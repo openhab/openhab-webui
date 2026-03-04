@@ -29,7 +29,7 @@ import OhChartTitle from './misc/oh-chart-title'
 import OhChartToolbox from './misc/oh-chart-toolbox'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { startOf } from '@/components/widgets/chart/utils.ts'
+import { startOf, addOrSubtractPeriod } from '@/components/widgets/chart/util/time.ts'
 
 const DEFAULT_PERIOD = 'D'
 
@@ -66,6 +66,16 @@ export default {
     }
   },
   computed: {
+    chartContext() {
+      return {
+        chart: {
+          ...this.context.component,
+          config: this.config
+        },
+        evaluateExpression: this.evaluateExpression,
+        numberFormatter: this.numberFormatter
+      }
+    },
     startTime() {
       return this.addOrSubtractPeriod(this.endTime, -1)
     },
@@ -101,39 +111,35 @@ export default {
     xAxis() {
       if (!this.context.component.slots || !this.context.component.slots.xAxis) return undefined
       return this.context.component.slots.xAxis.map((a) =>
-        axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, undefined, this.numberFormatter)
+        axisComponents[a.component].get(this.chartContext, a, this.startTime, this.endTime)
       )
     },
     yAxis() {
       if (!this.context.component.slots || !this.context.component.slots.yAxis) return undefined
       return this.context.component.slots.yAxis.map((a) =>
-        axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, true, this.numberFormatter)
+        axisComponents[a.component].get(this.chartContext, a, this.startTime, this.endTime, true)
       ) // invert Y axis by default
     },
     calendar() {
       if (!this.context.component.slots || !this.context.component.slots.calendar) return undefined
       return this.context.component.slots.calendar.map((a) =>
-        axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this, this.orient)
+        axisComponents[a.component].get(this.chartContext, a, this.startTime, this.endTime, this.orient === 'vertical')
       )
     },
     singleAxis() {
       if (!this.context.component.slots || !this.context.component.slots.singleAxis) return undefined
-      return this.context.component.slots.xAxis.map((a) =>
-        axisComponents[a.component].get(a, this.startTime, this.endTime, this.context.component, this)
+      return this.context.component.slots.singleAxis.map((a) =>
+        axisComponents[a.component].get(this.chartContext, a, this.startTime, this.endTime)
       )
     },
     tooltip() {
       if (!this.context.component.slots || !this.context.component.slots.tooltip) return undefined
-      return this.context.component.slots.tooltip.map((c) =>
-        OhChartTooltip.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter)
-      )
+      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(this.chartContext, c, this.startTime, this.endTime))
     },
     visualMap() {
       if (!this.context.component.slots) return undefined
       if (this.context.component.slots.visualMap) {
-        return this.context.component.slots.visualMap.map((c) =>
-          OhChartVisualMap.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter)
-        )
+        return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(this.chartContext, c, this.startTime, this.endTime))
       } else if (JSON.stringify(this.context.component.slots.series)?.includes('heatmap')) {
         // heatmap needs a visualMap, therefore fall back to a default
         const config = {
@@ -142,27 +148,25 @@ export default {
           show: false,
           type: 'continuous'
         }
-        return OhChartVisualMap.get({ config }, this.startTime, this.endTime, this, this.$device, this.numberFormatter)
+        return OhChartVisualMap.get(this.chartContext, { config }, this.startTime, this.endTime)
       }
       return undefined
     },
     dataZoom() {
       if (!this.context.component.slots || !this.context.component.slots.dataZoom) return undefined
-      return this.context.component.slots.dataZoom.map((c) => OhChartDataZoom.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.dataZoom.map((c) => OhChartDataZoom.get(this.chartContext, c, this.startTime, this.endTime))
     },
     legend() {
       if (!this.context.component.slots || !this.context.component.slots.legend) return undefined
-      return this.context.component.slots.legend.map((c) =>
-        OhChartLegend.get(c, this.startTime, this.endTime, this, this.$device, this.numberFormatter)
-      )
+      return this.context.component.slots.legend.map((c) => OhChartLegend.get(this.chartContext, c, this.startTime, this.endTime))
     },
     title() {
       if (!this.context.component.slots || !this.context.component.slots.title) return undefined
-      return this.context.component.slots.title.map((c) => OhChartTitle.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.title.map((c) => OhChartTitle.get(this.chartContext, c, this.startTime, this.endTime))
     },
     toolbox() {
       if (!this.context.component.slots || !this.context.component.slots.toolbox) return undefined
-      return this.context.component.slots.toolbox.map((c) => OhChartToolbox.get(c, this.startTime, this.endTime, this, this.$device))
+      return this.context.component.slots.toolbox.map((c) => OhChartToolbox.get(this.chartContext, c, this.startTime, this.endTime))
     }
   },
   asyncComputed: {
@@ -175,14 +179,14 @@ export default {
     async getSeriesPromises(component) {
       const getter = (data) =>
         seriesComponents[component.component].get(
+          this.chartContext,
           component,
           data.map((d) => d[1]),
           this.startTime,
-          this.endTime,
-          this
+          this.endTime
         )
 
-      const neededItems = seriesComponents[component.component].neededItems(component, this).filter((i) => !!i)
+      const neededItems = seriesComponents[component.component].neededItems(this.chartContext, component).filter((i) => !!i)
       if (neededItems.length === 0) {
         return Promise.resolve(getter([]))
       }
@@ -191,16 +195,10 @@ export default {
       const isBetweenStartAndEnd =
         dayjs(this.startTime).subtract(5, 'minutes').isBefore(now) && dayjs(this.endTime).add(5, 'minutes').isAfter(now)
 
-      let boundary =
-        seriesComponents[component.component].includeBoundary?.(component) !== undefined
-          ? seriesComponents[component.component].includeBoundary(component)
-          : isBetweenStartAndEnd
+      let boundary = seriesComponents[component.component].includeBoundary?.(this.chartContext, component) ?? isBetweenStartAndEnd
       if (component.config.noBoundary === true) boundary = false
 
-      let itemState =
-        seriesComponents[component.component].includeItemState?.(component) !== undefined
-          ? seriesComponents[component.component].includeItemState(component)
-          : isBetweenStartAndEnd
+      let itemState = seriesComponents[component.component].includeItemState?.(this.chartContext, component) ?? isBetweenStartAndEnd
       if (component.config.noItemState === true) itemState = false
 
       // Store items to avoid querying them again; use underscore-prefixed property to avoid reactivity
@@ -269,36 +267,10 @@ export default {
     },
     addOrSubtractPeriod(day, direction) {
       if (!this.context.component.config) return
-      if (direction === 0) return day
-      const fn = direction < 0 ? day.subtract : day.add
       const chartType = this.context.component.config.chartType
-      const absDirection = Math.abs(direction)
-      // Handle full direction units
-      for (let i = 0; i < Math.floor(absDirection); i++) {
-        if (chartType) {
-          day = fn.apply(day, [1, chartType === 'isoWeek' ? 'week' : chartType])
-        } else {
-          const period = this.period || this.context.component.config.period || DEFAULT_PERIOD
-          const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
-          if (span) {
-            day = fn.apply(day, [parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase())])
-          }
-        }
-      }
-      // Handle fractional direction
-      const fraction = absDirection % 1
-      if (fraction > 0) {
-        const unit = chartType
-          ? chartType === 'isoWeek'
-            ? 'week'
-            : chartType
-          : (this.period || this.context.component.config.period || DEFAULT_PERIOD).match(/[smhdDwWMQyY]$/)[0].toLowerCase()
-        const nextFullUnit = fn.apply(day, [1, unit])
-        const diff = nextFullUnit.diff(day)
-        day = day.add(diff * fraction, 'ms')
-      }
+      const period = this.period || this.context.component.config.period || DEFAULT_PERIOD
 
-      return day
+      return addOrSubtractPeriod(chartType, period, day, direction)
     }
   }
 }
