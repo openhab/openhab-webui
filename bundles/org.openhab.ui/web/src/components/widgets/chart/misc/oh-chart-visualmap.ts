@@ -12,7 +12,7 @@ const presetPalettes = {
 
 const chartVisualMap: MiscChartComponent = {
   get(context: ChartContext, component: api.UiComponent) {
-    let options = context.evaluateExpression<OhChartVisualmap.Config & VisualMapComponentOption>(
+    const options = context.evaluateExpression<OhChartVisualmap.Config & VisualMapComponentOption>(
       ComponentId.get(component)!,
       component.config
     )

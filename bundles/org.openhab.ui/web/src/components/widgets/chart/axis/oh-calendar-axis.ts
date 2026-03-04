@@ -4,10 +4,9 @@ import type { AxisComponent } from '../types'
 import type { CalendarOption } from 'echarts/types/dist/shared'
 
 const calendarAxis: AxisComponent = {
-  get(context, component, startTime, endTime, inverse) {
+  get(context, component, startTime, endTime) {
     const calendar = context.evaluateExpression<CalendarOption>(ComponentId.get(component)!, component.config)
     calendar.range = [startTime.toDate(), endTime.subtract(1, 'day').toDate()]
-    if (inverse) calendar.orient = 'horizontal' // TODO: Check whether this is correct
     if (!calendar.dayLabel) calendar.dayLabel = ({} as CalendarOption['dayLabel'])!
     if (calendar.dayLabel.firstDay === undefined) calendar.dayLabel.firstDay = 1
     if (calendar.dayLabel.margin === undefined) calendar.dayLabel.margin = 5

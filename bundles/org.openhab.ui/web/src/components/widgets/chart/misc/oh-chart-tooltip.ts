@@ -1,4 +1,4 @@
-import dayjs, { type Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import ComponentId from '../../component-id'
 import type { MiscChartComponent, ChartContext } from '../types'
@@ -11,7 +11,10 @@ dayjs.extend(LocalizedFormat)
 
 const chartTooltip: MiscChartComponent = {
   get(context: ChartContext, component: api.UiComponent) {
-    let options = context.evaluateExpression<OhChartTooltip.Config & TooltipComponentOption>(ComponentId.get(component)!, component.config)
+    const options = context.evaluateExpression<OhChartTooltip.Config & TooltipComponentOption>(
+      ComponentId.get(component)!,
+      component.config
+    )
     if (options.confine === undefined) options.confine = true
 
     if (!options.valueFormatter && context.numberFormatter) {
@@ -40,10 +43,10 @@ const chartTooltip: MiscChartComponent = {
           if (params[0].axisType === 'xAxis.time' && 'axisValue' in params[0]) {
             tooltip += `<div>${dayjs(params[0].axisValue as string).format('llll')}</div>`
           }
-          // content: for each oh-time-series marker colour, series name and formatted value
+          // content: for each oh-time-series marker color, series name and formatted value
           params.forEach((p) => {
             if (p.seriesId) {
-              const [seriesType, itemName] = p.seriesId.split('#')
+              const [seriesType] = p.seriesId.split('#')
               if (seriesType === 'oh-time-series') {
                 let state = context.numberFormatter!.format((p.data as number[])[1]!)
                 tooltip += (p.marker as string) + ' ' + p.seriesName + ': ' + state + '<br />'

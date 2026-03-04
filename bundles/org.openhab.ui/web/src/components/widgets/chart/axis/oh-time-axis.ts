@@ -1,18 +1,14 @@
-import dayjs, { type Dayjs } from 'dayjs'
-import IsoWeek from 'dayjs/plugin/isoWeek'
 import ComponentId from '../../component-id'
-import { startOf } from '@/components/widgets/chart/utils'
+import { startOf } from '@/components/widgets/chart/util/time'
 import type { AxisComponent } from '../types'
 import { OhChart } from '@/types/components/widgets'
 import type { TimeAxisBaseOption } from 'echarts/types/dist/shared'
 
-dayjs.extend(IsoWeek)
-
 const timeAxis: AxisComponent = {
-  get(context, component, startTime, endTime, inverse) {
+  get(context, component, startTime, endTime) {
     const axis = context.evaluateExpression<TimeAxisBaseOption>(ComponentId.get(component)!, component.config)
     axis.type = 'time'
-    const chartType = (context.chart.config as any as OhChart.Config).chartType
+    const chartType = context.chart.config.chartType
     if (chartType) {
       // adjusts time-axis begin and end timestamps depending on the received data, allowing to display series with offset
       axis.min = (v: { min: number; max: number }) => {
@@ -36,8 +32,6 @@ const timeAxis: AxisComponent = {
     if (!axis.axisPointer) {
       axis.axisPointer = { show: true, label: { backgroundColor: '#2196f3' } }
     }
-
-    axis.inverse = inverse
 
     return axis
   }
