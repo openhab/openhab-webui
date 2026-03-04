@@ -37,7 +37,10 @@ const timeSeries: SeriesComponent = {
     // other things
     if ('slots' in component && 'markArea' in (component as api.RootUiComponent).slots) {
       const markAreaComponent = (component as api.RootUiComponent).slots.markArea![0]
-      if (markAreaComponent) series.markArea = MarkArea.get(context, markAreaComponent, points, startTime, endTime)
+      if (markAreaComponent) {
+        series.markArea = MarkArea.get(context, markAreaComponent, points, startTime, endTime)
+        series.id += '#mark-area'
+      }
     }
 
     applyMarkers(series)
