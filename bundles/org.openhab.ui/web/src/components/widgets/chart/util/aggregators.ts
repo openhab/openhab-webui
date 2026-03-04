@@ -30,7 +30,8 @@ export default (
     case AggregationFunction.average:
       return arr[1].reduce((sum: number, state) => sum + parseFloat(state), 0) / arr[1].length
     default:
-      console.warn('Unknown aggregation function', aggregationFunction)
+      const exhaustiveCheck: never = aggregationFunction
+      console.warn('Unknown aggregation function', exhaustiveCheck)
       return parseFloat(arr[1][0]!)
   }
 }
