@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
-import { Marker, type Series } from '@/components/widgets/chart/types.ts'
+import { Marker, type SeriesOption } from '@/components/widgets/chart/types.ts'
 
-export default (series: Series) => {
+export default (series: SeriesOption) => {
   if (Array.isArray(series.markers)) {
     if (!series.markLine) {
       series.markLine = {

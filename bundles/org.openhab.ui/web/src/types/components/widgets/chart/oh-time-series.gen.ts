@@ -28,6 +28,7 @@ export interface Config {
   offsetUnit?: OffsetUnit
   markers?: Markers[]
   type?: Type
+  showSymbol?: boolean
   xAxisIndex?: number
   yAxisIndex?: number
   action?: Action
