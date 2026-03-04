@@ -1,8 +1,7 @@
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import ComponentId from '../../component-id'
-import type { MiscChartComponent, ChartContext } from '../types'
-import * as api from '@/api'
+import type { MiscChartComponent } from '../types'
 import type { OhChartTooltip } from '@/types/components/widgets'
 import type { TooltipComponentOption } from 'echarts'
 import type { TopLevelFormatterParams } from 'echarts/types/dist/shared'
@@ -10,7 +9,7 @@ import type { TopLevelFormatterParams } from 'echarts/types/dist/shared'
 dayjs.extend(LocalizedFormat)
 
 const chartTooltip: MiscChartComponent = {
-  get(context: ChartContext, component: api.UiComponent) {
+  get(context, component) {
     const options = context.evaluateExpression<OhChartTooltip.Config & TooltipComponentOption>(
       ComponentId.get(component)!,
       component.config

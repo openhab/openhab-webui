@@ -1,6 +1,5 @@
 import ComponentId from '../../component-id'
-import type { MiscChartComponent, ChartContext } from '../types'
-import * as api from '@/api'
+import type { MiscChartComponent } from '../types'
 import type { ToolboxComponentOption } from 'echarts'
 import type { OhChartToolbox } from '@/types/components/widgets'
 
@@ -13,7 +12,7 @@ const presetFeatures = {
 }
 
 const chartToolbox: MiscChartComponent = {
-  get(context: ChartContext, component: api.UiComponent) {
+  get(context, component) {
     const options = context.evaluateExpression<OhChartToolbox.Config & ToolboxComponentOption>(
       ComponentId.get(component)!,
       component.config as unknown as OhChartToolbox.Config & ToolboxComponentOption

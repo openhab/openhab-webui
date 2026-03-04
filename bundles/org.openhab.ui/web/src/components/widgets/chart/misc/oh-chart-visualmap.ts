@@ -1,6 +1,5 @@
 import ComponentId from '../../component-id'
-import type { MiscChartComponent, ChartContext } from '../types'
-import * as api from '@/api'
+import type { MiscChartComponent } from '../types'
 import type { OhChartVisualmap } from '@/types/components/widgets'
 import type { VisualMapComponentOption } from 'echarts'
 
@@ -11,7 +10,7 @@ const presetPalettes = {
 }
 
 const chartVisualMap: MiscChartComponent = {
-  get(context: ChartContext, component: api.UiComponent) {
+  get(context, component) {
     const options = context.evaluateExpression<OhChartVisualmap.Config & VisualMapComponentOption>(
       ComponentId.get(component)!,
       component.config
