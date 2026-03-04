@@ -60,8 +60,11 @@ const categoryAxis: AxisComponent = {
         const axisMonths = months[config.monthFormat] || months.default
         axis.data = [...axisMonths]
         break
+      case OhCategoryAxis.CategoryType.values:
+        break
       default:
-        console.warn('oh-category-axis: Unknown categoryType', config.categoryType, context.chart)
+        const exhaustiveCheck: never = config.categoryType
+        console.warn('oh-category-axis: Unknown categoryType', exhaustiveCheck, context.chart)
     }
 
     if (inverse) axis.data = axis.data.reverse()
