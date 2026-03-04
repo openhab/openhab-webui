@@ -1,7 +1,8 @@
 import type { Dayjs } from 'dayjs'
 import * as api from '@/api'
 import type { BarSeriesOption, HeatmapSeriesOption, LineSeriesOption, ScatterSeriesOption, CustomSeriesOption } from 'echarts'
-import { OhChart } from '@/types/components/widgets'
+import type { OhChart } from '@/types/components/widgets'
+import type { AxisBaseOptionCommon, CalendarOption, ComponentOption } from 'echarts/types/dist/shared'
 
 export enum Marker {
   avg = 'avg',
@@ -25,17 +26,21 @@ export interface ChartContext {
   chart: Omit<api.RootUiComponent | api.UiComponent, 'config'> & { config: OhChart.Config }
   evaluateExpression: EvaluateExpressionFunction
   numberFormatter?: Intl.NumberFormat
-  series?: {
-    data: number[][]
-  }[]
+  series?: SeriesOption[]
 }
 
 export interface AxisComponent {
-  get(context: ChartContext, component: api.UiComponent, startTime: Dayjs, endTime: Dayjs, inverse?: boolean): any
+  get(
+    context: ChartContext,
+    component: api.UiComponent,
+    startTime: Dayjs,
+    endTime: Dayjs,
+    inverse?: boolean
+  ): CalendarOption | AxisBaseOptionCommon
 }
 
 export interface MiscChartComponent {
-  get(context: ChartContext, component: api.UiComponent, startTime: Dayjs, endTime: Dayjs): any
+  get(context: ChartContext, component: api.UiComponent, startTime: Dayjs, endTime: Dayjs): ComponentOption
 }
 
 export interface SeriesComponent {
