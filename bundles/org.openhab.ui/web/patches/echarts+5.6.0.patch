@@ -1,5 +1,5 @@
 diff --git a/node_modules/echarts/types/dist/shared.d.ts b/node_modules/echarts/types/dist/shared.d.ts
-index 8f54be7..12b1d75 100644
+index 8f54be7..716d36e 100644
 --- a/node_modules/echarts/types/dist/shared.d.ts
 +++ b/node_modules/echarts/types/dist/shared.d.ts
 @@ -2375,7 +2375,7 @@ declare const AXIS_TYPES: {
@@ -56,3 +56,12 @@ index 8f54be7..12b1d75 100644
  
  interface AxisModelCommonMixin<Opt extends AxisBaseOption> extends Pick<Model<Opt>, 'option'> {
      axis: Axis;
+@@ -7173,7 +7173,7 @@ interface CommonAxisPointerOption {
+         dataIndexInside: number;
+     }[];
+ }
+-interface ComponentOption {
++export interface ComponentOption {
+     mainType?: string;
+     type?: string;
+     id?: OptionId;
