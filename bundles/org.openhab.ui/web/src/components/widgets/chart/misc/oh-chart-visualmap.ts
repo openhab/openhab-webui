@@ -26,12 +26,12 @@ const chartVisualMap: MiscChartComponent = {
     if (options.min !== undefined) {
       ;(options as VisualMapComponentOption).min = parseFloat(options.min)
     } else if (context.series && context.series[0]) {
-      ;(options as VisualMapComponentOption).min = Math.min(...context.series[0].data.map((p) => p[p.length - 1] as number))
+      ;(options as VisualMapComponentOption).min = Math.min(...(context.series[0].data as number[][]).map((p) => p[p.length - 1]!))
     }
     if (options.max !== undefined) {
       ;(options as VisualMapComponentOption).max = parseFloat(options.max)
     } else if (context.series && context.series[0]) {
-      ;(options as VisualMapComponentOption).max = Math.max(...context.series[0].data.map((p) => p[p.length - 1] as number))
+      ;(options as VisualMapComponentOption).max = Math.max(...(context.series[0].data as number[][]).map((p) => p[p.length - 1] as number))
     }
 
     if (!options.formatter && context.numberFormatter) {
