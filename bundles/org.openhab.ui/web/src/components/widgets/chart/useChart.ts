@@ -138,7 +138,6 @@ export function useChart(
 
   const tooltip = computed<ComponentOption[]>(() => {
     if (!slots.value?.tooltip) return []
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return slots.value.tooltip.map((c) => OhChartTooltip.get(chartContext.value, c, startTime.value, endTime.value))
   })
 
@@ -149,7 +148,6 @@ export function useChart(
       series: series.value
     }
     if (slots.value.visualMap) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return slots.value.visualMap.map((c) => OhChartVisualMap.get(visualMapContext, c, startTime.value, endTime.value))
     } else if (JSON.stringify(slots.value.series)?.includes('heatmap')) {
       const heatmapConfig = {
@@ -158,7 +156,6 @@ export function useChart(
         show: false,
         type: 'continuous'
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return [
         OhChartVisualMap.get(
           visualMapContext,
@@ -173,25 +170,21 @@ export function useChart(
 
   const dataZoom = computed(() => {
     if (!slots.value?.dataZoom) return []
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return slots.value.dataZoom.map((c) => OhChartDataZoom.get(chartContext.value, c, startTime.value, endTime.value))
   })
 
   const legend = computed(() => {
     if (!slots.value?.legend) return []
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return slots.value.legend.map((c) => OhChartLegend.get(chartContext.value, c, startTime.value, endTime.value))
   })
 
   const title = computed(() => {
     if (!slots.value?.title) return []
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return slots.value.title.map((c) => OhChartTitle.get(chartContext.value, c, startTime.value, endTime.value))
   })
 
   const toolbox = computed(() => {
     if (!slots.value?.toolbox) return []
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return slots.value.toolbox.map((c) => OhChartToolbox.get(chartContext.value, c, startTime.value, endTime.value))
   })
 
