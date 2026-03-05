@@ -1,7 +1,7 @@
 import type { Dayjs } from 'dayjs'
 import * as api from '@/api'
 import type { BarSeriesOption, HeatmapSeriesOption, LineSeriesOption, ScatterSeriesOption, CustomSeriesOption } from 'echarts'
-import type { OhChart } from '@/types/components/widgets'
+import type { OhChart, OhAggregateSeries, OhCalendarSeries, OhStateSeries, OhTimeSeries } from '@/types/components/widgets'
 import type { AxisBaseOptionCommon, CalendarOption, ComponentOption } from 'echarts/types/dist/shared'
 
 export enum Marker {
@@ -19,6 +19,8 @@ export type SeriesOption = { markers?: Marker[] } & (
   | ScatterSeriesOption
   | StateSeriesOption
 )
+
+export type SeriesConfig = OhAggregateSeries.Config | OhCalendarSeries.Config | OhStateSeries.Config | OhTimeSeries.Config
 
 export type EvaluateExpressionFunction = <T = any>(key: string, value: T) => T
 

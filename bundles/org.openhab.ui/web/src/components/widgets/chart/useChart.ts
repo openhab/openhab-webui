@@ -37,7 +37,7 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 import type { EChartsOption } from 'echarts'
 import { ChartType, Period, type OhChart } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
-import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, EvaluateExpressionFunction } from './types'
+import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, EvaluateExpressionFunction, SeriesConfig } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
 
 const DEFAULT_PERIOD = Period.D
@@ -195,7 +195,7 @@ export function useChart(
   const _persistencePromises: Record<string, Promise<api.ItemHistory>> = {}
 
   const getSeriesPromises = async (component: api.UiComponent): Promise<SeriesOption> => {
-    const config = evaluateExpression(ComponentId.get(component)!, component.config)
+    const config = evaluateExpression<SeriesConfig>(ComponentId.get(component)!, component.config)
 
     const getter = (data: [api.EnrichedItem, api.ItemHistory][]): SeriesOption =>
       seriesComponents[component.component]!.get(
