@@ -8,8 +8,9 @@ dayjs.extend(DayDuration)
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { startOf, addOrSubtractPeriod as addOrSubtractPeriodUtil } from '@/components/widgets/chart/util/time.ts'
-import openhab from '@/js/openhab/index'
+import ComponentId from '@/components/widgets/component-id.ts'
+import * as api from '@/api'
+import { startOf, addOrSubtractPeriod as addOrSubtractPeriodUtil } from './util/time.ts'
 
 // Axis components
 import OhTimeAxis from './axis/oh-time-axis'
@@ -34,12 +35,10 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 
 // Types
 import type { EChartsOption } from 'echarts'
-import * as api from '@/api'
 import { ChartType, Period, type OhChart } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
 import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, EvaluateExpressionFunction } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
-import ComponentId from '@/components/widgets/component-id.ts'
 
 const DEFAULT_PERIOD = Period.D
 
@@ -228,16 +227,15 @@ export function useChart(
       } else if (_items[neededItem]) {
         _itemPromises[neededItem] = Promise.resolve(_items[neededItem])
       } else {
-        _itemPromises[neededItem] = openhab.api.get(`/rest/items/${neededItem}`).then((item: api.EnrichedItem) => {
-          _items[neededItem] = item
+        _itemPromises[neededItem] = api.getItemByName({ itemName: neededItem }).then((item) => {
+          _items[neededItem] = item!
           delete _itemPromises[neededItem]
-          return item
+          return item!
         })
       }
     })
 
     const combinedPromises = neededItems.map(async (neededItem) => {
-      const url = `/rest/persistence/items/${neededItem}`
       let seriesStartTime = startTime.value
       let seriesEndTime = endTime.value
       if (config.offsetAmount && config.offsetUnit) {
@@ -245,6 +243,7 @@ export function useChart(
         seriesEndTime = seriesEndTime.subtract(config.offsetAmount as number, config.offsetUnit as dayjs.ManipulateType)
       }
       const query = {
+        itemName: neededItem,
         serviceId: config.service as string | undefined,
         starttime: seriesStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
@@ -253,13 +252,13 @@ export function useChart(
       }
       const key = `${neededItem}-${query.serviceId ?? 'default'}-${query.starttime}-${query.endtime}-${boundary.toString()}-${itemState.toString()}`
       if (!_persistencePromises[key]) {
-        _persistencePromises[key] = openhab.api.get(url, query).then((result: api.ItemHistory) => {
+        _persistencePromises[key] = api.getItemDataFromPersistenceService(query).then((result) => {
           delete _persistencePromises[key]
-          return result
+          return result!
         })
       }
 
-      return Promise.all([_itemPromises[neededItem], _persistencePromises[key]]) as Promise<[api.EnrichedItem, api.ItemHistory]>
+      return await Promise.all([_itemPromises[neededItem] as Promise<api.EnrichedItem>, _persistencePromises[key]])
     })
 
     return Promise.all(combinedPromises).then(getter)
