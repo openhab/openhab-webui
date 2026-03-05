@@ -39,6 +39,7 @@ import { ChartType, Period, type OhChart } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
 import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, EvaluateExpressionFunction } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
+import ComponentId from '@/components/widgets/component-id.ts'
 
 const DEFAULT_PERIOD = Period.D
 
@@ -202,6 +203,8 @@ export function useChart(
   const _persistencePromises: Record<string, Promise<api.ItemHistory>> = {}
 
   const getSeriesPromises = async (component: api.UiComponent): Promise<SeriesOption> => {
+    const config = evaluateExpression(ComponentId.get(component)!, component.config)
+
     const getter = (data: [api.EnrichedItem, api.ItemHistory][]): SeriesOption =>
       seriesComponents[component.component]!.get(
         chartContext.value,
@@ -221,10 +224,10 @@ export function useChart(
       dayjs(startTime.value).subtract(5, 'minutes').isBefore(now) && dayjs(endTime.value).add(5, 'minutes').isAfter(now)
 
     let boundary = seriesComponents[component.component]!.includeBoundary?.(chartContext.value, component) ?? isBetweenStartAndEnd
-    if (component.config.noBoundary === true) boundary = false
+    if (config.noBoundary === true) boundary = false
 
     let itemState = seriesComponents[component.component]!.includeItemState?.(chartContext.value, component) ?? isBetweenStartAndEnd
-    if (component.config.noItemState === true) itemState = false
+    if (config.noItemState === true) itemState = false
 
     neededItems.forEach((neededItem) => {
       if (_itemPromises[neededItem]) {
@@ -244,16 +247,12 @@ export function useChart(
       const url = `/rest/persistence/items/${neededItem}`
       let seriesStartTime = startTime.value
       let seriesEndTime = endTime.value
-      if (component.config.offsetAmount && component.config.offsetUnit) {
-        seriesStartTime = seriesStartTime.subtract(
-          component.config.offsetAmount as number,
-          component.config.offsetUnit as dayjs.ManipulateType
-        )
-        seriesEndTime = seriesEndTime.subtract(component.config.offsetAmount as number, component.config.offsetUnit as dayjs.ManipulateType)
+      if (config.offsetAmount && config.offsetUnit) {
+        seriesStartTime = seriesStartTime.subtract(config.offsetAmount as number, config.offsetUnit as dayjs.ManipulateType)
+        seriesEndTime = seriesEndTime.subtract(config.offsetAmount as number, config.offsetUnit as dayjs.ManipulateType)
       }
-      const serviceId = component.config.service ? (evaluateExpression('.serviceId', component.config.service) as string) : undefined
       const query = {
-        serviceId,
+        serviceId: config.service as string | undefined,
         starttime: seriesStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
         boundary,
