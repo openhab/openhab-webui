@@ -169,12 +169,12 @@ export default {
         }
       })
     }
-    this.f7.on('modalClosed', () => {
+    f7.on('modalClosed', () => {
       this.validateSoft(this.value || '')
     })
   },
   beforeUnmount () {
-    this.f7.off('modalClosed')
+    f7.off('modalClosed')
     this.destroyAutoCompleteOptions()
   },
   methods: {
