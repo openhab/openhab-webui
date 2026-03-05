@@ -60,12 +60,20 @@
       </template>
       <template v-if="softInvalid && !disableValidation" #error-message>
         <div>
-          <span class="text-color-red">{{ NETWORK_ADDRESS_WARNING_TEXT }}</span>
+          <span class="text-color-red" @click="showNetworkAddressPopover">{{ NETWORK_ADDRESS_WARNING_TEXT }}</span>
           <span @mousedown.prevent="disableValidation = true; validateSoft(value)" class="link" style="margin-left: 6px;">Use anyway</span>
         </div>
       </template>
     </f7-list-input>
   </ul>
+  <f7-popover ref="networkAddressPopover">
+    <f7-popover-inner>
+      <f7-block>
+        <p>This address does not match RFC standards for URL, IP, or hostname formats.</p>
+        <p>But if you are sure it is valid in your system, you can still use it anyway.</p>
+      </f7-block>
+    </f7-popover-inner>
+  </f7-popover>
 </template>
 
 <script>
@@ -178,6 +186,12 @@ export default {
     this.destroyAutoCompleteOptions()
   },
   methods: {
+    showNetworkAddressPopover(event) {
+      const pop = this.$refs.networkAddressPopover;
+      if (pop && pop.$el) {
+        f7.popover.open(pop.$el, event.target);
+      }
+    },
     onFocus() {
       this.validateSoft(this.value || '')
     },
