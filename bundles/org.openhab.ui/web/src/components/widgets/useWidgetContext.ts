@@ -14,8 +14,6 @@ import * as api from '@/api'
  * The useWidgetContext must be used as a composable in all widget components.
  *
  * A few requirements have to be met by components importing this composable:
- * - Widget components have to add a `component` ref to their root.
- * - Page components have to add a `page` ref to their root.
  * - All components using this composable have to add the `scopedCssUid` as a class to their root element.
  */
 export function useWidgetContext(context: WidgetContext) {
