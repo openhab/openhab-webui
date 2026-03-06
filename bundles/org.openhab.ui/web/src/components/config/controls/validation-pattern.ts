@@ -1,13 +1,15 @@
 const hex2 = `[0-9A-Fa-f]{2}`
 const hex4 = `[0-9A-Fa-f]{4}`
+const hex12 = `[0-9A-Fa-f]{12}`
 /**
  * MAC address handler.
  * Supports:
  * - `AA:BB:CC:DD:EE:FF`
  * - `AA-BB-CC-DD-EE-FF`
  * - `AABB.CCDD.EEFF`
+ * - `AABBCCDDEEFF`
  */
-export const MacAddress: string = `(?:(?:${hex2}[:\\-]){5}${hex2}|(?:${hex4}\\.){2}${hex4})`
+export const MacAddress: string = `(?:(?:${hex2}[:\\-]){5}${hex2}|(?:${hex4}\\.){2}${hex4}|${hex12})`
 export const MacAddressCompiled: RegExp = new RegExp(`^${MacAddress}$`)
 
 // const ipv4Addr = `(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])`
