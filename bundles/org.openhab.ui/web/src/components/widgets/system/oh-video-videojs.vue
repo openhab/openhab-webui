@@ -6,7 +6,8 @@
 
 <script>
 import { markRaw } from 'vue'
-import videojs from 'video.js'
+// dynamic import for better chunking
+const videojs = (await import('video.js')).default
 import 'video.js/dist/video-js.css'
 
 export default {

@@ -91,8 +91,8 @@ export default defineConfig({
     }),
     ...(production
       ? [compression({ algorithms: ['gzip', 'brotliCompress'] })]
-      : [vueDevtools(), visualizer({ open: false })]),
-    stats ? webpackStats() : null
+      : [vueDevtools()]),
+    ...(stats ? [visualizer(), webpackStats()] : [])
   ],
   define: {
     // __VUE_I18N_LEGACY_API__: false // tree-shake legacy mode

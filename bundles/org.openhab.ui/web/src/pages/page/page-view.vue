@@ -60,7 +60,7 @@
     </f7-tabs>
 
     <component
-      :is="page.component"
+      :is="widgetRegistry.page(page.component)"
       v-else-if="page && visibleToCurrentUser"
       :context="context"
       :f7router
@@ -91,10 +91,9 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
-import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
+import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import { actionsMixin } from '@/components/widgets/widget-actions'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
@@ -108,14 +107,7 @@ import { useViewArea } from '@/composables/useViewArea.ts'
 export default {
   mixins: [actionsMixin],
   components: {
-    'oh-layout-page': OhLayoutPage,
-    EmptyStatePlaceholder,
-    'oh-map-page': defineAsyncComponent(() => import(/* webpackChunkName: "map-page" */ '@/components/widgets/map/oh-map-page.vue')),
-    'oh-plan-page': defineAsyncComponent(() => import(/* webpackChunkName: "plan-page" */ '@/components/widgets/plan/oh-plan-page.vue')),
-    'oh-chart-page': defineAsyncComponent(() => import(/* webpackChunkName: "chart-page" */ '@/components/widgets/chart/oh-chart-page.vue')),
-    'oh-locations-tab': defineAsyncComponent(() => import('@/components/tabs/locations-tab.vue')),
-    'oh-equipment-tab': defineAsyncComponent(() => import('@/components/tabs/equipment-tab.vue')),
-    'oh-properties-tab': defineAsyncComponent(() => import('@/components/tabs/properties-tab.vue'))
+    EmptyStatePlaceholder
   },
   props: {
     uid: String,
@@ -128,7 +120,7 @@ export default {
     useViewArea()
 
     const { evaluateExpression } = useWidgetExpression()
-    return { theme, evaluateExpression }
+    return { theme, evaluateExpression, widgetRegistry }
   },
   data () {
     return {
@@ -261,12 +253,15 @@ export default {
       return context
     },
     tabComponent (tab) {
-      if (tab.component === 'oh-locations-tab' || tab.component === 'oh-equipment-tab' || tab.component === 'oh-properties-tab') {
-        return tab.component
+      switch (tab) {
+        case 'oh-locations-tab':
+        case 'oh-equipment-tab':
+        case 'oh-properties-tab':
+          return widgetRegistry.tab(tab.component)
       }
 
       const page = useComponentsStore().page(tab.config.page.replace('page:', ''))
-      return page.component
+      return widgetRegistry.page(page.component)
     },
     tabEvaluateExpression (tab, idx, key) {
       const ctx = this.tabContext(tab)

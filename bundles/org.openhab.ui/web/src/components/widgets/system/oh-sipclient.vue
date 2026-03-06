@@ -106,6 +106,9 @@ import ringBackFile from './oh-sipclient-ringback.mp3'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
+// dynamic import for better chunking
+const jssip = (await import('jssip')).default
+
 export default {
   data () {
     return {
@@ -183,11 +186,10 @@ export default {
       if (this.phone) this.phone.stop() // Reconnect to reload config
       this.context.component.config = { ...this.config, ...this.localConfig } // Merge local device configuration
 
-      import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // Lazy load jssip
         if (this.config.enableSIPDebug) {
-          JsSIP.debug.enable('JsSIP:*')
+          jssip.debug.enable('JsSIP:*')
         } else {
-          JsSIP.debug.disable()
+          jssip.debug.disable()
         }
         // SIP user agent setup
         this.remoteAudio = new window.Audio()
@@ -195,7 +197,7 @@ export default {
         if (url.protocol.indexOf('http') === 0) {
           url.protocol = url.protocol.replace('http', 'ws')
         }
-        const socket = new JsSIP.WebSocketInterface(url.toString())
+        const socket = new jssip.WebSocketInterface(url.toString())
         const configuration = {
           sockets: [socket],
           uri: 'sip:' + this.config.username + '@' + this.config.domain,
@@ -204,7 +206,7 @@ export default {
           session_timers: false,
           register: (this.config.disableRegister !== true)
         }
-        this.phone = new JsSIP.UA(configuration)
+        this.phone = new jssip.UA(configuration)
 
         // Update connected status on connection changes
         this.phone.on('connected', () => {
@@ -290,7 +292,6 @@ export default {
           })
         })
         this.phone.start()
-      })
     },
     /**
      * Plays a given tone. Might not properly work on all browsers and devices.

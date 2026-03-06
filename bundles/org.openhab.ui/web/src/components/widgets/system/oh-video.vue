@@ -29,11 +29,14 @@ import { f7 } from 'framework7-vue'
 import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
+import OhVideoVideojs from './oh-video-videojs.vue'
+import OhVideoWebrtc from './oh-video-webrtc.vue'
+
 export default {
   widget: OhVideoDefinition,
   components: {
-    'oh-video-videojs': defineAsyncComponent(() => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue')),
-    'oh-video-webrtc': defineAsyncComponent(() => import(/* webpackChunkName: "oh-video-webrtc" */ './oh-video-webrtc.vue'))
+    OhVideoVideojs,
+    OhVideoWebrtc,
   },
   props: {
     context: Object,

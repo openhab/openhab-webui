@@ -51,7 +51,7 @@
     </template>
     <component
       v-bind="$attrs"
-      :is="componentType"
+      :is="widgetRegistry.widget(componentType)"
       v-else-if="componentType && componentType.startsWith('oh-')"
       ref="component"
       :context="context"
@@ -67,13 +67,19 @@
     <template v-else-if="componentType && componentType === 'Content'">
       {{ config.text }}
     </template>
+    <!-- Error renders red text inside <pre> element -->
     <pre
       v-else-if="componentType && componentType === 'Error'"
       class="text-color-red"
       style="white-space: pre-wrap"
       >{{ config.error }}</pre
     >
-    <component :is="componentType" v-else ref="component" v-bind="{ ...$attrs, ...config }" :class="scopedCssUid">
+    <component
+      :is="widgetRegistry.widget(componentType, true) ?? componentType"
+      v-else
+      ref="component"
+      v-bind="{ ...$attrs, ...config }"
+      :class="scopedCssUid">
       {{ config.content }}
       <template v-if="defaultSlots.length > 0">
         <generic-widget-component
@@ -88,7 +94,12 @@
 <script setup lang="ts">
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
-import * as api from '@/api'
+import * as widgetRegistry from '@/components/oh-component-registry.ts'
+import Label from '@/components/widgets/Label.vue'
+import { defineAsyncComponent } from 'vue'
+
+const OhSwiper = defineAsyncComponent(() => import('@/components/widgets/system/oh-swiper.vue'))
+const OhCard = defineAsyncComponent(() => import('@/components/widgets/standard/oh-card.vue'))
 
 defineOptions({
   inheritAttrs: false

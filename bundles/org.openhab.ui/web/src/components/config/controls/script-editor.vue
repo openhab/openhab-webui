@@ -80,8 +80,10 @@ import { autocompletion, closeBrackets } from '@codemirror/autocomplete'
 // for linting
 import { linter, lintGutter } from '@codemirror/lint'
 import YAML from 'yaml'
-import * as eslint from 'eslint-linter-browserify'
 import globals from 'globals'
+
+// dynamic import for better chunking
+const eslint = await import('eslint-linter-browserify')
 
 // other extensions
 import { indentationMarkers } from '@replit/codemirror-indentation-markers'
