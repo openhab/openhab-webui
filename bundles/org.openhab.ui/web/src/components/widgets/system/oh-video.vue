@@ -30,13 +30,13 @@ import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 import OhVideoVideojs from './oh-video-videojs.vue'
-import OhVideoWebRTC from './oh-video-webrtc.vue'
+import OhVideoWebrtc from './oh-video-webrtc.vue'
 
 export default {
   widget: OhVideoDefinition,
   components: {
     OhVideoVideojs,
-    OhVideoWebRTC,
+    OhVideoWebrtc,
   },
   props: {
     context: Object,
