@@ -39,7 +39,7 @@
     "prebuild": "npm run generate-build-info && npm run generate-widget-component-ts && npm run generate-rest-client && npm run compile-grammar",
     "build": "cross-env NODE_ENV=production vite build",
     "build:mvn": "cross-env NODE_ENV=production cross-env MAVEN=true node ./build/build.mjs",
-    "webpack-analyzer-report-stats": "npm run generate-build-info && cross-env NODE_ENV=production cross-env STATS=true vite build",
+    "bundle-analyzer": "npm run generate-build-info && cross-env NODE_ENV=production cross-env STATS=true vite build",
     "preview": "vite preview",
     "format": "oxfmt --write src",
     "format:check": "oxfmt --check src",
