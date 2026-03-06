@@ -26,7 +26,7 @@ Object.entries(tabsFiles).forEach(([path, loader]) => {
   }
 })
 
-console.info(`oh-component-registry: Registered ${pages.size} pages, ${tabs.size} tabs and ${widgets.size} widgets`)
+console.info(`oh-component-registry: Registered ${pages.size} page, ${tabs.size} tab and ${widgets.size} widgets components`)
 console.debug('oh-component-registry pages', pages.keys())
 console.debug('oh-component-registry tabs', tabs.keys())
 console.debug('oh-component-registry widgets', widgets.keys())
