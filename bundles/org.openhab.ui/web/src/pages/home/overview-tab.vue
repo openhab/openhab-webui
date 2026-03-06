@@ -18,7 +18,7 @@
 
     <template v-else>
       <component
-        :is="overviewPage.component"
+        :is="widgetRegistry.page(overviewPage.component)"
         v-if="overviewPage"
         v-show="!inChatSession"
         :context="overviewPageContext"
@@ -78,7 +78,7 @@ import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
+import * as widgetRegistry from '@/components/widgets/widget-registry.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
@@ -94,12 +94,11 @@ export default {
     f7router: Object
   },
   components: {
-    OhLayoutPage,
     'empty-state-placeholder': EmptyStatePlaceholder,
     habot: defineAsyncComponent(() => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue'))
   },
   setup () {
-    return { f7 }
+    return { f7, widgetRegistry }
   },
   data () {
     return {

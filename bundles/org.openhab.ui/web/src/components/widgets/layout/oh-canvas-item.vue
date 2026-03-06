@@ -220,7 +220,6 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
 import type { WidgetContext } from '@/components/widgets/types'
-import GenericWidgetComponent from '@/components/widgets/generic-widget-component.vue'
 import OhPlaceholderWidget from '@/components/widgets/layout/oh-placeholder-widget.vue'
 
 defineOptions({ widget: OhCanvasItemDefinition })
