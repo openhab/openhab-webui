@@ -1,4 +1,4 @@
-import * as widgetRegistry from '@/components/widgets/widget-registry.ts'
+import * as widgetRegistry from '@/components/oh-component-registry.ts'
 
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'

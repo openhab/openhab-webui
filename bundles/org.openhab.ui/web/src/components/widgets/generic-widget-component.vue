@@ -93,7 +93,7 @@
 <script setup lang="ts">
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
-import * as widgetRegistry from '@/components/widgets/widget-registry.ts'
+import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import Label from '@/components/widgets/Label.vue'
 
 const OhSwiper = () => import('@/components/widgets/system/oh-swiper.vue')

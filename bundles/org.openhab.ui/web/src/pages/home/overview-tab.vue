@@ -78,7 +78,7 @@ import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import * as widgetRegistry from '@/components/widgets/widget-registry.ts'
+import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'

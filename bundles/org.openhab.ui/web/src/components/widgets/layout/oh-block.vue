@@ -51,7 +51,7 @@
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
 import { OhBlockDescription } from '@/assets/definitions/widgets/layout'
-import * as widgetRegistry from '@/components/widgets/widget-registry.ts'
+import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import * as api from '@/api'
 
 defineOptions({

@@ -93,7 +93,7 @@
 <script>
 import { f7, theme } from 'framework7-vue'
 
-import * as widgetRegistry from '@/components/widgets/widget-registry.ts'
+import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import { actionsMixin } from '@/components/widgets/widget-actions'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 

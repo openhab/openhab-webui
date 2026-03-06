@@ -26,22 +26,25 @@ Object.entries(tabsFiles).forEach(([path, loader]) => {
   }
 })
 
-console.debug(`widget-registry: Registered ${pages.size} pages, ${tabs.size} tabs and ${widgets.size} widgets`)
+console.info(`oh-component-registry: Registered ${pages.size} pages, ${tabs.size} tabs and ${widgets.size} widgets`)
+console.debug('oh-component-registry pages', pages.keys())
+console.debug('oh-component-registry tabs', tabs.keys())
+console.debug('oh-component-registry widgets', widgets.keys())
 
 export function page(name: string) {
   const p = pages.get(name)
-  if (!p) console.error("widget-registry: Didn't find page component ", name)
+  if (!p) console.error("oh-component-registry: Didn't find page component ", name)
   return p
 }
 
 export function tab(name: string) {
   const t = tabs.get(name)
-  if (!t) console.error("widget-registry: Didn't find tab component ", name)
+  if (!t) console.error("oh-component-registry: Didn't find tab component ", name)
   return t
 }
 
 export function widget(name: string, suppressLog = false) {
   const w = widgets.get(name)
-  if (!w && !suppressLog) console.error("widget-registry: Didn't find widget component ", name)
+  if (!w && !suppressLog) console.error("oh-component-registry: Didn't find widget component ", name)
   return w
 }
