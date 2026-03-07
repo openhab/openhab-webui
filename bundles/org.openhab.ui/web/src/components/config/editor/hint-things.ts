@@ -23,7 +23,7 @@ function hintThingConfig(
   }
 }
 
-//TODO
+// TODO: Re-enable ESLint rules
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
@@ -32,7 +32,7 @@ function findChannelTypeUID(context: CompletionContext, configLine: Line, config
   if (!channelUidLine) return null
 
   const section = context.state.doc.slice(channelUidLine.to, configLine.from)
-  //TODO text is not a member of type Text
+  // TODO: Text is not a member of type Text
   /* @ts-expect-error-next-line */
   const typeLine = section.text.find((line) => line.match(/^ {8}type: /))
   if (!typeLine) return null
