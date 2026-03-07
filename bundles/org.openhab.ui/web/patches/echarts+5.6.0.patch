@@ -1,0 +1,67 @@
+diff --git a/node_modules/echarts/types/dist/shared.d.ts b/node_modules/echarts/types/dist/shared.d.ts
+index 8f54be7..716d36e 100644
+--- a/node_modules/echarts/types/dist/shared.d.ts
++++ b/node_modules/echarts/types/dist/shared.d.ts
+@@ -2375,7 +2375,7 @@ declare const AXIS_TYPES: {
+     readonly log: 1;
+ };
+ declare type OptionAxisType = keyof typeof AXIS_TYPES;
+-interface AxisBaseOptionCommon extends ComponentOption, AnimationOptionMixin {
++export interface AxisBaseOptionCommon extends ComponentOption, AnimationOptionMixin {
+     type?: OptionAxisType;
+     show?: boolean;
+     inverse?: boolean;
+@@ -2424,7 +2424,7 @@ interface AxisBaseOptionCommon extends ComponentOption, AnimationOptionMixin {
+     }) => ScaleDataValue);
+     startValue?: number;
+ }
+-interface NumericAxisBaseOptionCommon extends AxisBaseOptionCommon {
++export interface NumericAxisBaseOptionCommon extends AxisBaseOptionCommon {
+     boundaryGap?: [number | string, number | string];
+     /**
+      * AxisTick and axisLabel and splitLine are calculated based on splitNumber.
+@@ -2450,7 +2450,7 @@ interface NumericAxisBaseOptionCommon extends AxisBaseOptionCommon {
+      */
+     alignTicks?: boolean;
+ }
+-interface CategoryAxisBaseOption extends AxisBaseOptionCommon {
++export interface CategoryAxisBaseOption extends AxisBaseOptionCommon {
+     type?: 'category';
+     boundaryGap?: boolean;
+     axisLabel?: AxisLabelOption<'category'> & {
+@@ -2466,7 +2466,7 @@ interface CategoryAxisBaseOption extends AxisBaseOptionCommon {
+         interval?: 'auto' | number | ((index: number, value: string) => boolean);
+     };
+ }
+-interface ValueAxisBaseOption extends NumericAxisBaseOptionCommon {
++export interface ValueAxisBaseOption extends NumericAxisBaseOptionCommon {
+     type?: 'value';
+     axisLabel?: AxisLabelOption<'value'>;
+     /**
+@@ -2481,7 +2481,7 @@ interface LogAxisBaseOption extends NumericAxisBaseOptionCommon {
+     axisLabel?: AxisLabelOption<'log'>;
+     logBase?: number;
+ }
+-interface TimeAxisBaseOption extends NumericAxisBaseOptionCommon {
++export interface TimeAxisBaseOption extends NumericAxisBaseOptionCommon {
+     type?: 'time';
+     axisLabel?: AxisLabelOption<'time'>;
+ }
+@@ -2571,7 +2571,7 @@ interface SplitAreaOption {
+     interval?: 'auto' | number | ((index: number, value: string) => boolean);
+     areaStyle?: AreaStyleOption<ZRColor[]>;
+ }
+-declare type AxisBaseOption = ValueAxisBaseOption | LogAxisBaseOption | CategoryAxisBaseOption | TimeAxisBaseOption | AxisBaseOptionCommon;
++export type AxisBaseOption = ValueAxisBaseOption | LogAxisBaseOption | CategoryAxisBaseOption | TimeAxisBaseOption | AxisBaseOptionCommon;
+ 
+ interface AxisModelCommonMixin<Opt extends AxisBaseOption> extends Pick<Model<Opt>, 'option'> {
+     axis: Axis;
+@@ -7173,7 +7173,7 @@ interface CommonAxisPointerOption {
+         dataIndexInside: number;
+     }[];
+ }
+-interface ComponentOption {
++export interface ComponentOption {
+     mainType?: string;
+     type?: string;
+     id?: OptionId;
