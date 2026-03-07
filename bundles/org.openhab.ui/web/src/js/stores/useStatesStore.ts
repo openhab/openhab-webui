@@ -69,7 +69,7 @@ export const useStatesStore = defineStore('states', () => {
   const handler: ProxyHandler<TrackedItems> = {
     get(obj: TrackedItems, prop: string | symbol): ItemState {
       /* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access */
-      if (prop === '_keys') return Object.keys(itemStates.value) as any
+      if (prop === '_keys') return Array.from(itemStates.value.keys()) as any
       if (prop === '__ob__') return (obj as any).__ob__
       if (prop === 'toString') return (() => '[object TrackedItems]') as any
 
