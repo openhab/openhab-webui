@@ -10,7 +10,7 @@ import * as api from '@/api'
 const timeSeries: SeriesComponent = {
   neededItems(context, component) {
     let markAreaItems: string[] = []
-    if ('slots' in component && 'markArea' in (component as api.RootUiComponent).slots) {
+    if ('slots' in component && Array.isArray((component as api.RootUiComponent).slots.markArea)) {
       markAreaItems = (component as api.RootUiComponent).slots
         .markArea!.map((a, i) =>
           context.evaluateExpression<string | undefined>(ComponentId.get(component)! + '.mitem' + i, (a.config as OhTimeSeries.Config).item)
@@ -35,7 +35,7 @@ const timeSeries: SeriesComponent = {
     }
 
     // other things
-    if ('slots' in component && 'markArea' in (component as api.RootUiComponent).slots) {
+    if ('slots' in component && Array.isArray((component as api.RootUiComponent).slots.markArea)) {
       const markAreaComponent = (component as api.RootUiComponent).slots.markArea![0]
       if (markAreaComponent) series.markArea = MarkArea.get(context, markAreaComponent, points, startTime, endTime)
     }
