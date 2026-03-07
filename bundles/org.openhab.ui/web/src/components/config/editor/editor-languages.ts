@@ -113,7 +113,7 @@ function autocompletionExtension(mode: string): Extension | null {
     case mode.startsWith(MediaType.JAVASCRIPT as string):
       return javascriptAutocompletions(mode)
 
-    // CodeMirror supports autocompletion for python by default
+    // CodeMirror supports autocompletion for Python and many other languages by default
     default:
       return autocompletion()
   }
