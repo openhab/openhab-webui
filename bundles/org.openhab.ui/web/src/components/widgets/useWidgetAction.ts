@@ -156,7 +156,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
     const confirmationPromise = actionConfirmation ? requestActionConfirmation(prefix, actionConfig) : Promise.resolve()
 
     confirmationPromise
-      .then(async () => {
+      .then(async (): Promise<boolean> => {
         switch (action) {
           case Action.navigate:
             const actionPage = actionConfig[`${processedPrefix}actionPage`]
@@ -383,14 +383,14 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             break
           case Action.url:
             const actionUrl = actionConfig[`${processedPrefix}actionUrl`]
-            if (!actionUrl) return
+            if (!actionUrl) return false
             const actionUrlSameWindow = actionConfig[`${processedPrefix}actionUrlSameWindow`]
             console.log(`Opening external URL ${actionUrl}`)
             window.open(actionUrl, actionUrlSameWindow ? '_top' : '_blank')
             break
           case Action.http:
             const actionHttpUrl = actionConfig[`${processedPrefix}actionUrl`]
-            if (!actionHttpUrl) return
+            if (!actionHttpUrl) return false
             const actionHttpMethod = actionConfig[`${processedPrefix}actionHttpMethod`] || 'GET'
             const actionHttpBody = actionConfig[`${processedPrefix}actionHttpBody`]
             console.log(`Performing HTTP ${actionHttpMethod} request to ${actionHttpUrl}`)
@@ -425,8 +425,9 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
       })
       .catch((e) => {
         console.error('Failed to perform action', e)
+        return false
       })
-    return false
+    return true
   }
 
   return {
