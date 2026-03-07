@@ -133,7 +133,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
     if (!ctx) ctx = context
     if (!cfg) cfg = config.value
     if (!cfg || !ctx) return false
-    const processedPrefix = processPrefix(prefix)
+    let processedPrefix = processPrefix(prefix)
     const actionPropsParameterGroup = cfg[`${processedPrefix}actionPropsParameterGroup`]
     const evalActionConfig = actionPropsParameterGroup
       ? evaluateExpression<ActionConfig>('$props', ctx.props as unknown as ActionConfig, ctx, ctx.props)
@@ -141,6 +141,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
     const actionConfig = evalActionConfig instanceof Error ? cfg : (evalActionConfig ?? cfg)
     prefix = actionPropsParameterGroup ? actionPropsParameterGroup.replace(/action/gi, '') : prefix
     prefix = prefix ? (prefix += '_') : ''
+    processedPrefix = processPrefix(prefix)
     const action = actionConfig[`${processedPrefix}action`] as Action | undefined
     if (!action) return false
     if (ctx.editmode) {
