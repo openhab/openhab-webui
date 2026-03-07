@@ -11,22 +11,22 @@
 
 <script>
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '../../widget-actions'
 import OhListItem from './oh-list-item.vue'
 import { OhLabelItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
   components: {
     OhListItem
   },
-  mixins: [actionsMixin],
   props: {
     context: Object
   },
   widget: OhLabelItemDefinition,
   setup (props) {
     const { config, evaluateExpression } = useWidgetContext(props.context)
-    return { config, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, performAction }
   }
 }
 </script>

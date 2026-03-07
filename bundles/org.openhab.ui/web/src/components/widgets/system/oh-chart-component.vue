@@ -45,7 +45,6 @@ import { nextTick } from 'vue'
 import { mapStores } from 'pinia'
 
 import chart from '../chart/chart-mixin'
-import { actionsMixin } from '../widget-actions'
 
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
@@ -73,9 +72,10 @@ use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, Sc
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [chart, actionsMixin],
+  mixins: [chart],
   components: {
     chart: VChart
   },
@@ -89,8 +89,9 @@ export default {
     } : null
 
     const { config, evaluateExpression, slots } = useWidgetContext(props.context)
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
 
-    return { echartsLocale, initOptions, config, evaluateExpression, slots }
+    return { echartsLocale, initOptions, config, evaluateExpression, slots, performAction }
   },
   computed: {
     activeHeight () {

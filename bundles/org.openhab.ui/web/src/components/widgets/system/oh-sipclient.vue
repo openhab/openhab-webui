@@ -95,7 +95,6 @@ import { f7 } from 'framework7-vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
-import { actionsMixin } from '../widget-actions'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import { WidgetDefinition, pg, pt, pi } from '@/assets/definitions/widgets/helpers.ts'
 
@@ -105,6 +104,7 @@ import ringFile from './oh-sipclient-ringtone.mp3'
 import ringBackFile from './oh-sipclient-ringback.mp3'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 // dynamic import for better chunking
 const jssip = (await import('jssip')).default
@@ -122,14 +122,15 @@ export default {
       f7router: f7.views.main.router
     }
   },
-  mixins: [foregroundService, actionsMixin],
+  mixins: [foregroundService],
   props: {
     context: Object
   },
   widget: OhSIPClientDefinition,
   setup (props) {
     const { config, evaluateExpression } = useWidgetContext(props.context)
-    return { config, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, performAction }
   },
   computed: {
     computedButtonStyle () {

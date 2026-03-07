@@ -12,19 +12,19 @@
 <script>
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 import { OhButtonDefinition } from '@/assets/definitions/widgets/system'
-import { actionsMixin } from '../widget-actions'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   props: {
     context: Object
   },
   widget: OhButtonDefinition,
   setup (props) {
     const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(props.context)
-    return { config, childContext, evaluateExpression, hasAction, defaultSlots }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, childContext, hasAction, defaultSlots, performAction }
   },
   methods: {
     clicked () {

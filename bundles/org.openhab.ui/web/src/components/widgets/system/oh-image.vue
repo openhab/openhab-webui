@@ -15,19 +15,20 @@ import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '../widget-actions'
 import { OhImageDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin, foregroundService],
+  mixins: [foregroundService],
   props: {
     context: Object
   },
   widget: OhImageDefinition,
   setup (props) {
     const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
-    return { config, hasAction, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, hasAction, performAction }
   },
   data () {
     return {
