@@ -6,6 +6,8 @@ import { pg, pb, pt, pn, pi, type WidgetDefinitionParameter } from '../helpers.t
 import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './options.ts'
 import type { ConfigDescriptionParameterGroup } from '@/api'
 
+export { OhChartPageDefinition } from './page.js'
+
 const positionGroup = pg(
   'position',
   'Position',

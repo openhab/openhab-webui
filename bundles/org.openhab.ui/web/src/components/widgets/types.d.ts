@@ -1,5 +1,7 @@
 import type { TrackedItems } from '@/js/stores/useStatesStore'
+import { DefineComponent } from 'vue'
 import * as api from '@/api'
+import type { WidgetDefinition } from '@/assets/definitions/widgets'
 
 // TODO - improve typescript of functions in EditMode
 export interface EditMode {
@@ -46,4 +48,7 @@ export interface WidgetContext {
   clipboardtype?: string | null
 
   parent: WidgetContext | null
+}
+interface OhComponent extends DefineComponent {
+  widget: () => WidgetDefinition
 }

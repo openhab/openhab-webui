@@ -1,7 +1,6 @@
 import { javascriptLanguage } from '@codemirror/lang-javascript'
 import { autocompletion, CompletionContext, type CompletionResult } from '@codemirror/autocomplete'
 import { syntaxTree } from '@codemirror/language'
-// @ts-expect-error - hint-utils is not typed
 import * as hintUtils from './hint-utils'
 
 // Vite generate named exports for JSON keys by creating JS identifiers for each property

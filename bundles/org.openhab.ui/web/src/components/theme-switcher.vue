@@ -101,6 +101,10 @@
               :value="commandItem"
               @input="setCommandItem" />
           </f7-list-group>
+          <f7-list-item>
+            <span>{{ t('about.miscellaneous.codeEditor.vimMode') }}</span>
+            <f7-toggle v-model:checked="uiOptionsStore.codeMirrorSettings.vimMode" />
+          </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-row>

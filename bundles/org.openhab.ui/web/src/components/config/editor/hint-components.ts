@@ -1,4 +1,10 @@
-import { insertCompletionText, pickedCompletion } from '@codemirror/autocomplete'
+import {
+  insertCompletionText,
+  pickedCompletion,
+  type Completion,
+  type CompletionContext,
+  type CompletionResult
+} from '@codemirror/autocomplete'
 import { lineIndent, findParent, isConfig, isComponent, isSlots, findComponentType } from './yaml-utils'
 import { completionStart, hintItems, hintParameterValues, hintParameters } from './hint-utils'
 
@@ -11,18 +17,28 @@ import * as StandardCellWidgets from '@/components/widgets/standard/cell'
 import * as LayoutWidgets from '@/components/widgets/layout'
 import * as PlanWidgets from '@/components/widgets/plan'
 import * as MapWidgets from '@/components/widgets/map'
-import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
-import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
+import ChartWidgetsDefinitions, { OhChartPageDefinition } from '@/assets/definitions/widgets/chart'
 import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
 import { BlockLibrariesComponentDefinitions } from '@/assets/definitions/blockly/libraries-components'
+import type { Line } from '@codemirror/state'
+import type { EditorView } from '@codemirror/view'
+import type { ExtendedEditorView } from './types'
+import type { OhComponent } from '@/components/widgets/types'
+import type { WidgetDefinition } from '@/assets/definitions/widgets'
+import type * as api from '@/api'
 
 const ComponentID = /[\w-]+/
 
-let ohComponents = null
-let f7Components = null
+interface F7VueComponent {
+  name: string
+  props?: Record<string, object>
+}
+
+let ohComponents: WidgetDefinition[] | null = null
+let f7Components: F7VueComponent[] | null = null
 
 function getOhComponents() {
-  ohComponents ??= Object.values({
+  ohComponents ??= Object.values<OhComponent>({
     ...SystemWidgets,
     ...LayoutWidgets,
     ...StandardWidgets,
@@ -35,22 +51,30 @@ function getOhComponents() {
   return ohComponents
 }
 
+const isF7VueComponent = (value: unknown): value is F7VueComponent => {
+  return (
+    value != null &&
+    typeof value === 'object' &&
+    'name' in value &&
+    typeof (value as F7VueComponent).name === 'string' &&
+    (value as F7VueComponent).name.startsWith('f7-')
+  )
+}
+
 function getF7Components() {
-  f7Components ??= Object.values(f7vue)
-    .filter((m) => m.name && m.name.startsWith('f7-'))
-    .sort((c1, c2) => c1.name.localeCompare(c2.name))
+  f7Components ??= (Object.values(f7vue) as unknown[]).filter(isF7VueComponent).sort((c1, c2) => c1.name.localeCompare(c2.name))
   return f7Components
 }
 
-function getWidgetDefinitions(context) {
-  const mode = context.view.originalMode
+function getWidgetDefinitions(context: CompletionContext): (WidgetDefinition | F7VueComponent)[] {
+  const mode = (context.view as ExtendedEditorView).originalMode
   const componentType = mode.includes(';type=') ? mode.split('=')[1] : undefined
   switch (componentType) {
     case 'chart':
       return [
         OhChartPageDefinition(),
-        ...Object.keys(ChartWidgetsDefinitions).map((name) => {
-          return Object.assign({}, ChartWidgetsDefinitions[name], { name })
+        ...Object.entries(ChartWidgetsDefinitions).map(([name, chartWidgetDefinition]) => {
+          return Object.assign({}, chartWidgetDefinition, { name })
         })
       ]
     case 'plan':
@@ -62,7 +86,7 @@ function getWidgetDefinitions(context) {
         .map((c) => c.widget())
         .sort((c1, c2) => c1.name.localeCompare(c2.name))
     case 'blocks':
-      return Object.values(BlockLibrariesComponentDefinitions)
+      return (Object.values(BlockLibrariesComponentDefinitions) as Array<() => WidgetDefinition>)
         .map((c) => c())
         .sort((c1, c2) => c1.name.localeCompare(c2.name))
     default:
@@ -70,14 +94,14 @@ function getWidgetDefinitions(context) {
         ...(componentType === 'home' ? [OhLocationCardParameters(), OhEquipmentCardParameters(), OhPropertyCardParameters()] : []),
         ...getOhComponents(),
         ...getF7Components(),
-        ...Object.keys(ChartWidgetsDefinitions).map((name) => {
-          return Object.assign({}, ChartWidgetsDefinitions[name], { name })
+        ...Object.entries(ChartWidgetsDefinitions).map(([name, chartWidgetDefinition]) => {
+          return Object.assign({}, chartWidgetDefinition, { name })
         })
       ]
   }
 }
 
-function hintExpression(context, line) {
+function hintExpression(context: CompletionContext, line: Line): CompletionResult | Promise<CompletionResult | null> | null {
   const cursor = context.pos - line.from
 
   const lastOp = line.text.substring(0, cursor).replace(/([@#.])[A-Za-z0-9_-]*$/, '$1')
@@ -86,7 +110,7 @@ function hintExpression(context, line) {
   } else if (lastOp.endsWith('items.')) {
     return hintItems(context, { suffix: '.state' })
   } else if (lastOp.endsWith('.')) {
-    return
+    return null
   }
 
   const Expression = /[\w@#]+/
@@ -193,22 +217,28 @@ function hintExpression(context, line) {
   }
 }
 
-function f7ComponentParameters(componentName) {
+function f7ComponentParameters(componentName: string): api.ConfigDescriptionParameter[] {
   console.debug(f7vue)
-  const f7vueComponent = Object.values(f7vue).find((c) => c.name === componentName)
-  console.debug(f7vueComponent)
-  if (!f7vueComponent) return []
+  const f7VueComponent = getF7Components().find((c) => c.name === componentName)
+  console.debug(f7VueComponent)
+  if (!f7VueComponent) return []
 
-  const defaultProps = {}
-  if (typeof f7vueComponent.props === 'object') {
-    for (const [name, props] of Object.entries(f7vueComponent.props)) {
-      if (props && typeof props === 'object' && 'default' in props) defaultProps[name] = props.default
+  const defaultProps: Record<string, any> = {}
+  if (f7VueComponent.props && typeof f7VueComponent.props === 'object') {
+    for (const [name, prop] of Object.entries(f7VueComponent.props)) {
+      if (prop && typeof prop === 'object' && 'default' in prop) defaultProps[name] = prop.default
     }
   }
 
-  const resolvePropTypeName = (p) => {
+  enum PARAM_TYPE {
+    String = 'TEXT',
+    Number = 'INTEGER',
+    Boolean = 'BOOLEAN'
+  }
+
+  const resolvePropTypeName = (p: { type?: unknown }): string | null => {
     if (!p) return null
-    const extract = (t) => {
+    const extract = (t: unknown): string | null => {
       if (!t) return null
       if (typeof t === 'function') return t.name || 'Object'
       if (Array.isArray(t)) return t.map(extract).join(' | ')
@@ -219,38 +249,36 @@ function f7ComponentParameters(componentName) {
     return extract(p)
   }
 
-  const PARAM_TYPES = {
-    String: 'TEXT',
-    Number: 'INTEGER',
-    Boolean: 'BOOLEAN'
-  }
+  if (!f7VueComponent.props || typeof f7VueComponent.props !== 'object') return []
 
-  const params = Object.entries(f7vueComponent.props).map(([propName, prop]) => {
+  const params: api.ConfigDescriptionParameter[] = Object.entries(f7VueComponent.props).map(([propName, prop]) => {
     const propType = resolvePropTypeName(prop)
     const defaultValue = defaultProps[propName] !== undefined ? 'Default value: ' + JSON.stringify(defaultProps[propName]) : ''
     return {
       name: propName,
       description: `${propType}\n${defaultValue}\n\nSee ${componentName} docs`,
-      type: PARAM_TYPES[propType] ?? 'UNKNOWN'
+      type: propType === PARAM_TYPE.Number || propType === PARAM_TYPE.Boolean ? propType : PARAM_TYPE.String
     }
   })
 
   return params
 }
 
-function hintConfig(context, line, parentLine) {
+function hintConfig(context: CompletionContext, line: Line, parentLine: Line): CompletionResult | Promise<CompletionResult | null> | null {
   const componentType = findComponentType(context, parentLine)
   console.debug('hinting config for component type:', componentType)
-  if (!componentType) return
+  if (!componentType) return null
   const colonPos = line.text.indexOf(':')
   const column = context.pos - line.from
   const afterColon = colonPos > 0 && column > colonPos
   const widgetDefinition = getWidgetDefinitions(context).find((d) => d.name === componentType)
-  const parameters = componentType.startsWith('f7-')
-    ? f7ComponentParameters(componentType)
-    : widgetDefinition && widgetDefinition.props
-      ? widgetDefinition.props.parameters
+  const widgetParameters =
+    widgetDefinition && 'props' in widgetDefinition && widgetDefinition.props && 'parameters' in widgetDefinition.props
+      ? (widgetDefinition.props.parameters as api.ConfigDescriptionParameter[])
       : []
+  const parameters: api.ConfigDescriptionParameter[] = componentType.startsWith('f7-')
+    ? f7ComponentParameters(componentType)
+    : widgetParameters
   if (componentType.startsWith('oh-')) {
     // try our luck and find a matching underlying f7-vue component...
     const f7parameters = f7ComponentParameters(componentType.replace('oh-', 'f7-').replace('-card', ''))
@@ -270,12 +298,12 @@ function hintConfig(context, line, parentLine) {
   }
 }
 
-function hintComponents(context, line) {
+function hintComponents(context: CompletionContext, line: Line): CompletionResult | null {
   const colonPos = line.text.indexOf(':')
   const column = context.pos - line.from
-  if (column < colonPos + 2) return
+  if (column < colonPos + 2) return null
 
-  const apply = (view, completion, _from, _to) => {
+  const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const from = line.from + colonPos + 2
     const to = view.state.doc.lineAt(context.pos).to
     const insert = completion.label
@@ -290,7 +318,7 @@ function hintComponents(context, line) {
     options: components.map((c) => {
       return {
         label: c.name,
-        info: c.description || 'A component of type ' + c.name,
+        info: 'description' in c ? c.description : 'A component of type ' + c.name,
         apply,
         boost: boost-- // preserve order
       }
@@ -298,12 +326,13 @@ function hintComponents(context, line) {
   }
 }
 
-function hintComponentStructure(context, parentLine) {
+function hintComponentStructure(context: CompletionContext, parentLine: Line | undefined) {
   const indent = parentLine ? lineIndent(parentLine) : -2
-  const apply = (view, completion, _from, _to) => {
+  type StructuredCompletion = Completion & { code: string }
+  const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const line = view.state.doc.lineAt(context.pos)
     const { from, to } = line
-    const insert = completion.code
+    const insert = (completion as StructuredCompletion).code
     view.dispatch({
       ...insertCompletionText(view.state, insert, from, to),
       annotations: pickedCompletion.of(completion) // trigger subsequent completion
@@ -333,8 +362,8 @@ function hintComponentStructure(context, parentLine) {
   }
 }
 
-function hintSlots(context, line, parentLine) {
-  const apply = (view, completion, _from, _to) => {
+function hintSlots(context: CompletionContext, line: Line, parentLine: Line) {
+  const apply = (view: EditorView, completion: Completion, _from: number, _to: number) => {
     const indent = lineIndent(parentLine)
     const insert =
       ' '.repeat(indent + 2) +
@@ -357,7 +386,7 @@ function hintSlots(context, line, parentLine) {
     options: definitions.map((c) => {
       return {
         label: c.name,
-        info: c.description || 'A component of type ' + c.name,
+        info: 'description' in c ? c.description : 'A component of type ' + c.name,
         apply,
         boost: boost--
       }
@@ -365,14 +394,14 @@ function hintSlots(context, line, parentLine) {
   }
 }
 
-export default function hint(context) {
+export default function hint(context: CompletionContext): CompletionResult | Promise<CompletionResult | null> | null {
   const currentLine = context.state.doc.lineAt(context.pos)
   const parentLine = findParent(context, currentLine)
   console.debug('parent line', parentLine)
 
-  if (isConfig(parentLine)) {
+  if (parentLine && isConfig(parentLine)) {
     return hintConfig(context, currentLine, parentLine)
-  } else if (isComponent(parentLine) || lineIndent(currentLine) === 0) {
+  } else if ((parentLine && isComponent(parentLine)) || lineIndent(currentLine) === 0) {
     return hintComponentStructure(context, parentLine)
   } else if (isComponent(currentLine)) {
     return hintComponents(context, currentLine)
@@ -382,4 +411,5 @@ export default function hint(context) {
       return hintSlots(context, currentLine, parentLine)
     }
   }
+  return null
 }
