@@ -5,8 +5,9 @@ import type { Extension } from '@codemirror/state'
 // for linting
 import { linter, lintGutter } from '@codemirror/lint'
 import YAML from 'yaml'
-import * as eslint from 'eslint-linter-browserify'
 import globals from 'globals'
+// dynamic import for better chunking
+const eslint = await import('eslint-linter-browserify')
 
 // OH-specific CompletionSources
 import javascriptAutocompletions from '../editor/hint-javascript'
