@@ -45,21 +45,24 @@ export function addOrSubtractPeriod(chartType: ChartType, period: Period, date: 
       date = fn(1, chartType === ChartType.isoWeek ? ChartType.week : chartType)
     } else {
       const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)!
-      if (span) {
-        date = fn(parseInt(span[1]!) || 1, span[2]!.replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
+      if (span[1] && span[2]) {
+        date = fn(parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
       }
     }
   }
   // Handle fractional direction
   const fraction = absDirection % 1
   if (fraction > 0) {
-    const unit =
-      chartType !== ChartType.dynamic
-        ? chartType === ChartType.isoWeek
-          ? ChartType.week
-          : chartType
-        : (period.match(/[smhdDwWMQyY]$/)![0].toLowerCase() as unknown as dayjs.ManipulateType)
-    const nextFullUnit = fn(1, unit)
+    let nextFullUnit = null
+    if (chartType !== ChartType.dynamic) {
+      nextFullUnit = fn(1, chartType === ChartType.isoWeek ? ChartType.week : chartType)
+    } else {
+      const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)!
+      if (span[1] && span[2]) {
+        nextFullUnit = fn(parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
+      }
+    }
+    if (!nextFullUnit) return date
     const diff = nextFullUnit.diff(date)
     date = date.add(diff * fraction, 'ms')
   }
