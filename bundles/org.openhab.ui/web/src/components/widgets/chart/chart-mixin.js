@@ -134,7 +134,11 @@ export default {
     },
     tooltip() {
       if (!this.context.component.slots || !this.context.component.slots.tooltip) return undefined
-      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(this.chartContext, c, this.startTime, this.endTime))
+      const chartContext = {
+        ...this.chartContext,
+        items: this._items
+      }
+      return this.context.component.slots.tooltip.map((c) => OhChartTooltip.get(chartContext, c, this.startTime, this.endTime))
     },
     visualMap() {
       if (!this.context.component.slots) return undefined
