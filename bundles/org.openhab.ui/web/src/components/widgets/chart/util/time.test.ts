@@ -54,12 +54,36 @@ describe('Time Utility Tests', () => {
       expect(result.month()).toBe(7) // August
     })
 
-    it('should handle dynamic periods correctly (e.g., "7d")', () => {
-      const period = '7d' as Period
+    it('should handle dynamic periods correctly (e.g., "1D")', () => {
+      const period = '1D' as Period
+      const result = addOrSubtractPeriod(ChartType.dynamic, period, mockDate, 1)
+
+      // Oct 23 + 1 day = Oct 24
+      expect(result.format('YYYY-MM-DD')).toBe('2024-10-24')
+    })
+
+    it('should handle dynamic periods correctly (e.g., "7D")', () => {
+      const period = '7D' as Period
       const result = addOrSubtractPeriod(ChartType.dynamic, period, mockDate, 1)
 
       // Oct 23 + 7 days = Oct 30
       expect(result.format('YYYY-MM-DD')).toBe('2024-10-30')
+    })
+
+    it('should handle dynamic periods correctly (e.g., "1W")', () => {
+      const period = '1W' as Period
+      const result = addOrSubtractPeriod(ChartType.dynamic, period, mockDate, 1)
+
+      // Oct 23 + 1 week = Oct 30
+      expect(result.format('YYYY-MM-DD')).toBe('2024-10-30')
+    })
+
+    it('should handle dynamic periods correctly (e.g., "2M")', () => {
+      const period = '2M' as Period
+      const result = addOrSubtractPeriod(ChartType.dynamic, period, mockDate, 1)
+
+      // Oct 23 + 2 months = Dec 23
+      expect(result.format('YYYY-MM-DD')).toBe('2024-12-23')
     })
 
     it('should handle fractional directions (0.5)', () => {
