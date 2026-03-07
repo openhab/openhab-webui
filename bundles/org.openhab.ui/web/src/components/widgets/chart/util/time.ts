@@ -44,8 +44,8 @@ export function addOrSubtractPeriod(chartType: ChartType, period: Period, date: 
     if (chartType !== ChartType.dynamic) {
       date = fn(1, chartType === ChartType.isoWeek ? ChartType.week : chartType)
     } else {
-      const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)!
-      if (span[1] && span[2]) {
+      const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
+      if (span && span[1] && span[2]) {
         date = fn(parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
       }
     }
@@ -57,8 +57,8 @@ export function addOrSubtractPeriod(chartType: ChartType, period: Period, date: 
     if (chartType !== ChartType.dynamic) {
       nextFullUnit = fn(1, chartType === ChartType.isoWeek ? ChartType.week : chartType)
     } else {
-      const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)!
-      if (span[1] && span[2]) {
+      const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
+      if (span && span[1] && span[2]) {
         nextFullUnit = fn(parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
       }
     }
