@@ -4,7 +4,7 @@ import { actionGroup, actionParams } from '../actions.ts'
 import { pg, pb, pt, pn, pi, WidgetDefinition, type WidgetDefinitionParameter, po, pd } from '../helpers.ts'
 import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './options.ts'
 
-export { OhChartPageDefinition } from './page.js'
+export { OhChartPageDefinition } from './page.ts'
 
 const positionGroup = pg(
   'position',
@@ -157,8 +157,8 @@ const aggregationFunctionParameter = pt(
   'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.'
 ).o(aggregationTypeOptions, true)
 
-const chartComponents: Record<string, WidgetDefinition> = {
-  'oh-chart-grid': new WidgetDefinition('oh-chart-grid', 'Cartesian Grid', '')
+const chartComponentsList: WidgetDefinition[] = [
+  new WidgetDefinition('oh-chart-grid', 'Cartesian Grid', '')
     .doc('https://echarts.apache.org/en/option.html#grid')
     .paramGroup(positionGroup)
     .params([
@@ -167,7 +167,7 @@ const chartComponents: Record<string, WidgetDefinition> = {
       pb('containLabel', 'Contain label', 'Whether the grid region contains the axis tick labels')
     ]),
 
-  'oh-category-axis': new WidgetDefinition('oh-category-axis', 'Category Axis', '')
+  new WidgetDefinition('oh-category-axis', 'Category Axis', '')
     .doc('https://echarts.apache.org/en/option.html#xAxis')
     .paramGroup(nameDisplayGroup)
     .paramGroup(componentRelationsGroup)
@@ -202,7 +202,7 @@ const chartComponents: Record<string, WidgetDefinition> = {
         .v((_, cfg) => cfg.categoryType === 'values')
     ]),
 
-  'oh-value-axis': new WidgetDefinition('oh-value-axis', 'Value Axis', '')
+  new WidgetDefinition('oh-value-axis', 'Value Axis', '')
     .doc('https://echarts.apache.org/en/option.html#yAxis')
     .paramGroup(nameDisplayGroup)
     .paramGroup(componentRelationsGroup)
@@ -218,25 +218,25 @@ const chartComponents: Record<string, WidgetDefinition> = {
       gridIndexParameter
     ]),
 
-  'oh-time-axis': new WidgetDefinition('oh-time-axis', 'Time Axis', '')
+  new WidgetDefinition('oh-time-axis', 'Time Axis', '')
     .doc('https://echarts.apache.org/en/option.html#xAxis')
     .paramGroup(nameDisplayGroup)
     .paramGroup(componentRelationsGroup)
     .params([...axisNameParameters, gridIndexParameter]),
 
-  'oh-calendar-axis': new WidgetDefinition('oh-calendar-axis', 'Calendar', '')
+  new WidgetDefinition('oh-calendar-axis', 'Calendar', '')
     .doc('https://echarts.apache.org/en/option.html#calendar')
     .paramGroup(nameDisplayGroup)
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
     .params([...positionParameters, orientParameter(), gridIndexParameter, ...actionParams()]),
 
-  'oh-data-series': new WidgetDefinition('oh-data-series', 'Data Series', '')
+  new WidgetDefinition('oh-data-series', 'Data Series', '')
     .doc('https://echarts.apache.org/en/option.html#series')
     .paramGroup(actionGroup())
     .params([seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), ...actionParams()]),
 
-  'oh-time-series': new WidgetDefinition('oh-time-series', 'Time Series', '')
+  new WidgetDefinition('oh-time-series', 'Time Series', '')
     .doc('https://echarts.apache.org/en/option.html#series')
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
@@ -249,7 +249,7 @@ const chartComponents: Record<string, WidgetDefinition> = {
       ...actionParams()
     ]),
 
-  'oh-state-series': new WidgetDefinition('oh-state-series', 'State Series', '')
+  new WidgetDefinition('oh-state-series', 'State Series', '')
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
     .params([
@@ -265,7 +265,7 @@ const chartComponents: Record<string, WidgetDefinition> = {
       ...actionParams()
     ]),
 
-  'oh-aggregate-series': new WidgetDefinition('oh-aggregate-series', 'Aggregate Series', '')
+  new WidgetDefinition('oh-aggregate-series', 'Aggregate Series', '')
     .doc('https://echarts.apache.org/en/option.html#series')
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
@@ -292,7 +292,7 @@ const chartComponents: Record<string, WidgetDefinition> = {
       ...actionParams()
     ]),
 
-  'oh-calendar-series': new WidgetDefinition('oh-calendar-series', 'Calendar Series', '')
+  new WidgetDefinition('oh-calendar-series', 'Calendar Series', '')
     .doc('https://echarts.apache.org/en/option.html#series')
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
@@ -304,11 +304,11 @@ const chartComponents: Record<string, WidgetDefinition> = {
       ...actionParams()
     ]),
 
-  'oh-chart-tooltip': new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '')
+  new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '')
     .doc('https://echarts.apache.org/en/option.html#tooltip')
     .params([showParameter(), orientParameter(), pb('confine', 'Confine', 'Keep the tooltip within the chart bounds')]),
 
-  'oh-chart-visualmap': new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
+  new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
     .doc('https://echarts.apache.org/en/option.html#visualMap')
     .paramGroup(
       pg(
@@ -348,7 +348,7 @@ const chartComponents: Record<string, WidgetDefinition> = {
       ...positionParameters
     ]),
 
-  'oh-chart-datazoom': new WidgetDefinition('oh-chart-datazoom', 'Data Zoom', '')
+  new WidgetDefinition('oh-chart-datazoom', 'Data Zoom', '')
     .doc('https://echarts.apache.org/en/option.html#dataZoom')
     .paramGroup(pg(positionGroup.name, positionGroup.label ?? '', 'Applicable only to slider types'))
     .params([
@@ -372,17 +372,17 @@ const chartComponents: Record<string, WidgetDefinition> = {
       })
     ]),
 
-  'oh-chart-legend': new WidgetDefinition('oh-chart-legend', 'Legend', '')
+  new WidgetDefinition('oh-chart-legend', 'Legend', '')
     .doc('https://echarts.apache.org/en/option.html#legend')
     .paramGroup(positionGroup)
     .params([showParameter(), orientParameter(), ...positionParameters]),
 
-  'oh-chart-title': new WidgetDefinition('oh-chart-title', 'Title', '')
+  new WidgetDefinition('oh-chart-title', 'Title', '')
     .doc('https://echarts.apache.org/en/option.html#title')
     .paramGroup(positionGroup)
     .params([showParameter(), pt('text', 'Title', ''), pt('subtext', 'Subtitle', ''), ...positionParameters]),
 
-  'oh-chart-toolbox': new WidgetDefinition('oh-chart-toolbox', 'Toolbox', '')
+  new WidgetDefinition('oh-chart-toolbox', 'Toolbox', '')
     .doc('https://echarts.apache.org/en/option.html#toolbox')
     .paramGroup(positionGroup)
     .params([
@@ -398,6 +398,10 @@ const chartComponents: Record<string, WidgetDefinition> = {
         .r(),
       ...positionParameters
     ])
-}
+]
+
+const chartComponents: Record<string, WidgetDefinition> = Object.fromEntries(
+  chartComponentsList.map((c) => [c.name, c])
+)
 
 export default chartComponents
