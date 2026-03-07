@@ -66,6 +66,13 @@ interface ScreenInfo {
   appHeight: number
 }
 
+export type EvaluateExpressionFn = <T = unknown>(
+  key: string,
+  value: T,
+  context?: WidgetContext,
+  props?: Record<string, unknown>
+) => T | null | Error
+
 /**
  * Composable providing the functionality to evaluate widget expressions.
  *
@@ -143,12 +150,12 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
    * @param props the props to make available to the expression (not required if already provided as composable property)
    * @returns `T` with evaluation result(s) in place of widget expression(s)
    */
-  function evaluateExpression<T = unknown>(
+  const evaluateExpression: EvaluateExpressionFn = <T = unknown>(
     key: string,
     value: T,
     context?: WidgetContext,
     props?: Record<string, unknown>
-  ): T | null | Error {
+  ): T | null | Error => {
     if (value === null) return null
     const ctx = context || properties.context
     if (!ctx) return null
