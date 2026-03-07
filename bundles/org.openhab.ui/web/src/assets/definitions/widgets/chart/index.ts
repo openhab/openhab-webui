@@ -441,7 +441,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
         pb(
           'smartFormatter',
           'Smart Formatter',
-          'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
+          'Automatically format values with unit & according to local configuration (e.g., decimal places). Improved markArea rendering.'
         ).a()
       ]
     }
