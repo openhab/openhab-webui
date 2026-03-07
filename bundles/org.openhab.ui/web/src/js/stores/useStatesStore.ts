@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { nextTick, ref } from 'vue'
 import openhab from '@/js/openhab'
 
-export type TrackedItems = Map<string, ItemState>
+export type TrackedItems = Record<string, ItemState>
 
 export interface ItemState {
   state: string
@@ -38,7 +38,7 @@ const INVALID_PROPS = new Set([
 ])
 
 export const useStatesStore = defineStore('states', () => {
-  const itemStates = ref<TrackedItems>(new Map())
+  const itemStates = ref<Map<string, ItemState>>(new Map())
   const pendingNewItems = new Set<string>()
   let processingIntervalId: number | null = null
 
@@ -66,8 +66,8 @@ export const useStatesStore = defineStore('states', () => {
   }
 
   /* global ProxyHandler:readonly */
-  const handler: ProxyHandler<Record<string, ItemState>> = {
-    get(obj: Record<string, ItemState>, prop: string | symbol): ItemState {
+  const handler: ProxyHandler<TrackedItems> = {
+    get(obj: TrackedItems, prop: string | symbol): ItemState {
       /* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access */
       if (prop === '_keys') return Object.keys(itemStates.value) as any
       if (prop === '__ob__') return (obj as any).__ob__
@@ -81,13 +81,13 @@ export const useStatesStore = defineStore('states', () => {
       const itemName = prop
       return ensureItemTracking(itemName)
     },
-    set(_target: Record<string, ItemState>, prop: string | symbol, value: string, _receiver: Record<string, ItemState>): boolean {
+    set(_target: TrackedItems, prop: string | symbol, value: string, _receiver: TrackedItems): boolean {
       setItemState(prop.toString(), { state: value, type: '-' })
       return true
     }
   }
 
-  const trackedItems = ref<Record<string, ItemState>>(new Proxy({}, handler))
+  const trackedItems = ref<TrackedItems>(new Proxy({}, handler))
   const trackingList = ref<Array<string>>([])
   let trackerConnectionId: string | null = null
   let trackerEventSource: EventSource | null = null
