@@ -1,5 +1,5 @@
-// eslint-disable-next-line import-x/named
-import { assign, pick } from 'lodash'
+import assign from 'lodash/assign'
+import pick from 'lodash/pick'
 
 export default {
   data() {

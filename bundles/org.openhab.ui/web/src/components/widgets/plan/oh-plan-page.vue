@@ -204,7 +204,7 @@ export default {
       this.currentCenter = center
     },
     markerComponent (marker) {
-      return 'oh-plan-marker'
+      return OhPlanMarker
     },
     onMarkerUpdate () {
     },

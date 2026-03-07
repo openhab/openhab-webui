@@ -37,6 +37,7 @@ Note that the source maps have to be manually loaded in the browser, e.g. for Ch
 * `npm run typescript:check` - run TypeScript compiler and check for type errors
 * `npm run format` - run `oxfmt` and apply Prettier formatting
 * `npm run format:check` - run `oxfmt` to verify Prettier formatting is intact
+* `npm run bundle-analyzer` - generate both a [HTML report](web/stats.html) and a [Webpack JSON report](web/www/webpack-stats.json) of the bundled assets, e.g., useful for debugging chunking and optimize JS loading
 
 ## Development server
 

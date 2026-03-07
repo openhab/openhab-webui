@@ -9,9 +9,9 @@ import { createApp, reactive, type Component } from 'vue'
 
 // Import globally registered components
 import OhNavContent from '@/components/navigation/oh-nav-content.vue'
-import OHIconComponent from './components/widgets/system/oh-icon.vue'
-import GenericWidgetComponent from './components/widgets/generic-widget-component.vue'
 import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
+import OhIconComponent from './components/widgets/system/oh-icon.vue'
+import GenericWidgetComponent from './components/widgets/generic-widget-component.vue'
 
 // Import Framework7
 import Framework7 from 'framework7/lite-bundle'
@@ -69,17 +69,8 @@ app.use(VueClipboard, {
 // Register key components prior to mounting the app to ensure they are available to eliminate warnings
 app.component('OhNavContent', OhNavContent)
 app.component('DeveloperDockIcon', DeveloperDockIcon)
-
-// statically import all widget components to ensure they are registered globally
-// Note: This is necessary because widget components are used in dynamic contexts with reference by name
-const widgetFiles: Record<string, unknown> = import.meta.glob('./components/widgets/**/*.vue', { eager: true })
-Object.entries(widgetFiles).forEach(([path, module]) => {
-  const componentName = path.split('/').pop()?.replace('.vue', '')
-  if (typeof module === 'object' && module !== null && 'default' in module && componentName) {
-    const component = module.default as Component
-    app.component(componentName, component)
-  }
-})
+app.component('OhIcon', OhIconComponent)
+app.component('GenericWidgetComponent', GenericWidgetComponent)
 
 app.mount('#app')
 performance.mark('app-mounted')
