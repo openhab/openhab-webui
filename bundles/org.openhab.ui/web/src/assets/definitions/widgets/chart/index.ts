@@ -25,13 +25,14 @@ export const positionParameters = [
   pt('height', 'Height', '').g('position')
 ]
 
-const orientParameter = () => pt('orient', 'Orientation', '').o(
-  [
-    { value: 'horizontal', label: 'Horizontal' },
-    { value: 'vertical', label: 'Vertical' }
-  ],
-  true
-)
+const orientParameter = () =>
+  pt('orient', 'Orientation', '').o(
+    [
+      { value: 'horizontal', label: 'Horizontal' },
+      { value: 'vertical', label: 'Vertical' }
+    ],
+    true
+  )
 
 const showParameter = () => pb('show', 'Show', 'Whether to show or not this component')
 
@@ -156,20 +157,18 @@ const aggregationFunctionParameter = pt(
   'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.'
 ).o(aggregationTypeOptions, true)
 
-export interface ChartComponentDefinition extends WidgetDefinition {
-  label: string
-  docLink?: string
-}
-
-const chartComponents: Record<string, ChartComponentDefinition> = {
+const chartComponents: Record<string, WidgetDefinition> = {
   'oh-chart-grid': new WidgetDefinition('oh-chart-grid', 'Cartesian Grid', '')
+    .doc('https://echarts.apache.org/en/option.html#grid')
     .paramGroup(positionGroup)
     .params([
       ...positionParameters,
       pb('show', 'Show', ''),
       pb('containLabel', 'Contain label', 'Whether the grid region contains the axis tick labels')
     ]),
+
   'oh-category-axis': new WidgetDefinition('oh-category-axis', 'Category Axis', '')
+    .doc('https://echarts.apache.org/en/option.html#xAxis')
     .paramGroup(nameDisplayGroup)
     .paramGroup(componentRelationsGroup)
     .params([
@@ -203,259 +202,202 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
         .v((_, cfg) => cfg.categoryType === 'values')
     ]),
 
-  'oh-value-axis': {
-    label: 'Value Axis',
-    docLink: 'https://echarts.apache.org/en/option.html#yAxis',
-    props: {
-      parameterGroups: [nameDisplayGroup, componentRelationsGroup],
-      parameters: [
-        ...axisNameParameters,
-        minParameter(),
-        maxParameter(),
-        pb(
-          'scale',
-          'Do Not Force Scale to Include Zero',
-          'If checked the scale will not necessarily include the origin (has no effect if min or max are set explicitely)'
-        ),
-        gridIndexParameter
-      ]
-    }
-  },
+  'oh-value-axis': new WidgetDefinition('oh-value-axis', 'Value Axis', '')
+    .doc('https://echarts.apache.org/en/option.html#yAxis')
+    .paramGroup(nameDisplayGroup)
+    .paramGroup(componentRelationsGroup)
+    .params([
+      ...axisNameParameters,
+      minParameter(),
+      maxParameter(),
+      pb(
+        'scale',
+        'Do Not Force Scale to Include Zero',
+        'If checked the scale will not necessarily include the origin (has no effect if min or max are set explicitely)'
+      ),
+      gridIndexParameter
+    ]),
 
-  'oh-time-axis': {
-    label: 'Time Axis',
-    docLink: 'https://echarts.apache.org/en/option.html#xAxis',
-    props: {
-      parameterGroups: [nameDisplayGroup, componentRelationsGroup],
-      parameters: [...axisNameParameters, gridIndexParameter]
-    }
-  },
+  'oh-time-axis': new WidgetDefinition('oh-time-axis', 'Time Axis', '')
+    .doc('https://echarts.apache.org/en/option.html#xAxis')
+    .paramGroup(nameDisplayGroup)
+    .paramGroup(componentRelationsGroup)
+    .params([...axisNameParameters, gridIndexParameter]),
 
-  'oh-calendar-axis': {
-    label: 'Calendar',
-    docLink: 'https://echarts.apache.org/en/option.html#calendar',
-    props: {
-      parameterGroups: [nameDisplayGroup, componentRelationsGroup, actionGroup()],
-      parameters: [...positionParameters, orientParameter(), gridIndexParameter, ...actionParams()]
-    }
-  },
+  'oh-calendar-axis': new WidgetDefinition('oh-calendar-axis', 'Calendar', '')
+    .doc('https://echarts.apache.org/en/option.html#calendar')
+    .paramGroup(nameDisplayGroup)
+    .paramGroup(componentRelationsGroup)
+    .paramGroup(actionGroup())
+    .params([...positionParameters, orientParameter(), gridIndexParameter, ...actionParams()]),
 
-  'oh-data-series': {
-    label: 'Data Series',
-    docLink: 'https://echarts.apache.org/en/option.html#series',
-    props: {
-      parameterGroups: [actionGroup()],
-      parameters: [seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), ...actionParams()]
-    }
-  },
+  'oh-data-series': new WidgetDefinition('oh-data-series', 'Data Series', '')
+    .doc('https://echarts.apache.org/en/option.html#series')
+    .paramGroup(actionGroup())
+    .params([seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), ...actionParams()]),
 
-  'oh-time-series': {
-    label: 'Time Series',
-    docLink: 'https://echarts.apache.org/en/option.html#series',
-    props: {
-      parameterGroups: [componentRelationsGroup, actionGroup()],
-      parameters: [
-        ...seriesParameters,
-        markersParameter(true),
-        seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
-        xAxisIndexParameter,
-        yAxisIndexParameter,
-        ...actionParams()
-      ]
-    }
-  },
+  'oh-time-series': new WidgetDefinition('oh-time-series', 'Time Series', '')
+    .doc('https://echarts.apache.org/en/option.html#series')
+    .paramGroup(componentRelationsGroup)
+    .paramGroup(actionGroup())
+    .params([
+      ...seriesParameters,
+      markersParameter(true),
+      seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+      xAxisIndexParameter,
+      yAxisIndexParameter,
+      ...actionParams()
+    ]),
 
-  'oh-state-series': {
-    label: 'State Series',
-    props: {
-      parameterGroups: [componentRelationsGroup, actionGroup()],
-      parameters: [
-        ...seriesParameters,
-        pd(
-          'yValue',
-          'Y Value',
-          'The position the state timeline should appear on the Y axis (in graph coordinates). If Y axis is a category axis, this should be the index of the category'
-        ),
-        pd('yHeight', 'Y Height', 'The height the state timeline bar in graph coordinates (default is 0.6)'),
-        xAxisIndexParameter,
-        yAxisIndexParameter,
-        ...actionParams()
-      ]
-    }
-  },
+  'oh-state-series': new WidgetDefinition('oh-state-series', 'State Series', '')
+    .paramGroup(componentRelationsGroup)
+    .paramGroup(actionGroup())
+    .params([
+      ...seriesParameters,
+      pd(
+        'yValue',
+        'Y Value',
+        'The position the state timeline should appear on the Y axis (in graph coordinates). If Y axis is a category axis, this should be the index of the category'
+      ),
+      pd('yHeight', 'Y Height', 'The height the state timeline bar in graph coordinates (default is 0.6)'),
+      xAxisIndexParameter,
+      yAxisIndexParameter,
+      ...actionParams()
+    ]),
 
-  'oh-aggregate-series': {
-    label: 'Aggregate Series',
-    docLink: 'https://echarts.apache.org/en/option.html#series',
-    props: {
-      parameterGroups: [componentRelationsGroup, actionGroup()],
-      parameters: [
-        ...seriesParameters,
-        markersParameter(),
-        seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
-        po(
-          'dimension1',
-          'First Dimension',
-          'The largest data point cluster size.<br />It should be consistent with the chart type, and match the type of a category axis where this series will appear.',
-          dimensionTypeOptions
-        ),
-        po(
-          'dimension2',
-          'Second Dimension',
-          'The smallest data point cluster size.<br />Set only when you have 2 category axes (for instance day of the week and hour of the day), and make sure to match the type of the 2nd axis.',
-          dimensionTypeOptions
-        ),
-        pb('transpose', 'Transpose', 'Enable when the first dimension should be mapped to the Y axis instead of the X axis'),
-        aggregationFunctionParameter,
-        xAxisIndexParameter,
-        yAxisIndexParameter,
-        ...actionParams()
-      ]
-    }
-  },
+  'oh-aggregate-series': new WidgetDefinition('oh-aggregate-series', 'Aggregate Series', '')
+    .doc('https://echarts.apache.org/en/option.html#series')
+    .paramGroup(componentRelationsGroup)
+    .paramGroup(actionGroup())
+    .params([
+      ...seriesParameters,
+      markersParameter(),
+      seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+      po(
+        'dimension1',
+        'First Dimension',
+        'The largest data point cluster size.<br />It should be consistent with the chart type, and match the type of a category axis where this series will appear.',
+        dimensionTypeOptions
+      ),
+      po(
+        'dimension2',
+        'Second Dimension',
+        'The smallest data point cluster size.<br />Set only when you have 2 category axes (for instance day of the week and hour of the day), and make sure to match the type of the 2nd axis.',
+        dimensionTypeOptions
+      ),
+      pb('transpose', 'Transpose', 'Enable when the first dimension should be mapped to the Y axis instead of the X axis'),
+      aggregationFunctionParameter,
+      xAxisIndexParameter,
+      yAxisIndexParameter,
+      ...actionParams()
+    ]),
 
-  'oh-calendar-series': {
-    label: 'Calendar Series',
-    docLink: 'https://echarts.apache.org/en/option.html#series',
-    props: {
-      parameterGroups: [componentRelationsGroup, actionGroup()],
-      parameters: [
-        ...seriesParameters,
-        seriesTypeParameter('heatmap', 'scatter'),
-        aggregationFunctionParameter,
-        calendarIndexParameter,
-        ...actionParams()
-      ]
-    }
-  },
+  'oh-calendar-series': new WidgetDefinition('oh-calendar-series', 'Calendar Series', '')
+    .doc('https://echarts.apache.org/en/option.html#series')
+    .paramGroup(componentRelationsGroup)
+    .paramGroup(actionGroup())
+    .params([
+      ...seriesParameters,
+      seriesTypeParameter('heatmap', 'scatter'),
+      aggregationFunctionParameter,
+      calendarIndexParameter,
+      ...actionParams()
+    ]),
 
-  'oh-chart-tooltip': {
-    label: 'Tooltip',
-    docLink: 'https://echarts.apache.org/en/option.html#tooltip',
-    props: {
-      parameterGroups: [],
-      parameters: [showParameter(), orientParameter(), pb('confine', 'Confine', 'Keep the tooltip within the chart bounds')]
-    }
-  },
+  'oh-chart-tooltip': new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '')
+    .doc('https://echarts.apache.org/en/option.html#tooltip')
+    .params([showParameter(), orientParameter(), pb('confine', 'Confine', 'Keep the tooltip within the chart bounds')]),
 
-  'oh-chart-visualmap': {
-    label: 'Visual Map',
-    docLink: 'https://echarts.apache.org/en/option.html#visualMap',
-    props: {
-      parameterGroups: [
-        {
-          name: 'boundariesGroup',
-          label: 'Boundaries',
-          description:
-            'Values considered in range for this visual map (by default [0, 200])<br/><strong>These cannot be determined from the series and have to be defined manually!</strong>',
-          advanced: false
-        },
-        pg('appearanceGroup', 'Appearance'),
-        positionGroup
-      ],
-      parameters: [
-        showParameter(),
-        Object.assign({}, minParameter(), { groupName: 'boundariesGroup' }),
-        Object.assign({}, maxParameter(), { groupName: 'boundariesGroup' }),
-        po('type', 'Type', 'Type of visual map - continuous or piecewise', [
-          { value: 'continuous', label: 'Continuous' },
-          { value: 'piecewise', label: 'Piecewise' }
-        ]).g('appearanceGroup'),
-        Object.assign({}, orientParameter(), { groupName: 'appearanceGroup' }),
-        pb('calculable', 'Show handles', 'Show handles to filter data in continuous mode')
-          .g('appearanceGroup')
-          .v((_, cfg) => cfg.type !== 'piecewise'),
-        pn('pieces', 'Number of pieces', 'Number of pieces in piecewise mode')
-          .g('appearanceGroup')
-          .v((_, cfg) => cfg.type === 'piecewise'),
-        po(
-          'presetPalette',
-          'Preset color palette',
-          'Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient',
-          [
-            { value: 'yellowred', label: 'Yellow-Red' },
-            { value: 'greenred', label: 'Green-Yellow-Red' },
-            { value: 'whiteblue', label: 'White-Blue' },
-            { value: 'bluered', label: 'Blue-red' }
-          ]
-        ).g('appearanceGroup'),
-        ...positionParameters
-      ]
-    }
-  },
+  'oh-chart-visualmap': new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
+    .doc('https://echarts.apache.org/en/option.html#visualMap')
+    .paramGroup(
+      pg(
+        'boundariesGroup',
+        'Boundaries',
+        'Values considered in range for this visual map (by default [0, 200])<br/><strong>These cannot be determined from the series and have to be defined manually!</strong>'
+      )
+    )
+    .paramGroup(pg('appearanceGroup', 'Appearance'))
+    .paramGroup(positionGroup)
+    .params([
+      showParameter(),
+      minParameter().g('boundariesGroup'),
+      maxParameter().g('boundariesGroup'),
+      po('type', 'Type', 'Type of visual map - continuous or piecewise', [
+        { value: 'continuous', label: 'Continuous' },
+        { value: 'piecewise', label: 'Piecewise' }
+      ]).g('appearanceGroup'),
+      orientParameter().g('appearanceGroup'),
+      pb('calculable', 'Show handles', 'Show handles to filter data in continuous mode')
+        .g('appearanceGroup')
+        .v((_, cfg) => cfg.type !== 'piecewise'),
+      pn('pieces', 'Number of pieces', 'Number of pieces in piecewise mode')
+        .g('appearanceGroup')
+        .v((_, cfg) => cfg.type === 'piecewise'),
+      po(
+        'presetPalette',
+        'Preset color palette',
+        'Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient',
+        [
+          { value: 'yellowred', label: 'Yellow-Red' },
+          { value: 'greenred', label: 'Green-Yellow-Red' },
+          { value: 'whiteblue', label: 'White-Blue' },
+          { value: 'bluered', label: 'Blue-red' }
+        ]
+      ).g('appearanceGroup'),
+      ...positionParameters
+    ]),
 
-  'oh-chart-datazoom': {
-    label: 'Data Zoom',
-    docLink: 'https://echarts.apache.org/en/option.html#dataZoom',
-    props: {
-      parameterGroups: [Object.assign({}, positionGroup, { description: 'Applicable only to slider types' })],
-      parameters: [
-        po('type', 'Type', 'Type: slider (default) or inside (allows to zoom with the mousewheel or a pinch gesture)', [
-          { value: 'slider', label: 'Slider' },
-          { value: 'inside', label: 'Inside' }
-        ]).r(),
-        {
-          ...showParameter(),
+  'oh-chart-datazoom': new WidgetDefinition('oh-chart-datazoom', 'Data Zoom', '')
+    .doc('https://echarts.apache.org/en/option.html#dataZoom')
+    .paramGroup(pg(positionGroup.name, positionGroup.label ?? '', 'Applicable only to slider types'))
+    .params([
+      po('type', 'Type', 'Type: slider (default) or inside (allows to zoom with the mousewheel or a pinch gesture)', [
+        { value: 'slider', label: 'Slider' },
+        { value: 'inside', label: 'Inside' }
+      ]).r(),
+      showParameter().v((_value, configuration) => {
+        return configuration.type === 'slider'
+      }),
+      orientParameter().v((_value, configuration) => {
+        return configuration.type === 'slider'
+      }),
+      ...positionParameters.map((o) => {
+        return {
+          ...o,
           visible: (_value, configuration) => {
             return configuration.type === 'slider'
           }
-        } as WidgetDefinitionParameter,
-        {
-          ...orientParameter(),
-          visible: (_value, configuration) => {
-            return configuration.type === 'slider'
-          }
-        } as WidgetDefinitionParameter,
-        ...positionParameters.map((o) => {
-          return {
-            ...o,
-            visible: (_value, configuration) => {
-              return configuration.type === 'slider'
-            }
-          } as WidgetDefinitionParameter
-        })
-      ]
-    }
-  },
+        } as WidgetDefinitionParameter
+      })
+    ]),
 
-  'oh-chart-legend': {
-    label: 'Legend',
-    docLink: 'https://echarts.apache.org/en/option.html#legend',
-    props: {
-      parameterGroups: [positionGroup],
-      parameters: [showParameter(), orientParameter(), ...positionParameters]
-    }
-  },
+  'oh-chart-legend': new WidgetDefinition('oh-chart-legend', 'Legend', '')
+    .doc('https://echarts.apache.org/en/option.html#legend')
+    .paramGroup(positionGroup)
+    .params([showParameter(), orientParameter(), ...positionParameters]),
 
-  'oh-chart-title': {
-    label: 'Title',
-    docLink: 'https://echarts.apache.org/en/option.html#title',
-    props: {
-      parameterGroups: [positionGroup],
-      parameters: [showParameter(), pt('text', 'Title', ''), pt('subtext', 'Subtitle', ''), ...positionParameters]
-    }
-  },
+  'oh-chart-title': new WidgetDefinition('oh-chart-title', 'Title', '')
+    .doc('https://echarts.apache.org/en/option.html#title')
+    .paramGroup(positionGroup)
+    .params([showParameter(), pt('text', 'Title', ''), pt('subtext', 'Subtitle', ''), ...positionParameters]),
 
-  'oh-chart-toolbox': {
-    label: 'Toolbox',
-    docLink: 'https://echarts.apache.org/en/option.html#toolbox',
-    props: {
-      parameterGroups: [positionGroup],
-      parameters: [
-        showParameter(),
-        po('presetFeatures', 'Features', 'Features', [
-          { value: 'saveAsImage', label: 'Save as Image' },
-          { value: 'restore', label: 'Restore' },
-          { value: 'dataView', label: 'Data Table' },
-          { value: 'dataZoom', label: 'Drag Range to Zoom' },
-          { value: 'magicType', label: 'Change Chart Type' }
-        ])
-          .m()
-          .r(),
-        ...positionParameters
-      ]
-    }
-  }
+  'oh-chart-toolbox': new WidgetDefinition('oh-chart-toolbox', 'Toolbox', '')
+    .doc('https://echarts.apache.org/en/option.html#toolbox')
+    .paramGroup(positionGroup)
+    .params([
+      showParameter(),
+      po('presetFeatures', 'Features', 'Features', [
+        { value: 'saveAsImage', label: 'Save as Image' },
+        { value: 'restore', label: 'Restore' },
+        { value: 'dataView', label: 'Data Table' },
+        { value: 'dataZoom', label: 'Drag Range to Zoom' },
+        { value: 'magicType', label: 'Change Chart Type' }
+      ])
+        .m()
+        .r(),
+      ...positionParameters
+    ])
 }
 
 export default chartComponents

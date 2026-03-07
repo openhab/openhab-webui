@@ -226,6 +226,7 @@ export class WidgetDefinition {
     parameterGroups: ConfigDescriptionParameterGroup[]
     parameters: WidgetDefinitionParameter[]
   }
+  docLink?: string
 
   /**
    * Creates a new widget definition
@@ -256,8 +257,13 @@ export class WidgetDefinition {
     return this
   }
 
-  params(p: Parameter[]): this {
+  params(p: WidgetDefinitionParameter[]): this {
     this.props.parameters.push(...p)
+    return this
+  }
+
+  doc(url: string) {
+    this.docLink = url
     return this
   }
 }
