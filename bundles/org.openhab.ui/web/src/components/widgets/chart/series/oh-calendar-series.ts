@@ -35,7 +35,7 @@ const calendarSeries: SeriesComponent = {
       return [arr[0].toDate(), parseFloat(formatter.format(value))]
     })
 
-    if (!series.type) (series.type as unknown as OhAggregateSeries.Type) = OhAggregateSeries.Type.heatmap
+    if (!series.type) (series.type as unknown as string) = OhAggregateSeries.Type.heatmap
     series.coordinateSystem = 'calendar'
 
     if (series.type === OhAggregateSeries.Type.scatter) {
