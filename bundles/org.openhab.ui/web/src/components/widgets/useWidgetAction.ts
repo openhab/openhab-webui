@@ -133,6 +133,9 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
     if (!ctx) ctx = context
     if (!cfg) cfg = config.value
     if (!cfg || !ctx) return false
+
+    console.log(`useWidgetAction::performAction called by ${ctx.component.component} with config`, cfg)
+
     let processedPrefix = processPrefix(prefix)
     const actionPropsParameterGroup = cfg[`${processedPrefix}actionPropsParameterGroup`]
     const evalActionConfig = actionPropsParameterGroup
