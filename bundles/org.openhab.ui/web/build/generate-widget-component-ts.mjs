@@ -12,6 +12,9 @@ import * as MapWidgets from  '../src/assets/definitions/widgets/map/index.ts'
 import { OhChartPageDefinition } from '../src/assets/definitions/widgets/chart/page.ts'
 import ChartWidgetsDefinitions from '../src/assets/definitions/widgets/chart/index.ts'
 import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '../src/assets/definitions/widgets/home/index.ts'
+import { actionParams } from '../src/assets/definitions/widgets/actions.ts'
+
+const ActionParams = [...actionParams(), ...actionParams('taphold')]
 
 const widgetLibraries = {
   SystemWidgets,
@@ -140,6 +143,23 @@ function createCommonOptionsMap() {
       })
     })
   })
+
+  // Add ActionParams to common options map
+  ActionParams.forEach((p) => {
+    if (p.options) {
+      const key = optionsMapKey(p)
+
+      if (mapCommonOptions.has(key)) {
+        const componentsPresent = mapCommonOptions.get(key)
+        if (!componentsPresent.includes('ActionConfig')) {
+          componentsPresent.push('ActionConfig')
+        }
+      } else {
+        mapCommonOptions.set(key, ['ActionConfig'])
+      }
+    }
+  })
+
   return mapCommonOptions
 }
 
@@ -161,6 +181,89 @@ function generateCommonTS(mapCommonOptions) {
     }
   })
   fs.writeFileSync(`${outDir}/common.gen.ts`, content)
+}
+
+function generateActionTS(mapCommonOptions) {
+  const configWidget = config['ActionConfig'] || {}
+  const commonComponents = []
+  let content = ''
+
+  // Action specific options
+  ActionParams.forEach((p) => {
+    if (p.options) {
+      const key = optionsMapKey(p)
+
+      if (mapCommonOptions.has(key) && mapCommonOptions.get(key).length === 1) {
+        const pascalCaseName = kebabToPascalCase(p.name)
+        const configOption = configWidget[pascalCaseName] || {}
+        const exportAs = configOption.exportAs || config.defaultExportAs || 'dict'
+
+        let optionStr = renderOption(p.name, p.options, exportAs)
+        if(configOption.modifier && typeof configOption.modifier === 'function') {
+          optionStr = configOption.modifier(optionStr)
+        }
+        content += optionStr
+      }
+    }
+  })
+
+  // Action config type
+  let configStr = 'export interface ActionConfig {\n'
+  ActionParams.forEach((p) => {
+    const optionalMark = p.required ? '' : '?'
+
+    let typeStr = 'any'
+    if (p.name === '') return
+    if (p.options && mapCommonOptions.has(optionsMapKey(p))) {
+      typeStr = kebabToPascalCase(p.name)
+      if (mapCommonOptions.get(optionsMapKey(p)).length > 1) {
+        if (!commonComponents.includes(typeStr)) {
+          commonComponents.push(typeStr)
+        }
+      }
+    } else {
+      switch (p.type) {
+        case 'TEXT':
+          typeStr = 'string'
+          break
+        case 'BOOLEAN':
+          typeStr = 'boolean'
+          break
+        case 'INTEGER':
+        case 'DECIMAL':
+          typeStr = 'number'
+          break
+        default:
+          console.log(`Unknown type ${p.type} for property ${p.name} in ActionParams`)
+      }
+    }
+
+    const name = p.name.includes('-') ? `'${p.name}'` : p.name
+    configStr += `  ${name}${optionalMark}: ${typeStr}\n`
+  })
+  configStr += '}\n'
+
+  content += configStr
+
+  let preamble = '// note: this file is generated and should not be edited by hand\n\n'
+  let postamble = ''
+  if (commonComponents.length > 0) {
+    preamble += 'import {\n'
+    preamble += commonComponents.map(name => `  ${name}`).join(',\n')
+    preamble += `\n} from './common.gen.ts'\n\n`
+  }
+
+  content = preamble + content + postamble
+
+  if(configWidget['_All'] && typeof configWidget['_All'].modifier === 'function') {
+    content = configWidget['_All'].modifier(content)
+  }
+
+  if(config['*'] && typeof config['*'].modifier === 'function') {
+    content = config['*'].modifier(content)
+  }
+
+  fs.writeFileSync(`${outDir}/actions.gen.ts`, content)
 }
 
 function generateComponentTS(mapCommonOptions) {
@@ -207,7 +310,9 @@ function generateComponentTS(mapCommonOptions) {
         if (p.options && mapCommonOptions.has(optionsMapKey(p))) {
           typeStr = kebabToPascalCase(p.name)
           if (mapCommonOptions.get(optionsMapKey(p)).length > 1) {
-            commonComponents.push(typeStr)
+            if (!commonComponents.includes(typeStr)) {
+              commonComponents.push(typeStr)
+            }
           }
         } else {
           switch (p.type) {
@@ -263,7 +368,9 @@ function generateComponentTS(mapCommonOptions) {
 
 function generateIndexTS() {
   const componentNames = []
-  let content = `export * from './common.gen.ts'\n\n`
+  let content = `export * from './common.gen.ts'\n`
+  content += `export { type ActionConfig } from './actions.gen.ts'\n\n`
+
   Object.keys(widgetLibraries).forEach((l) => {
     const library = widgetLibraries[l]
     const widgetDir = widgetDirectories[l] || 'misc'
@@ -292,5 +399,7 @@ Object.keys(widgetLibraries).forEach((l) => {
 
 const mapCommonOptions = createCommonOptionsMap()
 generateCommonTS(mapCommonOptions)
+generateActionTS(mapCommonOptions)
 generateComponentTS(mapCommonOptions)
 generateIndexTS()
+
