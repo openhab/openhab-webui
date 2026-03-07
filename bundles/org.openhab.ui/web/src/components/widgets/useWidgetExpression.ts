@@ -21,7 +21,7 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { i18n } from '@/js/i18n.ts'
 
-import type { WidgetContext } from './types'
+import type { VariableScopeName, WidgetContext } from './types'
 import * as api from '@/api'
 
 expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
@@ -128,7 +128,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
     if (context.varScope) {
       const scopeIDs = context.varScope.split('-')
       for (let scope_idx = 1; scope_idx < scopeIDs.length; scope_idx++) {
-        const scopeKey = scopeIDs.slice(0, scope_idx + 1).join('-')
+        const scopeKey = scopeIDs.slice(0, scope_idx + 1).join('-') as VariableScopeName
         if (context.ctxVars?.[scopeKey]) {
           for (const varKey in context.ctxVars[scopeKey]) {
             vars[varKey] = context.ctxVars[scopeKey][varKey]
