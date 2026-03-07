@@ -387,7 +387,7 @@ const chartComponentsList: WidgetDefinition[] = [
     .paramGroup(positionGroup)
     .params([
       showParameter(),
-      po('presetFeatures', 'Features', 'Features', [
+      po('presetFeatures', 'Features', '', [
         { value: 'saveAsImage', label: 'Save as Image' },
         { value: 'restore', label: 'Restore' },
         { value: 'dataView', label: 'Data Table' },
