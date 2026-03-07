@@ -34,12 +34,11 @@
 
 <script>
 import { OhIconDefinition } from '@/assets/definitions/widgets/system'
-import { actionsMixin } from '../widget-actions'
 import { Icon } from '@iconify/vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   components: {
     'iconify-icon': Icon
   },
@@ -57,7 +56,8 @@ export default {
   widget: OhIconDefinition,
   setup (props) {
     const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
-    return { config, hasAction, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, hasAction, performAction }
   },
   data () {
     return {

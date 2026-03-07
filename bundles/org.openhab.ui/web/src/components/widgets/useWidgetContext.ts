@@ -6,7 +6,7 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
-import type { WidgetContext } from './types'
+import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, WidgetContext } from './types'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as api from '@/api'
 
@@ -26,10 +26,10 @@ export function useWidgetContext(context: WidgetContext) {
   const userStore = useUserStore()
 
   // state
-  const vars = ref<Record<string, unknown>>(context.vars ?? {})
-  const ctxVars = ref<Record<string, unknown>>(context.ctxVars ?? {})
-  const widgetVars = ref<Record<string, unknown>>({})
-  const varScope = ref<string | null>(null)
+  const vars = ref<VariableObject>(context.vars ?? {})
+  const ctxVars = ref<ContextVarObj>(context.ctxVars ?? {})
+  const widgetVars = ref<VariableObject>({})
+  const varScope = ref<VariableScopeName | null>(null)
   const scopedCssUid = ref<string | null>(null)
 
   // computed
@@ -121,7 +121,7 @@ export function useWidgetContext(context: WidgetContext) {
     }
     if (context.vars) {
       for (const varKey in context.vars) {
-        widgetVars.value[varKey] = context.vars[varKey]
+        widgetVars.value[varKey] = context.vars[varKey] as VariableValue
       }
     }
     const extendedWidget =

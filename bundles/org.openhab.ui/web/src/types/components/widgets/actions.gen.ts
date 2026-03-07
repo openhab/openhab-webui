@@ -13,9 +13,9 @@ import {
   Taphold_actionAnalyzerChartType,
   Taphold_actionAnalyzerCoordSystem,
   Taphold_actionAnalyzerAggregation
-} from '../common.gen.ts'
+} from './common.gen.ts'
 
-export interface Config {
+export interface ActionConfig {
   action?: Action
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -72,36 +72,4 @@ export interface Config {
   taphold_actionVariable?: string
   taphold_actionVariableValue?: string
   taphold_actionVariableKey?: string
-  text?: string
-  round?: boolean
-  large?: boolean
-  small?: boolean
-  fill?: boolean
-  raised?: boolean
-  outline?: boolean
-  active?: string
-  iconF7?: string
-  iconMaterial?: string
-  iconColor?: string
-  iconSize?: number
-  tooltip?: string
-  variable?: string
-  variableKey?: string
-  clearVariable?: boolean
-  clearVariableKey?: boolean
-}
-
-export {
-  Action,
-  ActionHttpMethod,
-  ActionPageTransition,
-  ActionAnalyzerChartType,
-  ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation,
-  Taphold_action,
-  Taphold_actionHttpMethod,
-  Taphold_actionPageTransition,
-  Taphold_actionAnalyzerChartType,
-  Taphold_actionAnalyzerCoordSystem,
-  Taphold_actionAnalyzerAggregation
 }

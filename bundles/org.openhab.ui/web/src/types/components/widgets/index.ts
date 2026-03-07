@@ -1,4 +1,5 @@
 export * from './common.gen.ts'
+export { type ActionConfig } from './actions.gen.ts'
 
 export * as OhButton from './system/oh-button.gen.ts'
 export * as OhChart from './system/oh-chart.gen.ts'

@@ -60,13 +60,12 @@
 
 <script>
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '../widget-actions'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhTrend from '@/components/widgets/system/oh-trend.vue'
 import { OhLabelCardDefinition } from '@/assets/definitions/widgets/standard/cards'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   props: {
     context: Object
   },
@@ -77,7 +76,8 @@ export default {
   widget: OhLabelCardDefinition,
   setup(props) {
     const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
-    return { config, hasAction, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config)
+    return { config, hasAction, evaluateExpression, performAction }
   },
   data () {
     return {

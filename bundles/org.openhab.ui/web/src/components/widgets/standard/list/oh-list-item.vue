@@ -155,19 +155,19 @@
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '../../widget-actions'
 import { OhListItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
   name: 'oh-list-item',
-  mixins: [actionsMixin],
   props: {
     context: Object
   },
   widget: OhListItemDefinition,
   setup (props) {
     const { config, childContext, evaluateExpression, hasAction, slots } = useWidgetContext(props.context)
-    return { config, childContext, evaluateExpression, hasAction, slots }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, childContext, hasAction, slots, performAction }
   },
   computed: {
     isEquipmentAccordion () {

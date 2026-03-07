@@ -1,13 +1,12 @@
 import { reactive, isReactive } from 'vue'
-
-type VariableScopeId = string
-type VariableScopeName = `varScope-${VariableScopeId}`
-type VariableName = string
-type VariableValue = number | string | boolean | VariableArray | VariableObject | null
-interface VariableArray extends Array<VariableValue> {}
-interface VariableObject extends Record<VariableName, VariableValue> {}
-
-type ContextVarObj = Record<VariableScopeName, VariableObject>
+import type {
+  ContextVarObj,
+  VariableArray,
+  VariableName,
+  VariableObject,
+  VariableScopeName,
+  VariableValue
+} from '@/components/widgets/types'
 
 export function getLastVariableKeyValue(variableValue: VariableValue, variableKey: VariableName): VariableValue | undefined {
   const result = getVariableKeyValues(variableValue, variableKey)

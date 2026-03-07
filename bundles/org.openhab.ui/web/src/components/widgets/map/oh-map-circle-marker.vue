@@ -20,11 +20,10 @@ import { f7 } from 'framework7-vue'
 import { LCircle, LTooltip } from '@vue-leaflet/vue-leaflet'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '../widget-actions'
 import { OhMapCircleMarkerDefinition } from '@/assets/definitions/widgets/map'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   props: {
     context: Object
   },
@@ -36,7 +35,8 @@ export default {
   emits: ['update'],
   setup(props) {
     const { config, evaluateExpression } = useWidgetContext(props.context)
-    return { config, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, performAction }
   },
   data () {
     return {

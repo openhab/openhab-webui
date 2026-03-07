@@ -12,13 +12,12 @@ import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { LMarker, LTooltip, LIcon } from '@vue-leaflet/vue-leaflet'
-import { actionsMixin } from '../widget-actions'
 import { OhMapMarkerDefinition } from '@/assets/definitions/widgets/map'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   props: {
     context: Object
   },
@@ -31,7 +30,8 @@ export default {
   emits: ['update'],
   setup(props) {
     const { config, evaluateExpression } = useWidgetContext(props.context)
-    return { config, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, performAction }
   },
   data () {
     return {

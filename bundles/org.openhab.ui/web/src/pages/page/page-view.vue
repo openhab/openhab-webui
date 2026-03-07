@@ -59,12 +59,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <component
-      :is="widgetRegistry.page(page.component)"
-      v-else-if="page && visibleToCurrentUser"
-      :context="context"
-      :f7router
-      @action="performAction($event.ev, $event.prefix, $event.config, $event.context)" />
+    <component :is="widgetRegistry.page(page.component)" v-else-if="page && visibleToCurrentUser" :context="context" :f7router="f7router" />
 
     <empty-state-placeholder
       v-if="!visibleToCurrentUser"
@@ -94,7 +89,6 @@
 import { f7, theme } from 'framework7-vue'
 
 import * as widgetRegistry from '@/components/oh-component-registry.ts'
-import { actionsMixin } from '@/components/widgets/widget-actions'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
@@ -105,7 +99,6 @@ import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts
 import { useViewArea } from '@/composables/useViewArea.ts'
 
 export default {
-  mixins: [actionsMixin],
   components: {
     EmptyStatePlaceholder
   },
