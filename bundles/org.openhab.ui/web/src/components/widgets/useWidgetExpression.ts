@@ -66,6 +66,13 @@ interface ScreenInfo {
   appHeight: number
 }
 
+export type EvaluateExpressionFn = <T = unknown>(
+  key: string,
+  value: T,
+  context?: WidgetContext,
+  props?: Record<string, unknown>
+) => T | null | Error
+
 /**
  * Composable providing the functionality to evaluate widget expressions.
  *
@@ -133,16 +140,22 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
   }
 
   /**
-   * Evaluates a widget expression.
+   * Evaluates widget expression(s).
    * If widget context and props were not passed to the composable at instantiation, they have to be passed to the function.
    *
+   * @typeParam `T` the type of the input value
    * @param key the key of the expression (used for abstract syntax tree caching)
    * @param value the expression to evaluate
    * @param context the context to evaluate the expression in (not required if already provided as composable property)
    * @param props the props to make available to the expression (not required if already provided as composable property)
-   * @returns the result of the expression evaluation
+   * @returns `T` with evaluation result(s) in place of widget expression(s)
    */
-  function evaluateExpression(key: string, value: any, context?: WidgetContext, props?: Record<string, unknown>): unknown {
+  const evaluateExpression: EvaluateExpressionFn = <T = unknown>(
+    key: string,
+    value: T,
+    context?: WidgetContext,
+    props?: Record<string, unknown>
+  ): T | null | Error => {
     if (value === null) return null
     const ctx = context || properties.context
     if (!ctx) return null
@@ -172,9 +185,9 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
           user: userStore.user,
           translation: i18n.global.t,
           t: i18n.global.t
-        })
+        }) as T
       } catch (e) {
-        return e
+        return e as Error
       }
     } else if (typeof value === 'object' && !Array.isArray(value)) {
       const evalObj: Record<string, any> = {}
@@ -182,13 +195,13 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
       for (const objKey in valueObj) {
         evalObj[objKey] = evaluateExpression(key + '.' + objKey, valueObj[objKey], ctx, props || properties?.props)
       }
-      return evalObj
+      return evalObj as T
     } else if (typeof value === 'object' && Array.isArray(value)) {
-      const evalArr: any[] = []
+      const evalArr: unknown[] = []
       for (let i = 0; i < value.length; i++) {
         evalArr[i] = evaluateExpression(key + '.' + i, value[i], ctx, props || properties?.props)
       }
-      return evalArr
+      return evalArr as T
     } else {
       return value
     }
