@@ -100,7 +100,7 @@ function autocompletionExtension(mode: string): Extension | null {
     case mode.startsWith(MediaType.UI_COMPONENT as string):
       return autocompletion({ activateOnCompletion, override: [componentsHint] })
 
-    case mode === (MediaType.RULE_DSL as string):
+    case mode === (MediaType.RULE_YAML as string):
       return autocompletion({ activateOnCompletion, override: [rulesHint] })
 
     case mode === (MediaType.THING_YAML as string):
