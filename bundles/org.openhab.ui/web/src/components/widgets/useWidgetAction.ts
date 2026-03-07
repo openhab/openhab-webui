@@ -380,7 +380,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             break
           case Action.url:
             const actionUrl = actionConfig[`${processedPrefix}actionUrl`]
-            if (actionUrl) return
+            if (!actionUrl) return
             const actionUrlSameWindow = actionConfig[`${processedPrefix}actionUrlSameWindow`]
             console.log(`Opening external URL ${actionUrl}`)
             window.open(actionUrl, actionUrlSameWindow ? '_top' : '_blank')
