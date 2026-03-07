@@ -438,7 +438,11 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
           type: 'BOOLEAN',
           description: 'Keep the tooltip within the chart bounds'
         },
-        pb('smartFormatter', 'Smart Formatter', '').a() // TODO: Description
+        pb(
+          'smartFormatter',
+          'Smart Formatter',
+          'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
+        ).a()
       ]
     }
   },
