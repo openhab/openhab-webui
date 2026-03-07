@@ -28,6 +28,7 @@ export interface Config {
   actionRule?: string
   actionRuleContext?: string
   actionPage?: string
+  actionPageDefineVars?: string
   actionPageTransition?: ActionPageTransition
   actionModal?: string
   actionModalConfig?: string
@@ -55,6 +56,7 @@ export interface Config {
   taphold_actionRule?: string
   taphold_actionRuleContext?: string
   taphold_actionPage?: string
+  taphold_actionPageDefineVars?: string
   taphold_actionPageTransition?: Taphold_actionPageTransition
   taphold_actionModal?: string
   taphold_actionModalConfig?: string

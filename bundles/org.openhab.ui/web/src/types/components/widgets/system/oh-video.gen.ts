@@ -23,6 +23,7 @@ export interface Config {
   actionRule?: string
   actionRuleContext?: string
   actionPage?: string
+  actionPageDefineVars?: string
   actionPageTransition?: ActionPageTransition
   actionModal?: string
   actionModalConfig?: string
