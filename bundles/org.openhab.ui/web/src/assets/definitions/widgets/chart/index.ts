@@ -25,7 +25,7 @@ export const positionParameters = [
   pt('height', 'Height', '').g('position')
 ]
 
-const orientParameter: WidgetDefinitionParameter = pt('orient', 'Orientation', '').o(
+const orientParameter = () => pt('orient', 'Orientation', '').o(
   [
     { value: 'horizontal', label: 'Horizontal' },
     { value: 'vertical', label: 'Vertical' }
@@ -33,7 +33,7 @@ const orientParameter: WidgetDefinitionParameter = pt('orient', 'Orientation', '
   true
 )
 
-const showParameter = pb('show', 'Show', 'Whether to show or not this component')
+const showParameter = () => pb('show', 'Show', 'Whether to show or not this component')
 
 const nameParameter = pt('name', 'Name', 'A name which will appear on tooltips and labels')
 
@@ -54,9 +54,9 @@ const nameGapParameter = pn('nameGap', 'Name Gap', 'Gap between axis name and ax
 
 const nameRotateParameter = pt('nameRotate', 'Name Rotate', 'Rotation of axis name').g('nameDisplay')
 
-const minParameter = pt('min', 'Min', 'Minimum boundary')
+const minParameter = () => pt('min', 'Min', 'Minimum boundary')
 
-const maxParameter = pt('max', 'Max', 'Maximum boundary')
+const maxParameter = () => pt('max', 'Max', 'Maximum boundary')
 
 const gridIndexParameter = pn('gridIndex', 'Grid Index', 'The index of the grid for this axis').c('chartGrid').g('componentRelations')
 
@@ -210,8 +210,8 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
       parameterGroups: [nameDisplayGroup, componentRelationsGroup],
       parameters: [
         ...axisNameParameters,
-        minParameter,
-        maxParameter,
+        minParameter(),
+        maxParameter(),
         pb(
           'scale',
           'Do Not Force Scale to Include Zero',
@@ -236,7 +236,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
     docLink: 'https://echarts.apache.org/en/option.html#calendar',
     props: {
       parameterGroups: [nameDisplayGroup, componentRelationsGroup, actionGroup()],
-      parameters: [...positionParameters, orientParameter, gridIndexParameter, ...actionParams()]
+      parameters: [...positionParameters, orientParameter(), gridIndexParameter, ...actionParams()]
     }
   },
 
@@ -334,7 +334,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
     docLink: 'https://echarts.apache.org/en/option.html#tooltip',
     props: {
       parameterGroups: [],
-      parameters: [showParameter, orientParameter, pb('confine', 'Confine', 'Keep the tooltip within the chart bounds')]
+      parameters: [showParameter(), orientParameter(), pb('confine', 'Confine', 'Keep the tooltip within the chart bounds')]
     }
   },
 
@@ -354,14 +354,14 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
         positionGroup
       ],
       parameters: [
-        showParameter,
-        Object.assign({}, minParameter, { groupName: 'boundariesGroup' }),
-        Object.assign({}, maxParameter, { groupName: 'boundariesGroup' }),
+        showParameter(),
+        Object.assign({}, minParameter(), { groupName: 'boundariesGroup' }),
+        Object.assign({}, maxParameter(), { groupName: 'boundariesGroup' }),
         po('type', 'Type', 'Type of visual map - continuous or piecewise', [
           { value: 'continuous', label: 'Continuous' },
           { value: 'piecewise', label: 'Piecewise' }
         ]).g('appearanceGroup'),
-        Object.assign({}, orientParameter, { groupName: 'appearanceGroup' }),
+        Object.assign({}, orientParameter(), { groupName: 'appearanceGroup' }),
         pb('calculable', 'Show handles', 'Show handles to filter data in continuous mode')
           .g('appearanceGroup')
           .v((_, cfg) => cfg.type !== 'piecewise'),
@@ -395,13 +395,13 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
           { value: 'inside', label: 'Inside' }
         ]).r(),
         {
-          ...showParameter,
+          ...showParameter(),
           visible: (_value, configuration) => {
             return configuration.type === 'slider'
           }
         } as WidgetDefinitionParameter,
         {
-          ...orientParameter,
+          ...orientParameter(),
           visible: (_value, configuration) => {
             return configuration.type === 'slider'
           }
@@ -423,7 +423,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
     docLink: 'https://echarts.apache.org/en/option.html#legend',
     props: {
       parameterGroups: [positionGroup],
-      parameters: [showParameter, orientParameter, ...positionParameters]
+      parameters: [showParameter(), orientParameter(), ...positionParameters]
     }
   },
 
@@ -432,7 +432,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
     docLink: 'https://echarts.apache.org/en/option.html#title',
     props: {
       parameterGroups: [positionGroup],
-      parameters: [showParameter, pt('text', 'Title', ''), pt('subtext', 'Subtitle', ''), ...positionParameters]
+      parameters: [showParameter(), pt('text', 'Title', ''), pt('subtext', 'Subtitle', ''), ...positionParameters]
     }
   },
 
@@ -442,7 +442,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
     props: {
       parameterGroups: [positionGroup],
       parameters: [
-        showParameter,
+        showParameter(),
         po('presetFeatures', 'Features', 'Features', [
           { value: 'saveAsImage', label: 'Save as Image' },
           { value: 'restore', label: 'Restore' },
