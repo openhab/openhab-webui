@@ -400,8 +400,6 @@ const chartComponentsList: WidgetDefinition[] = [
     ])
 ]
 
-const chartComponents: Record<string, WidgetDefinition> = Object.fromEntries(
-  chartComponentsList.map((c) => [c.name, c])
-)
+const chartComponents: Record<string, WidgetDefinition> = Object.fromEntries(chartComponentsList.map((c) => [c.name, c]))
 
 export default chartComponents
