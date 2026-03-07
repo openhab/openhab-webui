@@ -1,27 +1,26 @@
-import dayjs from 'dayjs'
-import IsoWeek from 'dayjs/plugin/isoWeek'
 import ComponentId from '../../component-id'
-import { startOf } from '@/components/widgets/chart/utils.ts'
+import { startOf } from '@/components/widgets/chart/util/time'
+import type { AxisComponent } from '../types'
+import { OhChart } from '@/types/components/widgets'
+import type { TimeAxisBaseOption } from 'echarts/types/dist/shared'
 
-dayjs.extend(IsoWeek)
-
-export default {
-  get(component, startTime, endTime, chart, chartWidget, inverse, numberFormatter) {
-    let axis = chartWidget.evaluateExpression(ComponentId.get(component), component.config)
+const timeAxis: AxisComponent = {
+  get(context, component, startTime, endTime) {
+    const axis = context.evaluateExpression<TimeAxisBaseOption>(ComponentId.get(component)!, component.config)
     axis.type = 'time'
-    const chartType = chart.config.chartType
+    const chartType = context.chart.config.chartType
     if (chartType) {
       // adjusts time-axis begin and end timestamps depending on the received data, allowing to display series with offset
-      axis.min = (v) => {
+      axis.min = (v: { min: number; max: number }) => {
         if (isNaN(v.min)) return startTime.toDate().getTime()
         if (!isFinite(v.min)) return v.min
         return startOf(chartType, v.min).toDate().getTime()
       }
-      axis.max = (v) => {
+      axis.max = (v: { min: number; max: number }) => {
         if (isNaN(v.min)) return endTime.toDate().getTime()
         if (!isFinite(v.max)) return v.max
         return startOf(chartType, v.min)
-          .add(1, chartType === 'isoWeek' ? 'week' : chartType)
+          .add(1, chartType === OhChart.ChartType.isoWeek ? 'week' : chartType)
           .toDate()
           .getTime()
       }
@@ -37,3 +36,5 @@ export default {
     return axis
   }
 }
+
+export default timeAxis

@@ -25,6 +25,7 @@ export interface Config {
   offsetAmount?: number
   offsetUnit?: OffsetUnit
   type?: Type
+  showSymbol?: boolean
   aggregationFunction?: AggregationFunction
   calendarIndex?: number
   action?: Action

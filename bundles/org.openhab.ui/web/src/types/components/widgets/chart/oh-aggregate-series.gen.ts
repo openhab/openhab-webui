@@ -37,6 +37,7 @@ export interface Config {
   offsetUnit?: OffsetUnit
   markers?: Markers[]
   type?: Type
+  showSymbol?: boolean
   dimension1?: Dimension
   dimension2?: Dimension
   transpose?: boolean

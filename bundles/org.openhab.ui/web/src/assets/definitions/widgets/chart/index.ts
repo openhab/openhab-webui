@@ -153,6 +153,14 @@ const seriesTypeParameter = (...types: string[]): WidgetDefinitionParameter => {
   }
 }
 
+const lineSeriesSymbolParameter = pb(
+  'showSymbol',
+  'Show Symbol',
+  'Whether to always show the datapoint symbol. It will always be shown during tooltip hover.'
+).v((_value, configuration) => {
+  return configuration.type === 'line'
+})
+
 const aggregationFunctionParameter = pt(
   'aggregationFunction',
   'Aggregation Function',
@@ -311,7 +319,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
     docLink: 'https://echarts.apache.org/en/option.html#series',
     props: {
       parameterGroups: [actionGroup()],
-      parameters: [seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), ...actionParams()]
+      parameters: [seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), lineSeriesSymbolParameter, ...actionParams()]
     }
   },
 
@@ -324,6 +332,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
         ...seriesParameters,
         markersParameter(true),
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+        lineSeriesSymbolParameter,
         xAxisIndexParameter,
         yAxisIndexParameter,
         ...actionParams()
@@ -366,6 +375,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
         ...seriesParameters,
         markersParameter(),
         seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+        lineSeriesSymbolParameter,
         {
           name: 'dimension1',
           label: 'First Dimension',
@@ -406,6 +416,7 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
       parameters: [
         ...seriesParameters,
         seriesTypeParameter('heatmap', 'scatter'),
+        lineSeriesSymbolParameter,
         aggregationFunctionParameter,
         calendarIndexParameter,
         ...actionParams()
@@ -426,7 +437,12 @@ const chartComponents: Record<string, ChartComponentDefinition> = {
           label: 'Confine',
           type: 'BOOLEAN',
           description: 'Keep the tooltip within the chart bounds'
-        }
+        },
+        pb(
+          'smartFormatter',
+          'Smart Formatter',
+          'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
+        ).a()
       ]
     }
   },
