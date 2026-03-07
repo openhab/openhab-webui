@@ -138,8 +138,12 @@ export default {
     },
     visualMap() {
       if (!this.context.component.slots) return undefined
+      const chartContext = {
+        ...this.chartContext,
+        series: this.series
+      }
       if (this.context.component.slots.visualMap) {
-        return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(this.chartContext, c, this.startTime, this.endTime))
+        return this.context.component.slots.visualMap.map((c) => OhChartVisualMap.get(chartContext, c, this.startTime, this.endTime))
       } else if (JSON.stringify(this.context.component.slots.series)?.includes('heatmap')) {
         // heatmap needs a visualMap, therefore fall back to a default
         const config = {
@@ -148,7 +152,7 @@ export default {
           show: false,
           type: 'continuous'
         }
-        return OhChartVisualMap.get(this.chartContext, { config }, this.startTime, this.endTime)
+        return OhChartVisualMap.get(chartContext, { config }, this.startTime, this.endTime)
       }
       return undefined
     },
