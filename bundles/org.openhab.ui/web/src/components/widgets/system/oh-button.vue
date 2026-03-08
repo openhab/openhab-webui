@@ -23,8 +23,8 @@ export default {
   widget: OhButtonDefinition,
   setup (props) {
     const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(props.context)
-    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
-    return { config, childContext, hasAction, defaultSlots, performAction }
+    const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, childContext, hasAction, defaultSlots, performAction, onTaphold, onContextMenu }
   },
   methods: {
     clicked () {

@@ -430,7 +430,22 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
     return true
   }
 
+  function onTaphold(event: Event) {
+    performAction(event, 'taphold')
+  }
+
+  function onContextMenu(event: Event) {
+    if (config.value.taphold_action) {
+      event.stopPropagation()
+      event.preventDefault()
+      performAction(event, 'taphold')
+    }
+    // else: System contextual menu will be displayed
+  }
+
   return {
-    performAction
+    performAction,
+    onTaphold,
+    onContextMenu
   }
 }

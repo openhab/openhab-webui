@@ -76,8 +76,8 @@ export default {
   widget: OhLabelCardDefinition,
   setup(props) {
     const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
-    const { performAction } = useWidgetAction(props.context, config)
-    return { config, hasAction, evaluateExpression, performAction }
+    const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, hasAction, evaluateExpression, performAction, onTaphold, onContextMenu }
   },
   data () {
     return {

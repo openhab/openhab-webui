@@ -60,8 +60,8 @@ export default {
   },
   setup(props) {
     const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
-    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
-    return { config, hasAction, performAction }
+    const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, hasAction, performAction, onTaphold, onContextMenu }
   },
   computed: {
     computedContentClass () {
