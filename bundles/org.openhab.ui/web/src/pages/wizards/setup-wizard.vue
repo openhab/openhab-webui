@@ -672,7 +672,11 @@ export default {
       // skip setup tabs that are marked invisble because step is not required with current configuration
       // and steps marked as extended when using the short wizard
       while (nextStep && this.isInvisible(nextStep)) {
-        nextStep = this.wizardSteps[nextStep][action].step
+        if (action === 'skip') {
+          nextStep = this.wizardSteps[nextStep].skip?.step || this.wizardSteps[nextStep].next?.step
+        } else {
+          nextStep = this.wizardSteps[nextStep][action]?.step
+        }
       }
       if (direction?.action === 'next') {
         // we completed this step, store it
