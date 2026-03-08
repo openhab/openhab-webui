@@ -2,9 +2,16 @@ export type CodeEditorType = 'YAML' | 'DSL'
 
 export enum MediaType {
   YAML = 'application/yaml',
+  JSON = 'application/json',
+  JAVASCRIPT = 'application/javascript',
+  // openHAB vendor specific:
+  THING_YAML = 'application/yaml+thing',
+  ITEM_YAML = 'application/yaml+item',
   THING_DSL = 'text/vnd.openhab.dsl.thing',
   ITEM_DSL = 'text/vnd.openhab.dsl.item',
-  JSON = 'application/json'
+  RULE_YAML = 'application/vnd.openhab.rule+yaml',
+  RULE_DSL = 'application/vnd.openhab.dsl.rule',
+  UI_COMPONENT = 'application/vnd.openhab.uicomponent'
 }
 
 /**
@@ -19,11 +26,11 @@ export const DefaultMediaTypes = {
  */
 export const SupportedMediaTypes = {
   items: {
-    YAML: MediaType.YAML,
+    YAML: MediaType.ITEM_YAML,
     DSL: MediaType.ITEM_DSL
   },
   things: {
-    YAML: MediaType.YAML,
+    YAML: MediaType.THING_YAML,
     DSL: MediaType.THING_DSL
   }
 }

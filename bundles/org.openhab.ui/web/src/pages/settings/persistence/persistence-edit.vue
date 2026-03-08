@@ -284,7 +284,8 @@
           mode="application/vnd.openhab.persistence+yaml"
           :value="persistenceYaml"
           @input="onEditorInput"
-          :read-only="!editable" />
+          :read-only="!editable"
+          @save="save()" />
       </f7-tab>
     </f7-tabs>
   </f7-page>
