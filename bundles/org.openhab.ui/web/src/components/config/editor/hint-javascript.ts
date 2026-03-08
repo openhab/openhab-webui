@@ -90,6 +90,36 @@ function completionPathWithCallExpression(context: CompletionContext, from: numb
   return null
 }
 
+function isInComment(context: CompletionContext) {
+  let node: any = syntaxTree(context.state).resolveInner(context.pos, -1)
+  while (node) {
+    if (node.name === 'LineComment' || node.name === 'BlockComment') {
+      return true
+    }
+    node = node.parent
+  }
+  return false
+}
+
+function shouldSkipImplicitAutocomplete(context: CompletionContext) {
+  if (context.explicit) return false
+
+  const line = context.state.doc.lineAt(context.pos)
+  const textBeforeCursor = line.text.slice(0, context.pos - line.from)
+
+  // Avoid opening completion when the user just ended a statement with ';'.
+  if (context.pos === line.to && textBeforeCursor.trimEnd().endsWith(';')) {
+    return true
+  }
+
+  // Avoid opening completion inside line and block comments.
+  if (isInComment(context)) {
+    return true
+  }
+
+  return false
+}
+
 // Deal with definition that returns a reference (string instead of an object) to another definition.
 // e.g. "Int8Array": "TypedArray"
 // Recursively look up the reference until we find the actual definition
@@ -206,6 +236,8 @@ function setObjectDefs(...defs: Definitions[]) {
 }
 
 function hintOpenhabJs(context: CompletionContext) {
+  if (shouldSkipImplicitAutocomplete(context)) return null
+
   const from = hintUtils.completionStart(context)
   const path = completionPathWithCallExpression(context, from)
   const defs = resolveDefinitionFromPath(path?.path || [])
@@ -220,6 +252,8 @@ function hintOpenhabJs(context: CompletionContext) {
 }
 
 async function hintJsItems(context: any): Promise<CompletionResult | null> {
+  if (shouldSkipImplicitAutocomplete(context)) return null
+
   if (context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)) {
     return hintUtils.hintItems(context)
   }
