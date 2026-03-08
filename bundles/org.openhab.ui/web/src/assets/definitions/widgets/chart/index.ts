@@ -6,8 +6,6 @@ import { aggregationTypeOptions, dimensionTypeOptions, markerOptions } from './o
 
 export { OhChartPageDefinition } from './page.ts'
 
-export { OhChartPageDefinition } from './page.js'
-
 const positionGroup = pg(
   'position',
   'Position',
