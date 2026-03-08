@@ -95,6 +95,12 @@
           <link-details :item="item" :links="links" :f7router />
         </f7-col>
       </f7-row>
+      <f7-row v-if="item.name && (item.type !== 'Group' || item.groupType)">
+        <f7-col>
+          <f7-block-title>Persistence</f7-block-title>
+          <item-persistence-details :item="item" :f7router />
+        </f7-col>
+      </f7-row>
       <f7-row>
         <f7-col>
           <f7-list>
@@ -178,6 +184,7 @@
 import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import LinkDetails from '@/components/model/link-details.vue'
+import ItemPersistenceDetails from '@/components/persistence/item-persistence-details.vue'
 import GroupMembers from '@/components/item/group-members.vue'
 import MetadataMenu from '@/components/item/metadata/item-metadata-menu.vue'
 import ModelTreeview from '@/components/model/model-treeview.vue'
