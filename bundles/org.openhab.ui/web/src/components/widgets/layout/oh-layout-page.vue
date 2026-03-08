@@ -27,7 +27,7 @@
       <oh-grid-layout :context="context" />
     </template>
     <template v-else-if="config.layoutType === 'fixed' && config.fixedType === 'canvas'">
-      <oh-canvas-layout :context="context" :f7router @action="performAction($event.ev, $event.prefix, $event.context, $event.config)" />
+      <oh-canvas-layout :context="context" :f7router @action="performAction($event.evt, $event.prefix, $event.context, $event.config)" />
     </template>
   </div>
 </template>
