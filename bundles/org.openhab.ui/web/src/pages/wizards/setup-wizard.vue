@@ -308,7 +308,12 @@
 
       <!-- Welcome -->
       <f7-tab id="welcome" @tab:show="handleTabShow">
-        <tab-header :title="t('setupwizard.welcome.title')" :image="wizardSteps[currentStep].image" :step="currentStep" :link="wizardSteps[currentStep].link" :t="t" />
+        <tab-header
+          :title="t('setupwizard.welcome.title')"
+          :image="wizardSteps[currentStep].image"
+          :step="currentStep"
+          :link="wizardSteps[currentStep].link"
+          :t="t" />
         <f7-block>
           {{ t('setupwizard.welcome.model') }}
         </f7-block>
