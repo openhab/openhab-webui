@@ -1,15 +1,14 @@
 <template>
   <div style="width: 100%">
     <f7-list media-list style="margin-top: 0">
-      <f7-list-item v-for="addon in shownAddons" :key="addon.uid" class="addons-setup-wizard">
+      <f7-list-item v-for="addon in shownAddons" :key="addon.uid" class="addons-setup-wizard" @click="toggleAddonSelection(addon)">
         <f7-block class="addon display-flex flex-direction-column">
           <f7-row no-gap>
             <div style="width: 100%">
               <f7-checkbox
                 style="margin-right: 0.5rem"
                 :checked="isAddonSelected(addon)"
-                :disabled="addon.installed"
-                @change="toggleAddonSelection(addon, $event)" />
+                :disabled="addon.installed" />
               {{ addon.label }}
               <f7-link style="float: right" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
             </div>
@@ -75,6 +74,7 @@
 
 <style lang="stylus">
 .addons-setup-wizard
+  cursor pointer
   .addon
     margin-top: 0.5rem
     margin-bottom: 0.5rem
@@ -147,6 +147,7 @@ export default {
   },
   data () {
     return {
+      localSelectedAddons: [...this.selectedAddons],
       shownAddons: [...(this.preSelectedAddons || [])],
       modalShownAddons: this.addons?.filter((a) => !a.installed && !this.isPreSelectedAddon(a)) || [],
       showAddonSelectionModal: false,
@@ -176,7 +177,7 @@ export default {
      * @returns {boolean}
      */
     isAddonSelected (addon) {
-      return this.selectedAddons?.includes(addon)
+      return this.localSelectedAddons.includes(addon)
     },
     /**
      * Whether the given add-on is pre-selected.
@@ -201,18 +202,21 @@ export default {
     },
     /**
      * Toggles the selection of a single add-on.
-     * To be called by the change event of the <code>f7-checkbox</code> component.
      * @param addon
-     * @param event
      */
-    toggleAddonSelection (addon, event) {
-      if (event.target.checked) {
+    toggleAddonSelection (addon) {
+      if (this.isAddonSelected(addon)) {
+        const index = this.localSelectedAddons.findIndex((a) => addon.uid === a.uid)
+        if (index > -1) {
+          this.localSelectedAddons.splice(index, 1)
+        }
+        this.$emit('removed', addon)
+      } else {
+        this.localSelectedAddons.push(addon)
         this.$emit('added', addon)
         if (!this.shownAddons.includes(addon)) {
           this.shownAddons.push(addon)
         }
-      } else {
-        this.$emit('removed', addon)
       }
     },
     /**
