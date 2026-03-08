@@ -27,6 +27,5 @@
   "about.dialog.listeningItem": "Listening Item",
   "about.dialog.locationItem": "Location Item",
   "about.dialog.connectOnWindowEvent": "Launch on first window event",
-  "about.dialog.triggerOnConnect": "Trigger on first click",
-  "about.miscellaneous.codeEditor.vimMode": "Enable Vim mode in code editors"
+  "about.dialog.triggerOnConnect": "Trigger on first click"
 }
