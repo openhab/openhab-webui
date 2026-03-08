@@ -1,10 +1,10 @@
 <template>
   <f7-block class="sticky-header">
     <f7-login-screen-title>
-      <div class="compact-padding" v-if="image">
+      <div v-if="image" class="compact-padding">
         <img class="intro-logo" :src="image" type="image/svg+xml" />
       </div>
-      <div class="compact-padding" v-else-if="icon">
+      <div v-else-if="icon" class="compact-padding">
         <f7-icon size="48" color="blue" :f7="icon" />
       </div>
       {{ title }}
