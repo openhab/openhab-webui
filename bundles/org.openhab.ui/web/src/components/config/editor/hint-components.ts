@@ -46,7 +46,7 @@ function getOhComponents() {
     ...StandardCellWidgets
   })
     .filter((w) => w.widget && typeof w.widget === 'function')
-    .map((c) => c.widget())
+    .map((c) => c.widget() as WidgetDefinition)
     .sort((c1, c2) => c1.name.localeCompare(c2.name))
   return ohComponents
 }
@@ -79,11 +79,11 @@ function getWidgetDefinitions(context: CompletionContext): (WidgetDefinition | F
       ]
     case 'plan':
       return Object.values(PlanWidgets)
-        .map((c) => c.widget())
+        .map((c) => c.widget() as WidgetDefinition)
         .sort((c1, c2) => c1.name.localeCompare(c2.name))
     case 'map':
       return Object.values(MapWidgets)
-        .map((c) => c.widget())
+        .map((c) => c.widget() as WidgetDefinition)
         .sort((c1, c2) => c1.name.localeCompare(c2.name))
     case 'blocks':
       return (Object.values(BlockLibrariesComponentDefinitions) as Array<() => WidgetDefinition>)
