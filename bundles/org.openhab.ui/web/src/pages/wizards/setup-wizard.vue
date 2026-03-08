@@ -36,13 +36,13 @@
           :key="index"
           :title="t('setupwizard.' + step + '.title')"
           :selected="step === currentStep"
-          :style="!wizardStepKeysActive.includes(step) ? 'color: grey' : ''"
+          :style="!wizardStepKeysActive.includes(step) ? 'color: grey; pointer-events: none; opacity: 0.6' : ''"
           :checked="setupWizardStepsDone?.[step]"
           checkbox
           readonly
           link
           no-chevron
-          popover-close
+          :popover-close="wizardStepKeysActive.includes(step)"
           @click="toStep(step)" />
       </f7-list>
     </f7-popover>
@@ -423,6 +423,7 @@ export default {
 
       // wizard sequence of steps and functions to be called when changing step
       wizardSteps: {
+        // Intro does have to be the first step. Code forces no next step is possible before completing it.
         'intro': {
           next: { handler: () => this.beginSetup(), step: 'location' }
         },
@@ -604,7 +605,7 @@ export default {
       return steps
     },
     wizardStepKeysActive () {
-      return this.wizardStepKeysFiltered.filter((step) => !this.wizardSteps[step].show?.isInvisible?.())
+      return this.wizardStepKeysFiltered.filter((step) => step === 'intro' || (this.setupWizardStepsDone?.intro && !this.wizardSteps[step].show?.isInvisible?.()))
     },
     wizardStepCount () {
       return this.wizardStepKeysFiltered.length
