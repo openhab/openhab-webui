@@ -24,7 +24,7 @@ import type { Line } from '@codemirror/state'
 import type { EditorView } from '@codemirror/view'
 import type { ExtendedEditorView } from './types'
 import type { OhComponent } from '@/components/widgets/types'
-import type { WidgetDefinition } from '@/assets/definitions/widgets'
+import type { WidgetDefinition } from '@/assets/definitions/widgets/helpers'
 import type * as api from '@/api'
 
 const ComponentID = /[\w-]+/
