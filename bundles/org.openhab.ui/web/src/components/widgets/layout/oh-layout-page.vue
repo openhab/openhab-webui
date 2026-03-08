@@ -50,7 +50,7 @@ const props = defineProps<{
   f7router: Router.Router
 }>()
 
-const emits = defineEmits(['add-block', 'add-masonry'])
+defineEmits(['add-block', 'add-masonry'])
 
 const { config, childContext, scopedCssUid, defaultSlots, evaluateExpression } = useWidgetContext(props.context)
 const { performAction } = useWidgetAction(props.context, config, evaluateExpression)

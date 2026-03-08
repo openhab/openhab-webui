@@ -408,9 +408,10 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             const actionVariable = actionConfig[`${processedPrefix}actionVariable`]
             let actionVariableValue: VariableValue | undefined = actionConfig[`${processedPrefix}actionVariableValue`]
             const actionVariableKey = actionConfig[`${processedPrefix}actionVariableKey`]
-            if (!actionVariable || !ctx.ctxVars) return false
-            const actionVariableScope = getVariableScope(ctx.ctxVars, ctx.varScope, actionVariable)
-            const actionVariableLocation = actionVariableScope ? ctx.ctxVars[actionVariableScope]! : ctx.vars!
+            if (!actionVariable) return false
+            const actionVariableScope = ctx.ctxVars ? getVariableScope(ctx.ctxVars, ctx.varScope, actionVariable) : null
+            const actionVariableLocation = actionVariableScope ? ctx.ctxVars![actionVariableScope] : ctx.vars
+            if (!actionVariableLocation) return false
             if (actionVariableKey) {
               actionVariableValue = setVariableKeyValues(actionVariableLocation[actionVariable]!, actionVariableKey, actionVariableValue)
             }
