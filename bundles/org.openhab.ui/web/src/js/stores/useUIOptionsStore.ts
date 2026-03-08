@@ -203,6 +203,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     codeMirrorSettings,
     (newValue) => {
       localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
+  })
   watch(setupWizardShort, (newValue) => {
     localStorage.setItem('openhab.ui:setupWizard.short', newValue?.toString())
   })
