@@ -1,10 +1,12 @@
 export default {
     defaultExportAs: 'enum',
     '*': {      // global modifer applied to all components
-        modifier: (e) => e.replace('actionAnalyzerItems: string', 'actionAnalyzerItems?: string | string[]') // Fix array type
+        modifier: (e) => e
+          .replace('actionAnalyzerItems: string', 'actionAnalyzerItems?: string | string[]') // Fix array type
+          .replace('taphold_actionAnalyzerItems: string', 'taphold_actionAnalyzerItems?: string | string[]') // Fix array type
     },
     // modifiers to apply to all components in common.ts
-    _Common: { 
+    _Common: {
         ChartType: {
             modifier: (e) => e.replace('none', 'dynamic')
         },

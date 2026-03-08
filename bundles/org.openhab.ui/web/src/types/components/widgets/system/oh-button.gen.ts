@@ -63,7 +63,7 @@ export interface Config {
   taphold_actionPhotos?: string
   taphold_actionPhotoBrowserConfig?: string
   taphold_actionGroupPopupItem?: string
-  taphold_actionAnalyzerItems: string
+  taphold_actionAnalyzerItems?: string | string[]
   taphold_actionAnalyzerChartType?: Taphold_actionAnalyzerChartType
   taphold_actionAnalyzerCoordSystem?: Taphold_actionAnalyzerCoordSystem
   taphold_actionAnalyzerAggregation?: Taphold_actionAnalyzerAggregation
