@@ -127,7 +127,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
    * @param prefix the prefix for the parameter group and associated parameters (see below)
    * @param ctx the context to use (usually `props.context`)
    * @param cfg the config object containing the parameters to use (usually `useWidgetContext::config`)
-   * @returns true if the action was performed, otherwise undefined
+   * @returns true if the action was dispatched successfully (but possibly rejected by the user), otherwise false
    */
   function performAction(evt: Event, prefix: string, ctx?: WidgetContext, cfg?: WidgetActionConfig): boolean {
     if (!ctx) ctx = context
