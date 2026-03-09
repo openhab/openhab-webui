@@ -304,9 +304,12 @@ const chartComponentsList: WidgetDefinition[] = [
       ...actionParams()
     ]),
 
-  new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '')
-    .doc('https://echarts.apache.org/en/option.html#tooltip')
-    .params([showParameter(), orientParameter(), pb('confine', 'Confine', 'Keep the tooltip within the chart bounds')]),
+  new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '').doc('https://echarts.apache.org/en/option.html#tooltip').params([
+    showParameter(),
+    orientParameter(),
+    pb('confine', 'Confine', 'Keep the tooltip within the chart bounds'),
+    pb('smartFormatter', 'Smart Formatter', '').a() // TODO: Description
+  ]),
 
   new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
     .doc('https://echarts.apache.org/en/option.html#visualMap')
