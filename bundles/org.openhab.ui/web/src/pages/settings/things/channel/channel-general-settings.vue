@@ -57,15 +57,10 @@
           v-if="channel.properties && Object.keys(channel.properties).length > 0"
           accordion-item
           title="Properties"
-          :badge="Object.keys(channel.properties).length"
-        >
+          :badge="Object.keys(channel.properties).length">
           <f7-accordion-content>
             <f7-list>
-              <f7-list-item
-                v-for="(value, key) in channel.properties"
-                :key="key"
-                class="thing-property"
-              >
+              <f7-list-item v-for="(value, key) in channel.properties" :key="key" class="thing-property">
                 <template #title>
                   <div class="item-title-content">
                     <span class="property-key">{{ key }}</span>
