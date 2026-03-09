@@ -177,7 +177,8 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             const actionItem = actionConfig[`${processedPrefix}actionItem`]
             const actionCommand = actionConfig[`${processedPrefix}actionCommand`]
             if (!actionItem || !actionCommand) return false
-            void statesStore.sendCommand(actionItem, actionCommand).then(() => showActionFeedback(prefix, actionConfig))
+            await statesStore.sendCommand(actionItem, actionCommand)
+            showActionFeedback(prefix, actionConfig)
             break
           case Action.toggle:
             const actionToggleItem = actionConfig[`${processedPrefix}actionItem`]
@@ -195,7 +196,8 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             if (actionToggleCommand === 'OFF' && state.indexOf(',') < 0 && parseInt(state) === 0) cmd = actionToggleCommandAlt
             if (actionToggleCommand === 'ON' && state.indexOf(',') < 0 && parseInt(state) > 0) cmd = actionToggleCommandAlt
             if (!cmd) return false
-            void statesStore.sendCommand(actionToggleItem, cmd).then(() => showActionFeedback(prefix, actionConfig))
+            await statesStore.sendCommand(actionToggleItem, cmd)
+            showActionFeedback(prefix, actionConfig)
             break
           case Action.options:
             const actionCommandOptionsItem = actionConfig[`${processedPrefix}actionItem`]
@@ -394,15 +396,17 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             const actionHttpMethod = actionConfig[`${processedPrefix}actionHttpMethod`] || 'GET'
             const actionHttpBody = actionConfig[`${processedPrefix}actionHttpBody`]
             console.log(`Performing HTTP ${actionHttpMethod} request to ${actionHttpUrl}`)
-            fetch(actionHttpUrl, {
-              mode: 'no-cors',
-              method: actionHttpMethod,
-              body: actionHttpBody
-            })
-              .then(() => showActionFeedback(prefix, actionConfig))
-              .catch((e) =>
-                showActionFeedback(prefix, actionConfig, `Failed to perform HTTP request: ${e instanceof Error ? e.message : e}`)
-              )
+            try {
+              await fetch(actionHttpUrl, {
+                mode: 'no-cors',
+                method: actionHttpMethod,
+                body: actionHttpBody
+              })
+            } catch (e: unknown) {
+              showActionFeedback(prefix, actionConfig, `Failed to perform HTTP request: ${e instanceof Error ? e.message : String(e)}`)
+              return false
+            }
+            showActionFeedback(prefix, actionConfig)
             break
           case Action.variable:
             const actionVariable = actionConfig[`${processedPrefix}actionVariable`]
