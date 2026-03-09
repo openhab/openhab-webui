@@ -67,8 +67,8 @@
                 class="thing-property"
               >
                 <template #title>
-                  <div class="item-title-content property-key">
-                    <span>{{ key }}</span>
+                  <div class="item-title-content">
+                    <span class="property-key">{{ key }}</span>
                   </div>
                 </template>
                 <template #after>
@@ -92,6 +92,7 @@
     white-space inherit
 
 .property-key
+  display inline-block
   padding-left 12px
 </style>
 
