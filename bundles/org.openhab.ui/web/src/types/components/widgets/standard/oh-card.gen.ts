@@ -33,6 +33,7 @@ export interface Config {
   actionRule?: string
   actionRuleContext?: string
   actionPage?: string
+  actionPageDefineVars?: Record<string, unknown>[]
   actionPageTransition?: ActionPageTransition
   actionModal?: string
   actionModalConfig?: string
@@ -60,13 +61,14 @@ export interface Config {
   taphold_actionRule?: string
   taphold_actionRuleContext?: string
   taphold_actionPage?: string
+  taphold_actionPageDefineVars?: Record<string, unknown>[]
   taphold_actionPageTransition?: Taphold_actionPageTransition
   taphold_actionModal?: string
   taphold_actionModalConfig?: string
   taphold_actionPhotos?: string
   taphold_actionPhotoBrowserConfig?: string
   taphold_actionGroupPopupItem?: string
-  taphold_actionAnalyzerItems: string
+  taphold_actionAnalyzerItems?: string | string[]
   taphold_actionAnalyzerChartType?: Taphold_actionAnalyzerChartType
   taphold_actionAnalyzerCoordSystem?: Taphold_actionAnalyzerCoordSystem
   taphold_actionAnalyzerAggregation?: Taphold_actionAnalyzerAggregation

@@ -166,14 +166,13 @@ import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '../../widget-actions'
 import { OhCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhTrend from '../../system/oh-trend.vue'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   components: {
     OhTrend
   },
@@ -185,7 +184,8 @@ export default {
   },
   setup (props) {
     const { config, childContext, evaluateExpression, hasAction, slots, defaultSlots } = useWidgetContext(props.context)
-    return { config, childContext, evaluateExpression, hasAction, slots, defaultSlots }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, childContext, hasAction, slots, defaultSlots, performAction }
   },
   data () {
     return {

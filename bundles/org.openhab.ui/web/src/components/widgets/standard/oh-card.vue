@@ -43,11 +43,10 @@
 
 <script>
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '@/components/widgets/widget-actions'
 import { OhCardDefinition } from '@/assets/definitions/widgets/standard/cards'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   widget: OhCardDefinition,
   props: {
     context: Object,
@@ -61,7 +60,8 @@ export default {
   },
   setup(props) {
     const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
-    return { config, hasAction, evaluateExpression }
+    const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, hasAction, performAction, onTaphold, onContextMenu }
   },
   computed: {
     computedContentClass () {

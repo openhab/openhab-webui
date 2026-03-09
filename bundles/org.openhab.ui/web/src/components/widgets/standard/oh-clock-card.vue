@@ -31,13 +31,11 @@
 
 <script>
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '../widget-actions'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhClock from '../system/oh-clock.vue'
 import { OhClockCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [actionsMixin],
   props: {
     context: Object
   },

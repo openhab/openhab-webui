@@ -100,6 +100,14 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
       .v((_value, configuration) => {
         return ['navigate'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
       }),
+    pt(
+      paramPrefix + 'actionPageDefineVars',
+      'Define Page Variables',
+      'An object <code>{ [variableName]: [variableValue] }</code> where <code>variableValue</code> also supports expressions'
+    ).v((_value, configuration) => {
+      // hide from the dialog => only configurable through code tab
+      return false
+    }),
     po(
       paramPrefix + 'actionPageTransition',
       'Transition Effect',

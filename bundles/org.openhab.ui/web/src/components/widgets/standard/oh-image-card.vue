@@ -44,12 +44,11 @@
 <script>
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
-import { actionsMixin } from '../widget-actions'
 import OhImage from '../system/oh-image.vue'
 import { OhImageCardDefinition } from '@/assets/definitions/widgets/standard/cards'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   props: {
     context: Object
   },
@@ -60,7 +59,8 @@ export default {
   widget: OhImageCardDefinition,
   setup(props) {
     const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(props.context)
-    return { config, cardChildContext, hasAction, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, cardChildContext, hasAction, performAction }
   }
 }
 </script>

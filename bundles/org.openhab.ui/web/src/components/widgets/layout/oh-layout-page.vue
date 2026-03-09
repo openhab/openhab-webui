@@ -27,7 +27,7 @@
       <oh-grid-layout :context="context" />
     </template>
     <template v-else-if="config.layoutType === 'fixed' && config.fixedType === 'canvas'">
-      <oh-canvas-layout :context="context" :f7router @action="$emit('action', $event)" />
+      <oh-canvas-layout :context="context" :f7router @action="performAction($event.evt, $event.prefix, $event.context, $event.config)" />
     </template>
   </div>
 </template>
@@ -43,15 +43,17 @@ import OhCanvasLayout from './oh-canvas-layout.vue'
 import type { WidgetContext } from '../types'
 import type { Router } from 'framework7'
 import { computed } from 'vue'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 const props = defineProps<{
   context: WidgetContext,
   f7router: Router.Router
 }>()
 
-const emits = defineEmits(['action', 'add-block', 'add-masonry'])
+defineEmits(['add-block', 'add-masonry'])
 
-const { config, childContext, scopedCssUid, defaultSlots } = useWidgetContext(props.context)
+const { config, childContext, scopedCssUid, defaultSlots, evaluateExpression } = useWidgetContext(props.context)
+const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
 
 const masonrySlots = computed(() => 'slots' in props.context.component && props.context.component.slots.masonry || [])
 </script>

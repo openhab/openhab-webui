@@ -19,6 +19,13 @@ export interface EditMode {
   removeWidget: (...args: any[]) => any
 }
 
+export type VariableScopeName = `varScope-${string}`
+type VariableName = string
+type VariableValue = number | string | boolean | VariableArray | VariableObject | null
+interface VariableArray extends Array<VariableValue> {}
+export interface VariableObject extends Record<VariableName, VariableValue> {}
+export interface ContextVarObj extends Record<VariableScopeName, VariableObject> {}
+
 export interface WidgetContext {
   component: api.RootUiComponent | api.UiComponent
   config: Record<string, unknown>
@@ -26,7 +33,7 @@ export interface WidgetContext {
    * oh-context constants
    */
   const?: Record<string, unknown>
-  ctxVars?: Record<string, Record<string, unknown>>
+  ctxVars?: ContextVarObj
   editmode?: EditMode
   /**
    * oh-context functions
@@ -41,8 +48,8 @@ export interface WidgetContext {
   /**
    * variable.ts variable scope
    */
-  varScope?: string
-  vars?: Record<string, unknown>
+  varScope?: VariableScopeName
+  vars?: VariableObject
 
   modalConfig?: Record<string, unknown>
   clipboardtype?: string | null

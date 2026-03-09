@@ -29,13 +29,12 @@
 
 <script>
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { actionsMixin } from '@/components/widgets/widget-actions'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhGauge from '../system/oh-gauge.vue'
 import { OhGaugeCardDefinition } from '@/assets/definitions/widgets/standard/cards'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [actionsMixin],
   props: {
     context: Object
   },
@@ -46,7 +45,8 @@ export default {
   widget: OhGaugeCardDefinition,
   setup(props) {
     const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(props.context)
-    return { config, cardChildContext, hasAction, evaluateExpression }
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, cardChildContext, hasAction, performAction }
   }
 }
 </script>
