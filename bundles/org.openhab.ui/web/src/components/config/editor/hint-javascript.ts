@@ -90,30 +90,47 @@ function completionPathWithCallExpression(context: CompletionContext, from: numb
   return null
 }
 
-function isInComment(context: CompletionContext) {
+function getSyntaxNodeNames(context: CompletionContext) {
+  const names: string[] = []
   let node: any = syntaxTree(context.state).resolveInner(context.pos, -1)
   while (node) {
-    if (node.name === 'LineComment' || node.name === 'BlockComment') {
-      return true
-    }
+    names.push(node.name)
     node = node.parent
   }
-  return false
+  return names
 }
 
-function shouldSkipImplicitAutocomplete(context: CompletionContext) {
-  if (context.explicit) return false
-
-  const line = context.state.doc.lineAt(context.pos)
-  const textBeforeCursor = line.text.slice(0, context.pos - line.from)
-
-  // Avoid opening completion when the user just ended a statement with ';'.
-  if (context.pos === line.to && textBeforeCursor.trimEnd().endsWith(';')) {
+function isInCommentOrLiteral(context: CompletionContext) {
+  const nodeNames = getSyntaxNodeNames(context)
+  if (nodeNames.includes('LineComment') || nodeNames.includes('BlockComment') || nodeNames.includes('String')) {
     return true
   }
 
-  // Avoid opening completion inside line and block comments.
-  if (isInComment(context)) {
+  return nodeNames.includes('TemplateString') && !nodeNames.includes('Interpolation')
+}
+
+function hasImplicitAutocompleteTrigger(context: CompletionContext) {
+  if (context.matchBefore(/\w+/)) {
+    return true
+  }
+
+  const line = context.state.doc.lineAt(context.pos)
+  const textBeforeCursor = line.text.slice(0, context.pos - line.from).trimEnd()
+  if (textBeforeCursor.endsWith('.') || textBeforeCursor.endsWith('?.')) {
+    return true
+  }
+
+  return !!context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)
+}
+
+export function shouldSkipImplicitAutocomplete(context: CompletionContext) {
+  if (context.explicit) return false
+
+  if (isInCommentOrLiteral(context)) {
+    return true
+  }
+
+  if (!hasImplicitAutocompleteTrigger(context)) {
     return true
   }
 
