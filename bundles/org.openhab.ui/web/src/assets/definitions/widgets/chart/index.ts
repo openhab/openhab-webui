@@ -315,12 +315,18 @@ const chartComponentsList: WidgetDefinition[] = [
       ...actionParams()
     ]),
 
-  new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '').doc('https://echarts.apache.org/en/option.html#tooltip').params([
-    showParameter(),
-    orientParameter(),
-    pb('confine', 'Confine', 'Keep the tooltip within the chart bounds'),
-    pb('smartFormatter', 'Smart Formatter', 'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information').a()
-  ]),
+  new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '')
+    .doc('https://echarts.apache.org/en/option.html#tooltip')
+    .params([
+      showParameter(),
+      orientParameter(),
+      pb('confine', 'Confine', 'Keep the tooltip within the chart bounds'),
+      pb(
+        'smartFormatter',
+        'Smart Formatter',
+        'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
+      ).a()
+    ]),
 
   new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
     .doc('https://echarts.apache.org/en/option.html#visualMap')
