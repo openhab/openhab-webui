@@ -239,12 +239,12 @@ export function useChart(
       let seriesStartTime = startTime.value
       let seriesEndTime = endTime.value
       if (config.offsetAmount && config.offsetUnit) {
-        seriesStartTime = seriesStartTime.subtract(config.offsetAmount as number, config.offsetUnit as dayjs.ManipulateType)
-        seriesEndTime = seriesEndTime.subtract(config.offsetAmount as number, config.offsetUnit as dayjs.ManipulateType)
+        seriesStartTime = seriesStartTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
+        seriesEndTime = seriesEndTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
       }
       const query = {
         itemName: neededItem,
-        serviceId: config.service as string | undefined,
+        serviceId: config.service,
         starttime: seriesStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
         boundary,
