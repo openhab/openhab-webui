@@ -261,17 +261,27 @@ export function useChart(
     return Promise.all(combinedPromises).then(getter)
   }
 
-  const updateSeries = async (): Promise<void> => {
-    if (!slots.value || !slots.value.series) {
-      series.value = []
-      return
-    }
-    series.value = await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
-  }
-
   watch(
     [slots, startTime, endTime, chartContext],
-    () => {
+    (_newVal, _oldVal, onCleanup) => {
+      let isStale = false
+
+      // invoked when the watch is re-triggered or stopped
+      onCleanup(() => {
+        isStale = true
+      })
+
+      const updateSeries = async (): Promise<void> => {
+        if (!slots.value || !slots.value.series) {
+          series.value = []
+          return
+        }
+        if (!isStale) {
+          // only update series if the watch is not stale, i.e., the latest trigger instance
+          series.value = await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
+        }
+      }
+
       void updateSeries()
     },
     { immediate: true }
