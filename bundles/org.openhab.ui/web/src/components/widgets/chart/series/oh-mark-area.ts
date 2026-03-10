@@ -9,6 +9,8 @@ export interface Config {
   item: string
 }
 
+type Entry = { name?: string; xAxis: Date; value?: string }
+
 export default {
   get(context: ChartContext, component: api.UiComponent, points: api.ItemHistory[], _startTime: Dayjs, endTime: Dayjs) {
     const markArea = context.evaluateExpression<Config & MarkAreaComponentOption>(
@@ -24,7 +26,7 @@ export default {
 
     markArea.data = []
     let rollingState: string | null = null
-    let currentArea: unknown[] | null = null
+    let currentArea: Entry[] | null = null
 
     itemPoints.forEach((p) => {
       const isInState = states.includes(p.state)
@@ -39,12 +41,10 @@ export default {
         ]
       } else if (!isInState && wasInState && currentArea) {
         // End of area
-        currentArea.push({
-          xAxis: new Date(p.time),
-          value: rollingState
-        })
-        // @ts-expect-error we have no type available to properly type currentArea
-        markArea.data.push(currentArea)
+        currentArea.push({ xAxis: new Date(p.time) })
+        if (rollingState) currentArea[0]!.value = rollingState
+        // @ts-expect-error currentArea's type isn't type-compatible, but it still works
+        markArea.data!.push(currentArea)
         currentArea = null
       }
       rollingState = p.state
