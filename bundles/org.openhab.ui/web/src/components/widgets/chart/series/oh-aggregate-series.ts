@@ -1,6 +1,6 @@
 import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
-import ComponentId from '@/components/widgets/component-id'
+import ComponentId from '../../component-id'
 import aggregate from '../util/aggregators'
 import applyMarkers from '../util/markers'
 import type { SeriesComponent, SeriesOption } from '../types.ts'

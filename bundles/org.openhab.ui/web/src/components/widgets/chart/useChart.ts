@@ -8,7 +8,7 @@ dayjs.extend(DayDuration)
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import ComponentId from '@/components/widgets/component-id.ts'
+import ComponentId from '../component-id'
 import * as api from '@/api'
 import { startOf, addOrSubtractPeriod as addOrSubtractPeriodUtil } from './util/time.ts'
 

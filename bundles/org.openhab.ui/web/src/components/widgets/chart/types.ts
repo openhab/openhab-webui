@@ -3,6 +3,7 @@ import * as api from '@/api'
 import type { BarSeriesOption, HeatmapSeriesOption, LineSeriesOption, ScatterSeriesOption, CustomSeriesOption } from 'echarts'
 import type { OhChart, OhAggregateSeries, OhCalendarSeries, OhStateSeries, OhTimeSeries } from '@/types/components/widgets'
 import type { AxisBaseOptionCommon, CalendarOption, ComponentOption } from 'echarts/types/dist/shared'
+import type { EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
 
 export enum Marker {
   avg = 'avg',
@@ -22,11 +23,9 @@ export type SeriesOption = { markers?: Marker[] } & (
 
 export type SeriesConfig = OhAggregateSeries.Config | OhCalendarSeries.Config | OhStateSeries.Config | OhTimeSeries.Config
 
-export type EvaluateExpressionFunction = <T = any>(key: string, value: T) => T
-
 export interface ChartContext {
   chart: Omit<api.RootUiComponent | api.UiComponent, 'config'> & { config: OhChart.Config }
-  evaluateExpression: EvaluateExpressionFunction
+  evaluateExpression: EvaluateExpressionFn
   numberFormatter?: Intl.NumberFormat
   series?: SeriesOption[]
 }
