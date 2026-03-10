@@ -1,6 +1,6 @@
 <template>
   <div class="oh-chart-container" :style="{ height: activeHeight }">
-    <chart
+    <VChart
       v-if="ready"
       ref="chart"
       :initOptions="initOptions"
@@ -48,7 +48,7 @@ import { useChart } from '../chart/useChart'
 
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
-import { registerLocale, use } from 'echarts/core'
+import { type ECElementEvent, registerLocale, use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
@@ -74,6 +74,8 @@ import {
 
 import 'echarts/theme/dark.js'
 
+import VChart from 'vue-echarts'
+
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { type Calendar } from 'framework7'
 import type { WidgetContext } from '@/components/widgets/types'
@@ -94,7 +96,7 @@ const runtimeStore = useRuntimeStore()
 let echartsLocale = runtimeStore.locale.split('-')[0]!.toUpperCase()
 let initOptions = echartsLocale ? {
   locale: echartsLocale
-} : null
+} : {}
 
 // composables
 const { config, slots, evaluateExpression } = useWidgetContext(props.context)
@@ -190,11 +192,11 @@ const pickFixedStartDate = () => {
   calendarPicker.value.open()
 }
 
-const handleClick = (evt: { seriesIndex: number, event: Event }) => {
+const handleClick = (evt: ECElementEvent) => {
   if (evt.seriesIndex !== undefined) {
     if ('series' in slots.value && Array.isArray(slots.value.series) && slots.value.series.length) {
       let series = slots.value.series[evt.seriesIndex]
-      performAction(evt.event, '', undefined, series.config)
+      performAction(new Event(evt.event?.type ?? ''), '', undefined, series.config)
     }
   }
 }
