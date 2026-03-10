@@ -180,6 +180,11 @@ function generateCommonTS(mapCommonOptions) {
       content += optionStr
     }
   })
+
+  if(configCommon['*'] && typeof configCommon['*'].modifier === 'function') {
+    content = configCommon['*'].modifier(content)
+  }
+
   fs.writeFileSync(`${outDir}/common.gen.ts`, content)
 }
 
@@ -342,12 +347,12 @@ function generateComponentTS(mapCommonOptions) {
       let postamble = ''
       if (commonComponents.length > 0) {
         preamble += 'import {\n'
-        preamble += commonComponents.map(name => `  ${name}`).join(',\n')
+        preamble += commonComponents.map(name => name === 'Period' ? `  type ${name}` : `  ${name}`).join(',\n')
         const depth = widgetDir.split('/').length
         preamble += `\n} from '${'../'.repeat(depth)}common.gen.ts'\n\n`
 
         postamble += '\nexport {\n'
-        postamble += commonComponents.map(name => `  ${name}`).join(',\n')
+        postamble += commonComponents.map(name => name === 'Period' ? `  type ${name}` : `  ${name}`).join(',\n')
         postamble += '\n}\n'
       }
 

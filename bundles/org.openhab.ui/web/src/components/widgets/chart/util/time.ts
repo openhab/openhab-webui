@@ -1,7 +1,7 @@
 import dayjs, { Dayjs, type OpUnitType } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import DayDuration from 'dayjs/plugin/duration'
-import { ChartType, Period } from '@/types/components/widgets'
+import { ChartType, type Period } from '@/types/components/widgets'
 
 dayjs.extend(IsoWeek)
 dayjs.extend(DayDuration)

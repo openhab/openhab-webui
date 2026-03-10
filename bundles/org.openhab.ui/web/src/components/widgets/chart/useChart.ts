@@ -35,12 +35,12 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 
 // Types
 import type { EChartsOption } from 'echarts'
-import { ChartType, Period, type OhChart } from '@/types/components/widgets'
+import { ChartType, type Period, type OhChart, PeriodType } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
 import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, EvaluateExpressionFunction, SeriesConfig } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
 
-const DEFAULT_PERIOD = Period.D
+const DEFAULT_PERIOD = `1${PeriodType.D}`
 
 const axisComponents: Record<string, AxisComponent> = {
   'oh-time-axis': OhTimeAxis,
@@ -59,13 +59,10 @@ const seriesComponents: Record<string, SeriesComponent> = {
 
 export function useChart(
   context: WidgetContext,
-  widgetContext: {
-    config: ComputedRef<OhChart.Config>
-    evaluateExpression: EvaluateExpressionFunction
-    slots: ComputedRef<Record<string, api.UiComponent[]>>
-  }
+  config: ComputedRef<OhChart.Config>,
+  slots: ComputedRef<Record<string, api.UiComponent[]>>,
+  evaluateExpression: EvaluateExpressionFunction
 ) {
-  const { config, evaluateExpression, slots } = widgetContext
   const uiOptionsStore = useUIOptionsStore()
   const runtimeStore = useRuntimeStore()
 
@@ -327,7 +324,7 @@ export function useChart(
   }
 
   return {
-    endTime: readonly(endTime.value),
+    endTime: readonly(endTime),
     startTime,
     period,
     options,

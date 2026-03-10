@@ -97,11 +97,10 @@ let initOptions = echartsLocale ? {
 } : null
 
 // composables
-const widgetContext = useWidgetContext(props.context)
-const { config, slots, evaluateExpression } = widgetContext
+const { config, slots, evaluateExpression } = useWidgetContext(props.context)
 const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
 
-const chartComposable = useChart(props.context, widgetContext)
+const chartComposable = useChart(props.context, config, slots, evaluateExpression)
 const { startTime, options, period, earlierPeriod, laterPeriod, setDate, setPeriod } = chartComposable
 
 // data (state)
@@ -193,9 +192,9 @@ const pickFixedStartDate = () => {
 
 const handleClick = (evt: { seriesIndex: number, event: Event }) => {
   if (evt.seriesIndex !== undefined) {
-    if ('series' in slots && Array.isArray(slots.series) && slots.series.length) {
-      let series = slots.series[evt.seriesIndex]
-      performAction(evt.event, '', series.config)
+    if ('series' in slots.value && Array.isArray(slots.value.series) && slots.value.series.length) {
+      let series = slots.value.series[evt.seriesIndex]
+      performAction(evt.event, '', undefined, series.config)
     }
   }
 }
