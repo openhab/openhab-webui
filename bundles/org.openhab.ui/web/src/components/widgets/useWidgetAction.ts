@@ -136,7 +136,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
    * @param cfg the config object containing the parameters to use (defaults to the composable's config)
    * @returns true if the action was dispatched successfully (but possibly rejected by the user), otherwise false
    */
-  function performAction(evt: Event, prefix: string, ctx?: WidgetContext, cfg?: WidgetActionConfig): boolean {
+  function performAction(evt?: Event, prefix: string = '', ctx?: WidgetContext, cfg?: WidgetActionConfig): boolean {
     if (!ctx) ctx = context
     if (!cfg) cfg = config.value
     if (!cfg || !ctx) return false

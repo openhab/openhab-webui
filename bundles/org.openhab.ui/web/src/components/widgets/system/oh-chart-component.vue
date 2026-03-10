@@ -178,17 +178,19 @@ const pickFixedStartDate = () => {
   if (!calendarInput.value) return
 
   const value = startTime.value.toDate()
-  calendarPicker.value = f7.calendar.create({
-    inputEl: calendarInput.value,
-    value: [value],
-    on: {
-      change (_calendar, value) {
-        if ((value as unknown[]).length < 1) return
-        if (dayjs((value as Date[])[0]).isSame(startTime.value)) return
-        setDate((value as Date[])[0]!)
+  if (!calendarPicker.value) {
+    calendarPicker.value = f7.calendar.create({
+      inputEl: calendarInput.value,
+      value: [value],
+      on: {
+        change (_calendar, value) {
+          if ((value as unknown[]).length < 1) return
+          if (dayjs((value as Date[])[0]).isSame(startTime.value)) return
+          setDate((value as Date[])[0]!)
+        }
       }
-    }
-  })
+    })
+  }
   calendarPicker.value.open()
 }
 
@@ -196,7 +198,7 @@ const handleClick = (evt: ECElementEvent) => {
   if (evt.seriesIndex !== undefined) {
     if ('series' in slots.value && Array.isArray(slots.value.series) && slots.value.series.length) {
       let series = slots.value.series[evt.seriesIndex]
-      performAction(new Event(evt.event?.type ?? ''), '', undefined, series.config)
+      performAction(undefined, '', undefined, series.config)
     }
   }
 }

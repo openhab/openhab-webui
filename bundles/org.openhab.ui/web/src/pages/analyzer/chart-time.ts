@@ -51,7 +51,7 @@ const timeCoordSystem: CoordSystem = {
   initCoordSystem(coordSettings?: Partial<TimeCoordSettings>): TimeCoordSettings {
     const typeOptions: ChartType[] = [ChartType.day, ChartType.isoWeek, ChartType.week, ChartType.month, ChartType.year]
     return {
-      period: coordSettings?.period || `1${PeriodType.D}`,
+      period: coordSettings?.period || PeriodType.D,
       categoryAxisValues: [],
       valueAxesOptions: [],
       typeOptions,

@@ -129,7 +129,7 @@ export enum ChartType {
   year = 'year'
 }
 
-export type Period = `${number}${PeriodType}`
+export type Period = `${number}${PeriodType}` | PeriodType
 
 export enum PeriodType {
   h = 'h',

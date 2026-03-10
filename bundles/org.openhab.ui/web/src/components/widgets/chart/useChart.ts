@@ -40,7 +40,7 @@ import type { WidgetContext } from '../types'
 import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, EvaluateExpressionFunction, SeriesConfig } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
 
-const DEFAULT_PERIOD = `1${PeriodType.D}`
+const DEFAULT_PERIOD = PeriodType.D
 
 const axisComponents: Record<string, AxisComponent> = {
   'oh-time-axis': OhTimeAxis,
