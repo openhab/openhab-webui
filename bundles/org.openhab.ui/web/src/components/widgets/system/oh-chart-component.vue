@@ -18,7 +18,7 @@
       <f7-menu-item v-else dropdown :text="period">
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item
-            v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y', '3Y', '5Y', '10Y']"
+            v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y', '3Y', '5Y', '10Y'] as Period[]"
             :key="p"
             @click="setPeriod(p)"
             href="#"
@@ -52,7 +52,7 @@ import { type ECElementEvent, registerLocale, use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { ChartType } from '@/types/components/widgets'
+import { ChartType, type Period } from '@/types/components/widgets'
 
 import { BarChart, CustomChart, GaugeChart, HeatmapChart, LineChart, PieChart, ScatterChart } from 'echarts/charts'
 import { LabelLayout } from 'echarts/features'
