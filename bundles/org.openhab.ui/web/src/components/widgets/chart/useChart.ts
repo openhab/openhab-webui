@@ -37,7 +37,7 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 import type { EChartsOption } from 'echarts'
 import { ChartType, type Period, type OhChart, PeriodType } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
-import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, EvaluateExpressionFunction, SeriesConfig } from './types'
+import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, ChartEvaluateExpressionFn, SeriesConfig } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
 
 const DEFAULT_PERIOD = PeriodType.D
@@ -61,12 +61,12 @@ export function useChart(
   context: WidgetContext,
   config: ComputedRef<OhChart.Config>,
   slots: ComputedRef<Record<string, api.UiComponent[]>>,
-  evaluateExpression: EvaluateExpressionFunction
+  evaluateExpression: ChartEvaluateExpressionFn
 ) {
   const uiOptionsStore = useUIOptionsStore()
   const runtimeStore = useRuntimeStore()
 
-  const speriod = ref<string>((config.value.period as string) || DEFAULT_PERIOD)
+  const speriod = ref<Period>(config.value.period || DEFAULT_PERIOD)
   // future as boolean allows for backwards compatibility
   const future = ref<number>((config.value.future as unknown as boolean) === true ? 1 : ((config.value.future as number) ?? 0))
   const orient = ref<string | null>(null)
@@ -74,7 +74,7 @@ export function useChart(
   const addOrSubtractPeriod = (day: Dayjs, direction: number): Dayjs => {
     if (!config.value) return day
     const chartType = config.value.chartType || ChartType.dynamic
-    const p = (evaluateExpression('.period', speriod.value) as Period) || (config.value.period as Period) || DEFAULT_PERIOD
+    const p = evaluateExpression('.period', speriod.value) || (config.value.period as Period) || DEFAULT_PERIOD
     return addOrSubtractPeriodUtil(chartType, p, day, direction)
   }
 
@@ -277,8 +277,12 @@ export function useChart(
           return
         }
         if (!isStale) {
-          // only update series if the watch is not stale, i.e., the latest trigger instance
-          series.value = await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
+          // only request series if the watch is not stale, i.e., the most-recently triggered instance
+          const result = await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
+          if (!isStale) {
+            // only update series if the watch is not stale, i.e., the most-recently triggered instance
+            series.value = result
+          }
         }
       }
 
@@ -314,7 +318,7 @@ export function useChart(
   })
 
   // methods
-  const setPeriod = (periodValue: string) => {
+  const setPeriod = (periodValue: Period) => {
     speriod.value = periodValue
     endTime.value = addOrSubtractPeriod(dayjs(), future.value)
   }

@@ -3,7 +3,7 @@ import * as api from '@/api'
 import type { BarSeriesOption, HeatmapSeriesOption, LineSeriesOption, ScatterSeriesOption, CustomSeriesOption } from 'echarts'
 import type { OhChart, OhAggregateSeries, OhCalendarSeries, OhStateSeries, OhTimeSeries } from '@/types/components/widgets'
 import type { AxisBaseOptionCommon, CalendarOption, ComponentOption } from 'echarts/types/dist/shared'
-import type { EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
+import type { WidgetContext } from '@/components/widgets/types'
 
 export enum Marker {
   avg = 'avg',
@@ -23,9 +23,14 @@ export type SeriesOption = { markers?: Marker[] } & (
 
 export type SeriesConfig = OhAggregateSeries.Config | OhCalendarSeries.Config | OhStateSeries.Config | OhTimeSeries.Config
 
+/**
+ * The same as {@link useWidgetExpression}'s `EvaluateExpressionFn` but without {@link Error} as return type.
+ */
+export type ChartEvaluateExpressionFn = <T = unknown>(key: string, value: T, context?: WidgetContext, props?: Record<string, unknown>) => T
+
 export interface ChartContext {
   chart: Omit<api.RootUiComponent | api.UiComponent, 'config'> & { config: OhChart.Config }
-  evaluateExpression: EvaluateExpressionFn
+  evaluateExpression: ChartEvaluateExpressionFn
   numberFormatter?: Intl.NumberFormat
   series?: SeriesOption[]
 }
