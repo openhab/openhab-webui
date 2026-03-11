@@ -188,7 +188,7 @@
     "rollup-plugin-visualizer": "^6.0.5",
     "rollup-plugin-webpack-stats": "^2.1.11",
     "stylus": "^0.64.0",
-    "tar": "^7.5.10",
+    "tar": "^7.5.11",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0",
     "vite": "npm:rolldown-vite@^7.3.0",
