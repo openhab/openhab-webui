@@ -89,6 +89,53 @@ function completionPathWithCallExpression(context: CompletionContext, from: numb
   return null
 }
 
+function getSyntaxNodeNames(context: CompletionContext) {
+  const names: string[] = []
+  let node: any = syntaxTree(context.state).resolveInner(context.pos, -1)
+  while (node) {
+    names.push(node.name)
+    node = node.parent
+  }
+  return names
+}
+
+function isInCommentOrLiteral(context: CompletionContext) {
+  const nodeNames = getSyntaxNodeNames(context)
+  if (nodeNames.includes('LineComment') || nodeNames.includes('BlockComment') || nodeNames.includes('String')) {
+    return true
+  }
+
+  return nodeNames.includes('TemplateString') && !nodeNames.includes('Interpolation')
+}
+
+function hasImplicitAutocompleteTrigger(context: CompletionContext) {
+  if (context.matchBefore(/\w+/)) {
+    return true
+  }
+
+  const line = context.state.doc.lineAt(context.pos)
+  const textBeforeCursor = line.text.slice(0, context.pos - line.from).trimEnd()
+  if (textBeforeCursor.endsWith('.') || textBeforeCursor.endsWith('?.')) {
+    return true
+  }
+
+  return !!context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)
+}
+
+export function shouldSkipImplicitAutocomplete(context: CompletionContext) {
+  if (context.explicit) return false
+
+  if (isInCommentOrLiteral(context)) {
+    return true
+  }
+
+  if (!hasImplicitAutocompleteTrigger(context)) {
+    return true
+  }
+
+  return false
+}
+
 // Deal with definition that returns a reference (string instead of an object) to another definition.
 // e.g. "Int8Array": "TypedArray"
 // Recursively look up the reference until we find the actual definition
@@ -205,6 +252,8 @@ function setObjectDefs(...defs: Definitions[]) {
 }
 
 function hintOpenhabJs(context: CompletionContext) {
+  if (shouldSkipImplicitAutocomplete(context)) return null
+
   const from = hintUtils.completionStart(context)
   const path = completionPathWithCallExpression(context, from)
   const defs = resolveDefinitionFromPath(path?.path || [])
@@ -219,6 +268,8 @@ function hintOpenhabJs(context: CompletionContext) {
 }
 
 async function hintJsItems(context: any): Promise<CompletionResult | null> {
+  if (shouldSkipImplicitAutocomplete(context)) return null
+
   if (context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)) {
     return hintUtils.hintItems(context)
   }
