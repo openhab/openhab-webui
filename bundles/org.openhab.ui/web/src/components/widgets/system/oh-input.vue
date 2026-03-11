@@ -54,7 +54,7 @@ import dayjs from 'dayjs'
 import mixin from '../widget-mixin'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
 import { getDefaultInputType } from '@/assets/definitions/widgets/system/input.js'
-import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
+import { getLastVariableKeyValue, getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
@@ -75,7 +75,7 @@ export default {
         if (variableScope) variableLocation = this.context.ctxVars[variableScope]
       }
       if (this.config.variable && this.config.variableKey) {
-        const keyValue = this.getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
+        const keyValue = getLastVariableKeyValue(variableLocation[this.config.variable], this.config.variableKey)
         if (keyValue) {
           return keyValue
         }
