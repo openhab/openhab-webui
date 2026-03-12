@@ -22,6 +22,7 @@ export default {
       { type: 'Chart', icon: 'chart_bar_square' },
       { type: 'Webview', label: 'Web View', icon: 'globe' },
       { type: 'Colorpicker', label: 'Color Picker', icon: 'drop' },
+      { type: 'Json', label: 'Json', icon: 'drop' },
       { type: 'Colortemperaturepicker', label: 'Color Temperature Picker', icon: 'thermometer' },
       { type: 'Mapview', label: 'Map View', icon: 'map' },
       { type: 'Image', icon: 'photo' },
