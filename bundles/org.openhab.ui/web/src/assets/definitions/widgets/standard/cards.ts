@@ -84,6 +84,14 @@ export const OhColorpickerCardDefinition = () =>
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('colorpicker', 'Color picker'), ColorPickerParameters())
 
+// OhJsonCard
+import JsonParameters from '../system/json.ts'
+export const OhJsonCardDefinition = () =>
+  new WidgetDefinition('oh-json-card', 'Json Card', 'Display a json viewer / editor')
+    .paramGroup(CardParameterGroup(), CardParameters())
+    .paramGroup(pg('json', 'Json'), JsonParameters())
+
+
 // OhPlayerCard
 import PlayerParameters from '../system/player.ts'
 export const OhPlayerCardDefinition = () =>

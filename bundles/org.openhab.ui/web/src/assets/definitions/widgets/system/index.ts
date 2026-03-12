@@ -36,6 +36,10 @@ import ColorpickerParameters from './colorpicker.ts'
 export const OhColorpickerDefinition = () =>
   new WidgetDefinition('oh-colorpicker', 'Colorpicker', 'Control to pick a color').params(ColorpickerParameters())
 
+import JsonParameters from './json.ts'
+export const OhJsonDefinition = () =>
+  new WidgetDefinition('oh-json', 'Json', 'Control to view / edit json').params(JsonParameters())
+
 import ContextParameters from './context.ts'
 export const OhContextDefinition = () =>
   new WidgetDefinition(

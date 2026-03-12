@@ -7,16 +7,22 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhJson from '../system/oh-json.vue'
 import { OhJsonCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
+  mixins: [],
   components: {
     OhCard,
     OhJson
+  },
+  setup(props) {
+    useWidgetContext(props.context)
   },
   widget: OhJsonCardDefinition,
   data () {

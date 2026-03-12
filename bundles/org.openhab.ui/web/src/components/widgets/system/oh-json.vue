@@ -12,21 +12,26 @@
 
 <script>
 import { f7 } from 'framework7-vue'
+
 import { defineAsyncComponent, nextTick } from 'vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhJsonDefinition } from '@/assets/definitions/widgets/system'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
-
-import { useStatesStore } from '@/js/stores/useStatesStore'
-
 export default {
-  mixins: [mixin, DirtyMixin],
-  components: {
-    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
+  props: {
+    context: Object
   },
   widget: OhJsonDefinition,
+  setup (props) {
+    const { config } = useWidgetContext(props.context)
+    return { config }
+  },
+  mixins: [DirtyMixin],
+    components: {
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
+  },
   data () {
     return {
       ignoreInput: false,
