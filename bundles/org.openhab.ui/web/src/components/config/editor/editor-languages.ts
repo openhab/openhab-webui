@@ -17,6 +17,7 @@ import thingsHint from '../editor/hint-things'
 import itemsHint from '../editor/hint-items'
 
 // languages
+import { json } from '@codemirror/lang-json'
 import { javascript, esLint } from '@codemirror/lang-javascript'
 import { python } from '@codemirror/lang-python'
 import { groovy } from '@codemirror/legacy-modes/mode/groovy'
@@ -53,6 +54,8 @@ function languageExtension(mode: string): StreamLanguage<unknown> | LanguageSupp
     case mode === (MediaType.ITEM_DSL as string):
       return javascript()
 
+    case mode === 'json':
+      return json()
     case mode === 'js':
     case mode.startsWith(MediaType.JAVASCRIPT as string):
       return javascript()

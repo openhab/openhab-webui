@@ -1,7 +1,7 @@
 <template>
-  <oh-card :context="context" :content-class="['display-flex', 'justify-content-center']">
+  <oh-card :context="context" :content-class="[]" :content-style="{ padding: '0' }">
     <template #content>
-        <oh-json :context="context" />
+      <oh-json :context="context" />
     </template>
   </oh-card>
 </template>
@@ -21,7 +21,7 @@ export default {
     OhCard,
     OhJson
   },
-  setup(props) {
+  setup (props) {
     useWidgetContext(props.context)
   },
   widget: OhJsonCardDefinition,

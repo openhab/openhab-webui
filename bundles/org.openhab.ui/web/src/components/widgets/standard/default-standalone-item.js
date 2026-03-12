@@ -57,10 +57,11 @@ export default function itemDefaultStandaloneComponent(item) {
       }
     }
 
-    if (item.type === 'JSon' && !stateDescription.readOnly) {
+    if (item.type === 'JSon') {
       component = {
         component: 'oh-json-card',
         config: {
+          readOnly: !!stateDescription.readOnly
         }
       }
     }
@@ -184,3 +185,5 @@ export default function itemDefaultStandaloneComponent(item) {
 
   return component
 }
+
+
