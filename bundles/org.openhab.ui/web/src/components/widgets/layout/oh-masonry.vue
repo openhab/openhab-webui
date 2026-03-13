@@ -119,6 +119,7 @@ import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhMasonryDefinition } from '@/assets/definitions/widgets/layout'
 import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
 import type { WidgetContext } from '@/components/widgets/types'
+import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 
 const props = defineProps<{
   context: WidgetContext
