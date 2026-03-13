@@ -1,4 +1,4 @@
-import { onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { f7 } from 'framework7-vue'
 import Dom7 from 'dom7'
 
@@ -30,6 +30,7 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
   let highlightEl: HTMLElement | null = null
   let tabbarEl: HTMLElement | null = null
   let tabElements: HTMLElement[] = []
+  let tabbarClickHandler: ((event: Event) => void) | null = null
 
   function normalizeTabSelector(tab: string): string {
     return tab.startsWith('#') ? tab : `#${tab}`
@@ -48,21 +49,15 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
     return null
   }
 
-  async function switchTab(event: MouseEvent, tab: string) {
-    const tabSelector = normalizeTabSelector(tab)
-    if (isActiveTab(tabSelector)) {
-      return
-    }
-
-    // Access the clicked element
-    const targetTabLinkEl = event.currentTarget
-    if (!(targetTabLinkEl instanceof HTMLElement)) return
-
-    if (canSwitchTo && (await canSwitchTo(tabSelector.slice(1), currentTab.value || ''))) {
-      currentTab.value = tabSelector.slice(1)
-      f7.tab.show(tabSelector, targetTabLinkEl)
-      updateHighlight(tabSelector, targetTabLinkEl)
-    }
+  function getTabSelectorFromLinkEl(tabLinkEl: HTMLElement): string | null {
+    const targets = [
+      tabLinkEl.getAttribute('oh-tab-link'),
+      tabLinkEl.getAttribute('tab-link'),
+      tabLinkEl.getAttribute('href'),
+      tabLinkEl.getAttribute('data-tab')
+    ]
+    const tabTarget = targets.find((target) => !!target && target.startsWith('#'))
+    return tabTarget ? normalizeTabSelector(tabTarget) : null
   }
 
   function getTabLinkElement(tabSelector: string): HTMLElement | null {
@@ -71,7 +66,7 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
 
     return (
       tabElements.find((el) => {
-        const targets = [el.getAttribute('tab-link'), el.getAttribute('href'), el.getAttribute('data-tab')]
+        const targets = [el.getAttribute('oh-tab-link'), el.getAttribute('tab-link'), el.getAttribute('href'), el.getAttribute('data-tab')]
         if (targets.some((target) => target && normalizeTabSelector(target) === normalizedSelector)) {
           return true
         }
@@ -79,6 +74,20 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
         return (el.textContent || '').trim().toLowerCase() === normalizedName
       }) || null
     )
+  }
+
+  const setupHighlightBar = () => {
+    if (!tabbarEl) return
+
+    tabElements = Array.from(tabbarEl.querySelectorAll('[oh-tab-link]'))
+
+    highlightEl = document.createElement('div')
+    highlightEl.className = 'oh-tab-highlight'
+    const initialSelector = currentTab.value ? normalizeTabSelector(currentTab.value) : '#'
+    const initialTabLinkEl = getTabLinkElement(initialSelector) || tabElements[0]
+    Object.assign(highlightEl.style, getHighlightStyle(initialSelector, initialTabLinkEl))
+
+    tabbarEl.insertBefore(highlightEl, tabbarEl.firstChild)
   }
 
   const getHighlightStyle = (tabSelector: string, tabLinkEl?: HTMLElement) => {
@@ -105,6 +114,21 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
     highlightEl.style.bottom = style.bottom
   }
 
+  async function switchTab(tabLinkEl: HTMLElement) {
+    let tabSelector: string | null = getTabSelectorFromLinkEl(tabLinkEl)
+    if (!tabLinkEl || !tabSelector) return
+
+    if (isActiveTab(tabSelector)) {
+      return
+    }
+
+    if (canSwitchTo && (await canSwitchTo(tabSelector.slice(1), currentTab.value || ''))) {
+      currentTab.value = tabSelector.slice(1)
+      f7.tab.show(tabSelector, tabLinkEl)
+      updateHighlight(tabSelector, tabLinkEl)
+    }
+  }
+
   currentTab.value = getActiveTab()?.getAttribute('id') || null
 
   // We render our own tab highlight instead of using Framework7's built-in
@@ -113,23 +137,31 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
   // canSwitchTo and prevents us from validating/parsing before switching.
   onMounted(() => {
     if (f7.theme !== 'ios') {
-      tabbarEl = document.querySelector('.persistence-edit-page .oh-tabbar')
-      if (tabbarEl) {
-        tabElements = Array.from(tabbarEl.querySelectorAll('.oh-tab-link'))
+      setupHighlightBar()
+    }
 
-        highlightEl = document.createElement('div')
-        highlightEl.className = 'oh-tab-highlight'
-        const initialSelector = currentTab.value ? normalizeTabSelector(currentTab.value) : '#'
-        const initialTabLinkEl = getTabLinkElement(initialSelector) || tabElements[0]
-        Object.assign(highlightEl.style, getHighlightStyle(initialSelector, initialTabLinkEl))
+    tabbarEl = document.querySelector('.oh-tabbar')
+    if (!tabbarEl) return
 
-        tabbarEl.insertBefore(highlightEl, tabbarEl.firstChild)
-      }
+    tabbarClickHandler = (event: Event) => {
+      const clickedEl = (event.target as HTMLElement | null)?.closest('[oh-tab-link]')
+      if (!(clickedEl instanceof HTMLElement)) return
+      if (!tabbarEl?.contains(clickedEl)) return
+
+      event.preventDefault()
+      void switchTab(clickedEl)
+    }
+
+    tabbarEl.addEventListener('click', tabbarClickHandler)
+  })
+
+  onBeforeUnmount(() => {
+    if (tabbarEl && tabbarClickHandler) {
+      tabbarEl.removeEventListener('click', tabbarClickHandler)
     }
   })
 
   return {
-    currentTab,
-    switchTab
+    currentTab
   }
 }
