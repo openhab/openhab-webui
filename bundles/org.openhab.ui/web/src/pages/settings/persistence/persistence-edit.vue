@@ -14,8 +14,8 @@
         :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top" class="oh-tabbar">
-      <f7-link class="oh-tab-link" tab-link-active @click="(e: MouseEvent) => switchTab(e, 'design')"> Design </f7-link>
-      <f7-link class="oh-tab-link" @click="(e: MouseEvent) => switchTab(e, 'code')"> Code </f7-link>
+      <f7-link oh-tab-link="#design" tab-link-active> Design </f7-link>
+      <f7-link oh-tab-link="#code"> Code </f7-link>
     </f7-toolbar>
 
     <f7-tabs>
@@ -344,7 +344,7 @@ import { ApiError } from '@/js/hey-api'
 const pagePersistenceEdit = ref<HTMLElement | null>(null)
 
 const { dirty, dirtyIndicator, setupDirtyWatch } = useDirty(pagePersistenceEdit)
-const { currentTab, switchTab } = useTabs((tabTo, tabFrom) => confirmCodeSwitch(toYaml, fromYaml, tabTo, tabFrom))
+const { currentTab } = useTabs((tabTo, tabFrom) => confirmCodeSwitch(toYaml, fromYaml, tabTo, tabFrom))
 const { websiteUrl } = useRuntimeStore()
 
 let loading = false
