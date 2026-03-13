@@ -53,6 +53,28 @@
           :value="channel.description"
           @input="channel.description = $event.target.value"
           :clear-button="disabled !== true" />
+        <f7-list-item
+          v-if="channel.properties && Object.keys(channel.properties).length > 0"
+          accordion-item
+          title="Properties"
+          :badge="Object.keys(channel.properties).length">
+          <f7-accordion-content>
+            <f7-list>
+              <f7-list-item v-for="(value, key) in channel.properties" :key="key" class="thing-property">
+                <template #title>
+                  <div class="item-title-content">
+                    <span class="property-key">{{ key }}</span>
+                  </div>
+                </template>
+                <template #after>
+                  <div class="item-after-content">
+                    <span>{{ value }}</span>
+                  </div>
+                </template>
+              </f7-list-item>
+            </f7-list>
+          </f7-accordion-content>
+        </f7-list-item>
       </f7-list>
     </f7-col>
   </f7-block>
@@ -63,6 +85,10 @@
   .item-subtitle
     overflow-wrap break-word
     white-space inherit
+
+.property-key
+  display inline-block
+  padding-left 12px
 </style>
 
 <script>
