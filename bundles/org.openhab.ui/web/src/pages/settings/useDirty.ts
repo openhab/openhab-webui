@@ -1,4 +1,4 @@
-import { ref, computed, type Ref, watch, onMounted } from 'vue'
+import { ref, computed, type Ref, watch, onMounted, useTemplateRef } from 'vue'
 import type { Router } from 'framework7'
 import { showConfirmDialog } from '@/js/dialog-promises'
 import fastDeepEqual from 'fast-deep-equal'
@@ -39,19 +39,20 @@ export async function beforeLeave({
 /**
  * Tracks dirty state for a settings page.
  *
- * IMPORTANT: You must pass a ref to the page component/element (e.g. <f7-page ref="pageRef">).
+ * IMPORTANT: You must pass a string name of a ref or the ref itself for the page component/element (e.g. <f7-page ref="pageRef">).
  * useDirty attaches an internal dirty ref to that page DOM node so the Framework7 route
  * beforeLeave guard can detect unsaved changes.
  *
  * The dirty state can be manually set via the `dirty` ref, or automatically tracked by calling `setupDirtyWatch` with a reactive data object.
  *
  */
-export function useDirty(pageRef: Ref<HTMLElement | { $el?: HTMLElement } | null>) {
+export function useDirty(pageRefOrName: string | Ref<HTMLElement | { $el?: HTMLElement } | null>) {
   const dirty = ref<boolean>(false)
   const dirtyIndicator = computed(() => (dirty.value ? ' ●' : ''))
 
   onMounted(() => {
-    const refValue = pageRef.value
+    const refValue =
+      typeof pageRefOrName === 'string' ? useTemplateRef<HTMLElement | { $el?: HTMLElement }>(pageRefOrName).value : pageRefOrName.value
     const targetEl = (refValue instanceof Element ? refValue : refValue?.$el) as Element | undefined
     if (targetEl) {
       if (!targetEl.classList.contains('page')) {

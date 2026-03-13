@@ -1,8 +1,10 @@
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, shallowRef, useTemplateRef } from 'vue'
 import { f7 } from 'framework7-vue'
 import Dom7 from 'dom7'
 
 import { showConfirmDialog } from '@/js/dialog-promises'
+
+type TemplateRefTarget = HTMLElement | { $el?: unknown; el?: unknown } | null | undefined
 
 // Use this helper on pages that have both a design/object tab and a code tab.
 // It keeps both representations in sync by converting to code before entering
@@ -25,8 +27,21 @@ export async function confirmCodeSwitch(toCode: () => void, fromCode: () => void
   return true
 }
 
-export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise<boolean> | boolean = () => true) {
+// To use useTabs, ensure the tabbar has a ref and the tab links have oh-tab-link attributes instead of the default tab-link attributes. Example:
+// <f7-toolbar ref="myTabs" tabbar position="top">
+//   <f7-link oh-tab-link="#design" tab-link-active> Design </f7-link>
+//   <f7-link oh-tab-link="#code"> Code </f7-link>
+// </f7-toolbar>
+export function useTabs(
+  canSwitchTo: (tabTo: string, tabFrom: string) => Promise<boolean> | boolean = () => true,
+  tabbarRefOrName: string | TemplateRefTarget
+) {
   const currentTab = ref<string | null>(null)
+  const tabbarRef =
+    typeof tabbarRefOrName === 'string'
+      ? useTemplateRef<TemplateRefTarget>(tabbarRefOrName)
+      : shallowRef<TemplateRefTarget>(tabbarRefOrName)
+
   let highlightEl: HTMLElement | null = null
   let tabbarEl: HTMLElement | null = null
   let tabElements: HTMLElement[] = []
@@ -36,13 +51,29 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
     return tab.startsWith('#') ? tab : `#${tab}`
   }
 
+  function getTabsScopeElement(): ParentNode {
+    if (!tabbarEl) return document
+    return tabbarEl.closest('.page') || document
+  }
+
   function isActiveTab(tabSelector: string): boolean {
-    const activeTabEl = Dom7('.tab .tab-active')
-    return activeTabEl.length > 0 && activeTabEl.attr('id') === tabSelector.slice(1)
+    const activeTabEl = getActiveTab()
+    return !!activeTabEl && activeTabEl.getAttribute('id') === tabSelector.slice(1)
   }
 
   function getActiveTab(): Element | null {
-    const activeTabEl = Dom7('.tab .tab-active')
+    const tabsScopeEl = getTabsScopeElement()
+
+    for (const tabLinkEl of tabElements) {
+      const tabSelector = getTabSelectorFromLinkEl(tabLinkEl)
+      if (!tabSelector) continue
+      const targetTabEl = Dom7(tabsScopeEl).find(tabSelector)
+      if (targetTabEl.length > 0 && targetTabEl.hasClass('tab-active')) {
+        return targetTabEl[0] || null
+      }
+    }
+
+    const activeTabEl = Dom7(tabsScopeEl).find('.tab.tab-active')
     if (activeTabEl.length > 0) {
       return activeTabEl[0] || null
     }
@@ -50,36 +81,27 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
   }
 
   function getTabSelectorFromLinkEl(tabLinkEl: HTMLElement): string | null {
-    const targets = [
-      tabLinkEl.getAttribute('oh-tab-link'),
-      tabLinkEl.getAttribute('tab-link'),
-      tabLinkEl.getAttribute('href'),
-      tabLinkEl.getAttribute('data-tab')
-    ]
-    const tabTarget = targets.find((target) => !!target && target.startsWith('#'))
+    const tabTarget = tabLinkEl.getAttribute('oh-tab-link')
+    if (!tabTarget || !tabTarget.startsWith('#')) return null
     return tabTarget ? normalizeTabSelector(tabTarget) : null
   }
 
   function getTabLinkElement(tabSelector: string): HTMLElement | null {
     const normalizedSelector = normalizeTabSelector(tabSelector)
-    const normalizedName = normalizedSelector.slice(1).toLowerCase()
 
-    return (
-      tabElements.find((el) => {
-        const targets = [el.getAttribute('oh-tab-link'), el.getAttribute('tab-link'), el.getAttribute('href'), el.getAttribute('data-tab')]
-        if (targets.some((target) => target && normalizeTabSelector(target) === normalizedSelector)) {
-          return true
-        }
+    return tabElements.find((el) => normalizeTabSelector(el.getAttribute('oh-tab-link') || '') === normalizedSelector) || null
+  }
 
-        return (el.textContent || '').trim().toLowerCase() === normalizedName
-      }) || null
-    )
+  function resolveElement(target: TemplateRefTarget): HTMLElement | null {
+    if (target instanceof HTMLElement) return target
+    if (!target || typeof target !== 'object') return null
+    if (target.$el instanceof HTMLElement) return target.$el
+    if (target.el instanceof HTMLElement) return target.el
+    return null
   }
 
   const setupHighlightBar = () => {
     if (!tabbarEl) return
-
-    tabElements = Array.from(tabbarEl.querySelectorAll('[oh-tab-link]'))
 
     highlightEl = document.createElement('div')
     highlightEl.className = 'oh-tab-highlight'
@@ -114,9 +136,10 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
     highlightEl.style.bottom = style.bottom
   }
 
-  async function switchTab(tabLinkEl: HTMLElement) {
-    let tabSelector: string | null = getTabSelectorFromLinkEl(tabLinkEl)
-    if (!tabLinkEl || !tabSelector) return
+  async function switchTab(tab: HTMLElement | string) {
+    let tabSelector: string | null = typeof tab === 'string' ? normalizeTabSelector(tab) : getTabSelectorFromLinkEl(tab)
+    const targetTabLinkEl = typeof tab === 'string' ? getTabLinkElement(tabSelector || '') : tab
+    if (!targetTabLinkEl || !tabSelector) return
 
     if (isActiveTab(tabSelector)) {
       return
@@ -124,24 +147,30 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
 
     if (canSwitchTo && (await canSwitchTo(tabSelector.slice(1), currentTab.value || ''))) {
       currentTab.value = tabSelector.slice(1)
-      f7.tab.show(tabSelector, tabLinkEl)
-      updateHighlight(tabSelector, tabLinkEl)
+      f7.tab.show(tabSelector, targetTabLinkEl)
+      updateHighlight(tabSelector, targetTabLinkEl)
     }
   }
 
-  currentTab.value = getActiveTab()?.getAttribute('id') || null
-
-  // We render our own tab highlight instead of using Framework7's built-in
-  // tab-link handling. F7 needs link-tab metadata to style/animate the active
-  // tab, but that also triggers automatic tab switching on click, which bypasses
-  // canSwitchTo and prevents us from validating/parsing before switching.
   onMounted(() => {
+    tabbarEl = resolveElement(tabbarRef.value)
+    if (!tabbarEl) {
+      console.warn(
+        `[useTabs] Tabbar ref "${typeof tabbarRefOrName === 'string' ? tabbarRefOrName : '(element)'}" did not resolve to an element.`
+      )
+      return
+    }
+
+    tabElements = Array.from(tabbarEl.querySelectorAll('[oh-tab-link]'))
+    currentTab.value = getActiveTab()?.getAttribute('id') || null
+
+    // We render our own tab highlight instead of using Framework7's built-in
+    // tab-link handling. F7 needs link-tab metadata to style/animate the active
+    // tab, but that also triggers automatic tab switching on click, which bypasses
+    // canSwitchTo and prevents us from validating/parsing before switching.
     if (f7.theme !== 'ios') {
       setupHighlightBar()
     }
-
-    tabbarEl = document.querySelector('.oh-tabbar')
-    if (!tabbarEl) return
 
     tabbarClickHandler = (event: Event) => {
       const clickedEl = (event.target as HTMLElement | null)?.closest('[oh-tab-link]')
@@ -162,6 +191,7 @@ export function useTabs(canSwitchTo: (tabTo: string, tabFrom: string) => Promise
   })
 
   return {
-    currentTab
+    currentTab,
+    switchTab
   }
 }
