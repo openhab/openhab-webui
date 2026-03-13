@@ -13,7 +13,7 @@
         @save="save()"
         :f7router />
     </f7-navbar>
-    <f7-toolbar tabbar position="top" class="oh-tabbar">
+    <f7-toolbar ref="persistenceEditTabs" tabbar position="top">
       <f7-link oh-tab-link="#design" tab-link-active> Design </f7-link>
       <f7-link oh-tab-link="#code"> Code </f7-link>
     </f7-toolbar>
@@ -340,11 +340,8 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import * as api from '@/api'
 import { ApiError } from '@/js/hey-api'
 
-// Page element ref for dirty tracking
-const pagePersistenceEdit = ref<HTMLElement | null>(null)
-
-const { dirty, dirtyIndicator, setupDirtyWatch } = useDirty(pagePersistenceEdit)
-const { currentTab } = useTabs((tabTo, tabFrom) => confirmCodeSwitch(toYaml, fromYaml, tabTo, tabFrom))
+const { dirty, dirtyIndicator, setupDirtyWatch } = useDirty('pagePersistenceEdit')
+const { currentTab } = useTabs((tabTo, tabFrom) => confirmCodeSwitch(toYaml, fromYaml, tabTo, tabFrom), 'persistenceEditTabs')
 const { websiteUrl } = useRuntimeStore()
 
 let loading = false
