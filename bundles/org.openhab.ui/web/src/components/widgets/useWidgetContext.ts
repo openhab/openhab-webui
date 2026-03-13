@@ -11,7 +11,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as api from '@/api'
 
 /**
- * The useWidgetContext must be used as a composable in all widget components.
+ * useWidgetContext must be used as a composable in all widget components.
  *
  * A few requirements have to be met by components importing this composable:
  * - All components using this composable have to add the `scopedCssUid` as a class to their root element.

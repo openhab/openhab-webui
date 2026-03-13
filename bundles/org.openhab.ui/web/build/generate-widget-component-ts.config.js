@@ -1,6 +1,6 @@
 export default {
     defaultExportAs: 'enum',
-    '*': {      // global modifer applied to all components
+    '*': { // global modifier applied to all components
         modifier: (e) => e
           .replace('actionAnalyzerItems: string', 'actionAnalyzerItems?: string | string[]') // Fix array type
           .replace('taphold_actionAnalyzerItems: string', 'taphold_actionAnalyzerItems?: string | string[]') // Fix array type
@@ -9,6 +9,9 @@ export default {
     },
     // modifiers to apply to all components in common.ts
     _Common: {
+        '*': {
+            modifier: (e) => e.replace('export enum Period {', 'export type Period = `${number}${PeriodType}` | PeriodType\n\nexport enum PeriodType {')
+        },
         ChartType: {
             modifier: (e) => e.replace('none', 'dynamic')
         },

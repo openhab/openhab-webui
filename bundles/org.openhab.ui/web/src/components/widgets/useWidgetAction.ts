@@ -60,6 +60,13 @@ function showActionFeedback(prefix: string, actionConfig: ActionConfig, text?: s
 
 export type WidgetActionConfig = ActionConfig & { actionPropsParameterGroup?: string; taphold_actionPropsParameterGroup?: string }
 
+/**
+ * useWidgetAction implements the execution of widget actions.
+ *
+ * @param context the widget component's context, usually `props.context`
+ * @param config the widget component's config, usually `useWidgetContext::config`
+ * @param evaluateExpression useWidgetExpression's evaluateExpression function, usually `useWidgetContext::evaluateExpression`
+ */
 export function useWidgetAction(context: WidgetContext, config: ComputedRef<WidgetActionConfig>, evaluateExpression: EvaluateExpressionFn) {
   const { t } = useI18n()
 
@@ -125,11 +132,11 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
    *
    * @param evt the event (e.g. "click") at the origin of the action
    * @param prefix the prefix for the parameter group and associated parameters (see below)
-   * @param ctx the context to use (usually `props.context`)
-   * @param cfg the config object containing the parameters to use (usually `useWidgetContext::config`)
+   * @param ctx the context to use (defaults to the composable's context)
+   * @param cfg the config object containing the parameters to use (defaults to the composable's config)
    * @returns true if the action was dispatched successfully (but possibly rejected by the user), otherwise false
    */
-  function performAction(evt: Event, prefix: string, ctx?: WidgetContext, cfg?: WidgetActionConfig): boolean {
+  function performAction(evt?: Event, prefix: string = '', ctx?: WidgetContext, cfg?: WidgetActionConfig): boolean {
     if (!ctx) ctx = context
     if (!cfg) cfg = config.value
     if (!cfg || !ctx) return false
