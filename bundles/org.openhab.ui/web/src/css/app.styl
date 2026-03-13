@@ -63,6 +63,8 @@ html
   --f7-table-card-header-height 48px
   --f7-table-head-cell-height 48px
   --f7-table-body-cell-height 40px
+  // toast
+  --f7-toast-font-size 16px
 
 /* Fixes for desktop devices */
 .device-desktop
@@ -253,6 +255,12 @@ html
   --f7-bars-link-color #fff
   --f7-tabbar-link-inactive-color rgba(255,255,255,0.54)
 
+// Color to autoselect - use as color="auto-dark" on elements where the color should be auto switched between black and white based on dark mode
+.color-auto-dark
+  --f7-theme-color #000
+
+.dark .auto-dark-text
+  --f7-theme-color #fff
 
 .ios .contextual-toolbar
    .delete
@@ -455,3 +463,17 @@ html
 
 .advanced-label + .advanced-label
   margin-left 5px
+
+.toast .toast-content
+  justify-content:  center
+
+.oh-tabbar
+  position relative
+  overflow hidden
+
+.oh-tab-highlight
+  position absolute
+  height 2px
+  left 0
+  background-color var(--f7-theme-color, #007AFF)
+  transition left 0.3s ease-out, width 0.3s ease-out
