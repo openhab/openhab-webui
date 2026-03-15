@@ -8,12 +8,10 @@
   </f7-nav-left>
   <!-- if large is enabled, we need both the normal and the large title, as the navbar might collapse when scrolling down -->
   <f7-nav-title>
-    {{ title }}
-    <span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
+    {{ title }}<span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
   </f7-nav-title>
   <f7-nav-title-large v-if="large">
-    {{ title }}
-    <span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
+    {{ title }}<span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
   </f7-nav-title-large>
   <f7-nav-right>
     <developer-dock-icon />
