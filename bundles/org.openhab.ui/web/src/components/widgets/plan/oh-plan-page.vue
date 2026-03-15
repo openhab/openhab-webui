@@ -156,6 +156,21 @@ export default {
       const lng = this.config.imageWidth || 1000
       return [[0, 0], [lat, lng]]
     },
+    markerComponent() {
+      return (marker) => {
+        return OhPlanMarker
+      }
+    },
+    isMarkerVisible() {
+      return (marker) => {
+        if (this.context.editmode != null) return true
+        const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
+        const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
+        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
+        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
+        return isVisibleMin && isVisibleMax
+      }
+    },
     mapOptions () {
       return Object.assign({
         zoomSnap: 0.1,
@@ -187,19 +202,8 @@ export default {
     zoomUpdate (zoom) {
       this.currentZoom = zoom
     },
-    isMarkerVisible (marker) {
-      if (this.context.editmode != null) return true
-      const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
-      const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
-      const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
-      const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
-      return isVisibleMin && isVisibleMax
-    },
     centerUpdate (center) {
       this.currentCenter = center
-    },
-    markerComponent (marker) {
-      return OhPlanMarker
     },
     onMarkerUpdate () {
     },
