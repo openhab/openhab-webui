@@ -23,7 +23,9 @@
       </template>
     </f7-list-input>
 
-    <cronexpression-editor v-if="popupOpen" :model-value="value" @update:modelValue="updateValue" v-model:opened="popupOpen" />
+    <teleport to="body">
+      <cronexpression-editor v-if="popupOpen" :model-value="value" @update:modelValue="updateValue" v-model:opened="popupOpen" />
+    </teleport>
   </ul>
 </template>
 
@@ -34,33 +36,32 @@ import { theme } from 'framework7-vue'
 
 export default {
   components: {
-    CronexpressionEditor: defineAsyncComponent(
-      () => import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue')
-    )
+    CronexpressionEditor: defineAsyncComponent(() => import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue'))
   },
   props: {
     configDescription: Object,
     value: String
   },
-  emits: ['input'],
-  setup() {
+  emits: ['input', 'update:value'],
+  setup () {
     return { theme }
   },
-  data() {
+  data () {
     return {
       popupOpen: false
     }
   },
   methods: {
-    updateValue(value) {
+    updateValue (value) {
       this.$emit('input', value)
+      this.$emit('update:value', value)
     },
-    openPopup() {
+    openPopup () {
       this.popupOpen = true
     }
   },
   computed: {
-    translation() {
+    translation () {
       try {
         const ret = toString(this.value, {
           use24HourTimeFormat: true,
@@ -71,7 +72,7 @@ export default {
         return err
       }
     },
-    exprError() {
+    exprError () {
       return this.translation.indexOf('Error:') === 0
     }
   }

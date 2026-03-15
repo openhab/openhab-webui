@@ -4,8 +4,5 @@
   },
   "eslint.validate": ["vue", "html", "javascript"],
   "oxc.fmt.experimental": true,
-  "editor.defaultFormatter": "oxc.oxc-vscode",
-  "[vue]": {
-    "editor.defaultFormatter": "Vue.volar"
-  }
+  "editor.defaultFormatter": "oxc.oxc-vscode"
 }
