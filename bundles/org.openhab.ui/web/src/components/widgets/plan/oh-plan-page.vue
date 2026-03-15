@@ -28,7 +28,7 @@
         <component
           :is="markerComponent(marker)"
           v-for="(marker, idx) in markers"
-          :key="idx"
+          :key="marker.config.coords || idx"
           :context="childContext(marker)"
           @update="onMarkerUpdate" />
       </l-feature-group>
@@ -186,19 +186,13 @@ export default {
   methods: {
     zoomUpdate (zoom) {
       this.currentZoom = zoom
-      const allMarkers = this.defaultSlots
-      const visibleMarkers = allMarkers.filter((e) => {
+      this.markers = this.defaultSlots.filter((e) => {
         const zoomVisibilityMin = parseFloat(e.config.zoomVisibilityMin)
         const zoomVisibilityMax = parseFloat(e.config.zoomVisibilityMax)
         const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
         const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
         return this.context.editmode != null || (isVisibleMin && isVisibleMax)
       })
-      // only update our markers if the list has changed to avoid unnecessary rendering
-      if (visibleMarkers.length !== this.markers.length ||
-        visibleMarkers.every((e) => this.markers.indexOf(e) < 0)) {
-        this.markers = visibleMarkers
-      }
     },
     centerUpdate (center) {
       this.currentCenter = center
