@@ -25,12 +25,13 @@
       @update:zoom="zoomUpdate">
       <l-image-overlay v-if="backgroundImageUrl" :url="backgroundImageUrl" :bounds="bounds" />
       <l-feature-group v-if="context.component.slots" ref="featureGroup">
-        <component
-          :is="markerComponent(marker)"
-          v-for="(marker, idx) in markers"
-          :key="idx"
-          :context="childContext(marker)"
-          @update="onMarkerUpdate" />
+        <template v-for="(marker, idx) in defaultSlots" :key="idx">
+          <component
+            :is="markerComponent(marker)"
+            v-if="isMarkerVisible(marker)"
+            :context="childContext(marker)"
+            @update="onMarkerUpdate" />
+        </template>
       </l-feature-group>
       <l-control v-if="context.editmode" position="topright">
         <f7-menu class="padding">
@@ -146,8 +147,7 @@ export default {
       zoom: -0.5,
       crs: CRS.Simple,
       showMap: false,
-      mapKey: f7.utils.id(),
-      markers: []
+      mapKey: f7.utils.id()
     }
   },
   computed: {
@@ -155,6 +155,21 @@ export default {
       const lat = this.config.imageHeight || 1000
       const lng = this.config.imageWidth || 1000
       return [[0, 0], [lat, lng]]
+    },
+    markerComponent() {
+      return (marker) => {
+        return OhPlanMarker
+      }
+    },
+    isMarkerVisible() {
+      return (marker) => {
+        if (this.context.editmode != null) return true
+        const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
+        const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
+        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
+        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
+        return isVisibleMin && isVisibleMax
+      }
     },
     mapOptions () {
       return Object.assign({
@@ -186,25 +201,9 @@ export default {
   methods: {
     zoomUpdate (zoom) {
       this.currentZoom = zoom
-      const allMarkers = this.defaultSlots
-      const visibleMarkers = allMarkers.filter((e) => {
-        const zoomVisibilityMin = parseFloat(e.config.zoomVisibilityMin)
-        const zoomVisibilityMax = parseFloat(e.config.zoomVisibilityMax)
-        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
-        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
-        return this.context.editmode != null || (isVisibleMin && isVisibleMax)
-      })
-      // only update our markers if the list has changed to avoid unnecessary rendering
-      if (visibleMarkers.length !== this.markers.length ||
-        visibleMarkers.every((e) => this.markers.indexOf(e) < 0)) {
-        this.markers = visibleMarkers
-      }
     },
     centerUpdate (center) {
       this.currentCenter = center
-    },
-    markerComponent (marker) {
-      return OhPlanMarker
     },
     onMarkerUpdate () {
     },
