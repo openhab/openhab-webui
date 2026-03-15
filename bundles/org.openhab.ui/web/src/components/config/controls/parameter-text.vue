@@ -67,12 +67,10 @@
     </f7-list-input>
   </ul>
   <f7-popover ref="networkAddressPopover">
-    <f7-popover-inner>
-      <f7-block>
-        <p>This address does not match RFC standards for URL, IP, or hostname formats.</p>
-        <p>But if you are sure it is valid in your system, you can still use it anyway.</p>
-      </f7-block>
-    </f7-popover-inner>
+    <f7-block>
+      <p>This address does not match RFC standards for URL, IP, or hostname formats.</p>
+      <p>But if you are sure it is valid in your system, you can still use it anyway.</p>
+    </f7-block>
   </f7-popover>
 </template>
 
@@ -84,6 +82,7 @@ import { nextTick } from 'vue'
 import * as Pattern from './validation-pattern.ts'
 
 export default {
+  inheritAttrs: false,
   props: {
     readOnly: Boolean,
     configDescription: Object,
