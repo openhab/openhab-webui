@@ -26,8 +26,7 @@ import org.openhab.core.i18n.TranslationProvider;
 import org.openhab.core.items.GroupItem;
 import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
-import org.openhab.core.sitemap.Chart;
-import org.openhab.core.sitemap.Widget;
+import org.openhab.core.model.sitemap.sitemap.Widget;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -76,9 +75,9 @@ public class ChartRenderer extends AbstractWidgetRenderer {
             String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
             Item item = itemUIRegistry.getItem(itemName);
             if (item instanceof GroupItem && !forceAsItem) {
-                itemParam = "groups=" + chart.getItem();
+                itemParam = "groups=" + itemName;
             } else {
-                itemParam = "items=" + chart.getItem();
+                itemParam = "items=" + itemName;
             }
 
             String chartUrl = "/chart?" + itemParam + "&period=" + chart.getPeriod();
