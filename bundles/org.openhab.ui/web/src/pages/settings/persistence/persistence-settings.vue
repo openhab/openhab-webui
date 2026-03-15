@@ -1,8 +1,12 @@
 <template>
-  <f7-page ref="persistence-settings-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page
+    ref="pagePersistenceSettings"
+    class="persistence-settings-page"
+    @keydown.stop.prevent.exact.ctrl.s="save()"
+    @keydown.stop.prevent.exact.meta.s="save()">
     <f7-navbar>
       <oh-nav-content
-        title="Persistence Settings"
+        :title="'Persistence Settings' + dirtyIndicator"
         back-link="Settings"
         back-link-url="/settings/"
         :save-link="persistenceList.length > 0 ? `Save${$device.desktop ? ' (Ctrl-S)' : ''}` : ''"
@@ -14,8 +18,8 @@
       <f7-col>
         <f7-block-title medium> General Settings </f7-block-title>
         <config-sheet
-          :parameter-groups="configDescriptions.parameterGroups"
-          :parameters="configDescriptions.parameters"
+          :parameter-groups="configDescriptions?.parameterGroups"
+          :parameters="configDescriptions?.parameters"
           :configuration="config"
           :set-empty-config-as-null="true" />
       </f7-col>
@@ -31,12 +35,7 @@
             :link="persistence.id"
             :title="persistence.label"
             :footer="persistence.id" />
-          <f7-list-item
-            link="/addons/persistence/"
-            no-chevron
-            media-item
-            :color="theme.dark ? 'black' : 'white'"
-            subtitle="Install more persistence add-ons">
+          <f7-list-item link="/addons/persistence/" no-chevron media-item subtitle="Install more persistence add-ons">
             <template #media>
               <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
             </template>
@@ -53,7 +52,7 @@
           fill
           color="blue"
           external
-          :href="`${runtimeStore.websiteUrl}/link/persistence`"
+          :href="`${websiteUrl}/link/persistence`"
           target="_blank"
           :text="$t('home.overview.button.documentation')" />
         <span style="width: 8px" />
@@ -64,111 +63,92 @@
 </template>
 
 <style lang="stylus">
-.config-sheet
-  .config-parameter
-    margin-top 0px
-    margin-bottom 0px
+.persistence-settings-page
+  .config-sheet
+    .config-parameter
+      margin-top 0px
+      margin-bottom 0px
 </style>
 
-<script>
-import { nextTick } from 'vue'
-import { theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import type { Router } from 'framework7'
+
+import { useDirty } from '@/pages/useDirty'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
-export default {
-  components: {
-    EmptyStatePlaceholder,
-    ConfigSheet
-  },
-  props: {
-    f7router: Object
-  },
-  setup() {
-    const { dirty, dirtyIndicator } = useDirty('persistence-settings-page')
+// Page element ref for dirty tracking
+const pagePersistenceSettings = ref<HTMLElement | null>(null)
 
-    return { theme, dirty, dirtyIndicator }
-  },
-  data() {
-    return {
-      loading: false,
-      ready: false,
-      serviceId: 'org.openhab.persistence',
-      persistenceList: [],
-      configDescriptions: null,
-      config: null
-    }
-  },
-  computed: {
-    ...mapStores(useRuntimeStore)
-  },
-  watch: {
-    config: {
-      handler: function () {
-        if (!this.loading) {
-          this.dirty = true
-        }
-      },
-      deep: true
-    }
-  },
-  methods: {
-    onPageAfterIn() {
-      if (window) {
-        window.addEventListener('keydown', this.keyDown)
-      }
-      this.load()
-    },
-    onPageBeforeOut() {
-      if (window) {
-        window.removeEventListener('keydown', this.keyDown)
-      }
-    },
-    load() {
-      if (this.loading) return
-      this.loading = true
+const { dirty, dirtyIndicator, setupDirtyWatch } = useDirty(pagePersistenceSettings)
+const { websiteUrl } = useRuntimeStore()
 
-      this.$oh.api.get('/rest/persistence').then((data) => {
-        this.persistenceList = data
-      })
-      this.$oh.api.get('/rest/services/' + this.serviceId).then((data) => {
-        if (data.configDescriptionURI) {
-          this.$oh.api.get('/rest/config-descriptions/' + data.configDescriptionURI).then((data2) => {
-            this.configDescriptions = data2
-            this.$oh.api.get('/rest/services/' + this.serviceId + '/config').then((data3) => {
-              this.config = data3
-              nextTick(() => {
-                this.loading = false
-                this.ready = true
-              })
-            })
-          })
-        }
-      })
-    },
-    save() {
-      this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
-        showToast('Default persistence configuration saved')
-      })
-      this.dirty = false
-    },
-    keyDown(ev) {
-      if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
-        switch (ev.keyCode) {
-          case 83:
-            this.save()
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-        }
-      }
+const serviceId = 'org.openhab.persistence'
+
+// Props
+defineProps<{
+  f7router: Router.Router
+}>()
+// Local state
+const loading = ref<boolean>(false)
+const ready = ref<boolean>(false)
+const persistenceList = ref<api.PersistenceService[]>([])
+const configDescriptions = ref<api.ConfigDescription | null>(null)
+const config = ref<Record<string, unknown> | null>(null)
+
+// Watches
+setupDirtyWatch(config)
+
+// Lifecycle
+onMounted(() => {
+  void load()
+})
+
+// Methods
+async function load() {
+  if (loading.value) return
+  loading.value = true
+
+  try {
+    const [persistenceServicesSettled, serviceConfigSettled, serviceSettled] = await Promise.allSettled([
+      api.getPersistenceServices(),
+      api.getServiceConfig({ serviceId }),
+      api.getServicesById({ serviceId })
+    ])
+
+    persistenceList.value = persistenceServicesSettled.status === 'fulfilled' ? (persistenceServicesSettled.value ?? []) : []
+    config.value = serviceConfigSettled.status === 'fulfilled' ? (serviceConfigSettled.value ?? null) : null
+    const service = serviceSettled.status === 'fulfilled' ? serviceSettled.value : null
+
+    if (service?.configDescriptionURI) {
+      configDescriptions.value = (await api.getConfigDescriptionByUri({ uri: service.configDescriptionURI })) || null
     }
+  } catch (error) {
+    showToast('Failed to load persistence settings')
+    console.error('Failed to load persistence settings:', error)
+  } finally {
+    loading.value = false
+    ready.value = true
+  }
+}
+
+async function save() {
+  if (!config.value) return
+
+  try {
+    await api.updateServiceConfig({ serviceId, body: config.value })
+    dirty.value = false
+    showToast('Default persistence setting saved')
+  } catch (error) {
+    showToast('Failed to save default persistence setting')
+    console.error('Failed to save default persistence setting: ', error)
   }
 }
 </script>
