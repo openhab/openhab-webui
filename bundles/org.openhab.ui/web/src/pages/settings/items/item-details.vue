@@ -2,7 +2,7 @@
   <!-- page-with-subnavbar class required on Android -->
   <f7-page class="item-details-page page-with-subnavbar" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content v-if="ready" :title="item.name" :f7router>
+      <oh-nav-content v-if="ready" :title="item.name" :f7router back-link-url="/settings/items/">
         <template v-if="ready" #right>
           <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
             {{ theme.md ? '' : 'Edit' }}
