@@ -27,8 +27,8 @@
       <l-feature-group v-if="context.component.slots" ref="featureGroup">
         <component
           :is="markerComponent(marker)"
-          v-for="(marker, idx) in markers"
-          :key="marker.config.coords || idx"
+          v-for="marker in markers"
+          :key="defaultSlots.indexOf(marker)"
           :context="childContext(marker)"
           @update="onMarkerUpdate" />
       </l-feature-group>
