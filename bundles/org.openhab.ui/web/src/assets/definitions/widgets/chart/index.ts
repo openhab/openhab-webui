@@ -151,6 +151,14 @@ const seriesTypeParameter = (...types: string[]): WidgetDefinitionParameter => {
   )
 }
 
+const lineSeriesSymbolParameter = pb(
+  'showSymbol',
+  'Show Symbol',
+  'Whether to always show the datapoint symbol. It will always be shown during tooltip hover.'
+).v((_value, configuration) => {
+  return configuration.type === 'line'
+})
+
 const aggregationFunctionParameter = pt(
   'aggregationFunction',
   'Aggregation Function',
@@ -234,7 +242,7 @@ const chartComponentsList: WidgetDefinition[] = [
   new WidgetDefinition('oh-data-series', 'Data Series', '')
     .doc('https://echarts.apache.org/en/option.html#series')
     .paramGroup(actionGroup())
-    .params([seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), ...actionParams()]),
+    .params([seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), lineSeriesSymbolParameter, ...actionParams()]),
 
   new WidgetDefinition('oh-time-series', 'Time Series', '')
     .doc('https://echarts.apache.org/en/option.html#series')
@@ -244,6 +252,7 @@ const chartComponentsList: WidgetDefinition[] = [
       ...seriesParameters,
       markersParameter(true),
       seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+      lineSeriesSymbolParameter,
       xAxisIndexParameter,
       yAxisIndexParameter,
       ...actionParams()
@@ -273,6 +282,7 @@ const chartComponentsList: WidgetDefinition[] = [
       ...seriesParameters,
       markersParameter(),
       seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+      lineSeriesSymbolParameter,
       po(
         'dimension1',
         'First Dimension',
@@ -299,6 +309,7 @@ const chartComponentsList: WidgetDefinition[] = [
     .params([
       ...seriesParameters,
       seriesTypeParameter('heatmap', 'scatter'),
+      lineSeriesSymbolParameter,
       aggregationFunctionParameter,
       calendarIndexParameter,
       ...actionParams()
@@ -306,7 +317,16 @@ const chartComponentsList: WidgetDefinition[] = [
 
   new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '')
     .doc('https://echarts.apache.org/en/option.html#tooltip')
-    .params([showParameter(), orientParameter(), pb('confine', 'Confine', 'Keep the tooltip within the chart bounds')]),
+    .params([
+      showParameter(),
+      orientParameter(),
+      pb('confine', 'Confine', 'Keep the tooltip within the chart bounds'),
+      pb(
+        'smartFormatter',
+        'Smart Formatter',
+        'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
+      ).a()
+    ]),
 
   new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
     .doc('https://echarts.apache.org/en/option.html#visualMap')

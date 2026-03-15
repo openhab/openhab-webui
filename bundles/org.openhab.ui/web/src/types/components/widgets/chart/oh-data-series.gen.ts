@@ -20,6 +20,7 @@ export enum Type {
 
 export interface Config {
   type?: Type
+  showSymbol?: boolean
   action?: Action
   actionUrl?: string
   actionUrlSameWindow?: boolean

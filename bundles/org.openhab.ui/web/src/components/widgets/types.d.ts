@@ -33,6 +33,9 @@ export interface WidgetContext {
    * oh-context constants
    */
   const?: Record<string, unknown>
+  /**
+   * oh-context variables
+   */
   ctxVars?: ContextVarObj
   editmode?: EditMode
   /**
@@ -53,6 +56,14 @@ export interface WidgetContext {
 
   modalConfig?: Record<string, unknown>
   clipboardtype?: string | null
+  /**
+   * Whether the widget is displayed in the analyzer.
+   */
+  analyzer?: boolean
+  /**
+   * Whether the widget is displayed in a tab.
+   */
+  tab?: boolean
 
   parent: WidgetContext | null
 }

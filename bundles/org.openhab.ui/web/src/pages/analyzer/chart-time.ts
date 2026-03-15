@@ -15,11 +15,12 @@ import {
   OhChartPage,
   OhValueAxis,
   ChartType,
-  Period,
+  type Period,
   OhStateSeries,
   OhTimeSeries,
   OhChartTooltip,
-  OhChartLegend
+  OhChartLegend,
+  PeriodType
 } from '@/types/components/widgets'
 
 export interface TimeCoordSettings extends CoordSettingsBase {
@@ -50,7 +51,7 @@ const timeCoordSystem: CoordSystem = {
   initCoordSystem(coordSettings?: Partial<TimeCoordSettings>): TimeCoordSettings {
     const typeOptions: ChartType[] = [ChartType.day, ChartType.isoWeek, ChartType.week, ChartType.month, ChartType.year]
     return {
-      period: coordSettings?.period || Period.D,
+      period: coordSettings?.period || PeriodType.D,
       categoryAxisValues: [],
       valueAxesOptions: [],
       typeOptions,
