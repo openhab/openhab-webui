@@ -1,11 +1,11 @@
 <!-- Adapted from https://github.com/1615450788/vue-cron - license: MIT -->
 
 <template>
-  <f7-popup class="cron-select" :opened="opened" close-on-escape @popup:closed="onClose">
+  <f7-popup class="cronexpression-editor-popup" :opened="opened" close-on-escape @popup:closed="onClose">
     <f7-page class="cron-select-content">
       <f7-navbar :title="'Cron: ' + cron" :subtitle="translation">
         <f7-nav-right>
-          <f7-link class="popup-close" @click="onChange"> Done </f7-link>
+          <f7-link class="popup-close" @click="onDone"> Done </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar tabbar position="top">
@@ -26,18 +26,30 @@
           </template>
           <f7-block>
             <f7-list>
-              <f7-list-item radio :checked="second.cronEvery === CronEvery.Every ? true : null" @change="second.cronEvery = CronEvery.Every">
+              <f7-list-item
+                radio
+                :checked="second.cronEvery === CronEvery.Every ? true : null"
+                @change="second.cronEvery = CronEvery.Every">
                 {{ Labels.Seconds.every }}
               </f7-list-item>
-              <f7-list-item radio :checked="second.cronEvery === CronEvery.Increment ? true : null" @change="second.cronEvery = CronEvery.Increment">
+              <f7-list-item
+                radio
+                :checked="second.cronEvery === CronEvery.Increment ? true : null"
+                @change="second.cronEvery = CronEvery.Increment">
                 {{ Labels.Seconds.interval[0] }}
                 <f7-stepper small v-model:value="second.increment.increment" :min="1" :max="CRON_LIMITS.second.incrementMax" />
                 {{ Labels.Seconds.interval[1] || '' }}
                 <f7-stepper small v-model:value="second.increment.start" :min="CRON_LIMITS.second.min" :max="CRON_LIMITS.second.max" />
                 {{ Labels.Seconds.interval[2] || '' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificSecond" :title="Labels.Seconds.specific" smart-select no-chevron
-                :smart-select-params="smartSelectParams" :checked="second.cronEvery === CronEvery.Specific ? true : null"
+              <f7-list-item
+                radio
+                ref="specificSecond"
+                :title="Labels.Seconds.specific"
+                smart-select
+                no-chevron
+                :smart-select-params="smartSelectParams"
+                :checked="second.cronEvery === CronEvery.Specific ? true : null"
                 @click="second.cronEvery = CronEvery.Specific">
                 <select multiple v-model="second.specific">
                   <option v-for="val in 60" :key="val" :value="val - 1">
@@ -45,7 +57,10 @@
                   </option>
                 </select>
               </f7-list-item>
-              <f7-list-item radio :checked="second.cronEvery === CronEvery.Range ? true : null" @change="second.cronEvery = CronEvery.Range">
+              <f7-list-item
+                radio
+                :checked="second.cronEvery === CronEvery.Range ? true : null"
+                @change="second.cronEvery = CronEvery.Range">
                 {{ Labels.Seconds.cycle[0] }}
                 <f7-stepper small v-model:value="second.range.start" :min="CRON_LIMITS.second.min" :max="CRON_LIMITS.second.max" />
                 {{ Labels.Seconds.cycle[1] || '' }}
@@ -64,18 +79,30 @@
           </template>
           <f7-block>
             <f7-list>
-              <f7-list-item radio :checked="minute.cronEvery === CronEvery.Every ? true : null" @change="minute.cronEvery = CronEvery.Every">
+              <f7-list-item
+                radio
+                :checked="minute.cronEvery === CronEvery.Every ? true : null"
+                @change="minute.cronEvery = CronEvery.Every">
                 {{ Labels.Minutes.every }}
               </f7-list-item>
-              <f7-list-item radio :checked="minute.cronEvery === CronEvery.Increment ? true : null" @change="minute.cronEvery = CronEvery.Increment">
+              <f7-list-item
+                radio
+                :checked="minute.cronEvery === CronEvery.Increment ? true : null"
+                @change="minute.cronEvery = CronEvery.Increment">
                 {{ Labels.Minutes.interval[0] }}
                 <f7-stepper small v-model:value="minute.increment.increment" :min="1" :max="CRON_LIMITS.minute.incrementMax" />
                 {{ Labels.Minutes.interval[1] || '' }}
                 <f7-stepper small v-model:value="minute.increment.start" :min="CRON_LIMITS.minute.min" :max="CRON_LIMITS.minute.max" />
                 {{ Labels.Minutes.interval[2] || '' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificMinute" :title="Labels.Minutes.specific" smart-select no-chevron
-                :smart-select-params="smartSelectParams" :checked="minute.cronEvery === CronEvery.Specific ? true : null"
+              <f7-list-item
+                radio
+                ref="specificMinute"
+                :title="Labels.Minutes.specific"
+                smart-select
+                no-chevron
+                :smart-select-params="smartSelectParams"
+                :checked="minute.cronEvery === CronEvery.Specific ? true : null"
                 @click="minute.cronEvery = CronEvery.Specific">
                 <select multiple v-model="minute.specific">
                   <option v-for="val in 60" :key="val" :value="val - 1">
@@ -83,7 +110,10 @@
                   </option>
                 </select>
               </f7-list-item>
-              <f7-list-item radio :checked="minute.cronEvery === CronEvery.Range ? true : null" @change="minute.cronEvery = CronEvery.Range">
+              <f7-list-item
+                radio
+                :checked="minute.cronEvery === CronEvery.Range ? true : null"
+                @change="minute.cronEvery = CronEvery.Range">
                 {{ Labels.Minutes.cycle[0] }}
                 <f7-stepper small v-model:value="minute.range.start" :min="CRON_LIMITS.minute.min" :max="CRON_LIMITS.minute.max" />
                 {{ Labels.Minutes.cycle[1] || '' }}
@@ -105,15 +135,24 @@
               <f7-list-item radio :checked="hour.cronEvery === CronEvery.Every ? true : null" @change="hour.cronEvery = CronEvery.Every">
                 {{ Labels.Hours.every }}
               </f7-list-item>
-              <f7-list-item radio :checked="hour.cronEvery === CronEvery.Increment ? true : null" @change="hour.cronEvery = CronEvery.Increment">
+              <f7-list-item
+                radio
+                :checked="hour.cronEvery === CronEvery.Increment ? true : null"
+                @change="hour.cronEvery = CronEvery.Increment">
                 {{ Labels.Hours.interval[0] }}
                 <f7-stepper small v-model:value="hour.increment.increment" :min="1" :max="CRON_LIMITS.hour.incrementMax" />
                 {{ Labels.Hours.interval[1] || '' }}
                 <f7-stepper small v-model:value="hour.increment.start" :min="CRON_LIMITS.hour.min" :max="CRON_LIMITS.hour.max" />
                 {{ Labels.Hours.interval[2] || '' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificHour" :title="Labels.Hours.specific" smart-select no-chevron
-                :smart-select-params="smartSelectParams" :checked="hour.cronEvery === CronEvery.Specific ? true : null"
+              <f7-list-item
+                radio
+                ref="specificHour"
+                :title="Labels.Hours.specific"
+                smart-select
+                no-chevron
+                :smart-select-params="smartSelectParams"
+                :checked="hour.cronEvery === CronEvery.Specific ? true : null"
                 @click="hour.cronEvery = CronEvery.Specific">
                 <select multiple v-model="hour.specific">
                   <option v-for="val in 24" :key="val" :value="val - 1">
@@ -145,39 +184,63 @@
                 {{ Labels.Day.every }}
               </f7-list-item>
               <!-- Every 1 day(s) starting on Sunday -->
-              <f7-list-item radio :checked="day.cronEvery === CronEvery.IntervalWeek ? true : null" @change="day.cronEvery = CronEvery.IntervalWeek">
+              <f7-list-item
+                radio
+                :checked="day.cronEvery === CronEvery.IntervalWeek ? true : null"
+                @change="day.cronEvery = CronEvery.IntervalWeek">
                 {{ Labels.Day.intervalWeek[0] }}
-                <f7-stepper small v-model:value="week.increment.increment" :min="CRON_LIMITS.week.incrementMin" :max="CRON_LIMITS.week.incrementMax" />
+                <f7-stepper
+                  small
+                  v-model:value="week.increment.increment"
+                  :min="CRON_LIMITS.week.incrementMin"
+                  :max="CRON_LIMITS.week.incrementMax" />
                 {{ Labels.Day.intervalWeek[1] || '' }}
                 <select size="small" v-model="week.increment.start" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="Labels.Week[val - 1]"
-                    :value="WEEKDAY_TOKENS[val - 1]" />
+                  <option v-for="val in 7" :key="val" :label="Labels.Week[val - 1]" :value="WEEKDAY_TOKENS[val - 1]" />
                 </select>
                 <!-- <f7-stepper small :value="week.incrementStart" @stepper:change="(v) => week.incrementStart = v" :min="0" :max="23"></f7-stepper> -->
                 {{ Labels.Day.intervalWeek[2] || '' }}
               </f7-list-item>
               <!-- Every 1 day(s) starting on the 1 of the month -->
-              <f7-list-item radio :checked="day.cronEvery === CronEvery.IntervalDay ? true : null" @change="day.cronEvery = CronEvery.IntervalDay">
+              <f7-list-item
+                radio
+                :checked="day.cronEvery === CronEvery.IntervalDay ? true : null"
+                @change="day.cronEvery = CronEvery.IntervalDay">
                 {{ Labels.Day.intervalDay[0] }}
-                <f7-stepper small v-model:value="day.increment.increment" :min="CRON_LIMITS.dayOfMonth.min" :max="CRON_LIMITS.dayOfMonth.incrementMax" />
+                <f7-stepper
+                  small
+                  v-model:value="day.increment.increment"
+                  :min="CRON_LIMITS.dayOfMonth.min"
+                  :max="CRON_LIMITS.dayOfMonth.incrementMax" />
                 {{ Labels.Day.intervalDay[1] || '' }}
                 <f7-stepper small v-model:value="day.increment.start" :min="CRON_LIMITS.dayOfMonth.min" :max="CRON_LIMITS.dayOfMonth.max" />
                 {{ Labels.Day.intervalDay[2] || '' }}
               </f7-list-item>
               <!-- Specific day of week -->
-              <f7-list-item radio ref="specificDayOfWeek" :title="Labels.Day.specificWeek" smart-select no-chevron
-                :smart-select-params="smartSelectParams" :checked="day.cronEvery === CronEvery.Specific ? true : null"
+              <f7-list-item
+                radio
+                ref="specificDayOfWeek"
+                :title="Labels.Day.specificWeek"
+                smart-select
+                no-chevron
+                :smart-select-params="smartSelectParams"
+                :checked="day.cronEvery === CronEvery.Specific ? true : null"
                 @click="day.cronEvery = CronEvery.Specific">
                 <select multiple v-model="week.specific">
-                  <option v-for="val in 7" :key="val"
-                    :value="WEEKDAY_TOKENS[val - 1]">
+                  <option v-for="val in 7" :key="val" :value="WEEKDAY_TOKENS[val - 1]">
                     {{ Labels.Week[val - 1] }}
                   </option>
                 </select>
               </f7-list-item>
               <!-- Specific day of the month -->
-              <f7-list-item radio ref="specificDayOfMonth" :title="Labels.Day.specificDay" smart-select no-chevron
-                :smart-select-params="smartSelectParams" :checked="day.cronEvery === CronEvery.SpecificDayOfMonth ? true : null"
+              <f7-list-item
+                radio
+                ref="specificDayOfMonth"
+                :title="Labels.Day.specificDay"
+                smart-select
+                no-chevron
+                :smart-select-params="smartSelectParams"
+                :checked="day.cronEvery === CronEvery.SpecificDayOfMonth ? true : null"
                 @click="day.cronEvery = CronEvery.SpecificDayOfMonth">
                 <select multiple v-model="day.specific">
                   <option v-for="val in 31" :key="val" :value="val">
@@ -186,40 +249,64 @@
                 </select>
               </f7-list-item>
               <!-- On the last day of the month -->
-              <f7-list-item radio :checked="day.cronEvery === CronEvery.LastDayOfMonth ? true : null" @change="day.cronEvery = CronEvery.LastDayOfMonth">
+              <f7-list-item
+                radio
+                :checked="day.cronEvery === CronEvery.LastDayOfMonth ? true : null"
+                @change="day.cronEvery = CronEvery.LastDayOfMonth">
                 {{ Labels.Day.lastDay }}
               </f7-list-item>
               <!-- On the last weekday of the month -->
-              <f7-list-item radio :checked="day.cronEvery === CronEvery.LastWeekdayOfMonth ? true : null" @change="day.cronEvery = CronEvery.LastWeekdayOfMonth">
+              <f7-list-item
+                radio
+                :checked="day.cronEvery === CronEvery.LastWeekdayOfMonth ? true : null"
+                @change="day.cronEvery = CronEvery.LastWeekdayOfMonth">
                 {{ Labels.Day.lastWeekday }}
               </f7-list-item>
               <!-- On the last 'Specific Day' of the month -->
-              <f7-list-item radio :checked="day.cronEvery === CronEvery.LastSpecificDayOfMonth ? true : null" @change="day.cronEvery = CronEvery.LastSpecificDayOfMonth">
+              <f7-list-item
+                radio
+                :checked="day.cronEvery === CronEvery.LastSpecificDayOfMonth ? true : null"
+                @change="day.cronEvery = CronEvery.LastSpecificDayOfMonth">
                 {{ Labels.Day.lastWeek[0] }}
                 <select size="small" v-model="day.cronLastSpecificDomDay" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="Labels.Week[val - 1]"
-                    :value="WEEKDAY_TOKENS[val - 1]" />
+                  <option v-for="val in 7" :key="val" :label="Labels.Week[val - 1]" :value="WEEKDAY_TOKENS[val - 1]" />
                 </select>
                 {{ Labels.Day.lastWeek[1] || '' }}
               </f7-list-item>
               <!-- 1 day(s) before the end of the month -->
-              <f7-list-item radio :checked="day.cronEvery === CronEvery.DaysBeforeEndOfMonth ? true : null" @change="day.cronEvery = CronEvery.DaysBeforeEndOfMonth">
-                <f7-stepper small v-model:value="day.cronDaysBeforeEomMinus" :min="CRON_LIMITS.dayOfMonth.min" :max="CRON_LIMITS.dayOfMonth.max" />
+              <f7-list-item
+                radio
+                :checked="day.cronEvery === CronEvery.DaysBeforeEndOfMonth ? true : null"
+                @change="day.cronEvery = CronEvery.DaysBeforeEndOfMonth">
+                <f7-stepper
+                  small
+                  v-model:value="day.cronDaysBeforeEomMinus"
+                  :min="CRON_LIMITS.dayOfMonth.min"
+                  :max="CRON_LIMITS.dayOfMonth.max" />
                 {{ Labels.Day.beforeEndMonth[0] }}
               </f7-list-item>
               <!-- Nearest weekday (Monday to Friday) to the 1 of the month -->
-              <f7-list-item radio :checked="day.cronEvery === CronEvery.NearestWeekdayOfMonth ? true : null" @change="day.cronEvery = CronEvery.NearestWeekdayOfMonth">
+              <f7-list-item
+                radio
+                :checked="day.cronEvery === CronEvery.NearestWeekdayOfMonth ? true : null"
+                @change="day.cronEvery = CronEvery.NearestWeekdayOfMonth">
                 {{ Labels.Day.nearestWeekday[0] }}
-                <f7-stepper small v-model:value="day.cronDaysNearestWeekday" :min="CRON_LIMITS.dayOfMonth.min" :max="CRON_LIMITS.dayOfMonth.max" />
+                <f7-stepper
+                  small
+                  v-model:value="day.cronDaysNearestWeekday"
+                  :min="CRON_LIMITS.dayOfMonth.min"
+                  :max="CRON_LIMITS.dayOfMonth.max" />
                 {{ Labels.Day.nearestWeekday[1] }}
               </f7-list-item>
               <!-- On the 1 Sunday of the month -->
-              <f7-list-item radio :checked="day.cronEvery === CronEvery.SomeWeekdayOfMonth ? true : null" @change="day.cronEvery = CronEvery.SomeWeekdayOfMonth">
+              <f7-list-item
+                radio
+                :checked="day.cronEvery === CronEvery.SomeWeekdayOfMonth ? true : null"
+                @change="day.cronEvery = CronEvery.SomeWeekdayOfMonth">
                 {{ Labels.Day.someWeekday[0] }}
                 <f7-stepper small v-model:value="week.cronNthDayNth" :min="CRON_LIMITS.week.nthMin" :max="CRON_LIMITS.week.nthMax" />
                 <select size="small" v-model="week.cronNthDayDay" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="Labels.Week[val - 1]"
-                    :value="WEEKDAY_TOKENS[val - 1]" />
+                  <option v-for="val in 7" :key="val" :label="Labels.Week[val - 1]" :value="WEEKDAY_TOKENS[val - 1]" />
                 </select>
                 {{ Labels.Day.someWeekday[1] }}
               </f7-list-item>
@@ -232,15 +319,24 @@
               <f7-list-item radio :checked="month.cronEvery === CronEvery.Every ? true : null" @change="month.cronEvery = CronEvery.Every">
                 {{ Labels.Month.every }}
               </f7-list-item>
-              <f7-list-item radio :checked="month.cronEvery === CronEvery.Increment ? true : null" @change="month.cronEvery = CronEvery.Increment">
+              <f7-list-item
+                radio
+                :checked="month.cronEvery === CronEvery.Increment ? true : null"
+                @change="month.cronEvery = CronEvery.Increment">
                 {{ Labels.Month.interval[0] }}
                 <f7-stepper small v-model:value="month.increment.increment" :min="1" :max="CRON_LIMITS.month.incrementMax" />
                 {{ Labels.Month.interval[1] || '' }}
                 <f7-stepper small v-model:value="month.increment.start" :min="CRON_LIMITS.month.min" :max="CRON_LIMITS.month.max" />
                 {{ Labels.Month.interval[2] || '' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificMonth" :title="Labels.Month.specific" smart-select no-chevron
-                :smart-select-params="smartSelectParams" :checked="month.cronEvery === CronEvery.Specific ? true : null"
+              <f7-list-item
+                radio
+                ref="specificMonth"
+                :title="Labels.Month.specific"
+                smart-select
+                no-chevron
+                :smart-select-params="smartSelectParams"
+                :checked="month.cronEvery === CronEvery.Specific ? true : null"
                 @click="month.cronEvery = CronEvery.Specific">
                 <select multiple v-model="month.specific">
                   <option v-for="val in 12" :key="val" :value="val">
@@ -264,27 +360,40 @@
               <f7-list-item radio :checked="year.cronEvery === CronEvery.Every ? true : null" @change="year.cronEvery = CronEvery.Every">
                 {{ Labels.Year.every }}
               </f7-list-item>
-              <f7-list-item radio :checked="year.cronEvery === CronEvery.Increment ? true : null" @change="year.cronEvery = CronEvery.Increment">
+              <f7-list-item
+                radio
+                :checked="year.cronEvery === CronEvery.Increment ? true : null"
+                @change="year.cronEvery = CronEvery.Increment">
                 {{ Labels.Year.interval[0] }}
-                <f7-stepper small v-model:value="year.increment.increment" :min="CRON_LIMITS.year.incrementMin" :max="CRON_LIMITS.year.incrementMax" />
+                <f7-stepper
+                  small
+                  v-model:value="year.increment.increment"
+                  :min="CRON_LIMITS.year.incrementMin"
+                  :max="CRON_LIMITS.year.incrementMax" />
                 {{ Labels.Year.interval[1] || '' }}
-                <f7-stepper small v-model:value="year.increment.start" :min="year.currentYear" :max="year.currentYear + CRON_LIMITS.year.maxOffset" />
+                <f7-stepper small v-model:value="year.increment.start" :min="currentYear" :max="currentYear + CRON_LIMITS.year.maxOffset" />
                 {{ Labels.Year.interval[2] || '' }}
               </f7-list-item>
-              <f7-list-item radio ref="specificYear" :title="Labels.Year.specific" smart-select no-chevron
-                :smart-select-params="smartSelectParams" :checked="year.cronEvery === CronEvery.Specific ? true : null"
+              <f7-list-item
+                radio
+                ref="specificYear"
+                :title="Labels.Year.specific"
+                smart-select
+                no-chevron
+                :smart-select-params="smartSelectParams"
+                :checked="year.cronEvery === CronEvery.Specific ? true : null"
                 @click="year.cronEvery = CronEvery.Specific">
                 <select multiple v-model="year.specific">
-                  <option v-for="val in 100" :key="val" :value="val + year.currentYear - 1">
-                    {{ val + year.currentYear - 1 }}
+                  <option v-for="val in 100" :key="val" :value="val + currentYear - 1">
+                    {{ val + currentYear - 1 }}
                   </option>
                 </select>
               </f7-list-item>
               <f7-list-item radio :checked="year.cronEvery === CronEvery.Range ? true : null" @change="year.cronEvery = CronEvery.Range">
                 {{ Labels.Year.cycle[0] }}
-                <f7-stepper small v-model:value="year.range.start" :min="year.currentYear" :max="year.currentYear + CRON_LIMITS.year.maxOffset" />
+                <f7-stepper small v-model:value="year.range.start" :min="currentYear" :max="currentYear + CRON_LIMITS.year.maxOffset" />
                 {{ Labels.Year.cycle[1] || '' }}
-                <f7-stepper small v-model:value="year.range.end" :min="year.currentYear" :max="year.currentYear + CRON_LIMITS.year.maxOffset" />
+                <f7-stepper small v-model:value="year.range.end" :min="currentYear" :max="currentYear + CRON_LIMITS.year.maxOffset" />
                 {{ Labels.Year.cycle[2] || '' }}
               </f7-list-item>
             </f7-list>
@@ -296,8 +405,6 @@
 </template>
 
 <style lang="stylus">
-// .cron-select-content .page-content
-//   --f7-page-navbar-offset 0px
 @media (max-width: 640px)
   .cron-select-content
     .item-content
@@ -305,6 +412,8 @@
         display block
         .stepper-small
           transform translate(0, 8px)
+.cronexpression-editor-popup
+  --f7-navbar-height 60px
 </style>
 
 <script setup lang="ts">
@@ -336,10 +445,6 @@ interface CronDataBase {
   increment: { start: number, increment: number }
   range: { start: number, end: number }
   specific: (number | string)[]
-}
-
-interface CronDataYear extends CronDataBase {
-  currentYear: number
 }
 
 interface CronDataDay extends CronDataBase {
@@ -415,12 +520,11 @@ const month = ref<CronDataBase>({
   specific: []
 })
 
-const year = ref<CronDataYear>({
+const year = ref<CronDataBase>({
   cronEvery: CronEvery.Every,
   increment: { start: currentYear, increment: 1 },
   range: { start: currentYear, end: currentYear },
-  specific: [],
-  currentYear: currentYear
+  specific: []
 })
 
 // Watchers
@@ -435,17 +539,11 @@ watch(
 // Computed
 const smartSelectParams = computed(() => ({ openIn: 'popover', view: f7.view.main }))
 const cron = computed(() => {
-  return `${secondsText.value || '*'} ${minutesText.value || '*'} ${hoursText.value || '*'} ${daysText.value || '?'} ${monthsText.value || '*'} ${weeksText.value || '?'} ${yearsText.value.length ? ' ' : ''}${yearsText.value || ''}`
+  return `${secondsText.value} ${minutesText.value} ${hoursText.value} ${daysText.value} ${monthsText.value} ${weeksText.value} ${yearsText.value.length ? ' ' : ''}${yearsText.value || ''}`
 })
-const secondsText = computed(() => {
-  return formatBaseCronField(second.value)
-})
-const minutesText = computed(() => {
-  return formatBaseCronField(minute.value)
-})
-const hoursText = computed(() => {
-  return formatBaseCronField(hour.value)
-})
+const secondsText = computed(() => { return formatBaseCronField(second.value) })
+const minutesText = computed(() => { return formatBaseCronField(minute.value) })
+const hoursText = computed(() => { return formatBaseCronField(hour.value) })
 const daysText = computed(() => {
   switch (day.value.cronEvery) {
     case CronEvery.Every:
@@ -468,7 +566,7 @@ const daysText = computed(() => {
     case CronEvery.NearestWeekdayOfMonth:
       return day.value.cronDaysNearestWeekday + 'W'
     default:
-      return ''
+      return '*'
   }
 })
 const weeksText = computed(() => {
@@ -489,16 +587,12 @@ const weeksText = computed(() => {
       return (day.value.cronLastSpecificDomDay || 'SUN') + 'L'
     case CronEvery.SomeWeekdayOfMonth:
       return (week.value.cronNthDayDay || 'SUN') + '#' + week.value.cronNthDayNth
-    default:
-      return ''
+      default:
+        return '*'
   }
 })
-const monthsText = computed(() => {
-  return formatBaseCronField(month.value)
-})
-const yearsText = computed(() => {
-  return formatBaseCronField(year.value)
-})
+const monthsText = computed(() => { return formatBaseCronField(month.value) })
+const yearsText = computed(() => { return formatBaseCronField(year.value) })
 
 
 const translation = computed(() => {
@@ -513,7 +607,7 @@ const translation = computed(() => {
 })
 
 // Events
-function onChange() {
+function onDone() {
   value.value = cron.value
 }
 
@@ -537,7 +631,7 @@ function formatBaseCronField(
     case CronEvery.Range:
       return field.range.start + '-' + field.range.end
     default:
-      return ''
+      return '*'
   }
 }
 
@@ -572,7 +666,7 @@ function restore(val : string) {
         month.value = restoreBase(month.value, expr, CRON_LIMITS.month.min, CRON_LIMITS.month.max, CRON_LIMITS.month.incrementMax)
         break
       case 6:
-        year.value = restoreBase(year.value, expr, currentYear, currentYear + CRON_LIMITS.year.maxOffset, CRON_LIMITS.year.incrementMax) as CronDataYear
+        year.value = restoreBase(year.value, expr, currentYear, currentYear + CRON_LIMITS.year.maxOffset, CRON_LIMITS.year.incrementMax)
         break
     }
   })
