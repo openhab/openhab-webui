@@ -23,11 +23,9 @@
       </template>
     </f7-list-input>
 
-    <cronexpression-editor
-      v-if="popupOpen"
-      :model-value="value"
-      @update:modelValue="updateValue"
-      v-model:opened="popupOpen" />
+    <teleport to="body">
+      <cronexpression-editor v-if="popupOpen" :model-value="value" @update:modelValue="updateValue" v-model:opened="popupOpen" />
+    </teleport>
   </ul>
 </template>
 
@@ -44,7 +42,7 @@ export default {
     configDescription: Object,
     value: String
   },
-  emits: ['input'],
+  emits: ['input', 'update:value'],
   setup () {
     return { theme }
   },
@@ -56,6 +54,7 @@ export default {
   methods: {
     updateValue (value) {
       this.$emit('input', value)
+      this.$emit('update:value', value)
     },
     openPopup () {
       this.popupOpen = true
