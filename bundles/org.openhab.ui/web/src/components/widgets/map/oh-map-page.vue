@@ -79,34 +79,38 @@ export default {
     const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
     return { config, scopedCssUid, childContext, defaultSlots }
   },
-  data () {
+  data() {
     return {
       zoom: this.context.component.config.initialZoom || 4,
       currentZoom: 13,
       currentCenter: null,
-      center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
-      // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      // url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().darkMode}_all/{z}/{x}/{y}.png`,
-      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
+      center: this.context.component.config.initialCenter ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
+      attribution:
+        '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       showMarkers: false,
       layer: null
     }
   },
   computed: {
-    mapOptions () {
-      return Object.assign({
-        zoomSnap: 0.1
-      }, this.config.noZoomOrDrag ? {
-        dragging: false,
-        touchZoom: false,
-        doubleClickZoom: false,
-        scrollWheelZoom: false,
-        zoomControl: false
-      } : {})
+    mapOptions() {
+      return Object.assign(
+        {
+          zoomSnap: 0.1
+        },
+        this.config.noZoomOrDrag
+          ? {
+              dragging: false,
+              touchZoom: false,
+              doubleClickZoom: false,
+              scrollWheelZoom: false,
+              zoomControl: false
+            }
+          : {}
+      )
     },
     ...mapStores(useUIOptionsStore)
   },
-  mounted () {
+  mounted() {
     // vue-leaflet docs say the leafletObject should be ready on the next tick after mounting,
     // but it isn't, so we have to wait for the map to be ready before we can initialise
     const check = () => {
@@ -127,7 +131,7 @@ export default {
     }
   },
   methods: {
-    initialize () {
+    initialize() {
       this.setBackgroundLayer()
       if (this.defaultSlots.length) {
         // "dynamic" markers need to be initialised after the background layer;
@@ -138,12 +142,12 @@ export default {
         })
       }
     },
-    setBackgroundLayer () {
-      const defaultProvider = (useUIOptionsStore().darkMode === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
+    setBackgroundLayer() {
+      const defaultProvider = useUIOptionsStore().darkMode === 'dark' ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
       const provider = this.config.tileLayerProvider || defaultProvider
       let overlayLayer
 
-      if(this.layer) {
+      if (this.layer) {
         this.$refs.map.leafletObject.removeLayer(this.layer)
       }
 
@@ -167,13 +171,13 @@ export default {
       }
       this.$refs.map.leafletObject.invalidateSize()
     },
-    zoomUpdate (zoom) {
+    zoomUpdate(zoom) {
       this.currentZoom = zoom
     },
-    centerUpdate (center) {
+    centerUpdate(center) {
       this.currentCenter = center
     },
-    markerComponent (marker) {
+    markerComponent(marker) {
       switch (marker.component) {
         case 'oh-map-marker':
           return OhMapMarker
@@ -183,7 +187,7 @@ export default {
           return null
       }
     },
-    onMarkerUpdate () {
+    onMarkerUpdate() {
       nextTick(() => {
         const bounds = this.$refs.featureGroup.leafletObject.getBounds()
         if (bounds.isValid()) {
