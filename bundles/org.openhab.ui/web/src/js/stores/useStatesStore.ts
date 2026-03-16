@@ -112,7 +112,7 @@ export const useStatesStore = defineStore('states', () => {
       (connectionId) => {
         // only one state tracker at any given time!
         trackerConnectionId = connectionId
-        console.debug(`Setting initial tracking list (${trackingList.value.length} tracked Items): ` + trackingList.value)
+        console.debug(`Setting initial tracking list (${trackingList.value.length} tracked Items): `, trackingList.value)
         api.updateItemListForStateUpdates({ connectionId, body: trackingList.value }).catch((e) => {
           console.error('Failed to set initial tracking list for state tracker', e)
         })
@@ -224,9 +224,9 @@ export const useStatesStore = defineStore('states', () => {
         return
       }
       const trackingListJson = JSON.stringify(trackingList.value)
-      console.debug(`Updating tracking list (${trackingList.value.length} tracked Items): ` + trackingListJson)
+      console.debug(`Updating tracking list (${trackingList.value.length} tracked Items): `, trackingList.value)
 
-      api.updateItemListForStateUpdates({ connectionId: trackerConnectionId!, body: trackingList.value }).catch((e) => {
+      api.updateItemListForStateUpdates({ connectionId: trackerConnectionId, body: trackingList.value }).catch((e) => {
         console.error('Failed to update tracking list for state tracker', e)
       })
     })

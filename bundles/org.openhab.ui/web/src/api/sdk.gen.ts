@@ -579,9 +579,9 @@ export const getAudioSources = <ThrowOnError extends boolean = false>(parameters
 /**
  * Delete the session associated with a refresh token.
  */
-export const deleteSession = <ThrowOnError extends boolean = false>(parameters?: {
-    refresh_token?: string;
-    id?: string;
+export const deleteSession = <ThrowOnError extends boolean = false>(parameters: {
+    refresh_token: string;
+    id: string;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [{ in: 'body', key: 'refresh_token' }, { in: 'body', key: 'id' }] }]);
     return (options?.client ?? client).post<DeleteSessionResponses, DeleteSessionErrors, ThrowOnError, 'data'>({
@@ -619,14 +619,14 @@ export const getSessionsForCurrentUser = <ThrowOnError extends boolean = false>(
 /**
  * Get access and refresh tokens.
  */
-export const getOAuthToken = <ThrowOnError extends boolean = false>(parameters?: {
+export const getOAuthToken = <ThrowOnError extends boolean = false>(parameters: {
     useCookie?: boolean;
-    grant_type?: string;
-    code?: string;
-    redirect_uri?: string;
-    client_id?: string;
-    refresh_token?: string;
-    code_verifier?: string;
+    grant_type: string;
+    code: string;
+    redirect_uri: string;
+    client_id: string;
+    refresh_token: string;
+    code_verifier: string;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'query', key: 'useCookie' },
