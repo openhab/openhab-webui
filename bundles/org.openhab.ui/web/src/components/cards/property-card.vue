@@ -48,17 +48,17 @@ export default {
   components: {
     ModelCard
   },
-  data () {
+  data() {
     return {
       type: 'property'
     }
   },
-  setup (props) {
+  setup(props) {
     const { config, childContext, slots } = useWidgetContext(props.context)
     return { config, childContext, slots }
   },
   computed: {
-    listContext () {
+    listContext() {
       const footerDefaults = { contextLabelSource: 'path' }
       let pointsByType = []
       for (let pointType in this.itemsByPointType) {
@@ -87,7 +87,7 @@ export default {
         }
       }
     },
-    itemsByPointType () {
+    itemsByPointType() {
       const points = {}
       this.element.points.forEach((item) => {
         const pointType = item.metadata.semantics.value.replace(/^.*_/g, '')

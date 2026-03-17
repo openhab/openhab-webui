@@ -9,7 +9,7 @@
         :value="page.uid"
         @input="page.uid = $event.target.value"
         :clear-button="createMode"
-        :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
+        :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
         input-id="input"
         required
         validate
@@ -29,7 +29,7 @@
         label="Label"
         type="text"
         placeholder="Page label used for display purposes"
-        :info="(createMode) ? 'Required' : ''"
+        :info="createMode ? 'Required' : ''"
         :value="page.config.label"
         @input="page.config.label = $event.target.value"
         required
@@ -105,50 +105,53 @@ export default {
     createMode: Boolean,
     f7router: Object
   },
-  data () {
+  data() {
     return {}
   },
   methods: {
-    isVisibleTo (userrole) {
+    isVisibleTo(userrole) {
       return Array.isArray(this.page.config.visibleTo) && this.page.config.visibleTo.indexOf(userrole) >= 0
     },
-    updatePageVisibility (userrole) {
+    updatePageVisibility(userrole) {
       let value = this.$refs.pageVisibility.$el.children[0].f7SmartSelect.getValue()
       if (value && value.length === 0) {
         delete this.page.config.visibleTo
       } else {
         this.page.config.visibleTo = value
-        f7.toast.create({
-          text: 'Please be advised: the visibility restriction is not a security feature - items can be controlled by other means!',
-          closeButton: true,
-          destroyOnClose: true
-        }).open()
+        f7.toast
+          .create({
+            text: 'Please be advised: the visibility restriction is not a security feature - items can be controlled by other means!',
+            closeButton: true,
+            destroyOnClose: true
+          })
+          .open()
       }
     },
-    duplicatePage () {
+    duplicatePage() {
       const pageClone = cloneDeep(this.page)
       const pageType = pageClone.component.replace(/^oh-|-page$/g, '')
       pageClone.uid = pageClone.uid + '_copy'
       this.f7router.navigate(`/settings/pages/${pageType}/duplicate`, { props: { pageCopy: pageClone } })
     },
-    deletePage () {
-      f7.dialog.confirm(
-        `Are you sure you want to delete ${this.page.uid}?`,
-        'Delete Page',
-        () => {
-          this.$oh.api.delete('/rest/ui/components/ui:page/' + this.page.uid).then((data) => {
-            f7.toast.create({
-              text: `Page '${this.page.uid}' deleted`,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
+    deletePage() {
+      f7.dialog.confirm(`Are you sure you want to delete ${this.page.uid}?`, 'Delete Page', () => {
+        this.$oh.api
+          .delete('/rest/ui/components/ui:page/' + this.page.uid)
+          .then((data) => {
+            f7.toast
+              .create({
+                text: `Page '${this.page.uid}' deleted`,
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
             this.f7router.back('/settings/pages/', { force: true })
-          }).catch((err) => {
+          })
+          .catch((err) => {
             console.error(err)
             f7.dialog.alert('An error occurred while deleting: ' + err)
           })
-        }
-      )
+      })
     }
   }
 }

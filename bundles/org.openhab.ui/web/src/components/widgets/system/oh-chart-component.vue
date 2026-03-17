@@ -82,9 +82,30 @@ import type { WidgetContext } from '@/components/widgets/types'
 
 dayjs.extend(LocalizedFormat)
 
-use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
-  LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
-  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
+use([
+  CanvasRenderer,
+  LineChart,
+  BarChart,
+  GaugeChart,
+  HeatmapChart,
+  PieChart,
+  ScatterChart,
+  CustomChart,
+  TitleComponent,
+  LegendComponent,
+  LegendScrollComponent,
+  GridComponent,
+  SingleAxisComponent,
+  ToolboxComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  MarkLineComponent,
+  MarkPointComponent,
+  MarkAreaComponent,
+  VisualMapComponent,
+  CalendarComponent,
+  LabelLayout
+])
 
 const props = defineProps<{
   context: WidgetContext
@@ -94,9 +115,11 @@ const uiOptionsStore = useUIOptionsStore()
 const runtimeStore = useRuntimeStore()
 
 let echartsLocale = runtimeStore.locale.split('-')[0]!.toUpperCase()
-let initOptions = echartsLocale ? {
-  locale: echartsLocale
-} : {}
+let initOptions = echartsLocale
+  ? {
+      locale: echartsLocale
+    }
+  : {}
 
 // composables
 const { config, slots, evaluateExpression } = useWidgetContext(props.context)
@@ -158,14 +181,17 @@ onMounted(() => {
   if (['EN', 'ZH'].includes(echartsLocale)) {
     ready.value = true
   } else {
-    import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`).then((lang) => {
-      registerLocale(echartsLocale, lang.default)
-      console.log('echart localisation loaded: ', echartsLocale)
-    }).catch(() => {
-      console.log('echart localisation loading failed: ', echartsLocale)
-    }).finally(() => {
-      ready.value = true
-    })
+    import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`)
+      .then((lang) => {
+        registerLocale(echartsLocale, lang.default)
+        console.log('echart localisation loaded: ', echartsLocale)
+      })
+      .catch(() => {
+        console.log('echart localisation loading failed: ', echartsLocale)
+      })
+      .finally(() => {
+        ready.value = true
+      })
   }
 })
 
@@ -183,7 +209,7 @@ const pickFixedStartDate = () => {
       inputEl: calendarInput.value,
       value: [value],
       on: {
-        change (_calendar, value) {
+        change(_calendar, value) {
           if ((value as unknown[]).length < 1) return
           if (dayjs((value as Date[])[0]).isSame(startTime.value)) return
           setDate((value as Date[])[0]!)

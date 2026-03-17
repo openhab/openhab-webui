@@ -36,12 +36,12 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       apps: []
     }
   },
-  created () {
+  created() {
     this.$oh.api.get('/rest/ui/tiles').then((data) => {
       this.apps = data
     })

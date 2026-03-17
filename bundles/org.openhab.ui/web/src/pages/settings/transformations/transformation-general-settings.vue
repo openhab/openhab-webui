@@ -27,7 +27,7 @@
           label="Label"
           type="text"
           placeholder="Tranformation label for display purposes"
-          :info="(createMode) ? 'Required' : ''"
+          :info="createMode ? 'Required' : ''"
           :value="transformation.label"
           required
           validate
@@ -77,13 +77,13 @@ export default {
     language: String
   },
   emits: ['new-type', 'new-language'],
-  data () {
+  data() {
     return {
       smartSelectParams: {
         openIn: 'popup',
         searchbar: true,
         virtualList: true,
-        virtualListHeight: (theme.aurora) ? 32 : undefined
+        virtualListHeight: theme.aurora ? 32 : undefined
       }
     }
   }

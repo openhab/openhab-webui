@@ -30,16 +30,16 @@ export default {
     value: String
   },
   emits: ['input'],
-  setup () {
+  setup() {
     return { theme }
   },
   computed: {
-    step () {
+    step() {
       return this.configDescription.step || this.configDescription.stepsize || 60
     }
   },
   methods: {
-    updateValue (event) {
+    updateValue(event) {
       this.$emit('input', event.target.value)
     }
   }

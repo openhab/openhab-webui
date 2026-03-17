@@ -25,15 +25,19 @@
         media-item
         :link="`links/${link.itemName}/${channelId.replace('#', '%23')}`"
         class="channellist-linkeditem searchbar-ignore"
-        :title="(link.item.label) ? link.item.label : link.item.name"
-        :footer="(link.item.label) ? link.item.name : '\xa0'"
+        :title="link.item.label ? link.item.label : link.item.name"
+        :footer="link.item.label ? link.item.name : '\xa0'"
         :subtitle="getItemTypeAndMetaLabel(link.item)"
-        :after="context.store[link.item.name] ? context.store[link.item.name].displayState || context.store[link.item.name].state : link.item.state">
+        :after="
+          context.store[link.item.name]
+            ? context.store[link.item.name].displayState || context.store[link.item.name].state
+            : link.item.state
+        ">
         <template #media>
           <oh-icon
             v-if="link.item.category"
             :icon="link.item.category"
-            :state="link.item.type === 'Image' ? null : (context.store[link.item.name].state || link.item.state)"
+            :state="link.item.type === 'Image' ? null : context.store[link.item.name].state || link.item.state"
             height="32"
             width="32" />
           <span v-else class="item-initial">{{ link.item.name[0] }}</span>
@@ -52,7 +56,9 @@
     <f7-list-button
       class="searchbar-ignore"
       color="blue"
-      :title="thing.editable && (channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'"
+      :title="
+        thing.editable && (channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'
+      "
       @click="configureChannel()" />
     <f7-list-button
       v-if="extensible && thing.editable"
@@ -101,7 +107,7 @@ export default {
     f7router: Object
   },
   emits: ['channel-updated'],
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -110,7 +116,7 @@ export default {
     }
   },
   methods: {
-    buildLinks () {
+    buildLinks() {
       if (this.channel) {
         this.channelKind = this.channel.kind
         let links = []
@@ -135,91 +141,102 @@ export default {
         })
       }
     },
-    addLink () {
-      this.f7router.navigate({
-        url: 'links/new',
-        route: {
-          component: AddLinkPage,
-          path: 'links/new'
+    addLink() {
+      this.f7router.navigate(
+        {
+          url: 'links/new',
+          route: {
+            component: AddLinkPage,
+            path: 'links/new'
+          }
+        },
+        {
+          props: {
+            thing: this.thing,
+            channelGroup: this.channelId.includes('#')
+              ? this.thingType.channelGroups.find((cg) => cg.id === this.channelId.split('#', 1)[0])
+              : null,
+            channel: this.thing.channels.find((c) => c.id === this.channelId),
+            channelType: this.channelType
+          }
         }
-      }, {
-        props: {
-          thing: this.thing,
-          channelGroup: this.channelId.includes('#') ? this.thingType.channelGroups.find((cg) => cg.id === this.channelId.split('#', 1)[0]) : null,
-          channel: this.thing.channels.find((c) => c.id === this.channelId),
-          channelType: this.channelType
-        }
-      })
+      )
     },
-    configureChannel () {
+    configureChannel() {
       const self = this
       const path = 'channels/' + this.channelId + '/edit'
-      this.f7router.navigate({
-        url: path,
-        route: {
-          component: ConfigureChannelPage,
-          path,
-          context: {
-            operation: 'edit-channel'
-          },
-          on: {
-            pageAfterOut (event, page) {
-              const context = page.route.route.context
-              const finalChannel = context.finalChannel
-              if (finalChannel) {
-                // replace the channel in-place
-                const idx = self.thing.channels.findIndex((c) => c.uid === finalChannel.uid)
-                self.thing.channels[idx] = finalChannel
-                self.$emit('channel-updated', true)
-              } else {
-                self.$emit('channel-updated', false)
+      this.f7router.navigate(
+        {
+          url: path,
+          route: {
+            component: ConfigureChannelPage,
+            path,
+            context: {
+              operation: 'edit-channel'
+            },
+            on: {
+              pageAfterOut(event, page) {
+                const context = page.route.route.context
+                const finalChannel = context.finalChannel
+                if (finalChannel) {
+                  // replace the channel in-place
+                  const idx = self.thing.channels.findIndex((c) => c.uid === finalChannel.uid)
+                  self.thing.channels[idx] = finalChannel
+                  self.$emit('channel-updated', true)
+                } else {
+                  self.$emit('channel-updated', false)
+                }
               }
             }
           }
+        },
+        {
+          props: {
+            thing: this.thing,
+            channel: this.channel,
+            channelType: this.channelType,
+            channelId: this.channelId
+          }
         }
-      }, {
-        props: {
-          thing: this.thing,
-          channel: this.channel,
-          channelType: this.channelType,
-          channelId: this.channelId
-        }
-      })
+      )
     },
-    duplicateChannel () {
+    duplicateChannel() {
       const self = this
       const path = 'channels/' + this.channelId + '/edit'
-      this.f7router.navigate({
-        url: path,
-        route: {
-          component: DuplicateChannelPage,
-          path,
-          context: {
-            operation: 'duplicate-channel'
-          },
-          on: {
-            pageAfterOut (event, page) {
-              const context = page.route.route.context
-              const finalChannel = context.finalChannel
-              if (finalChannel) {
-                self.thing.channels.push(finalChannel)
-                self.$emit('channel-updated', true)
-              } else {
-                self.$emit('channel-updated', false)
+      this.f7router.navigate(
+        {
+          url: path,
+          route: {
+            component: DuplicateChannelPage,
+            path,
+            context: {
+              operation: 'duplicate-channel'
+            },
+            on: {
+              pageAfterOut(event, page) {
+                const context = page.route.route.context
+                const finalChannel = context.finalChannel
+                if (finalChannel) {
+                  self.thing.channels.push(finalChannel)
+                  self.$emit('channel-updated', true)
+                } else {
+                  self.$emit('channel-updated', false)
+                }
               }
             }
           }
+        },
+        {
+          props: {
+            thing: this.thing,
+            channel: this.channel,
+            channelType: this.channelType,
+            channelId: this.channelId
+          }
         }
-      }, {
-        props: {
-          thing: this.thing,
-          channel: this.channel,
-          channelType: this.channelType,
-          channelId: this.channelId
-        }
-      })
+      )
     },
-    removeChannel () {
+    removeChannel() {
       const self = this
 
       if (this.links.length > 0) {
@@ -234,16 +251,17 @@ export default {
           const idx = self.thing.channels.findIndex((c) => c.uid === self.channel.uid)
           self.thing.channels.splice(idx, 1)
           self.$emit('channel-updated', true)
-        })
+        }
+      )
     }
   },
   watch: {
-    opened (isOpen) {
+    opened(isOpen) {
       if (isOpen) {
         this.buildLinks()
       }
     },
-    thing () {
+    thing() {
       if (this.opened) {
         this.buildLinks()
       }

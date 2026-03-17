@@ -12,7 +12,7 @@
           v-for="service in services"
           :value="service.id"
           :key="service.id"
-          :selected="(multiple) ? value.indexOf(service.id) >= 0 : value === service.id ? true : null">
+          :selected="multiple ? value.indexOf(service.id) >= 0 : value === service.id ? true : null">
           {{ service.label }}
         </option>
       </select>
@@ -36,7 +36,7 @@ export default {
     required: Boolean
   },
   emits: ['input'],
-  data () {
+  data() {
     return {
       ready: false,
       service: [],
@@ -47,8 +47,8 @@ export default {
       }
     }
   },
-  created () {
-    this.smartSelectParams.closeOnSelect = !(this.multiple)
+  created() {
+    this.smartSelectParams.closeOnSelect = !this.multiple
     // TODO use a Vuex store
     api.getPersistenceServices().then((data) => {
       this.services = data.sort((a, b) => {
@@ -60,7 +60,7 @@ export default {
     })
   },
   methods: {
-    select (e) {
+    select(e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
     }

@@ -55,38 +55,41 @@ import { f7, theme } from 'framework7-vue'
 import type { Router } from 'framework7'
 import DeveloperDockIcon from '@/components/developer/developer-dock-icon.vue'
 
-const props = withDefaults(defineProps<{
-  title: string,
-  subtitle?: string,
-  menuIcon?: boolean,
-  backLink?: string,
-  backLinkUrl?: string,
-  editable?: boolean,
-  saveLink?: string,
-  saveLinkUrl?: string,
-  large?: boolean,
-  f7router?: Router.Router,
-}>(), {
-  menuIcon: true,
-  backLink: 'Back',
-  editable: undefined,
-  large: false
-})
+const props = withDefaults(
+  defineProps<{
+    title: string
+    subtitle?: string
+    menuIcon?: boolean
+    backLink?: string
+    backLinkUrl?: string
+    editable?: boolean
+    saveLink?: string
+    saveLinkUrl?: string
+    large?: boolean
+    f7router?: Router.Router
+  }>(),
+  {
+    menuIcon: true,
+    backLink: 'Back',
+    editable: undefined,
+    large: false
+  }
+)
 
 const emit = defineEmits(['back', 'save'])
 
 defineSlots<{
-  right: void,
-  after: void,
+  right: void
+  after: void
 }>()
 
-function back () {
+function back() {
   if (props.backLinkUrl) return
   if (props.backLinkUrl === null) {
     emit('back')
     return
   }
-  const f7router : Router.Router = props.f7router || f7.views.main.router
+  const f7router: Router.Router = props.f7router || f7.views.main.router
   f7router.back()
 
   /*

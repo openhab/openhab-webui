@@ -35,14 +35,15 @@ export default {
     LTileLayer,
     LMarker
   },
-  data () {
+  data() {
     return {
       showMap: false,
       zoom: 1,
       center: latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().darkMode}_all/{z}/{x}/{y}.png`,
-      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
+      attribution:
+        '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       marker: null,
       mapOptions: {
         zoomSnap: 0.5
@@ -52,33 +53,36 @@ export default {
   computed: {
     ...mapStores(useUIOptionsStore)
   },
-  mounted () {
+  mounted() {
     nextTick(() => {
-      this.zoom = (this.value) ? 15 : 1
-      this.marker = (this.value) ? latLng(this.value.split(',')) : null
-      this.center = (this.value) ? latLng(this.value.split(',')) : latLng(48, 6)
+      this.zoom = this.value ? 15 : 1
+      this.marker = this.value ? latLng(this.value.split(',')) : null
+      this.center = this.value ? latLng(this.value.split(',')) : latLng(48, 6)
       this.showMap = true
       if (!this.value) {
-        api.getServiceConfig({ serviceId: 'org.openhab.i18n' }).then((data) => {
-          if (data.location) {
-            this.center = latLng(data.location.split(','))
-            this.zoom = 15
-            this.showMap = false
-            nextTick(() => {
-              this.showMap = true
-            })
-          }
-        }).catch((err) => {
-          // silently ignore if the request is not permitted for the user
-          if (!(err.response?.statusText === 'Forbidden' || err.response?.status === 403)) {
-            return Promise.reject(err)
-          }
-        })
+        api
+          .getServiceConfig({ serviceId: 'org.openhab.i18n' })
+          .then((data) => {
+            if (data.location) {
+              this.center = latLng(data.location.split(','))
+              this.zoom = 15
+              this.showMap = false
+              nextTick(() => {
+                this.showMap = true
+              })
+            }
+          })
+          .catch((err) => {
+            // silently ignore if the request is not permitted for the user
+            if (!(err.response?.statusText === 'Forbidden' || err.response?.status === 403)) {
+              return Promise.reject(err)
+            }
+          })
       }
     })
   },
   methods: {
-    mapClicked (evt) {
+    mapClicked(evt) {
       this.marker = latLng(evt.latlng)
       this.marker.lat = Number.parseFloat(this.marker.lat).toFixed(6)
       this.marker.lng = Number.parseFloat(this.marker.lng).toFixed(6)

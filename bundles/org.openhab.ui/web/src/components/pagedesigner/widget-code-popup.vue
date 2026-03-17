@@ -57,7 +57,7 @@ export default {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   emits: ['update', 'closed'],
-  data () {
+  data() {
     return {
       leaveCancelled: false,
       updateTimer: null,
@@ -66,7 +66,7 @@ export default {
     }
   },
   computed: {
-    widgetYamlError () {
+    widgetYamlError() {
       try {
         YAML.parse(this.code, { prettyErrors: true })
         return 'OK'
@@ -76,7 +76,7 @@ export default {
     }
   },
   methods: {
-    widgetCodeOpened () {
+    widgetCodeOpened() {
       this.code = YAML.stringify(this.component)
       this.originalCode = this.code
       nextTick(() => {
@@ -85,18 +85,18 @@ export default {
       })
       window.addEventListener('keydown', this.onKeydown)
     },
-    widgetCodeClosed () {
+    widgetCodeClosed() {
       this.cleanupMovablePopup()
       window.removeEventListener('keydown', this.onKeydown)
       f7.emit('widgetCodeClosed')
       this.$emit('closed')
     },
-    onKeydown (evt) {
+    onKeydown(evt) {
       if (evt.key === 'Escape' && !this.leaveCancelled) {
         this.closeWithDirtyCheck()
       }
     },
-    closeWithDirtyCheck () {
+    closeWithDirtyCheck() {
       if (this.dirty) {
         const dialog = this.confirmLeaveWithoutSaving(
           () => {
@@ -106,21 +106,23 @@ export default {
           () => {
             // prevent re-triggering the confirm dialog when ESC is pressed to close the dialog
             this.leaveCancelled = true
-            setTimeout(() => { this.leaveCancelled = false }, 100)
+            setTimeout(() => {
+              this.leaveCancelled = false
+            }, 100)
           }
         )
       } else {
         this.$refs.widgetCode.$el.f7Modal.close()
       }
     },
-    reset () {
+    reset() {
       f7.dialog.confirm('Do you want to revert your changes?', 'Revert Changes', () => {
         this.code = this.originalCode
         this.updateWidgetCode(this.code)
         this.dirty = false
       })
     },
-    save () {
+    save() {
       if (this.widgetYamlError !== 'OK') {
         f7.dialog.alert('Invalid YAML: ' + this.widgetYamlError, 'Unable to save changes').open()
         return
@@ -128,11 +130,11 @@ export default {
       this.updateWidgetCode(this.code)
       this.$refs.widgetCode.$el.f7Modal.close()
     },
-    updateWidgetCode (value) {
+    updateWidgetCode(value) {
       f7.emit('widgetCodeUpdate', value)
       this.$emit('update', value)
     },
-    update (value) {
+    update(value) {
       this.code = value
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {

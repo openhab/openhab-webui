@@ -3,7 +3,7 @@
     <f7-navbar>
       <oh-nav-content title="Inbox" back-link="Things" back-link-url="/settings/things/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -29,7 +29,7 @@
           &nbsp;Remove
         </f7-button>
         <f7-button
-          v-if="selectedItems.map(uid => inbox.find(e => e.thingUID === uid))?.filter(e => e.flag !== 'IGNORED').length"
+          v-if="selectedItems.map((uid) => inbox.find((e) => e.thingUID === uid))?.filter((e) => e.flag !== 'IGNORED').length"
           @click="confirmActionOnSelection('ignore')"
           color="orange"
           class="ignore display-flex flex-direction-row margin-right"
@@ -183,7 +183,7 @@
               :title="entry.label"
               :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
               :footer="entry.thingUID"
-              :badge="(entry.flag === 'IGNORED') ? 'IGNORED' : ''" />
+              :badge="entry.flag === 'IGNORED' ? 'IGNORED' : ''" />
           </f7-list-group>
         </f7-list>
         <f7-list v-if="ready && searchQuery && filteredItems.length === 0">
@@ -227,10 +227,10 @@ export default {
   components: {
     EmptyStatePlaceholder
   },
-  setup () {
+  setup() {
     return { f7, theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -246,18 +246,19 @@ export default {
     }
   },
   computed: {
-    inboxCount () {
+    inboxCount() {
       if (!this.inbox) return 0
-      return (this.showIgnored) ? this.inbox.length : this.inbox.filter((e) => e.flag !== 'IGNORED').length
+      return this.showIgnored ? this.inbox.length : this.inbox.filter((e) => e.flag !== 'IGNORED').length
     },
-    filteredIndexedInbox () {
-      let filteredInbox = (this.showIgnored) ? this.inbox : this.inbox.filter((e) => e.flag !== 'IGNORED')
+    filteredIndexedInbox() {
+      let filteredInbox = this.showIgnored ? this.inbox : this.inbox.filter((e) => e.flag !== 'IGNORED')
       if (this.searchQuery) {
         const searchQuery = this.searchQuery.toLowerCase()
-        filteredInbox = filteredInbox.filter((e) =>
-          e.label.toLowerCase().includes(searchQuery) ||
-          e.thingUID.toLowerCase().includes(searchQuery) ||
-          e.properties[e.representationProperty]?.toLowerCase()?.includes(searchQuery)
+        filteredInbox = filteredInbox.filter(
+          (e) =>
+            e.label.toLowerCase().includes(searchQuery) ||
+            e.thingUID.toLowerCase().includes(searchQuery) ||
+            e.properties[e.representationProperty]?.toLowerCase()?.includes(searchQuery)
         )
       }
       if (this.groupBy === 'alphabetical') {
@@ -280,21 +281,25 @@ export default {
 
           return prev
         }, {})
-        return Object.keys(bindingGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
-          objEntries[key] = bindingGroups[key]
-          return objEntries
-        }, {})
+        return Object.keys(bindingGroups)
+          .sort((a, b) => a.localeCompare(b))
+          .reduce((objEntries, key) => {
+            objEntries[key] = bindingGroups[key]
+            return objEntries
+          }, {})
       }
     },
-    filteredItems () {
-      return Object.values(this.filteredIndexedInbox).flat().map((e) => e.thingUID)
+    filteredItems() {
+      return Object.values(this.filteredIndexedInbox)
+        .flat()
+        .map((e) => e.thingUID)
     },
-    areAllSelected () {
+    areAllSelected() {
       return this.selectedItems.length >= this.filteredItems.length
     }
   },
   methods: {
-    load () {
+    load() {
       this.loading = true
       this.$oh.api.get('/rest/inbox?includeIgnored=true').then((data) => {
         this.inbox = data.sort((a, b) => a.label.localeCompare(b.label))
@@ -314,7 +319,7 @@ export default {
         })
       })
     },
-    switchGroupOrder (groupBy) {
+    switchGroupOrder(groupBy) {
       this.groupBy = groupBy
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
@@ -326,32 +331,32 @@ export default {
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
       this.startEventSource()
     },
-    startEventSource () {
+    startEventSource() {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/inbox/*', null, (event) => {
         // const topicParts = event.topic.split('/')
         this.load()
       })
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    click (event, item) {
+    click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.thingUID, item)
       } else {
         this.openEntryActions(event, item)
       }
     },
-    ctrlClick (event, item) {
+    ctrlClick(event, item) {
       this.toggleItemCheck(event, item.thingUID, item)
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
-    openEntryActions (e, entry) {
+    openEntryActions(e, entry) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(e, entry.thingUID)
         return
@@ -372,25 +377,25 @@ export default {
             this.entryActionsCopyThingDefinitionButton(entry),
             this.entryActionsIgnoreButton(entry, this.load, ignored)
           ],
-          [
-            this.entryActionsRemoveButton(entry, this.load)
-          ]
+          [this.entryActionsRemoveButton(entry, this.load)]
         ]
       })
 
       actions.open()
     },
-    changeIgnored () {
-      setTimeout(() => { this.$refs.listIndex.update() })
+    changeIgnored() {
+      setTimeout(() => {
+        this.$refs.listIndex.update()
+      })
     },
-    toggleCheck () {
+    toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
       this.selectedItems = []
     },
-    isChecked (item) {
+    isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
     },
-    toggleItemCheck (event, item) {
+    toggleItemCheck(event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
@@ -398,7 +403,7 @@ export default {
         this.selectedItems.push(item)
       }
     },
-    confirmActionOnSelection (action) {
+    confirmActionOnSelection(action) {
       const vm = this
 
       let title, message
@@ -421,9 +426,11 @@ export default {
           break
       }
 
-      f7.dialog.confirm(message, title, () => { vm.performActionOnSelection(action) })
+      f7.dialog.confirm(message, title, () => {
+        vm.performActionOnSelection(action)
+      })
     },
-    performActionOnSelection (action) {
+    performActionOnSelection(action) {
       let progressMessage, successMessage, promises
       let navigateToThingsPage = false
       switch (action) {
@@ -452,35 +459,39 @@ export default {
 
       let dialog = f7.dialog.progress(progressMessage)
 
-      Promise.all(promises).then(() => {
-        f7.toast.create({
-          text: successMessage,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        const searchFor = this.selectedItems.join(',')
-        this.selectedItems = []
-        dialog.close()
-        if (navigateToThingsPage) {
-          this.f7router.navigate('/settings/things/', {
-            props: {
-              searchFor
-            }
-          })
-        } else {
+      Promise.all(promises)
+        .then(() => {
+          f7.toast
+            .create({
+              text: successMessage,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          const searchFor = this.selectedItems.join(',')
+          this.selectedItems = []
+          dialog.close()
+          if (navigateToThingsPage) {
+            this.f7router.navigate('/settings/things/', {
+              props: {
+                searchFor
+              }
+            })
+          } else {
+            this.load()
+          }
+        })
+        .catch((err) => {
+          dialog.close()
           this.load()
-        }
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred: ' + err)
-      })
+          console.error(err)
+          f7.dialog.alert('An error occurred: ' + err)
+        })
     },
-    filterSelectedItems () {
+    filterSelectedItems() {
       return this.inbox.filter((e) => this.selectedItems.indexOf(e.thingUID) >= 0)
     },
-    search (searchbar, query, previousQuery) {
+    search(searchbar, query, previousQuery) {
       if (query) {
         this.searchQuery = query
         this.selectedItems = this.selectedItems.filter((selected) => this.filteredItems.includes(selected))
@@ -488,10 +499,10 @@ export default {
         this.clearSearch()
       }
     },
-    clearSearch () {
+    clearSearch() {
       this.searchQuery = null
     },
-    selectDeselectAll () {
+    selectDeselectAll() {
       if (this.areAllSelected) {
         this.selectedItems = []
       } else {

@@ -26,7 +26,7 @@ export default {
     title: String,
     text: String
   },
-  setup () {
+  setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('empty-states', mergeLocaleMessage)
     return {

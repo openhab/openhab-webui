@@ -38,7 +38,7 @@
         <item-picker
           :value="currentModule.configuration.itemName"
           label="Item"
-          @input="(val) => currentModule.configuration.itemName = val" />
+          @input="(val) => (currentModule.configuration.itemName = val)" />
       </f7-list-group>
     </f7-list>
     <f7-list>
@@ -55,7 +55,7 @@
         name="itemState"
         type="text"
         :value="currentModule.configuration.state"
-        @blur="(evt) => currentModule.configuration.state = evt.target.value" />
+        @blur="(evt) => (currentModule.configuration.state = evt.target.value)" />
     </f7-list>
     <f7-list v-if="stateSuggestions.length">
       <f7-list-item
@@ -196,9 +196,9 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 export default {
   mixins: [ModuleWizard],
   props: {
-    'currentModule': Object,
-    'currentModuleType': Object,
-    'moduleTypes': Object,
+    currentModule: Object,
+    currentModuleType: Object,
+    moduleTypes: Object,
     f7router: Object
   },
   components: {
@@ -206,7 +206,7 @@ export default {
     ConfigSheet
   },
   emits: ['show-advanced', 'type-select', 'start-script'],
-  data () {
+  data() {
     return {
       category: '',
       itemEventType: 'state',
@@ -225,31 +225,33 @@ export default {
     }
   },
   methods: {
-    chooseItemCategory () {
+    chooseItemCategory() {
       this.openModelPicker()
     },
-    chooseScriptCategory () {
+    chooseScriptCategory() {
       this.category = 'script'
       let moduleType = this.moduleTypes.find((t) => t.uid === 'script.ScriptCondition')
       if (moduleType) {
-        this.languages = moduleType.configDescriptions.find((c) => c.name === 'type').options.map((l) => {
-          return {
-            contentType: l.value,
-            name: l.label.split(' (')[0],
-            version: l.label.split(' (')[1].replace(')', '')
-          }
-        })
+        this.languages = moduleType.configDescriptions
+          .find((c) => c.name === 'type')
+          .options.map((l) => {
+            return {
+              contentType: l.value,
+              name: l.label.split(' (')[0],
+              version: l.label.split(' (')[1].replace(')', '')
+            }
+          })
       }
     },
-    chooseTimeCategory () {
+    chooseTimeCategory() {
       this.category = 'time'
       this.updateTimeEventType('dayOfWeek')
     },
-    chooseEphemerisCategory () {
+    chooseEphemerisCategory() {
       this.category = 'ephemeris'
       this.updateEphemerisEventType('weekdays')
     },
-    updateItemEventType (type) {
+    updateItemEventType(type) {
       this.itemEventType = type
       switch (type) {
         case 'command':
@@ -263,7 +265,7 @@ export default {
           break
       }
     },
-    updateTimeEventType (type) {
+    updateTimeEventType(type) {
       this.timeEventType = type
       switch (type) {
         case 'dayOfWeek':
@@ -277,7 +279,7 @@ export default {
           break
       }
     },
-    updateEphemerisEventType (type) {
+    updateEphemerisEventType(type) {
       this.ephemerisEventType = type
       switch (type) {
         case 'weekdays':
@@ -297,13 +299,13 @@ export default {
           break
       }
     },
-    scriptLanguagePicked (value) {
+    scriptLanguagePicked(value) {
       this.$emit('type-select', 'script.ScriptCondition')
       nextTick(() => {
         this.$emit('start-script', value)
       })
     },
-    itemPicked (value) {
+    itemPicked(value) {
       this.category = 'item'
       this.currentItem = value
       this.currentModule.configuration.itemName = value.name

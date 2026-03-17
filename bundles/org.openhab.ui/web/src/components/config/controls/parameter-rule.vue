@@ -20,7 +20,7 @@ export default {
     RulePicker
   },
   methods: {
-    updateValue (value) {
+    updateValue(value) {
       this.$emit('input', value)
     }
   }

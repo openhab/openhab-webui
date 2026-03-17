@@ -3,7 +3,7 @@
     <f7-navbar>
       <oh-nav-content title="Widgets" back-link="Developer Tools" back-link-url="/developer/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -106,10 +106,10 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -122,10 +122,10 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
       this.$oh.api.get('/rest/ui/components/ui:widget').then((data) => {
@@ -144,24 +144,24 @@ export default {
         })
       })
     },
-    toggleCheck () {
+    toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
     },
-    isChecked (item) {
+    isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
     },
-    click (event, item) {
+    click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
         this.f7router.navigate(item.uid, { animate: false })
       }
     },
-    ctrlClick (event, item) {
+    ctrlClick(event, item) {
       this.toggleItemCheck(event, item.uid, item)
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
-    toggleItemCheck (event, item) {
+    toggleItemCheck(event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
@@ -169,38 +169,38 @@ export default {
         this.selectedItems.push(item)
       }
     },
-    removeSelected () {
+    removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected widgets?`,
-        'Remove widgets',
-        () => {
-          vm.doRemoveSelected()
-        }
-      )
+      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected widgets?`, 'Remove widgets', () => {
+        vm.doRemoveSelected()
+      })
     },
-    doRemoveSelected () {
+    doRemoveSelected() {
       let dialog = f7.dialog.progress('Deleting widgets...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/ui/components/ui:widget/' + i))
-      Promise.all(promises).then((data) => {
-        f7.toast.create({
-          text: 'Widgets removed',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.selectedItems = []
-        dialog.close()
-        this.load()
-        f7.emit('sidebarRefresh', null)
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred while deleting: ' + err)
-        f7.emit('sidebarRefresh', null)
-      })
+      Promise.all(promises)
+        .then((data) => {
+          f7.toast
+            .create({
+              text: 'Widgets removed',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.selectedItems = []
+          dialog.close()
+          this.load()
+          f7.emit('sidebarRefresh', null)
+        })
+        .catch((err) => {
+          dialog.close()
+          this.load()
+          console.error(err)
+          f7.dialog.alert('An error occurred while deleting: ' + err)
+          f7.emit('sidebarRefresh', null)
+        })
     }
   }
 }

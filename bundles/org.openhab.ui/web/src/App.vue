@@ -3,10 +3,7 @@
     v-if="init"
     v-bind="f7params"
     :style="{
-      visibility:
-        userStore.user || componentsStore.page('overview') || communicationFailureMsg
-          ? ''
-          : 'hidden'
+      visibility: userStore.user || componentsStore.page('overview') || communicationFailureMsg ? '' : 'hidden'
     }">
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="1024">
@@ -58,7 +55,7 @@
                 currentPath.settings?.services ||
                 currentPath.settings?.addons ||
                 currentPath.settings?.persistence ||
-                currentPath.settings?.transformations,
+                currentPath.settings?.transformations
             }">
             <template #media>
               <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
@@ -252,7 +249,7 @@
                 :animate="false"
                 no-chevron
                 :class="{
-                  currentsection: currentPath.developer?.['api-explorer'],
+                  currentsection: currentPath.developer?.['api-explorer']
                 }">
                 <template #media>
                   <f7-icon f7="burn" color="gray" />
@@ -266,7 +263,7 @@
                 :animate="false"
                 no-chevron
                 :class="{
-                  currentsection: currentPath.developer?.['log-viewer'],
+                  currentsection: currentPath.developer?.['log-viewer']
                 }">
                 <template #media>
                   <f7-icon f7="square_list" color="gray" />
@@ -295,11 +292,7 @@
         <template #fixed>
           <div v-if="ready && runtimeStore.apiEndpoint('auth')" class="account">
             <div class="display-flex justify-content-center">
-              <div
-                v-if="
-                  !userStore.user &&
-                    !componentsStore.pages().filter(p => p.uid !== 'overview').length"
-                class="hint-signin">
+              <div v-if="!userStore.user && !componentsStore.pages().filter((p) => p.uid !== 'overview').length" class="hint-signin">
                 <em>{{ t('sidebar.tip.signIn') }}<br /><f7-icon f7="arrow_down" size="20" /></em>
               </div>
               <f7-button
@@ -523,9 +516,9 @@ export default {
     PanelRight,
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
-  setup () {
-    const { locale, mergeLocaleMessage : globalMergeLocaleMessage } = useI18n({ useScope: 'global'})
-    const { t, mergeLocaleMessage : localMergeLocaleMessage } = useI18n({ useScope: 'local'})
+  setup() {
+    const { locale, mergeLocaleMessage: globalMergeLocaleMessage } = useI18n({ useScope: 'global' })
+    const { t, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
     const { startAudioWebSocket, triggerDialog } = useDialog()
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
@@ -541,7 +534,7 @@ export default {
       triggerDialog
     }
   },
-  data () {
+  data() {
     let theme = localStorage.getItem('openhab.ui:theme')
 
     if ((!theme || theme === 'auto') && typeof window.OHApp?.preferTheme === 'function') {
@@ -604,10 +597,10 @@ export default {
     }
   },
   computed: {
-    origin () {
+    origin() {
       return window.location.origin
     },
-    currentPath () {
+    currentPath() {
       // Returns a hierarchical object representation of the currentUrl.
       //   '/settings/services/openhabcloud/' -> currentPath.settings.services.openhabcloud
       //   { $key: 'settings', settings: { $key: 'services', services: { $key: 'openhabcloud', openhabcloud: { $end: true } } } }
@@ -627,7 +620,7 @@ export default {
           { $end: true }
         )
     },
-    serverDisplayUrl () {
+    serverDisplayUrl() {
       return window.location.origin
     },
     ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore),
@@ -653,16 +646,17 @@ export default {
         // update i18n globals
         this.locale = useRuntimeStore().locale
 
-        loadLocaleMessages('common', this.globalMergeLocaleMessage).then(() => {
-          f7.params.dialog.buttonOk = this.$t('dialogs.ok')
-          f7.params.dialog.buttonCancel = this.$t('dialogs.cancel')
-          f7.params.smartSelect.searchbarDisableText = this.$t('dialogs.cancel')
-          f7.params.smartSelect.searchbarPlaceholder = this.$t('dialogs.search')
-          f7.params.smartSelect.sheetCloseLinkText = this.$t('dialogs.done')
-          f7.params.smartSelect.popupCloseLinkText = this.$t('dialogs.close')
-          f7.params.smartSelect.pageBackLinkText = this.$t('dialogs.back')
-          f7.params.smartSelect.nothingFoundText = this.$t('dialogs.search.nothingFound')
-        })
+        loadLocaleMessages('common', this.globalMergeLocaleMessage)
+          .then(() => {
+            f7.params.dialog.buttonOk = this.$t('dialogs.ok')
+            f7.params.dialog.buttonCancel = this.$t('dialogs.cancel')
+            f7.params.smartSelect.searchbarDisableText = this.$t('dialogs.cancel')
+            f7.params.smartSelect.searchbarPlaceholder = this.$t('dialogs.search')
+            f7.params.smartSelect.sheetCloseLinkText = this.$t('dialogs.done')
+            f7.params.smartSelect.popupCloseLinkText = this.$t('dialogs.close')
+            f7.params.smartSelect.pageBackLinkText = this.$t('dialogs.back')
+            f7.params.smartSelect.nothingFoundText = this.$t('dialogs.search.nothingFound')
+          })
           .catch((err) => {
             console.error('Error loading locale messages: ', err)
           })
@@ -672,7 +666,7 @@ export default {
     }
   },
   methods: {
-    loadData (useCredentials) {
+    loadData(useCredentials) {
       performance.mark('loadDataStart')
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
@@ -728,9 +722,7 @@ export default {
                   headersObj[parts[0]] = parts[1]
                 })
               // Redirect according to location header but modify URL arguments to redirect back to the UI and not the REST API after authentication
-              window.location.replace(
-                headersObj['location'].replace(window.location.href + 'rest', window.location.href)
-              )
+              window.location.replace(headersObj['location'].replace(window.location.href + 'rest', window.location.href))
             }
           } else if (err.message === 0 || err.status === 0) {
             console.info('openHAB REST API connection failed: 0 (unknown). Unloading service-worker and reloading PWA ...')
@@ -748,9 +740,7 @@ export default {
             console.error('openHAB REST API connection failed fatal:', err)
             // Make sure this is set to a value, otherwise the page won't show up
             this.communicationFailureMsg = err.message || err.status || 'Unknown Error'
-            return Promise.reject(
-              'openHAB REST API connection failed with error: ' + err.message || err.status
-            )
+            return Promise.reject('openHAB REST API connection failed with error: ' + err.message || err.status)
           }
         })
         .then((rootResponse) => {
@@ -775,9 +765,7 @@ export default {
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
           if (locale) {
-            let dayjsLocale = dayjsLocales.find(
-              (l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0]
-            )
+            let dayjsLocale = dayjsLocales.find((l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0])
             // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
             if (dayjsLocale?.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
 
@@ -786,20 +774,19 @@ export default {
 
             dayjsLocalePromise = dayjsLocale
               ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`)
-                .then((data) => {
-                  return data.default
-                }).catch((error) => {
-                  console.error('Error fetching dayjs: ', error, dayjsLocale)
-                })
+                  .then((data) => {
+                    return data.default
+                  })
+                  .catch((error) => {
+                    console.error('Error fetching dayjs: ', error, dayjsLocale)
+                  })
               : Promise.resolve(null)
           }
-          return Promise.all([
-            useComponentsStore().loadPagesAndWidgets(),
-            dayjsLocalePromise
-          ])
+          return Promise.all([useComponentsStore().loadPagesAndWidgets(), dayjsLocalePromise])
         })
         .then((data) => {
-          this.pages = useComponentsStore().pages()
+          this.pages = useComponentsStore()
+            .pages()
             .filter((p) => p.config.sidebar && this.pageIsVisible(p))
             .sort((p1, p2) => {
               const order1 = p1.config.order || 1000
@@ -814,8 +801,9 @@ export default {
           }
           // load & build the semantic model
           useModelStore().loadSemanticModel()
-        }).then(() => {
-        // finished with loading
+        })
+        .then(() => {
+          // finished with loading
           this.ready = true
           performance.mark('loadDataEnd')
           const measure = performance.measure('loadData', 'loadDataStart', 'loadDataEnd')
@@ -823,17 +811,16 @@ export default {
           return Promise.resolve()
         })
     },
-    pageIsVisible (page) {
+    pageIsVisible(page) {
       if (!page.config.visibleTo) return true
       if (useUserStore().noAuth) return true
       const user = useUserStore().user
       if (!user) return false
-      if (user.roles && user.roles.some((r) => page.config.visibleTo.indexOf('role:' + r) >= 0))
-        return true
+      if (user.roles && user.roles.some((r) => page.config.visibleTo.indexOf('role:' + r) >= 0)) return true
       if (page.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
       return false
     },
-    pageIcon (page) {
+    pageIcon(page) {
       if (page.config && page.config.icon) return page.config.icon
       switch (page.component) {
         case 'oh-layout-page':
@@ -850,19 +837,19 @@ export default {
           return 'f7:tv'
       }
     },
-    updateThemeOptions () {
+    updateThemeOptions() {
       if (useUIOptionsStore().visibleBreakpointDisabled) {
         nextTick(() => {
           f7.panel.get('left').disableVisibleBreakpoint()
         })
       }
     },
-    toggleDeveloperDock () {
+    toggleDeveloperDock() {
       if (!useUserStore().isAdmin()) return
       useRuntimeStore().showDeveloperDock = !useRuntimeStore().showDeveloperDock
       if (useRuntimeStore().showDeveloperDock) useStatesStore().startTrackingStates()
     },
-    selectDeveloperDock (dockOpts) {
+    selectDeveloperDock(dockOpts) {
       if (dockOpts) {
         if (dockOpts.dock) this.activeDock = dockOpts.dock
         if (dockOpts.helpTab) this.activeHelpTab = dockOpts.helpTab
@@ -880,11 +867,11 @@ export default {
       }
       if (!useRuntimeStore().showDeveloperDock) this.toggleDeveloperDock()
     },
-    toggleVisibleBreakpoint () {
+    toggleVisibleBreakpoint() {
       f7.panel.get('left').toggleVisibleBreakpoint()
       useUIOptionsStore().visibleBreakpointDisabled = f7.panel.get('left').visibleBreakpointDisabled
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if (ev.shiftKey && ev.altKey) {
         switch (ev.keyCode) {
           case 68: // D for developer dock
@@ -892,7 +879,7 @@ export default {
             break
           case 77: // M for menu
             const leftPanel = f7.panel.get('left')
-            if(leftPanel.opened) {
+            if (leftPanel.opened) {
               leftPanel.close()
             } else {
               leftPanel.open()
@@ -905,11 +892,11 @@ export default {
         ev.preventDefault()
       }
     },
-    updateUrl (newUrl) {
+    updateUrl(newUrl) {
       this.currentUrl = newUrl
       useRuntimeStore().pagePath = this.currentUrl
     },
-    updateTitle () {
+    updateTitle() {
       const title = [this.f7params.name] // ['openHAB']
       const navbarTitle = () => {
         return this.$$('.page-current .navbar .title')?.[0]?.textContent
@@ -921,14 +908,8 @@ export default {
       } else if (this.currentPath.overview) {
         const config = useComponentsStore().page('overview')?.config
         const localizedTitle = this.t(`home.${this.currentPath.$key}.title`)
-        title.unshift(
-          config?.browserTitle || (config?.label === 'Overview' ? localizedTitle : config?.label)
-        )
-      } else if (
-        this.currentPath.locations ||
-        this.currentPath.equipment ||
-        this.currentPath.properties
-      ) {
+        title.unshift(config?.browserTitle || (config?.label === 'Overview' ? localizedTitle : config?.label))
+      } else if (this.currentPath.locations || this.currentPath.equipment || this.currentPath.properties) {
         title.unshift(this.t(`home.${this.currentPath.$key}.title`))
       } else if (this.currentPath.settings?.addons && navbarTitle()) {
         // The navbar title on these pages starts with "Configure ....", so don't add "Settings" in front of it
@@ -968,7 +949,7 @@ export default {
       document.title = title.filter((t) => t).join(' - ')
     }
   },
-  created () {
+  created() {
     this.AddonIcons = AddonIcons
     this.AddonTitles = AddonTitles
 
@@ -994,11 +975,7 @@ export default {
           this.init = true
         })
         .catch((err) => {
-          console.warn(
-            'Error while using the stored refresh_token to get a new access_token: ' +
-              err +
-              '. Logging out & cleaning session.'
-          )
+          console.warn('Error while using the stored refresh_token to get a new access_token: ' + err + '. Logging out & cleaning session.')
           this.cleanSession()
           this.init = true
         })
@@ -1006,34 +983,32 @@ export default {
       this.init = true
     }
   },
-  mounted () {
+  mounted() {
     f7ready(async (f7) => {
       this.$f7dim.width = f7.width
       this.$f7dim.height = f7.height
 
       this.updateThemeOptions()
 
-      this.tryExchangeAuthorizationCode().then((user) => {
-        this.loggedIn = true
-        this.loadData()
-      }).catch((err) => {
-        if (err) {
-          f7.dialog.alert('An error occurred while getting authorization: ' + err)
-        } else {
-          // we're just not signed in
-          const refreshToken = this.getRefreshToken()
-          this.loadData().then(() => {
-            if (
-              !refreshToken &&
-              useRuntimeStore().apiEndpoint('ui') &&
-              !useComponentsStore().page('overview')
-            ) {
-              // as there is no overview page, assume the setup wizard hasn't run yet so launch it right away
-              this.authorize(true)
-            }
-          })
-        }
-      })
+      this.tryExchangeAuthorizationCode()
+        .then((user) => {
+          this.loggedIn = true
+          this.loadData()
+        })
+        .catch((err) => {
+          if (err) {
+            f7.dialog.alert('An error occurred while getting authorization: ' + err)
+          } else {
+            // we're just not signed in
+            const refreshToken = this.getRefreshToken()
+            this.loadData().then(() => {
+              if (!refreshToken && useRuntimeStore().apiEndpoint('ui') && !useComponentsStore().page('overview')) {
+                // as there is no overview page, assume the setup wizard hasn't run yet so launch it right away
+                this.authorize(true)
+              }
+            })
+          }
+        })
 
       f7.on('routeChange', (route) => {
         // console.log('Route changed:', route.url)

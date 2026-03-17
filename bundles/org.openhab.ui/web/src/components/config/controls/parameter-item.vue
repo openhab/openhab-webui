@@ -26,7 +26,7 @@ export default {
   },
   emits: ['input'],
   methods: {
-    filter (filterName) {
+    filter(filterName) {
       const value = this.configDescription.filterCriteria?.find((f) => f.name === filterName)?.value
       if (typeof value === 'string') {
         if (value.includes(',')) {
@@ -37,7 +37,7 @@ export default {
       }
       return value
     },
-    updateValue (value) {
+    updateValue(value) {
       this.$emit('input', value)
     }
   }

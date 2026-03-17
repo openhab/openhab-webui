@@ -43,17 +43,17 @@ export default {
   components: {
     ModelCard
   },
-  data () {
+  data() {
     return {
       type: 'equipment'
     }
   },
-  setup (props) {
+  setup(props) {
     const { config, childContext, slots } = useWidgetContext(props.context)
     return { config, childContext, slots }
   },
   computed: {
-    listContext () {
+    listContext() {
       const contextLabelDefaults = { contextLabelSource: 'path' }
       return {
         store: useStatesStore().trackedItems,

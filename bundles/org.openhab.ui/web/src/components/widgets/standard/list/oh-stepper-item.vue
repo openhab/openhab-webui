@@ -20,13 +20,13 @@ export default {
   props: {
     context: Object
   },
-  setup (props) {
+  setup(props) {
     const { config, childContext } = useWidgetContext(props.context)
     return { config, childContext }
   },
   widget: OhStepperItemDefinition,
   computed: {
-    afterComponent () {
+    afterComponent() {
       return {
         component: 'oh-stepper',
         config: this.config

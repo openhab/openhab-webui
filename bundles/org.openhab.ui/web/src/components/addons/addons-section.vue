@@ -47,7 +47,7 @@
     </template>
     <template v-else-if="showAsCards">
       <addons-swiper
-        v-if="!device.desktop && !device.ipad && (addons.length < addonCollapsedLimit)"
+        v-if="!device.desktop && !device.ipad && addons.length < addonCollapsedLimit"
         :addons-list="addonsList"
         :install-action-text="installActionText"
         @addon-button-click="addonButtonClick" />
@@ -141,21 +141,24 @@ import * as api from '@/api'
 const device = f7.device
 
 // props
-const props = withDefaults(defineProps<{
-  addons: api.Addon[]
-  title?: string
-  subtitle?: string
-  showAll?: boolean
-  featured?: string[]
-  showAsCards?: boolean
-  suggested?: boolean
-  installActionText?: string
-}>(), {
-  showAll: false,
-  featured: () => [],
-  showAsCards: false,
-  suggested: false
-})
+const props = withDefaults(
+  defineProps<{
+    addons: api.Addon[]
+    title?: string
+    subtitle?: string
+    showAll?: boolean
+    featured?: string[]
+    showAsCards?: boolean
+    suggested?: boolean
+    installActionText?: string
+  }>(),
+  {
+    showAll: false,
+    featured: () => [],
+    showAsCards: false,
+    suggested: false
+  }
+)
 
 // emits
 const emit = defineEmits<{ (e: 'addon-button-click', addon: api.Addon): void }>()
@@ -166,17 +169,14 @@ const collapsed = ref(true)
 // computed
 const featuredAddons = computed<api.Addon[] | null>(() => {
   if (props.featured) {
-    return props.addons
-      .filter((a) => props.featured.includes(a.uid))
-      .sort(compareAddons)
+    return props.addons.filter((a) => props.featured.includes(a.uid)).sort(compareAddons)
   }
   return null
 })
 
 const notFeaturedAddons = computed<api.Addon[]>(() => {
-  const baseList = (featuredAddons.value && featuredAddons.value.length)
-    ? props.addons.filter((a) => !featuredAddons.value!.includes(a))
-    : [...props.addons]
+  const baseList =
+    featuredAddons.value && featuredAddons.value.length ? props.addons.filter((a) => !featuredAddons.value!.includes(a)) : [...props.addons]
 
   return baseList.sort(compareAddons)
 })

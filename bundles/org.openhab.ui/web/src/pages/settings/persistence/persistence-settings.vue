@@ -90,10 +90,10 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       loading: false,
       ready: false,
@@ -117,18 +117,18 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -150,17 +150,19 @@ export default {
         }
       })
     },
-    save () {
+    save() {
       this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
-        f7.toast.create({
-          text: 'Default persistence setting saved',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        f7.toast
+          .create({
+            text: 'Default persistence setting saved',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          })
+          .open()
       })
       this.dirty = false
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 83:

@@ -484,12 +484,12 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return {
       theme
     }
   },
-  data () {
+  data() {
     return {
       stateConnected: false,
       stateProcessing: true,
@@ -539,20 +539,20 @@ export default {
     }
   },
   computed: {
-    filteredTableData () {
+    filteredTableData() {
       return this.tableData.filter((item) => item.visible)
     },
-    countersBadgeColor () {
+    countersBadgeColor() {
       if (this.tableData.length >= this.maxEntries) return 'red'
       if (this.filterCount < this.tableData.length) return 'orange'
       return 'green'
     },
-    selectedLog () {
+    selectedLog() {
       return this.tableData.find((entry) => entry.id === this.selectedId) || {}
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.$oh.api.get('/rest/logging/').then((data) => {
         data.loggers.forEach((logger) => this.loggerPackages.push(logger))
         nextTick(() => {
@@ -585,23 +585,23 @@ export default {
 
       this.showErrors = localStorage.getItem('openhab.ui:logviewer.logShowErrors')
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       this.loggingStop()
     },
-    popupOpened (ref, navbar) {
+    popupOpened(ref, navbar) {
       nextTick(() => {
         this.initializeMovablePopup(ref, navbar)
       })
     },
-    updateLogLevel (logger, value) {
+    updateLogLevel(logger, value) {
       logger.level = value
       this.$oh.api.put('/rest/logging/' + logger.loggerName, logger)
     },
-    removeLogLevel (logger) {
+    removeLogLevel(logger) {
       this.$oh.api.delete('/rest/logging/' + logger.loggerName)
       this.loggerPackages = this.loggerPackages.filter((loggerPackage) => loggerPackage.loggerName !== logger.loggerName)
     },
-    socketConnect () {
+    socketConnect() {
       const readyCallback = () => {
         this.stateConnected = true
         this.stateProcessing = true
@@ -635,12 +635,12 @@ export default {
       //   })
       // }
     },
-    socketClose () {
+    socketClose() {
       this.$oh.ws.close(this.socket, () => {
         this.stateConnected = false
       })
     },
-    renderEntry (entity) {
+    renderEntry(entity) {
       let tr = document.createElement('tr')
       let icon = 'question_diamond'
       switch (entity.level) {
@@ -662,13 +662,17 @@ export default {
       }
       const levelLowerCased = entity.level.toLowerCase()
       if (this.textMode) {
-        tr.innerHTML = `<td class="text"><span class="time">${entity.time}${entity.milliseconds}</span>` +
-        `[<span class="level ${levelLowerCased}">${entity.level}</span>] ` +
-        `[<span class="logger" title="${entity.loggerName}">${entity.loggerName}</span>] - ` +
-        `<span class="msg ${levelLowerCased}">${this.highlightText(entity.message)}</span></td>`
+        tr.innerHTML =
+          `<td class="text"><span class="time">${entity.time}${entity.milliseconds}</span>` +
+          `[<span class="level ${levelLowerCased}">${entity.level}</span>] ` +
+          `[<span class="logger" title="${entity.loggerName}">${entity.loggerName}</span>] - ` +
+          `<span class="msg ${levelLowerCased}">${this.highlightText(entity.message)}</span></td>`
       } else {
         tr.className = 'table-rows ' + levelLowerCased
-        tr.innerHTML = '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' + icon + `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
+        tr.innerHTML =
+          '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' +
+          icon +
+          `</i> ${entity.time}<span class="milliseconds">${entity.milliseconds}</span></td>` +
           `<td class="level">${entity.level}</td>` +
           `<td class="logger"><span class="logger" title="${entity.loggerName}">${entity.loggerName}</span></td>` +
           `<td class="nowrap">${this.highlightText(entity.message)}</td>`
@@ -678,11 +682,11 @@ export default {
       })
       return tr
     },
-    onRowClick (entityId) {
+    onRowClick(entityId) {
       this.selectedId = entityId
       f7.popup.open('#logdetails-popup')
     },
-    addLogEntry (logEntry) {
+    addLogEntry(logEntry) {
       this.lastSequence = Math.max(this.lastSequence, logEntry.sequence)
       const date = new Date(logEntry.unixtime)
 
@@ -754,32 +758,32 @@ export default {
         })
       }
     },
-    loggingPause () {
+    loggingPause() {
       this.stateProcessing = false
     },
-    loggingContinue () {
+    loggingContinue() {
       if (!this.stateConnected) {
         this.socketConnect()
       }
       this.updateFilter()
       this.stateProcessing = true
     },
-    loggingStop () {
+    loggingStop() {
       this.stateConnected = false
       this.socketClose()
     },
-    clearLog () {
+    clearLog() {
       this.tableData.length = 0
       this.filterCount = 0
       this.logStart = '--:--:--'
       this.logEnd = '--:--:--'
       this.$refs.dataTable.firstChild.innerHTML = ''
     },
-    showLatestLogs () {
+    showLatestLogs() {
       this.autoScroll = true
       this.scrollToBottom()
     },
-    scrollToBottom () {
+    scrollToBottom() {
       // Scroll to the bottom of the table
       const tableContainer = this.$refs.tableContainer
       if (tableContainer) {
@@ -789,18 +793,18 @@ export default {
       }
       this.redrawPartOfTable()
     },
-    handleScroll () {
+    handleScroll() {
       const tableContainer = this.$refs.tableContainer
 
       if (Date.now() < this.scrollTime) return
 
       // Detect if the user has scrolled up
-      const isAtBottom = tableContainer.scrollHeight - tableContainer.scrollTop < (tableContainer.clientHeight + 20)
+      const isAtBottom = tableContainer.scrollHeight - tableContainer.scrollTop < tableContainer.clientHeight + 20
       this.autoScroll = isAtBottom
 
       this.redrawPartOfTable()
     },
-    redrawPartOfTable () {
+    redrawPartOfTable() {
       const LINE_HEIGHT = 31
 
       const tableContainer = this.$refs.tableContainer
@@ -818,7 +822,7 @@ export default {
       if (firstIndexToRedraw > 0) {
         const padder = document.createElement('tr')
         padder.className = 'padder'
-        padder.style.height = (LINE_HEIGHT * firstIndexToRedraw) + 'px'
+        padder.style.height = LINE_HEIGHT * firstIndexToRedraw + 'px'
         tableBody.appendChild(padder)
       }
       for (let i = firstIndexToRedraw; i <= lastIndexToRedraw; i++) {
@@ -827,11 +831,11 @@ export default {
       if (lastIndexToRedraw < filteredItemsCount - 1) {
         const padder = document.createElement('tr')
         padder.className = 'padder'
-        padder.style.height = (LINE_HEIGHT * (filteredItemsCount - 1 - lastIndexToRedraw)) + 'px'
+        padder.style.height = LINE_HEIGHT * (filteredItemsCount - 1 - lastIndexToRedraw) + 'px'
         tableBody.appendChild(padder)
       }
     },
-    handleLogPackageEnter (event) {
+    handleLogPackageEnter(event) {
       let logger = {
         loggerName: event.target.value,
         level: 'INFO'
@@ -840,10 +844,14 @@ export default {
       this.loggerPackages.push(logger)
       this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
     },
-    processFilter (logEntry) {
-      return logEntry.loggerName.toLowerCase().includes(this.filterTextLowerCase) || logEntry.message.toLowerCase().includes(this.filterTextLowerCase) || (this.showErrors && logEntry.level === 'ERROR')
+    processFilter(logEntry) {
+      return (
+        logEntry.loggerName.toLowerCase().includes(this.filterTextLowerCase) ||
+        logEntry.message.toLowerCase().includes(this.filterTextLowerCase) ||
+        (this.showErrors && logEntry.level === 'ERROR')
+      )
     },
-    handleFilter (searchbar, filter) {
+    handleFilter(searchbar, filter) {
       if (!searchbar) return
       if (!filter) {
         this.clearFilter()
@@ -855,13 +863,13 @@ export default {
       this.updateFilter()
       this.scrollToBottom()
     },
-    clearFilter () {
+    clearFilter() {
       this.filterText = this.filterTextLowerCase = ''
       localStorage.removeItem('openhab.ui:logviewer.logFilterText')
       this.updateFilter()
       this.scrollToBottom()
     },
-    updateFilter () {
+    updateFilter() {
       let cnt = 0
 
       this.$refs.dataTable.firstChild.innerHTML = ''
@@ -874,7 +882,7 @@ export default {
       this.filterCount = cnt
       this.redrawPartOfTable()
     },
-    highlightText (text) {
+    highlightText(text) {
       if (this.activeHighlights.length === 0) {
         return text // Skip if no filters are active
       }
@@ -882,14 +890,11 @@ export default {
       // Apply each filter with its respective color
       this.activeHighlights.forEach((filter) => {
         const regex = new RegExp(`(${filter.text})`, 'gi')
-        text = text.replace(
-          regex,
-          `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`
-        )
+        text = text.replace(regex, `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`)
       })
       return text
     },
-    downloadCSV () {
+    downloadCSV() {
       const filteredData = this.tableData.filter((row) => row.visible)
 
       const transformedData = filteredData.map((row) => ({
@@ -910,7 +915,7 @@ export default {
 
       URL.revokeObjectURL(url)
     },
-    convertObjectArrayToCSV (array) {
+    convertObjectArrayToCSV(array) {
       if (!array.length) {
         return ''
       }
@@ -928,19 +933,23 @@ export default {
       // Combine headers and rows into a single CSV string
       return [headers, ...rows].join('\n')
     },
-    copyTableToClipboard () {
+    copyTableToClipboard() {
       if (this.textMode) {
-        const logs = this.filteredTableData.map((log) => {
-          return `${log.time}${log.milliseconds} [${log.level}] [${log.loggerName}] - ${log.message}`
-        }).join('\n')
+        const logs = this.filteredTableData
+          .map((log) => {
+            return `${log.time}${log.milliseconds} [${log.level}] [${log.loggerName}] - ${log.message}`
+          })
+          .join('\n')
         // v-clipboard works without https, but it can only copy plain text
         copyToClipboard(logs, {
           onSuccess: () => {
-            f7.toast.create({
-              text: 'Table copied as text to clipboard',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
+            f7.toast
+              .create({
+                text: 'Table copied as text to clipboard',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
           }
         })
         return
@@ -968,22 +977,24 @@ export default {
       navigator.clipboard
         .write([clipboardItem])
         .then(() => {
-          f7.toast.create({
-            text: 'Table copied as HTML to clipboard',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          f7.toast
+            .create({
+              text: 'Table copied as HTML to clipboard',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
         })
         .catch((err) => {
           console.error('Failed to copy table: ', err)
         })
     },
-    setTextMode (textModeEnabled) {
+    setTextMode(textModeEnabled) {
       this.textMode = textModeEnabled
       localStorage.setItem('openhab.ui:logviewer.textMode', this.textMode)
       this.updateFilter()
     },
-    prefilterHighlights () {
+    prefilterHighlights() {
       this.activeHighlights.length = 0
       for (const entry of this.highlightFilters) {
         if (entry.active) {
@@ -994,38 +1005,38 @@ export default {
         }
       }
     },
-    saveHighlighters () {
+    saveHighlighters() {
       localStorage.setItem('openhab.ui:logviewer.logHighlightFilters', JSON.stringify(this.highlightFilters))
       this.prefilterHighlights()
       this.updateFilter()
     },
-    addNewHighlight () {
+    addNewHighlight() {
       this.highlightFilters.push({
         text: '',
         color: this.colors[0],
         active: false
       })
     },
-    updateHighlightText (event, index) {
+    updateHighlightText(event, index) {
       this.highlightFilters[index].text = event.target.value
       this.prefilterHighlights()
     },
-    removeHighlight (index) {
+    removeHighlight(index) {
       this.highlightFilters.splice(index, 1)
       this.prefilterHighlights()
     },
-    openColorPopover (index, event) {
+    openColorPopover(index, event) {
       this.currentHighlightColorItemIndex = index
       this.currentHighlightColor = this.highlightFilters[index].color
       f7.popover.open('#color-picker-popover', event.target)
     },
-    selectHighlightColor (color) {
+    selectHighlightColor(color) {
       f7.popover.close('#color-picker-popover')
       if (color !== null) {
         this.highlightFilters[this.currentHighlightColorItemIndex].color = color
       }
     },
-    toggleErrorDisplay () {
+    toggleErrorDisplay() {
       this.showErrors = !this.showErrors
       this.updateFilter()
       localStorage.setItem('openhab.ui:logviewer.logShowErrors', this.showErrors)

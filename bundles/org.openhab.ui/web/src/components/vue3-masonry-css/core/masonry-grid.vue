@@ -18,7 +18,7 @@ const props = withDefaults(defineProps<MasonryProps>(), {
 })
 
 const slots = defineSlots<{
-  default(): VNode[];
+  default(): VNode[]
 }>()
 
 const displayColumns = ref<number>(2)
@@ -95,8 +95,8 @@ const gutterSize = computed(() => {
 const renderChild = (element: VNode) => {
   const style = props.css
     ? {
-      padding: `calc(${gutterSize.value} / 2)`
-    }
+        padding: `calc(${gutterSize.value} / 2)`
+      }
     : undefined
 
   return h(
@@ -113,10 +113,10 @@ const renderChild = (element: VNode) => {
 const renderColumn = (children: VNode[], key: string) => {
   const style = props.css
     ? {
-      boxSizing: 'border-box',
-      backgroundClip: 'padding-box',
-      width: `${100 / displayColumns.value}%`
-    }
+        boxSizing: 'border-box',
+        backgroundClip: 'padding-box',
+        width: `${100 / displayColumns.value}%`
+      }
     : undefined
 
   return h(
@@ -134,9 +134,9 @@ const renderColumn = (children: VNode[], key: string) => {
 const renderContainer = (columns: VNode[]) => {
   const style = props.css
     ? {
-      display: ['-webkit-box', '-ms-flexbox', 'flex'],
-      margin: `calc(-${gutterSize.value} / 2)`
-    }
+        display: ['-webkit-box', '-ms-flexbox', 'flex'],
+        margin: `calc(-${gutterSize.value} / 2)`
+      }
     : undefined
 
   return h(props.tag, { style, class: props.class }, columns)

@@ -42,12 +42,12 @@ export default {
     OhCell
   },
   widget: OhLabelCellDefinition,
-  setup (props) {
+  setup(props) {
     const { config } = useWidgetContext(props.context)
     return { config }
   },
   computed: {
-    label () {
+    label() {
       return this.config.label || this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
     }
   }

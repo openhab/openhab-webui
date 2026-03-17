@@ -7,7 +7,7 @@
     class="disable-user-select">
     <f7-navbar
       v-if="!page || !page.config.hideNavbar"
-      :back-link="(showBackButton) ? $t('page.navbar.back') : undefined"
+      :back-link="showBackButton ? $t('page.navbar.back') : undefined"
       class="disable-user-select">
       <f7-nav-left v-if="!showBackButton">
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
@@ -20,7 +20,7 @@
           {{ theme.md ? '' : $t('page.navbar.edit') }}
         </f7-link>
         <f7-link v-if="fullscreenIcon" class="fullscreen-icon-navbar" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
-        <div v-if="!showBackButton && !isAdmin && !fullscreenIcon" style="width: 44px; height: 44px;" />
+        <div v-if="!showBackButton && !isAdmin && !fullscreenIcon" style="width: 44px; height: 44px" />
       </f7-nav-right>
     </f7-navbar>
     <template v-else>
@@ -44,11 +44,9 @@
         :tab-link-active="currentTab === idx">
         <i v-if="tabEvaluateExpression(tab, idx, 'icon')" class="icon" :style="{ width: tabBarIconSize, height: tabBarIconSize }">
           <oh-icon :icon="tabEvaluateExpression(tab, idx, 'icon')" :width="tabBarIconSize" :height="tabBarIconSize" />
-          <f7-badge
-            v-if="tabEvaluateExpression(tab, idx, 'badge')"
-            :color="tabEvaluateExpression(tab, idx, 'badgeColor')"
-            >{{ tabEvaluateExpression(tab, idx, 'badge') }}</f7-badge
-          >
+          <f7-badge v-if="tabEvaluateExpression(tab, idx, 'badge')" :color="tabEvaluateExpression(tab, idx, 'badgeColor')">{{
+            tabEvaluateExpression(tab, idx, 'badge')
+          }}</f7-badge>
         </i>
         <span class="tabbar-label">{{ tabEvaluateExpression(tab, idx, 'title') }}</span>
       </f7-link>
@@ -109,13 +107,13 @@ export default {
     defineVars: Object,
     f7router: Object
   },
-  setup () {
+  setup() {
     useViewArea()
 
     const { evaluateExpression } = useWidgetExpression()
     return { theme, evaluateExpression, widgetRegistry }
   },
-  data () {
+  data() {
     return {
       currentTab: this.initialTab ? Number(this.initialTab) : 0,
       fullscreen: this.$fullscreen.isFullscreen,
@@ -124,80 +122,73 @@ export default {
     }
   },
   computed: {
-    pageStyle () {
+    pageStyle() {
       if (!this.context) return null
       const pageComponent =
         this.pageType === 'tabs'
-          ? (this.context.component.slots.default[this.currentTab]
-          // the tabbed page component can be null if this.currentTab is out of bounds
-            ? this.tabContext(this.context.component.slots.default[this.currentTab]).component
-            : null)
+          ? this.context.component.slots.default[this.currentTab]
+            ? // the tabbed page component can be null if this.currentTab is out of bounds
+              this.tabContext(this.context.component.slots.default[this.currentTab]).component
+            : null
           : this.context.component
       if (!pageComponent || !pageComponent.config || !pageComponent.config.style) return null
       return pageComponent.config.style
     },
     // Resolve the f7 CSS variable because iconify's SVG element doesn't like css variables
-    tabBarIconSize () {
-      return window
-        .getComputedStyle(document.documentElement)
-        .getPropertyValue('--f7-tabbar-icon-size')
+    tabBarIconSize() {
+      return window.getComputedStyle(document.documentElement).getPropertyValue('--f7-tabbar-icon-size')
     },
-    context () {
+    context() {
       return {
         component: this.page,
         vars: Object.assign(
-          this.page && this.page.config && this.page.config.defineVars
-            ? this.page.config.defineVars
-            : {},
+          this.page && this.page.config && this.page.config.defineVars ? this.page.config.defineVars : {},
           this.defineVars
         ),
         store: useStatesStore().trackedItems
       }
     },
-    page () {
+    page() {
       return useComponentsStore().page(this.uid)
     },
-    pageType () {
+    pageType() {
       return this.getPageType(this.page)
     },
-    pageLabel () {
+    pageLabel() {
       return this.page?.config.label
     },
-    isAdmin () {
+    isAdmin() {
       return this.page && useUserStore().isAdmin()
     },
-    visibleToCurrentUser () {
+    visibleToCurrentUser() {
       if (!this.page || !this.page.config || !this.page.config.visibleTo) return true
       const user = useUserStore().user
       if (!user) return false
-      if (user.roles && user.roles.some((r) => this.page.config.visibleTo.indexOf('role:' + r) >= 0))
-        return true
+      if (user.roles && user.roles.some((r) => this.page.config.visibleTo.indexOf('role:' + r) >= 0)) return true
       if (this.page.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
       return false
     },
-    showBackButton () {
+    showBackButton() {
       return this.deep && !this.page?.config.sidebar
     },
-    fullscreenIcon () {
+    fullscreenIcon() {
       if (this.$fullscreen.isEnabled && this.page?.config.showFullscreenIcon) {
-        return this.fullscreen
-          ? 'rectangle_arrow_up_right_arrow_down_left_slash'
-          : 'rectangle_arrow_up_right_arrow_down_left'
+        return this.fullscreen ? 'rectangle_arrow_up_right_arrow_down_left_slash' : 'rectangle_arrow_up_right_arrow_down_left'
       }
       return null
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       useStatesStore().startTrackingStates()
       // make sure to set the current tab
       // fixes an issue where a tabbed subpage was opened and navigated around, when returning back to original page, tab was rendered empty
       this.onTabChange(this.currentTab)
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       useStatesStore().stopTrackingStates()
     },
-    onTabChange (idx) {
+    onTabChange(idx) {
       if (this.pageType !== 'tabs') return
 
       this.currentTab = idx
@@ -206,7 +197,7 @@ export default {
       this.f7router.updateCurrentUrl(url)
       this.f7router.url = url
     },
-    getPageType (page) {
+    getPageType(page) {
       if (!page) return null
       switch (page.component) {
         case 'oh-layout-page':
@@ -224,10 +215,8 @@ export default {
           return 'unknown'
       }
     },
-    tabContext (tab) {
-      const page = tab.config.page
-        ? useComponentsStore().page(tab.config.page.replace('page:', ''))
-        : tab.component
+    tabContext(tab) {
+      const page = tab.config.page ? useComponentsStore().page(tab.config.page.replace('page:', '')) : tab.component
       const context = {
         component: page,
         tab,
@@ -245,7 +234,7 @@ export default {
       }
       return context
     },
-    tabComponent (tab) {
+    tabComponent(tab) {
       switch (tab) {
         case 'oh-locations-tab':
         case 'oh-equipment-tab':
@@ -256,11 +245,11 @@ export default {
       const page = useComponentsStore().page(tab.config.page.replace('page:', ''))
       return widgetRegistry.page(page.component)
     },
-    tabEvaluateExpression (tab, idx, key) {
+    tabEvaluateExpression(tab, idx, key) {
       const ctx = this.tabContext(tab)
       return this.evaluateExpression('tab-' + idx + '-' + key, tab.config[key], ctx, ctx.props)
     },
-    editPage () {
+    editPage() {
       if (this.pageType === 'tabs') {
         const action = f7.actions.create({
           buttons: [
@@ -287,7 +276,7 @@ export default {
         this.f7router.navigate('/settings/pages/' + this.pageType + '/' + this.uid)
       }
     },
-    toggleFullscreen () {
+    toggleFullscreen() {
       this.$fullscreen.toggle(document.body, {
         wrap: false,
         callback: (fullscreen) => {

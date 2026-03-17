@@ -70,7 +70,7 @@ export default {
   props: {
     f7router: Object
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -84,15 +84,15 @@ export default {
     }
   },
   computed: {
-    purgeableLinksCount () {
+    purgeableLinksCount() {
       return this.orphanLinks.filter((l) => l.itemChannelLink.editable).length
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    load () {
+    load() {
       this.loading = true
       this.$oh.api.get('/rest/links/orphans').then((data) => {
         this.orphanLinks = data
@@ -100,23 +100,26 @@ export default {
         this.ready = true
       })
     },
-    getLinkForProblem (orphanLink) {
+    getLinkForProblem(orphanLink) {
       if (orphanLink.problem === 'THING_CHANNEL_MISSING') {
         return '/settings/items/' + orphanLink.itemChannelLink.itemName
       }
       return null
     },
-    purgeAllManaged () {
+    purgeAllManaged() {
       this.loading = true
-      this.$oh.api.post('/rest/links/purge').catch((e) => {
-        // ignore parseerror due to empty response
-        if (e === 'parseerror') return
-        console.error(e)
-      }).finally(() => {
-        this.load()
-      })
+      this.$oh.api
+        .post('/rest/links/purge')
+        .catch((e) => {
+          // ignore parseerror due to empty response
+          if (e === 'parseerror') return
+          console.error(e)
+        })
+        .finally(() => {
+          this.load()
+        })
     },
-    plural (count) {
+    plural(count) {
       return count === 1 ? '' : 's'
     }
   }

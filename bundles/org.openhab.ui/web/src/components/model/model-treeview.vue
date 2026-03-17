@@ -87,7 +87,7 @@ export default {
     Draggable,
     ModelTreeviewItem
   },
-  setup () {
+  setup() {
     const moveState = reactive({
       moving: false,
       canAdd: false,
@@ -118,7 +118,7 @@ export default {
     }
   },
   computed: {
-    model () {
+    model() {
       return {
         class: '',
         children: {
@@ -132,12 +132,12 @@ export default {
         item: null
       }
     },
-    rootNode () {
+    rootNode() {
       return this.model
     }
   },
   methods: {
-    nodeSelected (node) {
+    nodeSelected(node) {
       this.$emit('selected', node)
     }
   }

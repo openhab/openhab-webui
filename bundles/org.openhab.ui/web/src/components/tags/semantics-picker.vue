@@ -58,12 +58,12 @@ export default {
   components: {
     SemanticsPickerPopup
   },
-  setup () {
+  setup() {
     return {
       f7
     }
   },
-  data () {
+  data() {
     return {
       semanticClass: '',
       semanticProperty: '',
@@ -71,18 +71,18 @@ export default {
     }
   },
   computed: {
-    editable () {
+    editable() {
       return this.createMode || (this.item && this.item.editable)
     },
-    currentSemanticType () {
+    currentSemanticType() {
       return this.semanticType(this.semanticClass)
     },
-    semanticValue () {
+    semanticValue() {
       if (!this.semanticClass) return null
       const value = this.tagWithHierarchy(this.semanticClass)
       return value || this.currentSemanticType
     },
-    semanticValueTitle () {
+    semanticValueTitle() {
       if (this.currentSemanticType === 'Location') return 'Location'
       else if (this.currentSemanticType === 'Equipment') return 'Equipment'
       else if (this.currentSemanticType === 'Point') return 'Point'
@@ -90,7 +90,7 @@ export default {
     }
   },
   methods: {
-    openPopup (type) {
+    openPopup(type) {
       if (!this.editable) return
       this.popupType = type
       this.$nextTick(() => {
@@ -99,10 +99,10 @@ export default {
         if (popupEl) f7.popup.open(popupEl)
       })
     },
-    closePopup () {
+    closePopup() {
       this.popupType = null
     },
-    tagWithHierarchy (tag) {
+    tagWithHierarchy(tag) {
       if (!tag) return null
       let parentTagId = useSemanticsStore().Tags.find((t) => t.name === tag).parent
       if (!parentTagId) return null // no parent tag, so this is the root class
@@ -116,7 +116,7 @@ export default {
       }
       return value
     },
-    itemChanged () {
+    itemChanged() {
       if (!this.item.tags) return
       this.semanticClass = ''
       this.semanticProperty = ''
@@ -139,7 +139,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.itemChanged()
   }
 }

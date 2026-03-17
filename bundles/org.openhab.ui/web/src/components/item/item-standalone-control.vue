@@ -11,13 +11,13 @@ export default {
     context: Object,
     noBorder: Boolean
   },
-  data () {
+  data() {
     return {
       vars: {}
     }
   },
   computed: {
-    widgetContext () {
+    widgetContext() {
       if (!this.item) return
 
       let ctx = {

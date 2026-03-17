@@ -53,12 +53,12 @@ export default {
     OhRollershutter
   },
   widget: OhRollershutterCellDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, slots } = useWidgetContext(props.context)
     return { config, childContext, slots }
   },
   computed: {
-    rollershutterContext () {
+    rollershutterContext() {
       return Object.assign({}, this.context, {
         component: {
           component: 'oh-rollershutter',

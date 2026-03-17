@@ -42,7 +42,7 @@
                 <f7-stepper
                   small
                   :value="second.incrementIncrement"
-                  @stepper:change="(v) => second.incrementIncrement = v"
+                  @stepper:change="(v) => (second.incrementIncrement = v)"
                   :min="1"
                   :max="60" />
                 {{ text.Seconds.interval[1] || '' }}
@@ -70,9 +70,9 @@
               </f7-list-item>
               <f7-list-item radio :checked="second.cronEvery === 4 ? true : null" @change="second.cronEvery = 4">
                 {{ text.Seconds.cycle[0] }}
-                <f7-stepper small :value="second.rangeStart" @stepper:change="v => (second.rangeStart = v)" :min="0" :max="59" />
+                <f7-stepper small :value="second.rangeStart" @stepper:change="(v) => (second.rangeStart = v)" :min="0" :max="59" />
                 {{ text.Seconds.cycle[1] || '' }}
-                <f7-stepper small :value="second.rangeEnd" @stepper:change="(v) => second.rangeEnd = v" :min="0" :max="59" />
+                <f7-stepper small :value="second.rangeEnd" @stepper:change="(v) => (second.rangeEnd = v)" :min="0" :max="59" />
                 {{ text.Seconds.cycle[2] || '' }}
               </f7-list-item>
             </f7-list>
@@ -95,11 +95,11 @@
                 <f7-stepper
                   small
                   :value="minute.incrementIncrement"
-                  @stepper:change="v => (minute.incrementIncrement = v)"
+                  @stepper:change="(v) => (minute.incrementIncrement = v)"
                   :min="1"
                   :max="60" />
                 {{ text.Minutes.interval[1] || '' }}
-                <f7-stepper small :value="minute.incrementStart" @stepper:change="(v) => minute.incrementStart = v" :min="0" :max="59" />
+                <f7-stepper small :value="minute.incrementStart" @stepper:change="(v) => (minute.incrementStart = v)" :min="0" :max="59" />
                 {{ text.Minutes.interval[2] || '' }}
               </f7-list-item>
               <f7-list-item
@@ -123,9 +123,9 @@
               </f7-list-item>
               <f7-list-item radio :checked="minute.cronEvery === 4 ? true : null" @change="minute.cronEvery = 4">
                 {{ text.Minutes.cycle[0] }}
-                <f7-stepper small :value="minute.rangeStart" @stepper:change="v => (minute.rangeStart = v)" :min="0" :max="60" />
+                <f7-stepper small :value="minute.rangeStart" @stepper:change="(v) => (minute.rangeStart = v)" :min="0" :max="60" />
                 {{ text.Minutes.cycle[1] || '' }}
-                <f7-stepper small :value="minute.rangeEnd" @stepper:change="v => (minute.rangeEnd = v)" :min="0" :max="59" />
+                <f7-stepper small :value="minute.rangeEnd" @stepper:change="(v) => (minute.rangeEnd = v)" :min="0" :max="59" />
                 {{ text.Minutes.cycle[2] || '' }}
               </f7-list-item>
             </f7-list>
@@ -148,11 +148,11 @@
                 <f7-stepper
                   small
                   :value="hour.incrementIncrement"
-                  @stepper:change="v => (hour.incrementIncrement = v)"
+                  @stepper:change="(v) => (hour.incrementIncrement = v)"
                   :min="1"
                   :max="23" />
                 {{ text.Hours.interval[1] || '' }}
-                <f7-stepper small :value="hour.incrementStart" @stepper:change="v => (hour.incrementStart = v)" :min="0" :max="23" />
+                <f7-stepper small :value="hour.incrementStart" @stepper:change="(v) => (hour.incrementStart = v)" :min="0" :max="23" />
                 {{ text.Hours.interval[2] || '' }}
               </f7-list-item>
               <f7-list-item
@@ -176,9 +176,9 @@
               </f7-list-item>
               <f7-list-item radio :checked="hour.cronEvery === 4 ? true : null" @change="hour.cronEvery = 4">
                 {{ text.Hours.cycle[0] }}
-                <f7-stepper small :value="hour.rangeStart" @stepper:change="v => (hour.rangeStart = v)" :min="0" :max="23" />
+                <f7-stepper small :value="hour.rangeStart" @stepper:change="(v) => (hour.rangeStart = v)" :min="0" :max="23" />
                 {{ text.Hours.cycle[1] || '' }}
-                <f7-stepper small :value="hour.rangeEnd" @stepper:change="v => (hour.rangeEnd = v)" :min="0" :max="23" />
+                <f7-stepper small :value="hour.rangeEnd" @stepper:change="(v) => (hour.rangeEnd = v)" :min="0" :max="23" />
                 {{ text.Hours.cycle[2] || '' }}
               </f7-list-item>
             </f7-list>
@@ -200,10 +200,15 @@
               <!-- Every 1 day(s) starting on Sunday -->
               <f7-list-item radio :checked="day.cronEvery === 2 ? true : null" @change="day.cronEvery = 2">
                 {{ text.Day.intervalWeek[0] }}
-                <f7-stepper small :value="week.incrementIncrement" @stepper:change="v => (week.incrementIncrement = v)" :min="1" :max="7" />
+                <f7-stepper
+                  small
+                  :value="week.incrementIncrement"
+                  @stepper:change="(v) => (week.incrementIncrement = v)"
+                  :min="1"
+                  :max="7" />
                 {{ text.Day.intervalWeek[1] || '' }}
                 <select size="small" v-model="week.incrementStart" style="max-width: 150px">
-                  <option v-for="val in 7" :key="val" :label="text.Week[val-1]" :value="val" />
+                  <option v-for="val in 7" :key="val" :label="text.Week[val - 1]" :value="val" />
                 </select>
                 <!-- <f7-stepper small :value="week.incrementStart" @stepper:change="(v) => week.incrementStart = v" :min="0" :max="23"></f7-stepper> -->
                 {{ text.Day.intervalWeek[2] || '' }}
@@ -211,9 +216,14 @@
               <!-- Every 1 day(s) starting on the 1 of the month -->
               <f7-list-item radio :checked="day.cronEvery === 3 ? true : null" @change="day.cronEvery = 3">
                 {{ text.Day.intervalDay[0] }}
-                <f7-stepper small :value="day.incrementIncrement" @stepper:change="v => (day.incrementIncrement = v)" :min="1" :max="31" />
+                <f7-stepper
+                  small
+                  :value="day.incrementIncrement"
+                  @stepper:change="(v) => (day.incrementIncrement = v)"
+                  :min="1"
+                  :max="31" />
                 {{ text.Day.intervalDay[1] || '' }}
-                <f7-stepper small :value="day.incrementStart" @stepper:change="v => (day.incrementStart = v)" :min="1" :max="31" />
+                <f7-stepper small :value="day.incrementStart" @stepper:change="(v) => (day.incrementStart = v)" :min="1" :max="31" />
                 {{ text.Day.intervalDay[2] || '' }}
               </f7-list-item>
               <!-- Specific day of week -->
@@ -231,7 +241,9 @@
                     v-for="val in 7"
                     :key="val"
                     :value="['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]"
-                    :selected=" week.specificSpecific.indexOf( ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]) >= 0 ? true : null">
+                    :selected="
+                      week.specificSpecific.indexOf(['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'][val - 1]) >= 0 ? true : null
+                    ">
                     {{ text.Week[val - 1] }}
                   </option>
                 </select>
@@ -273,7 +285,7 @@
                 <f7-stepper
                   small
                   :value="day.cronDaysBeforeEomMinus"
-                  @stepper:change="v => (day.cronDaysBeforeEomMinus = v)"
+                  @stepper:change="(v) => (day.cronDaysBeforeEomMinus = v)"
                   :min="1"
                   :max="31" />
                 {{ text.Day.beforeEndMonth[0] }}
@@ -284,7 +296,7 @@
                 <f7-stepper
                   small
                   :value="day.cronDaysNearestWeekday"
-                  @stepper:change="(v) => day.cronDaysNearestWeekday = v"
+                  @stepper:change="(v) => (day.cronDaysNearestWeekday = v)"
                   :min="1"
                   :max="31" />
                 {{ text.Day.nearestWeekday[1] }}
@@ -292,7 +304,7 @@
               <!-- On the 1 Sunday of the month -->
               <f7-list-item radio :checked="day.cronEvery === 11 ? true : null" @change="day.cronEvery = 11">
                 {{ text.Day.someWeekday[0] }}
-                <f7-stepper small :value="week.cronNthDayNth" @stepper:change="(v) => week.cronNthDayNth = v" :min="1" :max="5" />
+                <f7-stepper small :value="week.cronNthDayNth" @stepper:change="(v) => (week.cronNthDayNth = v)" :min="1" :max="5" />
                 <select size="small" v-model="week.cronNthDayDay" style="max-width: 150px">
                   <option v-for="val in 7" :key="val" :label="text.Week[val - 1]" :value="val" />
                 </select>
@@ -312,11 +324,11 @@
                 <f7-stepper
                   small
                   :value="month.incrementIncrement"
-                  @stepper:change="(v) => month.incrementIncrement = v"
+                  @stepper:change="(v) => (month.incrementIncrement = v)"
                   :min="1"
                   :max="12" />
                 {{ text.Month.interval[1] || '' }}
-                <f7-stepper small :value="month.incrementStart" @stepper:change="(v) => month.incrementStart = v" :min="1" :max="12" />
+                <f7-stepper small :value="month.incrementStart" @stepper:change="(v) => (month.incrementStart = v)" :min="1" :max="12" />
                 {{ text.Month.interval[2] || '' }}
               </f7-list-item>
               <f7-list-item
@@ -336,9 +348,9 @@
               </f7-list-item>
               <f7-list-item radio :checked="month.cronEvery === 4 ? true : null" @change="month.cronEvery = 4">
                 {{ text.Month.cycle[0] }}
-                <f7-stepper small :value="month.rangeStart" @stepper:change="(v) => month.rangeStart = v" :min="1" :max="12" />
+                <f7-stepper small :value="month.rangeStart" @stepper:change="(v) => (month.rangeStart = v)" :min="1" :max="12" />
                 {{ text.Month.cycle[1] || '' }}
-                <f7-stepper small :value="month.rangeEnd" @stepper:change="(v) => month.rangeEnd = v" :min="1" :max="12" />
+                <f7-stepper small :value="month.rangeEnd" @stepper:change="(v) => (month.rangeEnd = v)" :min="1" :max="12" />
                 {{ text.Month.cycle[2] || '' }}
               </f7-list-item>
             </f7-list>
@@ -355,11 +367,11 @@
                 <f7-stepper
                   small
                   :value="year.incrementIncrement"
-                  @stepper:change="(v) => year.incrementIncrement = v"
+                  @stepper:change="(v) => (year.incrementIncrement = v)"
                   :min="1"
                   :max="99" />
                 {{ text.Year.interval[1] || '' }}
-                <f7-stepper small :value="year.incrementStart" @stepper:change="(v) => year.incrementStart = v" :min="2019" :max="2119" />
+                <f7-stepper small :value="year.incrementStart" @stepper:change="(v) => (year.incrementStart = v)" :min="2019" :max="2119" />
                 {{ text.Year.interval[2] || '' }}
               </f7-list-item>
               <f7-list-item
@@ -383,9 +395,9 @@
               </f7-list-item>
               <f7-list-item radio :checked="year.cronEvery === 4 ? true : null" @change="year.cronEvery = 4">
                 {{ text.Year.cycle[0] }}
-                <f7-stepper small :value="year.rangeStart" @stepper:change="v => (year.rangeStart = v)" :min="2019" :max="2119" />
+                <f7-stepper small :value="year.rangeStart" @stepper:change="(v) => (year.rangeStart = v)" :min="2019" :max="2119" />
                 {{ text.Year.cycle[1] || '' }}
-                <f7-stepper small :value="year.rangeEnd" @stepper:change="v => (year.rangeEnd = v)" :min="2019" :max="2119" />
+                <f7-stepper small :value="year.rangeEnd" @stepper:change="(v) => (year.rangeEnd = v)" :min="2019" :max="2119" />
                 {{ text.Year.cycle[2] || '' }}
               </f7-list-item>
             </f7-list>
@@ -418,12 +430,10 @@ export default {
   props: {
     value: String
   },
-  setup () {
-    return [
-      f7
-    ]
+  setup() {
+    return [f7]
   },
-  data () {
+  data() {
     return {
       currentTab: 'seconds',
       second: {
@@ -497,30 +507,32 @@ export default {
     }
   },
   watch: {
-    value () {
+    value() {
       this.rest(this.$data)
     }
   },
   computed: {
-    smartSelectParams () {
+    smartSelectParams() {
       return { openIn: 'popover', view: f7.view.main }
     },
-    text () {
+    text() {
       return Labels
     },
-    secondsText () {
+    secondsText() {
       let seconds = ''
       let cronEvery = this.second.cronEvery
-      switch (cronEvery.toString(), {
-        use24HourTimeFormat: true,
-        dayOfWeekStartIndexZero: false
-      }) {
+      switch (
+        (cronEvery.toString(),
+        {
+          use24HourTimeFormat: true,
+          dayOfWeekStartIndexZero: false
+        })
+      ) {
         case '1':
           seconds = '*'
           break
         case '2':
-          seconds =
-            this.second.incrementStart + '/' + this.second.incrementIncrement
+          seconds = this.second.incrementStart + '/' + this.second.incrementIncrement
           break
         case '3':
           this.second.specificSpecific.forEach((val) => {
@@ -534,7 +546,7 @@ export default {
       }
       return seconds
     },
-    minutesText () {
+    minutesText() {
       let minutes = ''
       let cronEvery = this.minute.cronEvery
       switch (cronEvery.toString()) {
@@ -542,8 +554,7 @@ export default {
           minutes = '*'
           break
         case '2':
-          minutes =
-            this.minute.incrementStart + '/' + this.minute.incrementIncrement
+          minutes = this.minute.incrementStart + '/' + this.minute.incrementIncrement
           break
         case '3':
           this.minute.specificSpecific.forEach((val) => {
@@ -557,7 +568,7 @@ export default {
       }
       return minutes
     },
-    hoursText () {
+    hoursText() {
       let hours = ''
       let cronEvery = this.hour.cronEvery
       switch (cronEvery.toString()) {
@@ -579,7 +590,7 @@ export default {
       }
       return hours
     },
-    daysText () {
+    daysText() {
       let days = ''
       let cronEvery = this.day.cronEvery
       switch (cronEvery.toString()) {
@@ -616,7 +627,7 @@ export default {
       }
       return days
     },
-    weeksText () {
+    weeksText() {
       let weeks = ''
       let cronEvery = this.day.cronEvery
       switch (cronEvery.toString()) {
@@ -649,7 +660,7 @@ export default {
       }
       return weeks
     },
-    monthsText () {
+    monthsText() {
       let months = ''
       let cronEvery = this.month.cronEvery
       switch (cronEvery.toString()) {
@@ -657,8 +668,7 @@ export default {
           months = '*'
           break
         case '2':
-          months =
-            this.month.incrementStart + '/' + this.month.incrementIncrement
+          months = this.month.incrementStart + '/' + this.month.incrementIncrement
           break
         case '3':
           this.month.specificSpecific.forEach((val) => {
@@ -672,7 +682,7 @@ export default {
       }
       return months
     },
-    yearsText () {
+    yearsText() {
       let years = ''
       let cronEvery = this.year.cronEvery
       switch (cronEvery.toString()) {
@@ -694,12 +704,12 @@ export default {
       }
       return years
     },
-    cron () {
-      return `${this.secondsText || '*'} ${this.minutesText || '*'} ${this
-        .hoursText || '*'} ${this.daysText || '*'} ${this.monthsText ||
-        '*'} ${this.weeksText || '?'} ${this.yearsText || '*'}`
+    cron() {
+      return `${this.secondsText || '*'} ${this.minutesText || '*'} ${this.hoursText || '*'} ${this.daysText || '*'} ${
+        this.monthsText || '*'
+      } ${this.weeksText || '?'} ${this.yearsText || '*'}`
     },
-    translation () {
+    translation() {
       return toString(this.cron, {
         use24HourTimeFormat: true,
         dayOfWeekStartIndexZero: false
@@ -707,16 +717,16 @@ export default {
     }
   },
   methods: {
-    getValue () {
+    getValue() {
       return this.cron
     },
-    change () {
+    change() {
       f7.emit('cronEditorUpdate', this.cron)
     },
-    close () {
+    close() {
       f7.emit('cronEditorClosed')
     },
-    rest (data) {
+    rest(data) {
       for (let i in data) {
         if (i === 'currentTab') continue
         if (data[i] instanceof Object) {
@@ -734,6 +744,6 @@ export default {
       }
     }
   },
-  mounted () {}
+  mounted() {}
 }
 </script>

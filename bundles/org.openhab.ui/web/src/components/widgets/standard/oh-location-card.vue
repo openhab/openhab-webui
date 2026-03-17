@@ -14,16 +14,22 @@ export default {
   props: {
     context: Object
   },
-  setup (props) {
+  setup(props) {
     const { config } = useWidgetContext(props.context)
     return { config }
   },
   computed: {
-    element () {
-      return useModelStore().getSemanticModelElement(this.config.item, 'location') ||
-        { defaultTitle: 'Location Card', item: { equipment: [], metadata: { semantics: { value: '' } } }, equipment: [], properties: [] }
+    element() {
+      return (
+        useModelStore().getSemanticModelElement(this.config.item, 'location') || {
+          defaultTitle: 'Location Card',
+          item: { equipment: [], metadata: { semantics: { value: '' } } },
+          equipment: [],
+          properties: []
+        }
+      )
     },
-    parentLocationName () {
+    parentLocationName() {
       return this.element && this.element.parent ? this.element.parent.label || this.element.parent.name : ''
     }
   },
