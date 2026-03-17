@@ -1,6 +1,6 @@
 <template>
   <f7-nav-left class="oh-nav-content">
-    <f7-link class="menu-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
+    <f7-link v-if="menuIcon" class="menu-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
     <f7-link v-if="!theme.md && backLink" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
       {{ backLink }}
     </f7-link>
@@ -58,6 +58,7 @@ import DeveloperDockIcon from '@/components/developer/developer-dock-icon.vue'
 const props = withDefaults(defineProps<{
   title: string,
   subtitle?: string,
+  menuIcon?: boolean,
   backLink?: string,
   backLinkUrl?: string,
   editable?: boolean,
@@ -66,6 +67,7 @@ const props = withDefaults(defineProps<{
   large?: boolean,
   f7router?: Router.Router,
 }>(), {
+  menuIcon: true,
   backLink: 'Back',
   editable: undefined,
   large: false
