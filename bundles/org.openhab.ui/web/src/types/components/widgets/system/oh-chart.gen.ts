@@ -2,18 +2,16 @@
 
 import {
   ChartType,
-  type Period,
-  Future
+  type Period
 } from '../common.gen.ts'
 
 export interface Config {
   chartType: ChartType
   period?: Period
-  future?: Future
+  future?: number
 }
 
 export {
   ChartType,
-  type Period,
-  Future
+  type Period
 }
