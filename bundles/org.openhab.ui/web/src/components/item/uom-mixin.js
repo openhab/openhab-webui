@@ -1,4 +1,4 @@
-import { Units, MetricPrefixes, BinaryPrefixes } from '@/assets/units'
+import { Units, MetricPrefixes, BinaryPrefixes } from '@/assets/units.ts'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 import * as api from '@/api'

@@ -5,33 +5,62 @@
 // So it is not necessary to explicitly add what is already in the curated units for the full units list.
 // However, no prefixes will be applied to these. If you want prefixes to be applied, you should add them in the respective baseUnits Array as well.
 
-/**
- * @typedef Unit
- * @property {string} dimension unit dimension (required)
- * @property {string[]} [units] units used in a curated shortlist of units, not specific to SI or Imperial measurement system
- * @property {string[]} [unitsSI] units used in a curated shortlist of units, specific to the SI measurement system
- * @property {string[]} [unitsUS] units used in a curated shortlist of units, specific to the Imperial measurement system
- * @property {string} [default] default unit, to be set to override core default unit, not specific to SI or Imperial measurement system
- * @property {string} [defaultsSI] default unit in SI measurement system, to be set to override OH core default SI unit
- * @property {string} [defaultUS] default unit in Imperial measurement system, to be set to override OH core default Imperial unit
- * @property {string[]} [baseUnits] all supported base units that don't allow metric or binary prefixes
- * @property {string[]} [baseUnitsMetric] metric base units, the full list of units will include all of these with all metric prefixes
- * @property {string[]} [baseUnitsBinary] binary base units, the full list of units will include all of these with all binary prefixes
- */
+interface Unit {
+  /**
+   * unit dimension (required)
+   */
+  dimension: string
+  /**
+   * units used in a curated shortlist of units, not specific to SI or Imperial measurement system
+   */
+  units?: string[]
+  /**
+   * units used in a curated shortlist of units, specific to the SI measurement system
+   */
+  unitsSI?: string[]
+  /**
+   * units used in a curated shortlist of units, specific to the Imperial measurement system
+   */
+  unitsUS?: string[]
+  /**
+   * default unit, to be set to override core default unit, not specific to SI or Imperial measurement system
+   */
+  default?: string
+  /**
+   * default unit in SI measurement system, to be set to override OH core default SI unit
+   */
+  defaultsSI?: string
+  /**
+   * default unit in Imperial measurement system, to be set to override OH core default Imperial unit
+   */
+  defaultUS?: string
+  /**
+   * all supported base units that don't allow metric or binary prefixes
+   */
+  baseUnits?: string[]
+  /**
+   * metric base units, the full list of units will include all of these with all metric prefixes
+   */
+  baseUnitsMetric?: string[]
+  /**
+   * binary base units, the full list of units will include all of these with all binary prefixes
+   */
+  baseUnitsBinary?: string[]
+}
 
 /**
  * Defines the possible units for UI unit selection.
  * @type {Unit[]}
  */
-export const Units = [
+export const Units: Unit[] = [
   {
     dimension: 'Acceleration',
     baseUnits: ['gₙ'],
-    baseUnitsSI: ['m/s²']
+    baseUnitsMetric: ['m/s²']
   },
   {
     dimension: 'AmountOfSubstance',
-    baseUnitsSI: ['mol']
+    baseUnitsMetric: ['mol']
   },
   {
     dimension: 'Angle',
@@ -169,12 +198,20 @@ export const Units = [
     baseUnitsMetric: ['J/m²', 'Wh/m²']
   },
   {
-    dimension: 'RadiationAbsorbedDose',
+    dimension: 'RadiationDoseAbsorbed',
     baseUnitsMetric: ['Gy']
   },
   {
-    dimension: 'RadiationEffectiveDose',
+    dimension: 'RadiationDoseEffective',
     baseUnitsMetric: ['Sv']
+  },
+  {
+    dimension: 'RadiationDoseRate',
+    baseUnitsMetric: ['Sv/h']
+  },
+  {
+    dimension: 'RadiationSpecificActivity',
+    baseUnitsMetric: ['Bq/m³']
   },
   {
     dimension: 'Radioactivity',
@@ -217,10 +254,31 @@ export const Units = [
  * Metric prefixes for metric base units.
  * @type {string[]}
  */
-export const MetricPrefixes = ['y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm', 'c', 'd', 'da', 'h', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+export const MetricPrefixes: string[] = [
+  'y',
+  'z',
+  'a',
+  'f',
+  'p',
+  'n',
+  'µ',
+  'm',
+  'c',
+  'd',
+  'da',
+  'h',
+  'k',
+  'M',
+  'G',
+  'T',
+  'P',
+  'E',
+  'Z',
+  'Y'
+]
 
 /**
  * Binary prefixes for binary base units.
  * @type {string[]}
  */
-export const BinaryPrefixes = ['ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
+export const BinaryPrefixes: string[] = ['ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei', 'Zi', 'Yi']
