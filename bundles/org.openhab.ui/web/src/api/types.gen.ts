@@ -137,11 +137,11 @@ export type RuleStatusInfo = {
 };
 
 export type Module = {
-    configuration: Configuration;
     typeUID: string;
     label: string;
-    description: string;
     id: string;
+    description: string;
+    configuration: Configuration;
 };
 
 export type Configuration = {
@@ -159,8 +159,8 @@ export type RuleExecution = {
 
 export type Template = {
     uid: string;
-    visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
     tags: Array<string>;
+    visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
     label: string;
     description: string;
 };
@@ -1688,18 +1688,15 @@ export type GetAvailableActionsForThingData = {
     url: '/actions/{thingUID}';
 };
 
-export type GetAvailableActionsForThingErrors = {
-    /**
-     * No actions found.
-     */
-    404: unknown;
-};
-
 export type GetAvailableActionsForThingResponses = {
     /**
      * OK
      */
     200: Array<ThingAction>;
+    /**
+     * No actions found
+     */
+    204: void;
 };
 
 export type GetAvailableActionsForThingResponse = GetAvailableActionsForThingResponses[keyof GetAvailableActionsForThingResponses];
@@ -1834,6 +1831,10 @@ export type DeleteSessionData = {
 
 export type DeleteSessionErrors = {
     /**
+     * User authentication is not managed by openHAB
+     */
+    400: unknown;
+    /**
      * User is not authenticated
      */
     401: unknown;
@@ -1858,6 +1859,10 @@ export type GetApiTokensData = {
 };
 
 export type GetApiTokensErrors = {
+    /**
+     * User authentication is not managed by openHAB
+     */
+    400: unknown;
     /**
      * User is not authenticated
      */
@@ -1885,6 +1890,10 @@ export type GetSessionsForCurrentUserData = {
 };
 
 export type GetSessionsForCurrentUserErrors = {
+    /**
+     * User authentication is not managed by openHAB
+     */
+    400: unknown;
     /**
      * User is not authenticated
      */
@@ -1946,6 +1955,10 @@ export type RemoveApiTokenData = {
 };
 
 export type RemoveApiTokenErrors = {
+    /**
+     * User authentication is not managed by openHAB
+     */
+    400: unknown;
     /**
      * User is not authenticated
      */
