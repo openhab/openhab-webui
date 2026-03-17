@@ -47,104 +47,109 @@
             </f7-col>
           </f7-block>
 
-          <f7-block class="no-margin-bottom">
-            <f7-segmented strong tag="p">
-              <f7-button
-                v-for="tab in modelTabs"
-                :key="tab.value"
-                @click="showCardControls = false; currentModelTab = tab.value"
-                :active="currentModelTab === tab.value"
-                :text="tab.label" />
-            </f7-segmented>
+          <f7-block class="block-narrow no-margin-bottom">
+            <f7-col>
+              <f7-segmented strong tag="p">
+                <f7-button
+                  v-for="tab in modelTabs"
+                  :key="tab.value"
+                  @click="showCardControls = false; currentModelTab = tab.value"
+                  :active="currentModelTab === tab.value"
+                  :text="tab.label" />
+              </f7-segmented>
 
-            <f7-block-title class="no-margin-bottom"> Cards </f7-block-title>
-            <div>
-              <div class="display-block padding">
-                <div class="no-padding float-right">
-                  <f7-button
-                    @click="showCardControls = !showCardControls"
-                    small
-                    outline
-                    :fill="showCardControls"
-                    sortable-toggle=".sortable"
-                    style="margin-top: -3px; margin-right: 5px"
-                    color="gray"
-                    icon-size="12"
-                    icon-ios="material:wrap_text"
-                    icon-md="material:wrap_text"
-                    icon-aurora="material:wrap_text">
-                    &nbsp;Reorder
-                  </f7-button>
-                </div>
+              <div class="cards-title-row">
+                <f7-block-title class="no-margin-bottom">Cards</f7-block-title>
+                <f7-button
+                  @click="showCardControls = !showCardControls"
+                  small
+                  outline
+                  :fill="showCardControls"
+                  sortable-toggle=".sortable"
+                  color="gray"
+                  icon-size="12"
+                  icon-ios="material:wrap_text"
+                  icon-md="material:wrap_text"
+                  icon-aurora="material:wrap_text"
+                  style="margin-left: 8px">
+                  &nbsp;Reorder
+                </f7-button>
               </div>
-
-              <f7-list
-                media-list
-                class="homecards-list"
-                sortable
-                :key="'cards-' + currentModelTab + cardListId"
-                @sortable:sort="reorderCard">
-                <f7-list-item
-                  v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
-                  media-item
-                  :link="(showCardControls) ? undefined : ''"
-                  @click="(ev) => cardClicked(ev, card, idx)"
-                  :key="idx"
-                  :title="card.separator || card.defaultTitle"
-                  :footer="(card.separator) ? '(separator)' : card.key">
-                  <template #content-start>
-                    <f7-menu class="configure-layout-menu">
-                      <f7-menu-item icon-f7="list_bullet" dropdown>
-                        <f7-menu-dropdown>
-                          <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
-                          <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
-                          <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
-                          <f7-menu-dropdown-item divider />
-                          <f7-menu-dropdown-item
-                            v-if="!card.separator"
-                            @click="addCardSeparator(idx)"
-                            href="#"
-                            text="Add Separator Before" />
-                          <f7-menu-dropdown-item v-if="card.separator" @click="removeCardSeparator(idx)" href="#" text="Remove Separator" />
-                        </f7-menu-dropdown>
-                      </f7-menu-item>
-                    </f7-menu>
-                    <f7-checkbox
-                      :checked="!isCardExcluded(card) ? true : null"
-                      :disabled="card.separator !== undefined ? true : null"
-                      class="margin-right" />
-                  </template>
-                </f7-list-item>
-              </f7-list>
-            </div>
+              <div>
+                <f7-list
+                  media-list
+                  class="homecards-list"
+                  sortable
+                  :key="'cards-' + currentModelTab + cardListId"
+                  @sortable:sort="reorderCard">
+                  <f7-list-item
+                    v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
+                    media-item
+                    :link="(showCardControls) ? undefined : ''"
+                    @click="(ev) => cardClicked(ev, card, idx)"
+                    :key="idx"
+                    :title="card.separator || card.defaultTitle"
+                    :footer="(card.separator) ? '(separator)' : card.key">
+                    <template #content-start>
+                      <f7-menu class="configure-layout-menu">
+                        <f7-menu-item icon-f7="list_bullet" dropdown>
+                          <f7-menu-dropdown>
+                            <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
+                            <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
+                            <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
+                            <f7-menu-dropdown-item divider />
+                            <f7-menu-dropdown-item
+                              v-if="!card.separator"
+                              @click="addCardSeparator(idx)"
+                              href="#"
+                              text="Add Separator Before" />
+                            <f7-menu-dropdown-item
+                              v-if="card.separator"
+                              @click="removeCardSeparator(idx)"
+                              href="#"
+                              text="Remove Separator" />
+                          </f7-menu-dropdown>
+                        </f7-menu-item>
+                      </f7-menu>
+                      <f7-checkbox
+                        :checked="!isCardExcluded(card) ? true : null"
+                        :disabled="card.separator !== undefined ? true : null"
+                        class="margin-right" />
+                    </template>
+                  </f7-list-item>
+                </f7-list>
+              </div>
+            </f7-col>
           </f7-block>
 
-          <f7-block class="homecards-settings">
-            <div v-if="currentModelTab === 'locations'">
-              <config-sheet
-                :parameterGroups="locationsTabParameters.props.parameterGroups || []"
-                :parameters="locationsTabParameters.props.parameters || []"
-                :configuration="page.slots.locations[0].config"
-                :f7router
-                @updated="dirty = true" />
-            </div>
+          <f7-block class="block-narrow homecards-settings">
+            <f7-col>
+              <div v-if="currentModelTab === 'locations'">
+                <config-sheet
+                  :parameterGroups="locationsTabParameters.props.parameterGroups || []"
+                  :parameters="locationsTabParameters.props.parameters || []"
+                  :configuration="page.slots.locations[0].config"
+                  :f7router
+                  @updated="dirty = true" />
+              </div>
 
-            <div v-if="currentModelTab === 'equipment'">
-              <config-sheet
-                :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
-                :parameters="equipmentTabParameters.props.parameters || []"
-                :configuration="page.slots.equipment[0].config"
-                :f7router
-                @updated="dirty = true" />
-            </div>
+              <div v-if="currentModelTab === 'equipment'">
+                <config-sheet
+                  :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
+                  :parameters="equipmentTabParameters.props.parameters || []"
+                  :configuration="page.slots.equipment[0].config"
+                  :f7router
+                  @updated="dirty = true" />
+              </div>
 
-            <div v-if="currentModelTab === 'properties'">
-              <config-sheet
-                :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
-                :parameters="propertiesTabParameters.props.parameters || []"
-                :configuration="page.slots.properties[0].config"
-                @updated="dirty = true" />
-            </div>
+              <div v-if="currentModelTab === 'properties'">
+                <config-sheet
+                  :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
+                  :parameters="propertiesTabParameters.props.parameters || []"
+                  :configuration="page.slots.properties[0].config"
+                  @updated="dirty = true" />
+              </div>
+            </f7-col>
           </f7-block>
         </div>
 
@@ -173,6 +178,11 @@
 
 <style lang="stylus">
 .home-editor
+  .cards-title-row
+    display: flex
+    align-items: center
+    justify-content: space-between
+    margin-bottom: 0.5rem
   .page-code-editor.v-codemirror
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
@@ -183,10 +193,12 @@
     white-space pre-wrap
   .homecards-list
     margin-bottom 0
-    padding-bottom calc(5rem + var(--f7-block-margin-vertical))
+    padding-bottom calc(10px + var(--f7-block-margin-vertical))
     .item-link
       overflow inherit
       z-index inherit !important
+    .icon-checkbox
+      margin-right 10px
   .homecards-settings
     margin-top 0
     .parameter-group
