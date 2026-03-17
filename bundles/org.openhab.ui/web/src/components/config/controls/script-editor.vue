@@ -3,6 +3,11 @@
 </template>
 
 <style lang="stylus">
+.dark .code-editor-fit
+  .cm-editor
+    .cm-selectionMatch
+      background-color #9db95538 !important // overrides the default gruvbox selection match color
+
 .code-editor-fit
   position relative
   width 100%
