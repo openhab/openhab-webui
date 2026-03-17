@@ -1,5 +1,5 @@
 <template>
-  <f7-block class="padding-vertical no-padding-horizontal">
+  <f7-block class="channel-general-settings padding-vertical no-padding-horizontal">
     <f7-col>
       <f7-list class="no-margin" inline-labels no-hairlines-md>
         <f7-list-input
@@ -81,14 +81,14 @@
 </template>
 
 <style lang="stylus">
-.list
-  .item-subtitle
-    overflow-wrap break-word
-    white-space inherit
-
-.property-key
-  display inline-block
-  padding-left 12px
+.channel-general-settings
+  .list
+    .item-subtitle
+      overflow-wrap break-word
+      white-space inherit
+  .property-key
+    display inline-block
+    padding-left 12px
 </style>
 
 <script>
