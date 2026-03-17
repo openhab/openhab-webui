@@ -1,5 +1,5 @@
 <template>
-  <ul v-if="multiple" ref="inputs">
+  <ul v-if="multiple" ref="inputs" class="parameter-text">
     <f7-block-header class="no-margin">
       <div class="margin-horizontal item-label" style="padding-top: var(--f7-list-item-padding-vertical); color: var(--f7-text-color)">
         {{ configDescription.label }}
@@ -30,7 +30,7 @@
       @focus="gotFocus"
       :placeholder="configDescription.placeholder" />
   </ul>
-  <ul v-else>
+  <ul v-else class="parameter-text">
     <f7-list-input
       ref="input"
       :floating-label="theme.md"
@@ -60,21 +60,26 @@
       </template>
       <template v-if="softInvalid && !disableValidation" #error-message>
         <div>
-          <span class="text-color-red" @click="showNetworkAddressPopover">{{ NETWORK_ADDRESS_WARNING_TEXT }}</span>
+          <span class="network-address-text text-color-red" @click="showNetworkAddressPopover">{{ NETWORK_ADDRESS_WARNING_TEXT }}</span>
           <span @mousedown.prevent="disableValidation = true; validateSoft(value)" class="link" style="margin-left: 6px;">Use anyway</span>
         </div>
       </template>
     </f7-list-input>
   </ul>
   <f7-popover ref="networkAddressPopover">
-    <f7-popover-inner>
-      <f7-block>
-        <p>This address does not match RFC standards for URL, IP, or hostname formats.</p>
-        <p>But if you are sure it is valid in your system, you can still use it anyway.</p>
-      </f7-block>
-    </f7-popover-inner>
+    <f7-block>
+      <p>This address does not match RFC standards for URL, IP, or hostname formats.</p>
+      <p>But if you are sure it is valid in your system, you can still use it anyway.</p>
+    </f7-block>
   </f7-popover>
 </template>
+
+<style lang="stylus">
+.parameter-text
+  .network-address-text
+    &:hover
+      cursor pointer
+</style>
 
 <script>
 const NETWORK_ADDRESS_WARNING_TEXT = `⚠ This is not a standard URL, IP address, or host name.`
@@ -84,6 +89,7 @@ import { nextTick } from 'vue'
 import * as Pattern from './validation-pattern.ts'
 
 export default {
+  inheritAttrs: false,
   props: {
     readOnly: Boolean,
     configDescription: Object,
