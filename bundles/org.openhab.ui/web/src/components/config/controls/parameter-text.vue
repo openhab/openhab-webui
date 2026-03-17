@@ -1,5 +1,5 @@
 <template>
-  <ul v-if="multiple" ref="inputs">
+  <ul v-if="multiple" ref="inputs" class="parameter-text">
     <f7-block-header class="no-margin">
       <div class="margin-horizontal item-label" style="padding-top: var(--f7-list-item-padding-vertical); color: var(--f7-text-color)">
         {{ configDescription.label }}
@@ -30,7 +30,7 @@
       @focus="gotFocus"
       :placeholder="configDescription.placeholder" />
   </ul>
-  <ul v-else>
+  <ul v-else class="parameter-text">
     <f7-list-input
       ref="input"
       :floating-label="theme.md"
@@ -60,7 +60,7 @@
       </template>
       <template v-if="softInvalid && !disableValidation" #error-message>
         <div>
-          <span class="text-color-red" @click="showNetworkAddressPopover">{{ NETWORK_ADDRESS_WARNING_TEXT }}</span>
+          <span class="network-address-text text-color-red" @click="showNetworkAddressPopover">{{ NETWORK_ADDRESS_WARNING_TEXT }}</span>
           <span @mousedown.prevent="disableValidation = true; validateSoft(value)" class="link" style="margin-left: 6px;">Use anyway</span>
         </div>
       </template>
@@ -73,6 +73,13 @@
     </f7-block>
   </f7-popover>
 </template>
+
+<style lang="stylus">
+.parameter-text
+  .network-address-text
+    &:hover
+      cursor pointer
+</style>
 
 <script>
 const NETWORK_ADDRESS_WARNING_TEXT = `⚠ This is not a standard URL, IP address, or host name.`
