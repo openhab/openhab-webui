@@ -71,7 +71,7 @@ export type EvaluateExpressionFn = <T = unknown>(
   value: T,
   context?: WidgetContext,
   props?: Record<string, unknown>
-) => T | null | Error
+) => T | Error
 
 /**
  * Composable providing the functionality to evaluate widget expressions.
@@ -155,10 +155,10 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
     value: T,
     context?: WidgetContext,
     props?: Record<string, unknown>
-  ): T | null | Error => {
-    if (value === null) return null
+  ): T | Error => {
+    if (value === null) return null as T
     const ctx = context || properties.context
-    if (!ctx) return null
+    if (!ctx) return new Error('Widget context not provided')
     if (typeof value === 'string' && value.startsWith('=')) {
       try {
         // we cache the parsed abstract tree to prevent it from being parsed again at runtime
