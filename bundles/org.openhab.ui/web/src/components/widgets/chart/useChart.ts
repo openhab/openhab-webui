@@ -134,7 +134,11 @@ export function useChart(
 
   const tooltip = computed<ComponentOption[]>(() => {
     if (!slots.value?.tooltip) return []
-    return slots.value.tooltip.map((c) => OhChartTooltip.get(chartContext.value, c, startTime.value, endTime.value))
+    const tooltipContext = {
+      ...chartContext.value,
+      items: _items
+    }
+    return slots.value.tooltip.map((c) => OhChartTooltip.get(tooltipContext, c, startTime.value, endTime.value))
   })
 
   const visualMap = computed<ComponentOption[]>(() => {

@@ -33,6 +33,7 @@ export interface ChartContext {
   evaluateExpression: ChartEvaluateExpressionFn
   numberFormatter?: Intl.NumberFormat
   series?: SeriesOption[]
+  items?: Record<string, api.EnrichedItem>
 }
 
 export interface AxisComponent {
