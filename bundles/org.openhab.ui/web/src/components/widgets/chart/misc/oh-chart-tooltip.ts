@@ -52,9 +52,11 @@ const chartTooltip: MiscChartComponent = {
           // content: for each oh-time-series marker color, series name and formatted value
           params.forEach((p) => {
             if (p.seriesId) {
-              const [seriesType] = p.seriesId.split('#')
-              if (seriesType === 'oh-time-series') {
+              const [seriesType, itemName, _id, markArea] = p.seriesId.split('#')
+              const item = context.items?.[itemName!]
+              if (seriesType === 'oh-time-series' && !markArea) {
                 let state = context.numberFormatter!.format((p.data as number[])[1]!)
+                if (item && item.unitSymbol) state += ' ' + item.unitSymbol
                 tooltip += (p.marker as string) + ' ' + p.seriesName + ': ' + state + '<br />'
               }
             }
