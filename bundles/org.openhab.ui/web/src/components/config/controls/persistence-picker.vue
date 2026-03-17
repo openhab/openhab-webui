@@ -33,7 +33,7 @@ export default {
     openOnReady: Boolean
   },
   emits: ['persistencePicked', 'input'],
-  data () {
+  data() {
     return {
       ready: false,
       services: [],
@@ -45,7 +45,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.smartSelectParams.closeOnSelect = true
     this.$oh.api.get('/rest/persistence').then((data) => {
       this.services = data.sort((a, b) => {
@@ -69,10 +69,10 @@ export default {
     })
   },
   methods: {
-    open () {
+    open() {
       this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
     },
-    select (e) {
+    select(e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
       f7.emit('persistencePicked', e.target.value)

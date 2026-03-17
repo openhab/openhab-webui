@@ -40,10 +40,10 @@ export default {
     serviceId: String,
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       service: {},
       configDescriptions: null,
@@ -63,13 +63,15 @@ export default {
     }
   },
   methods: {
-    save () {
+    save() {
       this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
-        f7.toast.create({
-          text: 'Saved',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        f7.toast
+          .create({
+            text: 'Saved',
+            destroyOnClose: true,
+            closeTimeout: 2000
+          })
+          .open()
       })
       if (this.serviceId === 'org.openhab.i18n') {
         f7.emit('sidebarRefresh', this.config.locale)
@@ -78,17 +80,17 @@ export default {
       this.dirty = false
       this.f7router.back()
     },
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         this.save()
         ev.stopPropagation()
@@ -96,7 +98,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.$oh.api.get('/rest/services/' + this.serviceId).then((data) => {
       this.service = data
 

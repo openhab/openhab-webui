@@ -17,7 +17,7 @@ export default {
     configDescription: Object,
     value: String
   },
-  setup () {
+  setup() {
     return { theme }
   },
   components: {

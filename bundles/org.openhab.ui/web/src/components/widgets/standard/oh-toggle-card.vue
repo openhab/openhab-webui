@@ -30,10 +30,10 @@ export default {
     OhToggle
   },
   widget: OhToggleCardDefinition,
-  setup (props) {
+  setup(props) {
     useWidgetContext(props.context)
   },
-  data () {
+  data() {
     return {
       value: Math.random()
     }

@@ -79,7 +79,7 @@ export default {
   components: {
     AddonLogo
   },
-  data () {
+  data() {
     return {
       shownAddons: [],
       selectedAddons: []
@@ -91,7 +91,7 @@ export default {
      * @param addon
      * @returns {boolean}
      */
-    selectedAddon (addon) {
+    selectedAddon(addon) {
       return this.selectedAddons.includes(addon)
     },
     /**
@@ -99,7 +99,7 @@ export default {
      * @param addon
      * @returns {boolean}
      */
-    preSelectedAddon (addon) {
+    preSelectedAddon(addon) {
       return this.preSelectedAddons.includes(addon)
     },
     /**
@@ -107,7 +107,7 @@ export default {
      * @param addon
      * @returns {string}
      */
-    addonDescription (addon) {
+    addonDescription(addon) {
       const line1 = this.t('setupwizard.addon.' + addon.uid + '.line1')
       const line2 = this.t('setupwizard.addon.' + addon.uid + '.line2')
       const hasLine1 = line1 !== 'setupwizard.addon.' + addon.uid + '.line1'
@@ -121,7 +121,7 @@ export default {
      * @param addon
      * @param event
      */
-    toggleAddonSelection (addon, event) {
+    toggleAddonSelection(addon, event) {
       if (event.target.checked) {
         this.selectedAddons.push(addon)
       } else {
@@ -132,7 +132,7 @@ export default {
     /**
      * Opens the add-on selection popup.
      */
-    selectAddons () {
+    selectAddons() {
       if (this.autocompleteAddons) {
         this.autocompleteAddons.value = this.selectedAddons.map((a) => a.label)
         this.autocompleteAddons.open()
@@ -143,12 +143,12 @@ export default {
      * To be called by change event of the selection popup.
      * @param newSelected
      */
-    updateAddonSelection (newSelected) {
+    updateAddonSelection(newSelected) {
       this.selectedAddons = newSelected
       this.$emit('update', this.selectedAddons)
     }
   },
-  mounted () {
+  mounted() {
     // Update the list of shown and selected add-ons with the pre-selected add-ons.
     // Exclude add-ons that are in the list of pre-selected add-ons, but are not meant to be shown here (usually because these add-ons are handled in a separate step).
     if (Array.isArray(this.preSelectedAddons)) {
@@ -172,12 +172,17 @@ export default {
           render(
             this.addons
               .filter(
-                (a) => !a.installed && !this.preSelectedAddon(a) && (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0))
-              .map((a) => a.label))
+                (a) =>
+                  !a.installed &&
+                  !this.preSelectedAddon(a) &&
+                  (a.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || a.uid.toLowerCase().indexOf(query.toLowerCase()) >= 0)
+              )
+              .map((a) => a.label)
+          )
         }
       },
       on: {
-        change:  (value) => {
+        change: (value) => {
           const selected = value.map((label) => this.addons.find((a) => a.label === label))
           // If we added addons, keep them visible on the main list, even if we deselect them again later.
           this.shownAddons = [...new Set(this.selectedAddons.concat(selected))]

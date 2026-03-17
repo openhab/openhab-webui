@@ -7,11 +7,11 @@
         :disabled="!editable ? true : null"
         smart-select
         :smart-select-params="{
-                      openIn: 'popup',
-                      searchbar: true,
-                      closeOnSelect: true,
-                      scrollToSelectedItem: true,
-                    }"
+          openIn: 'popup',
+          searchbar: true,
+          closeOnSelect: true,
+          scrollToSelectedItem: true
+        }"
         ref="classes">
         <select name="classes" @change="updateClass">
           <option value="" />
@@ -66,32 +66,32 @@ export default {
   components: {
     ConfigSheet
   },
-  data () {
+  data() {
     return {
       classesDefs: Object.keys(GoogleDefinitions),
       classSelectKey: f7.utils.id()
     }
   },
   computed: {
-    classes () {
+    classes() {
       return this.metadata.value
     },
-    orderedClasses () {
+    orderedClasses() {
       return [...this.classesDefs].sort((a, b) => {
         return a.localeCompare(b)
       })
     },
-    parameters () {
+    parameters() {
       if (!this.metadata.value) return []
       return GoogleDefinitions['type:' + this.metadata.value] || GoogleDefinitions['attribute:' + this.metadata.value]
     },
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    isSelected (cl) {
+    isSelected(cl) {
       return this.classes === cl
     },
-    updateClass () {
+    updateClass() {
       const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = value
       this.metadata.config = {}

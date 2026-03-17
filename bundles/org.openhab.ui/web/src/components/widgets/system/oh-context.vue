@@ -18,17 +18,17 @@ export default {
     context: Object
   },
   widget: OhContextDefinition,
-  setup (props) {
+  setup(props) {
     const { childContext, evaluateExpression, defaultSlots } = useWidgetContext(props.context)
     return { childContext, evaluateExpression, defaultSlots }
   },
-  data () {
+  data() {
     return {
       varScope: (this.context.varScope || 'varScope') + '-' + f7.utils.id()
     }
   },
   computed: {
-    fn () {
+    fn() {
       if (!this.context?.component?.config) return {}
       let evalFunc = {}
       const sourceFunc = this.context.component.config.functions || {}
@@ -44,7 +44,7 @@ export default {
     }
   },
   methods: {
-    childrenContext (childComp) {
+    childrenContext(childComp) {
       const ctx = this.childContext(childComp)
       const ctxFunctions = this.fn
       if (this.context.fn) {
@@ -68,7 +68,7 @@ export default {
       return ctx
     }
   },
-  beforeMount () {
+  beforeMount() {
     const evaluateDefaults = () => {
       if (!this.context?.component?.config) return
 

@@ -101,7 +101,7 @@
                   link
                   no-chevron
                   media-item
-                  :color="(theme.dark) ? 'black' : 'white'"
+                  :color="theme.dark ? 'black' : 'white'"
                   subtitle="Add configuration"
                   @click="editConfiguration(undefined, null)">
                   <template #media>
@@ -146,7 +146,7 @@
                   link
                   no-chevron
                   media-item
-                  :color="(theme.dark) ? 'black' : 'white'"
+                  :color="theme.dark ? 'black' : 'white'"
                   subtitle="Add cron strategy"
                   @click="editCronStrategy(undefined, null)">
                   <template #media>
@@ -166,7 +166,7 @@
                       v-for="(f, index) in persistence[ft.name]"
                       :key="f.name"
                       :title="f.name"
-                      :footer="(typeof ft.footerFn === 'function') ? ft.footerFn(f) : ''"
+                      :footer="typeof ft.footerFn === 'function' ? ft.footerFn(f) : ''"
                       :link="editable"
                       @click="(ev) => editFilter(ev, ft, index, f)"
                       swipeout>
@@ -193,7 +193,7 @@
                       link
                       no-chevron
                       media-item
-                      :color="(theme.dark) ? 'black' : 'white'"
+                      :color="theme.dark ? 'black' : 'white'"
                       :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
                       @click="editFilter(undefined, ft, null)">
                       <template #media>
@@ -359,10 +359,10 @@ export default {
     serviceId: String,
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       newPersistence: false,
       persistence: {},
@@ -380,19 +380,19 @@ export default {
     }
   },
   computed: {
-    editable () {
+    editable() {
       return this.newPersistence || (this.persistence && this.persistence.editable === true)
     },
-    pageTitle () {
+    pageTitle() {
       if (this.newPersistence) return 'Create new persistence configuration'
       if (!this.ready) return ''
       if (!this.editable) return `${this.serviceId} persistence configuration details`
       return `Edit ${this.serviceId} persistence configuration`
     },
-    strategies () {
+    strategies() {
       return this.PredefinedStrategies.concat(this.persistence.cronStrategies.map((cs) => cs.name))
     },
-    filters () {
+    filters() {
       let names = []
       for (let i = 0; i < this.FilterTypes.length; i++) {
         const filterTypeName = this.FilterTypes[i].name
@@ -400,7 +400,7 @@ export default {
       }
       return names
     },
-    currentItemsWithAlias () {
+    currentItemsWithAlias() {
       return Object.keys(this.persistence.aliases).sort()
     },
     ...mapStores(useRuntimeStore)
@@ -408,7 +408,8 @@ export default {
   watch: {
     persistence: {
       handler: function () {
-        if (!this.loading) { // ignore changes during loading
+        if (!this.loading) {
+          // ignore changes during loading
           this.checkDirty()
         }
       },
@@ -416,22 +417,22 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    initializeNewPersistence () {
+    initializeNewPersistence() {
       this.newPersistence = true
       const suggestedCronStrategies = this.suggestedStrategies.filter((s) => s.cronExpression)
       const suggestedCronStrategyNames = suggestedCronStrategies.map((s) => s.name)
-      const commonCronStrategies = this.CommonCronStrategies.filter((s) => (!suggestedCronStrategyNames.includes(s.name)))
+      const commonCronStrategies = this.CommonCronStrategies.filter((s) => !suggestedCronStrategyNames.includes(s.name))
       const cronStrategies = suggestedCronStrategies.concat(commonCronStrategies)
       this.persistence = {
         serviceId: this.serviceId,
@@ -440,11 +441,13 @@ export default {
         cronStrategies
       }
       // Dynamically add empty arrays for all filter types defined in the FilterTypes object
-      this.FilterTypes.forEach((ft) => { this.persistence[ft.name] = [] })
+      this.FilterTypes.forEach((ft) => {
+        this.persistence[ft.name] = []
+      })
       this.savedPersistence = cloneDeep(this.persistence)
       this.ready = true
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -452,26 +455,29 @@ export default {
         this.suggestedStrategies = suggestions
       })
 
-      this.$oh.api.get('/rest/persistence/' + this.serviceId).then((data) => {
-        this.persistence = data
-        this.savedPersistence = cloneDeep(this.persistence)
-        // Ensure arrays for all filter types defined in the FilterTypes object are existent
-        this.FilterTypes.forEach((ft) => {
-          if (!this.persistence[ft.name]) this.persistence[ft.name] = []
-        })
-        this.loading = false
-        this.ready = true
-      }).catch((e) => {
-        if (e === 404 || e === 'Not Found') {
-          this.initializeNewPersistence()
+      this.$oh.api
+        .get('/rest/persistence/' + this.serviceId)
+        .then((data) => {
+          this.persistence = data
+          this.savedPersistence = cloneDeep(this.persistence)
+          // Ensure arrays for all filter types defined in the FilterTypes object are existent
+          this.FilterTypes.forEach((ft) => {
+            if (!this.persistence[ft.name]) this.persistence[ft.name] = []
+          })
           this.loading = false
           this.ready = true
-        } else {
-          Promise.reject(e)
-        }
-      })
+        })
+        .catch((e) => {
+          if (e === 404 || e === 'Not Found') {
+            this.initializeNewPersistence()
+            this.loading = false
+            this.ready = true
+          } else {
+            Promise.reject(e)
+          }
+        })
     },
-    async save (noToast) {
+    async save(noToast) {
       if (!this.editable) return
       if (this.currentTab === 'code') this.fromYaml()
 
@@ -481,30 +487,37 @@ export default {
       const saveConfirmed = await this.validateAliases()
       if (!saveConfirmed) return
 
-      return this.$oh.api.put('/rest/persistence/' + this.persistence.serviceId, this.persistence).then((data) => {
-        this.savedPersistence = cloneDeep(this.persistence)
-        this.dirty = false
-        if (this.newPersistence) {
-          this.newPersistence = false
-          this.ready = false
-          this.load()
-        }
-        if (!noToast) {
-          f7.toast.create({
-            text: 'Persistence configuration saved',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while saving persistence configuration: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      return this.$oh.api
+        .put('/rest/persistence/' + this.persistence.serviceId, this.persistence)
+        .then((data) => {
+          this.savedPersistence = cloneDeep(this.persistence)
+          this.dirty = false
+          if (this.newPersistence) {
+            this.newPersistence = false
+            this.ready = false
+            this.load()
+          }
+          if (!noToast) {
+            f7.toast
+              .create({
+                text: 'Persistence configuration saved',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          }
+        })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Error while saving persistence configuration: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        })
     },
-    deletePersistence () {
+    deletePersistence() {
       f7.dialog.confirm(
         `Are you sure you want to delete persistence configuration for ${this.serviceId}?`,
         'Delete persistence configuration',
@@ -516,10 +529,10 @@ export default {
         }
       )
     },
-    checkDirty () {
+    checkDirty() {
       this.dirty = !fastDeepEqual(this.persistence, this.savedPersistence)
     },
-    showSwipeout (ev) {
+    showSwipeout(ev) {
       let swipeoutElement = ev.target
       ev.cancelBubble = true
       while (!swipeoutElement.classList.contains('swipeout')) {
@@ -530,31 +543,34 @@ export default {
         f7.swipeout.open(swipeoutElement)
       }
     },
-    editConfiguration (ev, index, configuration) {
+    editConfiguration(ev, index, configuration) {
       if (!this.editable) return
       this.currentConfiguration = configuration
 
       const popup = {
         component: ConfigurationPopup
       }
-      this.f7router.navigate({
-        url: 'configuration-config',
-        route: {
-          path: 'configuration-config',
-          popup
+      this.f7router.navigate(
+        {
+          url: 'configuration-config',
+          route: {
+            path: 'configuration-config',
+            popup
+          }
+        },
+        {
+          props: {
+            configuration: this.currentConfiguration,
+            strategies: this.strategies,
+            filters: this.filters,
+            suggestedStrategies: this.suggestedStrategies.map((s) => s.name)
+          }
         }
-      }, {
-        props: {
-          configuration: this.currentConfiguration,
-          strategies: this.strategies,
-          filters: this.filters,
-          suggestedStrategies: this.suggestedStrategies.map((s) => s.name)
-        }
-      })
+      )
 
       f7.once('configurationUpdate', (ev) => this.saveConfiguration(index, ev))
     },
-    saveConfiguration (index, configuration) {
+    saveConfiguration(index, configuration) {
       const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === configuration.items.join())
       if (index === null && idx !== -1) {
         f7.dialog.alert('A configuration for this/these Item(s) already exists!')
@@ -562,28 +578,31 @@ export default {
       }
       this.saveModule('configs', index, configuration)
     },
-    editCronStrategy (ev, index, cronStrategy) {
+    editCronStrategy(ev, index, cronStrategy) {
       if (!this.editable) return
       this.currentCronStrategy = cronStrategy
 
       const popup = {
         component: CronStrategyPopup
       }
-      this.f7router.navigate({
-        url: 'cron-strategy-config',
-        route: {
-          path: 'cron-strategy-config',
-          popup
+      this.f7router.navigate(
+        {
+          url: 'cron-strategy-config',
+          route: {
+            path: 'cron-strategy-config',
+            popup
+          }
+        },
+        {
+          props: {
+            cronStrategy: this.currentCronStrategy
+          }
         }
-      }, {
-        props: {
-          cronStrategy: this.currentCronStrategy
-        }
-      })
+      )
 
       f7.once('cronStrategyConfigUpdate', (ev) => this.saveCronStrategy(index, ev))
     },
-    saveCronStrategy (index, cronStrategy) {
+    saveCronStrategy(index, cronStrategy) {
       const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
       if ((index === null && idx !== -1) || this.PredefinedStrategies.includes(cronStrategy.name)) {
         f7.dialog.alert('A (cron) strategy with the same name already exists!')
@@ -591,7 +610,7 @@ export default {
       }
       this.saveModule('cronStrategies', index, cronStrategy)
     },
-    deleteCronStrategy (ev, index) {
+    deleteCronStrategy(ev, index) {
       // Remove cron strategy from configs, otherwise we get a 400
       const csName = this.persistence.cronStrategies[index].name
       this.persistence.configs.forEach((cfg) => {
@@ -600,7 +619,7 @@ export default {
       })
       this.deleteModule(ev, 'cronStrategies', index)
     },
-    editFilter (ev, filterType, index, filter) {
+    editFilter(ev, filterType, index, filter) {
       if (!this.editable) return
       this.currentFilter = filter
 
@@ -610,23 +629,26 @@ export default {
       const popup = {
         component: FilterPopup
       }
-      this.f7router.navigate({
-        url: 'filter-config',
-        route: {
-          path: 'filter-config',
-          popup
+      this.f7router.navigate(
+        {
+          url: 'filter-config',
+          route: {
+            path: 'filter-config',
+            popup
+          }
+        },
+        {
+          props: {
+            filter: this.currentFilter,
+            filterType,
+            filterConfigDescriptionParameters: filterType.configDescriptionParameters
+          }
         }
-      }, {
-        props: {
-          filter: this.currentFilter,
-          filterType,
-          filterConfigDescriptionParameters: filterType.configDescriptionParameters
-        }
-      })
+      )
 
       f7.once('filterUpdate', (ev, ftn) => this.saveFilter(ftn, index, ev))
     },
-    saveFilter (filterTypeName, index, filter) {
+    saveFilter(filterTypeName, index, filter) {
       const idx = this.filters.findIndex((f) => f === filter.name)
       if (index === null && idx !== -1) {
         f7.dialog.alert('A filter with the same name already exists!')
@@ -640,7 +662,7 @@ export default {
       if (!this.persistence[filterTypeName]) this.persistence[filterTypeName] = []
       this.saveModule(filterTypeName, index, filter)
     },
-    deleteFilter (ev, module, index) {
+    deleteFilter(ev, module, index) {
       // Remove filter from configs, otherwise we get a 400
       const filterName = this.persistence[module][index].name
       this.persistence.configs.forEach((cfg) => {
@@ -649,26 +671,29 @@ export default {
       })
       this.deleteModule(ev, module, index)
     },
-    updateAliasItems (items) {
+    updateAliasItems(items) {
       if (!this.editable) return
       const aliases = this.persistence.aliases
       Object.keys(aliases)
         .filter((i) => !items.includes(i))
-        .forEach((i) => { delete aliases[i] })
+        .forEach((i) => {
+          delete aliases[i]
+        })
       items
         .filter((i) => !Object.keys(aliases).includes(i))
-        .forEach((i) => { aliases[i] = '' })
-      const newAliases = Object.keys(aliases)
-        .reduce((obj, key) => {
-          obj[key] = aliases[key]
-          return obj
-        }, {})
+        .forEach((i) => {
+          aliases[i] = ''
+        })
+      const newAliases = Object.keys(aliases).reduce((obj, key) => {
+        obj[key] = aliases[key]
+        return obj
+      }, {})
       this.persistence.aliases = newAliases
     },
-    editAlias (ev, item, alias) {
+    editAlias(ev, item, alias) {
       if (!this.editable) return
       // Warn when alias already exists
-      const duplicate = Object.entries(this.persistence.aliases).find(([i, a]) => (item !== i) && (alias === a))
+      const duplicate = Object.entries(this.persistence.aliases).find(([i, a]) => item !== i && alias === a)
       if (duplicate) {
         f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + duplicate[0])
         this.persistence.aliases[item] = ''
@@ -676,10 +701,10 @@ export default {
       }
       this.persistence.aliases[item] = alias
     },
-    deleteAlias (ev, item) {
+    deleteAlias(ev, item) {
       this.deleteModuleKey(ev, 'aliases', item)
     },
-    async validateAliases () {
+    async validateAliases() {
       const entries = Object.entries(this.persistence.aliases)
       // Check for invalid alias format
       const invalidEntry = entries.find(([i, a]) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(a))
@@ -703,7 +728,7 @@ export default {
       }
       return true
     },
-    showConfirmDialog (message, title) {
+    showConfirmDialog(message, title) {
       return new Promise((resolve) => {
         f7.dialog.confirm(
           message,
@@ -713,7 +738,7 @@ export default {
         )
       })
     },
-    saveModule (module, index, updatedModule) {
+    saveModule(module, index, updatedModule) {
       if (index === null) {
         console.debug(`Adding ${module}:`)
         console.debug(updatedModule)
@@ -726,7 +751,7 @@ export default {
       }
       this.checkDirty()
     },
-    deleteModule (ev, module, index) {
+    deleteModule(ev, module, index) {
       if (!this.editable) return
       let swipeoutElement = ev.target
       ev.cancelBubble = true
@@ -740,7 +765,7 @@ export default {
         this.checkDirty()
       })
     },
-    deleteModuleKey (ev, module, key) {
+    deleteModuleKey(ev, module, key) {
       if (!this.editable) return
       let swipeoutElement = ev.target
       ev.cancelBubble = true
@@ -754,11 +779,11 @@ export default {
         this.checkDirty()
       })
     },
-    onEditorInput (value) {
+    onEditorInput(value) {
       this.persistenceYaml = value
       this.dirty = true
     },
-    toYaml () {
+    toYaml() {
       const toCode = {
         configurations: this.persistence.configs,
         aliases: this.persistence.aliases,
@@ -769,7 +794,7 @@ export default {
       })
       this.persistenceYaml = YAML.stringify(toCode)
     },
-    fromYaml () {
+    fromYaml() {
       if (!this.editable) return false
       try {
         const updatedPersistence = YAML.parse(this.persistenceYaml)
@@ -785,7 +810,7 @@ export default {
         return false
       }
     },
-    keyDown (ev, index) {
+    keyDown(ev, index) {
       if (ev.key === 'Tab') {
         ev.stopPropagation()
         ev.preventDefault()
@@ -814,7 +839,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.PredefinedStrategies = PredefinedStrategies
     this.FilterTypes = FilterTypes
     this.CommonCronStrategies = CommonCronStrategies

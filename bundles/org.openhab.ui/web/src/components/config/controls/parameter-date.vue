@@ -22,11 +22,11 @@ export default {
     value: String
   },
   emits: ['input'],
-  setup () {
+  setup() {
     return { theme }
   },
   methods: {
-    updateValue (event) {
+    updateValue(event) {
       this.$emit('input', event.target.value)
     }
   }

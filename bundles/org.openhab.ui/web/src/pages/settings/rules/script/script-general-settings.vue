@@ -36,7 +36,7 @@
             smart-select
             :smart-select-params="{ openIn: 'sheet', closeOnSelect: true }">
             <select @change="$emit('new-language', $event.target.value)">
-              <option v-if="!languages.map(l => l.contentType).includes(mode)" :key="mode" :value="mode" selected="true">
+              <option v-if="!languages.map((l) => l.contentType).includes(mode)" :key="mode" :value="mode" selected="true">
                 {{ mode ? mode + ' (not installed)' : 'Unknown' }}
               </option>
               <option
@@ -74,22 +74,22 @@ export default {
     RuleGeneralSettings
   },
   computed: {
-    moduleTitle () {
+    moduleTitle() {
       return this.editable || this.module?.label ? this.module.label : this.sugModuleTitle
     },
-    sugModuleTitle () {
+    sugModuleTitle() {
       return this.suggestedModuleTitle(this.module, this.moduleType)
     },
-    moduleDescription () {
+    moduleDescription() {
       return this.editable || this.module?.description ? this.module.description : this.sugModuleDescription
     },
-    sugModuleDescription () {
+    sugModuleDescription() {
       return this.suggestedModuleDescription(this.module, this.moduleType)
     },
-    editable () {
+    editable() {
       return this.createMode || (this.rule && this.rule.editable)
     },
-    scriptType () {
+    scriptType() {
       switch (this.module.type) {
         case 'script.ScriptAction':
         case 'jsr223.ScriptedAction':

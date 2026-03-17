@@ -11,7 +11,7 @@
     @card:closed="cardClosed">
     <f7-card-content :padding="false">
       <div
-        :class="(!backgroundImageUrl) ? `bg-color-${color}` : undefined"
+        :class="!backgroundImageUrl ? `bg-color-${color}` : undefined"
         :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
         <f7-card-header
           :text-color="config.invertText ? 'black' : 'white'"
@@ -112,7 +112,7 @@ export default {
     type: String,
     element: Object
   },
-  setup (props) {
+  setup(props) {
     const { config, childContext, visible, slots } = useWidgetContext(props.context)
     return { config, childContext, visible, slots }
   },
@@ -120,7 +120,7 @@ export default {
     ...mapStores(useUIOptionsStore)
   },
   asyncComputed: {
-    backgroundImageUrl () {
+    backgroundImageUrl() {
       if (this.config.backgroundImage) {
         return this.$oh.media.getImage(this.config.backgroundImage)
       } else {

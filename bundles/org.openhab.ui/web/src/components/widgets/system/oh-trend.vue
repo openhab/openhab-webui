@@ -23,49 +23,49 @@ import Trend from '@hotdogee/vue3-trend'
 export default {
   props: {
     context: Object,
-    width: [ Number, String ]
+    width: [Number, String]
   },
   components: {
     Trend
   },
   widget: OhTrendDefinition,
-  setup (props) {
+  setup(props) {
     const { config } = useWidgetContext(props.context)
     return { config }
   },
-  data () {
+  data() {
     return {
       trendData: [],
       showTrend: false
     }
   },
   computed: {
-    trendItem () {
+    trendItem() {
       return this.config.trendItem
     },
-    trendWidth () {
+    trendWidth() {
       return this.width || this.config.trendWidth
     },
-    trendGradient () {
+    trendGradient() {
       return this.config.trendGradient || ['#2196f3', '#5ac8fa']
     },
-    trendGradientDirection () {
+    trendGradientDirection() {
       return this.config.trendGradientDirection || 'top'
     },
-    trendStrokeWidth () {
+    trendStrokeWidth() {
       return this.config.trendStrokeWidth || 3
     }
   },
-  mounted () {
+  mounted() {
     this.buildTrend()
   },
   watch: {
-    trendItem (item) {
+    trendItem(item) {
       this.buildTrend()
     }
   },
   methods: {
-    buildTrend () {
+    buildTrend() {
       this.trendData = []
       this.showTrend = false
       if (!this.trendItem) return []

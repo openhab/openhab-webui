@@ -32,10 +32,10 @@ export default {
     config: Object
   },
   methods: {
-    propsSheetClosed () {
+    propsSheetClosed() {
       f7.emit('propsEditorClosed')
     },
-    updateProps () {
+    updateProps() {
       f7.emit('propsEditorUpdate', this.config)
     }
   }

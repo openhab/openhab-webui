@@ -26,7 +26,7 @@ export default {
     OhStepper
   },
   widget: OhStepperCardDefinition,
-  setup (props) {
+  setup(props) {
     const { cardChildContext } = useWidgetContext(props.context)
     return { cardChildContext }
   }

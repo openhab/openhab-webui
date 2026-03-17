@@ -59,10 +59,10 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       channel: {
@@ -75,19 +75,21 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn (event) {
+    onPageAfterIn(event) {
       const bindingId = this.thingType.UID.split(':')[0]
       const promises = this.thingType.extensibleChannelTypeIds.map((ctid) => this.$oh.api.get(`/rest/channel-types/${bindingId}:${ctid}`))
-      Promise.all(promises).then((ct) => {
-        this.channelTypes = ct
-        this.ready = true
-      }).catch((err) => {
-        console.error('Error loading channel types', err)
-        f7.dialog.alert('Error loading channel type: ' + err)
-        this.f7router.back()
-      })
+      Promise.all(promises)
+        .then((ct) => {
+          this.channelTypes = ct
+          this.ready = true
+        })
+        .catch((err) => {
+          console.error('Error loading channel types', err)
+          f7.dialog.alert('Error loading channel type: ' + err)
+          this.f7router.back()
+        })
     },
-    save () {
+    save() {
       if (!this.channel.id) {
         f7.dialog.alert('Please give a unique identifier')
         return

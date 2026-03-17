@@ -33,7 +33,7 @@ export default {
     OhVideo
   },
   widget: OhVideoCardDefinition,
-  setup (props) {
+  setup(props) {
     const { cardChildContext } = useWidgetContext(props.context)
     return { cardChildContext }
   }

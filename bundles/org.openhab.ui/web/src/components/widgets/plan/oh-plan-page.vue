@@ -13,13 +13,14 @@
       :key="mapKey"
       class="oh-plan-page-lmap"
       @ready="fitMapBounds"
-      :class="{ 'with-tabbar': context.tab,
-                'oh-plan-white-background': config.backgroundColor === 'white',
-                'oh-plan-black-background': config.backgroundColor === 'black',
-                'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
-                'oh-plan-dark-mode-invert': config.darkModeInvert,
-                'oh-plan-tooltip-black': config.tooltipColor === 'black',
-                'oh-plan-tooltip-blackwhite': config.tooltipColor === 'blackwhite',
+      :class="{
+        'with-tabbar': context.tab,
+        'oh-plan-white-background': config.backgroundColor === 'white',
+        'oh-plan-black-background': config.backgroundColor === 'black',
+        'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
+        'oh-plan-dark-mode-invert': config.darkModeInvert,
+        'oh-plan-tooltip-black': config.tooltipColor === 'black',
+        'oh-plan-tooltip-blackwhite': config.tooltipColor === 'blackwhite'
       }"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
@@ -139,7 +140,7 @@ export default {
     const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
     return { config, scopedCssUid, childContext, defaultSlots }
   },
-  data () {
+  data() {
     return {
       currentZoom: 13,
       currentCenter: null,
@@ -151,10 +152,13 @@ export default {
     }
   },
   computed: {
-    bounds () {
+    bounds() {
       const lat = this.config.imageHeight || 1000
       const lng = this.config.imageWidth || 1000
-      return [[0, 0], [lat, lng]]
+      return [
+        [0, 0],
+        [lat, lng]
+      ]
     },
     markerComponent() {
       return (marker) => {
@@ -171,21 +175,26 @@ export default {
         return isVisibleMin && isVisibleMax
       }
     },
-    mapOptions () {
-      return Object.assign({
-        zoomSnap: 0.1,
-        tap: false
-      }, this.config.noZoomOrDrag ? {
-        dragging: false,
-        touchZoom: false,
-        doubleClickZoom: false,
-        scrollWheelZoom: false,
-        zoomControl: false
-      } : {})
+    mapOptions() {
+      return Object.assign(
+        {
+          zoomSnap: 0.1,
+          tap: false
+        },
+        this.config.noZoomOrDrag
+          ? {
+              dragging: false,
+              touchZoom: false,
+              doubleClickZoom: false,
+              scrollWheelZoom: false,
+              zoomControl: false
+            }
+          : {}
+      )
     }
   },
   asyncComputed: {
-    backgroundImageUrl () {
+    backgroundImageUrl() {
       return this.$oh.media.getImage(this.config.imageUrl)
     }
   },
@@ -193,26 +202,25 @@ export default {
     'config.noZoomOrDrag': function (val) {
       this.refreshMap()
     },
-    backgroundImageUrl (val) {
+    backgroundImageUrl(val) {
       this.showMap = true
       this.refreshMap()
     }
   },
   methods: {
-    zoomUpdate (zoom) {
+    zoomUpdate(zoom) {
       this.currentZoom = zoom
     },
-    centerUpdate (center) {
+    centerUpdate(center) {
       this.currentCenter = center
     },
-    onMarkerUpdate () {
-    },
-    fitMapBounds () {
+    onMarkerUpdate() {},
+    fitMapBounds() {
       if (this.$refs.map) {
         this.$refs.map.leafletObject?.fitBounds(this.bounds)
       }
     },
-    refreshMap () {
+    refreshMap() {
       this.mapKey = f7.utils.id()
       nextTick(() => {
         this.fitMapBounds()

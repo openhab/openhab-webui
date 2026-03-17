@@ -15,12 +15,12 @@ export default {
     context: Object
   },
   widget: OhChartDefinition,
-  setup (props) {
+  setup(props) {
     const { config } = useWidgetContext(props.context)
     return { config }
   },
   methods: {
-    forceRerender () {
+    forceRerender() {
       this.$refs.chart.forceRerender()
     }
   }

@@ -3,7 +3,7 @@
     <f7-navbar>
       <oh-nav-content title="Pages" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -90,7 +90,7 @@
               media-item
               class="pagelist-item"
               :checkbox="showCheckboxes && page.uid !== 'overview'"
-              :checked="isChecked(((page.component === 'Sitemap') ? 'system:sitemap:' : 'ui:page:') + page.uid)"
+              :checked="isChecked((page.component === 'Sitemap' ? 'system:sitemap:' : 'ui:page:') + page.uid)"
               :disabled="showCheckboxes && page.uid === 'overview' ? true : null"
               @click.ctrl="(e) => ctrlClick(e, page)"
               @click.meta="(e) => ctrlClick(e, page)"
@@ -174,10 +174,10 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       initSearchbar: false,
@@ -198,7 +198,7 @@ export default {
     }
   },
   computed: {
-    indexedPages () {
+    indexedPages() {
       if (this.groupBy === 'alphabetical') {
         return this.pages.reduce((prev, page, i, pages) => {
           const label = page.config.label || page.uid
@@ -220,37 +220,35 @@ export default {
 
           return prev
         }, {})
-        return Object.keys(typeGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
-          objEntries[key] = typeGroups[key]
-          return objEntries
-        }, {})
+        return Object.keys(typeGroups)
+          .sort((a, b) => a.localeCompare(b))
+          .reduce((objEntries, key) => {
+            objEntries[key] = typeGroups[key]
+            return objEntries
+          }, {})
       }
     },
-    searchPlaceholder () {
+    searchPlaceholder() {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       useLastSearchQueryStore().lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar)
-        useLastSearchQueryStore().lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      if (this.initSearchbar) useLastSearchQueryStore().lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
       this.selectedItems = []
       this.showCheckboxes = false
-      let promises = [
-        this.$oh.api.get('/rest/ui/components/system:sitemap'),
-        this.$oh.api.get('/rest/ui/components/ui:page')
-      ]
+      let promises = [this.$oh.api.get('/rest/ui/components/system:sitemap'), this.$oh.api.get('/rest/ui/components/ui:page')]
       Promise.all(promises).then((data) => {
         const pagesAndSitemaps = data[0].concat(data[1])
         this.pages = pagesAndSitemaps.sort((a, b) => {
@@ -270,7 +268,7 @@ export default {
         })
       })
     },
-    switchGroupOrder (groupBy) {
+    switchGroupOrder(groupBy) {
       this.groupBy = groupBy
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
@@ -282,42 +280,42 @@ export default {
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
-    toggleCheck () {
+    toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
     },
-    isChecked (item) {
+    isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
     },
-    click (event, item) {
+    click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
         this.f7router.navigate(this.getPageType(item).type + '/' + item.uid)
       }
     },
-    ctrlClick (event, item) {
+    ctrlClick(event, item) {
       this.toggleItemCheck(event, item.uid, item)
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
-    toggleItemCheck (event, itemName, item) {
+    toggleItemCheck(event, itemName, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
-      itemName = (item.component === 'Sitemap') ? 'system:sitemap:' + itemName : 'ui:page:' + itemName
+      itemName = item.component === 'Sitemap' ? 'system:sitemap:' + itemName : 'ui:page:' + itemName
       if (this.isChecked(itemName)) {
         this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
       } else {
         this.selectedItems.push(itemName)
       }
     },
-    getPageType (page) {
+    getPageType(page) {
       return this.pageTypes.find((t) => t.componentType === page.component)
     },
-    getPageIcon (page) {
+    getPageIcon(page) {
       if (page.uid === 'overview') return 'f7:house'
       if (page.config && page.config.icon) return page.config.icon
       const pageType = this.pageTypes.find((t) => t.componentType === page.component)
       return pageType ? pageType.icon : 'f7:tv'
     },
-    removeSelected () {
+    removeSelected() {
       const vm = this
 
       if (this.selectedItems.indexOf('ui:page:overview') >= 0) {
@@ -325,15 +323,11 @@ export default {
         return
       }
 
-      f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected pages?`,
-        'Remove Pages',
-        () => {
-          vm.doRemoveSelected()
-        }
-      )
+      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected pages?`, 'Remove Pages', () => {
+        vm.doRemoveSelected()
+      })
     },
-    doRemoveSelected () {
+    doRemoveSelected() {
       let dialog = f7.dialog.progress('Deleting Pages...')
 
       const promises = this.selectedItems.map((p) => {
@@ -343,27 +337,31 @@ export default {
           return this.$oh.api.delete('/rest/ui/components/ui:page/' + p.replace('ui:page:', ''))
         }
       })
-      Promise.all(promises).then((data) => {
-        f7.toast.create({
-          text: 'Pages removed',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.selectedItems = []
-        dialog.close()
-        this.load()
-        f7.emit('sidebarRefresh', null)
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred while deleting: ' + err)
-        f7.emit('sidebarRefresh', null)
-      })
+      Promise.all(promises)
+        .then((data) => {
+          f7.toast
+            .create({
+              text: 'Pages removed',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.selectedItems = []
+          dialog.close()
+          this.load()
+          f7.emit('sidebarRefresh', null)
+        })
+        .catch((err) => {
+          dialog.close()
+          this.load()
+          console.error(err)
+          f7.dialog.alert('An error occurred while deleting: ' + err)
+          f7.emit('sidebarRefresh', null)
+        })
     }
   },
   asyncComputed: {
-    iconUrl () {
+    iconUrl() {
       return (icon) => this.$oh.media.getIcon(icon)
     }
   }

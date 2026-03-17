@@ -64,7 +64,7 @@ export default {
     return { config, hasAction, performAction, onTaphold, onContextMenu }
   },
   computed: {
-    computedContentClass () {
+    computedContentClass() {
       return [
         ...(this.hasAction ? ['card-link'] : []),
         ...(Array.isArray(this.contentClass) ? this.contentClass : ['padding']),

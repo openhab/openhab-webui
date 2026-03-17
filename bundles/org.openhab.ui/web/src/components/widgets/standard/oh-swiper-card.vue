@@ -21,7 +21,7 @@ export default {
     OhSwiper
   },
   widget: OhSwiperCardDefinition,
-  setup (props) {
+  setup(props) {
     const { cardChildContext } = useWidgetContext(props.context)
     return { cardChildContext }
   }

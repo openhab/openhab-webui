@@ -88,30 +88,30 @@ export default {
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, visible, performAction }
   },
-  data () {
+  data() {
     return {
       markerKey: 'marker-' + f7.utils.id(),
       dragging: false
     }
   },
-  created () {
+  created() {
     this.DefaultIcon = {
       iconUrl: markerIcon,
-      iconSize: [25, 41],
+      iconSize: [25, 41]
     }
   },
   computed: {
-    coords () {
-      return (this.config.coords) ? this.config.coords.split(',') : [250, 250]
+    coords() {
+      return this.config.coords ? this.config.coords.split(',') : [250, 250]
     },
-    hasCustomIcon () {
+    hasCustomIcon() {
       return this.config.useTooltipAsLabel || this.config.icon
     },
-    iconSize () {
+    iconSize() {
       const iconSize = this.config.iconSize || 40
       return [iconSize, iconSize]
     },
-    tooltipOptions () {
+    tooltipOptions() {
       return {
         permanent: this.config.tooltipPermanent,
         direction: this.config.tooltipDirection || 'auto',
@@ -119,26 +119,32 @@ export default {
         opacity: this.config.tooltipOpacity || 0.9
       }
     },
-    state () {
+    state() {
       if (this.config.item) {
         return this.context.store[this.config.item].state
       }
       return null
     },
-    tooltipStyle () {
-      return Object.assign({
-        fontSize: this.config.tooltipFontSize,
-        color: this.config.tooltipColor
-      }, this.config.tooltipStyle)
+    tooltipStyle() {
+      return Object.assign(
+        {
+          fontSize: this.config.tooltipFontSize,
+          color: this.config.tooltipColor
+        },
+        this.config.tooltipStyle
+      )
     },
-    iconStyle () {
-      return Object.assign({
-        transform: 'rotate(' + this.config.iconRotation + 'deg)'
-      }, this.config.iconStyle)
+    iconStyle() {
+      return Object.assign(
+        {
+          transform: 'rotate(' + this.config.iconRotation + 'deg)'
+        },
+        this.config.iconStyle
+      )
     }
   },
   asyncComputed: {
-    tooltip () {
+    tooltip() {
       if (this.config.tooltip) {
         return this.config.tooltip
       } else if (this.config.item) {
@@ -150,10 +156,10 @@ export default {
     }
   },
   methods: {
-    onMove (latlng) {
+    onMove(latlng) {
       this.context.component.config.coords = [latlng.lat, latlng.lng].join(',')
     },
-    onClick (event) {
+    onClick(event) {
       if (this.context.editmode) {
         // this.context.editmode.configureWidget(this.context.component, this.context.parent)
       } else {
@@ -161,7 +167,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.$emit('update', this.coords)
   }
 }

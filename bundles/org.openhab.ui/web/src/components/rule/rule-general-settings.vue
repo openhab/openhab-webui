@@ -12,7 +12,7 @@
             required
             :validate="editable"
             :disabled="!createMode ? true : null"
-            :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
+            :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
             input-id="input"
             pattern="[A-Za-z0-9_\-]+"
             error-message="Required. A-Z,a-z,0-9,_,- only"
@@ -32,7 +32,7 @@
             label="Label"
             type="text"
             :placeholder="`${type} label for display purposes`"
-            :info="(createMode) ? 'Required' : ''"
+            :info="createMode ? 'Required' : ''"
             :value="rule.name"
             required
             validate
@@ -74,7 +74,7 @@
             required
             :validate="editable"
             :disabled="true"
-            :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+            :info="createMode ? 'Note: cannot be changed after the creation' : ''"
             @input="rule.uid = $event.target.value"
             :clear-button="createMode" />
           <f7-list-input
@@ -127,21 +127,21 @@ export default {
     TagInput
   },
   computed: {
-    editable () {
+    editable() {
       return this.createMode || (this.rule && this.rule.editable)
     },
-    type () {
+    type() {
       if (this.inScriptEditor) return 'Script'
       if (this.inSceneEditor) return 'Scene'
       return 'Rule'
     }
   },
   methods: {
-    isScriptTag (tag) {
+    isScriptTag(tag) {
       if (this.inScriptEditor !== true) return false
       if (tag === 'Script') return true
     },
-    isSceneTag (tag) {
+    isSceneTag(tag) {
       if (this.inSceneEditor !== true) return false
       if (tag === 'Scene') return true
     }

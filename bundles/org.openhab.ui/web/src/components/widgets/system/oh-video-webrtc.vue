@@ -13,7 +13,7 @@
     <button
       v-if="sendAudio"
       class="oh-video-mic"
-      :class="{ 'active': isMicOn }"
+      :class="{ active: isMicOn }"
       @click="toggleMic"
       :title="isMicOn ? 'Mute microphone' : 'Send microphone'">
       <i class="material-icons">{{ isMicOn ? 'mic' : 'mic_off' }}</i>
@@ -39,7 +39,7 @@ export default {
     posterURL: { type: String },
     sendAudio: { type: Boolean }
   },
-  data () {
+  data() {
     return {
       webrtc: null,
       localAudioStream: null,
@@ -48,10 +48,10 @@ export default {
     }
   },
   watch: {
-    src (value) {
+    src(value) {
       this.startStream()
     },
-    sendAudio (value) {
+    sendAudio(value) {
       if (value === false && this.isMicOn) {
         this.isMicOn = false
         this.disableMicrophone()
@@ -59,27 +59,33 @@ export default {
     }
   },
   computed: {
-    computedPosterUrl () {
+    computedPosterUrl() {
       if (this.posterURL && this.posterURL.startsWith('data:')) {
         return this.posterURL
       }
-      const ts = (new Date()).toISOString()
-      return this.posterURL ? this.posterURL.indexOf('?') === -1 ? `${this.posterURL}?_ts=${ts}` : `${this.posterURL}&_ts=${ts}` : this.posterURL
+      const ts = new Date().toISOString()
+      return this.posterURL
+        ? this.posterURL.indexOf('?') === -1
+          ? `${this.posterURL}?_ts=${ts}`
+          : `${this.posterURL}&_ts=${ts}`
+        : this.posterURL
     }
   },
   methods: {
-    stopStream () {
+    stopStream() {
       console.debug('WebRTC Closing Connection')
       if (this.webrtc) {
         this.webrtc.isClosed = true
-        try { this.disableMicrophone() } catch (e) { }
+        try {
+          this.disableMicrophone()
+        } catch (e) {}
         this.webrtc.close()
         // see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/close
         this.audioTransceiver = null
         this.webrtc = null
       }
     },
-    startStream () {
+    startStream() {
       if (!this.inForeground || !this.src) {
         return
       }
@@ -107,9 +113,10 @@ export default {
         // Try to enable microphone before/around negotiation
         this.enableMicrophone(webrtc, this.audioTransceiver)
       }
-      webrtc.onnegotiationneeded = function handleNegotiationNeeded () {
+      webrtc.onnegotiationneeded = function handleNegotiationNeeded() {
         // WebRTC lifecycle to create a live stream
-        webrtc.createOffer()
+        webrtc
+          .createOffer()
           .then((offer) => webrtc.setLocalDescription(offer))
           .then(() => waitForCandidates(self.candidatesTimeout))
           .then(() => sendOffer())
@@ -117,7 +124,7 @@ export default {
           .catch((e) => console.warn(e))
 
         // waits x amount of time for ICE candidates before resolving
-        function waitForCandidates (timeout = 2000) {
+        function waitForCandidates(timeout = 2000) {
           return new Promise((resolve, reject) => {
             let timer = null
             if (timeout > 0) {
@@ -138,7 +145,7 @@ export default {
           })
         }
         // Sends our SDP offer to the remote server, expects a SDP answer back
-        function sendOffer () {
+        function sendOffer() {
           console.debug('Offer: ', webrtc.localDescription.sdp)
           return new Promise((resolve, reject) => {
             fetch(self.src, {
@@ -152,14 +159,13 @@ export default {
                 const answer = atob(data)
                 console.debug('Answer: ', answer)
                 resolve(answer)
-              }).catch((e) => reject(e))
+              })
+              .catch((e) => reject(e))
           })
         }
       }
       // creates a channel needed by nest(?) cameras, we also use this to restart streams if closed
-      const webrtcSendChannel = webrtc.createDataChannel(
-        'dataSendChannel'
-      )
+      const webrtcSendChannel = webrtc.createDataChannel('dataSendChannel')
       webrtcSendChannel.onclose = (_event) => {
         console.debug(`${webrtcSendChannel.label} has closed`)
         // if we did not close this, restart the stream
@@ -170,7 +176,7 @@ export default {
       }
       this.webrtc = webrtc
     },
-    toggleMic () {
+    toggleMic() {
       this.isMicOn = !this.isMicOn
       if (!this.webrtc) {
         // If no connection yet, start it so microphone state can apply during negotiation
@@ -185,10 +191,12 @@ export default {
         this.disableMicrophone()
       }
     },
-    async enableMicrophone (webrtc, audioTransceiver) {
+    async enableMicrophone(webrtc, audioTransceiver) {
       try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          f7.dialog.alert('To enable the microphone, please make sure that HTTPS is in use and WebRTC is supported by this browser, including microphone access.')
+          f7.dialog.alert(
+            'To enable the microphone, please make sure that HTTPS is in use and WebRTC is supported by this browser, including microphone access.'
+          )
           return
         }
         // If already enabled, do nothing
@@ -209,14 +217,16 @@ export default {
         f7.dialog.alert('Microphone could not be enabled: ' + (e.message || 'Unknown error'))
       }
     },
-    disableMicrophone () {
+    disableMicrophone() {
       try {
         if (this.audioTransceiver && this.audioTransceiver.sender) {
           this.audioTransceiver.sender.replaceTrack(null)
         }
         if (this.localAudioStream) {
           this.localAudioStream.getTracks().forEach((t) => {
-            try { t.stop() } catch (e) {}
+            try {
+              t.stop()
+            } catch (e) {}
           })
           this.localAudioStream = null
         }
@@ -224,10 +234,10 @@ export default {
         console.warn('Failed to disable microphone:', e)
       }
     },
-    startForegroundActivity () {
+    startForegroundActivity() {
       this.startStream()
     },
-    stopForegroundActivity () {
+    stopForegroundActivity() {
       this.stopStream()
     }
   }

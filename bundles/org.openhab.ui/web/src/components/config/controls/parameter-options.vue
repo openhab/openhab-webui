@@ -41,7 +41,7 @@
       :value="option.value"
       :checked="isSelected(option) ? true : null"
       radio-icon="start"
-      @change="(!configDescription.required && isSelected(option)) ? updateValue(undefined) : updateValue(option.value)"
+      @change="!configDescription.required && isSelected(option) ? updateValue(undefined) : updateValue(option.value)"
       :key="option.value"
       :title="option.label"
       :name="configDescription.name" />
@@ -57,19 +57,19 @@ export default {
     value: [Number, String, Array, Boolean]
   },
   emits: ['input'],
-  data () {
+  data() {
     return {
       inlineList: false,
       smartSelectParams: {
-        view: (f7) ? f7.view.main : null
+        view: f7 ? f7.view.main : null
       }
     }
   },
-  created () {
+  created() {
     if (this.configDescription.options.length <= 5 && !this.configDescription.multiple) {
       this.inlineList = true
     } else if (this.configDescription.options.length <= 10) {
-      this.smartSelectParams.openIn = (this.configDescription.options.some((o) => o.label.length > 25)) ? 'sheet' : 'popover'
+      this.smartSelectParams.openIn = this.configDescription.options.some((o) => o.label.length > 25) ? 'sheet' : 'popover'
     } else if (this.configDescription.options.length > 100) {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
@@ -79,15 +79,15 @@ export default {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true
     }
-    this.smartSelectParams.closeOnSelect = !(this.configDescription.multiple)
+    this.smartSelectParams.closeOnSelect = !this.configDescription.multiple
     // this.smartSelectParams.routableModals = false // to fix bug on firefox
     if (!this.configDescription.multiple && this.configDescription.required && this.value === undefined) {
       this.$emit('input', this.configDescription.options[0].value)
     }
   },
   methods: {
-    updateValue (evt) {
-      let value = (this.inlineList) ? evt : this.$refs.item.$el.children[0].f7SmartSelect.getValue()
+    updateValue(evt) {
+      let value = this.inlineList ? evt : this.$refs.item.$el.children[0].f7SmartSelect.getValue()
       if (!this.configDescription.multiple) {
         if (this.configDescription.type === 'INTEGER') value = parseInt(value)
         if (this.configDescription.type === 'DECIMAL') value = parseFloat(value)
@@ -95,7 +95,7 @@ export default {
       }
       this.$emit('input', value)
     },
-    isSelected (option) {
+    isSelected(option) {
       if (this.value === null || this.value === undefined) return
       let castedVal = null
       if (this.configDescription.type === 'INTEGER') castedVal = parseInt(option.value)

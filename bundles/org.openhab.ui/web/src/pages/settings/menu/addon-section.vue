@@ -19,11 +19,11 @@ export default {
   },
   emits: ['expand'],
   computed: {
-    addonsSettings () {
+    addonsSettings() {
       if (this.expanded) return this.addonsInstalled
       return this.addonsInstalled.map((addon) => {
-        const show = addon.type === 'persistence' ||
-          this.addonsServices.findIndex((as) => as.configDescriptionURI.split(':')[1] === addon.id) > -1
+        const show =
+          addon.type === 'persistence' || this.addonsServices.findIndex((as) => as.configDescriptionURI.split(':')[1] === addon.id) > -1
         return Object.assign({ hidden: !show }, addon)
       })
     }

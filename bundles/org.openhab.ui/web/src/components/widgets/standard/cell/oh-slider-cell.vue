@@ -70,12 +70,12 @@ export default {
     OhSlider
   },
   widget: OhSliderCellDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, slots } = useWidgetContext(props.context)
     return { config, childContext, slots }
   },
   computed: {
-    sliderContext () {
+    sliderContext() {
       return Object.assign({}, this.context, {
         component: {
           component: 'oh-slider',

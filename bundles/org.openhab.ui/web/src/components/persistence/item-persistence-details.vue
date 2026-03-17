@@ -60,7 +60,7 @@ const loaded = ref<boolean>(false)
 // computed
 const strategies = computed(() => {
   const strategies: Record<string, Array<string>> = {}
-  services.value.forEach((service) => strategies[service.id] = serviceStrategies(service))
+  services.value.forEach((service) => (strategies[service.id] = serviceStrategies(service)))
   return strategies
 })
 
@@ -94,9 +94,9 @@ onMounted(() => {
 const load = async () => {
   loaded.value = false
   const availableServices = (await api.getPersistenceServices())!
-  services.value = (await Promise.all(
-    availableServices.map((service) => loadService(service))
-  )).sort((s1, s2) => s1.label.localeCompare(s2.label))
+  services.value = (await Promise.all(availableServices.map((service) => loadService(service)))).sort((s1, s2) =>
+    s1.label.localeCompare(s2.label)
+  )
   loaded.value = true
 }
 
@@ -160,10 +160,14 @@ const matchesItem = (item: api.EnrichedItem | api.EnrichedGroupItem, items: Arra
   if (!negativeMatch) {
     if (items.includes('*')) return true
     itemPattern = itemName
-    groupPatterns = items.filter((configItem) => !configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(0, -1))
+    groupPatterns = items
+      .filter((configItem) => !configItem.startsWith('!') && configItem.endsWith('*'))
+      .map((configItem) => configItem.slice(0, -1))
   } else {
     itemPattern = '!' + itemName
-    groupPatterns = items.filter((configItem) => configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(1, -1))
+    groupPatterns = items
+      .filter((configItem) => configItem.startsWith('!') && configItem.endsWith('*'))
+      .map((configItem) => configItem.slice(1, -1))
   }
   if (items.includes(itemPattern)) return true
   return groupPatterns.some((groupName) => groupNames.includes(groupName))

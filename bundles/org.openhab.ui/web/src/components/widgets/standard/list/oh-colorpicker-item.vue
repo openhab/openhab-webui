@@ -1,7 +1,7 @@
 <template>
   <oh-list-item :context="context">
     <template #after>
-      <div style="display: flex; gap: 0.5rem;">
+      <div style="display: flex; gap: 0.5rem">
         <generic-widget-component :context="childContext(colorPickerComponent)" />
         <generic-widget-component :context="childContext(switchComponent)" />
       </div>
@@ -22,12 +22,12 @@ export default {
     context: Object
   },
   widget: OhColorpickerItemDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext } = useWidgetContext(props.context)
     return { config, childContext }
   },
   computed: {
-    colorPickerComponent () {
+    colorPickerComponent() {
       return {
         component: 'oh-colorpicker',
         config: Object.assign({}, this.config, {
@@ -35,7 +35,7 @@ export default {
         })
       }
     },
-    switchComponent () {
+    switchComponent() {
       return {
         component: 'oh-toggle',
         config: this.config

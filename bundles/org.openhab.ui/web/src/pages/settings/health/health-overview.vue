@@ -74,7 +74,7 @@ export default {
   props: {
     f7router: Object
   },
-  data () {
+  data() {
     return {
       objectsSubtitles: {
         orphanLinks: 'Items pointing to non-existent thing channels or vica versa',
@@ -91,17 +91,17 @@ export default {
     }
   },
   computed: {
-    apiEndpoints () {
+    apiEndpoints() {
       return useRuntimeStore().apiEndpoints
     }
   },
   watch: {
-    apiEndpoints () {
+    apiEndpoints() {
       this.loadCounters()
     }
   },
   methods: {
-    loadCounters () {
+    loadCounters() {
       if (!this.apiEndpoints) return
       if (useRuntimeStore().apiEndpoint('links')) {
         this.$oh.api.get('/rest/links/orphans').then((data) => {
@@ -119,7 +119,7 @@ export default {
         })
       }
     },
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.loadCounters()
     }
   }

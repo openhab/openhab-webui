@@ -80,7 +80,13 @@
         v-else
         :show-as-cards="searchResults.length <= 3"
         :addons="searchResults"
-        :title="'Found: ' + searchResults.length + (currentTab == 'main' ? '' : ' ' + currentTab) + ' add-on' + ((searchResults.length === 1) ? '' : 's')"
+        :title="
+          'Found: ' +
+          searchResults.length +
+          (currentTab == 'main' ? '' : ' ' + currentTab) +
+          ' add-on' +
+          (searchResults.length === 1 ? '' : 's')
+        "
         @addon-button-click="addonButtonClick" />
     </div>
 
@@ -139,7 +145,14 @@
         <addons-section
           v-if="addons"
           @addon-button-click="addonButtonClick"
-          :addons="allAddons.filter((a) => a.type === 'automation' && a.contentType !== 'application/vnd.openhab.ruletemplate' && a.contentType !== 'application/vnd.openhab.uicomponent;type=blocks')"
+          :addons="
+            allAddons.filter(
+              (a) =>
+                a.type === 'automation' &&
+                a.contentType !== 'application/vnd.openhab.ruletemplate' &&
+                a.contentType !== 'application/vnd.openhab.uicomponent;type=blocks'
+            )
+          "
           :featured="['automation-jsscripting', 'automation-pythonscripting', 'automation-jrubyscripting', 'automation-groovyscripting']"
           :title="'Languages &amp; Technologies'"
           :subtitle="'Use your preferred scripting language and other automation functionality'" />
@@ -288,10 +301,10 @@ export default {
   components: {
     AddonsSection
   },
-  setup () {
+  setup() {
     return { f7, theme }
   },
-  data () {
+  data() {
     return {
       leftPanelOpened: false,
       currentTab: 'main',
@@ -307,48 +320,58 @@ export default {
     }
   },
   computed: {
-    allAddons () {
-      return Object.keys(this.addons).flatMap((k) => this.addons[k]).filter((a) => this.isInFilter(a))
+    allAddons() {
+      return Object.keys(this.addons)
+        .flatMap((k) => this.addons[k])
+        .filter((a) => this.isInFilter(a))
     },
-    installedAddons () {
+    installedAddons() {
       return this.allAddons.filter((a) => a.installed)
     },
-    suggestedAddons () {
+    suggestedAddons() {
       return this.allAddons.filter((a) => !a.installed && this.suggestions.some((s) => s.id === a.id)).filter((a) => this.isInFilter(a))
     },
-    unsuggestedAddons () {
+    unsuggestedAddons() {
       return this.allAddons.filter((a) => !this.suggestedAddons.includes(a)).filter((a) => this.isInFilter(a))
     },
-    officialAddons () {
-      return Object.keys(this.addons).filter((k) => k === 'eclipse' || k === 'karaf').flatMap((k) => this.addons[k]).filter((a) => this.isInFilter(a)).filter((a) => !this.suggestedAddons.includes(a))
+    officialAddons() {
+      return Object.keys(this.addons)
+        .filter((k) => k === 'eclipse' || k === 'karaf')
+        .flatMap((k) => this.addons[k])
+        .filter((a) => this.isInFilter(a))
+        .filter((a) => !this.suggestedAddons.includes(a))
     },
-    marketplaceAddons () {
+    marketplaceAddons() {
       return this.addons.marketplace.filter((a) => !this.suggestedAddons.includes(a)).filter((a) => this.isInFilter(a))
     },
-    otherAddons () {
-      return Object.keys(this.addons).filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace').flatMap((k) => this.addons[k]).filter((a) => this.isInFilter(a)).filter((a) => !this.suggestedAddons.includes(a))
+    otherAddons() {
+      return Object.keys(this.addons)
+        .filter((k) => k !== 'eclipse' && k !== 'karaf' && k !== 'marketplace')
+        .flatMap((k) => this.addons[k])
+        .filter((a) => this.isInFilter(a))
+        .filter((a) => !this.suggestedAddons.includes(a))
     },
-    pageTitle () {
+    pageTitle() {
       if (!AddonTitles[this.currentTab]) return 'Add-on Store'
       return AddonTitles[this.currentTab].replace(/s$/, '') + ' Add-ons'
     },
-    connectionTypes () {
+    connectionTypes() {
       return this.AddonConnectionTypes[this.connectionType].values
     },
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       this.stopEventSource()
       f7.panel.get('left').off('opened closed', this.updateLeftPanelVisibility)
     },
-    updateLeftPanelVisibility () {
+    updateLeftPanelVisibility() {
       this.leftPanelOpened = f7.panel.get('left').opened
     },
-    load () {
+    load() {
       if (this.searchFor) {
         // Show this in the searchbar while the page is loading
         this.$refs.storeSearchbar.$el.f7Searchbar.$inputEl.val(this.searchFor)
@@ -382,11 +405,11 @@ export default {
         })
       })
     },
-    addonButtonClick (addon) {
-      const serviceId = (addon.uid.indexOf(':') > 0) ? addon.uid.substring(0, addon.uid.indexOf(':')) : undefined
+    addonButtonClick(addon) {
+      const serviceId = addon.uid.indexOf(':') > 0 ? addon.uid.substring(0, addon.uid.indexOf(':')) : undefined
       this.openAddonPopup(addon.uid, serviceId, addon)
     },
-    onTabShow (tab) {
+    onTabShow(tab) {
       this.currentTab = tab.id
 
       const section = tab.id === 'main' ? '' : tab.id + '/'
@@ -399,7 +422,7 @@ export default {
         f7.lazy.create('.page-addon-store')
       })
     },
-    search (searchbar, query, previousQuery) {
+    search(searchbar, query, previousQuery) {
       if (!this.ready) return
 
       query = query.trim()
@@ -413,7 +436,14 @@ export default {
         results = results.filter((a) => a.type === this.currentTab)
       }
       query = query.toLowerCase()
-      results = results.filter((a) => query !== ',' && (a.id.includes(query) || a.label.toLowerCase().includes(query) || a.description?.toLowerCase()?.includes(query) || a.keywords?.toLowerCase()?.includes(query)))
+      results = results.filter(
+        (a) =>
+          query !== ',' &&
+          (a.id.includes(query) ||
+            a.label.toLowerCase().includes(query) ||
+            a.description?.toLowerCase()?.includes(query) ||
+            a.keywords?.toLowerCase()?.includes(query))
+      )
 
       this.query = query
       this.searchResults = results
@@ -421,7 +451,7 @@ export default {
         f7.lazy.create('.page-addon-store')
       }, 100)
     },
-    clearSearch (searchbar, previousQuery) {
+    clearSearch(searchbar, previousQuery) {
       this.$refs.storeSearchbar.$el.f7Searchbar.$inputEl.val('')
       this.query = null
       this.searchResults = null
@@ -431,7 +461,7 @@ export default {
         })
       }
     },
-    updateFilter (filter, value) {
+    updateFilter(filter, value) {
       this[filter] = value
       if (this.query) {
         nextTick(() => {
@@ -439,20 +469,25 @@ export default {
         })
       }
     },
-    isInFilter (addon) {
+    isInFilter(addon) {
       // For now, we don't filter rule templates, UI widgets and block libraries, although there might be cases where they could use a cloud service,
       // or be specific to a region/country.
       // No connection or countries field is available for these addons.
-      const isLibraryContentType = ['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent'].includes(addon.contentType.split(';')[0])
+      const isLibraryContentType = ['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent'].includes(
+        addon.contentType.split(';')[0]
+      )
       // Note only the addons from the distribution currently have the connection attribute.
       // Therefore marketplace or alternative store addons will only be visible with a selection that allows cloud connections.
-      const isInConnectionFilter = isLibraryContentType ? true : (this.connectionTypes.includes(addon.connection) || this.connectionTypes.includes('cloud'))
+      const isInConnectionFilter = isLibraryContentType
+        ? true
+        : this.connectionTypes.includes(addon.connection) || this.connectionTypes.includes('cloud')
       // Filter according to region/country. Don't filter if no region/country set for OH.
       // Note only the addons from the distribution currently have the countries attribute.
       let isInRegionFilter = true
       if (this.regionReady) {
         if (this.regionType === 'exclude_other') {
-          isInRegionFilter = addon.countries.length > 0 ? addon.countries.map((c) => c.toUpperCase()).includes(this.region.toUpperCase()) : true
+          isInRegionFilter =
+            addon.countries.length > 0 ? addon.countries.map((c) => c.toUpperCase()).includes(this.region.toUpperCase()) : true
         } else if (this.regionType === 'only_region') {
           isInRegionFilter = addon.countries.map((c) => c.toUpperCase()).includes(this.region.toUpperCase())
         }
@@ -460,7 +495,7 @@ export default {
       return isInConnectionFilter && isInRegionFilter
     }
   },
-  created () {
+  created() {
     this.AddonIcons = AddonIcons
     this.AddonTitles = AddonTitles
     this.SuggestionLabels = AddonSuggestionLabels

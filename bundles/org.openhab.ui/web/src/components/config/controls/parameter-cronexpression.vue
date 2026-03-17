@@ -35,30 +35,33 @@ export default {
     value: String
   },
   emits: ['input'],
-  setup () {
+  setup() {
     return { theme }
   },
   methods: {
-    updateValue (value) {
+    updateValue(value) {
       this.$emit('input', value)
     },
-    openPopup () {
+    openPopup() {
       import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
         const popup = {
           component: c.default
         }
 
-        f7.views.main.router.navigate({
-          url: 'cron-edit',
-          route: {
-            path: 'cron-edit',
-            popup
+        f7.views.main.router.navigate(
+          {
+            url: 'cron-edit',
+            route: {
+              path: 'cron-edit',
+              popup
+            }
+          },
+          {
+            props: {
+              value: this.value
+            }
           }
-        }, {
-          props: {
-            value: this.value
-          }
-        })
+        )
 
         f7.once('cronEditorUpdate', this.updateValue)
         f7.once('cronEditorClosed', () => {
@@ -68,7 +71,7 @@ export default {
     }
   },
   computed: {
-    translation () {
+    translation() {
       try {
         const ret = toString(this.value, {
           use24HourTimeFormat: true,
@@ -79,7 +82,7 @@ export default {
         return err
       }
     },
-    exprError () {
+    exprError() {
       return this.translation.indexOf('Error:') === 0
     }
   }

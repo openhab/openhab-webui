@@ -15,12 +15,9 @@
             </h2>
             <p v-if="runtimeStore.uiInfo.commit">
               Main UI Commit
-              <a
-                :href="'https://github.com/openhab/openhab-webui/commit/' + runtimeStore.uiInfo.commit"
-                class="external"
-                target="_blank"
-                >{{ runtimeStore.uiInfo.commit }}</a
-              >
+              <a :href="'https://github.com/openhab/openhab-webui/commit/' + runtimeStore.uiInfo.commit" class="external" target="_blank">{{
+                runtimeStore.uiInfo.commit
+              }}</a>
             </p>
             <p>
               <f7-link external target="_blank" href="https://www.openhab.org/" :text="t('about.homePage')" />
@@ -58,7 +55,16 @@
                           color="blue"
                           :progress="(systemInfo.freeMemory * 100) / systemInfo.totalMemory" />
                         <small class="margin-bottom text-color-gray">
-                          {{ t('about.technicalInformation.resourceStats', { nbproc: systemInfo.availableProcessors, ram: Math.round(systemInfo.freeMemory / 1024 / 1024) + '/' + Math.round(systemInfo.totalMemory / 1024 / 1024) + 'MB', }) }}
+                          {{
+                            t('about.technicalInformation.resourceStats', {
+                              nbproc: systemInfo.availableProcessors,
+                              ram:
+                                Math.round(systemInfo.freeMemory / 1024 / 1024) +
+                                '/' +
+                                Math.round(systemInfo.totalMemory / 1024 / 1024) +
+                                'MB'
+                            })
+                          }}
                         </small>
                       </div>
                     </template>
@@ -165,12 +171,12 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
-    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local'})
+  setup() {
+    const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('about', mergeLocaleMessage)
     return { t, mergeLocaleMessage }
   },
-  data () {
+  data() {
     return {
       systemInfo: null,
       textualSystemInfoOpened: false,
@@ -178,7 +184,7 @@ export default {
     }
   },
   computed: {
-    textualSystemInfo () {
+    textualSystemInfo() {
       if (!this.textualSystemInfoOpened) return ''
       return YAML.stringify({
         runtimeInfo: useRuntimeStore().runtimeInfo,
@@ -210,26 +216,31 @@ export default {
     ...mapStores(useUIOptionsStore, useRuntimeStore)
   },
   methods: {
-    beforePageIn () {
+    beforePageIn() {
       if (useUserStore().isAdmin()) {
         api.getSystemInformation().then((data) => {
           this.systemInfo = data.systemInfo
         })
         api.getAddons().then((data) => {
-          this.addons = data.filter((a) => a.installed).map((a) => a.uid).sort()
+          this.addons = data
+            .filter((a) => a.installed)
+            .map((a) => a.uid)
+            .sort()
         })
       }
       this.checkPurgeServiceWorkerAndCachesAvailable()
     },
-    copyTextualSystemInfo () {
+    copyTextualSystemInfo() {
       let el = document.getElementById('textual-systeminfo')
       el.select()
       document.execCommand('copy')
-      f7.toast.create({
-        text: 'Copied to clipboard',
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
+      f7.toast
+        .create({
+          text: 'Copied to clipboard',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        })
+        .open()
     }
   }
 }

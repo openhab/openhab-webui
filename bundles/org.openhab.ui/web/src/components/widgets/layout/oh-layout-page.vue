@@ -46,7 +46,7 @@ import { computed } from 'vue'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 const props = defineProps<{
-  context: WidgetContext,
+  context: WidgetContext
   f7router: Router.Router
 }>()
 
@@ -55,5 +55,5 @@ defineEmits(['add-block', 'add-masonry'])
 const { config, childContext, scopedCssUid, defaultSlots, evaluateExpression } = useWidgetContext(props.context)
 const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
 
-const masonrySlots = computed(() => 'slots' in props.context.component && props.context.component.slots.masonry || [])
+const masonrySlots = computed(() => ('slots' in props.context.component && props.context.component.slots.masonry) || [])
 </script>

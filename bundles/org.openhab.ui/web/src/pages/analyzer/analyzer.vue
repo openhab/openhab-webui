@@ -92,10 +92,9 @@
                             {{ t('analyzer.series.table.header.markers') }}
                           </th>
                           <th class="label-cell">
-                            <span
-                              v-if="'auxColumn' in coordSettings"
-                              >{{ t('analyzer.series.table.header.' + coordSettings.auxColumn) }}</span
-                            >
+                            <span v-if="'auxColumn' in coordSettings">{{
+                              t('analyzer.series.table.header.' + coordSettings.auxColumn)
+                            }}</span>
                             <span v-else />
                           </th>
                         </tr>
@@ -145,7 +144,11 @@
                           </td>
                           <td class="label-cell">
                             <f7-link v-if="'aggregation' in options" @click="chooseAggregation(options as AggregateSeriesOptions)">
-                              {{ (options as AggregateSeriesOptions).aggregation ? t('analyzer.aggregations.' + (options as AggregateSeriesOptions).aggregation) : 'none' }}
+                              {{
+                                (options as AggregateSeriesOptions).aggregation
+                                  ? t('analyzer.aggregations.' + (options as AggregateSeriesOptions).aggregation)
+                                  : 'none'
+                              }}
                             </f7-link>
                             <span v-else />
                           </td>
@@ -329,7 +332,7 @@
                           <td class="label-cell">
                             <f7-checkbox
                               :checked="axis.scale ? true : null"
-                              @change="(evt : Event) => axis.scale = (evt.target as HTMLInputElement).checked" />
+                              @change="(evt: Event) => (axis.scale = (evt.target as HTMLInputElement).checked)" />
                           </td>
                           <td class="label-cell">
                             <f7-link @click="chooseAxisSplit(axis)">
@@ -393,7 +396,16 @@ import * as api from '@/api'
 
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
-import { type CoordSettings, Marker, ValueAxisSplitOptions, type CoordSystem, type SeriesOptions, type VisualMap, type SeriesType, type ValueAxisOptions } from './types'
+import {
+  type CoordSettings,
+  Marker,
+  ValueAxisSplitOptions,
+  type CoordSystem,
+  type SeriesOptions,
+  type VisualMap,
+  type SeriesType,
+  type ValueAxisOptions
+} from './types'
 import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/types/components/widgets'
 import type { TimeCoordSettings, TimeSeriesOptions } from './chart-time'
 import type { CalendarSeriesOptions } from './chart-calendar'
@@ -404,7 +416,7 @@ enum CoordSystemsName {
   calendar = 'calendar'
 }
 
-const COORD_SYSTEMS : Record<string, CoordSystem> = {
+const COORD_SYSTEMS: Record<string, CoordSystem> = {
   [CoordSystemsName.time]: ChartTime,
   [CoordSystemsName.aggregate]: ChartAggregate,
   [CoordSystemsName.calendar]: ChartCalendar
@@ -412,7 +424,9 @@ const COORD_SYSTEMS : Record<string, CoordSystem> = {
 
 export default {
   components: {
-    'oh-chart-page': defineAsyncComponent(() => import(/* webpackChunkName: "chart-page" */ '../../components/widgets/chart/oh-chart-page.vue')),
+    'oh-chart-page': defineAsyncComponent(
+      () => import(/* webpackChunkName: "chart-page" */ '../../components/widgets/chart/oh-chart-page.vue')
+    ),
     ItemPicker,
     EmptyStatePlaceholder
   },
@@ -420,17 +434,24 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('analyzer', mergeLocaleMessage)
 
     const userStore = useUserStore()
     const componentsStore = useComponentsStore()
     return {
-      t, f7, theme, userStore, componentsStore, ChartType, CoordSystemsName, OhChartVisualmap
+      t,
+      f7,
+      theme,
+      userStore,
+      componentsStore,
+      ChartType,
+      CoordSystemsName,
+      OhChartVisualmap
     }
   },
-  data () {
+  data() {
     return {
       showChart: false,
       invalidConfiguration: false,
@@ -448,21 +469,21 @@ export default {
     }
   },
   computed: {
-    titleDisplayText () {
+    titleDisplayText() {
       if (this.label != null) return this.label
       if (!this.items || !this.items.length) return 'Analyze'
       const firstItem = this.items[0]
       if (!firstItem) return 'Analyze'
-      if (this.items.length === 1) return (firstItem.label) ? firstItem.label : firstItem.name
-      return ((firstItem.label) ? firstItem.label : firstItem.name) + ' + ' + (this.items.length - 1)
+      if (this.items.length === 1) return firstItem.label ? firstItem.label : firstItem.name
+      return (firstItem.label ? firstItem.label : firstItem.name) + ' + ' + (this.items.length - 1)
     },
-    context () {
+    context() {
       return {
         component: this.page,
         analyzer: true
       }
     },
-    page () : Partial<api.RootUiComponent> | undefined{
+    page(): Partial<api.RootUiComponent> | undefined {
       const coordSystem = this.coordSystem
       if (!coordSystem) {
         return undefined
@@ -472,22 +493,22 @@ export default {
       chartPage.config!.label = this.label
       return chartPage
     },
-    dimensions () {
-      return ('dimensions' in this.coordSettings) ? this.coordSettings.dimensions : 1
+    dimensions() {
+      return 'dimensions' in this.coordSettings ? this.coordSettings.dimensions : 1
     },
-    coordSystemsName () {
+    coordSystemsName() {
       return CoordSystemsName
     },
     ...mapStores(useUserStore)
   },
   methods: {
-    close () {
+    close() {
       f7.sheet.close((this.$refs.controlsSheet as Sheet.Sheet).el)
     },
-    openControls () {
+    openControls() {
       this.controlsOpened = true
     },
-    initChart () {
+    initChart() {
       if (this.f7route?.query.period) (this.coordSettings as TimeCoordSettings).period = this.f7route.query.period
       if (this.f7route?.query.items === '') {
         this.invalidConfiguration = true
@@ -505,14 +526,14 @@ export default {
         }
       })
     },
-    refreshChart (fn : () => void) {
+    refreshChart(fn: () => void) {
       this.showChart = false
       if (typeof fn === 'function') fn()
       nextTick(() => {
         this.showChart = true
       })
     },
-    initItemsSeries (freshInit = true) {
+    initItemsSeries(freshInit = true) {
       if (freshInit) {
         this.seriesOptions = {}
       }
@@ -523,17 +544,13 @@ export default {
       coordSystem.initAxes(this.coordSettings)
       for (const item of this.items) {
         const seriesOption = this.seriesOptions[item.name]
-        this.seriesOptions[item.name] = coordSystem.initSeries(
-          item,
-          this.coordSettings,
-          freshInit || !seriesOption ? {} : seriesOption
-        )
+        this.seriesOptions[item.name] = coordSystem.initSeries(item, this.coordSettings, freshInit || !seriesOption ? {} : seriesOption)
       }
     },
-    async updateItems (itemNames : Array<string>) {
+    async updateItems(itemNames: Array<string>) {
       this.itemNames = itemNames
       this.showChart = false
-      const promises = itemNames.map((n) => api.getItemByName({ itemName : n }).then((data) => data as api.EnrichedItem))
+      const promises = itemNames.map((n) => api.getItemByName({ itemName: n }).then((data) => data as api.EnrichedItem))
       return Promise.all(promises).then((resp) => {
         this.items = [...resp]
         this.initItemsSeries(false)
@@ -549,14 +566,14 @@ export default {
         return Promise.resolve()
       })
     },
-    changeSeriesType (options : SeriesOptions, type : SeriesType) {
+    changeSeriesType(options: SeriesOptions, type: SeriesType) {
       if (options.type === type) return // no change
       this.refreshChart(() => {
         options.type = type
         this.initItemsSeries(false)
       })
     },
-    changeChartType (type : ChartType) {
+    changeChartType(type: ChartType) {
       this.refreshChart(() => {
         this.coordSettings.chartType = type
         if (type === '') {
@@ -564,7 +581,7 @@ export default {
         }
       })
     },
-    changeCoordSystem (coordSystem : CoordSystemsName) {
+    changeCoordSystem(coordSystem: CoordSystemsName) {
       const newCoordSystem = COORD_SYSTEMS[coordSystem]
       if (!newCoordSystem) {
         this.invalidConfiguration = true
@@ -577,104 +594,107 @@ export default {
         const device = getDevice()
         this.coordSettings = this.coordSystem.initCoordSystem({
           ...this.coordSettings,
-          orientation: (device.desktop || device.ipad) ? Orient.horizontal : Orient.vertical
+          orientation: device.desktop || device.ipad ? Orient.horizontal : Orient.vertical
         } as CoordSettings) as CoordSettings
         this.initItemsSeries(true)
       })
     },
-    changeAggregateDimensions (dimensions : number) {
+    changeAggregateDimensions(dimensions: number) {
       if (!('dimensions' in this.coordSettings)) {
         return
       }
       this.refreshChart(() => {
-        (this.coordSettings as any).dimensions = dimensions
+        ;(this.coordSettings as any).dimensions = dimensions
         this.initItemsSeries(false)
       })
     },
-    toggleOrientation () {
+    toggleOrientation() {
       if ('orientation' in this.coordSettings) {
-        this.coordSettings.orientation = (this.coordSettings.orientation === Orient.horizontal) ? Orient.vertical : Orient.horizontal
+        this.coordSettings.orientation = this.coordSettings.orientation === Orient.horizontal ? Orient.vertical : Orient.horizontal
       }
     },
-    changeVisualMapPalette (palette : OhChartVisualmap.PresetPalette) {
+    changeVisualMapPalette(palette: OhChartVisualmap.PresetPalette) {
       this.refreshChart(() => {
         if ('visualMap' in this.coordSettings) {
           this.coordSettings.visualMap.palette = palette
         }
       })
     },
-    changeVisualMapType (type : OhChartVisualmap.Type) {
+    changeVisualMapType(type: OhChartVisualmap.Type) {
       this.refreshChart(() => {
         if ('visualMap' in this.coordSettings) {
           this.coordSettings.visualMap.type = type
         }
       })
     },
-    chooseMarkers (seriesOptions : TimeSeriesOptions | AggregateSeriesOptions) {
+    chooseMarkers(seriesOptions: TimeSeriesOptions | AggregateSeriesOptions) {
       const actions = Object.values(Marker).map((m) => {
         return {
           text: m,
           color: 'blue',
-          onClick: () => { seriesOptions.marker = m }
+          onClick: () => {
+            seriesOptions.marker = m
+          }
         }
       })
-      f7.actions.create({
-        buttons: [
-          [
-            { label: true, text: this.t('analyzer.dialogs.header.markers') },
-            ...actions
-          ],
-          [
-            { color: 'red', text: this.t('dialogs.cancel'), close: true }
+      f7.actions
+        .create({
+          buttons: [
+            [{ label: true, text: this.t('analyzer.dialogs.header.markers') }, ...actions],
+            [{ color: 'red', text: this.t('dialogs.cancel'), close: true }]
           ]
-        ]
-      }).open()
+        })
+        .open()
     },
-    chooseAggregation (seriesOptions : AggregateSeriesOptions | CalendarSeriesOptions) {
+    chooseAggregation(seriesOptions: AggregateSeriesOptions | CalendarSeriesOptions) {
       const actions = Object.values(AggregationFunction).map((a) => {
         return {
           text: this.t('analyzer.aggregations.' + a),
           color: 'blue',
-          onClick: () => { seriesOptions.aggregation = AggregationFunction[a as keyof typeof AggregationFunction]}
+          onClick: () => {
+            seriesOptions.aggregation = AggregationFunction[a as keyof typeof AggregationFunction]
+          }
         }
       })
-      f7.actions.create({
-        buttons: [
-          [
-            { label: true, text: this.t('analyzer.dialogs.header.aggregation') },
-            ...actions
-          ],
-          [
-            { color: 'red', text: this.t('dialogs.cancel'), close: true }
+      f7.actions
+        .create({
+          buttons: [
+            [{ label: true, text: this.t('analyzer.dialogs.header.aggregation') }, ...actions],
+            [{ color: 'red', text: this.t('dialogs.cancel'), close: true }]
           ]
-        ]
-      }).open()
+        })
+        .open()
     },
-    chooseAxisSplit (axis : ValueAxisOptions) {
+    chooseAxisSplit(axis: ValueAxisOptions) {
       const actions = Object.keys(ValueAxisSplitOptions).map((key) => {
         return {
           text: ValueAxisSplitOptions[key as keyof typeof ValueAxisSplitOptions],
           color: 'blue',
-          onClick: () => { axis.split = key as ValueAxisSplitOptions }
+          onClick: () => {
+            axis.split = key as ValueAxisSplitOptions
+          }
         }
       })
-      f7.actions.create({
-        buttons: [
-          [{ label: true, text: this.t('analyzer.dialogs.header.split') }, ...actions],
-          [{ color: 'red', text: 'Cancel', close: true }]
-        ]
-      }).open()
+      f7.actions
+        .create({
+          buttons: [
+            [{ label: true, text: this.t('analyzer.dialogs.header.split') }, ...actions],
+            [{ color: 'red', text: 'Cancel', close: true }]
+          ]
+        })
+        .open()
     },
-    savePage () {
+    savePage() {
       if (!this.userStore.isAdmin()) return // shouldn't get here if not an admin
 
       const self = this
 
       const pageId = 'page_' + f7.utils.id()
-      f7.dialog.create({
-        title: this.t('analyzer.dialogs.save.title'),
-        text: this.t('analyzer.dialogs.save.message'),
-        content: `
+      f7.dialog
+        .create({
+          title: this.t('analyzer.dialogs.save.title'),
+          text: this.t('analyzer.dialogs.save.message'),
+          content: `
           <div class="dialog-input-field input">
             <div class="dialog-input-label" style="padding-bottom: 8px">Page ID</div>
             <input type="text" placeholder="${pageId}" id="page-id" class="dialog-input">
@@ -684,56 +704,68 @@ export default {
             <input type="text" placeholder="${this.titleDisplayText}" id="page-label" class="dialog-input">
           </div>
         `,
-        buttons: [
-          { text: this.t('dialogs.cancel'), color: 'gray', close: true },
-          { text: this.t('dialogs.save'), color: 'red', close: true, onClick: () => {
-            const uid = (document.getElementById('page-id') as HTMLInputElement).value || pageId
-            const label = (document.getElementById('page-label') as HTMLInputElement).value || this.titleDisplayText
-            if (!uid.match(/^[A-Za-z0-9_]+$/)) {
-              f7.dialog.alert(this.t('analyzer.dialogs.save.invalid'))
-              return
-            }
-            if (this.componentsStore.page(uid)) {
-              f7.dialog.confirm(
-                this.t('analyzer.dialogs.save.replace.message', { uid }),
-                this.t('analyzer.dialogs.save.replace.title'),
-                () => { self.doSavePage(uid, label, true) })
-              return
-            }
+          buttons: [
+            { text: this.t('dialogs.cancel'), color: 'gray', close: true },
+            {
+              text: this.t('dialogs.save'),
+              color: 'red',
+              close: true,
+              onClick: () => {
+                const uid = (document.getElementById('page-id') as HTMLInputElement).value || pageId
+                const label = (document.getElementById('page-label') as HTMLInputElement).value || this.titleDisplayText
+                if (!uid.match(/^[A-Za-z0-9_]+$/)) {
+                  f7.dialog.alert(this.t('analyzer.dialogs.save.invalid'))
+                  return
+                }
+                if (this.componentsStore.page(uid)) {
+                  f7.dialog.confirm(
+                    this.t('analyzer.dialogs.save.replace.message', { uid }),
+                    this.t('analyzer.dialogs.save.replace.title'),
+                    () => {
+                      self.doSavePage(uid, label, true)
+                    }
+                  )
+                  return
+                }
 
-            this.doSavePage(uid, label, false)
-          }
-          }
-        ],
-        destroyOnClose: true
-      }).open()
+                this.doSavePage(uid, label, false)
+              }
+            }
+          ],
+          destroyOnClose: true
+        })
+        .open()
     },
-    doSavePage (uid : string, label: string, overwrite : boolean = false) {
+    doSavePage(uid: string, label: string, overwrite: boolean = false) {
       this.label = label
       let chartPage = Object.assign({ uid }, this.page)
 
-      const promise = (!overwrite)
+      const promise = !overwrite
         ? api.addUiComponentToNamespace({ namespace: 'ui:page', rootUiComponent: chartPage as api.RootUiComponent })
         : api.updateUiComponentInNamespace({ namespace: 'ui:page', componentUID: uid, rootUiComponent: chartPage as api.RootUiComponent })
       promise.then((data) => {
         if (overwrite) {
-          f7.toast.create({
-            text: this.t('analyzer.page.updated'),
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          f7.toast
+            .create({
+              text: this.t('analyzer.page.updated'),
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
         } else {
-          f7.toast.create({
-            text: this.t('analyzer.page.created'),
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          f7.toast
+            .create({
+              text: this.t('analyzer.page.created'),
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
         }
         f7.emit('sidebarRefresh' as Framework7Events, null)
       })
     }
   },
-  mounted () {
+  mounted() {
     this.initChart()
   }
 }

@@ -24,7 +24,7 @@ export default {
   props: {
     path: String
   },
-  data () {
+  data() {
     return {
       ready: false,
       parsedDocs: null,
@@ -32,18 +32,18 @@ export default {
     }
   },
   computed: {
-    localUrl () {
+    localUrl() {
       if (!useRuntimeStore().pagePath.endsWith('/')) return '/'
       return useRuntimeStore().pagePath
     },
-    documentationLink () {
+    documentationLink() {
       if (this.path.endsWith('index')) return `${useRuntimeStore().websiteUrl}/docs/mainui${this.path.replace('index', '')}`
       return `${useRuntimeStore().websiteUrl}/docs/mainui${this.path}`
     },
     ...mapStores(useRuntimeStore)
   },
   watch: {
-    path () {
+    path() {
       if (this.ready) {
         this.ready = false
         this.load()
@@ -51,7 +51,7 @@ export default {
     }
   },
   methods: {
-    load () {
+    load() {
       console.debug('Sidebar Help: Loading docs for ' + this.path + ' ...')
       if (this.cache[this.path]) {
         console.debug('Sidebar Help: Using docs from cache.')
@@ -60,74 +60,85 @@ export default {
         return
       }
       console.debug('Sidebar Help: Docs not found in cache, loading from GitHub ...')
-      fetch(useRuntimeStore().docSrcUrl + '/mainui' + this.path + '.md').then((response) => {
-        if (response.status === 404) {
-          this.parsedDocs = '<p>Failed to load docs. It seems they are missing.</p><p>Please <a class="external" target="_blank" href="https://github.com/openhab/openhab-docs/issues/new">report this on the openHAB docs repo</a>.</p>'
-          this.ready = true
-          return
-        }
-        response.text().then((text) => {
-          import('marked').then((marked) => {
-            const startComment = '<!-- START MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
-            const endComment = '<!-- END MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
-
-            // Remove frontmatter stuff
-            const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
-            if (frontmatterSeparators.length > 0) {
-              text = text.substring(frontmatterSeparators[1].index + 4)
-            }
-            // Remove anything before the start comment (if existent)
-            const startIndex = text.indexOf(startComment)
-            if (startIndex > -1) {
-              text = text.substring(startIndex + startComment.length)
-            }
-            // Remove anything after the end comment (if existent)
-            const endIndex = text.indexOf(endComment)
-            if (endIndex > -1) {
-              text = text.substring(0, endIndex)
-            }
-            let body = marked.parse(text)
-
-            // Perform a few replaces on HTML body for Markdown readmes on GitHub
-            body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
-            body = body.replace(/<h1.*$/gm, '') // Remove h1 headings
-            body = body.replace(/<img src=".*$/gm, '') // Remove images
-
-            // Fix {{base}} and /docs anchor href for doc pages
-            body = body.replace(/<a href="(%7B%7Bbase%7D%7D|\/docs)/gm, `<a class="external" target="_blank" href="${useRuntimeStore().websiteUrl}/docs`)
-            // Fix local folder anchor href: Rewrite folder to /folder/
-            body = body.replace(/(<a href=")([A-z-]+)(")/gm, '$1' + this.localUrl + '$2/$3')
-            // Fix external anchor href
-            body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
-
-            // Fix links to other pages if on overview or semantic model tabs
-            body = body.replace(/(<a href=")(\/overview\/)([A-z-]+)(\/")/gm, '$1/$3$4')
-
-            // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
-            body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')
-            body = body.replace(/<!--F7:blue ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #2196f3">$1</i>')
-            body = body.replace(/<!--F7:green ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #4cd964">$1</i>')
-
-            body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
-            body = body.replace(/<\/pre>/gm, '</pre></div>')
-            body = body.replace(/<table>/gm, '<div class="data-table"><table>')
-            body = body.replace(/<\/table>/gm, '</table></div>')
-
-            this.cache[this.path] = body
-            this.parsedDocs = body
+      fetch(useRuntimeStore().docSrcUrl + '/mainui' + this.path + '.md')
+        .then((response) => {
+          if (response.status === 404) {
+            this.parsedDocs =
+              '<p>Failed to load docs. It seems they are missing.</p><p>Please <a class="external" target="_blank" href="https://github.com/openhab/openhab-docs/issues/new">report this on the openHAB docs repo</a>.</p>'
             this.ready = true
-          }).catch((err) => {
-            this.parsedDocs = '<p>Failed to parse docs.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
-            this.ready = true
+            return
+          }
+          response.text().then((text) => {
+            import('marked')
+              .then((marked) => {
+                const startComment = '<!-- START MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
+                const endComment = '<!-- END MAINUI SIDEBAR DOC - DO NOT REMOVE -->'
+
+                // Remove frontmatter stuff
+                const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
+                if (frontmatterSeparators.length > 0) {
+                  text = text.substring(frontmatterSeparators[1].index + 4)
+                }
+                // Remove anything before the start comment (if existent)
+                const startIndex = text.indexOf(startComment)
+                if (startIndex > -1) {
+                  text = text.substring(startIndex + startComment.length)
+                }
+                // Remove anything after the end comment (if existent)
+                const endIndex = text.indexOf(endComment)
+                if (endIndex > -1) {
+                  text = text.substring(0, endIndex)
+                }
+                let body = marked.parse(text)
+
+                // Perform a few replaces on HTML body for Markdown readmes on GitHub
+                body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
+                body = body.replace(/<h1.*$/gm, '') // Remove h1 headings
+                body = body.replace(/<img src=".*$/gm, '') // Remove images
+
+                // Fix {{base}} and /docs anchor href for doc pages
+                body = body.replace(
+                  /<a href="(%7B%7Bbase%7D%7D|\/docs)/gm,
+                  `<a class="external" target="_blank" href="${useRuntimeStore().websiteUrl}/docs`
+                )
+                // Fix local folder anchor href: Rewrite folder to /folder/
+                body = body.replace(/(<a href=")([A-z-]+)(")/gm, '$1' + this.localUrl + '$2/$3')
+                // Fix external anchor href
+                body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
+
+                // Fix links to other pages if on overview or semantic model tabs
+                body = body.replace(/(<a href=")(\/overview\/)([A-z-]+)(\/")/gm, '$1/$3$4')
+
+                // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
+                body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')
+                body = body.replace(/<!--F7:blue ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #2196f3">$1</i>')
+                body = body.replace(/<!--F7:green ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #4cd964">$1</i>')
+
+                body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
+                body = body.replace(/<\/pre>/gm, '</pre></div>')
+                body = body.replace(/<table>/gm, '<div class="data-table"><table>')
+                body = body.replace(/<\/table>/gm, '</table></div>')
+
+                this.cache[this.path] = body
+                this.parsedDocs = body
+                this.ready = true
+              })
+              .catch((err) => {
+                this.parsedDocs = '<p>Failed to parse docs.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
+                this.ready = true
+              })
           })
         })
-      }).catch((err) => {
-        this.parsedDocs = '<p>Failed to load docs.</p><p>This might be an issue with your internet connection.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
-        this.ready = true
-      })
+        .catch((err) => {
+          this.parsedDocs =
+            '<p>Failed to load docs.</p><p>This might be an issue with your internet connection.</p><h3>Debug Information</h3><blockquote>' +
+            err +
+            '</blockquote>'
+          this.ready = true
+        })
     }
   },
-  created () {
+  created() {
     this.load()
   }
 }

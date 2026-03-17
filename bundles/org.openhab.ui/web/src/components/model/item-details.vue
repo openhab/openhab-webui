@@ -73,7 +73,7 @@ export default {
     ItemForm
   },
   emits: ['item-created', 'item-removed', 'cancel-create', 'item-updated'],
-  data () {
+  data() {
     return {
       editMode: false,
       createMode: false,
@@ -81,28 +81,29 @@ export default {
       editedItem: {}
     }
   },
-  mounted () {
+  mounted() {
     this.onModelChange()
   },
   methods: {
-    onPageBeforeIn () {
+    onPageBeforeIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    keyDown (ev) {
-      if (ev.keyCode === 46) { // delete key
+    keyDown(ev) {
+      if (ev.keyCode === 46) {
+        // delete key
         this.remove()
         ev.stopPropagation()
         ev.preventDefault()
       }
     },
-    onModelChange () {
+    onModelChange() {
       this.editMode = false
       this.createMode = false
       this.forceSemantics = false
@@ -114,85 +115,100 @@ export default {
         }
       }
     },
-    save () {
+    save() {
       this.editMode = false
-      this.saveItem(this.editedItem).then(() => {
-        f7.toast.create({
-          text: 'Item updated',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.$emit('item-updated', this.editedItem)
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Item not saved: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      this.saveItem(this.editedItem)
+        .then(() => {
+          f7.toast
+            .create({
+              text: 'Item updated',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.$emit('item-updated', this.editedItem)
+        })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Item not saved: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        })
     },
-    create () {
+    create() {
       this.editMode = false
 
       // TODO properly validate item
       if (!this.editedItem.name) return
 
-      this.saveItem(this.editedItem).then(() => {
-        f7.toast.create({
-          text: 'Item created',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.model.item = this.editedItem
-        this.model.item.created = true
-        this.model.item.editable = true
-        this.$emit('item-created', this.model.item)
-        this.onModelChange()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Item not saved: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      this.saveItem(this.editedItem)
+        .then(() => {
+          f7.toast
+            .create({
+              text: 'Item created',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.model.item = this.editedItem
+          this.model.item.created = true
+          this.model.item.editable = true
+          this.$emit('item-created', this.model.item)
+          this.onModelChange()
+        })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Item not saved: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        })
     },
-    remove () {
+    remove() {
       const vm = this
 
-      f7.dialog.confirm(
-        'Remove ' + this.model.item.name + '?',
-        'Remove Item',
-        () => {
-          vm.doRemove()
-        }
-      )
-    },
-    doRemove () {
-      this.editMode = false
-
-      this.$oh.api.delete('/rest/items/' + this.model.item.name).then((data) => {
-        f7.toast.create({
-          text: 'Item removed',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.model.item.created = true
-        this.model.item.editable = true
-        this.$emit('item-removed', this.model.item)
-        this.onModelChange()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Item not removed: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+      f7.dialog.confirm('Remove ' + this.model.item.name + '?', 'Remove Item', () => {
+        vm.doRemove()
       })
     },
-    edit () {
+    doRemove() {
+      this.editMode = false
+
+      this.$oh.api
+        .delete('/rest/items/' + this.model.item.name)
+        .then((data) => {
+          f7.toast
+            .create({
+              text: 'Item removed',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.model.item.created = true
+          this.model.item.editable = true
+          this.$emit('item-removed', this.model.item)
+          this.onModelChange()
+        })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Item not removed: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        })
+    },
+    edit() {
       this.editMode = true
       this.editedItem = Object.assign({}, this.model.item)
     },
-    cancel () {
+    cancel() {
       if (this.createMode) {
         this.$emit('cancel-create')
       }
@@ -202,7 +218,7 @@ export default {
     }
   },
   watch: {
-    model () {
+    model() {
       this.onModelChange()
     }
   }

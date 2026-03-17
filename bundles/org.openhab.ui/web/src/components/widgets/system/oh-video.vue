@@ -36,7 +36,7 @@ export default {
   widget: OhVideoDefinition,
   components: {
     OhVideoVideojs,
-    OhVideoWebrtc,
+    OhVideoWebrtc
   },
   props: {
     context: Object,
@@ -46,7 +46,7 @@ export default {
     const { config } = useWidgetContext(props.context)
     return { config }
   },
-  data () {
+  data() {
     return {
       t: f7.utils.id(),
       src: null,
@@ -54,21 +54,21 @@ export default {
     }
   },
   watch: {
-    itemState (value) {
+    itemState(value) {
       if (value) {
         this.loadItemURL()
       }
     }
   },
   computed: {
-    itemState () {
+    itemState() {
       if (this.config.item) {
         return f7.utils.id() + '|' + this.context.store[this.config.item].state
       }
       return null
     }
   },
-  mounted () {
+  mounted() {
     if (this.config.item) {
       this.loadItemURL()
     } else {
@@ -81,19 +81,15 @@ export default {
     }
   },
   methods: {
-    loadItemURL () {
-      this.$oh.api
-        .getPlain(`/rest/items/${this.config.item}/state`, 'text/plain')
-        .then((data) => {
-          this.src = data
-        })
+    loadItemURL() {
+      this.$oh.api.getPlain(`/rest/items/${this.config.item}/state`, 'text/plain').then((data) => {
+        this.src = data
+      })
     },
-    loadPosterItemURL () {
-      this.$oh.api
-        .getPlain(`/rest/items/${this.config.posterItem}/state`, 'text/plain')
-        .then((data) => {
-          this.posterSrc = data
-        })
+    loadPosterItemURL() {
+      this.$oh.api.getPlain(`/rest/items/${this.config.posterItem}/state`, 'text/plain').then((data) => {
+        this.posterSrc = data
+      })
     }
   }
 }

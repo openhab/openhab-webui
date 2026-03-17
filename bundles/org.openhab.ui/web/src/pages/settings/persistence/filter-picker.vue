@@ -41,7 +41,7 @@ export default {
     disabled: Boolean
   },
   emits: ['filters-selected'],
-  data () {
+  data() {
     return {
       smartSelectParams: {
         view: f7.view.main,
@@ -50,7 +50,7 @@ export default {
     }
   },
   methods: {
-    select () {
+    select() {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       const value = this.$refs.smartSelect.$el.children[0].f7SmartSelect.getValue()
       this.$emit('filters-selected', value)
