@@ -53,6 +53,7 @@ import OhMapMarker from './oh-map-marker.vue'
 import OhMapCircleMarker from './oh-map-circle-marker.vue'
 
 import 'leaflet-providers'
+import { mapStores } from 'pinia'
 
 // Do NOT remove: required for Leaflet to render in prod build
 delete Icon.Default.prototype._getIconUrl
@@ -78,10 +79,10 @@ export default {
       currentZoom: 13,
       currentCenter: null,
       center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
-      // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().darkMode}_all/{z}/{x}/{y}.png`,
-      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
-      showMarkers: false
+      attribution:
+        '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
+      showMarkers: false,
+      layer: null
     }
   },
   computed: {
@@ -95,7 +96,8 @@ export default {
         scrollWheelZoom: false,
         zoomControl: false
       } : {})
-    }
+    },
+    ...mapStores(useUIOptionsStore)
   },
   mounted () {
     // vue-leaflet docs say the leafletObject should be ready on the next tick after mounting,
@@ -112,6 +114,11 @@ export default {
       check()
     })
   },
+  watch: {
+    'uiOptionsStore.darkMode': function (newVal) {
+      this.setBackgroundLayer()
+    }
+  },
   methods: {
     initialize () {
       this.setBackgroundLayer()
@@ -127,13 +134,18 @@ export default {
     setBackgroundLayer () {
       const defaultProvider = (useUIOptionsStore().darkMode === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
       const provider = this.config.tileLayerProvider || defaultProvider
-      let layer, overlayLayer
-      try {
-        layer = tileLayer.provider(provider, this.config.tileLayerProviderOptions)
-      } catch {
-        layer = tileLayer.provider(defaultProvider)
+      let overlayLayer
+
+      if (this.layer) {
+        this.$refs.map.leafletObject.removeLayer(this.layer)
       }
-      layer.addTo(this.$refs.map.leafletObject)
+
+      try {
+        this.layer = tileLayer.provider(provider, this.config.tileLayerProviderOptions)
+      } catch {
+        this.layer = tileLayer.provider(defaultProvider)
+      }
+      this.layer.addTo(this.$refs.map.leafletObject)
 
       if (this.config.overlayTileLayerProvider) {
         try {
