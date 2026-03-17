@@ -4575,7 +4575,7 @@
             }
           },
           {
-            "name": "itemname",
+            "name": "itemName",
             "in": "query",
             "description": "An Item name, if provided response will only contain information for this Item",
             "schema": {
@@ -4640,7 +4640,15 @@
                   "uniqueItems": true,
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PersistenceStrategy"
+                    "type": "string",
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/PersistenceStrategy"
+                      },
+                      {
+                        "$ref": "#/components/schemas/PersistenceCronStrategy"
+                      }
+                    ]
                   }
                 }
               }
@@ -4782,7 +4790,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "type": "object"
                 }
               }
             }
@@ -4828,10 +4836,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object"
-                }
+                "type": "object"
               }
             }
           }
@@ -4842,7 +4847,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "type": "object"
                 }
               }
             }
@@ -4885,7 +4890,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string"
+                  "type": "object"
                 }
               }
             }
@@ -6510,7 +6515,7 @@
         "requestBody": {
           "description": "items",
           "content": {
-            "*/*": {
+            "application/json": {
               "schema": {
                 "uniqueItems": true,
                 "type": "array",
@@ -8099,13 +8104,13 @@
           "typeUID": {
             "type": "string"
           },
-          "description": {
-            "type": "string"
-          },
           "label": {
             "type": "string"
           },
           "id": {
+            "type": "string"
+          },
+          "description": {
             "type": "string"
           },
           "configuration": {
@@ -8157,10 +8162,10 @@
               "EXPERT"
             ]
           },
-          "description": {
+          "label": {
             "type": "string"
           },
-          "label": {
+          "description": {
             "type": "string"
           }
         }
@@ -9449,10 +9454,7 @@
       "PersistenceStrategy": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string"
-          },
-          "configuration": {
+          "name": {
             "type": "string"
           }
         }

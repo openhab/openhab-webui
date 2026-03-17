@@ -138,9 +138,9 @@ export type RuleStatusInfo = {
 
 export type Module = {
     typeUID: string;
-    description: string;
     label: string;
     id: string;
+    description: string;
     configuration: Configuration;
 };
 
@@ -161,8 +161,8 @@ export type Template = {
     uid: string;
     tags: Array<string>;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-    description: string;
     label: string;
+    description: string;
 };
 
 export type Input = {
@@ -597,8 +597,7 @@ export type PersistenceItemInfo = {
 };
 
 export type PersistenceStrategy = {
-    type: string;
-    configuration: string;
+    name: string;
 };
 
 export type PersistenceService = {
@@ -3912,7 +3911,7 @@ export type GetItemsForPersistenceServiceData = {
         /**
          * An Item name, if provided response will only contain information for this Item
          */
-        itemname?: string;
+        itemName?: string;
     };
     url: '/persistence/items';
 };
@@ -3960,7 +3959,7 @@ export type GetPersistenceServiceStrategySuggestionsResponses = {
     /**
      * OK
      */
-    200: Array<PersistenceStrategy>;
+    200: Array<PersistenceStrategy | PersistenceCronStrategy>;
 };
 
 export type GetPersistenceServiceStrategySuggestionsResponse = GetPersistenceServiceStrategySuggestionsResponses[keyof GetPersistenceServiceStrategySuggestionsResponses];
@@ -4041,7 +4040,9 @@ export type DeleteServiceConfigResponses = {
     /**
      * OK
      */
-    200: string;
+    200: {
+        [key: string]: unknown;
+    };
     /**
      * No old configuration
      */
@@ -4073,16 +4074,16 @@ export type GetServiceConfigResponses = {
     /**
      * OK
      */
-    200: string;
+    200: {
+        [key: string]: unknown;
+    };
 };
 
 export type GetServiceConfigResponse = GetServiceConfigResponses[keyof GetServiceConfigResponses];
 
 export type UpdateServiceConfigData = {
     body?: {
-        [key: string]: {
-            [key: string]: unknown;
-        };
+        [key: string]: unknown;
     };
     headers?: {
         /**
@@ -4111,7 +4112,9 @@ export type UpdateServiceConfigResponses = {
     /**
      * OK
      */
-    200: string;
+    200: {
+        [key: string]: unknown;
+    };
     /**
      * No old configuration
      */

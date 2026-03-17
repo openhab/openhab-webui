@@ -1793,9 +1793,9 @@ export const getPersistenceHealth = <ThrowOnError extends boolean = false>(optio
  */
 export const getItemsForPersistenceService = <ThrowOnError extends boolean = false>(parameters?: {
     serviceId?: string;
-    itemname?: string;
+    itemName?: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'serviceId' }, { in: 'query', key: 'itemname' }] }]);
+    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'serviceId' }, { in: 'query', key: 'itemName' }] }]);
     return (options?.client ?? client).get<GetItemsForPersistenceServiceResponses, GetItemsForPersistenceServiceErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
@@ -1898,9 +1898,7 @@ export const updateServiceConfig = <ThrowOnError extends boolean = false>(parame
     'Accept-Language'?: string;
     serviceId: string;
     body?: {
-        [key: string]: {
-            [key: string]: unknown;
-        };
+        [key: string]: unknown;
     };
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
@@ -2555,7 +2553,7 @@ export const updateItemListForStateUpdates = <ThrowOnError extends boolean = fal
         ...options,
         ...params,
         headers: {
-            'Content-Type': '*/*',
+            'Content-Type': 'application/json',
             ...options?.headers,
             ...params.headers
         }
