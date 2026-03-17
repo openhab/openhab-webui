@@ -597,6 +597,11 @@ const yearsText = computed(() => { return formatBaseCronField(year.value) })
 
 const translation = computed(() => {
   try {
+    const parsed = cron.value.trim().split(/[ ]+/);
+    if (parsed.length < 6) {
+      throw new Error('Error: Cron expression must have at least 6 fields (seconds, minutes, hours, day of month, month, day of week, [year])')
+    }
+
     return toString(cron.value, {
       use24HourTimeFormat: true,
       dayOfWeekStartIndexZero: false

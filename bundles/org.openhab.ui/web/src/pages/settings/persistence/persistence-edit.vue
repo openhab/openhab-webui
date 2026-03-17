@@ -103,7 +103,7 @@
                   media-item
                   :color="(theme.dark) ? 'black' : 'white'"
                   subtitle="Add configuration"
-                  @click="editConfiguration(undefined, null)">
+                  @click="editConfiguration(null, null)">
                   <template #media>
                     <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                   </template>
@@ -148,7 +148,7 @@
                   media-item
                   :color="(theme.dark) ? 'black' : 'white'"
                   subtitle="Add cron strategy"
-                  @click="editCronStrategy(undefined, null)">
+                  @click="editCronStrategy(null, null)">
                   <template #media>
                     <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                   </template>
@@ -195,7 +195,7 @@
                       media-item
                       :color="(theme.dark) ? 'black' : 'white'"
                       :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
-                      @click="editFilter(undefined, ft, null)">
+                      @click="editFilter(null, ft, null)">
                       <template #media>
                         <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                       </template>

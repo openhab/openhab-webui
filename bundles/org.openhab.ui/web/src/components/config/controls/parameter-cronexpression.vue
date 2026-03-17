@@ -6,10 +6,9 @@
       :name="configDescription.name"
       :value="value"
       :required="configDescription.required"
-      validate
       :clear-button="!configDescription.required"
-      @input="(evt) => updateValue(evt.target.value)"
-      :error-message-force="exprError"
+      :error-message="errorMessage"
+      :error-message-force="!!errorMessage"
       type="text">
       <template #content-end>
         <div class="padding-left">
@@ -48,7 +47,8 @@ export default {
   },
   data () {
     return {
-      popupOpen: false
+      popupOpen: false,
+      errorMessage: ''
     }
   },
   methods: {
@@ -63,17 +63,23 @@ export default {
   computed: {
     translation () {
       try {
-        const ret = toString(this.value, {
+        const _value = this.value || ''
+        const parsed = _value.trim().split(/[ ]+/);
+
+        if (parsed.length < 6) {
+          throw new Error('Error: Cron expression must have at least 6 fields (seconds, minutes, hours, day of month, month, day of week, [year])')
+        }
+
+        const ret = toString(_value, {
           use24HourTimeFormat: true,
           dayOfWeekStartIndexZero: false
         })
+        this.errorMessage = ''
         return ret
       } catch (err) {
-        return err
+        this.errorMessage = err && err.message ? err.message : String(err)
+        return ''
       }
-    },
-    exprError () {
-      return this.translation.indexOf('Error:') === 0
     }
   }
 }
