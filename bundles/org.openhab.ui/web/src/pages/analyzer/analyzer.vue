@@ -3,6 +3,7 @@
     <f7-navbar>
       <oh-nav-content
         :title="titleDisplayText"
+        :menu-icon="false"
         :back-link="t('analyzer.back')"
         :save-link="userStore.isAdmin() ? t('analyzer.save') : undefined"
         @save="savePage"
