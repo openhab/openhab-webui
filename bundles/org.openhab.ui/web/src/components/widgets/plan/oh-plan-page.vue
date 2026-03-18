@@ -27,7 +27,7 @@
       <l-feature-group v-if="context.component.slots" ref="featureGroup">
         <template v-for="(marker, idx) in defaultSlots" :key="idx">
           <component
-            :is="markerComponent(marker)"
+            :is="markerComponent"
             v-if="isMarkerVisible(marker)"
             :context="childContext(marker)"
             @update="onMarkerUpdate" />
@@ -94,7 +94,7 @@ dark-tooltip()
     dark-tooltip()
 
 // override leaflet style
-.leaflet-div-icon
+.oh-plan-page-lmap .leaflet-div-icon
   background: unset
   border: unset
 
@@ -112,7 +112,7 @@ import { Icon, CRS } from 'leaflet'
 import { LMap, LImageOverlay, LFeatureGroup, LControl } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
-import OhPlanMarker from './oh-plan-marker.vue'
+import { widget } from '@/components/oh-component-registry'
 import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
 
 // Do NOT remove: required for Leaflet to render in prod build
@@ -131,8 +131,7 @@ export default {
     LMap,
     LImageOverlay,
     LControl,
-    LFeatureGroup,
-    OhPlanMarker
+    LFeatureGroup
   },
   widget: OhPlanPageDefinition,
   setup(props) {
@@ -151,25 +150,13 @@ export default {
     }
   },
   computed: {
+    markerComponent () {
+      return widget('oh-plan-marker')
+    },
     bounds () {
       const lat = this.config.imageHeight || 1000
       const lng = this.config.imageWidth || 1000
       return [[0, 0], [lat, lng]]
-    },
-    markerComponent() {
-      return (marker) => {
-        return OhPlanMarker
-      }
-    },
-    isMarkerVisible() {
-      return (marker) => {
-        if (this.context.editmode != null) return true
-        const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
-        const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
-        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
-        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
-        return isVisibleMin && isVisibleMax
-      }
     },
     mapOptions () {
       return Object.assign({
@@ -201,6 +188,14 @@ export default {
   methods: {
     zoomUpdate (zoom) {
       this.currentZoom = zoom
+    },
+    isMarkerVisible (marker) {
+      if (this.context.editmode != null) return true
+      const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
+      const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
+      const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
+      const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
+      return isVisibleMin && isVisibleMax
     },
     centerUpdate (center) {
       this.currentCenter = center
