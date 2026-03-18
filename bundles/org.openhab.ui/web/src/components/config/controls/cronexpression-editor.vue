@@ -39,7 +39,7 @@
                 {{ Labels.Seconds.interval[0] }}
                 <f7-stepper small v-model:value="second.increment.increment" :min="1" :max="CRON_LIMITS.second.incrementMax" />
                 {{ Labels.Seconds.interval[1] || '' }}
-                <f7-stepper small v-model:value="second.increment.start" :min="CRON_LIMITS.second.min - 1" :max="CRON_LIMITS.second.max" />
+                <f7-stepper small v-model:value="second.increment.start" :min="CRON_LIMITS.second.min" :max="CRON_LIMITS.second.max" />
                 {{ Labels.Seconds.interval[2] || '' }}
               </f7-list-item>
               <f7-list-item
@@ -440,14 +440,14 @@ enum CronEvery {
   SomeWeekdayOfMonth
 }
 
-interface CronDataBase {
+interface CronFieldBase {
   cronEvery: CronEvery
   increment: { start: number, increment: number }
   range: { start: number, end: number }
   specific: (number | string)[]
 }
 
-interface CronDataDay extends CronDataBase {
+interface CronFieldDay extends CronFieldBase {
   cronLastSpecificDomDay?: WeekdayToken
   cronDaysBeforeEomMinus?: number
   cronDaysNearestWeekday?: number
@@ -455,7 +455,7 @@ interface CronDataDay extends CronDataBase {
   cronNthDayNth?: number
 }
 
-interface CronDataWeek {
+interface CronFieldWeek {
   increment: { start: WeekdayToken, increment: number }
   specific: WeekdayToken[]
   cronNthDayDay?: WeekdayToken
@@ -472,60 +472,70 @@ const emits = defineEmits<{
 const date = new Date()
 const currentMonth = date.getMonth() + 1
 const currentYear = date.getFullYear()
+const smartSelectParams = { openIn: 'popover', view: f7.view.main }
+
+function resetFields(field: string) {
+  const ResetSpecificBaseField = {
+    cronEvery: CronEvery.Specific,
+    increment: { start: 1, increment: 1 },
+    range: { start: 1, end: 1 },
+    specific: []
+  }
+
+  const ResetEveryBaseField = {
+    cronEvery: CronEvery.Every,
+    increment: { start: 1, increment: 1 },
+    range: { start: 1, end: 1 },
+    specific: []
+  }
+
+  switch (field) {
+    case 'second':
+    case 'minute':
+    case 'hour':
+      return { ...ResetSpecificBaseField }
+    case 'day':
+      return  {
+        cronEvery: CronEvery.Every,
+        increment: { start: 1, increment: 1 },
+        range: { start: 1, end: 1 },
+        specific: [],
+        cronLastSpecificDomDay: 'SUN',
+        cronDaysBeforeEomMinus: 1,
+        cronDaysNearestWeekday: 1
+      }
+    case 'week':
+      return {
+        increment: { start: 'SUN', increment: 1 },
+        specific: [],
+        cronNthDayDay: 'SUN',
+        cronNthDayNth: 1
+      }
+    case 'month':
+      return {
+        ...ResetEveryBaseField,
+        increment: { start: currentMonth, increment: 1 },
+        range: { start: currentMonth, end: currentMonth }
+      }
+    case 'year':
+      return {
+        ...ResetEveryBaseField,
+        increment: { start: currentYear, increment: 1 },
+        range: { start: currentYear, end: currentYear }
+      }
+    default:
+      return { ...ResetEveryBaseField }
+  }
+}
 
 // reactive state
-const second = ref<CronDataBase>({
-  cronEvery: CronEvery.Specific,
-  increment: { start: 0, increment: 5 },
-  range: { start: 1, end: 1 },
-  specific: [0]
-})
-
-const minute = ref<CronDataBase>({
-  cronEvery: CronEvery.Specific,
-  increment: { start: 0, increment: 5 },
-  range: { start: 1, end: 1 },
-  specific: [0]
-})
-
-const hour = ref<CronDataBase>({
-  cronEvery: CronEvery.Specific,
-  increment: { start: 0, increment: 5 },
-  range: { start: 1, end: 1 },
-  specific: [8]
-})
-
-const day = ref<CronDataDay>({
-  cronEvery: CronEvery.Every,
-  increment: { start: 1, increment: 1 },
-  range: { start: 1, end: 1 },
-  specific: [],
-  cronLastSpecificDomDay: 'SUN',
-  cronDaysBeforeEomMinus: 1,
-  cronDaysNearestWeekday: 1
-})
-
-
-const week = ref<CronDataWeek>({
-  increment: { start: 'SUN', increment: 1 },
-  specific: [],
-  cronNthDayDay: 'SUN',
-  cronNthDayNth: 1
-})
-
-const month = ref<CronDataBase>({
-  cronEvery: CronEvery.Every,
-  increment: { start: currentMonth, increment: 2 },
-  range: { start: currentMonth, end: currentMonth },
-  specific: []
-})
-
-const year = ref<CronDataBase>({
-  cronEvery: CronEvery.Every,
-  increment: { start: currentYear, increment: 1 },
-  range: { start: currentYear, end: currentYear },
-  specific: []
-})
+const second = ref<CronFieldBase>(resetFields('second') as CronFieldBase)
+const minute = ref<CronFieldBase>(resetFields('minute') as CronFieldBase)
+const hour = ref<CronFieldBase>(resetFields('hour') as CronFieldBase)
+const day = ref<CronFieldDay>(resetFields('day') as CronFieldDay)
+const week = ref<CronFieldWeek>(resetFields('week') as CronFieldWeek)
+const month = ref<CronFieldBase>(resetFields('month') as CronFieldBase)
+const year = ref<CronFieldBase>(resetFields('year') as CronFieldBase)
 
 // Watchers
 watch(
@@ -537,9 +547,17 @@ watch(
 )
 
 // Computed
-const smartSelectParams = computed(() => ({ openIn: 'popover', view: f7.view.main }))
 const cron = computed(() => {
-  return `${secondsText.value} ${minutesText.value} ${hoursText.value} ${daysText.value} ${monthsText.value} ${weeksText.value} ${yearsText.value.length ? ' ' : ''}${yearsText.value || ''}`
+  const fields = [
+    secondsText.value,
+    minutesText.value,
+    hoursText.value,
+    daysText.value,
+    monthsText.value,
+    weeksText.value,
+  ];
+  if (yearsText.value) fields.push(yearsText.value);
+  return fields.join(' ');
 })
 const secondsText = computed(() => { return formatBaseCronField(second.value) })
 const minutesText = computed(() => { return formatBaseCronField(minute.value) })
@@ -594,7 +612,6 @@ const weeksText = computed(() => {
 const monthsText = computed(() => { return formatBaseCronField(month.value) })
 const yearsText = computed(() => { return formatBaseCronField(year.value) })
 
-
 const translation = computed(() => {
   try {
     const parsed = cron.value.trim().split(/[ ]+/);
@@ -623,7 +640,7 @@ function onClose() {
 
 // Methods
 function formatBaseCronField(
-  field: CronDataBase,
+  field: CronFieldBase,
   emptyForEvery = false
 ) {
   switch (field.cronEvery) {
@@ -641,18 +658,17 @@ function formatBaseCronField(
 }
 
 function restore(val : string) {
+  second.value = resetFields('second') as CronFieldBase
+  minute.value = resetFields('minute') as CronFieldBase
+  hour.value = resetFields('hour') as CronFieldBase
+  day.value = resetFields('day') as CronFieldDay
+  month.value = resetFields('month') as CronFieldBase
+  year.value = resetFields('year') as CronFieldBase
+
   if (!val) return
   const cronExpr = val.trim().split(/\s+/)
 
-  second.value.cronEvery = CronEvery.Every
-  minute.value.cronEvery = CronEvery.Every
-  hour.value.cronEvery = CronEvery.Every
-  day.value.cronEvery = CronEvery.Every
-  month.value.cronEvery = CronEvery.Every
-  year.value.cronEvery = CronEvery.Every
-
   if (cronExpr.length !== 6 && cronExpr.length !== 7) {
-    resetDayAndWeekSubstate()
     return
   }
 
@@ -678,13 +694,13 @@ function restore(val : string) {
   restoreDayAndWeek(cronExpr[3] || '', cronExpr[5] || '')
 }
 
-function restoreBase(val: CronDataBase, expr: string, fieldMin: number, fieldMax: number, incrementMax: number) {
+function restoreBase(val: CronFieldBase, expr: string, fieldMin: number, fieldMax: number, incrementMax: number) {
   if (expr === '*') {
     val.cronEvery = CronEvery.Every
   } else if (expr.includes('/')) {
     val.cronEvery = CronEvery.Increment
     const [start, step] = expr.split('/')
-    val.increment.start = start === 'H' ? 'H' :   parseAndClamp(start || String(fieldMin), fieldMin, fieldMin, fieldMax)
+    val.increment.start = parseAndClamp(start || String(fieldMin), fieldMin, fieldMin, fieldMax)
     val.increment.increment = parseAndClamp(step || '1', 1, 1, incrementMax)
   } else if (expr.includes('-')) {
     val.cronEvery = CronEvery.Range
@@ -699,24 +715,8 @@ function restoreBase(val: CronDataBase, expr: string, fieldMin: number, fieldMax
   return val
 }
 
-function resetDayAndWeekSubstate() {
-  day.value.increment.start = 1
-  day.value.increment.increment = 1
-  day.value.specific = []
-  day.value.cronLastSpecificDomDay = 'SUN'
-  day.value.cronDaysBeforeEomMinus = 1
-  day.value.cronDaysNearestWeekday = 1
-
-  week.value.increment.start = 'SUN'
-  week.value.increment.increment = 1
-  week.value.specific = []
-  week.value.cronNthDayDay = 'SUN'
-  week.value.cronNthDayNth = 1
-}
 
 function restoreDayAndWeek(dayExpr: string, weekExpr: string) {
-  resetDayAndWeekSubstate()
-
   // Standard cron for day-of-month/day-of-week when the other field carries the schedule.
   if ((dayExpr === '*' || dayExpr === '?') && (weekExpr === '*' || weekExpr === '?')) {
     day.value.cronEvery = CronEvery.Every

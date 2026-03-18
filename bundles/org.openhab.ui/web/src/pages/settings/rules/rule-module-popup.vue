@@ -13,7 +13,7 @@
             v-if="!readOnly && currentRuleModuleType && dirty"
             :class="{ 'disabled': !isConfigValid }"
             @click="isConfigValid ? updateModuleConfig() : null">
-            {{ $t('dialogs.save') }}
+            {{  $t('dialogs.save') }}
           </f7-link>
           <f7-link v-else @click="close">
             {{ $t('dialogs.close') }}
