@@ -20,8 +20,8 @@ function parseWeekdayToken(token: string): WeekdayToken | null {
 
   const dayNumber = parseInt(normalized, 10)
   if (dayNumber >= 1 && dayNumber <= 7) {
-    // Numeric weekdays are normalized so 1=SAT, 2=SUN, 3=MON, ..., 7=FRI.
-    return WEEKDAY_TOKENS[(dayNumber + 5) % 7]!
+    // Numeric weekdays follow Quartz cron numbering: 1=SUN, 2=MON, ..., 7=SAT.
+    return WEEKDAY_TOKENS[dayNumber - 1]!
   }
 
   return null
@@ -32,8 +32,8 @@ export function normalizeWeekdayToken(token: string): WeekdayToken {
 }
 
 export function toCronWeekdayNumber(token: WeekdayToken): number {
-  // Emit numeric weekdays using 1=SAT, 2=SUN, 3=MON, ..., 7=FRI.
-  return ((WEEKDAY_TOKENS.indexOf(token) + 1) % 7) + 1
+  // Emit numeric weekdays using 1=SUN, 2=MON, ..., 7=SAT.
+  return WEEKDAY_TOKENS.indexOf(token) + 1
 }
 
 export function formatCronWeekdayList(tokens: WeekdayToken[]): string {
@@ -86,4 +86,29 @@ export function normalizeSpecificNumericList(expr: string, min: number, max: num
     .map((value) => clampToRange(value, min, max))
 
   return [...new Set(values)].sort((a, b) => a - b)
+}
+
+export function validate(value: string) {
+  const trimmed = value.trim()
+  const specialCases = ['@annually', '@yearly', '@monthly', '@weekly', '@daily', '@hourly', '@reboot']
+  if (trimmed.startsWith('@')) {
+    if (specialCases.includes(trimmed.toLowerCase())) {
+      return ''
+    } else {
+      return 'Invalid special cron expression'
+    }
+  } else {
+    const fields = trimmed.split(/\s+/)
+    if (fields.length != 6 && fields.length != 7) {
+      return 'Cron expression must have 6 or 7 fields'
+    } else {
+      const regex =
+        /^((((\d+,)+\d+|(\d+(\/|-|#)\d+)|\d+L?|\*(\/\d+)?|L(-\d+)?|\?|[A-Z]{3}(-[A-Z]{3})?|(\(\d+-\d+\)(\/\d+)?|\(\d+\/\d+\)?|\(\d+-\d+\/\d+\)?|\/\d+)?|W?) ?){6,7})/
+      if (!regex.test(trimmed)) {
+        return 'Invalid cron expression format'
+      } else {
+        return ''
+      }
+    }
+  }
 }
