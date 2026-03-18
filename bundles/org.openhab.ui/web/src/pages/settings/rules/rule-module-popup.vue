@@ -9,7 +9,10 @@
           {{ title }}
         </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="!readOnly && currentRuleModuleType && dirty" @click="updateModuleConfig">
+          <f7-link
+            v-if="!readOnly && currentRuleModuleType && dirty"
+            :class="{ 'disabled': !isConfigValid }"
+            @click="isConfigValid ? updateModuleConfig() : null">
             {{ $t('dialogs.save') }}
           </f7-link>
           <f7-link v-else @click="close">
@@ -119,7 +122,7 @@
             :parameters="currentRuleModuleType.configDescriptions"
             :configuration="ruleModule.configuration"
             :readOnly="readOnly"
-            @updated="dirty = true" />
+            @updated="onUpdated" />
           <f7-block v-else>
             <f7-button @click="editBlockly" color="blue" outline fill> Edit Blockly </f7-button>
           </f7-block>
@@ -168,7 +171,8 @@ export default {
   data () {
     return {
       currentRuleModuleType: this.ruleModuleType,
-      advancedTypePicker: false
+      advancedTypePicker: false,
+      isConfigValid: true
     }
   },
   computed: {
@@ -183,7 +187,7 @@ export default {
     },
     moduleDescriptionSuggestion () {
       if (!this.ruleModule || !this.currentRuleModuleType) return 'Description'
-      return this.suggestedModuleDescription(this.ruleModule, this.currentRuleModuleType)
+        return this.suggestedModuleDescription(this.ruleModule, this.currentRuleModuleType)
     }
   },
   watch: {
@@ -206,7 +210,7 @@ export default {
       f7.emit('ruleModuleConfigClosed')
     },
     updateModuleConfig () {
-      if (this.$refs.parameters && !this.$refs.parameters.isValid()) {
+      if (!this.isConfigValid) {
         f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
@@ -254,6 +258,11 @@ export default {
     },
     close () {
       this.$refs.modulePopup.$el.f7Modal.close()
+    },
+    onUpdated () {
+      this.dirty = true
+      if (!this.$refs.parameters || typeof this.$refs.parameters.isValid !== 'function') return true
+      this.isConfigValid = this.$refs.parameters.isValid()
     }
   },
   created () {
