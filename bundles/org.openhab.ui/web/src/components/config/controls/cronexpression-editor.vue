@@ -39,7 +39,7 @@
                 {{ Labels.Seconds.interval[0] }}
                 <f7-stepper small v-model:value="second.increment.increment" :min="1" :max="CRON_LIMITS.second.incrementMax" />
                 {{ Labels.Seconds.interval[1] || '' }}
-                <f7-stepper small v-model:value="second.increment.start" :min="CRON_LIMITS.second.min" :max="CRON_LIMITS.second.max" />
+                <f7-stepper small v-model:value="second.increment.start" :min="CRON_LIMITS.second.min - 1" :max="CRON_LIMITS.second.max" />
                 {{ Labels.Seconds.interval[2] || '' }}
               </f7-list-item>
               <f7-list-item
@@ -417,7 +417,7 @@
 </style>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue'
 import { f7 } from 'framework7-vue'
 import Labels from '@/assets/i18n/cron/en'
 import { toString } from 'cronstrue'
@@ -684,7 +684,7 @@ function restoreBase(val: CronDataBase, expr: string, fieldMin: number, fieldMax
   } else if (expr.includes('/')) {
     val.cronEvery = CronEvery.Increment
     const [start, step] = expr.split('/')
-    val.increment.start = parseAndClamp(start || String(fieldMin), fieldMin, fieldMin, fieldMax)
+    val.increment.start = start === 'H' ? 'H' :   parseAndClamp(start || String(fieldMin), fieldMin, fieldMin, fieldMax)
     val.increment.increment = parseAndClamp(step || '1', 1, 1, incrementMax)
   } else if (expr.includes('-')) {
     val.cronEvery = CronEvery.Range
