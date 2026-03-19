@@ -17,8 +17,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
@@ -73,7 +71,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Input input = (Input) w;
 
         String snippet = getSnippet("input");
@@ -85,7 +83,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
             item = itemUIRegistry.getItem(itemName);
         } catch (ItemNotFoundException e) {
             logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
-            return ECollections.emptyEList();
+            return List.of();
         }
 
         String dataType;
@@ -200,7 +198,7 @@ public class InputRenderer extends AbstractWidgetRenderer {
 
         sb.append(snippet);
 
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private String parseNumber(String value) {

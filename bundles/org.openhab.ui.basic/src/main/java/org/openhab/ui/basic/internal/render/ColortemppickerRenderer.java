@@ -13,12 +13,11 @@
 package org.openhab.ui.basic.internal.render;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 import javax.measure.Unit;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
@@ -77,7 +76,7 @@ public class ColortemppickerRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Colortemperaturepicker ctp = (Colortemperaturepicker) w;
 
         BigDecimal currentK = null;
@@ -154,7 +153,7 @@ public class ColortemppickerRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private BigDecimal getMinimumInKelvin(Colortemperaturepicker widget, Unit<?> widgetUnit,

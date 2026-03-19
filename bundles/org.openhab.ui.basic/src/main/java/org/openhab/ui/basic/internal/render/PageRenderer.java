@@ -130,7 +130,7 @@ public class PageRenderer extends AbstractWidgetRenderer {
             throws RenderException {
         // put a single frame around all children widgets, if there are no explicit frames
         if (!children.isEmpty()) {
-            Widget firstChild = children.get(0);
+            Widget firstChild = children.getFirst();
             Parent parent = itemUIRegistry.getParent(firstChild);
             if (!(firstChild instanceof Frame || parent instanceof Frame || parent instanceof Sitemap)) {
                 String frameSnippet = getSnippet("frame");

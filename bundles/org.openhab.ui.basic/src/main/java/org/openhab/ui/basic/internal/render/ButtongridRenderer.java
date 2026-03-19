@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
@@ -152,7 +151,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
 
         if (mawRow > 50 || maxColumn > 12) {
             logger.warn("The button grid is too big ({},{})", mawRow, maxColumn);
-            return ECollections.emptyEList();
+            return List.of();
         }
 
         boolean showHeaderRow = grid.getLabel() != null;
@@ -172,7 +171,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%buttons%", buttons.toString());
 
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private void buildRow(int columns, @Nullable Map<Integer, ButtonDefinition> buttonsInRow,

@@ -12,10 +12,9 @@
  */
 package org.openhab.ui.basic.internal.render;
 
+import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
@@ -77,7 +76,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Switch s = (Switch) w;
 
         String snippetName = null;
@@ -172,7 +171,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private void buildButton(Switch w, @Nullable String lab, String cmd, @Nullable String releaseCmd,

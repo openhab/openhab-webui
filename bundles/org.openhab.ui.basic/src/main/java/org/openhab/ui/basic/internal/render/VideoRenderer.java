@@ -13,9 +13,8 @@
 package org.openhab.ui.basic.internal.render;
 
 import java.util.Date;
+import java.util.List;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
@@ -56,7 +55,7 @@ public class VideoRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Video videoWidget = (Video) w;
         String encoding = videoWidget.getEncoding();
 
@@ -110,6 +109,6 @@ public class VideoRenderer extends AbstractWidgetRenderer {
             snippet = snippet.replace("%media_type%", mediaType);
         }
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 }

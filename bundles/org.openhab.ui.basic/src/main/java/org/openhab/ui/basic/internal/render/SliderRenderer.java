@@ -13,12 +13,11 @@
 package org.openhab.ui.basic.internal.render;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 import javax.measure.Unit;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
@@ -63,7 +62,7 @@ public class SliderRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Slider s = (Slider) w;
 
         String snippetName = "slider";
@@ -94,7 +93,7 @@ public class SliderRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private String maxValueOf(Slider slider) {

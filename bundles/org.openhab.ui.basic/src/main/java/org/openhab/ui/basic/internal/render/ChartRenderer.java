@@ -17,8 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
@@ -67,7 +65,7 @@ public class ChartRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Chart chart = (Chart) w;
 
         try {
@@ -165,7 +163,7 @@ public class ChartRenderer extends AbstractWidgetRenderer {
         } catch (ItemNotFoundException e) {
             logger.warn("Chart cannot be rendered as item '{}' does not exist.", chart.getItem());
         }
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private void buildRow(Chart w, @Nullable String lab, String cmd, String current, StringBuilder rowSB)
