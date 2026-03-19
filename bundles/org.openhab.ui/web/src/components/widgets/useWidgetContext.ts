@@ -100,17 +100,13 @@ export function useWidgetContext(context: WidgetContext) {
     return true
   })
 
-  const slots = computed<Record<string, api.UiComponent[]>>(() => {
-    if ('slots' in context.component) return context.component.slots
-    return {}
-  })
+  const slots = computed<Record<string, api.UiComponent[]>>(() =>
+    'slots' in context.component && context.component.slots ? context.component.slots : {}
+  )
 
-  const defaultSlots = computed<api.UiComponent[]>(() => {
-    if ('slots' in context.component && context.component.slots.default) {
-      return context.component.slots.default
-    }
-    return []
-  })
+  const defaultSlots = computed<api.UiComponent[]>(() =>
+    'slots' in context.component && context.component.slots?.default ? context.component.slots.default : []
+  )
 
   const childWidgetContext = computed((): WidgetContext | null => {
     if (!componentType.value?.startsWith('widget:')) return null
