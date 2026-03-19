@@ -1,6 +1,6 @@
 /* Definitions for the standard library's standalone (card) widgets */
 
-import { WidgetDefinition, pb, pt, pi, pn, pg } from '../helpers.ts'
+import { WidgetDefinition, pb, pt, pi, pn, pg, po } from '../helpers.ts'
 import { actionGroup, actionParams } from '../actions.ts'
 
 export const CardParameterGroup = () => pg('card', 'Card', 'Parameters of the card')
@@ -202,6 +202,14 @@ export const OhClockCardDefinition = () =>
           { value: 'HH:mm:ss', label: "Current time ('HH:mm:ss')" }
         ],
         false
+      ),
+      po(
+        'timezone',
+        'Timezone',
+        'Timezone to use for the clock.',
+        [
+          ...Intl.supportedValuesOf('timeZone').map(tz => ({ value: tz, label: tz }))
+        ]
       ),
       pt('timeFontSize', 'Time Font Size', 'Time font size (e.g. "34px")'),
       pt('timeFontWeight', 'Time Font Weight', 'Time font weight (e.g. "normal" or "bold")'),
