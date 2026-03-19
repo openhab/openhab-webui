@@ -38,18 +38,18 @@
           label="Label"
           type="text"
           :disabled="disabled ? true : null"
-          :placeholder="(channelType !== null) ? channelType.label : 'Channel label for display purposes'"
+          :placeholder="channelType !== null ? channelType.label : 'Channel label for display purposes'"
           :value="channel.label"
           required
           validate
-          :info="(createMode) ? 'Required.' : ''"
+          :info="createMode ? 'Required.' : ''"
           @input="channel.label = $event.target.value"
           :clear-button="disabled !== true" />
         <f7-list-input
           label="Description"
           type="text"
           :disabled="disabled ? true : null"
-          :placeholder="(channelType !== null) ? channelType.description : ''"
+          :placeholder="channelType !== null ? channelType.description : ''"
           :value="channel.description"
           @input="channel.description = $event.target.value"
           :clear-button="disabled !== true" />

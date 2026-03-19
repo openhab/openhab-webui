@@ -39,12 +39,12 @@ export default {
     OhColorpicker
   },
   widget: OhColorpickerCellDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, slots } = useWidgetContext(props.context)
     return { config, childContext, slots }
   },
   computed: {
-    colorpickerContext () {
+    colorpickerContext() {
       return Object.assign({}, this.context, {
         component: {
           component: 'oh-colorpicker',
@@ -54,7 +54,7 @@ export default {
         }
       })
     },
-    state () {
+    state() {
       const stateParts = this.context.store[this.config.item].state.split(',')
       if (stateParts.length === 3) {
         if (parseFloat(stateParts[2]) === 0) return 'Off'

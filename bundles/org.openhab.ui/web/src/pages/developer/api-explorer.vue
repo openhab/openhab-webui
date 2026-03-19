@@ -124,7 +124,7 @@ export default {
     f7router: Object
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       const swaggerCss = import(/* webpackChunkName: "swagger-css" */ 'swagger-ui-dist/swagger-ui.css')
       const swaggerModule = import(/* webpackChunkName: "swagger" */ 'swagger-ui-dist')
       const refreshToken = this.refreshAccessToken()

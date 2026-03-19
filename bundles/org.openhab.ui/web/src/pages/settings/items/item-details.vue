@@ -17,7 +17,7 @@
               <oh-icon
                 v-if="item.category"
                 :icon="item.category"
-                :state="item.type === 'Image' ? null : (context.store[item.name].state || item.state)"
+                :state="item.type === 'Image' ? null : context.store[item.name].state || item.state"
                 height="60"
                 width="60" />
               <span v-else>
@@ -26,7 +26,7 @@
             </div>
             <h2>{{ item.label }}</h2>
             <!-- <h4 v-show="item.label">{{item.name}}</h4> -->
-            <h5 v-show="item.type" style="margin-top: 10px; margin-bottom: 15px;">
+            <h5 v-show="item.type" style="margin-top: 10px; margin-bottom: 15px">
               <small>{{ getItemTypeLabel(item) }}</small>
             </h5>
           </f7-subnavbar>
@@ -207,10 +207,10 @@ export default {
     itemName: String,
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme, utils }
   },
-  data () {
+  data() {
     return {
       item: {},
       links: [],
@@ -218,30 +218,36 @@ export default {
     }
   },
   computed: {
-    context () {
+    context() {
       return {
         store: useStatesStore().trackedItems
       }
     },
-    nonSemanticTags () {
-      return this.item?.tags?.filter((tag) => tag !== this.semanticTag(this.item?.metadata?.semantics?.value) && tag !== this.semanticTag(this.item?.metadata?.semantics?.config?.relatesTo)) || []
+    nonSemanticTags() {
+      return (
+        this.item?.tags?.filter(
+          (tag) =>
+            tag !== this.semanticTag(this.item?.metadata?.semantics?.value) &&
+            tag !== this.semanticTag(this.item?.metadata?.semantics?.config?.relatesTo)
+        ) || []
+      )
     },
-    itemGroups () {
+    itemGroups() {
       return this.item?.parents?.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     }
   },
   methods: {
-    onPageBeforeIn () {
+    onPageBeforeIn() {
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       useStatesStore().stopTrackingStates()
     },
-    modelItem (item) {
+    modelItem(item) {
       return {
         item,
         opened: false,
-        class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
+        class: item.metadata && item.metadata.semantics ? item.metadata.semantics.value : '',
         children: {
           locations: [],
           equipment: [],
@@ -251,7 +257,7 @@ export default {
         }
       }
     },
-    async load () {
+    async load() {
       this.$oh.api.get(`/rest/items/${this.itemName}?parents=true&metadata=.+`).then((data) => {
         this.item = data
         this.iconUrl = '/icon/' + this.item.category + '?format=svg'
@@ -262,34 +268,33 @@ export default {
         useStatesStore().startTrackingStates()
       })
     },
-    duplicateItem () {
+    duplicateItem() {
       let itemClone = cloneDeep(this.item)
-      this.f7router.navigate({
-        url: '/settings/items/duplicate'
-      }, {
-        props: {
-          itemCopy: itemClone
-        }
-      })
-    },
-    deleteItem () {
-      f7.dialog.confirm(
-        `Are you sure you want to delete ${this.item.label || this.item.name}?`,
-        'Delete Item',
-        () => {
-          this.$oh.api.delete('/rest/items/' + this.item.name).then(() => {
-            this.f7router.navigate('/settings/items/')
-          })
+      this.f7router.navigate(
+        {
+          url: '/settings/items/duplicate'
+        },
+        {
+          props: {
+            itemCopy: itemClone
+          }
         }
       )
     },
-    searchInSidebar () {
-      f7.emit('selectDeveloperDock', { 'dock': 'tools', 'toolTab': 'pin', 'searchFor': this.item.name })
+    deleteItem() {
+      f7.dialog.confirm(`Are you sure you want to delete ${this.item.label || this.item.name}?`, 'Delete Item', () => {
+        this.$oh.api.delete('/rest/items/' + this.item.name).then(() => {
+          this.f7router.navigate('/settings/items/')
+        })
+      })
     },
-    navigateToItem (value) {
+    searchInSidebar() {
+      f7.emit('selectDeveloperDock', { dock: 'tools', toolTab: 'pin', searchFor: this.item.name })
+    },
+    navigateToItem(value) {
       this.f7router.navigate(this.itemLink(value.item.name))
     },
-    itemLink (item) {
+    itemLink(item) {
       return '/settings/items/' + item
     },
     /**
@@ -298,7 +303,7 @@ export default {
      * @param {string|null} value
      * @return {*|null}
      */
-    semanticTag (value) {
+    semanticTag(value) {
       if (!value) return null
       const valueArray = value.split('_')
       if (valueArray.length === 0) return null

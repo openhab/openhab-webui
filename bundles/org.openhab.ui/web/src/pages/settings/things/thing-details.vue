@@ -30,8 +30,8 @@
           <f7-col class="padding-horizontal">
             <div v-show="!error" class="float-right align-items-flex-start align-items-center">
               <f7-link
-                :icon-color="(thing?.statusInfo?.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                :tooltip="((thing?.statusInfo?.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                :icon-color="thing?.statusInfo?.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+                :tooltip="(thing?.statusInfo?.statusDetail === 'DISABLED' ? 'Enable' : 'Disable') + ($device.desktop ? ' (Ctrl-D)' : '')"
                 icon-ios="f7:pause_circle"
                 icon-md="f7:pause_circle"
                 icon-aurora="f7:pause_circle"
@@ -42,7 +42,7 @@
             Status:
             <f7-chip class="margin-left" :text="thing?.statusInfo?.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
-              <strong>{{ (thing?.statusInfo?.statusDetail !== 'NONE') ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
+              <strong>{{ thing?.statusInfo?.statusDetail !== 'NONE' ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
               <br />
               <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />
             </div>
@@ -112,7 +112,7 @@
                 accordion-item
                 title="Firmware"
                 :badge="firmwares.length"
-                :badge-color="(thing.firmwareStatus.status) === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
+                :badge-color="thing.firmwareStatus.status === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
                 <f7-accordion-content>
                   <f7-list>
                     <f7-list-item class="thing-property" title="Status" :after="firmwareStatusText" />
@@ -127,14 +127,29 @@
                       :footer="firmware.changelog">
                       <div class="item-after">
                         <f7-badge
-                          :color="firmware.version === thing.properties.firmwareVersion ? 'gray' : (firmware.version > thing.properties.firmwareVersion ? 'green' : 'red')">
-                          {{ compareVersions(firmware.version, thing.properties.firmwareVersion) === 0 ? 'Current Version' :
-                            (compareVersions(firmware.version, thing.properties.firmwareVersion) > 0 ? 'Upgrade' : 'Downgrade') }}
+                          :color="
+                            firmware.version === thing.properties.firmwareVersion
+                              ? 'gray'
+                              : firmware.version > thing.properties.firmwareVersion
+                                ? 'green'
+                                : 'red'
+                          ">
+                          {{
+                            compareVersions(firmware.version, thing.properties.firmwareVersion) === 0
+                              ? 'Current Version'
+                              : compareVersions(firmware.version, thing.properties.firmwareVersion) > 0
+                                ? 'Upgrade'
+                                : 'Downgrade'
+                          }}
                           <f7-link
                             v-if="compareVersions(firmware.version, thing.properties.firmwareVersion) !== 0 && !firmwareUpdating"
                             icon-color="white"
-                            :tooltip="compareVersions(firmware.version, thing.properties.firmwareVersion) === 1 ? 'Start Upgrade' : 'Start Downgrade'"
-                            style="margin-left: 4px;"
+                            :tooltip="
+                              compareVersions(firmware.version, thing.properties.firmwareVersion) === 1
+                                ? 'Start Upgrade'
+                                : 'Start Downgrade'
+                            "
+                            style="margin-left: 4px"
                             icon-ios="f7:play_fill"
                             icon-md="f7:play_fill"
                             icon-aurora="f7:play_fill"
@@ -161,7 +176,7 @@
 
             <!-- Thing Actions & UI Actions -->
             <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties">
-              <f7-block-title medium class="no-margin-top" style="display: flex; align-items: center; justify-content: space-between;">
+              <f7-block-title medium class="no-margin-top" style="display: flex; align-items: center; justify-content: space-between">
                 Actions
                 <div v-if="advancedThingActionsCount" class="advanced-actions-toggle">
                   <label class="advanced-label">
@@ -222,7 +237,7 @@
               <f7-list>
                 <f7-list-button
                   v-for="action in actionGroup.actions"
-                  :color="(action.verify) ? 'yellow' : 'blue'"
+                  :color="action.verify ? 'yellow' : 'blue'"
                   :key="action.name"
                   :title="action.label"
                   @click="action.execute()" />
@@ -435,7 +450,7 @@ export default {
     thingId: String,
     f7router: Object
   },
-  data () {
+  data() {
     return {
       ready: false,
       error: false,
@@ -443,7 +458,7 @@ export default {
       currentTab: 'thing',
       showAdvancedThingActions: false,
       transferProgress: 0,
-      transferStep: "",
+      transferStep: '',
       /**
        * @deprecated
        */
@@ -454,10 +469,10 @@ export default {
     }
   },
   computed: {
-    pageTitle () {
+    pageTitle() {
       return this.thing?.label || this.thing?.UID || ''
     },
-    context () {
+    context() {
       return {
         store: useStatesStore().trackedItems
       }
@@ -465,13 +480,12 @@ export default {
     /**
      * Check if this is a Matter Thread device with Thread diagnostics properties
      */
-    hasMatterThreadProperties () {
+    hasMatterThreadProperties() {
       if (!this.thing?.UID?.startsWith('matter:node')) return false
       if (!this.thing?.properties) return false
       // Check for Thread network diagnostics properties
-      return Object.keys(this.thing.properties).some((key) =>
-        key.startsWith('ThreadNetworkDiagnostics-') ||
-        key.startsWith('ThreadBorderRouterManagement-')
+      return Object.keys(this.thing.properties).some(
+        (key) => key.startsWith('ThreadNetworkDiagnostics-') || key.startsWith('ThreadBorderRouterManagement-')
       )
     },
     /**
@@ -479,78 +493,93 @@ export default {
      * Action parameters are BOOLEAN parameters in groups with context='actions' or (name='actions' AND label='Actions').
      * @deprecated Can be removed once all bindings have migrated from config actions to real Thing actions.
      */
-    filteredConfigParameters () {
+    filteredConfigParameters() {
       if (!this.configDescriptions?.parameters || !this.configDescriptions?.parameterGroups) {
         return this.configDescriptions?.parameters || []
       }
       // Find action groups: first by context, then fall back to name+label heuristic
-      let actionGroupNames = this.configDescriptions.parameterGroups
-        .filter((pg) => pg.context === 'actions')
-        .map((pg) => pg.name)
+      let actionGroupNames = this.configDescriptions.parameterGroups.filter((pg) => pg.context === 'actions').map((pg) => pg.name)
       if (actionGroupNames.length === 0) {
         actionGroupNames = this.configDescriptions.parameterGroups
           .filter((pg) => pg.name === 'actions' && pg.label === 'Actions')
           .map((pg) => pg.name)
       }
       // Filter out BOOLEAN parameters in action groups (these are rendered as action buttons instead)
-      return this.configDescriptions.parameters.filter(
-        (p) => !(actionGroupNames.includes(p.groupName) && p.type === 'BOOLEAN')
-      )
+      return this.configDescriptions.parameters.filter((p) => !(actionGroupNames.includes(p.groupName) && p.type === 'BOOLEAN'))
     },
-    advancedThingActionsCount () {
+    advancedThingActionsCount() {
       return this.thingActions && Array.isArray(this.thingActions) ? this.thingActions.filter((a) => a.visibility === 'EXPERT').length : 0
     },
-    filteredThingActions () {
+    filteredThingActions() {
       if (this.showAdvancedThingActions) return this.thingActions ?? []
       return this.thingActions?.filter((a) => a.visibility !== 'EXPERT') ?? []
     },
     firmwareStatusText() {
       if (this.firmwareUpdating) {
         switch (this.transferStep) {
-          case "WAITING":
-            return "Waiting to start update"
-          case "DOWNLOADING":
-            return "Downloading firmware from provider"
-          case "TRANSFERRING":
-            return "Transfer in progress " + this.transferProgress + "% complete"
-          case "UPDATING":
-            return "Updating firmware"
-          case "REBOOTING":
-            return "Rebooting device"
+          case 'WAITING':
+            return 'Waiting to start update'
+          case 'DOWNLOADING':
+            return 'Downloading firmware from provider'
+          case 'TRANSFERRING':
+            return 'Transfer in progress ' + this.transferProgress + '% complete'
+          case 'UPDATING':
+            return 'Updating firmware'
+          case 'REBOOTING':
+            return 'Rebooting device'
           default:
-            return "Unknown - " + this.transferStep
+            return 'Unknown - ' + this.transferStep
         }
       }
 
       switch (this.thing.firmwareStatus.status) {
-        case "UP_TO_DATE":
-          return "Up to date"
-        case "UPDATE_AVAILABLE":
-          return "Update Available"
-        case "UPDATE_EXECUTABLE":
-          return "Update Executable"
+        case 'UP_TO_DATE':
+          return 'Up to date'
+        case 'UPDATE_AVAILABLE':
+          return 'Update Available'
+        case 'UPDATE_EXECUTABLE':
+          return 'Update Executable'
         default:
-          return "Unknown"
+          return 'Unknown'
       }
     },
     firmwareUpdating() {
-      return this.thing.statusInfo.status === "OFFLINE" && this.thing.statusInfo.statusDetail === "FIRMWARE_UPDATING";
+      return this.thing.statusInfo.status === 'OFFLINE' && this.thing.statusInfo.statusDetail === 'FIRMWARE_UPDATING'
     },
-    ...mapState(useThingEditStore, ['configDirty', 'thingDirty', 'thing', 'thingType', 'channelTypes', 'configDescriptions', 'configStatusInfo', 'thingActions', 'firmwares', 'editable', 'isExtensible', 'hasLinkedItems'])
+    ...mapState(useThingEditStore, [
+      'configDirty',
+      'thingDirty',
+      'thing',
+      'thingType',
+      'channelTypes',
+      'configDescriptions',
+      'configStatusInfo',
+      'thingActions',
+      'firmwares',
+      'editable',
+      'isExtensible',
+      'hasLinkedItems'
+    ])
   },
   watch: {
-    configDirty: function () { this.dirty = this.configDirty || this.thingDirty || this.codeDirty },
-    thingDirty: function () { this.dirty = this.configDirty || this.thingDirty || this.codeDirty },
-    codeDirty: function () { this.dirty = this.configDirty || this.thingDirty || this.codeDirty },
+    configDirty: function () {
+      this.dirty = this.configDirty || this.thingDirty || this.codeDirty
+    },
+    thingDirty: function () {
+      this.dirty = this.configDirty || this.thingDirty || this.codeDirty
+    },
+    codeDirty: function () {
+      this.dirty = this.configDirty || this.thingDirty || this.codeDirty
+    },
     'thing.properties': {
-      handler () {
+      handler() {
         this.checkPropertyTruncation()
       },
       deep: true
     }
   },
   methods: {
-    onPageAfterIn (event) {
+    onPageAfterIn(event) {
       useStatesStore().startTrackingStates()
       if (window) {
         window.addEventListener('keydown', this.keyDown)
@@ -566,14 +595,14 @@ export default {
         this.load()
       }
     },
-    onPageBeforeOut (event) {
+    onPageBeforeOut(event) {
       useStatesStore().stopTrackingStates()
       this.stopEventSource()
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    switchTab (newTab) {
+    switchTab(newTab) {
       if (this.currentTab === newTab) return
 
       // We can't prevent the tab switch here. Instead, we'll switch back if parsing fails
@@ -593,14 +622,14 @@ export default {
         )
       }
     },
-    onCodeChanged (codeDirty) {
+    onCodeChanged(codeDirty) {
       this.codeDirty = codeDirty
     },
     /**
      * Load required data from the REST API.
      * @param {boolean} [stay=false] stay ready: do not reset ready state, only reload data
      */
-    load (stay = false) {
+    load(stay = false) {
       if (!stay) {
         this.ready = false
       }
@@ -633,7 +662,7 @@ export default {
     /**
      * @deprecated to be removed once all Things that use config actions use real Thing actions instead
      */
-    getBindingActions (configDescriptionsResponse) {
+    getBindingActions(configDescriptionsResponse) {
       if (!configDescriptionsResponse?.parameterGroups || !configDescriptionsResponse?.parameters) {
         return []
       }
@@ -643,16 +672,20 @@ export default {
         // No match by context, fall back to heuristic match by group name and label
         actionContextGroups = configDescriptionsResponse.parameterGroups.filter((pg) => pg.name === 'actions' && pg.label === 'Actions')
       }
-      let bindingActions = configDescriptionsResponse.parameters.filter((p) => actionContextGroups.map((acg) => acg.name).includes(p.groupName) && p.type === 'BOOLEAN')
+      let bindingActions = configDescriptionsResponse.parameters.filter(
+        (p) => actionContextGroups.map((acg) => acg.name).includes(p.groupName) && p.type === 'BOOLEAN'
+      )
 
       return map(groupBy(bindingActions, 'groupName'), (gActions, gName) => {
         return {
           group: configDescriptionsResponse.parameterGroups.find((pg) => pg.name === gName),
-          actions: map(gActions, (a) => { return { ...a, execute: () => this.doConfigAction(a) } })
+          actions: map(gActions, (a) => {
+            return { ...a, execute: () => this.doConfigAction(a) }
+          })
         }
       })
     },
-    save (saveThing) {
+    save(saveThing) {
       if (!this.ready || !this.editable) return
 
       if (this.currentTab === 'code' && this.codeDirty) {
@@ -671,125 +704,140 @@ export default {
 
       useThingEditStore().save(saveThing)
     },
-    doThingAction (action) {
+    doThingAction(action) {
       const popup = {
         component: ThingActionPopup
       }
-      this.f7router.navigate({
-        url: 'thing-action',
-        route: {
-          path: 'thing-action',
-          popup
+      this.f7router.navigate(
+        {
+          url: 'thing-action',
+          route: {
+            path: 'thing-action',
+            popup
+          }
+        },
+        {
+          props: {
+            thingUID: this.thingId,
+            action
+          }
         }
-      }, {
-        props: {
-          thingUID: this.thingId,
-          action
-        }
-      })
+      )
     },
-    doConfigAction (action) {
+    doConfigAction(action) {
       if (action.type !== 'BOOLEAN') {
         console.warn('Invalid action type', action)
         return
       }
-      let prompt = (action.label) ? `${action.label}?` : `Do you want to perform ${action.name} action?`
+      let prompt = action.label ? `${action.label}?` : `Do you want to perform ${action.name} action?`
       if (action.description) {
         prompt += `<p class="action-description">${action.description}</p>`
       }
       if (action.verify) {
-        prompt += '<p><small><strong class="text-color-yellow"><i class="f7-icons">exclamationmark_triangle</i>WARNING:</strong>&nbsp;This action may be dangerous!</small></p>'
+        prompt +=
+          '<p><small><strong class="text-color-yellow"><i class="f7-icons">exclamationmark_triangle</i>WARNING:</strong>&nbsp;This action may be dangerous!</small></p>'
       }
-      f7.dialog.confirm(
-        prompt,
-        this.thing.label,
-        () => {
-          // Make sure Vue reactivity notices the change
-          this.thing.configuration = ({
-            ...this.thing.configuration,
-            [action.name]: true
-          })
-          // Vue reactivity is too slow to recognize config change before the API call, manually mark the config dirty
-          this.configDirty = true
-          this.save()
+      f7.dialog.confirm(prompt, this.thing.label, () => {
+        // Make sure Vue reactivity notices the change
+        this.thing.configuration = {
+          ...this.thing.configuration,
+          [action.name]: true
         }
-      )
+        // Vue reactivity is too slow to recognize config change before the API call, manually mark the config dirty
+        this.configDirty = true
+        this.save()
+      })
     },
-    openNetworkPopup (networkType) {
+    openNetworkPopup(networkType) {
       const popup = {
         component: NetworkPopup
       }
-      this.f7router.navigate({
-        url: `${networkType}-network`,
-        route: {
-          path: `${networkType}-network`,
-          popup
-        }
-      }, {
-        props: {
-          bridgeUID: this.thing.bridgeUID || this.thing.UID,
-          networkType
-        }
-      })
-    },
-    duplicateThing () {
-      let thingClone = cloneDeep(this.thing)
-      this.f7router.navigate({
-        url: '/settings/things/duplicate'
-      }, {
-        props: {
-          thingTypeId: this.thing.thingTypeUID,
-          thingCopy: thingClone
-        }
-      })
-    },
-    deleteThing () {
-      let url
-
-      const force = (this.thing.statusInfo.status === 'REMOVING')
-      const message = (force)
-        ? `${this.thing.label || this.thing.UID} is currently being removed but the binding has not confirmed it has finished the operation yet. Would you like to force its removal? Warning: this could cause stability issues with the binding!`
-        : `Are you sure you want to delete ${this.thing.label || this.thing.UID}?`
-
-      f7.dialog.confirm(
-        message,
-        'Delete Thing',
-        () => {
-          api.removeThingById({ thingUID: this.thingId, force }).then(() => {
-            this.dirty = this.configDirty = this.thingDirty = this.codeDirty = false
-            this.f7router.back('/settings/things/', { force: true })
-          }).catch((error) => {
-            f7.dialog.alert('Error while deleting the Thing: ' + error.message)
-          })
+      this.f7router.navigate(
+        {
+          url: `${networkType}-network`,
+          route: {
+            path: `${networkType}-network`,
+            popup
+          }
+        },
+        {
+          props: {
+            bridgeUID: this.thing.bridgeUID || this.thing.UID,
+            networkType
+          }
         }
       )
     },
-    installBinding () {
-      this.f7router.navigate({
-        url: '/addons/binding/'
-      }, {
-        props: {
-          searchFor: this.thing.UID.split(':')[0]
+    duplicateThing() {
+      let thingClone = cloneDeep(this.thing)
+      this.f7router.navigate(
+        {
+          url: '/settings/things/duplicate'
+        },
+        {
+          props: {
+            thingTypeId: this.thing.thingTypeUID,
+            thingCopy: thingClone
+          }
         }
+      )
+    },
+    deleteThing() {
+      let url
+
+      const force = this.thing.statusInfo.status === 'REMOVING'
+      const message = force
+        ? `${this.thing.label || this.thing.UID} is currently being removed but the binding has not confirmed it has finished the operation yet. Would you like to force its removal? Warning: this could cause stability issues with the binding!`
+        : `Are you sure you want to delete ${this.thing.label || this.thing.UID}?`
+
+      f7.dialog.confirm(message, 'Delete Thing', () => {
+        api
+          .removeThingById({ thingUID: this.thingId, force })
+          .then(() => {
+            this.dirty = this.configDirty = this.thingDirty = this.codeDirty = false
+            this.f7router.back('/settings/things/', { force: true })
+          })
+          .catch((error) => {
+            f7.dialog.alert('Error while deleting the Thing: ' + error.message)
+          })
       })
     },
-    toggleDisabled () {
-      const enable = (this.thing.statusInfo.statusDetail === 'DISABLED')
-      api.enableThing({ thingUID: this.thingId, body: enable.toString() }).then((data) => {
-        f7.toast.create({
-          text: (enable) ? 'Thing enabled' : 'Thing disabled',
-          destroyOnClose: true,
-          closeTimeout: 3000
-        }).open()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while disabling or enabling: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 4000
-        }).open()
-      })
+    installBinding() {
+      this.f7router.navigate(
+        {
+          url: '/addons/binding/'
+        },
+        {
+          props: {
+            searchFor: this.thing.UID.split(':')[0]
+          }
+        }
+      )
     },
-    keyDown (ev) {
+    toggleDisabled() {
+      const enable = this.thing.statusInfo.statusDetail === 'DISABLED'
+      api
+        .enableThing({ thingUID: this.thingId, body: enable.toString() })
+        .then((data) => {
+          f7.toast
+            .create({
+              text: enable ? 'Thing enabled' : 'Thing disabled',
+              destroyOnClose: true,
+              closeTimeout: 3000
+            })
+            .open()
+        })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Error while disabling or enabling: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 4000
+            })
+            .open()
+        })
+    },
+    keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 68:
@@ -805,187 +853,206 @@ export default {
         }
       }
     },
-    addChannel () {
+    addChannel() {
       const self = this
-      this.f7router.navigate({
-        url: 'channels/new',
-        route: {
-          component: AddChannelPage,
-          path: 'channels/new',
-          context: {
-            operation: 'add-channel'
-          },
-          on: {
-            pageAfterOut (event, page) {
-              const context = page.route.route.context
-              const finalChannel = context.finalChannel
-              if (finalChannel) {
-                self.thing.channels.push(finalChannel)
-                self.save()
-                self.onChannelsUpdated(true)
-              } else {
-                self.onChannelsUpdated(false)
+      this.f7router.navigate(
+        {
+          url: 'channels/new',
+          route: {
+            component: AddChannelPage,
+            path: 'channels/new',
+            context: {
+              operation: 'add-channel'
+            },
+            on: {
+              pageAfterOut(event, page) {
+                const context = page.route.route.context
+                const finalChannel = context.finalChannel
+                if (finalChannel) {
+                  self.thing.channels.push(finalChannel)
+                  self.save()
+                  self.onChannelsUpdated(true)
+                } else {
+                  self.onChannelsUpdated(false)
+                }
               }
             }
           }
-        }
-      }, {
-        props: {
-          thing: this.thing,
-          thingType: this.thingType
-        }
-      })
-    },
-    addToModel (createEquipment) {
-      this.f7router.navigate({
-        url: 'add-to-model',
-        route: {
-          component: AddFromThingPage,
-          path: 'add-to-model',
+        },
+        {
           props: {
-          },
-          on: {
-            pageAfterOut (event, page) {
-            }
+            thing: this.thing,
+            thingType: this.thingType
           }
         }
-      }, {
-        props: {
-          thingId: this.thing.UID,
-          createEquipment
-        }
-      })
+      )
     },
-    onChannelsUpdated (save) {
+    addToModel(createEquipment) {
+      this.f7router.navigate(
+        {
+          url: 'add-to-model',
+          route: {
+            component: AddFromThingPage,
+            path: 'add-to-model',
+            props: {},
+            on: {
+              pageAfterOut(event, page) {}
+            }
+          }
+        },
+        {
+          props: {
+            thingId: this.thing.UID,
+            createEquipment
+          }
+        }
+      )
+    },
+    onChannelsUpdated(save) {
       if (save) this.save(true)
       if (!this.eventSource) this.startEventSource()
     },
-    unlinkAll (removeItems) {
-      const message = (removeItems)
+    unlinkAll(removeItems) {
+      const message = removeItems
         ? 'Are you sure you wish to unlink and remove all items currently linked to this thing?'
         : 'Are you sure you wish to unlink all items currently linked to this thing?'
-      f7.dialog.confirm(message, 'Unlink all',
-        () => {
-          api.getItemLinks().then((data) => {
-            let dialog = f7.dialog.progress('Unlinking all items...')
-            this.stopEventSource()
-            const links = data.filter((l) => l.channelUID.indexOf(this.thingId) === 0)
+      f7.dialog.confirm(message, 'Unlink all', () => {
+        api.getItemLinks().then((data) => {
+          let dialog = f7.dialog.progress('Unlinking all items...')
+          this.stopEventSource()
+          const links = data.filter((l) => l.channelUID.indexOf(this.thingId) === 0)
 
-            const unlinkPromises = links.map((l) => api.unlinkItemFromChannel( { itemName: l.itemName, channelUID: l.channelUID } ))
-            Promise.all(unlinkPromises).then(() => {
+          const unlinkPromises = links.map((l) => api.unlinkItemFromChannel({ itemName: l.itemName, channelUID: l.channelUID }))
+          Promise.all(unlinkPromises)
+            .then(() => {
               if (removeItems) {
                 dialog.setText('Removing items...')
-                const deletePromises = links.map((l) => api.removeItemFromRegistry( { itemName: l.itemName } ))
-                Promise.all(deletePromises).then(() => {
-                  dialog.close()
-                  f7.toast.create({
-                    text: 'All items unlinked and removed',
-                    destroyOnClose: true,
-                    closeTimeout: 2000
-                  }).open()
-                  this.load()
-                }).catch((err) => {
-                  dialog.close()
-                  f7.dialog.alert('Some of the items could not be unlinked: ' + err)
-                  console.error('Some of the items could not be unlinked: ' + err)
-                  this.load()
-                })
+                const deletePromises = links.map((l) => api.removeItemFromRegistry({ itemName: l.itemName }))
+                Promise.all(deletePromises)
+                  .then(() => {
+                    dialog.close()
+                    f7.toast
+                      .create({
+                        text: 'All items unlinked and removed',
+                        destroyOnClose: true,
+                        closeTimeout: 2000
+                      })
+                      .open()
+                    this.load()
+                  })
+                  .catch((err) => {
+                    dialog.close()
+                    f7.dialog.alert('Some of the items could not be unlinked: ' + err)
+                    console.error('Some of the items could not be unlinked: ' + err)
+                    this.load()
+                  })
               } else {
                 dialog.close()
-                f7.toast.create({
-                  text: 'All items unlinked',
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                }).open()
+                f7.toast
+                  .create({
+                    text: 'All items unlinked',
+                    destroyOnClose: true,
+                    closeTimeout: 2000
+                  })
+                  .open()
                 this.load()
               }
-            }).catch((err) => {
+            })
+            .catch((err) => {
               dialog.close()
               f7.dialog.alert('Some of the items could not be removed: ' + err)
               console.error('Some of the items could not be removed: ' + err)
               this.load()
             })
-          })
         })
-    },
-    startEventSource () {
-      if (this.eventSource) this.stopEventSource()
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/things/*/*,openhab/links/*/*' /* + encodeURIComponent(this.thingId) */, null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[1]) {
-          case 'things':
-            if (topicParts[2] !== this.thingId) return
-            switch (topicParts[3]) {
-              case 'status':
-                this.thing.statusInfo = JSON.parse(event.payload)
-                break
-              case 'removed':
-                f7.toast.create({
-                  text: 'The Thing was deleted',
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                }).open()
-                this.f7router.back('/settings/things/', { force: true })
-                break
-              case 'updated':
-                console.log('Thing updated according to SSE, reloading')
-                this.load(true)
-                break
-              case 'firmware':
-                console.log('event firmware')
-                switch (topicParts[4]) {
-                  case 'status':
-                    this.load(true)
-                    break
-                  case 'update':
-                    switch (topicParts[5]) {
-                      case 'progress':
-                        let firmwareProgress = JSON.parse(event.payload)
-                        this.transferStep = firmwareProgress.progressStep
-                        this.transferProgress = firmwareProgress.progress
-                        break
-                      case 'result':
-                        let firmwareResult = JSON.parse(event.payload)
-                        let resultMessage = "Unknown firmware result"
-                        switch (firmwareResult.result) {
-                          case "SUCCESS":
-                            resultMessage = "Firmware update completed successfully"
-                            break
-                          case "CANCELED":
-                            resultMessage = "Firmware update cancelled"
-                            break
-                          case "ERROR":
-                            resultMessage = "Error during firmware update: " + firmwareResult.errorMessage
-                            break
-                          default:
-                            break
-                        }
-                        f7.toast.create({
-                          text: resultMessage,
-                          destroyOnClose: true,
-                          closeTimeout: 2000
-                        }).open()
-                        this.load(true)
-                        break
-                    }
-                    break;
-                }
-                break
-              case 'links':
-                // if (topicParts[2].indexOf(this.thingId) < 0) return
-                // console.log('Links updated according to SSE, reloading')
-                // this.ready = false
-                // this.load()
-                break
-            }
-        }
       })
     },
-    stopEventSource () {
+    startEventSource() {
+      if (this.eventSource) this.stopEventSource()
+      this.eventSource = this.$oh.sse.connect(
+        '/rest/events?topics=openhab/things/*/*,openhab/links/*/*' /* + encodeURIComponent(this.thingId) */,
+        null,
+        (event) => {
+          const topicParts = event.topic.split('/')
+          switch (topicParts[1]) {
+            case 'things':
+              if (topicParts[2] !== this.thingId) return
+              switch (topicParts[3]) {
+                case 'status':
+                  this.thing.statusInfo = JSON.parse(event.payload)
+                  break
+                case 'removed':
+                  f7.toast
+                    .create({
+                      text: 'The Thing was deleted',
+                      destroyOnClose: true,
+                      closeTimeout: 2000
+                    })
+                    .open()
+                  this.f7router.back('/settings/things/', { force: true })
+                  break
+                case 'updated':
+                  console.log('Thing updated according to SSE, reloading')
+                  this.load(true)
+                  break
+                case 'firmware':
+                  console.log('event firmware')
+                  switch (topicParts[4]) {
+                    case 'status':
+                      this.load(true)
+                      break
+                    case 'update':
+                      switch (topicParts[5]) {
+                        case 'progress':
+                          let firmwareProgress = JSON.parse(event.payload)
+                          this.transferStep = firmwareProgress.progressStep
+                          this.transferProgress = firmwareProgress.progress
+                          break
+                        case 'result':
+                          let firmwareResult = JSON.parse(event.payload)
+                          let resultMessage = 'Unknown firmware result'
+                          switch (firmwareResult.result) {
+                            case 'SUCCESS':
+                              resultMessage = 'Firmware update completed successfully'
+                              break
+                            case 'CANCELED':
+                              resultMessage = 'Firmware update cancelled'
+                              break
+                            case 'ERROR':
+                              resultMessage = 'Error during firmware update: ' + firmwareResult.errorMessage
+                              break
+                            default:
+                              break
+                          }
+                          f7.toast
+                            .create({
+                              text: resultMessage,
+                              destroyOnClose: true,
+                              closeTimeout: 2000
+                            })
+                            .open()
+                          this.load(true)
+                          break
+                      }
+                      break
+                  }
+                  break
+                case 'links':
+                  // if (topicParts[2].indexOf(this.thingId) < 0) return
+                  // console.log('Links updated according to SSE, reloading')
+                  // this.ready = false
+                  // this.load()
+                  break
+              }
+          }
+        }
+      )
+    },
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    updateThing (updatedThing) {
+    updateThing(updatedThing) {
       const isExtensible = (channel, thingType) => {
         if (!channel || !channel.channelTypeUID) return false
         const bindingId = thingType.UID.split(':')[0]
@@ -1011,7 +1078,10 @@ export default {
                 if (existingChannel.label) existingChannel.label = updatedChannel.label
                 if (existingChannel.description) existingChannel.description = updatedChannel.description
               }
-              if (existingChannel.configuration && JSON.stringify(existingChannel.configuration) !== JSON.stringify(updatedChannel.configuration)) {
+              if (
+                existingChannel.configuration &&
+                JSON.stringify(existingChannel.configuration) !== JSON.stringify(updatedChannel.configuration)
+              ) {
                 existingChannel.configuration = updatedChannel.configuration
               }
             } else {
@@ -1047,7 +1117,10 @@ export default {
                   f7.dialog.alert(`Not removing channel ${existingChannel.id} because there are items linked to it`).open()
                   continue
                 }
-                this.thing.channels.splice(this.thing.channels.findIndex((c) => c.id === existingChannel.id), 1)
+                this.thing.channels.splice(
+                  this.thing.channels.findIndex((c) => c.id === existingChannel.id),
+                  1
+                )
               }
             }
           }
@@ -1058,7 +1131,7 @@ export default {
         return false
       }
     },
-    checkPropertyTruncation () {
+    checkPropertyTruncation() {
       nextTick(() => {
         const newTruncationStatus = {}
         if (!this.thing || !this.thing.properties || !this.ready) {
@@ -1091,11 +1164,11 @@ export default {
       })
     },
 
-    isTruncated (key, type) {
+    isTruncated(key, type) {
       return !!(this.propertyTruncation[key] && this.propertyTruncation[key][type])
     },
 
-    showFullProperty (key, value) {
+    showFullProperty(key, value) {
       const dialogContent = `
         <div class="dialog-title" style="margin-bottom: 8px;">${key}</div>
         <pre class="dialog-text" style="font-size: var(--f7-font-size); margin: 0; white-space: pre-wrap; word-wrap: break-word;">${value}</pre>
@@ -1104,14 +1177,12 @@ export default {
         title: 'Property Details',
         content: dialogContent,
         cssClass: 'wide-property-dialog',
-        buttons: [
-          { text: 'OK' }
-        ]
+        buttons: [{ text: 'OK' }]
       })
       dialog.open()
     },
 
-    showFullPropertyIfTruncated (key, value) {
+    showFullPropertyIfTruncated(key, value) {
       const isTitleTruncated = this.isTruncated(key, 'title')
       const isValueTruncated = this.isTruncated(key, 'value')
       if (isTitleTruncated || isValueTruncated) {
@@ -1123,24 +1194,31 @@ export default {
       const version = firmware && firmware.version ? firmware.version : ''
       const message = version
         ? `Are you sure you want to start the firmware update to version "${version}"?\n\n` +
-        'This operation may take several minutes and should not be interrupted.'
+          'This operation may take several minutes and should not be interrupted.'
         : 'Are you sure you want to start the firmware update?\n\n' +
-        'This operation may take several minutes and should not be interrupted.'
+          'This operation may take several minutes and should not be interrupted.'
 
       f7.dialog.confirm(message, 'Confirm Firmware Update', () => {
-        api.updateThingFirmware({ thingUID: this.thingId, firmwareVersion: firmware.version }).then(() => {
-          f7.toast.create({
-            text: 'Firmware update started',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }).catch((err) => {
-          f7.toast.create({
-            text: 'Error starting firmware update: ' + err,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        })
+        api
+          .updateThingFirmware({ thingUID: this.thingId, firmwareVersion: firmware.version })
+          .then(() => {
+            f7.toast
+              .create({
+                text: 'Firmware update started',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          })
+          .catch((err) => {
+            f7.toast
+              .create({
+                text: 'Error starting firmware update: ' + err,
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          })
       })
     },
 
@@ -1157,10 +1235,10 @@ export default {
       return 0
     }
   },
-  mounted () {
+  mounted() {
     this.checkPropertyTruncation()
   },
-  updated () {
+  updated() {
     this.checkPropertyTruncation()
   }
 }

@@ -1165,7 +1165,6 @@ import { Multiselect } from '@mit-app-inventor/blockly-plugin-workspace-multisel
 import { TypedVariableModal } from '@blockly/plugin-typed-variable-modal'
 import { installAllBlocks } from '@blockly/field-colour'
 
-
 import defineOHBlocks from '@/assets/definitions/blockly'
 import { defineLibraryToolboxCategory } from '@/assets/definitions/blockly/libraries'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
@@ -1185,7 +1184,7 @@ export default {
     libraryDefinitions: Array
   },
   emits: ['mounted', 'ready', 'change'],
-  data () {
+  data() {
     return {
       blockLibraries: null,
       sinks: [],
@@ -1199,7 +1198,7 @@ export default {
     }
   },
   computed: {
-    cssVars () {
+    cssVars() {
       return {
         '--blockly-ws-search-bg-color': useUIOptionsStore().darkMode === 'dark' ? '#1e1e1e' : 'white',
         '--blockly-ws-search-border-color': useUIOptionsStore().darkMode === 'dark' ? 'lightgrey' : 'grey',
@@ -1208,18 +1207,19 @@ export default {
     },
     ...mapStores(useUIOptionsStore)
   },
-  mounted () {
+  mounted() {
     this.load()
     this.$emit('mounted')
   },
   methods: {
-    async load () {
+    async load() {
       const dataPromises = [
-        api.getRules({ summary : true }),
+        api.getRules({ summary: true }),
         api.getAudioSinks(),
         api.getVoices(),
-        (this.libraryDefinitions) ? Promise.resolve(this.libraryDefinitions) :
-          api.getRegisteredUiComponentsInNamespace({ namespace : 'ui:blocks' }),
+        this.libraryDefinitions
+          ? Promise.resolve(this.libraryDefinitions)
+          : api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:blocks' }),
         api.getPersistenceServices(),
         api.getTransformationServices()
       ]
@@ -1231,12 +1231,8 @@ export default {
             const labelB = b.name
             return labelA.localeCompare(labelB)
           })
-          this.rules = rules.filter(
-            (r) => !r.tags || r.tags.indexOf('Script') < 0
-          )
-          this.scripts = rules.filter(
-            (r) => r.tags && r.tags.indexOf('Script') >= 0
-          )
+          this.rules = rules.filter((r) => !r.tags || r.tags.indexOf('Script') < 0)
+          this.scripts = rules.filter((r) => r.tags && r.tags.indexOf('Script') >= 0)
 
           this.sinks = data[1].sort((a, b) => {
             const labelA = a.label
@@ -1270,7 +1266,7 @@ export default {
           console.error('Error while retrieving Blockly data - ' + err + ':' + status)
         })
     },
-    initBlockly (libraryDefinitions) {
+    initBlockly(libraryDefinitions) {
       defineOHBlocks(f7, libraryDefinitions, {
         sinks: this.sinks,
         voices: this.voices,
@@ -1334,10 +1330,7 @@ export default {
         return xmlList
       }
 
-      workspace.registerToolboxCategoryCallback(
-        'CREATE_TYPED_VARIABLE',
-        createFlyout
-      )
+      workspace.registerToolboxCategoryCallback('CREATE_TYPED_VARIABLE', createFlyout)
       const typedVarModal = new TypedVariableModal(workspace, 'callbackName', [
         ['Item name', 'oh_item'],
         ['Item object', 'oh_itemtype'],
@@ -1378,29 +1371,31 @@ export default {
         this.refreshToolboxSelection()
       }
     },
-    addLibraryToToolbox (definitions) {
+    addLibraryToToolbox(definitions) {
       const library = this.$refs.libraryCategory
-      definitions.sort((a, b) => (a.config.name || a.uid).localeCompare(b.config.name || b.uid)).forEach((definition) => {
-        const category = document.createElement('category')
-        category.setAttribute('name', definition.config.name)
-        category.setAttribute('custom', 'LIBRARY_' + definition.uid)
-        library.appendChild(category)
-      })
+      definitions
+        .sort((a, b) => (a.config.name || a.uid).localeCompare(b.config.name || b.uid))
+        .forEach((definition) => {
+          const category = document.createElement('category')
+          category.setAttribute('name', definition.config.name)
+          category.setAttribute('custom', 'LIBRARY_' + definition.uid)
+          library.appendChild(category)
+        })
     },
-    registerLibraryCallbacks (definitions) {
+    registerLibraryCallbacks(definitions) {
       definitions.forEach((definition) => {
         workspace.registerToolboxCategoryCallback('LIBRARY_' + definition.uid, defineLibraryToolboxCategory(definition, f7))
       })
     },
-    showHideLabels (showLabels) {
+    showHideLabels(showLabels) {
       workspace.showLabels = showLabels
       workspace.refresh()
     },
-    getBlocks () {
+    getBlocks() {
       const xml = Blockly.Xml.workspaceToDom(workspace)
       return Blockly.Xml.domToText(xml)
     },
-    getCode () {
+    getCode() {
       let code = javascriptGenerator.workspaceToCode(workspace)
       // Extracts all lines that contain a directive and moves them to the top
       const lines = code.split(/\r?\n/)
@@ -1408,25 +1403,25 @@ export default {
       const nonMatches = []
       lines.forEach((line) => {
         console.log(line)
-        if (line.startsWith('"use ') || line.startsWith('\'use ')) {
+        if (line.startsWith('"use ') || line.startsWith("'use ")) {
           matches.push(line)
         } else {
           nonMatches.push(line)
         }
       })
-      return [...matches, ...nonMatches].join('\n');
+      return [...matches, ...nonMatches].join('\n')
     },
-    getRenderers () {
+    getRenderers() {
       const excludedRenderers = ['minimalist']
       const renderers = Object.keys(Blockly.registry.getAllItems('renderer'))
         .filter((r) => !excludedRenderers.includes(r))
         .sort()
       return renderers
     },
-    getCurrentRenderer () {
+    getCurrentRenderer() {
       return this.uiOptionsStore.blocklyRenderer
     },
-    changeRenderer (newRenderer) {
+    changeRenderer(newRenderer) {
       this.uiOptionsStore.blocklyRenderer = newRenderer
 
       const dom = Blockly.Xml.workspaceToDom(workspace)
@@ -1436,7 +1431,7 @@ export default {
       Blockly.Xml.domToWorkspace(dom, workspace)
       workspace.refreshToolboxSelection()
     },
-    onChange (event) {
+    onChange(event) {
       if (event.type === Blockly.Events.FINISHED_LOADING) {
         this.loading = false
         this.$emit('ready')

@@ -78,32 +78,32 @@ export default {
     SitemapTreeviewItem: 'sitemap-treeview-item'
   },
   emits: ['selected'],
-  data () {
+  data() {
     return {
       localSitemap: this.sitemap ? this.sitemap : this.widget,
       localMoveState: this.moveState ? this.moveState : {}
     }
   },
   methods: {
-    select (event) {
+    select(event) {
       let self = this
       if (this.$$(event.target).is('.treeview-toggle')) return
       this.$emit('selected', [this.widget, this.parentWidget])
     },
-    onStart (event) {
+    onStart(event) {
       console.debug('Drag start event:', event)
       this.localMoveState.moving = true
       this.localMoveState.widget = this.widget.slots.widgets[event.oldIndex]
       this.localMoveState.newParent = this.parentWidget
     },
-    onMove (event) {
+    onMove(event) {
       console.debug('Drag move event:', event)
       const newParent = event.relatedContext?.element?.parent
       if (newParent) {
         this.localMoveState.newParent = newParent
       }
     },
-    onEnd (event) {
+    onEnd(event) {
       console.debug('Drag end event:', event)
       const widget = this.localMoveState.widget
       const parentWidget = this.localMoveState.newParent
@@ -114,29 +114,36 @@ export default {
       this.localMoveState.widget = null
       this.localMoveState.newParent = null
     },
-    dropAllowed (widget) {
+    dropAllowed(widget) {
       if (!this.canAddChildren(widget)) return false
-      if (!this.localMoveState.widget || this.allowedWidgetTypes(widget).map((wt) => wt.type).includes(this.localMoveState.widget.component)) {
+      if (
+        !this.localMoveState.widget ||
+        this.allowedWidgetTypes(widget)
+          .map((wt) => wt.type)
+          .includes(this.localMoveState.widget.component)
+      ) {
         return true
       }
       return false
     },
-    setWidgetClosed (closed) {
+    setWidgetClosed(closed) {
       this.widget.closed = closed
     }
   },
   computed: {
-    subtitle () {
+    subtitle() {
       return this.widgetTypeLabel() + this.widgetConfigDescription(this.includeItemName)
     },
-    iconColor () {
+    iconColor() {
       return ''
     },
-    children () {
+    children() {
       return this.widget.slots?.widgets || []
     },
-    canHaveChildren () {
-      return (this.LINKABLE_WIDGET_TYPES.includes(this.widget.component) && (this.children.length > 0 || this.localMoveState.moving)) === true
+    canHaveChildren() {
+      return (
+        (this.LINKABLE_WIDGET_TYPES.includes(this.widget.component) && (this.children.length > 0 || this.localMoveState.moving)) === true
+      )
     }
   }
 }

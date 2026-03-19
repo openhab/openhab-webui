@@ -20,7 +20,7 @@ export default {
     el: Object,
     modalConfig: Object
   },
-  setup () {
+  setup() {
     useViewArea()
   }
 }

@@ -10,7 +10,7 @@
 
 <script>
 import { OhWebFrameDefinition } from '@/assets/definitions/widgets/system'
-import { useWidgetContext } from '@/components/widgets/useWidgetContext';
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
   widget: OhWebFrameDefinition,

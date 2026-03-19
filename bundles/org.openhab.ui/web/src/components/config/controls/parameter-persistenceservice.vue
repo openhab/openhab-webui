@@ -15,7 +15,7 @@ export default {
     PersistenceServicePicker
   },
   methods: {
-    updateValue (value) {
+    updateValue(value) {
       this.$emit('input', value)
     }
   }

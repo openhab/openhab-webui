@@ -24,7 +24,7 @@ export default {
   setup(props) {
     useWidgetContext(props.context)
   },
-  data () {
+  data() {
     return {
       value: Math.random()
     }

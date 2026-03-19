@@ -54,7 +54,7 @@ export default {
     OhPlaceholderWidget
   },
   widget: OhGridColDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, visible, scopedCssUid, defaultSlots } = useWidgetContext(props.context)
     return { config, childContext, visible, scopedCssUid, defaultSlots }
   }

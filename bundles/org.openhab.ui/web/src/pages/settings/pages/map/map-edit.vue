@@ -2,7 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="map-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
-        :title="!ready ? '' : ((createMode ? 'Create map page' : page.config.label) + dirtyIndicator)"
+        :title="!ready ? '' : (createMode ? 'Create map page' : page.config.label) + dirtyIndicator"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -13,7 +13,7 @@
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode ? true : null" @toggle:change="value => togglePreviewMode(value)" />
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />
         Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
@@ -165,12 +165,12 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     useViewArea()
 
     return { theme }
   },
-  data () {
+  data() {
     // populate the list of tile providers with variants
     const isOverlay = function (providerName) {
       // https://github.com/leaflet-extras/leaflet-providers/blob/bc7482c62f1bbe3737682777716ec946e052deb6/preview/preview.js#L56
@@ -227,14 +227,16 @@ export default {
     }
   },
   methods: {
-    markerDefaultIcon (marker) {
-      const widgetDefinition = Object.values(ConfigurableWidgets).find((c) => c.widget && typeof c.widget === 'function' && c.widget().name === marker.component)
+    markerDefaultIcon(marker) {
+      const widgetDefinition = Object.values(ConfigurableWidgets).find(
+        (c) => c.widget && typeof c.widget === 'function' && c.widget().name === marker.component
+      )
       if (widgetDefinition) {
         return widgetDefinition.widget().icon
       }
       return null
     },
-    addWidget (component, widgetType, parentContext, slot) {
+    addWidget(component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -249,12 +251,14 @@ export default {
         this.forceUpdate()
       }
     },
-    getWidgetDefinition (componentType) {
-      const component = Object.values(ConfigurableWidgets).find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
+    getWidgetDefinition(componentType) {
+      const component = Object.values(ConfigurableWidgets).find(
+        (w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType
+      )
       if (!component) return null
       return component.widget()
     },
-    configureMarker (ev, marker, context) {
+    configureMarker(ev, marker, context) {
       let el = ev.target
       ev.cancelBubble = true
       while (!el.classList.contains('media-item')) {
@@ -263,14 +267,14 @@ export default {
       }
       this.context.editmode.configureWidget(marker, context)
     },
-    toYaml () {
+    toYaml() {
       this.pageYaml = YAML.stringify({
         component: this.page.component,
         config: this.page.config,
         markers: this.page.slots.default
       })
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
         this.page.config = updatedPage.config

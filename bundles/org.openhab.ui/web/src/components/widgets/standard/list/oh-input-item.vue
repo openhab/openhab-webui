@@ -29,12 +29,12 @@ export default {
     context: Object
   },
   widget: OhInputItemDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext } = useWidgetContext(props.context)
     return { config, childContext }
   },
   computed: {
-    afterComponent () {
+    afterComponent() {
       return {
         component: 'oh-input',
         config: this.config

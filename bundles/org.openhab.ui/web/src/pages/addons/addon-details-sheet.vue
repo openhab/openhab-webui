@@ -115,14 +115,14 @@ export default {
     AddonInfoTable
   },
   emits: ['closed', 'install', 'uninstall'],
-  data () {
+  data() {
     return {
       addon: {},
       bindingInfo: {}
     }
   },
   watch: {
-    opened (state) {
+    opened(state) {
       if (state) {
         if (!this.addonId) {
           this.addon = {}
@@ -145,34 +145,48 @@ export default {
     }
   },
   computed: {
-    state () {
+    state() {
       // TODO: figure out somehow whether the addon is BEING installed/uninstalled.
       if (!this.addon) return 'UNKNOWN'
       return this.addon.installed ? 'INSTALLED' : 'UNINSTALLED'
     },
-    installableAddon () {
-      return (this.addon && this.addon.contentType && (this.addon.contentType === 'application/vnd.openhab.bundle' || this.addon.contentType.indexOf('application/vnd.openhab.feature') === 0))
+    installableAddon() {
+      return (
+        this.addon &&
+        this.addon.contentType &&
+        (this.addon.contentType === 'application/vnd.openhab.bundle' ||
+          this.addon.contentType.indexOf('application/vnd.openhab.feature') === 0)
+      )
     },
-    showUnverifiedAuthorWarning () {
+    showUnverifiedAuthorWarning() {
       return this.addon && !this.addon.verifiedAuthor && this.installableAddon
     },
-    showUnpublishedWarning () {
-      return (this.serviceId === 'marketplace' && this.addon.properties && this.addon.properties.tags && this.addon.properties.tags.indexOf('published') < 0)
+    showUnpublishedWarning() {
+      return (
+        this.serviceId === 'marketplace' &&
+        this.addon.properties &&
+        this.addon.properties.tags &&
+        this.addon.properties.tags.indexOf('published') < 0
+      )
     }
   },
   methods: {
-    toggleSwipeStep () {
+    toggleSwipeStep() {
       this.$refs.sheet.$el.f7Modal.stepToggle('.demo-sheet-swipe-to-step')
     },
-    install () {
-      this.$oh.api.post('/rest/addons/' + this.addonId + '/install' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), {}, 'text').then((data) => {
-        this.$emit('install', this.addon)
-      })
+    install() {
+      this.$oh.api
+        .post('/rest/addons/' + this.addonId + '/install' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), {}, 'text')
+        .then((data) => {
+          this.$emit('install', this.addon)
+        })
     },
-    uninstall () {
-      this.$oh.api.post('/rest/addons/' + this.addonId + '/uninstall' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), {}, 'text').then((data) => {
-        this.$emit('uninstall', this.addon)
-      })
+    uninstall() {
+      this.$oh.api
+        .post('/rest/addons/' + this.addonId + '/uninstall' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), {}, 'text')
+        .then((data) => {
+          this.$emit('uninstall', this.addon)
+        })
     }
   }
 }

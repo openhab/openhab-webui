@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" class="thing-add-page">
     <f7-navbar>
-      <oh-nav-content :title="(ready) ? 'New ' + thingType.label : 'New Thing'" save-link="Add" @save="save()" :f7router />
+      <oh-nav-content :title="ready ? 'New ' + thingType.label : 'New Thing'" save-link="Add" @save="save()" :f7router />
     </f7-navbar>
 
     <f7-block v-if="ready" class="block-narrow">
@@ -70,10 +70,10 @@ export default {
     ConfigSheet,
     ThingGeneralSettings
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     if (this.thingCopy) {
       delete this.thingCopy.editable
       delete this.thingCopy.properties
@@ -95,46 +95,54 @@ export default {
     }
   },
   computed: {
-    isExtensible () {
+    isExtensible() {
       if (!this.thingType || !this.thingType.extensibleChannelTypeIds) return false
       return this.thingType.extensibleChannelTypeIds.length > 0
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (this.ready) return
-      this.$oh.api.get('/rest/thing-types/' + this.thingTypeId).then((data) => {
-        this.thingType = data
-        try {
-          this.thing.ID = f7.utils.id()
-          this.thing.UID = this.thingTypeId + ':' + this.thing.ID
-        } catch (e) {
-          console.log('Cannot generate ID: ' + e)
-        }
-        if (!this.thingCopy) this.thing.label = this.thingType.label
-
-        if (this.thingCopy) {
-          if (this.thing.bridgeUID) this.thing.UID = [this.thing.thingTypeUID, this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':') + 1), this.thing.ID].join(':')
-          if (this.isExtensible) {
-            this.thing.channels.forEach((ch) => {
-              ch.uid = this.thing.UID + ':' + ch.id
-            })
-          } else {
-            this.thing.channels = []
+      this.$oh.api
+        .get('/rest/thing-types/' + this.thingTypeId)
+        .then((data) => {
+          this.thingType = data
+          try {
+            this.thing.ID = f7.utils.id()
+            this.thing.UID = this.thingTypeId + ':' + this.thing.ID
+          } catch (e) {
+            console.log('Cannot generate ID: ' + e)
           }
-        }
+          if (!this.thingCopy) this.thing.label = this.thingType.label
 
-        this.$oh.api.get('/rest/things?summary=true&staticDataOnly=true').then((things) => {
-          this.things = things
-          this.ready = true
+          if (this.thingCopy) {
+            if (this.thing.bridgeUID)
+              this.thing.UID = [
+                this.thing.thingTypeUID,
+                this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':') + 1),
+                this.thing.ID
+              ].join(':')
+            if (this.isExtensible) {
+              this.thing.channels.forEach((ch) => {
+                ch.uid = this.thing.UID + ':' + ch.id
+              })
+            } else {
+              this.thing.channels = []
+            }
+          }
+
+          this.$oh.api.get('/rest/things?summary=true&staticDataOnly=true').then((things) => {
+            this.things = things
+            this.ready = true
+          })
         })
-      }).catch((err) => {
-        console.error('Error loading thing type', err)
-        f7.dialog.alert('Error loading thing type: ' + err)
-        this.f7router.back()
-      })
+        .catch((err) => {
+          console.error('Error loading thing type', err)
+          f7.dialog.alert('Error loading thing type: ' + err)
+          this.f7router.back()
+        })
     },
-    save () {
+    save() {
       if (!this.thing.ID) {
         f7.dialog.alert('Please give a unique identifier')
         return
@@ -158,13 +166,16 @@ export default {
         })
       }
 
-      this.$oh.api.post('/rest/things', this.thing)
+      this.$oh.api
+        .post('/rest/things', this.thing)
         .then(() => {
-          f7.toast.create({
-            text: 'Thing created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          f7.toast
+            .create({
+              text: 'Thing created',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
           this.f7router.navigate('/settings/things/' + this.thing.UID)
         })
         .catch((error) => {

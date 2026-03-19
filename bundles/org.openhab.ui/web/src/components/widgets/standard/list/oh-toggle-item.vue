@@ -21,12 +21,12 @@ export default {
     context: Object
   },
   widget: OhToggleItemDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext } = useWidgetContext(props.context)
     return { config, childContext }
   },
   computed: {
-    afterComponent () {
+    afterComponent() {
       return {
         component: 'oh-toggle',
         config: this.config

@@ -14,26 +14,26 @@ export default {
     format: String
   },
   widget: OhClockDefinition,
-  setup (props) {
+  setup(props) {
     const { config, evaluateExpression } = useWidgetContext(props.context)
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, performAction }
   },
-  data () {
+  data() {
     return {
       date: ''
     }
   },
   methods: {
-    updateTime () {
+    updateTime() {
       this.date = dayjs().format(this.format || this.config.format || 'LTS')
     }
   },
-  mounted () {
+  mounted() {
     this.updateTime()
     this.timer = setInterval(this.updateTime, 1000)
   },
-  beforeUnmount () {
+  beforeUnmount() {
     clearInterval(this.timer)
   }
 }

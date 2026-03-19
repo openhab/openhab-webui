@@ -2,7 +2,7 @@
   <f7-popup>
     <f7-page :style="modalStyle" class="oh-popup">
       <f7-navbar
-        :title="(context.component.config && context.component.config.label) ? context.component.config.label : ''"
+        :title="context.component.config && context.component.config.label ? context.component.config.label : ''"
         :back-link="$t('dialogs.back')" />
 
       <f7-toolbar v-if="page && page.component === 'oh-tabs-page' && visibleToCurrentUser" tabbar labels bottom>
@@ -54,7 +54,7 @@ export default {
   components: {
     EmptyStatePlaceholder
   },
-  setup () {
+  setup() {
     useViewArea()
   }
 }

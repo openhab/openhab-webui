@@ -62,7 +62,7 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -79,10 +79,10 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    load () {
+    load() {
       this.loading = true
       this.$oh.api.get('/rest/persistence/health').then((data) => {
         this.persistenceProblems = data
@@ -90,21 +90,21 @@ export default {
         this.ready = true
       })
     },
-    problemKey (persistenceProblem) {
+    problemKey(persistenceProblem) {
       let key = persistenceProblem.reason
       if (persistenceProblem.serviceId) key = key + '_' + persistenceProblem.serviceId
       if (persistenceProblem.items) key = key + '_' + persistenceProblem.items.join('_')
     },
-    getLinkForProblem (persistenceProblem) {
+    getLinkForProblem(persistenceProblem) {
       if (persistenceProblem.serviceId) {
         return '/settings/persistence/' + persistenceProblem.serviceId
       }
       return '/settings/persistence/'
     },
-    explanation (reason) {
+    explanation(reason) {
       return this.persistenceProblemExplanation[reason] || reason
     },
-    plural (count) {
+    plural(count) {
       return count === 1 ? '' : 's'
     }
   }

@@ -52,33 +52,46 @@ export default {
   components: {
     ConfigSheet
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       transformations: []
     }
   },
   computed: {
-    stateDescriptionParameters () {
+    stateDescriptionParameters() {
       const options = this.transformations
-        .map((t) => { return { label: t.label, value: `${t.type.toUpperCase()}(${t.uid}):%s` } })
-        .sort((a, b) => (a.label).localeCompare(b.label))
+        .map((t) => {
+          return { label: t.label, value: `${t.type.toUpperCase()}(${t.uid}):%s` }
+        })
+        .sort((a, b) => a.label.localeCompare(b.label))
       return [
         { type: 'BOOLEAN', name: 'readOnly', label: 'Read only', description: 'Item is read-only and should not accept commands' },
-        { type: 'TEXT', name: 'pattern', label: 'Pattern', description: 'Pattern or transformation applied to the state for display purposes', options, limitToOptions: false },
+        {
+          type: 'TEXT',
+          name: 'pattern',
+          label: 'Pattern',
+          description: 'Pattern or transformation applied to the state for display purposes',
+          options,
+          limitToOptions: false
+        },
         { type: 'TEXT', name: 'min', label: 'Min', description: 'Minimum allowed value' },
         { type: 'TEXT', name: 'max', label: 'Max', description: 'Maximum allowed value' },
         { type: 'TEXT', name: 'step', label: 'Step', description: 'Minimum interval between values' }
       ]
     },
-    options () {
+    options() {
       if (!this.metadata.config.options) return []
-      return this.metadata.config.options.trim().split(',').map((s) => s.trim()).join('\n')
+      return this.metadata.config.options
+        .trim()
+        .split(',')
+        .map((s) => s.trim())
+        .join('\n')
     },
-    docLink () {
+    docLink() {
       const docUrl = `${useRuntimeStore().websiteUrl}/link/thing`
       if (this.namespace === 'stateDescription') {
         return docUrl + '#state-description'
@@ -88,10 +101,14 @@ export default {
     }
   },
   methods: {
-    updateOptions (ev) {
-      this.metadata.config.options = ev.target.value.split('\n').map((s) => s.trim()).join(',').trim()
+    updateOptions(ev) {
+      this.metadata.config.options = ev.target.value
+        .split('\n')
+        .map((s) => s.trim())
+        .join(',')
+        .trim()
     },
-    load () {
+    load() {
       if (this.namespace === 'commandDescription') {
         this.ready = true
         return
@@ -102,7 +119,7 @@ export default {
       })
     }
   },
-  created () {
+  created() {
     this.load()
   }
 }

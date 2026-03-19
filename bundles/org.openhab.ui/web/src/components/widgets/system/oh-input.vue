@@ -6,12 +6,12 @@
       :type="type"
       v-bind="config"
       :style="{ width: '100%', ...config.style }"
-      :value="((type && type.indexOf('date') === 0) || type === 'time') ? valueForDatepicker : value"
+      :value="(type && type.indexOf('date') === 0) || type === 'time' ? valueForDatepicker : value"
       :calendar-params="calendarParams"
       :step="config.step ? config.step : 'any'"
       @focus="listenForEnterKey"
       @blur="stopListeningForEnterKey"
-      @input="$evt => updated($evt.target.value)"
+      @input="($evt) => updated($evt.target.value)"
       @calendar:change="updated"
       @texteditor:change="updated"
       @colorpicker:change="updated">
@@ -63,18 +63,18 @@ export default {
     context: Object
   },
   widget: OhInputDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, defaultSlots } = useWidgetContext(props.context)
     return { config, childContext, defaultSlots }
   },
-  data () {
+  data() {
     return {
       item: null,
       pendingUpdate: null
     }
   },
   computed: {
-    value () {
+    value() {
       let variableLocation = this.context.vars
       if (this.config.variable) {
         const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
@@ -98,11 +98,11 @@ export default {
       }
       return this.config.defaultValue
     },
-    type () {
+    type() {
       return this.config.type || getDefaultInputType(this.item?.type) || 'text'
     },
     // Returns the unit from the item's displayState, state description pattern or the item's unit symbol
-    unit () {
+    unit() {
       if (this.type !== 'number') return null
       if (!this.item?.unitSymbol) return null
 
@@ -118,11 +118,11 @@ export default {
     // Returns the index of the last pattern in the stateDescription
     // Example: displayState = "Some label %0.1f footext °C", returns 2
     // Returns -1 if no pattern is found
-    valueIndexInDisplayState () {
+    valueIndexInDisplayState() {
       const parts = this.item?.stateDescription?.pattern?.trim()?.split(/\s+/) || []
       return parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
     },
-    calendarParams () {
+    calendarParams() {
       if (this.type !== 'datepicker') return null
       let params = { dateFormat: { year: 'numeric', month: 'numeric', day: 'numeric' } }
       if (this.config.showTime) {
@@ -135,7 +135,7 @@ export default {
         ...this.config.calendarParams
       }
     },
-    valueForDatepicker () {
+    valueForDatepicker() {
       const value = Array.isArray[this.value] ? this.value[0] : this.value
       const datetime = new Date(value)
       if (isNaN(datetime)) return null
@@ -153,7 +153,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     if (this.config.item) {
       this.$oh.api.get(`/rest/items/${this.config.item}?recursive=false`).then((item) => {
         this.item = item
@@ -166,7 +166,7 @@ export default {
     }
   },
   methods: {
-    updated (value) {
+    updated(value) {
       if (this.type === 'texteditor') {
         value = this.$$(this.$refs.input.$el).find('.text-editor-content')[0].innerHTML
         if (value === this.value) return
@@ -176,37 +176,47 @@ export default {
         if (!time) return // avoid error being thrown because there is no match
         time = time.groups
         if (isNaN(time.hour) || isNaN(time.minute)) return
-        value = dayjs(oldDate).set('hour', time.hour).set('minute', time.minute).set('second', isNaN(time.second) ? 0 : time.second).set('millisecond', 0).format()
-        if ((new Date(oldDate)).getTime() === (new Date(value)).getTime()) return
+        value = dayjs(oldDate)
+          .set('hour', time.hour)
+          .set('minute', time.minute)
+          .set('second', isNaN(time.second) ? 0 : time.second)
+          .set('millisecond', 0)
+          .format()
+        if (new Date(oldDate).getTime() === new Date(value).getTime()) return
       } else if (this.type === 'date') {
         const oldDate = dayjs(Array.isArray[this.value] ? this.value[0] : this.value).set('millisecond', 0)
-        value = dayjs(value).set('hour', oldDate.get('hour')).set('minute', oldDate.get('minute')).set('second', oldDate.get('second')).set('millisecond', 0).format()
-        if ((new Date(oldDate)).getTime() === (new Date(value)).getTime()) return
+        value = dayjs(value)
+          .set('hour', oldDate.get('hour'))
+          .set('minute', oldDate.get('minute'))
+          .set('second', oldDate.get('second'))
+          .set('millisecond', 0)
+          .format()
+        if (new Date(oldDate).getTime() === new Date(value).getTime()) return
       } else if (this.type === 'datepicker' && Array.isArray(value) && this.valueForDatepicker[0].getTime() === value[0].getTime()) {
         return
       }
       this.pendingUpdate = value
       if (this.config.variable) {
         const variableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.variable)
-        const variableLocation = (variableScope) ? this.context.ctxVars[variableScope] : this.context.vars
+        const variableLocation = variableScope ? this.context.ctxVars[variableScope] : this.context.vars
         if (this.config.variableKey) {
           value = setVariableKeyValues(variableLocation[this.config.variable], this.config.variableKey, value)
         }
         variableLocation[this.config.variable] = value
       }
     },
-    listenForEnterKey (evt) {
+    listenForEnterKey(evt) {
       evt.target.addEventListener('keyup', this.keyUp)
     },
-    stopListeningForEnterKey (evt) {
+    stopListeningForEnterKey(evt) {
       evt.target.removeEventListener('keyup', this.keyUp)
     },
-    keyUp (evt) {
+    keyUp(evt) {
       if (evt.key === 'Enter') {
         this.sendButtonClicked()
       }
     },
-    sendButtonClicked () {
+    sendButtonClicked() {
       if (this.config.item && this.pendingUpdate) {
         let cmd = this.pendingUpdate
         if (this.unit) {
@@ -219,19 +229,23 @@ export default {
         this.pendingUpdate = null
       }
     },
-    extractUnit (pattern) {
+    extractUnit(pattern) {
       if (!pattern) return null
       return pattern.trim().split(/\s+/).pop()
     },
-    extractValue (pattern) {
+    extractValue(pattern) {
       if (!pattern) return null
 
       const parts = pattern.trim().split(/\s+/)
       switch (parts.length) {
-        case 0: return null
-        case 1: return pattern
-        case 2: return parts[0]
-        default: return parts[this.valueIndexInDisplayState]
+        case 0:
+          return null
+        case 1:
+          return pattern
+        case 2:
+          return parts[0]
+        default:
+          return parts[this.valueIndexInDisplayState]
       }
     }
   }

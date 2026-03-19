@@ -7,7 +7,7 @@
     <f7-block class="items-add-from-textual-definition">
       <div v-if="ready" class="row items-parser resizable">
         <div class="col">
-          <editor class="editor" :value="code" @input="(value: string) => code = value" :mode="mediaType" @save="add()" />
+          <editor class="editor" :value="code" @input="(value: string) => (code = value)" :mode="mediaType" @save="add()" />
         </div>
         <span class="resize-handler" />
       </div>
@@ -61,7 +61,7 @@
                       <oh-icon v-if="item.category" :icon="item.category" :width="20" :height="20" />
                     </td>
                     <td class="label-cell">
-                      {{ (item.groupNames) ? item.groupNames.join(', ') : '' }}
+                      {{ item.groupNames ? item.groupNames.join(', ') : '' }}
                     </td>
                     <td v-if="item.tags" class="label-cell">
                       <f7-chip v-for="tag in item.tags" class="margin-right" :key="tag" :text="tag" media-bg-color="blue">
@@ -77,7 +77,11 @@
                         <div v-if="link.configuration">
                           <em>{{ link.channelUID }}</em
                           ><br />
-                          <small>{{ Object.keys(link.configuration).map((key) => key + '=' + link.configuration![key]).join(', ') }}</small>
+                          <small>{{
+                            Object.keys(link.configuration)
+                              .map((key) => key + '=' + link.configuration![key])
+                              .join(', ')
+                          }}</small>
                         </div>
                         <em v-else>{{ link.channelUID }}</em>
                       </div>
@@ -91,7 +95,11 @@
                         :key="item.name + '_' + namespace">
                         <div v-if="value.config">
                           {{ namespace }}="{{ value.value }}" [
-                          <small>{{ Object.keys(value.config).map((key) => key + '=' + value.config![key]).join(', ') }}</small>
+                          <small>{{
+                            Object.keys(value.config)
+                              .map((key) => key + '=' + value.config![key])
+                              .join(', ')
+                          }}</small>
                           ]
                         </div>
                         <div v-else>{{ namespace }}="{{ value.value }}"</div>
@@ -116,7 +124,7 @@
           small
           :key="type"
           :active="codeEditorType === type"
-          @click="codeEditorType = (type as CodeEditorType)">
+          @click="codeEditorType = type as CodeEditorType">
           {{ type }}
         </f7-button>
       </f7-segmented>
@@ -172,7 +180,7 @@ const props = defineProps<{
 
 // data
 interface ExtendedFileFormatItem extends api.FileFormatItem {
-  existing?: api.EnrichedItem,
+  existing?: api.EnrichedItem
   existingLinks?: api.ItemChannelLink[]
 }
 
@@ -190,9 +198,12 @@ const { codeEditorType } = storeToRefs(uiOptionsStore)
 const mediaType = computed(() => SupportedMediaTypes.items[codeEditorType.value])
 
 // watchers
-watch(code, debounce(() => {
-  parseItems()
-}, 300))
+watch(
+  code,
+  debounce(() => {
+    parseItems()
+  }, 300)
+)
 
 watch(codeEditorType, () => {
   parseItems()
@@ -204,40 +215,42 @@ const onPageAfterIn = () => {
 }
 
 const load = async () => {
-  const data = await Promise.all([
-    api.getItems(),
-    api.getThings(),
-    api.getItemLinks()
-  ])
-    items.value = data[0]!
-    things.value = data[1]!
-    links.value = data[2]!
-    ready.value = true
+  const data = await Promise.all([api.getItems(), api.getThings(), api.getItemLinks()])
+  items.value = data[0]!
+  things.value = data[1]!
+  links.value = data[2]!
+  ready.value = true
 }
 
 const parseItems = () => {
-  api.parse({
-    body: code.value
-  }, {
-    headers: {
-      'Content-Type': mediaType.value,
-      accept: 'application/json'
-    }
-  }).then((data) => {
-    parseError.value = null
-    parsedItems.value = data!.items.map((item) => {
-      const extendedItem: ExtendedFileFormatItem = { ...item }
-
-      extendedItem.existing = items.value.find((i) => i.name === item.name)
-      if (extendedItem.existing) {
-        extendedItem.existingLinks = links.value.filter((l) => l.itemName === item.name)
+  api
+    .parse(
+      {
+        body: code.value
+      },
+      {
+        headers: {
+          'Content-Type': mediaType.value,
+          accept: 'application/json'
+        }
       }
+    )
+    .then((data) => {
+      parseError.value = null
+      parsedItems.value = data!.items.map((item) => {
+        const extendedItem: ExtendedFileFormatItem = { ...item }
 
-      return extendedItem
+        extendedItem.existing = items.value.find((i) => i.name === item.name)
+        if (extendedItem.existing) {
+          extendedItem.existingLinks = links.value.filter((l) => l.itemName === item.name)
+        }
+
+        return extendedItem
+      })
     })
-  }).catch(async (err) => {
-    parseError.value = await err.response.text()
-  })
+    .catch(async (err) => {
+      parseError.value = await err.response.text()
+    })
 }
 
 const add = () => {
@@ -245,7 +258,9 @@ const add = () => {
   if (!parsedItems.value.length) return
 
   if (parsedItems.value.some((i) => i.existing && i.existing.editable === false)) {
-    f7.dialog.alert('Some items are already existing are not editable. Look for red icons besides the names of affected items, remove them from your input and try again.')
+    f7.dialog.alert(
+      'Some items are already existing are not editable. Look for red icons besides the names of affected items, remove them from your input and try again.'
+    )
     return
   }
 
@@ -263,56 +278,65 @@ const add = () => {
   })
 
   let dialog = f7.dialog.progress('Creating/updating Items...')
-  api.addOrUpdateItemsInRegistry({ body: itemsPayload }).then(() => {
-    dialog.setText('Updating links and metadata...')
-    dialog.setProgress(50)
+  api
+    .addOrUpdateItemsInRegistry({ body: itemsPayload })
+    .then(() => {
+      dialog.setText('Updating links and metadata...')
+      dialog.setProgress(50)
 
-    const linksAndMetadataPromises: Promise<any>[] = []
-    parsedItems.value.forEach((item) => {
-      if (item.existingLinks) {
-        // Remove existing links unless they're about to be modified
-        item.existingLinks.forEach((el) => {
-          if (item.channelLinks && item.channelLinks.some((l) => l.channelUID === el.channelUID)) return
-          linksAndMetadataPromises.push(api.unlinkItemFromChannel({ itemName: item.name, channelUID: el.channelUID }))
-        })
-      }
+      const linksAndMetadataPromises: Promise<any>[] = []
+      parsedItems.value.forEach((item) => {
+        if (item.existingLinks) {
+          // Remove existing links unless they're about to be modified
+          item.existingLinks.forEach((el) => {
+            if (item.channelLinks && item.channelLinks.some((l) => l.channelUID === el.channelUID)) return
+            linksAndMetadataPromises.push(api.unlinkItemFromChannel({ itemName: item.name, channelUID: el.channelUID }))
+          })
+        }
 
-      if (item.channelLinks) {
-        item.channelLinks.forEach((l) => {
-          linksAndMetadataPromises.push(api.linkItemToChannel({
-            itemName: item.name,
-            channelUID: l.channelUID,
-            itemChannelLink: { ...l, itemName: item.name } as api.ItemChannelLink
-          }))
-        })
-      }
+        if (item.channelLinks) {
+          item.channelLinks.forEach((l) => {
+            linksAndMetadataPromises.push(
+              api.linkItemToChannel({
+                itemName: item.name,
+                channelUID: l.channelUID,
+                itemChannelLink: { ...l, itemName: item.name } as api.ItemChannelLink
+              })
+            )
+          })
+        }
 
-      if (item.metadata) {
-         Object.keys(item.metadata).forEach((namespace) => {
-           const m = item.metadata![namespace]!
-          linksAndMetadataPromises.push(api.addMetadataToItem({ itemName: item.name, namespace: namespace, metadata: m }))
+        if (item.metadata) {
+          Object.keys(item.metadata).forEach((namespace) => {
+            const m = item.metadata![namespace]!
+            linksAndMetadataPromises.push(api.addMetadataToItem({ itemName: item.name, namespace: namespace, metadata: m }))
+          })
+        }
+      })
+
+      Promise.all(linksAndMetadataPromises)
+        .then(() => {
+          dialog.setProgress(100)
+          f7.toast
+            .create({
+              text: 'Items created and linked',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          dialog.close()
+          props.f7router.back()
         })
-      }
+        .catch((err) => {
+          dialog.close()
+          console.error(err)
+          f7.dialog.alert('An error occurred while creating the links and metadata: ' + err.message)
+        })
     })
-
-    Promise.all(linksAndMetadataPromises).then(() => {
-      dialog.setProgress(100)
-      f7.toast.create({
-        text: 'Items created and linked',
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
-      dialog.close()
-      props.f7router.back()
-    }).catch((err) => {
+    .catch((err) => {
       dialog.close()
       console.error(err)
-      f7.dialog.alert('An error occurred while creating the links and metadata: ' + err.message)
+      f7.dialog.alert('An error occurred while creating the items: ' + err.message)
     })
-  }).catch((err) => {
-    dialog.close()
-    console.error(err)
-    f7.dialog.alert('An error occurred while creating the items: ' + err.message)
-  })
 }
 </script>

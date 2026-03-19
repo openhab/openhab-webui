@@ -3,7 +3,7 @@
     :id="popupId"
     class="editor-popup"
     :tablet-fullscreen="fullscreen"
-    @popup:opened="() => showEditor = true"
+    @popup:opened="() => (showEditor = true)"
     @popup:closed="popupClosed">
     <f7-page class="code-editor-content">
       <f7-navbar :title="title">
@@ -37,18 +37,18 @@ export default {
     fullscreen: Boolean,
     popupId: String
   },
-  data () {
+  data() {
     return {
       code: this.value,
       showEditor: false
     }
   },
   methods: {
-    popupClosed () {
+    popupClosed() {
       f7.emit('scriptEditorClosed')
       this.showEditor = false
     },
-    update () {
+    update() {
       f7.emit('scriptEditorUpdate', this.code)
     }
   }

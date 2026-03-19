@@ -86,18 +86,18 @@ export default {
     OhPlaceholderWidget
   },
   widget: OhSwiperDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, slots, defaultSlots } = useWidgetContext(props.context)
     return { config, childContext, slots, defaultSlots }
   },
   computed: {
-    slides () {
+    slides() {
       return this.defaultSlots.filter((c) => c.component !== 'oh-repeater')
     },
-    repeater () {
+    repeater() {
       return this.defaultSlots.filter((c) => c.component === 'oh-repeater')
     },
-    mergedConfig () {
+    mergedConfig() {
       const config = Object.assign({}, this.config)
       // provide backwards compatibility for the params object as passed to f7-swiper in F7 v5
       if (config.params) {

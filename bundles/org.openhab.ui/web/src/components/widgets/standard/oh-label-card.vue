@@ -7,10 +7,10 @@
         @taphold="onTaphold($event)"
         @contextmenu="onContextMenu($event)"
         :class="[
-                         'label-card-content',
-                         config.vertical ? 'vertical-arrangement' : '',
-                         ...(Array.isArray(config.contentClass) ? config.contentClass : []),
-                       ]"
+          'label-card-content',
+          config.vertical ? 'vertical-arrangement' : '',
+          ...(Array.isArray(config.contentClass) ? config.contentClass : [])
+        ]"
         :style="{ background: config.background, ...config.contentStyle }">
         <oh-trend v-if="config.trendItem" :key="'trend' + config.item" class="trend" :width="trendWidth" :context="context" />
         <f7-list>
@@ -20,7 +20,7 @@
                 :icon="config.icon"
                 :height="config.iconSize || 32"
                 :width="config.iconSize || 32"
-                :state="(config.item && config.iconUseState) ? context.store[config.item].state : null"
+                :state="config.item && config.iconUseState ? context.store[config.item].state : null"
                 :color="config.iconColor" />
             </template>
             <div v-if="config.label || config.item" :class="config.class">
@@ -79,23 +79,17 @@ export default {
     const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, hasAction, evaluateExpression, performAction, onTaphold, onContextMenu }
   },
-  data () {
+  data() {
     return {
       trendWidth: 0
     }
   },
-  mounted () {
-    this.trendWidth = this.$refs.cardContent
-      ? this.$refs.cardContent.$el.clientWidth
-      : 0
+  mounted() {
+    this.trendWidth = this.$refs.cardContent ? this.$refs.cardContent.$el.clientWidth : 0
   },
   computed: {
-    label () {
-      return (
-        this.config.label ||
-        this.context.store[this.config.item].displayState ||
-        this.context.store[this.config.item].state
-      )
+    label() {
+      return this.config.label || this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
     }
   }
 }

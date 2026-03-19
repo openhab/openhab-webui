@@ -113,7 +113,10 @@
             <div class="padding text-align-center">Nothing selected</div>
           </f7-block>
           <f7-block
-            v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)">
+            v-if="
+              !selectedItem ||
+              (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)
+            ">
             <div><f7-block-title>Add to Model</f7-block-title></div>
             <f7-card>
               <f7-card-content>
@@ -138,7 +141,10 @@
 
     <template #fixed>
       <f7-fab
-        v-if="!selectedItem || (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)"
+        v-if="
+          !selectedItem ||
+          (selectedItem.item.created !== false && selectedItem.item.type === 'Group' && selectedItem.class.indexOf('Point_') < 0)
+        "
         class="add-to-model-fab"
         position="right-bottom"
         color="blue">
@@ -324,12 +330,13 @@ export default {
     MetadataMenu,
     LinkDetails
   },
-  setup () {
+  setup() {
     return {
-      f7, theme
+      f7,
+      theme
     }
   },
-  data () {
+  data() {
     return {
       newItem: null,
       newItemParent: null,
@@ -341,16 +348,16 @@ export default {
     }
   },
   computed: {
-    empty () {
+    empty() {
       let emptySemantic = !this.rootLocations.length && !this.rootEquipment.length && !this.rootPoints.length
-      return (this.includeNonSemantic) ? emptySemantic && !this.rootGroups.length && !this.rootItems.length : emptySemantic
+      return this.includeNonSemantic ? emptySemantic && !this.rootGroups.length && !this.rootItems.length : emptySemantic
     },
-    context () {
+    context() {
       return {
         store: useStatesStore().trackedItems
       }
     },
-    searchPlaceholder () {
+    searchPlaceholder() {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     ...mapWritableState(useRuntimeStore, {
@@ -365,7 +372,7 @@ export default {
     })
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       useStatesStore().startTrackingStates()
       if (this.selectedItem) {
         this.update()
@@ -374,17 +381,17 @@ export default {
         this.load()
       }
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       this.detailsOpened = false
       useStatesStore().stopTrackingStates()
       this.stopEventSource()
       useLastSearchQueryStore().lastModelSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
-    modelItem (item) {
+    modelItem(item) {
       const modelItem = {
         item,
         opened: false,
-        class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
+        class: item.metadata && item.metadata.semantics ? item.metadata.semantics.value : '',
         children: {
           locations: [],
           equipment: [],
@@ -405,7 +412,7 @@ export default {
 
       return modelItem
     },
-    load () {
+    load() {
       if (this.initSearchbar) useLastSearchQueryStore().lastModelSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
@@ -421,30 +428,34 @@ export default {
         if (!this.eventSource) this.startEventSource()
       })
     },
-    update () {
+    update() {
       this.previousSelection = this.selectedItem
       this.newItem = null
       this.load()
       // this.newItemParent = null
     },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/items/*/added,openhab/items/*/updated,openhab/items/*/removed', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[3]) {
-          case 'added':
-          case 'removed':
-          case 'updated':
-            // this.ready = false
-            this.update()
-            break
+    startEventSource() {
+      this.eventSource = this.$oh.sse.connect(
+        '/rest/events?topics=openhab/items/*/added,openhab/items/*/updated,openhab/items/*/removed',
+        null,
+        (event) => {
+          const topicParts = event.topic.split('/')
+          switch (topicParts[3]) {
+            case 'added':
+            case 'removed':
+            case 'updated':
+              // this.ready = false
+              this.update()
+              break
+          }
         }
-      })
+      )
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    selectItem (item) {
+    selectItem(item) {
       // Allow deselecting by clicking a second time
       if (this.selectedItem === item) {
         this.clearSelection()
@@ -464,25 +475,25 @@ export default {
         }
       }
     },
-    clearSelection (ev) {
+    clearSelection(ev) {
       if (!ev || (ev.target && ev.currentTarget && ev.target === ev.currentTarget)) {
         this.selectedItem = null
         this.previousSelection = null
         this.detailsOpened = false
       }
     },
-    changeNonSemantic () {
+    changeNonSemantic() {
       this.rootGroups = []
       this.rootItems = []
       this.load()
     },
-    toggleExpanded () {
+    toggleExpanded() {
       this.expanded = !this.expanded
       this.applyExpandedOption()
     },
-    addSemanticItem (semanticType) {
+    addSemanticItem(semanticType) {
       this.newItem = {
-        type: (semanticType === 'Point') ? 'Switch' : 'Group',
+        type: semanticType === 'Point' ? 'Switch' : 'Group',
         name: '',
         label: '',
         category: '',
@@ -498,8 +509,7 @@ export default {
         this.newItem.groupNames = [this.selectedItem.item.name]
         if (this.selectedItem.item.metadata && this.selectedItem.item.metadata.semantics) {
           const semantics = this.selectedItem.item.metadata.semantics
-          if (semantics.value.indexOf('Location') === 0 &&
-              semanticType.indexOf('Location') < 0) {
+          if (semantics.value.indexOf('Location') === 0 && semanticType.indexOf('Location') < 0) {
             this.newItem.metadata.semantics.config = {
               hasLocation: this.selectedItem.item.name
             }
@@ -519,9 +529,9 @@ export default {
       this.detailsTab = 'item'
       this.load()
     },
-    addNonSemanticItem (group) {
+    addNonSemanticItem(group) {
       this.newItem = {
-        type: (group) ? 'Group' : 'String',
+        type: group ? 'Group' : 'String',
         name: '',
         label: '',
         category: '',
@@ -536,40 +546,43 @@ export default {
       this.detailsTab = 'item'
       this.load()
     },
-    addFromThing (createEquipment) {
-      this.f7router.navigate({
-        url: 'add-thing',
-        route: {
-          component: AddFromThing,
-          path: 'add-thing',
-          props: {
-          },
-          on: {
-            pageAfterOut (event, page) {
+    addFromThing(createEquipment) {
+      this.f7router.navigate(
+        {
+          url: 'add-thing',
+          route: {
+            component: AddFromThing,
+            path: 'add-thing',
+            props: {},
+            on: {
+              pageAfterOut(event, page) {}
             }
           }
-        }
-      }, {
-        props: {
-          parent: this.selectedItem,
-          createEquipment
-        }
-      })
-    },
-    addFromLocationTemplate () {
-      this.f7router.navigate({
-        url: 'add-template',
-        route: {
-          component: AddFromTemplate,
-          path: 'add-template',
+        },
+        {
           props: {
+            parent: this.selectedItem,
+            createEquipment
           }
         }
-      }, {
-        props: {
-          itemList: this.items
+      )
+    },
+    addFromLocationTemplate() {
+      this.f7router.navigate(
+        {
+          url: 'add-template',
+          route: {
+            component: AddFromTemplate,
+            path: 'add-template',
+            props: {}
+          }
+        },
+        {
+          props: {
+            itemList: this.items
+          }
         }
-      })
+      )
     }
   }
 }

@@ -122,7 +122,7 @@ export default {
   components: {
     ConfigSheet
   },
-  data () {
+  data() {
     return {
       deviceTypes,
       classesDefs: deviceTypesAndAttributes,
@@ -133,7 +133,7 @@ export default {
       ready: false
     }
   },
-  created () {
+  created() {
     this.multiple = !!this.metadata.value && this.metadata.value.indexOf(',') > 0
     this.itemType = this.item.groupType || this.item.type
 
@@ -141,13 +141,9 @@ export default {
       this.metadata.config = {}
     }
   },
-  mounted () {
+  mounted() {
     if (this.itemType === 'Group' && this.item.members) {
-      Promise.all(
-        this.item.members.map((member) =>
-          this.$oh.api.get(`/rest/items/${member.name}?metadata=matter`)
-        )
-      ).then((responses) => {
+      Promise.all(this.item.members.map((member) => this.$oh.api.get(`/rest/items/${member.name}?metadata=matter`))).then((responses) => {
         this.item.members = this.item.members.map((member, index) => {
           return {
             ...member,
@@ -162,28 +158,30 @@ export default {
     }
   },
   computed: {
-    classesAsArray () {
-      return (this.metadata.value) ? this.metadata.value.split(',') : []
+    classesAsArray() {
+      return this.metadata.value ? this.metadata.value.split(',') : []
     },
-    classes () {
+    classes() {
       if (!this.multiple) return this.metadata.value
       return this.classesAsArray
     },
-    shouldShowAttributeMapping () {
+    shouldShowAttributeMapping() {
       // Show attribute mapping if:
       // 1. It's a Group item (regardless of groupType)
       // 2. Has selected device types
       // 3. At least one selected device type has attributes defined
-      return this.item.type === 'Group' &&
-             this.classes &&
-             this.classes.length &&
-             this.classesAsArray.some((deviceType) => this.deviceTypes[deviceType]?.attributes?.length > 0)
+      return (
+        this.item.type === 'Group' &&
+        this.classes &&
+        this.classes.length &&
+        this.classesAsArray.some((deviceType) => this.deviceTypes[deviceType]?.attributes?.length > 0)
+      )
     },
-    parametersGroups () {
+    parametersGroups() {
       if (!this.classes || !this.multiple) return []
       return this.classesAsArray.map((type) => ({ name: type, label: type }))
     },
-    parameters () {
+    parameters() {
       if (!this.classes) return matterParameters.global || []
 
       if (!this.multiple) {
@@ -191,15 +189,17 @@ export default {
       }
 
       // For multiple selection, show parameters for all selected types
-      return this.classesAsArray.flatMap((type) => {
-        const typeParams = matterParameters[type] || []
-        return typeParams.map((opt) => ({ ...opt, groupName: type }))
-      }).concat(matterParameters.global || [])
+      return this.classesAsArray
+        .flatMap((type) => {
+          const typeParams = matterParameters[type] || []
+          return typeParams.map((opt) => ({ ...opt, groupName: type }))
+        })
+        .concat(matterParameters.global || [])
     },
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    getAvailableDeviceTypes () {
+    getAvailableDeviceTypes() {
       if (this.item.type !== 'Group') {
         return Object.keys(this.deviceTypes).filter((type) => {
           const device = this.deviceTypes[type]
@@ -217,34 +217,29 @@ export default {
         ? Object.keys(this.deviceTypes)
         : Object.keys(this.deviceTypes).filter((type) => this.deviceTypes[type]?.attributes?.length > 0)
     },
-    isLinked (deviceType, attribute, item) {
+    isLinked(deviceType, attribute, item) {
       if (!item?.metadata?.matter?.value) return false
 
       const value = item.metadata.matter.value.toLowerCase()
       return attribute === null ? value === deviceType.toLowerCase() : value === attribute.toLowerCase()
     },
-    isSelected (deviceType) {
-      return this.multiple
-        ? this.classes.includes(deviceType)
-        : this.classes === deviceType
+    isSelected(deviceType) {
+      return this.multiple ? this.classes.includes(deviceType) : this.classes === deviceType
     },
-    toggleMultiple () {
+    toggleMultiple() {
       this.multiple = !this.multiple
       this.metadata.value = ''
       this.classSelectKey = f7.utils.id()
     },
-    updateClasses () {
+    updateClasses() {
       const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = Array.isArray(value) ? value.join(',') : value
       this.metadata.config = {}
     },
-    updateLinkedItem (deviceType, attribute, itemName) {
+    updateLinkedItem(deviceType, attribute, itemName) {
       if (!itemName) {
         // Handle unlinking
-        const groupMbr = this.item.members.find((mbr) =>
-          mbr.metadata?.matter?.value?.toLowerCase() ===
-          attribute.toLowerCase()
-        )
+        const groupMbr = this.item.members.find((mbr) => mbr.metadata?.matter?.value?.toLowerCase() === attribute.toLowerCase())
         if (groupMbr) {
           groupMbr.metadata.matter.value = ''
           this.dirtyItem.add(groupMbr)
@@ -265,7 +260,7 @@ export default {
         this.dirtyItem.add(groupMbr)
       }
     },
-    updatedLinkedItem () {
+    updatedLinkedItem() {
       Promise.all(
         Array.from(this.dirtyItem).map((item) => {
           if (!item.metadata.matter.value) {
@@ -278,24 +273,26 @@ export default {
             })
           }
         })
-      ).then(() => {
-        this.dirtyItem.clear()
-        f7.toast.create({
-          text: 'Group members updated',
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        console.error('Failed to update group members:', err)
-      })
+      )
+        .then(() => {
+          this.dirtyItem.clear()
+          f7.toast
+            .create({
+              text: 'Group members updated',
+              closeTimeout: 2000
+            })
+            .open()
+        })
+        .catch((err) => {
+          console.error('Failed to update group members:', err)
+        })
     },
-    getMappedChild (attributeName) {
+    getMappedChild(attributeName) {
       // Return the child item mapped to this attribute (all lowercase)
       const attr = attributeName.toLowerCase()
-      return this.item.members && this.item.members.find((mbr) =>
-        mbr.metadata?.matter?.value?.toLowerCase() === attr
-      )
+      return this.item.members && this.item.members.find((mbr) => mbr.metadata?.matter?.value?.toLowerCase() === attr)
     },
-    getAttributeOptions (attributeName, deviceType) {
+    getAttributeOptions(attributeName, deviceType) {
       // Find the attribute in deviceTypes and return its mapping options if present
       const type = this.deviceTypes[deviceType]
       if (!type || !type.attributes) return []
@@ -305,14 +302,14 @@ export default {
       }
       return []
     },
-    getChildMapping (attributeName, optionLabel, optionValue) {
+    getChildMapping(attributeName, optionLabel, optionValue) {
       // Get the mapped value for this option from the mapped child's metadata.config
       const mappedChild = this.getMappedChild(attributeName)
       if (!mappedChild) return optionValue
       const cfg = (mappedChild.metadata && mappedChild.metadata.matter && mappedChild.metadata.matter.config) || {}
       return cfg[optionLabel] || optionValue
     },
-    setChildMapping (attributeName, optionLabel, newValue) {
+    setChildMapping(attributeName, optionLabel, newValue) {
       const mappedChild = this.getMappedChild(attributeName)
       if (!mappedChild) return
       if (!mappedChild.metadata.matter.config) {

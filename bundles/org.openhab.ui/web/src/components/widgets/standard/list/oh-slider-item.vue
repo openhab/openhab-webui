@@ -34,15 +34,17 @@ export default {
     context: Object
   },
   widget: OhSliderItemDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext } = useWidgetContext(props.context)
     return { config, childContext }
   },
   computed: {
-    value () {
-      return (this.config?.ignoreDisplayState === true) ? this.context.store[this.config.item].state : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+    value() {
+      return this.config?.ignoreDisplayState === true
+        ? this.context.store[this.config.item].state
+        : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
     },
-    sliderComponent () {
+    sliderComponent() {
       return {
         component: 'oh-slider',
         config: this.config

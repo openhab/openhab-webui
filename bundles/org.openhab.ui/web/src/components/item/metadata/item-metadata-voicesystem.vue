@@ -35,7 +35,7 @@ export default {
   components: {
     ConfigSheet
   },
-  setup () {
+  setup() {
     return { theme }
   },
   data: () => {
@@ -48,14 +48,20 @@ export default {
     }
   },
   computed: {
-    customRules () {
+    customRules() {
       if (!this.metadata.value) return []
-      return this.metadata.value.split('\n').map((s) => s.trim()).join('\n')
+      return this.metadata.value
+        .split('\n')
+        .map((s) => s.trim())
+        .join('\n')
     }
   },
   methods: {
-    updateValue (ev) {
-      this.metadata.value = ev.target.value.split('\n').map((s) => s.trim()).join('\n')
+    updateValue(ev) {
+      this.metadata.value = ev.target.value
+        .split('\n')
+        .map((s) => s.trim())
+        .join('\n')
     }
   }
 }

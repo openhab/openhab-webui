@@ -67,9 +67,9 @@
       <div
         @click.capture="eventControl"
         :style="{
-        width: autosize ? 'auto' : w + 'px',
-        height: autosize ? 'auto' : h + 'px'
-      }"
+          width: autosize ? 'auto' : w + 'px',
+          height: autosize ? 'auto' : h + 'px'
+        }"
         class="disable-user-select">
         <oh-placeholder-widget
           v-if="!defaultSlots.length"
@@ -81,7 +81,7 @@
           class="oh-canvas-item-content"
           :class="{
             'oh-canvas-item-styled': styled,
-            'oh-canvas-item-shadow': styled && shadow,
+            'oh-canvas-item-shadow': styled && shadow
           }" />
         <f7-icon class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
         <div class="oh-canvas-item-id disable-user-select">{{ config.id }}</div>
@@ -104,7 +104,7 @@
         class="oh-canvas-item-content"
         :class="{
           'oh-canvas-item-styled': styled,
-          'oh-canvas-item-shadow': styled && shadow,
+          'oh-canvas-item-shadow': styled && shadow
         }" />
     </div>
   </template>
@@ -240,7 +240,7 @@ export interface OhCanvasItemEmits {
   (e: 'oci-dragged', id: string, x: number, y: number): void
 }
 
-const emit = defineEmits<OhCanvasItemEmits>();
+const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
 const { config, visible, childContext, defaultSlots } = useWidgetContext(props.context)
@@ -260,27 +260,37 @@ const resizeObserver = ref<ResizeObserver | null>(null)
 
 const x = computed({
   get: () => (config.value?.x as number) ?? 20,
-  set: (val) => { props.context.component.config.x = val }
+  set: (val) => {
+    props.context.component.config.x = val
+  }
 })
 
 const y = computed({
   get: () => (config.value?.y as number) ?? 20,
-  set: (val) => { props.context.component.config.y = val }
+  set: (val) => {
+    props.context.component.config.y = val
+  }
 })
 
 const w = computed<number | 'auto'>({
   get: () => (config.value?.w as number | string as 'auto') ?? 100,
-  set: (val: number | 'auto') => { props.context.component.config.w = val }
+  set: (val: number | 'auto') => {
+    props.context.component.config.w = val
+  }
 })
 
 const h = computed<number | 'auto'>({
   get: () => (config.value?.h as number | string as 'auto') ?? 100,
-  set: (val: number | 'auto') => { props.context.component.config.h = val }
+  set: (val: number | 'auto') => {
+    props.context.component.config.h = val
+  }
 })
 
 const shadow = computed({
   get: () => config.value?.noCanvasShadow === false,
-  set: (val) => { props.context.component.config.noCanvasShadow = val }
+  set: (val) => {
+    props.context.component.config.noCanvasShadow = val
+  }
 })
 
 const styled = computed(() => config.value?.notStyled === false)

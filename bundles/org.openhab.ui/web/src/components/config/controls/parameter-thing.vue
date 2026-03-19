@@ -22,7 +22,7 @@ export default {
     ThingPicker
   },
   methods: {
-    updateValue (value) {
+    updateValue(value) {
       this.$emit('input', value)
     }
   }

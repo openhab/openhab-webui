@@ -23,7 +23,7 @@
         <f7-button
           v-else
           class="install-button prevent-active-state-propagation"
-          :text="addon.installed ? 'Remove' : (installActionText || 'Install')"
+          :text="addon.installed ? 'Remove' : installActionText || 'Install'"
           :color="addon.installed ? 'red' : 'blue'"
           round
           small
@@ -75,7 +75,7 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 const uiOptionsStore = useUIOptionsStore()
 
 // props
-const props = defineProps<{ addon: api.Addon, installActionText?: string }>()
+const props = defineProps<{ addon: api.Addon; installActionText?: string }>()
 
 // emits
 const emit = defineEmits<{

@@ -34,10 +34,9 @@
                   :badge-color="thingStatusBadgeColor(thing.statusInfo)"
                   :link="'/settings/things/' + thing.UID">
                   <template #media>
-                    <span
-                      class="item-initial"
-                      >{{ (channel.label) ? channel.label[0] : channelType.label ? channelType.label[0] : '?' }}</span
-                    >
+                    <span class="item-initial">{{
+                      channel.label ? channel.label[0] : channelType.label ? channelType.label[0] : '?'
+                    }}</span>
                   </template>
                 </f7-list-item>
                 <f7-list-item divider title="Item" />
@@ -72,7 +71,12 @@
             v-for="profileType in profileTypes"
             radio
             class="profile-item"
-            :checked="(!currentProfileType && profileType.uid === 'system:default' || currentProfileType && profileType.uid === currentProfileType.uid) ? true : null"
+            :checked="
+              (!currentProfileType && profileType.uid === 'system:default') ||
+              (currentProfileType && profileType.uid === currentProfileType.uid)
+                ? true
+                : null
+            "
             :disabled="!link.editable ? true : null"
             :class="{ 'profile-disabled': !link.editable }"
             @change="onProfileTypeChange(profileType.uid)"
@@ -137,10 +141,10 @@ export default {
     source: String,
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
 
@@ -162,7 +166,7 @@ export default {
     }
   },
   computed: {
-    context () {
+    context() {
       return {
         store: useStatesStore().trackedItems
       }
@@ -170,57 +174,63 @@ export default {
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    onPageBeforeIn () {
+    onPageBeforeIn() {
       useStatesStore().startTrackingStates()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       useStatesStore().stopTrackingStates()
     },
-    onPageAfterIn () {
-      Promise.all([
-        this.$oh.api.get('/rest/things/' + this.thingId),
-        this.$oh.api.get('/rest/items/' + this.itemName)
-      ]).then(([thing, item]) => {
-        this.thing = thing
-        this.channel = this.thing.channels.find((c) => c.id === this.channelId)
-        this.item = item
+    onPageAfterIn() {
+      Promise.all([this.$oh.api.get('/rest/things/' + this.thingId), this.$oh.api.get('/rest/items/' + this.itemName)]).then(
+        ([thing, item]) => {
+          this.thing = thing
+          this.channel = this.thing.channels.find((c) => c.id === this.channelId)
+          this.item = item
 
-        const itemType = this.item.type
-        Promise.all([
-          this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType),
-          this.$oh.api.get('/rest/channel-types/' + this.channel.channelTypeUID)
-        ]).then(([profileTypes, channelType]) => {
-          this.profileTypes = profileTypes
-          this.channelType = channelType
+          const itemType = this.item.type
+          Promise.all([
+            this.$oh.api.get('/rest/profile-types?channelTypeUID=' + this.channel.channelTypeUID + '&itemType=' + itemType),
+            this.$oh.api.get('/rest/channel-types/' + this.channel.channelTypeUID)
+          ])
+            .then(([profileTypes, channelType]) => {
+              this.profileTypes = profileTypes
+              this.channelType = channelType
 
-          this.profileTypes.unshift(profileTypes.splice(profileTypes.findIndex((p) => p.uid === 'system:default'), 1)[0]) // move default to be first
-          this.profileTypes = this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
+              this.profileTypes.unshift(
+                profileTypes.splice(
+                  profileTypes.findIndex((p) => p.uid === 'system:default'),
+                  1
+                )[0]
+              ) // move default to be first
+              this.profileTypes = this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
 
-          const channelUID = this.channel.uid.replace('#', '%23')
-          this.$oh.api.get('/rest/links/' + this.itemName + '/' + channelUID).then((link) => {
-            this.link = link
-            if (this.link.configuration.profile) {
-              this.onProfileTypeChange(this.link.configuration.profile)
-            }
-            this.originalProfileType = this.currentProfileType
-            this.originalLink = cloneDeep(this.link)
-            this.dirty = false
+              const channelUID = this.channel.uid.replace('#', '%23')
+              this.$oh.api.get('/rest/links/' + this.itemName + '/' + channelUID).then((link) => {
+                this.link = link
+                if (this.link.configuration.profile) {
+                  this.onProfileTypeChange(this.link.configuration.profile)
+                }
+                this.originalProfileType = this.currentProfileType
+                this.originalLink = cloneDeep(this.link)
+                this.dirty = false
 
-            nextTick(() => {
-              this.ready = true
+                nextTick(() => {
+                  this.ready = true
+                })
+              })
             })
-          })
-        }).catch((err) => {
-          console.error('Error loading profile type or channel type', err)
-          f7.dialog.alert('Error loading profile type or channel type: ' + err)
-          this.f7router.back()
-        })
-      })
+            .catch((err) => {
+              console.error('Error loading profile type or channel type', err)
+              f7.dialog.alert('Error loading profile type or channel type: ' + err)
+              this.f7router.back()
+            })
+        }
+      )
     },
-    updated () {
+    updated() {
       this.dirty = this.currentProfileType !== this.originalProfileType || !fastDeepEqual(this.link, this.originalLink)
     },
-    goBackWithDirtyCheck () {
+    goBackWithDirtyCheck() {
       if (this.dirty) {
         this.confirmLeaveWithoutSaving(() => {
           this.f7router.back()
@@ -229,7 +239,7 @@ export default {
         this.f7router.back()
       }
     },
-    onProfileTypeChange (profileTypeUid) {
+    onProfileTypeChange(profileTypeUid) {
       this.profileTypeConfiguration = null
       if (!profileTypeUid) {
         this.currentProfileType = null
@@ -238,74 +248,93 @@ export default {
       this.currentProfileType = this.profileTypes.find((p) => p.uid === profileTypeUid)
       this.updated()
       const getProfileConfigDescription = this.$oh.api.get('/rest/config-descriptions/profile:' + profileTypeUid)
-      getProfileConfigDescription.then((data) => {
-        this.profileTypeConfiguration = data
-      }).catch((err) => {
-        // just clear out the config sheet
-        console.log(`No configuration for profile type ${profileTypeUid}: ` + err)
-        this.profileTypeConfiguration = null
-      })
+      getProfileConfigDescription
+        .then((data) => {
+          this.profileTypeConfiguration = data
+        })
+        .catch((err) => {
+          // just clear out the config sheet
+          console.log(`No configuration for profile type ${profileTypeUid}: ` + err)
+          this.profileTypeConfiguration = null
+        })
     },
-    getItemType (channel) {
+    getItemType(channel) {
       if (channel && channel.kind === 'TRIGGER') return 'Trigger'
       if (!channel || !channel.itemType) return '?'
       return channel.itemType
     },
-    unlink () {
-      f7.dialog.confirm(
-        `Are you sure you want to unlink ${this.item.name} from ${this.thing.label}?`,
-        'Unlink',
-        () => {
-          const itemName = this.item.name
-          const channelUID = encodeURIComponent(this.channel.uid)
-          this.$oh.api.delete('/rest/links/' + itemName + '/' + channelUID).then(() => {
-            f7.toast.create({
-              text: 'Link deleted',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
+    unlink() {
+      f7.dialog.confirm(`Are you sure you want to unlink ${this.item.name} from ${this.thing.label}?`, 'Unlink', () => {
+        const itemName = this.item.name
+        const channelUID = encodeURIComponent(this.channel.uid)
+        this.$oh.api
+          .delete('/rest/links/' + itemName + '/' + channelUID)
+          .then(() => {
+            f7.toast
+              .create({
+                text: 'Link deleted',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
             this.f7router.back()
-          }).catch((err) => {
-            f7.toast.create({
-              text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
           })
-        })
+          .catch((err) => {
+            f7.toast
+              .create({
+                text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          })
+      })
     },
-    unlinkAndDelete () {
+    unlinkAndDelete() {
       f7.dialog.confirm(
         `Are you sure you want to unlink ${this.item.name} from ${this.thing.label} and delete it?`,
         'Unlink and Delete Item',
         () => {
           const itemName = this.item.name
           const channelUID = encodeURIComponent(this.channel.uid)
-          this.$oh.api.delete('/rest/links/' + itemName + '/' + channelUID).then(() => {
-            this.$oh.api.delete('/rest/items/' + itemName).then(() => {
-              f7.toast.create({
-                text: 'Link and item deleted',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              }).open()
-            }).catch((err) => {
-              f7.toast.create({
-                text: 'Link deleted but error while deleting item: ' + err,
-                destroyOnClose: true,
-                closeTimeout: 2000
-              }).open()
+          this.$oh.api
+            .delete('/rest/links/' + itemName + '/' + channelUID)
+            .then(() => {
+              this.$oh.api
+                .delete('/rest/items/' + itemName)
+                .then(() => {
+                  f7.toast
+                    .create({
+                      text: 'Link and item deleted',
+                      destroyOnClose: true,
+                      closeTimeout: 2000
+                    })
+                    .open()
+                })
+                .catch((err) => {
+                  f7.toast
+                    .create({
+                      text: 'Link deleted but error while deleting item: ' + err,
+                      destroyOnClose: true,
+                      closeTimeout: 2000
+                    })
+                    .open()
+                })
+              this.f7router.back()
             })
-            this.f7router.back()
-          }).catch((err) => {
-            f7.toast.create({
-              text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
-          })
-        })
+            .catch((err) => {
+              f7.toast
+                .create({
+                  text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
+                  destroyOnClose: true,
+                  closeTimeout: 2000
+                })
+                .open()
+            })
+        }
+      )
     },
-    save () {
+    save() {
       const itemName = this.item.name
       const channelUID = encodeURIComponent(this.channel.uid)
       const link = this.link
@@ -318,22 +347,29 @@ export default {
       }
 
       // delete then recreate the link
-      this.$oh.api.delete('/rest/links/' + itemName + '/' + channelUID).then(() => {
-        this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
-          f7.toast.create({
-            text: 'Link updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          this.f7router.back()
+      this.$oh.api
+        .delete('/rest/links/' + itemName + '/' + channelUID)
+        .then(() => {
+          this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
+            f7.toast
+              .create({
+                text: 'Link updated',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+            this.f7router.back()
+          })
         })
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Link not updated (links defined in a .items file are not editable from this screen): ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Link not updated (links defined in a .items file are not editable from this screen): ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        })
     }
   }
 }
