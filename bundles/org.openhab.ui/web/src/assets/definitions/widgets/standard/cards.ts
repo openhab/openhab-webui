@@ -1,7 +1,8 @@
 /* Definitions for the standard library's standalone (card) widgets */
 
-import { WidgetDefinition, pb, pt, pi, pn, pg, po } from '../helpers.ts'
+import { WidgetDefinition, pb, pt, pi, pn, pg } from '../helpers.ts'
 import { actionGroup, actionParams } from '../actions.ts'
+import ClockParameters from '../system/clock.ts'
 
 export const CardParameterGroup = () => pg('card', 'Card', 'Parameters of the card')
 
@@ -191,26 +192,7 @@ export const OhClockCardDefinition = () =>
   new WidgetDefinition('oh-clock-card', 'Digital Clock Card', 'Display a digital clock in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('clock', 'Clock'), [
-      pt(
-        'timeFormat',
-        'Time Format',
-        'Time format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
-      ).o(
-        [
-          { value: 'LTS', label: "Localized time including seconds ('LTS', e.g. '8:02:18 PM')" },
-          { value: 'LT', label: "Localized time ('LT'. e.g. '8:02 PM')" },
-          { value: 'HH:mm:ss', label: "Current time ('HH:mm:ss')" }
-        ],
-        false
-      ),
-      po(
-        'timezone',
-        'Timezone',
-        'Timezone to use for the clock.',
-        [
-          ...Intl.supportedValuesOf('timeZone').map(tz => ({ value: tz, label: tz }))
-        ]
-      ),
+      ...ClockParameters(),
       pt('timeFontSize', 'Time Font Size', 'Time font size (e.g. "34px")'),
       pt('timeFontWeight', 'Time Font Weight', 'Time font weight (e.g. "normal" or "bold")'),
       pb('showDate', 'Show the date', 'Show the current date in addition to the time'),

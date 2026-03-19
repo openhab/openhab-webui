@@ -9,15 +9,15 @@ import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhClockDefinition } from '@/assets/definitions/widgets/system'
 
 import utc from 'dayjs/plugin/utc'
-import timezone from 'dayjs/plugin/timezone'
+import timezoneDayjs from 'dayjs/plugin/timezone'
 import type { WidgetContext } from '../types'
 
 dayjs.extend(utc)
-dayjs.extend(timezone)
+dayjs.extend(timezoneDayjs)
 
 const props = defineProps<{
-  context: WidgetContext
-  format?: string
+  context: WidgetContext,
+  format?: string,
   timezone?: string
 }>()
 
@@ -25,16 +25,22 @@ defineOptions({
   widget: OhClockDefinition
 })
 
-console.log('clock context', props.context)
-
 const { config } = useWidgetContext(props.context)
 
 let timer: number
 const date = ref<string>('')
 
 function updateTime() {
-  let dayjsDate = props.timezone || config.timezone ? dayjs().tz(props.timezone || config.timezone) : dayjs()
-  date.value = dayjsDate.format(props.format || config.format || 'LTS')
+  let dayjsDate = dayjs()
+  try {
+    if (props.timezone || config.value.timezone) {
+      dayjsDate = dayjs().tz(props.timezone || config.value.timezone)
+    }
+  } catch (error) {
+    date.value = 'Invalid timezone settings'
+    return
+  }
+  date.value = dayjsDate.format(props.format || config.value.format || 'LTS')
 }
 
 onMounted(() => {

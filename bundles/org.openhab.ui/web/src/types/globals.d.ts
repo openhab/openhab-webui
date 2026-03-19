@@ -1,3 +1,3 @@
 declare namespace Intl {
-  function supportedValuesOf(key: 'timeZone'): string[];
+  function supportedValuesOf(key: 'timeZone'): string[]
 }

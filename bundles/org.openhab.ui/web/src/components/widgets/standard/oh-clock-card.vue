@@ -46,7 +46,7 @@ const props = defineProps<{
 
 const { config } = useWidgetContext(props.context)
 
-const clockContext : WidgetContext = {
+const clockContext: WidgetContext = {
   component: {
     component: 'oh-clock',
     config: {}
@@ -54,11 +54,10 @@ const clockContext : WidgetContext = {
   config: {},
   props: {},
   store: null,
-  parent: null
+  parent: props.context
 }
 
 defineOptions({
   widget: OhClockCardDefinition
 })
-
 </script>

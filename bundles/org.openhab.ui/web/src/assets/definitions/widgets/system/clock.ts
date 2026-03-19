@@ -1,17 +1,20 @@
-import { pt, po } from '../helpers.ts'
+import { pt } from '../helpers.ts'
 
 export default () => [
   pt(
-    'format',
-    'Date Format',
-    'Date format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
-  ),
-  po(
-    'timezone',
-    'Timezone',
-    'Timezone to use for the clock.',
+    'timeFormat',
+    'Time Format',
+    'Time format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
+  ).o(
     [
-      ...Intl.supportedValuesOf('timeZone').map(tz => ({ value: tz, label: tz }))
-    ]
+      { value: 'LTS', label: "Localized time including seconds ('LTS', e.g. '8:02:18 PM')" },
+      { value: 'LT', label: "Localized time ('LT'. e.g. '8:02 PM')" },
+      { value: 'HH:mm:ss', label: "Current time ('HH:mm:ss')" }
+    ],
+    false
+  ),
+  pt('timezone', 'Timezone', 'Timezone to use for the clock.').o(
+    Intl.supportedValuesOf('timeZone').map((tz) => ({ value: tz, label: tz })),
+    false
   )
 ]
