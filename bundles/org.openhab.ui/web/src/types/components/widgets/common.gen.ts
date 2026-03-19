@@ -139,10 +139,6 @@ export enum PeriodType {
   Y = 'Y'
 }
 
-export enum Future {
-
-}
-
 export enum Modules {
   wheel = 'wheel',
   sbSpectrum = 'sb-spectrum',

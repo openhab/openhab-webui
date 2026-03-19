@@ -78,8 +78,8 @@ async function loadConfig() {
 function renderEnum(name, options) {
   let content = `export enum ${kebabToPascalCase(name)} {\n`
   content += options.map(o => {
-    if(!o.value || o.value === '') return '  none = \'\''
-    if(!isNaN(parseInt(o.value))) return ''
+    if (!o.value || o.value === '') return '  none = \'\''
+    if (!isNaN(parseInt(o.value))) return ''
     return `  ${kebabToCamelCase(o.value)} = '${o.value}'`}).join(',\n')
   content += `\n}\n\n`
   return content
@@ -88,8 +88,8 @@ function renderEnum(name, options) {
 function renderType(name, options) {
   let content = `export type ${kebabToPascalCase(name)} = `
   content += options.map(o => {
-    if(!o.value || o.value === '') return ''
-    if(!isNaN(parseInt(o.value))) return ''
+    if (!o.value || o.value === '') return ''
+    if (!isNaN(parseInt(o.value))) return ''
     return `'${kebabToCamelCase(o.value)}'`}).join(' | ')
   content += '\n'
   return content
@@ -98,8 +98,8 @@ function renderType(name, options) {
 function renderDict(name, options) {
   let content = `export const ${kebabToPascalCase(name)} = {\n`
   content += options.map(o => {
-    if(!o.value || o.value === '') return `  none: ''`
-    if(!isNaN(parseInt(o.value))) return ''
+    if (!o.value || o.value === '') return `  none: ''`
+    if (!isNaN(parseInt(o.value))) return ''
     return `  ${kebabToCamelCase(o.value)}: '${o.value}'`}).join(',\n')
   content += `\n} as const\n\n`
   content += `export type ${kebabToPascalCase(name)}Key = typeof ${kebabToPascalCase(name)}[keyof typeof ${kebabToPascalCase(name)}]\n\n`
@@ -130,7 +130,7 @@ function createCommonOptionsMap() {
       widget.pascalCaseName = kebabToPascalCase(widgetName)
 
       widget.props.parameters.forEach((p) => {
-        if (p.options) {
+        if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options) {
           const key = optionsMapKey(p)
 
           if (mapCommonOptions.has(key)) {
@@ -174,14 +174,14 @@ function generateCommonTS(mapCommonOptions) {
       const exportAs = configOption.exportAs || config.defaultExportAs || 'type'
 
       let optionStr = renderOption(parsedOptionProp.name, parsedOptionProp.options, exportAs)
-      if(configOption.modifier && typeof configOption.modifier === 'function') {
+      if (configOption.modifier && typeof configOption.modifier === 'function') {
         optionStr = configOption.modifier(optionStr)
       }
       content += optionStr
     }
   })
 
-  if(configCommon['*'] && typeof configCommon['*'].modifier === 'function') {
+  if (configCommon['*'] && typeof configCommon['*'].modifier === 'function') {
     content = configCommon['*'].modifier(content)
   }
 
@@ -204,7 +204,7 @@ function generateActionTS(mapCommonOptions) {
         const exportAs = configOption.exportAs || config.defaultExportAs || 'dict'
 
         let optionStr = renderOption(p.name, p.options, exportAs)
-        if(configOption.modifier && typeof configOption.modifier === 'function') {
+        if (configOption.modifier && typeof configOption.modifier === 'function') {
           optionStr = configOption.modifier(optionStr)
         }
         content += optionStr
@@ -219,7 +219,7 @@ function generateActionTS(mapCommonOptions) {
 
     let typeStr = 'any'
     if (p.name === '') return
-    if (p.options && mapCommonOptions.has(optionsMapKey(p))) {
+    if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(optionsMapKey(p))) {
       typeStr = kebabToPascalCase(p.name)
       if (mapCommonOptions.get(optionsMapKey(p)).length > 1) {
         if (!commonComponents.includes(typeStr)) {
@@ -260,11 +260,11 @@ function generateActionTS(mapCommonOptions) {
 
   content = preamble + content + postamble
 
-  if(configWidget['_All'] && typeof configWidget['_All'].modifier === 'function') {
+  if (configWidget['_All'] && typeof configWidget['_All'].modifier === 'function') {
     content = configWidget['_All'].modifier(content)
   }
 
-  if(config['*'] && typeof config['*'].modifier === 'function') {
+  if (config['*'] && typeof config['*'].modifier === 'function') {
     content = config['*'].modifier(content)
   }
 
@@ -297,7 +297,7 @@ function generateComponentTS(mapCommonOptions) {
             const exportAs = configOption.exportAs || config.defaultExportAs || 'dict'
 
             let optionStr = renderOption(p.name, p.options, exportAs)
-            if(configOption.modifier && typeof configOption.modifier === 'function') {
+            if (configOption.modifier && typeof configOption.modifier === 'function') {
               optionStr = configOption.modifier(optionStr)
             }
             content += optionStr
@@ -312,7 +312,7 @@ function generateComponentTS(mapCommonOptions) {
 
         let typeStr = 'any'
         if (p.name === '') return
-        if (p.options && mapCommonOptions.has(optionsMapKey(p))) {
+        if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(optionsMapKey(p))) {
           typeStr = kebabToPascalCase(p.name)
           if (mapCommonOptions.get(optionsMapKey(p)).length > 1) {
             if (!commonComponents.includes(typeStr)) {
@@ -358,11 +358,11 @@ function generateComponentTS(mapCommonOptions) {
 
       content = preamble + content + postamble
 
-      if(configWidget['_All'] && typeof configWidget['_All'].modifier === 'function') {
+      if (configWidget['_All'] && typeof configWidget['_All'].modifier === 'function') {
         content = configWidget['_All'].modifier(content)
       }
 
-      if(config['*'] && typeof config['*'].modifier === 'function') {
+      if (config['*'] && typeof config['*'].modifier === 'function') {
         content = config['*'].modifier(content)
       }
 
@@ -397,7 +397,7 @@ const config = await loadConfig()
 
 Object.keys(widgetLibraries).forEach((l) => {
   const widgetDir = widgetDirectories[l] || 'misc'
-  if(!fs.existsSync(`${outDir}/${widgetDir}`)) {
+  if (!fs.existsSync(`${outDir}/${widgetDir}`)) {
     fs.mkdirSync(`${outDir}/${widgetDir}`, { recursive: true })
   }
 })

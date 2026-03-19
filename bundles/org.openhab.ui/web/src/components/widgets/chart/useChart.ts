@@ -68,7 +68,7 @@ export function useChart(
 
   const speriod = ref<Period>(config.value.period || DEFAULT_PERIOD)
   // future as boolean allows for backwards compatibility
-  const future = ref<number>((config.value.future as unknown as boolean) === true ? 1 : ((config.value.future as number) ?? 0))
+  const future = computed<number>(() => ((config.value.future as unknown as boolean) === true ? 1 : (config.value.future ?? 0)))
   const orient = ref<string | null>(null)
 
   const addOrSubtractPeriod = (day: Dayjs, direction: number): Dayjs => {
