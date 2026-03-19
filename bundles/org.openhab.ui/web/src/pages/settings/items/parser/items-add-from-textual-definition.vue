@@ -216,11 +216,13 @@ const load = async () => {
 }
 
 const parseItems = () => {
+  const serverMediaType = mediaType.value.split('+')[0]
+
   api.parse({
     body: code.value
   }, {
     headers: {
-      'Content-Type': mediaType.value,
+      'Content-Type': serverMediaType,
       accept: 'application/json'
     }
   }).then((data) => {
