@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
@@ -27,10 +25,10 @@ import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.model.sitemap.sitemap.Button;
-import org.openhab.core.model.sitemap.sitemap.ButtonDefinition;
-import org.openhab.core.model.sitemap.sitemap.Buttongrid;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Button;
+import org.openhab.core.sitemap.ButtonDefinition;
+import org.openhab.core.sitemap.Buttongrid;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.State;
 import org.openhab.core.types.util.UnitUtils;
 import org.openhab.core.ui.items.ItemUIRegistry;
@@ -48,6 +46,7 @@ import org.slf4j.LoggerFactory;
  * can produce HTML code for Buttongrid widgets.
  *
  * @author Laurent Garnier - Initial contribution
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -67,7 +66,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Buttongrid grid = (Buttongrid) w;
 
         Map<Integer, Map<Integer, ButtonDefinition>> rowsButtons = new HashMap<>();
@@ -104,7 +103,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
             }
         }
         // Go through buttons defined as sub-element of the Buttongrid to fill the map rowsWidgets
-        for (Widget widget : grid.getChildren()) {
+        for (Widget widget : grid.getWidgets()) {
             if (widget instanceof Button button) {
                 int row = button.getRow();
                 int column = button.getColumn();
@@ -152,7 +151,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
 
         if (mawRow > 50 || maxColumn > 12) {
             logger.warn("The button grid is too big ({},{})", mawRow, maxColumn);
-            return ECollections.emptyEList();
+            return List.of();
         }
 
         boolean showHeaderRow = grid.getLabel() != null;
@@ -172,7 +171,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%buttons%", buttons.toString());
 
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private void buildRow(int columns, @Nullable Map<Integer, ButtonDefinition> buttonsInRow,
@@ -205,9 +204,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
             } else if (buttonWidgets != null) {
                 String buttonHtml = "";
                 for (Button b : buttonWidgets) {
-                    String icon = b.getStaticIcon() != null || b.getIcon() != null || !b.getIconRules().isEmpty()
-                            ? getCategory(b)
-                            : null;
+                    String icon = b.getIcon() != null || !b.getIconRules().isEmpty() ? getCategory(b) : null;
                     buttonHtml += buildButton(b, b.getLabel(), b.getCmd(), b.getReleaseCmd(), icon, b.isStateless());
                 }
                 buildCell(false, sizeDessktop, col > 8, sizeTablet, col > 4, sizePhone, buttonHtml, builder);
@@ -263,7 +260,10 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
         if (buttonWidget != null) {
             Item item = null;
             try {
-                item = itemUIRegistry.getItem(buttonWidget.getItem());
+                String widgetItemName = buttonWidget.getItem();
+                if (widgetItemName != null) {
+                    item = itemUIRegistry.getItem(widgetItemName);
+                }
             } catch (ItemNotFoundException e) {
                 logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
             }
