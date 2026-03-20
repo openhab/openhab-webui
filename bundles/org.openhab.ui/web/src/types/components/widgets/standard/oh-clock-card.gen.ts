@@ -1,6 +1,9 @@
 // note: this file is generated and should not be edited by hand
 
 import {
+  TimeFormat,
+  Timezone,
+  DateFormat,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
@@ -8,18 +11,6 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
 } from '../common.gen.ts'
-
-export enum TimeFormat {
-  LTS = 'LTS',
-  LT = 'LT',
-  HH_mm_ss = 'HH:mm:ss'
-}
-
-export enum DateFormat {
-  LL = 'LL',
-  L = 'L',
-  MM_DD_YYYY = 'MM/DD/YYYY'
-}
 
 export enum DatePos {
   above = 'above',
@@ -33,10 +24,11 @@ export interface Config {
   noShadow?: boolean
   outline?: boolean
   timeFormat?: TimeFormat
+  timezone?: Timezone
+  dateFormat?: DateFormat
   timeFontSize?: string
   timeFontWeight?: string
   showDate?: boolean
-  dateFormat?: DateFormat
   datePos?: DatePos
   dateFontSize?: string
   dateFontWeight?: string
@@ -71,6 +63,9 @@ export interface Config {
 }
 
 export {
+  TimeFormat,
+  Timezone,
+  DateFormat,
   Action,
   ActionHttpMethod,
   ActionPageTransition,

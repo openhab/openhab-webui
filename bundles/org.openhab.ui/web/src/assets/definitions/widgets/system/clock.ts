@@ -16,5 +16,21 @@ export default () => [
   pt('timezone', 'Timezone', 'Timezone to use for the clock.').o(
     Intl.supportedValuesOf('timeZone').map((tz) => ({ value: tz, label: tz })),
     false
+  ),
+  pt(
+    'dateFormat',
+    'Date Format',
+    'Date format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
   )
+    .o(
+      [
+        { value: 'LL', label: "Localized long date ('LL', e.g. 'August 16, 2018')" },
+        { value: 'L', label: "Localized short date ('L', e.g. '08/16/2018')" },
+        { value: 'MM/DD/YYYY', label: "Current date ('MM/DD/YYYY')" }
+      ],
+      false
+    )
+    .v((value, configuration, configDescription, parameters) => {
+      return configuration.showDate === true
+    })
 ]

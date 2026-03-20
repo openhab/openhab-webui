@@ -196,22 +196,6 @@ export const OhClockCardDefinition = () =>
       pt('timeFontSize', 'Time Font Size', 'Time font size (e.g. "34px")'),
       pt('timeFontWeight', 'Time Font Weight', 'Time font weight (e.g. "normal" or "bold")'),
       pb('showDate', 'Show the date', 'Show the current date in addition to the time'),
-      pt(
-        'dateFormat',
-        'Date Format',
-        'Date format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
-      )
-        .o(
-          [
-            { value: 'LL', label: "Localized long date ('LL', e.g. 'August 16, 2018')" },
-            { value: 'L', label: "Localized short date ('L', e.g. '08/16/2018')" },
-            { value: 'MM/DD/YYYY', label: "Current date ('MM/DD/YYYY')" }
-          ],
-          false
-        )
-        .v((value, configuration, configDescription, parameters) => {
-          return configuration.showDate === true
-        }),
       pt('datePos', 'Date Position', 'Where to show the date')
         .o([
           { value: 'above', label: 'Above time' },
