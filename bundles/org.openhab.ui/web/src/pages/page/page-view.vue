@@ -279,7 +279,7 @@ export default {
       }
 
       const page = useComponentsStore().page(tab.config.page.replace('page:', ''))
-      return page.component
+      return this.pageComponent(page)
     },
     tabEvaluateExpression (tab, idx, key) {
       const ctx = this.tabContext(tab)
