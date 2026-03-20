@@ -484,7 +484,7 @@
   // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
 
 .safe-areas.log-dock-offset
-  padding-bottom calc(var(--log-dock-height) + var(--f7-safe-area-bottom))
+  --f7-safe-area-bottom calc(var(--log-dock-height) + env(safe-area-inset-bottom, 0px))
 
 .log-dock
   position fixed !important
