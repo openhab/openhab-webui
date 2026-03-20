@@ -17,12 +17,7 @@
     </f7-block>
 
     <template v-else>
-      <oh-layout-page
-        v-if="overviewPage"
-        v-show="!inChatSession"
-        :context="overviewPageContext"
-        :class="{ notready: !ready }"
-        :f7router />
+      <oh-layout-page v-if="overviewPage" v-show="!inChatSession" :context="overviewPageContext" :class="{ notready: !ready }" :f7router />
       <div v-else-if="!inChatSession" class="empty-overview">
         <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
         <f7-row v-if="!userStore.isAdmin() || $f7dim.width < 1280" class="display-flex justify-content-center">
