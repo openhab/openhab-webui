@@ -1,7 +1,6 @@
 <template>
-  <f7-page name="logviewer" class="log-viewer" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <!-- Logger Settings Popup -->
-    <div class="popup logsettings-popup">
+  <div class="popup logsettings-popup">
       <div class="view">
         <div class="page">
           <div class="navbar">
@@ -47,10 +46,10 @@
           </div>
         </div>
       </div>
-    </div>
+  </div>
 
     <!-- Highlights Popup -->
-    <div class="popup loghighlights-popup" @popup:close="saveHighlighters">
+  <div class="popup loghighlights-popup" @popup:close="saveHighlighters">
       <div class="view">
         <div class="page">
           <div class="navbar">
@@ -93,10 +92,10 @@
           </div>
         </div>
       </div>
-    </div>
+  </div>
 
     <!-- Color Picker Popover -->
-    <f7-popover id="color-picker-popover">
+  <f7-popover id="color-picker-popover">
       <f7-block>
         <div class="color-palette">
           <button
@@ -107,71 +106,75 @@
             @click="selectHighlightColor(color)" />
         </div>
       </f7-block>
-    </f7-popover>
+  </f7-popover>
 
     <!-- Log Details Popup -->
-    <f7-popup
-      id="logdetails-popup"
-      ref="logDetailsPopup"
-      close-on-escape
-      close-by-backdrop-click
-      @popup:open="popupOpened($refs.logDetailsPopup, $refs.logDetailsNavbar)"
-      @popup:closed="cleanupMovablePopup">
-      <f7-page>
-        <f7-navbar title="Log Details" ref="logDetailsNavbar">
-          <f7-nav-right>
-            <f7-link class="popup-close"> Close </f7-link>
-          </f7-nav-right>
-        </f7-navbar>
-        <f7-toolbar bottom class="toolbar-details">
-          <div class="display-flex justify-content-center" style="width: 100%">
-            <f7-link class="display-flex flex-direction-row margin-right" @click="selectedId = selectedId > 0 ? selectedId - 1 : 0">
-              <f7-icon f7="backward_fill" />
-              &nbsp; Previous
-            </f7-link>
-            <f7-link
-              class="display-flex flex-direction-row margin-right"
-              @click="selectedId = selectedId < tableData.length - 1 ? selectedId + 1 : tableData.length - 1">
-              Next &nbsp;
-              <f7-icon f7="forward_fill" />
-            </f7-link>
-            <f7-link class="display-flex flex-direction-row" @click="selectedId = tableData.length - 1">
-              <f7-icon f7="forward_end_fill" />
-            </f7-link>
-          </div>
-        </f7-toolbar>
+  <f7-popup
+    id="logdetails-popup"
+    ref="logDetailsPopup"
+    close-on-escape
+    close-by-backdrop-click
+    @popup:open="popupOpened($refs.logDetailsPopup, $refs.logDetailsNavbar)"
+    @popup:closed="cleanupMovablePopup">
+    <f7-page>
+      <f7-navbar title="Log Details" ref="logDetailsNavbar">
+        <f7-nav-right>
+          <f7-link class="popup-close"> Close </f7-link>
+        </f7-nav-right>
+      </f7-navbar>
+      <f7-toolbar bottom class="toolbar-details">
+        <div class="display-flex justify-content-center" style="width: 100%">
+          <f7-link class="display-flex flex-direction-row margin-right" @click="selectedId = selectedId > 0 ? selectedId - 1 : 0">
+            <f7-icon f7="backward_fill" />
+            &nbsp; Previous
+          </f7-link>
+          <f7-link
+            class="display-flex flex-direction-row margin-right"
+            @click="selectedId = selectedId < tableData.length - 1 ? selectedId + 1 : tableData.length - 1">
+            Next &nbsp;
+            <f7-icon f7="forward_fill" />
+          </f7-link>
+          <f7-link class="display-flex flex-direction-row" @click="selectedId = tableData.length - 1">
+            <f7-icon f7="forward_end_fill" />
+          </f7-link>
+        </div>
+      </f7-toolbar>
 
-        <f7-list class="col wide">
-          <f7-list-item header="Time" :title="selectedLog.time + selectedLog.milliseconds" />
-          <f7-list-item header="Timestamp" :title="selectedLog.timestamp" />
-          <f7-list-item header="Level" :title="selectedLog.level" />
-          <f7-list-item header="Logger Class" :title="selectedLog.loggerName" />
-          <f7-list-item>
-            <template #title>
-              <div class="item-title">
-                <div class="item-header">Message</div>
-                <div class="log-message">
-                  {{ selectedLog.message }}
-                </div>
+      <f7-list class="col wide">
+        <f7-list-item header="Time" :title="selectedLog.time + selectedLog.milliseconds" />
+        <f7-list-item header="Timestamp" :title="selectedLog.timestamp" />
+        <f7-list-item header="Level" :title="selectedLog.level" />
+        <f7-list-item header="Logger Class" :title="selectedLog.loggerName" />
+        <f7-list-item>
+          <template #title>
+            <div class="item-title">
+              <div class="item-header">Message</div>
+              <div class="log-message">
+                {{ selectedLog.message }}
               </div>
-            </template>
-          </f7-list-item>
-          <f7-list-item v-if="selectedLog.stackTrace">
-            <template #title>
-              <div class="item-title">
-                <div class="item-header">Stack Trace</div>
-                <div class="stack-trace">
-                  {{ selectedLog.stackTrace }}
-                </div>
+            </div>
+          </template>
+        </f7-list-item>
+        <f7-list-item v-if="selectedLog.stackTrace">
+          <template #title>
+            <div class="item-title">
+              <div class="item-header">Stack Trace</div>
+              <div class="stack-trace">
+                {{ selectedLog.stackTrace }}
               </div>
-            </template>
-          </f7-list-item>
-        </f7-list>
-      </f7-page>
-    </f7-popup>
+            </div>
+          </template>
+        </f7-list-item>
+      </f7-list>
+    </f7-page>
+  </f7-popup>
 
     <f7-navbar>
-      <oh-nav-content title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" :f7router>
+      <oh-nav-content
+        title="Log Viewer"
+        back-link="Developer Tools"
+        back-link-url="/developer/"
+        :f7router>
         <template #right>
           <f7-link
             icon-ios="f7:play_fill"
@@ -208,9 +211,6 @@
           :disable-button="false"
           @searchbar:search="handleFilter"
           @searchbar.clear="clearFilter" />
-        <!-- <div class="filter-input-box">
-          <input type="search" placeholder="Filter..." v-model="filterText" @keyup.enter="handleFilter"></input>
-        </div> -->
         <div style="display: flex; flex-wrap: nowrap">
           <f7-badge class="log-period margin-left-half" :color="periodRangeColor" :tooltip="periodRangeTooltip">
             {{ logStart }}&nbsp;>&nbsp;{{ logEnd }}
@@ -218,16 +218,11 @@
           <f7-badge class="margin-horizontal" :color="countersBadgeColor" tooltip="Log entries filtered/total">
             {{ filterCount }}/{{ tableData.length }}
           </f7-badge>
-          <!-- <f7-badge color="red" tooltip="Maximum log entries to be buffered">
-            {{ maxEntries }}
-          </f7-badge> -->
         </div>
       </f7-subnavbar>
     </f7-navbar>
 
     <f7-toolbar bottom>
-      <!-- <f7-link icon-f7="arrow_down_to_line" tooltip="Scroll to latest log entries" :disabled="autoScroll"
-                 :class="{ 'disabled-link': autoScroll }" @click="showLatestLogs" /> -->
       <f7-link
         icon-f7="cloud_download"
         tooltip="Download filtered log as CSV"
@@ -290,6 +285,98 @@
 <style lang="stylus">
 .log-viewer
 
+  &.log-viewer-embedded
+    position relative
+    width 100%
+    height 100%
+    min-height 0
+    display flex
+    flex-direction column
+    overflow hidden
+    --log-viewer-height 100%
+
+    .table-block
+      flex 1
+      min-height 0
+      position relative
+
+    .custom-card
+      height 100%
+
+    .table-container
+      height 100%
+
+    .dock-header
+      flex none
+      padding 10px 12px 8px
+      border-bottom 1px solid var(--f7-bars-border-color)
+      background var(--f7-page-bg-color)
+
+    .dock-header-row
+      display flex
+      align-items center
+      justify-content space-between
+      gap 12px
+
+    .dock-title
+      font-size 16px
+      font-weight 600
+
+    .dock-actions
+      display flex
+      align-items center
+      gap 4px
+
+    .dock-filter-row
+      display flex
+      align-items center
+      gap 12px
+      margin-top 8px
+
+    .dock-searchbar
+      flex 1
+      min-width 0
+      margin 0
+
+    .dock-stats
+      display flex
+      align-items center
+      flex-wrap nowrap
+
+    .dock-toolbar
+      flex none
+      display flex
+      align-items center
+      gap 6px
+      padding 8px 12px
+      border-bottom 1px solid var(--f7-bars-border-color)
+      background var(--f7-page-bg-color)
+
+    .dock-content
+      flex 1
+      min-height 0
+      position relative
+      overflow hidden
+
+      .custom-card
+        height 100%
+
+      .table-container
+        height 100%
+
+    .dock-scroll-button
+      position absolute
+      right 16px
+      bottom 16px
+      z-index 2
+      width 40px
+      min-width 40px
+      height 40px
+      border-radius 999px
+      display flex
+      align-items center
+      justify-content center
+
   .subnavbar
     height: unset
 
@@ -321,11 +408,17 @@
     padding-left var(--f7-safe-area-left)
     padding-right var(--f7-safe-area-right)
 
+  &:not(.log-viewer-embedded)
+    .table-container
+      overflow-y auto
+      overflow-x auto
+      display block
+      height calc(var(--log-viewer-height, 100vh) - var(--f7-navbar-height) - var(--f7-subnavbar-height) - var(--f7-toolbar-height))
+
   .table-container
     overflow-y auto
     overflow-x auto
     display block
-    height calc(100vh - var(--f7-navbar-height) - var(--f7-subnavbar-height) - var(--f7-toolbar-height))
 
   table
     width 100%
@@ -502,8 +595,17 @@ import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [MovablePopupMixin],
+  emits: ['toggle-fullscreen', 'hide'],
   props: {
-    f7router: Object
+    f7router: Object,
+    embedded: {
+      type: Boolean,
+      default: false
+    },
+    fullscreen: {
+      type: Boolean,
+      default: false
+    }
   },
   setup() {
     return {
@@ -589,6 +691,8 @@ export default {
   },
   methods: {
     onPageAfterIn() {
+      this.loggerPackages = []
+      this.loadingLoggers = true
       this.$oh.api
         .get('/rest/logging/')
         .then((data) => {
@@ -625,7 +729,7 @@ export default {
       }
       this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
 
-      this.showErrors = localStorage.getItem('openhab.ui:logviewer.logShowErrors')
+      this.showErrors = localStorage.getItem('openhab.ui:logviewer.logShowErrors') === 'true'
     },
     onPageBeforeOut() {
       this.loggingStop()
@@ -1135,6 +1239,14 @@ export default {
       this.updateFilter()
       localStorage.setItem('openhab.ui:logviewer.logShowErrors', this.showErrors)
     }
+  },
+  mounted () {
+    if (this.embedded) {
+      this.onPageAfterIn()
+    }
+  },
+  beforeUnmount () {
+    this.loggingStop()
   }
 }
 </script>

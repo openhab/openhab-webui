@@ -269,9 +269,6 @@
                   <f7-icon f7="square_list" color="gray" />
                 </template>
               </f7-list-item>
-              <!-- <f7-list-item link="" @click="f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
-                <f7-icon :f7="runtimeStore.showDeveloperDock ? 'wrench_fill' : 'wrench'" color="gray" />
-              </f7-list-item> -->
             </ul>
           </li>
         </f7-list>
@@ -366,6 +363,7 @@
       url="/"
       :main="true"
       class="safe-areas"
+      :class="{ 'log-dock-offset': showDockedLogViewer && !logDockFullscreen }"
       :master-detail-breakpoint="960"
       :browser-history="true"
       :browser-history-root="origin"
@@ -373,6 +371,20 @@
       :preload-previous-page="false"
       :ios-swipe-back="false"
       :animate="!uiOptionsStore.disablePageTransitionAnimation" />
+
+    <Teleport to="body">
+      <div
+        v-if="showDockedLogViewer"
+        class="log-dock"
+        :class="{ fullscreen: logDockFullscreen }"
+        :style="logDockStyle">
+        <log-viewer
+          embedded
+          :fullscreen="logDockFullscreen"
+          @hide="setLogDockVisible(false)"
+          @toggle-fullscreen="toggleLogDockFullscreen" />
+      </div>
+    </Teleport>
   </f7-app>
 </template>
 
@@ -470,6 +482,34 @@
   // --f7-list-item-media-margin 24px
   // --f7-list-item-padding-horizontal 32px
   // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
+
+.safe-areas.log-dock-offset
+  padding-bottom calc(var(--log-dock-height) + var(--f7-safe-area-bottom))
+
+.log-dock
+  position fixed !important
+  bottom 0
+  z-index 10000
+  height var(--log-dock-height)
+  max-height var(--log-dock-height)
+  border-top 1px solid var(--f7-bars-border-color)
+  background var(--f7-page-bg-color)
+  box-shadow 0 -8px 24px rgba(0, 0, 0, 0.16)
+  overflow hidden
+  display flex
+  flex-direction column
+  --log-viewer-height 100%
+
+  > *
+    flex 1
+    min-height 0
+
+.log-dock.fullscreen
+  height calc(100dvh - var(--f7-safe-area-top))
+  max-height none
+
+:root
+  --log-dock-height clamp(240px, 34vh, 460px)
 </style>
 
 <script>
@@ -484,6 +524,7 @@ import buildInfo from '@/assets/build-info'
 
 import routes from '@/js/routes.js'
 import PanelRight from '@/pages/panel-right.vue'
+import LogViewer from '@/pages/developer/log-viewer.vue'
 import { getPageIcon } from '@/pages/page-type'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
@@ -515,6 +556,7 @@ export default {
   components: {
     EmptyStatePlaceholder,
     PanelRight,
+    LogViewer,
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
   setup() {
@@ -594,7 +636,10 @@ export default {
       activeToolTab: 'pin',
       activeHelpTab: 'current',
       developerSearch: null,
-      currentUrl: ''
+      currentUrl: '',
+
+      logDockVisible: localStorage.getItem('openhab.ui:logDock.visible') === 'true',
+      logDockFullscreen: false
     }
   },
   computed: {
@@ -623,6 +668,19 @@ export default {
     },
     serverDisplayUrl() {
       return window.location.origin
+    },
+    showDockedLogViewer () {
+      return this.logDockVisible && !this.currentPath.developer?.['log-viewer']
+    },
+    logDockStyle () {
+      const viewportWidth = this.$f7dim?.width || window.innerWidth
+      const hasPermanentLeftPanel = viewportWidth >= this.f7params.panel.leftBreakpoint && !this.uiOptionsStore.visibleBreakpointDisabled
+      return {
+        left: hasPermanentLeftPanel
+          ? 'calc(var(--f7-panel-width) + var(--f7-safe-area-left))'
+          : 'var(--f7-safe-area-left)',
+        right: 'var(--f7-safe-area-right)'
+      }
     },
     ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore),
     ...mapWritableState(useRuntimeStore, {
@@ -856,26 +914,54 @@ export default {
       f7.panel.get('left').toggleVisibleBreakpoint()
       useUIOptionsStore().visibleBreakpointDisabled = f7.panel.get('left').visibleBreakpointDisabled
     },
+    setLogDockVisible (visible) {
+      this.logDockVisible = visible
+      if (!visible) this.logDockFullscreen = false
+      localStorage.setItem('openhab.ui:logDock.visible', String(this.logDockVisible))
+    },
+    toggleLogDock () {
+      this.setLogDockVisible(!this.logDockVisible)
+    },
+    toggleLogDockFullscreen () {
+      if (!this.logDockVisible) this.setLogDockVisible(true)
+      this.logDockFullscreen = !this.logDockFullscreen
+    },
+    isTextInputTarget (target) {
+      if (!target) return false
+      if (target.isContentEditable) return true
+      const tagName = target.tagName
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tagName)) return true
+      return Boolean(target.closest?.('.CodeMirror, .cm-editor, .monaco-editor, .ace_editor'))
+    },
     keyDown(ev) {
-      if (ev.shiftKey && ev.altKey) {
-        switch (ev.keyCode) {
-          case 68: // D for developer dock
-            this.toggleDeveloperDock()
-            break
-          case 77: // M for menu
-            const leftPanel = f7.panel.get('left')
-            if (leftPanel.opened) {
-              leftPanel.close()
-            } else {
-              leftPanel.open()
-            }
-            break
-          default:
-            return
+      if (!(ev.shiftKey && ev.altKey)) return
+      if (this.isTextInputTarget(ev.target)) return
+
+      switch (ev.keyCode) {
+        case 68: // D for developer dock
+          this.toggleDeveloperDock()
+          break
+        case 70: // F for fullscreen log pane
+          if (this.logDockVisible) this.toggleLogDockFullscreen()
+          break
+        case 76: // L for log pane
+          this.toggleLogDock()
+          break
+        case 77: { // M for menu
+          const leftPanel = f7.panel.get('left')
+          if (leftPanel.opened) {
+            leftPanel.close()
+          } else {
+            leftPanel.open()
+          }
+          break
         }
-        ev.stopPropagation()
-        ev.preventDefault()
+        default:
+          return
       }
+
+      ev.stopPropagation()
+      ev.preventDefault()
     },
     updateUrl(newUrl) {
       this.currentUrl = newUrl
@@ -1045,6 +1131,14 @@ export default {
         this.toggleDeveloperDock()
       })
 
+      f7.on('toggleLogDock', () => {
+        this.toggleLogDock()
+      })
+
+      f7.on('toggleLogDockFullscreen', () => {
+        this.toggleLogDockFullscreen()
+      })
+
       f7.on('selectDeveloperDock', (opts) => {
         this.selectDeveloperDock(opts)
       })
@@ -1071,6 +1165,11 @@ export default {
       this.startEventSource()
       this.startAudioWebSocket()
     })
+  },
+  beforeUnmount () {
+    if (window) {
+      window.removeEventListener('keydown', this.keyDown)
+    }
   }
 }
 </script>
