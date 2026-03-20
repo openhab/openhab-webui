@@ -91,17 +91,6 @@
                     <f7-icon f7="square_list" color="gray" />
                   </template>
                 </f7-list-item>
-                <f7-list-item
-                  media-item
-                  title="Log Pane"
-                  footer="Toggle persistent bottom log pane (Shift+Alt+L)"
-                  link="#"
-                  no-chevron
-                  @click.prevent="f7.emit('toggleLogDock')">
-                  <template #media>
-                    <f7-icon f7="rectangle_bottomthird_inset" color="gray" />
-                  </template>
-                </f7-list-item>
               </f7-list>
               <f7-block-title>Local Developer Settings</f7-block-title>
               <f7-list>
