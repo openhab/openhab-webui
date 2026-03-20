@@ -1,114 +1,114 @@
 <template>
-    <!-- Logger Settings Popup -->
+  <!-- Logger Settings Popup -->
   <div class="popup logsettings-popup">
-      <div class="view">
-        <div class="page">
-          <div class="navbar">
-            <div class="navbar-bg" />
-            <div class="navbar-inner">
-              <div class="title">Logging Settings</div>
-              <div class="right">
-                <!-- Link to close popup -->
-                <a class="link popup-close">Close</a>
-              </div>
+    <div class="view">
+      <div class="page">
+        <div class="navbar">
+          <div class="navbar-bg" />
+          <div class="navbar-inner">
+            <div class="title">Logging Settings</div>
+            <div class="right">
+              <!-- Link to close popup -->
+              <a class="link popup-close">Close</a>
             </div>
           </div>
-          <div class="page-content">
-            <f7-block class="input-with-buttons-container">
-              <div class="input-with-buttons searchbar">
-                <input
-                  type="text"
-                  placeholder="Add custom logger package entry..."
-                  @keyup.enter="handleLogPackageEnter($event)"
-                  class="custom-input" />
-              </div>
-            </f7-block>
-            <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center">
-              Logger will be added with ROOT log level {{ defaultLogLevel }}
-            </f7-block>
+        </div>
+        <div class="page-content">
+          <f7-block class="input-with-buttons-container">
+            <div class="input-with-buttons searchbar">
+              <input
+                type="text"
+                placeholder="Add custom logger package entry..."
+                @keyup.enter="handleLogPackageEnter($event)"
+                class="custom-input" />
+            </div>
+          </f7-block>
+          <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center">
+            Logger will be added with ROOT log level {{ defaultLogLevel }}
+          </f7-block>
 
-            <f7-list class="col wide">
-              <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName" :title="loggerPackage.loggerName">
-                <template #after>
-                  <f7-input type="select" :value="loggerPackage.level" @input="updateLogLevel(loggerPackage, $event.target.value)">
-                    <option value="DEFAULT">Default</option>
-                    <option value="TRACE">Trace</option>
-                    <option value="DEBUG">Debug</option>
-                    <option value="INFO">Info</option>
-                    <option value="WARN">Warning</option>
-                    <option value="ERROR">Error</option>
-                    <option value="OFF">Off</option>
-                  </f7-input>
-                  <f7-button small icon-f7="xmark_circle" @click="removeLogLevel(loggerPackage)" />
-                </template>
-              </f7-list-item>
-            </f7-list>
-          </div>
+          <f7-list class="col wide">
+            <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName" :title="loggerPackage.loggerName">
+              <template #after>
+                <f7-input type="select" :value="loggerPackage.level" @input="updateLogLevel(loggerPackage, $event.target.value)">
+                  <option value="DEFAULT">Default</option>
+                  <option value="TRACE">Trace</option>
+                  <option value="DEBUG">Debug</option>
+                  <option value="INFO">Info</option>
+                  <option value="WARN">Warning</option>
+                  <option value="ERROR">Error</option>
+                  <option value="OFF">Off</option>
+                </f7-input>
+                <f7-button small icon-f7="xmark_circle" @click="removeLogLevel(loggerPackage)" />
+              </template>
+            </f7-list-item>
+          </f7-list>
         </div>
       </div>
+    </div>
   </div>
 
-    <!-- Highlights Popup -->
+  <!-- Highlights Popup -->
   <div class="popup loghighlights-popup" @popup:close="saveHighlighters">
-      <div class="view">
-        <div class="page">
-          <div class="navbar">
-            <div class="navbar-bg" />
-            <div class="navbar-inner">
-              <div class="title">Logging Highlight Filters</div>
-              <div class="right">
-                <!-- Link to close popup -->
-                <a class="link popup-close">Close</a>
-              </div>
+    <div class="view">
+      <div class="page">
+        <div class="navbar">
+          <div class="navbar-bg" />
+          <div class="navbar-inner">
+            <div class="title">Logging Highlight Filters</div>
+            <div class="right">
+              <!-- Link to close popup -->
+              <a class="link popup-close">Close</a>
             </div>
           </div>
-          <div class="page-content">
-            <f7-list class="col wide">
-              <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
-                <template #media>
-                  <input type="checkbox" v-model="highlightFilter.active" checked />
-                </template>
-                <template #title>
-                  <f7-input
-                    type="text"
-                    placeholder="Enter text to highlight..."
-                    :value="highlightFilter.text"
-                    @input="updateHighlightText($event, index)" />
-                </template>
+        </div>
+        <div class="page-content">
+          <f7-list class="col wide">
+            <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
+              <template #media>
+                <input type="checkbox" v-model="highlightFilter.active" checked />
+              </template>
+              <template #title>
+                <f7-input
+                  type="text"
+                  placeholder="Enter text to highlight..."
+                  :value="highlightFilter.text"
+                  @input="updateHighlightText($event, index)" />
+              </template>
 
-                <!-- Color Picker -->
-                <template #after>
-                  <div>
-                    <f7-button
-                      class="color-picker-button"
-                      @click="openColorPopover(index, $event)"
-                      :style="{ backgroundColor: highlightFilter.color }" />
-                  </div>
-                  <f7-button small icon-f7="xmark_circle" @click="removeHighlight(index)" />
-                </template>
-              </f7-list-item>
-            </f7-list>
-            <button class="button" @click="addNewHighlight">Add New Highlight</button>
-          </div>
+              <!-- Color Picker -->
+              <template #after>
+                <div>
+                  <f7-button
+                    class="color-picker-button"
+                    @click="openColorPopover(index, $event)"
+                    :style="{ backgroundColor: highlightFilter.color }" />
+                </div>
+                <f7-button small icon-f7="xmark_circle" @click="removeHighlight(index)" />
+              </template>
+            </f7-list-item>
+          </f7-list>
+          <button class="button" @click="addNewHighlight">Add New Highlight</button>
         </div>
       </div>
+    </div>
   </div>
 
-    <!-- Color Picker Popover -->
+  <!-- Color Picker Popover -->
   <f7-popover id="color-picker-popover">
-      <f7-block>
-        <div class="color-palette">
-          <button
-            v-for="color in colors"
-            :key="color"
-            :style="{ backgroundColor: color }"
-            :class="{ selected: currentHighlightColor === color }"
-            @click="selectHighlightColor(color)" />
-        </div>
-      </f7-block>
+    <f7-block>
+      <div class="color-palette">
+        <button
+          v-for="color in colors"
+          :key="color"
+          :style="{ backgroundColor: color }"
+          :class="{ selected: currentHighlightColor === color }"
+          @click="selectHighlightColor(color)" />
+      </div>
+    </f7-block>
   </f7-popover>
 
-    <!-- Log Details Popup -->
+  <!-- Log Details Popup -->
   <f7-popup
     id="logdetails-popup"
     ref="logDetailsPopup"
@@ -171,101 +171,98 @@
 
   <div v-if="embedded" class="log-viewer log-viewer-embedded" :class="{ 'log-viewer-fullscreen': fullscreen }">
     <div class="dock-header">
-        <div class="dock-header-row">
-          <div class="dock-title">Log Viewer</div>
-          <div class="dock-actions">
-            <f7-link
-              icon-ios="f7:play_fill"
-              icon-f7="play_fill"
-              icon-md="material:play_arrow"
-              :icon-color="stateConnected && stateProcessing ? 'gray' : ''"
-              :tooltip="!$device.ios ? 'Continue receiving logs' : ''"
-              :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios }"
-              @click="loggingContinue" />
-            <f7-link
-              icon-ios="f7:pause_fill"
-              icon-aurora="f7:pause_fill"
-              icon-md="material:pause_fill"
-              :icon-color="!stateConnected || !stateProcessing ? 'gray' : ''"
-              :tooltip="!$device.ios ? 'Pause processing new logs' : ''"
-              :class="{ 'disabled-link': !stateConnected || !stateProcessing, 'no-margin-left': $device.ios }"
-              @click="loggingPause" />
-            <f7-link
-              icon-ios="f7:stop_fill"
-              icon-aurora="f7:stop_fill"
-              icon-md="material:stop_fill"
-              :icon-color="!stateConnected ? 'gray' : ''"
-              :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
-              :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
-              @click="loggingStop" />
-            <f7-link
-              :icon-f7="fullscreen ? 'arrow_down_to_line' : 'arrow_up_left_arrow_down_right'"
-              :tooltip="fullscreen ? 'Restore docked size (Shift+Alt+F)' : 'Fill main pane (Shift+Alt+F)'"
-              @click="$emit('toggle-fullscreen')" />
-            <span class="dock-action-sep" />
-            <f7-link
-              icon-f7="xmark"
-              tooltip="Hide log pane (Shift+Alt+L)"
-              @click="$emit('hide')" />
-          </div>
+      <div class="dock-header-row">
+        <div class="dock-title">Log Viewer</div>
+        <div class="dock-actions">
+          <f7-link
+            icon-ios="f7:play_fill"
+            icon-f7="play_fill"
+            icon-md="material:play_arrow"
+            :icon-color="stateConnected && stateProcessing ? 'gray' : ''"
+            :tooltip="!$device.ios ? 'Continue receiving logs' : ''"
+            :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios }"
+            @click="loggingContinue" />
+          <f7-link
+            icon-ios="f7:pause_fill"
+            icon-aurora="f7:pause_fill"
+            icon-md="material:pause_fill"
+            :icon-color="!stateConnected || !stateProcessing ? 'gray' : ''"
+            :tooltip="!$device.ios ? 'Pause processing new logs' : ''"
+            :class="{ 'disabled-link': !stateConnected || !stateProcessing, 'no-margin-left': $device.ios }"
+            @click="loggingPause" />
+          <f7-link
+            icon-ios="f7:stop_fill"
+            icon-aurora="f7:stop_fill"
+            icon-md="material:stop_fill"
+            :icon-color="!stateConnected ? 'gray' : ''"
+            :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
+            :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
+            @click="loggingStop" />
+          <f7-link
+            :icon-f7="fullscreen ? 'arrow_down_to_line' : 'arrow_up_left_arrow_down_right'"
+            :tooltip="fullscreen ? 'Restore docked size (Shift+Alt+F)' : 'Fill main pane (Shift+Alt+F)'"
+            @click="$emit('toggle-fullscreen')" />
+          <span class="dock-action-sep" />
+          <f7-link icon-f7="xmark" tooltip="Hide log pane (Shift+Alt+L)" @click="$emit('hide')" />
         </div>
-        <div class="dock-filter-row">
-          <f7-searchbar
-            ref="searchbar"
-            class="dock-searchbar"
-            :value="filterText"
-            custom-search
-            placeholder="Filter"
-            :disable-button="false"
-            @searchbar:search="handleFilter"
-            @searchbar.clear="clearFilter" />
-          <div class="dock-stats">
-            <f7-badge class="log-period margin-left-half"> {{ logStart }}&nbsp;>&nbsp;{{ logEnd }} </f7-badge>
-            <f7-badge class="margin-horizontal" :color="countersBadgeColor" tooltip="Log entries filtered/total">
-              {{ filterCount }}/{{ tableData.length }}
-            </f7-badge>
-          </div>
+      </div>
+      <div class="dock-filter-row">
+        <f7-searchbar
+          ref="searchbar"
+          class="dock-searchbar"
+          :value="filterText"
+          custom-search
+          placeholder="Filter"
+          :disable-button="false"
+          @searchbar:search="handleFilter"
+          @searchbar.clear="clearFilter" />
+        <div class="dock-stats">
+          <f7-badge class="log-period margin-left-half"> {{ logStart }}&nbsp;>&nbsp;{{ logEnd }} </f7-badge>
+          <f7-badge class="margin-horizontal" :color="countersBadgeColor" tooltip="Log entries filtered/total">
+            {{ filterCount }}/{{ tableData.length }}
+          </f7-badge>
         </div>
+      </div>
     </div>
 
     <div class="dock-toolbar">
-        <f7-link
-          icon-f7="cloud_download"
-          tooltip="Download filtered log as CSV"
-          :class="{ 'disabled-link': filterCount == 0 }"
-          @click="downloadCSV" />
-        <f7-link
-          icon-f7="rectangle_on_rectangle"
-          tooltip="Copy filtered log to clipboard"
-          :class="{ 'disabled-link': filterCount == 0 }"
-          @click="copyTableToClipboard" />
-        <f7-link icon-f7="trash" tooltip="Clear the log buffer" :class="{ 'disabled-link': tableData.length == 0 }" @click="clearLog" />
-        <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs">
-          <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
-          <f7-icon v-else f7="exclamationmark_triangle" />
-        </f7-link>
-        <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".loghighlights-popup" class="popup-open" />
-        <f7-segmented>
-          <f7-button
-            outline
-            small
-            :active="!textMode"
-            icon-f7="table"
-            :icon-size="theme.aurora ? 20 : 22"
-            class="no-ripple"
-            @click="setTextMode(false)"
-            tooltip="Show logs in a table" />
-          <f7-button
-            outline
-            small
-            :active="textMode"
-            icon-f7="text_justifyleft"
-            :icon-size="theme.aurora ? 20 : 22"
-            class="no-ripple"
-            @click="setTextMode(true)"
-            tooltip="Show logs as plain text" />
-        </f7-segmented>
-        <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
+      <f7-link
+        icon-f7="cloud_download"
+        tooltip="Download filtered log as CSV"
+        :class="{ 'disabled-link': filterCount == 0 }"
+        @click="downloadCSV" />
+      <f7-link
+        icon-f7="rectangle_on_rectangle"
+        tooltip="Copy filtered log to clipboard"
+        :class="{ 'disabled-link': filterCount == 0 }"
+        @click="copyTableToClipboard" />
+      <f7-link icon-f7="trash" tooltip="Clear the log buffer" :class="{ 'disabled-link': tableData.length == 0 }" @click="clearLog" />
+      <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs">
+        <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
+        <f7-icon v-else f7="exclamationmark_triangle" />
+      </f7-link>
+      <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".loghighlights-popup" class="popup-open" />
+      <f7-segmented>
+        <f7-button
+          outline
+          small
+          :active="!textMode"
+          icon-f7="table"
+          :icon-size="theme.aurora ? 20 : 22"
+          class="no-ripple"
+          @click="setTextMode(false)"
+          tooltip="Show logs in a table" />
+        <f7-button
+          outline
+          small
+          :active="textMode"
+          icon-f7="text_justifyleft"
+          :icon-size="theme.aurora ? 20 : 22"
+          class="no-ripple"
+          @click="setTextMode(true)"
+          tooltip="Show logs as plain text" />
+      </f7-segmented>
+      <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
     </div>
 
     <div class="dock-content table-block">
@@ -284,11 +281,7 @@
 
   <f7-page v-else name="logviewer" class="log-viewer" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content
-        title="Log Viewer"
-        back-link="Developer Tools"
-        back-link-url="/developer/"
-        :f7router>
+      <oh-nav-content title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" :f7router>
         <template #right>
           <f7-link
             icon-ios="f7:play_fill"
