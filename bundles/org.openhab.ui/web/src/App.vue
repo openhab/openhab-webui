@@ -373,11 +373,7 @@
       :animate="!uiOptionsStore.disablePageTransitionAnimation" />
 
     <Teleport to="body">
-      <div
-        v-if="showDockedLogViewer"
-        class="log-dock"
-        :class="{ fullscreen: logDockFullscreen }"
-        :style="logDockStyle">
+      <div v-if="showDockedLogViewer" class="log-dock" :class="{ fullscreen: logDockFullscreen }" :style="logDockStyle">
         <div class="log-dock-resize-handle" @pointerdown.prevent="startDockResize" />
         <log-viewer
           embedded
