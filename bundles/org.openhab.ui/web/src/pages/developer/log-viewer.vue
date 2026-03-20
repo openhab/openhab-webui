@@ -199,9 +199,10 @@
               :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
               @click="loggingStop" />
             <f7-link
-              :icon-f7="fullscreen ? 'arrow_down_right_and_arrow_up_left' : 'arrow_up_left_arrow_down_right'"
+              :icon-f7="fullscreen ? 'arrow_down_to_line' : 'arrow_up_left_arrow_down_right'"
               :tooltip="fullscreen ? 'Restore docked size' : 'Fill main pane'"
               @click="$emit('toggle-fullscreen')" />
+            <span class="dock-action-sep" />
             <f7-link
               icon-f7="xmark"
               tooltip="Hide log pane"
@@ -437,6 +438,14 @@
       display flex
       align-items center
       gap 4px
+
+    .dock-action-sep
+      display inline-block
+      width 1px
+      height 16px
+      background var(--f7-bars-border-color)
+      margin 0 4px
+      flex-shrink 0
 
     .dock-filter-row
       display flex
