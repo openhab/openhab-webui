@@ -210,6 +210,8 @@
   @media (min-width 960px)
     padding-left 0 !important
     padding-right 0 !important
+.thing-inbox-approve-dialog
+  width auto
 </style>
 
 <script>
