@@ -205,7 +205,7 @@
             <span class="dock-action-sep" />
             <f7-link
               icon-f7="xmark"
-              tooltip="Hide log pane"
+              tooltip="Hide log pane (Shift+Alt+L)"
               @click="$emit('hide')" />
           </div>
         </div>
