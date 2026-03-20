@@ -743,6 +743,9 @@ export default {
       handler (val) {
         if (val) document.documentElement.style.setProperty('--log-dock-height', val + 'px')
       }
+    },
+    currentUrl () {
+      if (this.logDockFullscreen) this.logDockFullscreen = false
     }
   },
   methods: {
