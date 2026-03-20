@@ -200,7 +200,7 @@
               @click="loggingStop" />
             <f7-link
               :icon-f7="fullscreen ? 'arrow_down_to_line' : 'arrow_up_left_arrow_down_right'"
-              :tooltip="fullscreen ? 'Restore docked size' : 'Fill main pane'"
+              :tooltip="fullscreen ? 'Restore docked size (Shift+Alt+F)' : 'Fill main pane (Shift+Alt+F)'"
               @click="$emit('toggle-fullscreen')" />
             <span class="dock-action-sep" />
             <f7-link
