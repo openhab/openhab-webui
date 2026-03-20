@@ -169,6 +169,120 @@
     </f7-page>
   </f7-popup>
 
+  <div v-if="embedded" class="log-viewer log-viewer-embedded" :class="{ 'log-viewer-fullscreen': fullscreen }">
+    <div class="dock-header">
+        <div class="dock-header-row">
+          <div class="dock-title">Log Viewer</div>
+          <div class="dock-actions">
+            <f7-link
+              icon-ios="f7:play_fill"
+              icon-f7="play_fill"
+              icon-md="material:play_arrow"
+              :icon-color="stateConnected && stateProcessing ? 'gray' : ''"
+              :tooltip="!$device.ios ? 'Continue receiving logs' : ''"
+              :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios }"
+              @click="loggingContinue" />
+            <f7-link
+              icon-ios="f7:pause_fill"
+              icon-aurora="f7:pause_fill"
+              icon-md="material:pause_fill"
+              :icon-color="!stateConnected || !stateProcessing ? 'gray' : ''"
+              :tooltip="!$device.ios ? 'Pause processing new logs' : ''"
+              :class="{ 'disabled-link': !stateConnected || !stateProcessing, 'no-margin-left': $device.ios }"
+              @click="loggingPause" />
+            <f7-link
+              icon-ios="f7:stop_fill"
+              icon-aurora="f7:stop_fill"
+              icon-md="material:stop_fill"
+              :icon-color="!stateConnected ? 'gray' : ''"
+              :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
+              :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
+              @click="loggingStop" />
+            <f7-link
+              :icon-f7="fullscreen ? 'arrow_down_to_line' : 'arrow_up_left_arrow_down_right'"
+              :tooltip="fullscreen ? 'Restore docked size' : 'Fill main pane'"
+              @click="$emit('toggle-fullscreen')" />
+            <span class="dock-action-sep" />
+            <f7-link
+              icon-f7="xmark"
+              tooltip="Hide log pane"
+              @click="$emit('hide')" />
+          </div>
+        </div>
+        <div class="dock-filter-row">
+          <f7-searchbar
+            ref="searchbar"
+            class="dock-searchbar"
+            :value="filterText"
+            custom-search
+            placeholder="Filter"
+            :disable-button="false"
+            @searchbar:search="handleFilter"
+            @searchbar.clear="clearFilter" />
+          <div class="dock-stats">
+            <f7-badge class="log-period margin-left-half"> {{ logStart }}&nbsp;>&nbsp;{{ logEnd }} </f7-badge>
+            <f7-badge class="margin-horizontal" :color="countersBadgeColor" tooltip="Log entries filtered/total">
+              {{ filterCount }}/{{ tableData.length }}
+            </f7-badge>
+          </div>
+        </div>
+    </div>
+
+    <div class="dock-toolbar">
+        <f7-link
+          icon-f7="cloud_download"
+          tooltip="Download filtered log as CSV"
+          :class="{ 'disabled-link': filterCount == 0 }"
+          @click="downloadCSV" />
+        <f7-link
+          icon-f7="rectangle_on_rectangle"
+          tooltip="Copy filtered log to clipboard"
+          :class="{ 'disabled-link': filterCount == 0 }"
+          @click="copyTableToClipboard" />
+        <f7-link icon-f7="trash" tooltip="Clear the log buffer" :class="{ 'disabled-link': tableData.length == 0 }" @click="clearLog" />
+        <f7-link @click="toggleErrorDisplay" tooltip="Always show error level logs">
+          <f7-icon v-if="showErrors" f7="exclamationmark_triangle_fill" />
+          <f7-icon v-else f7="exclamationmark_triangle" />
+        </f7-link>
+        <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".loghighlights-popup" class="popup-open" />
+        <f7-segmented>
+          <f7-button
+            outline
+            small
+            :active="!textMode"
+            icon-f7="table"
+            :icon-size="theme.aurora ? 20 : 22"
+            class="no-ripple"
+            @click="setTextMode(false)"
+            tooltip="Show logs in a table" />
+          <f7-button
+            outline
+            small
+            :active="textMode"
+            icon-f7="text_justifyleft"
+            :icon-size="theme.aurora ? 20 : 22"
+            class="no-ripple"
+            @click="setTextMode(true)"
+            tooltip="Show logs as plain text" />
+        </f7-segmented>
+        <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
+    </div>
+
+    <div class="dock-content table-block">
+      <f7-card class="custom-card">
+        <div class="table-container" ref="tableContainer" @scroll="handleScroll">
+          <table ref="dataTable">
+            <tbody />
+          </table>
+        </div>
+      </f7-card>
+      <button v-show="!autoScroll" class="button button-fill dock-scroll-button" @click="showLatestLogs">
+        <f7-icon f7="arrow_down_to_line" />
+      </button>
+    </div>
+  </div>
+
+  <f7-page v-else name="logviewer" class="log-viewer" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         title="Log Viewer"
@@ -326,6 +440,14 @@
       display flex
       align-items center
       gap 4px
+
+    .dock-action-sep
+      display inline-block
+      width 1px
+      height 16px
+      background var(--f7-bars-border-color)
+      margin 0 4px
+      flex-shrink 0
 
     .dock-filter-row
       display flex
