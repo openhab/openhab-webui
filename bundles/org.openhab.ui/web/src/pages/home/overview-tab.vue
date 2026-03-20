@@ -17,8 +17,7 @@
     </f7-block>
 
     <template v-else>
-      <component
-        :is="overviewPage.component"
+      <oh-layout-page
         v-if="overviewPage"
         v-show="!inChatSession"
         :context="overviewPageContext"
@@ -79,6 +78,7 @@ import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUserStore } from '@/js/stores/useUserStore'
@@ -93,7 +93,8 @@ export default {
     f7router: Object
   },
   components: {
-    'empty-state-placeholder': EmptyStatePlaceholder,
+    OhLayoutPage,
+    EmptyStatePlaceholder,
     habot: defineAsyncComponent(() => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue'))
   },
   setup () {

@@ -1,25 +1,39 @@
 import { type Component, defineAsyncComponent, type App } from 'vue'
 
-const pages = new Map<string, Component>()
-const tabs = new Map<string, Component>()
-const widgets = new Map<string, Component>()
+type Loader = () => Promise<{ default: Component }>
 
-export function registerWidgets(app: App) {
-  const widgetFiles: Record<string, unknown> = import.meta.glob('@/components/widgets/**/*.vue')
-  Object.entries(widgetFiles).forEach(([path, loader]) => {
+function registerSystemWidgets(app: App) {
+  const files = import.meta.glob<Loader>('@/components/widgets/system/*.vue')
+  Object.entries(files).forEach(([path, loader]) => {
     const componentName = path.split('/').pop()?.replace('.vue', '')
     if (componentName) {
-      app.component(componentName, defineAsyncComponent(loader as () => Promise<{ default: Component }>))
+      app.component(componentName, defineAsyncComponent(loader))
     }
   })
 }
 
-export function registerTabs(app: App) {
-  const tabsFiles: Record<string, unknown> = import.meta.glob('@/components/tabs/**/*.vue')
-  Object.entries(tabsFiles).forEach(([path, loader]) => {
+function registerStandardWidgets(app: App) {
+  const files = import.meta.glob<Loader>('@/components/widgets/standard/**/*.vue')
+  Object.entries(files).forEach(([path, loader]) => {
     const componentName = path.split('/').pop()?.replace('.vue', '')
     if (componentName) {
-      app.component(componentName, defineAsyncComponent(loader as () => Promise<{ default: Component }>))
+      app.component(componentName, defineAsyncComponent(loader))
     }
   })
+}
+
+function registerLayoutWidgets(app: App) {
+  const files = import.meta.glob<Loader>('@/components/widgets/layout/*.vue')
+  Object.entries(files).forEach(([path, loader]) => {
+    const componentName = path.split('/').pop()?.replace('.vue', '')
+    if (componentName) {
+      app.component(componentName, defineAsyncComponent(loader))
+    }
+  })
+}
+
+export function registerWidgets(app: App) {
+  registerSystemWidgets(app)
+  registerStandardWidgets(app)
+  registerLayoutWidgets(app)
 }

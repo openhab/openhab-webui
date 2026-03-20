@@ -1,6 +1,28 @@
+import { defineAsyncComponent } from 'vue'
+
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'
+
+import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
+const OhMapPage = defineAsyncComponent(() => import('@/components/widgets/map/oh-map-page.vue'))
+const OhPlanPage = defineAsyncComponent(() => import('@/components/widgets/plan/oh-plan-page.vue'))
+const OhChartPage = defineAsyncComponent(() => import('@/components/widgets/chart/oh-chart-page.vue'))
+
+function pageComponent(page) {
+  if (!page.component) return null
+  switch (page.component) {
+    case 'oh-layout-page':
+      return OhLayoutPage
+    case 'oh-map-page':
+      return OhMapPage
+    case 'oh-plan-page':
+      return OhPlanPage
+    case 'oh-chart-page':
+      return OhChartPage
+  }
+  return null
+}
 
 export default {
   props: {
@@ -52,7 +74,7 @@ export default {
     },
     componentType() {
       if (this.page) {
-        return this.page.component
+        return pageComponent(this.page)
       } else if (this.widget || this.standard) {
         return 'generic-widget-component'
       }
@@ -86,7 +108,7 @@ export default {
     },
     tabComponent(tab) {
       const page = useComponentsStore().page(tab.config.page.replace('page:', ''))
-      return page.component
+      return pageComponent(page)
     }
   }
 }
