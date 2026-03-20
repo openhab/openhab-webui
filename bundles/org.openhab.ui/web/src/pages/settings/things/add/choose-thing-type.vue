@@ -94,6 +94,8 @@
   .scan-input
     .list
       margin-top 0
+.thing-inbox-approve-dialog
+  width auto
 </style>
 
 <script>
