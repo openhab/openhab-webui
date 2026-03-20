@@ -23,7 +23,6 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
