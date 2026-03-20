@@ -158,8 +158,9 @@ import debounce from 'debounce'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import * as api from '@/api'
-import { type CodeEditorType, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
+import { type CodeEditorType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
 import { storeToRefs } from 'pinia'
+import { ApiError } from '@/js/hey-api.ts'
 
 const uiOptionsStore = useUIOptionsStore()
 
@@ -238,7 +239,11 @@ const parseItems = () => {
       return extendedItem
     })
   }).catch(async (err) => {
-    parseError.value = await err.response.text()
+    if (err instanceof ApiError) {
+      parseError.value = await err.response.text()
+      return
+    }
+    console.error('Unexpected error while parsing input', err)
   })
 }
 
