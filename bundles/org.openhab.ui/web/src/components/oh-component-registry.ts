@@ -1,50 +1,39 @@
-import { type Component, defineAsyncComponent } from 'vue'
+import { type Component, defineAsyncComponent, type App } from 'vue'
 
-const pages = new Map<string, Component>()
-const tabs = new Map<string, Component>()
-const widgets = new Map<string, Component>()
+type Loader = () => Promise<{ default: Component }>
 
-const widgetFiles: Record<string, unknown> = import.meta.glob('@/components/widgets/**/*.vue')
-Object.entries(widgetFiles).forEach(([path, loader]) => {
-  const componentName = path.split('/').pop()?.replace('.vue', '')
-  if (componentName) {
-    const asyncComponent = defineAsyncComponent(loader as () => Promise<{ default: Component }>)
-    if (componentName.endsWith('-page')) {
-      pages.set(componentName, asyncComponent)
-    } else {
-      widgets.set(componentName, asyncComponent)
+function registerSystemWidgets(app: App) {
+  const files = import.meta.glob<Loader>('@/components/widgets/system/*.vue')
+  Object.entries(files).forEach(([path, loader]) => {
+    const componentName = path.split('/').pop()?.replace('.vue', '')
+    if (componentName) {
+      app.component(componentName, defineAsyncComponent(loader))
     }
-  }
-})
-
-const tabsFiles: Record<string, unknown> = import.meta.glob('@/components/tabs/**/*.vue')
-Object.entries(tabsFiles).forEach(([path, loader]) => {
-  const componentName = path.split('/').pop()?.replace('.vue', '')
-  if (componentName) {
-    const asyncComponent = defineAsyncComponent(loader as () => Promise<{ default: Component }>)
-    tabs.set(componentName, asyncComponent)
-  }
-})
-
-console.info(`oh-component-registry: Registered ${pages.size} page, ${tabs.size} tab and ${widgets.size} widgets components`)
-console.debug('oh-component-registry pages', pages.keys())
-console.debug('oh-component-registry tabs', tabs.keys())
-console.debug('oh-component-registry widgets', widgets.keys())
-
-export function page(name: string) {
-  const p = pages.get(name)
-  if (!p) console.error("oh-component-registry: Didn't find page component ", name)
-  return p
+  })
 }
 
-export function tab(name: string) {
-  const t = tabs.get(name)
-  if (!t) console.error("oh-component-registry: Didn't find tab component ", name)
-  return t
+function registerStandardWidgets(app: App) {
+  const files = import.meta.glob<Loader>('@/components/widgets/standard/**/*.vue')
+  Object.entries(files).forEach(([path, loader]) => {
+    const componentName = path.split('/').pop()?.replace('.vue', '')
+    if (componentName) {
+      app.component(componentName, defineAsyncComponent(loader))
+    }
+  })
 }
 
-export function widget(name: string, suppressLog = false) {
-  const w = widgets.get(name)
-  if (!w && !suppressLog) console.error("oh-component-registry: Didn't find widget component ", name)
-  return w
+function registerLayoutWidgets(app: App) {
+  const files = import.meta.glob<Loader>('@/components/widgets/layout/*.vue')
+  Object.entries(files).forEach(([path, loader]) => {
+    const componentName = path.split('/').pop()?.replace('.vue', '')
+    if (componentName) {
+      app.component(componentName, defineAsyncComponent(loader))
+    }
+  })
+}
+
+export function registerWidgets(app: App) {
+  registerSystemWidgets(app)
+  registerStandardWidgets(app)
+  registerLayoutWidgets(app)
 }

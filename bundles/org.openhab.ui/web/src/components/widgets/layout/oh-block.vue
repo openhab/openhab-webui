@@ -34,11 +34,7 @@
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>
-    <component
-      :is="widgetRegistry.widget(component.component, true) ?? component.component"
-      v-for="(component, idx) in defaultSlots"
-      :key="idx"
-      :context="childContext(component)" />
+    <component :is="component.component" v-for="(component, idx) in defaultSlots" :key="idx" :context="childContext(component)" />
   </f7-block>
 </template>
 
@@ -51,7 +47,6 @@
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
 import { OhBlockDescription } from '@/assets/definitions/widgets/layout'
-import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import * as api from '@/api'
 
 defineOptions({

@@ -59,7 +59,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <component :is="widgetRegistry.page(page.component)" v-else-if="page && visibleToCurrentUser" :context="context" :f7router="f7router" />
+    <component :is="pageComponent(page)" v-else-if="page && visibleToCurrentUser" :context="context" :f7router="f7router" />
 
     <empty-state-placeholder
       v-if="!visibleToCurrentUser"
@@ -86,9 +86,9 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
-import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
@@ -97,6 +97,15 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 import { useViewArea } from '@/composables/useViewArea.ts'
+
+import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
+const OhMapPage = defineAsyncComponent(() => import('@/components/widgets/map/oh-map-page.vue'))
+const OhPlanPage = defineAsyncComponent(() => import('@/components/widgets/plan/oh-plan-page.vue'))
+const OhChartPage = defineAsyncComponent(() => import('@/components/widgets/chart/oh-chart-page.vue'))
+
+const OhLocationsTab = defineAsyncComponent(() => import('@/components/tabs/locations-tab.vue'))
+const OhEquipmentTab = defineAsyncComponent(() => import('@/components/tabs/equipment-tab.vue'))
+const OhPropertiesTab = defineAsyncComponent(() => import('@/components/tabs/properties-tab.vue'))
 
 export default {
   components: {
@@ -113,7 +122,7 @@ export default {
     useViewArea()
 
     const { evaluateExpression } = useWidgetExpression()
-    return { theme, evaluateExpression, widgetRegistry }
+    return { theme, evaluateExpression }
   },
   data () {
     return {
@@ -245,16 +254,32 @@ export default {
       }
       return context
     },
+    pageComponent(page) {
+      if (!page.component) return null
+      switch (page.component) {
+        case 'oh-layout-page':
+          return OhLayoutPage
+        case 'oh-map-page':
+          return OhMapPage
+        case 'oh-plan-page':
+          return OhPlanPage
+        case 'oh-chart-page':
+          return OhChartPage
+      }
+      return null
+    },
     tabComponent (tab) {
       switch (tab) {
         case 'oh-locations-tab':
+          return OhLocationsTab
         case 'oh-equipment-tab':
+          return OhEquipmentTab
         case 'oh-properties-tab':
-          return widgetRegistry.tab(tab.component)
+          return OhPropertiesTab
       }
 
       const page = useComponentsStore().page(tab.config.page.replace('page:', ''))
-      return widgetRegistry.page(page.component)
+      return page.component
     },
     tabEvaluateExpression (tab, idx, key) {
       const ctx = this.tabContext(tab)

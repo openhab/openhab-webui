@@ -37,7 +37,6 @@
 
 <script>
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import OhChart from '../system/oh-chart.vue'
 import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
 import { mapStores } from 'pinia'
 
@@ -46,9 +45,6 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 export default {
   props: {
     context: Object
-  },
-  components: {
-    OhChart
   },
   widget: OhChartPageDefinition,
   setup (props) {

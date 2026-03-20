@@ -51,7 +51,7 @@
     </template>
     <component
       v-bind="$attrs"
-      :is="widgetRegistry.widget(componentType)"
+      :is="componentType"
       v-else-if="componentType && componentType.startsWith('oh-')"
       ref="component"
       :context="context"
@@ -74,12 +74,7 @@
       style="white-space: pre-wrap"
       >{{ config.error }}</pre
     >
-    <component
-      :is="widgetRegistry.widget(componentType, true) ?? componentType"
-      v-else
-      ref="component"
-      v-bind="{ ...$attrs, ...config }"
-      :class="scopedCssUid">
+    <component :is="componentType" v-else ref="component" v-bind="{ ...$attrs, ...config }" :class="scopedCssUid">
       {{ config.content }}
       <template v-if="defaultSlots.length > 0">
         <generic-widget-component
@@ -94,7 +89,6 @@
 <script setup lang="ts">
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
-import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import Label from '@/components/widgets/Label.vue'
 import { defineAsyncComponent } from 'vue'
 

@@ -17,13 +17,7 @@
     </f7-block>
 
     <template v-else>
-      <component
-        :is="widgetRegistry.page(overviewPage.component)"
-        v-if="overviewPage"
-        v-show="!inChatSession"
-        :context="overviewPageContext"
-        :class="{ notready: !ready }"
-        :f7router />
+      <oh-layout-page v-if="overviewPage" v-show="!inChatSession" :context="overviewPageContext" :class="{ notready: !ready }" :f7router />
       <div v-else-if="!inChatSession" class="empty-overview">
         <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
         <f7-row v-if="!userStore.isAdmin() || $f7dim.width < 1280" class="display-flex justify-content-center">
@@ -78,8 +72,8 @@ import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUserStore } from '@/js/stores/useUserStore'
@@ -94,11 +88,12 @@ export default {
     f7router: Object
   },
   components: {
-    'empty-state-placeholder': EmptyStatePlaceholder,
+    OhLayoutPage,
+    EmptyStatePlaceholder,
     habot: defineAsyncComponent(() => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue'))
   },
   setup () {
-    return { f7, widgetRegistry }
+    return { f7 }
   },
   data () {
     return {
