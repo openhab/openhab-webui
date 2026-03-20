@@ -41,8 +41,12 @@ import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
 import { mapStores } from 'pinia'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { defineAsyncComponent } from 'vue'
 
 export default {
+  components: {
+    'oh-chart': defineAsyncComponent(() => import('@/components/widgets/system/oh-chart.vue')),
+  },
   props: {
     context: Object
   },
