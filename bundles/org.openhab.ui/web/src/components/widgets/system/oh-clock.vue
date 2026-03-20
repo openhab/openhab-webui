@@ -15,21 +15,35 @@ import type { WidgetContext } from '../types'
 dayjs.extend(utc)
 dayjs.extend(timezoneDayjs)
 
+defineOptions({
+  widget: OhClockDefinition
+})
+
+// props
 const props = defineProps<{
   context: WidgetContext,
   format?: string,
   timezone?: string
 }>()
 
-defineOptions({
-  widget: OhClockDefinition
-})
-
+// composables
 const { config } = useWidgetContext(props.context)
 
+// data (state)
 let timer: number
 const date = ref<string>('')
 
+// lifecycle
+onMounted(() => {
+  updateTime()
+  timer = setInterval(updateTime, 1000)
+})
+
+onBeforeUnmount(() => {
+  clearInterval(timer)
+})
+
+// methods
 function updateTime() {
   let dayjsDate = dayjs()
   try {
@@ -42,13 +56,4 @@ function updateTime() {
   }
   date.value = dayjsDate.format(props.format || config.value.format || 'LTS')
 }
-
-onMounted(() => {
-  updateTime()
-  timer = setInterval(updateTime, 1000)
-})
-
-onBeforeUnmount(() => {
-  clearInterval(timer)
-})
 </script>
