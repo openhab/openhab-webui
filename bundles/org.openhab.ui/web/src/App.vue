@@ -378,6 +378,7 @@
         class="log-dock"
         :class="{ fullscreen: logDockFullscreen }"
         :style="logDockStyle">
+        <div class="log-dock-resize-handle" @pointerdown.prevent="startDockResize" />
         <log-viewer
           embedded
           :fullscreen="logDockFullscreen"
@@ -484,7 +485,8 @@
   // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
 
 .safe-areas.log-dock-offset
-  --f7-safe-area-bottom calc(var(--log-dock-height) + env(safe-area-inset-bottom, 0px))
+  height calc(100dvh - var(--log-dock-height)) !important
+  max-height calc(100dvh - var(--log-dock-height)) !important
 
 .log-dock
   position fixed !important
@@ -500,16 +502,28 @@
   flex-direction column
   --log-viewer-height 100%
 
-  > *
+  > *:not(.log-dock-resize-handle)
     flex 1
     min-height 0
+
+.log-dock-resize-handle
+  position absolute
+  top 0
+  left 0
+  right 0
+  height 5px
+  cursor ns-resize
+  z-index 1
+  &:hover
+    background var(--f7-color-blue)
+    opacity 0.35
 
 .log-dock.fullscreen
   height calc(100dvh - var(--f7-safe-area-top))
   max-height none
 
 :root
-  --log-dock-height clamp(240px, 34vh, 460px)
+  --log-dock-height clamp(120px, 34vh, 460px)
 </style>
 
 <script>
@@ -639,7 +653,8 @@ export default {
       currentUrl: '',
 
       logDockVisible: localStorage.getItem('openhab.ui:logDock.visible') === 'true',
-      logDockFullscreen: false
+      logDockFullscreen: false,
+      logDockHeight: parseInt(localStorage.getItem('openhab.ui:logDock.height')) || null
     }
   },
   computed: {
@@ -721,6 +736,12 @@ export default {
           })
 
         loadLocaleMessages('about', this.globalMergeLocaleMessage)
+      }
+    },
+    logDockHeight: {
+      immediate: true,
+      handler (val) {
+        if (val) document.documentElement.style.setProperty('--log-dock-height', val + 'px')
       }
     }
   },
@@ -925,6 +946,24 @@ export default {
     toggleLogDockFullscreen () {
       if (!this.logDockVisible) this.setLogDockVisible(true)
       this.logDockFullscreen = !this.logDockFullscreen
+    },
+    startDockResize (ev) {
+      const startY = ev.clientY
+      const startHeight = this.logDockHeight || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--log-dock-height')) || 300
+      const minHeight = 120
+      const maxHeight = window.innerHeight * 0.85
+
+      const onMove = (moveEv) => {
+        const delta = startY - moveEv.clientY
+        this.logDockHeight = Math.round(Math.min(maxHeight, Math.max(minHeight, startHeight + delta)))
+      }
+      const onUp = () => {
+        window.removeEventListener('pointermove', onMove)
+        window.removeEventListener('pointerup', onUp)
+        localStorage.setItem('openhab.ui:logDock.height', String(this.logDockHeight))
+      }
+      window.addEventListener('pointermove', onMove)
+      window.addEventListener('pointerup', onUp)
     },
     keyDown(ev) {
       if (!(ev.shiftKey && ev.altKey)) return
