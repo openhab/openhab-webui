@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import RoundSlider from 'vue-three-round-slider'
 
 import slideMixin from './slide-mixin'
 import { OhKnobDefinition } from '@/assets/definitions/widgets/system'
@@ -22,7 +22,7 @@ export default {
   mixins: [slideMixin],
   components: {
     // See https://roundsliderui.com/document.html for docs
-    RoundSlider: defineAsyncComponent(() => import(/* webpackChunkName: "vue-round-slider" */ 'vue-three-round-slider'))
+    RoundSlider
   },
   props: {
     context: Object
