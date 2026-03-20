@@ -36,8 +36,8 @@
 </style>
 
 <script>
+import { defineAsyncComponent } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import OhChart from '../system/oh-chart.vue'
 import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
 import { mapStores } from 'pinia'
 
@@ -48,7 +48,7 @@ export default {
     context: Object
   },
   components: {
-    OhChart
+    'oh-chart': defineAsyncComponent(() => import('../system/oh-chart.vue')),
   },
   widget: OhChartPageDefinition,
   setup (props) {
