@@ -941,16 +941,15 @@ export default {
       if (!this.logDockVisible) this.setLogDockVisible(true)
       this.logDockFullscreen = !this.logDockFullscreen
     },
-    isTextInputTarget (target) {
-      if (!target) return false
-      if (target.isContentEditable) return true
-      const tagName = target.tagName
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tagName)) return true
-      return Boolean(target.closest?.('.CodeMirror, .cm-editor, .monaco-editor, .ace_editor'))
-    },
     keyDown(ev) {
       if (!(ev.shiftKey && ev.altKey)) return
-      if (this.isTextInputTarget(ev.target)) return
+
+      // Claim our known shortcuts unconditionally so the OS/browser never
+      // inserts an extended character (e.g. ¬, Ð, ˝) even when an input is focused.
+      const ourKeys = [68, 70, 76, 77] // D, F, L, M
+      if (!ourKeys.includes(ev.keyCode)) return
+      ev.preventDefault()
+      ev.stopPropagation()
 
       switch (ev.keyCode) {
         case 68: // D for developer dock
@@ -971,12 +970,7 @@ export default {
           }
           break
         }
-        default:
-          return
       }
-
-      ev.stopPropagation()
-      ev.preventDefault()
     },
     updateUrl(newUrl) {
       this.currentUrl = newUrl
