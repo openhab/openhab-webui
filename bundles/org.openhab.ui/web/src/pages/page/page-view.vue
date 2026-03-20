@@ -59,7 +59,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <component :is="widgetRegistry.page(page.component)" v-else-if="page && visibleToCurrentUser" :context="context" :f7router="f7router" />
+    <component :is="page.component" v-else-if="page && visibleToCurrentUser" :context="context" :f7router="f7router" />
 
     <empty-state-placeholder
       v-if="!visibleToCurrentUser"
@@ -88,7 +88,6 @@
 <script>
 import { f7, theme } from 'framework7-vue'
 
-import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
@@ -113,7 +112,7 @@ export default {
     useViewArea()
 
     const { evaluateExpression } = useWidgetExpression()
-    return { theme, evaluateExpression, widgetRegistry }
+    return { theme, evaluateExpression }
   },
   data () {
     return {
@@ -250,11 +249,11 @@ export default {
         case 'oh-locations-tab':
         case 'oh-equipment-tab':
         case 'oh-properties-tab':
-          return widgetRegistry.tab(tab.component)
+          return tab.component
       }
 
       const page = useComponentsStore().page(tab.config.page.replace('page:', ''))
-      return widgetRegistry.page(page.component)
+      return page.component
     },
     tabEvaluateExpression (tab, idx, key) {
       const ctx = this.tabContext(tab)

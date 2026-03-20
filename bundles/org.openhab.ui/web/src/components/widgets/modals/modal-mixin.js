@@ -1,5 +1,3 @@
-import * as widgetRegistry from '@/components/oh-component-registry.ts'
-
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'
@@ -54,7 +52,7 @@ export default {
     },
     componentType() {
       if (this.page) {
-        return widgetRegistry.page(this.page.component)
+        return this.page.component
       } else if (this.widget || this.standard) {
         return 'generic-widget-component'
       }
@@ -88,7 +86,7 @@ export default {
     },
     tabComponent(tab) {
       const page = useComponentsStore().page(tab.config.page.replace('page:', ''))
-      return widgetRegistry.page(page.component)
+      return page.component
     }
   }
 }

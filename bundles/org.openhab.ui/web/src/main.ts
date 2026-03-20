@@ -13,6 +13,8 @@ import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
 import OhIconComponent from './components/widgets/system/oh-icon.vue'
 import GenericWidgetComponent from './components/widgets/generic-widget-component.vue'
 
+import { registerWidgets, registerTabs } from '@/components/oh-component-registry'
+
 // Import Framework7
 import Framework7 from 'framework7/lite-bundle'
 import Framework7Vue, { registerComponents } from 'framework7-vue/bundle'
@@ -71,6 +73,9 @@ app.component('OhNavContent', OhNavContent)
 app.component('DeveloperDockIcon', DeveloperDockIcon)
 app.component('OhIcon', OhIconComponent)
 app.component('GenericWidgetComponent', GenericWidgetComponent)
+
+registerWidgets(app)
+registerTabs(app)
 
 app.mount('#app')
 performance.mark('app-mounted')
