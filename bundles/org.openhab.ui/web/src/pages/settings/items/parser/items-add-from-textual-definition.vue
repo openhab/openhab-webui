@@ -188,6 +188,10 @@ const parseError = ref<string | null>(null)
 
 const { codeEditorType } = storeToRefs(uiOptionsStore)
 
+if (props.textualDefinition) {
+  codeEditorType.value = 'DSL'
+}
+
 // computed
 const mediaType = computed(() => SupportedMediaTypes.items[codeEditorType.value])
 
