@@ -215,11 +215,14 @@ export function useChart(
     const now = dayjs()
     const isBetweenStartAndEnd =
       dayjs(startTime.value).subtract(5, 'minutes').isBefore(now) && dayjs(endTime.value).add(5, 'minutes').isAfter(now)
+    const isNotFuture = !(future.value > 0)
 
-    let boundary = seriesComponents[component.component]!.includeBoundary?.(chartContext.value, component) ?? isBetweenStartAndEnd
+    let boundary =
+      seriesComponents[component.component]!.includeBoundary?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
     if (config.noBoundary === true) boundary = false
 
-    let itemState = seriesComponents[component.component]!.includeItemState?.(chartContext.value, component) ?? isBetweenStartAndEnd
+    let itemState =
+      seriesComponents[component.component]!.includeItemState?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
     if (config.noItemState === true) itemState = false
 
     neededItems.forEach((neededItem) => {
