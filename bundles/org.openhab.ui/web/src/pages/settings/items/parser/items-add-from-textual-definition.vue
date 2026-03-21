@@ -169,6 +169,7 @@ const editor = defineAsyncComponent(() => import(/* webpackChunkName: "script-ed
 // props
 const props = defineProps<{
   f7router: Router.Router
+  textualDefinition?: string
 }>()
 
 // data
@@ -181,11 +182,15 @@ const items = ref<api.EnrichedItem[]>([])
 const things = ref<api.EnrichedThing[]>([])
 const links = ref<api.ItemChannelLink[]>([])
 const ready = ref(false)
-const code = ref('')
+const code = ref(props.textualDefinition || '')
 const parsedItems = ref<ExtendedFileFormatItem[]>([])
 const parseError = ref<string | null>(null)
 
 const { codeEditorType } = storeToRefs(uiOptionsStore)
+
+if (props.textualDefinition) {
+  codeEditorType.value = 'DSL'
+}
 
 // computed
 const mediaType = computed(() => SupportedMediaTypes.items[codeEditorType.value])
