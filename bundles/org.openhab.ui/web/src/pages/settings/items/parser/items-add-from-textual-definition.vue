@@ -207,6 +207,7 @@ watch(codeEditorType, () => {
 // methods
 const onPageAfterIn = () => {
   load()
+  if (props.textualDefinition) parseItems()
 }
 
 const load = async () => {
