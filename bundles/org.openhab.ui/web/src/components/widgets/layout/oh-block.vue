@@ -57,7 +57,9 @@ const props = defineProps<{
   context: WidgetContext
 }>()
 
-const parentDefaultSlots = (props.context.parent?.component as api.RootUiComponent | undefined)?.slots?.default || []
+const parentDefaultSlots = props.context.parent?.component &&
+  'slots' in props.context.parent.component  && props.context.parent.component.slots.default ?
+  props.context.parent.component.slots?.default : []
 
 const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(props.context)
 </script>
