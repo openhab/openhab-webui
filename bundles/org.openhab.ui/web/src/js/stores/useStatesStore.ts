@@ -158,6 +158,7 @@ export const useStatesStore = defineStore('states', () => {
       )
       .catch((e) => {
         console.error(`Failed to send command '${command}' to item '${itemName}'`, e)
+        throw e // rethrow to allow subscribing to command failures
       })
   }
 
