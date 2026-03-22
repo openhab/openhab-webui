@@ -325,6 +325,7 @@ export default {
             destroyOnClose: true,
             closeTimeout: 2000
           }).open()
+          this.dirty = false
           this.f7router.back()
         })
       }).catch((err) => {
