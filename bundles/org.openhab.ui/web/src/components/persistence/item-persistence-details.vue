@@ -114,7 +114,7 @@ const loadService = async (service: api.PersistenceService): Promise<Persistence
 
   let itemsPersisted: api.PersistenceItemInfo | 'not_persisted' | 'unsupported' = 'unsupported'
   try {
-    itemsPersisted = (await api.getItemsForPersistenceService({ serviceId: service.id, itemName: props.item.name }))![0]!
+    itemsPersisted = (await api.getItemsForPersistenceService({ serviceId: service.id, itemName: props.item.name }))![0] || 'not_persisted'
   } catch (err: unknown) {
     if (err instanceof ApiError && err.response.status === 404) {
       itemsPersisted = 'not_persisted'
