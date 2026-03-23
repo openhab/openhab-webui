@@ -75,8 +75,8 @@ const tokenNeededParameter = p('BOOLEAN', 'token', 'Authentification token neede
 // Fans
 const speedParameter = p(
   'TEXT',
-  'speeds',
-  'Speeds',
+  'fanSpeeds',
+  'Fan Speeds',
   'Mappings between items states and Google modes (comma separated), e.g. "0=away:zero,50=default:standard:one,100=high:two"'
 )
 const orderedParameter = p('BOOLEAN', 'ordered', 'Ordered')
@@ -92,6 +92,12 @@ const colorUnitParameter = p(
   'colorUnit',
   'Color Unit',
   '(Color lights only) Specify the unit to be used for the "lightColorTemperature" child in a grouped light, e.g. "kelvin", "mired" or "percent"'
+)
+const colorTemperatureInvertedParameter = p(
+  'BOOLEAN',
+  'colorTemperatureInverted',
+  'Inverted Color Temperature',
+  '(Color lights only) Invert color temperature percentage values (e.g. warm light at 100% instead of 0%)'
 )
 // OpenCloseDevices
 const discreteOnlyParameter = p(
@@ -139,7 +145,7 @@ const levelStepSizeParameter = p(
 // Thermostat
 const thermostatModesParameter = p(
   'TEXT',
-  'modes',
+  'thermostatModes',
   'Thermostat modes',
   'Mappings from Google values to openHAB item values (comma separated), e.g. "off=OFF:WINDOW_OPEN,heat=COMFORT:BOOST,eco=ECO,on=ON,auto"'
 )
@@ -333,19 +339,23 @@ const deviceTypes = {
   Hood: [speedParameter, langParameter, orderedParameter, fanModeNameParameter, fanModeSettingsParameter],
   // Light devices (all variants use type LIGHT)
   Light: [colorTemperatureRangeParameter, colorUnitParameter, modeParameter, settingsParameter, langParameter, orderedParameter],
+  SpecialColorLight: [colorTemperatureRangeParameter, colorUnitParameter, colorTemperatureInvertedParameter],
   // Other devices
-  ACUnit: [
+  AC_Unit: [
     speedParameter,
     langParameter,
     orderedParameter,
+    fanModeNameParameter,
+    fanModeSettingsParameter,
     useFahrenheitParameter,
+    maxHumidityParameter,
     thermostatModesParameter,
     thermostatTemperatureRangeParameter
   ],
   Camera: [protocolsParameter, tokenNeededParameter],
   Charger: [isRechargeableParameter, unitParameter],
   ClimateSensor: [useFahrenheitParameter, temperatureRangeParameter, maxHumidityParameter],
-  Humidifier: [humidityRangeParameter, speedParameter, langParameter, orderedParameter],
+  Humidifier: [humidityRangeParameter, maxHumidityParameter, speedParameter, langParameter, orderedParameter],
   HumiditySensor: [maxHumidityParameter],
   Lock: [invertedParameter],
   Scene: [sceneReversibleParameter],
@@ -360,7 +370,7 @@ const deviceTypes = {
   Sensor: [sensorNameParameter, valueUnitParameter, statesParameter],
   Speaker: [volumeMaxLevelParameter, volumeDefaultPercentageParameter, levelStepSizeParameter],
   TemperatureSensor: [useFahrenheitParameter, temperatureRangeParameter],
-  Thermostat: [useFahrenheitParameter, thermostatModesParameter, thermostatTemperatureRangeParameter],
+  Thermostat: [useFahrenheitParameter, maxHumidityParameter, thermostatModesParameter, thermostatTemperatureRangeParameter],
   TV: [
     volumeMaxLevelParameter,
     volumeDefaultPercentageParameter,
@@ -440,6 +450,10 @@ const deviceAttributes = {
   vacuumBattery: [],
   vacuumLocate: [],
   vacuumCurrentCycle: [],
+  // Washer/Dishwasher members
+  washerPower: [],
+  washerTimerRemaining: [],
+  washerCurrentCycle: [],
   // Dynamic modes members
   modesCurrentMode: [],
   modesSettings: [],
