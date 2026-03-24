@@ -64,6 +64,11 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const codeMirrorSettings = reactive({
     vimMode: localStorage.getItem('openhab.ui:codeMirror.vimMode') === 'true'
   })
+  const setupWizardShort = ref<boolean>(localStorage.getItem('openhab.ui:setupWizard.short') === 'true')
+  const _storedWizardStepsDone = localStorage.getItem('openhab.ui:setupWizard.stepsDone')
+  const setupWizardStepsDone = ref<Record<string, boolean>>(
+    _storedWizardStepsDone ? (JSON.parse(_storedWizardStepsDone) as Record<string, boolean>) : {}
+  )
 
   const darkMode = computed({
     get: (): 'dark' | 'light' => {
@@ -196,10 +201,16 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
   })
 
+  watch(codeMirrorSettings, (newValue) => {
+    localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
+  })
+  watch(setupWizardShort, (newValue) => {
+    localStorage.setItem('openhab.ui:setupWizard.short', newValue?.toString())
+  })
   watch(
-    codeMirrorSettings,
+    setupWizardStepsDone,
     (newValue) => {
-      localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
+      localStorage.setItem('openhab.ui:setupWizard.stepsDone', JSON.stringify(newValue || {}))
     },
     { deep: true }
   )
@@ -264,6 +275,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     dialogTriggerOnConnect,
 
     codeMirrorSettings,
+    setupWizardShort,
+    setupWizardStepsDone,
 
     updateClasses,
     themeOptions
