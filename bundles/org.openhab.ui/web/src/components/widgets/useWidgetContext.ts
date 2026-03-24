@@ -10,6 +10,22 @@ import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, W
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as api from '@/api'
 
+export function transformParameterDefault(p: api.ConfigDescriptionParameter & { default?: string }) {
+  if (p.default === undefined) return undefined
+  switch (p.type) {
+    case 'BOOLEAN':
+      return Boolean(p.default)
+    case 'INTEGER':
+    case 'DECIMAL':
+      return Number(p.default)
+    case 'TEXT':
+      return p.default
+    default:
+      const exhaustiveCheck: never = p.type
+      return p.default
+  }
+}
+
 /**
  * useWidgetContext must be used as a composable in all widget components.
  *
@@ -70,9 +86,10 @@ export function useWidgetContext(context: WidgetContext) {
     if ('props' in context.component && context.component.props.parameters) {
       let defaultValues: Record<string, unknown> = {}
       // Note: api.ConfigDescriptionParameter uses 'defaultValue', but UI widgets just use 'default'
-      context.component.props.parameters.forEach((p: { name: string; default?: unknown }) => {
-        if (p.default !== undefined) {
-          defaultValues[p.name] = p.default
+      context.component.props.parameters.forEach((p: api.ConfigDescriptionParameter & { default?: string }) => {
+        const defaultValue = transformParameterDefault(p)
+        if (defaultValue !== undefined) {
+          defaultValues[p.name] = defaultValue
         }
       })
       return Object.assign({}, defaultValues, context.props || {})
@@ -140,7 +157,7 @@ export function useWidgetContext(context: WidgetContext) {
 
   // methods
   function evaluateExpression(key: string, value: any, _context?: WidgetContext, _props?: Record<string, unknown>): unknown {
-    return _evaluateExpression(key, value, _context || context, _props || props.value)
+    return _evaluateExpression(key, value, _context ?? context, _props ?? props.value)
   }
 
   function childContext(component: api.UiComponent): WidgetContext {

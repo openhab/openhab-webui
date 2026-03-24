@@ -115,9 +115,11 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
 import * as StandardListWidgets from '@/components/widgets/standard/list'
+import * as api from '@/api'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useViewArea } from '@/composables/useViewArea'
+import { transformParameterDefault } from '@/components/widgets/useWidgetContext.ts'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -268,7 +270,13 @@ export default {
           this.ready = true
         })
       } else {
-        this.$oh.api.get('/rest/ui/components/ui:widget/' + this.uid).then((data) => {
+        api.getUiComponentInNamespace({ namespace: 'ui:widget', componentUID: this.uid }).then((data) => {
+          data.props.parameters.forEach((p) => {
+            const defaultValue = transformParameterDefault(p)
+            if (defaultValue !== undefined) {
+              p.default = defaultValue
+            }
+          })
           this.widgetDefinition = YAML.stringify(data, { toStringOptions })
           nextTick(() => {
             this.loading = false
@@ -291,10 +299,10 @@ export default {
       }
 
       const promise = this.createMode
-        ? this.$oh.api.postPlain('/rest/ui/components/ui:widget', JSON.stringify(this.widget), 'text/plain', 'application/json')
-        : this.$oh.api.put('/rest/ui/components/ui:widget/' + this.widget.uid, this.widget)
+        ? api.addUiComponentToNamespace({ namespace: 'ui:widget', rootUiComponent: this.widget })
+        : api.updateUiComponentInNamespace({ namespace: 'ui:widget', componentUID: this.widget.uid, rootUiComponent: this.widget })
       promise
-        .then((data) => {
+        .then(() => {
           this.dirty = false
           if (this.createMode) {
             f7.toast
