@@ -91,12 +91,14 @@
 
 <script>
 import { nextTick } from 'vue'
+import { useStorage } from '@vueuse/core'
 import { f7, theme } from 'framework7-vue'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { showToast } from '@/js/dialog-promises'
+
+const storagePrefix = 'openhab.ui:search:'
 
 export default {
   components: {
@@ -106,7 +108,12 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const persistLastSearchQuery = useStorage(storagePrefix + 'schedule', '', sessionStorage, {
+      flush: 'sync',
+      writeDefaults: false
+    })
+
+    return { theme, persistLastSearchQuery }
   },
   data() {
     return {
@@ -122,18 +129,21 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn() {
-      this.load()
+    async onPageAfterIn() {
+      await this.load()
+      this.$refs.searchbar?.$el.f7Searchbar.search(this.persistLastSearchQuery || '')
     },
     onPageBeforeOut() {
       this.stopEventSource()
-      useLastSearchQueryStore().lastScheduleSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.persistLastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) useLastSearchQueryStore().lastScheduleSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      if (this.initSearchbar) {
+        this.persistLastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
+      }
       this.initSearchbar = false
 
       let occurrences = []
@@ -142,7 +152,7 @@ export default {
         limit = new Date()
       limit.setDate(start.getDate() + 31)
 
-      this.$oh.api
+      await this.$oh.api
         .get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString())
         .then((data) => {
           this.rules = data
@@ -176,10 +186,10 @@ export default {
           if (!this.eventSource) this.startEventSource()
 
           nextTick(() => {
-            if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+            const searchbar = this.$refs.searchbar?.$el.f7Searchbar
+            if (this.$device.desktop && searchbar) {
+              searchbar.$inputEl[0].focus()
             }
-            this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastScheduleSearchQuery || '')
           })
         })
         .catch((err, status) => {

@@ -7,7 +7,7 @@ import { i18n } from '@/js/i18n'
 import type { Composer } from 'vue-i18n'
 import * as api from '@/api'
 import { ApiError } from '../hey-api'
-import type { SemanticsConfig } from '@/types/semantics-config'
+import type { SemanticMetadataConfig } from '@/types/semantic-tags'
 
 interface ModelItem extends api.EnrichedItem {
   modelPath?: ModelItem[]
@@ -133,7 +133,7 @@ export const useModelStore = defineStore('model', () => {
     if (item.modelPath) return item.modelPath
     let parent: ModelItem | null | undefined = null
 
-    const config: SemanticsConfig = item.metadata.semantics.config || {}
+    const config: SemanticMetadataConfig = item.metadata.semantics.config || {}
     if (config.hasLocation) {
       parent = items.find((i) => i.name === config.hasLocation)
     } else if (config.isPointOf) {
@@ -237,7 +237,7 @@ export const useModelStore = defineStore('model', () => {
         // get the property items
         const propertyStruct: { [key: string]: ModelItem[] } = {}
         filteredItems.properties.sort(_compareObjects).forEach((item) => {
-          const config: SemanticsConfig = item.metadata?.semantics?.config || {}
+          const config: SemanticMetadataConfig = item.metadata?.semantics?.config || {}
           const property = config.relatesTo?.split('_')[1]
           if (property) {
             if (!propertyStruct[property]) propertyStruct[property] = []

@@ -11,9 +11,7 @@
           v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-pages"
-          :custom-search="true"
-          @searchbar:search="searchbarSearch"
-          @searchbar:clear="searchbarClear"
+          custom-search
           :placeholder="searchPlaceholder"
           :disable-button="!theme.aurora" />
       </f7-subnavbar>
@@ -80,25 +78,29 @@
 
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
-          <span>{{ listTitle }}</span>
+          <span>{{ getListTitle(searchString.toString().length !== 0, filteredList.length, pages.length, 'Page', selection.length) }}</span>
           <template v-if="showCheckboxes && pageUids.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
-        <div v-show="ready && pages.length > 0" class="padding-left padding-right">
+        <list-filter
+          v-if="ready"
+          :filtersDefinitions="filtersDefinitions"
+          :selected="selectedListFilters"
+          @update:selected="onUpdateSelectedListFilters" />
+        <div v-show="ready && filteredList.length > 0" class="padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
             <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')"> By type </f7-button>
           </f7-segmented>
         </div>
 
-        <f7-list v-if="pages.length > 0 && filteredPages.length === 0" class="searchbar-not-found">
+        <f7-list v-if="pages.length > 0 && filteredList.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
         <f7-list
-          v-show="filteredPages.length > 0"
+          v-show="filteredList.length > 0"
           class="col pages-list"
           ref="pagesList"
           :contacts-list="groupBy === 'alphabetical'"
@@ -184,13 +186,14 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, toRaw } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
 import { getPageType, getPageIcon } from '@/pages/page-type'
+import { useSearch } from '@/components/useSearch'
+import { getListTitle, findElementsInObject } from '@/pages/list-helpers'
 
 import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
@@ -219,12 +222,81 @@ export default {
   },
   setup() {
     const runtimeStore = useRuntimeStore()
-    const lastSearchQueryStore = useLastSearchQueryStore()
+
+    const componentsCache = new Map()
+
+    const filtersDefinitions = {
+      kind: {
+        label: 'Kind',
+        options: { ...ITEM_KINDS },
+        singleSelect: true,
+        searchbarKeyword: 'is',
+        keywordChecker: (page, value) => (value.toLowerCase() == 'editable' ? !!page.editable : !page.editable)
+      },
+      type: {
+        label: 'Type',
+        options: { ...PAGE_TYPE_OPTIONS },
+        keywordChecker: (page, value) => getPageType(page).type === value
+      },
+      tag: {
+        label: 'Tag',
+        options: {},
+        keywordChecker: (page, value) => searchValue(page.tags, value)
+      },
+      visible: {
+        label: 'Visible to',
+        options: {},
+        advanced: true,
+        keywordChecker: (page, value) => searchValue(page.config?.visibleTo || [], value)
+      },
+      component: {
+        title: 'Component',
+        advanced: true,
+        keywordChecker: (page, value) => {
+          let componentsInPage = componentsCache.get(page.uid)
+          if (!componentsInPage) {
+            componentsInPage = findElementsInObject(toRaw(page), 'component')
+            componentsCache.set(page.uid, componentsInPage)
+          }
+          return searchValue(componentsInPage, value)
+        }
+      }
+    }
+
+    const haystackFunc = (page) => {
+      const searchFields = [
+        page.config?.label,
+        page.uid,
+        getPageType(page)?.label,
+        ...(page.tags || []),
+        ...(page.config?.visibleTo || []).map((role) => role)
+      ]
+      return searchFields.filter(Boolean).join(' ').toLowerCase()
+    }
+
+    const {
+      search,
+      searchString,
+      searchValue,
+      selectedListFilters,
+      onUpdateSelectedListFilters,
+      persistSearchbarQuery,
+      restoreSearchbarQuery
+    } = useSearch('searchbar', haystackFunc, { filtersDefinitions, persistSearchStringKey: 'pages-query' })
 
     return {
       theme,
       runtimeStore,
-      lastSearchQueryStore
+      filtersDefinitions,
+      search,
+      searchString,
+      searchValue,
+      selectedListFilters,
+      onUpdateSelectedListFilters,
+      persistSearchbarQuery,
+      restoreSearchbarQuery,
+      getListTitle,
+      componentsCache
     }
   },
   data() {
@@ -233,24 +305,8 @@ export default {
       initSearchbar: false,
       loading: false,
       pages: [],
-      filteredItems: [],
-      filters: {
-        kinds: {
-          label: 'Kind',
-          options: { ...ITEM_KINDS }
-        },
-        pageTypes: {
-          label: 'Type',
-          options: { ...PAGE_TYPE_OPTIONS }
-        },
-        tags: {
-          label: 'Tag',
-          options: {}
-        }
-      },
-      selectedItems: [],
-      showCheckboxes: false,
-      searchQuery: ''
+      selected: [],
+      showCheckboxes: false
     }
   },
   computed: {
@@ -262,16 +318,12 @@ export default {
         this.runtimeStore.pagesGroupOrder = value
       }
     },
-    filteredPages() {
-      if (!this.searchQuery.length) return this.filteredItems
-      return this.filteredItems.filter((page) => this.pageMatchesSearch(page, this.searchQuery))
-    },
-    filteredPagesCount() {
-      return this.filteredPages.length
+    filteredList() {
+      return this.search(this.pages)
     },
     indexedPages() {
       if (this.groupBy === 'alphabetical') {
-        return this.filteredPages.reduce((prev, page) => {
+        return this.filteredList.reduce((prev, page) => {
           const label = page.config?.label || page.uid
           const initial = label.substring(0, 1).toUpperCase()
           if (!prev[initial]) prev[initial] = []
@@ -280,7 +332,7 @@ export default {
           return prev
         }, {})
       } else {
-        const typeGroups = this.filteredPages.reduce((prev, page) => {
+        const typeGroups = this.filteredList.reduce((prev, page) => {
           const type = getPageType(page).label
           if (!prev[type]) prev[type] = []
           prev[type].push(page)
@@ -299,52 +351,33 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      return this.pageUids.length > 0 && this.pageUids.every((uid) => this.selectedItems.includes(uid))
-    },
-    listTitle() {
-      let title = this.filteredPagesCount
-      if (this.searchQuery.length || this.$refs.filters?.filtered) {
-        title += ` of ${this.pages.length} pages found`
-      } else {
-        title += ' pages'
-      }
-      if (this.selection.length > 0) {
-        title += `, ${this.selection.length} selected`
-      }
-      return title
+      return this.pageUids.length > 0 && this.pageUids.every((uid) => this.selected.includes(uid))
     },
     pageUids() {
-      return this.filteredPages.map((page) => page.uid)
+      return this.filteredList.map((page) => page.uid)
     },
     selection() {
-      return this.pageUids.filter((uid) => this.selectedItems.includes(uid))
+      return this.pageUids.filter((uid) => this.selected.includes(uid))
     }
   },
   methods: {
-    searchbarSearch(event) {
-      this.searchQuery = event?.query || ''
-    },
-    searchbarClear() {
-      this.searchQuery = ''
-    },
-    onPageAfterIn() {
-      this.load()
+    async onPageAfterIn() {
+      await this.load()
+      this.restoreSearchbarQuery()
     },
     onPageBeforeOut() {
-      this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.persistSearchbarQuery()
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
-
-      if (this.initSearchbar) this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
       this.pages = []
-      this.filteredItems = []
-      this.selectedItems = []
+      this.selected = []
       this.showCheckboxes = false
-      this.$oh.api
+      this.componentsCache.clear()
+      await this.$oh.api
         .get('/rest/ui/components/ui:page')
         .then((data) => {
           this.pages = data.sort((a, b) => {
@@ -353,23 +386,28 @@ export default {
             return aLabel.localeCompare(bLabel)
           })
 
-          const uniqueTags = new Set()
-          this.pages.forEach((page) => {
-            ;(page.tags || []).forEach((t) => uniqueTags.add(t))
-          })
-          const sortedTags = Array.from(uniqueTags).sort((a, b) => a.localeCompare(b))
-          this.filters.tags.options = Object.fromEntries(sortedTags.map((tag) => [tag, tag]))
+          const { tagSet, visibleSet } = this.pages.reduce(
+            (acc, page) => {
+              if (page.tags) page.tags.forEach((tag) => acc.tagSet.add(tag))
+              if (page.config?.visibleTo) page.config.visibleTo.forEach((visible) => acc.visibleSet.add(visible))
+              return acc
+            },
+            { tagSet: new Set(), visibleSet: new Set() }
+          )
+          this.filtersDefinitions.tag.options = Object.fromEntries([...tagSet].sort().map((tag) => [tag.toLowerCase(), tag]))
+          this.filtersDefinitions.visible.options = Object.fromEntries(
+            [...visibleSet].sort().map((visible) => [visible.toLowerCase(), visible])
+          )
 
           this.initSearchbar = true
           this.ready = true
-          this.updateFilteredItems()
 
           nextTick(() => {
             if (this.$refs.listIndex) this.$refs.listIndex.update()
-            if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+            const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
+            if (this.$device.desktop && searchbar) {
+              searchbar.$inputEl[0].focus()
             }
-            this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastPagesSearchQuery || '')
           })
         })
         .catch((err) => {
@@ -395,59 +433,18 @@ export default {
     toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
       if (!this.showCheckboxes) {
-        this.selectedItems = []
+        this.selected = []
       }
     },
     isChecked(item) {
-      return this.selectedItems.indexOf(item) >= 0
-    },
-    getNormalizedSearchTerms(query) {
-      return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
-    },
-    getPageSearchText(page) {
-      const searchFields = [
-        page.config?.label,
-        page.uid,
-        this.getPageType(page)?.label,
-        ...(page.tags || []),
-        ...(page.config?.visibleTo || []).map((role) => role)
-      ]
-      return searchFields.filter(Boolean).join(' ').toLowerCase()
-    },
-    pageMatchesSearch(page, query) {
-      const terms = this.getNormalizedSearchTerms(query)
-      if (!terms.length) return true
-      const pageSearchText = this.getPageSearchText(page)
-      return terms.every((term) => pageSearchText.includes(term))
-    },
-    updateFilteredItems() {
-      const filters = this.$refs.filters
-      if (!filters || !filters.filtered) {
-        this.filteredItems = this.pages
-        return
-      }
-
-      const selected = filters.selected
-      this.filteredItems = this.pages.filter((page) => {
-        const kind = page.editable === false ? 'readonly' : 'editable'
-        const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
-
-        const pageType = getPageType(page).type
-        const typeMatch = !selected.pageTypes.size || selected.pageTypes.has(pageType)
-
-        const tagsMatch = !selected.tags.size || (page.tags || []).some((t) => selected.tags.has(t))
-
-        return kindMatch && typeMatch && tagsMatch
-      })
-
-      if (this.groupBy === 'alphabetical') this.$refs.listIndex?.update()
+      return this.selected.indexOf(item) >= 0
     },
     selectDeselectAll() {
       if (this.allSelected) {
-        this.selectedItems = []
+        this.selected = []
       } else {
-        // assign a copy so mutations to `selectedItems` don't modify the computed `pageUids` array
-        this.selectedItems = Array.from(this.pageUids)
+        // assign a copy so mutations to `selected` don't modify the computed `pageUids` array
+        this.selected = Array.from(this.pageUids)
       }
     },
     click(event, item) {
@@ -460,14 +457,14 @@ export default {
     },
     ctrlClick(event, item) {
       this.toggleItemCheck(event, item.uid, item)
-      if (!this.selectedItems.length) this.showCheckboxes = false
+      if (!this.selected.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, itemName, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(itemName)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
+        this.selected.splice(this.selected.indexOf(itemName), 1)
       } else {
-        this.selectedItems.push(itemName)
+        this.selected.push(itemName)
       }
     },
     getPageType,
@@ -495,7 +492,7 @@ export default {
       Promise.all(promises)
         .then((data) => {
           showToast('Pages removed')
-          this.selectedItems = []
+          this.selected = []
           dialog.close()
           this.load()
           f7.emit('sidebarRefresh', null)
