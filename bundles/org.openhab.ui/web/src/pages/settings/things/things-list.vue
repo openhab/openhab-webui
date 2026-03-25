@@ -154,10 +154,11 @@
               :checkbox="showCheckboxes"
               :checked="isChecked(thing.UID) ? true : null"
               :value="thing.UID"
-              @click.ctrl="(e) => ctrlClick(e, thing)"
-              @click.meta="(e) => ctrlClick(e, thing)"
-              @click.exact="(e) => click(e, thing)"
-              link=""
+              :prevent-router="showCheckboxes"
+              @click.ctrl="ctrlClick($event, thing)"
+              @click.meta="ctrlClick($event, thing)"
+              @click.exact="click($event, thing)"
+              :link="`/settings/things/${thing.UID}`"
               :title="thing.label || thing.UID">
               <template #footer>
                 <div>
@@ -479,8 +480,6 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.UID, item)
-      } else {
-        this.f7router.navigate(item.UID)
       }
     },
     ctrlClick(event, item) {
