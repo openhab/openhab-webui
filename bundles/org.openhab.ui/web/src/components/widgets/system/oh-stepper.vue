@@ -48,13 +48,16 @@ const stepperConfig = computed<OhStepper.Config>(() => {
 })
 
 const value = computed<number>(() => {
-  const applyOffset = (num: number): number => (!isNaN(stepperConfig.value.offset as number)) ? Number(toStepFixed(num + Number(stepperConfig.value.offset))) : num
+  const applyOffset = (num: number): number =>
+    !isNaN(stepperConfig.value.offset as number) ? Number(toStepFixed(num + Number(stepperConfig.value.offset))) : num
   if (stepperConfig.value.variable) {
     const variableScope = getVariableScope(props.context.ctxVars ?? {}, props.context.varScope, stepperConfig.value.variable)
-    const variableLocation = (variableScope) ? props.context.ctxVars![variableScope] : props.context.vars
+    const variableLocation = variableScope ? props.context.ctxVars![variableScope] : props.context.vars
     if (!variableLocation) return 0
     if (stepperConfig.value.variableKey) {
-      return applyOffset(getLastVariableKeyValue(variableLocation[stepperConfig.value.variable]!, stepperConfig.value.variableKey) as number)
+      return applyOffset(
+        getLastVariableKeyValue(variableLocation[stepperConfig.value.variable]!, stepperConfig.value.variableKey) as number
+      )
     }
     return applyOffset(variableLocation[stepperConfig.value.variable] as number)
   }
@@ -90,16 +93,19 @@ const onInput = () => {
   }, 1500)
 }
 const sendCommand = (cmd: number) => {
-  const applyOffset = (num: number) => (!isNaN(stepperConfig.value.offset as number)) ? Number(toStepFixed(num - Number(stepperConfig.value.offset))) : num
+  const applyOffset = (num: number) =>
+    !isNaN(stepperConfig.value.offset as number) ? Number(toStepFixed(num - Number(stepperConfig.value.offset))) : num
   let newValue = applyOffset(Number(toStepFixed(cmd)))
   if (isNaN(newValue)) newValue = stepperConfig.value.min ?? stepperConfig.value.max ?? 0
   if (newValue === value.value) return
   if (stepperConfig.value.variable) {
     const variableScope = getVariableScope(props.context.ctxVars ?? {}, props.context.varScope, stepperConfig.value.variable)
-    const variableLocation = (variableScope) ? props.context.ctxVars![variableScope] : props.context.vars
+    const variableLocation = variableScope ? props.context.ctxVars![variableScope] : props.context.vars
     if (!variableLocation) return
     if (stepperConfig.value.variableKey) {
-      newValue = applyOffset(setVariableKeyValues(variableLocation[stepperConfig.value.variable]!, stepperConfig.value.variableKey, cmd) as number)
+      newValue = applyOffset(
+        setVariableKeyValues(variableLocation[stepperConfig.value.variable]!, stepperConfig.value.variableKey, cmd) as number
+      )
     }
     variableLocation[stepperConfig.value.variable] = newValue
   } else if (stepperConfig.value.item) {

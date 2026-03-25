@@ -45,7 +45,7 @@ import { defineAsyncComponent } from 'vue'
 
 export default {
   components: {
-    'oh-chart': defineAsyncComponent(() => import('@/components/widgets/system/oh-chart.vue')),
+    'oh-chart': defineAsyncComponent(() => import('@/components/widgets/system/oh-chart.vue'))
   },
   props: {
     context: Object

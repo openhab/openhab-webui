@@ -92,22 +92,22 @@ export default {
     EmptyStatePlaceholder,
     habot: defineAsyncComponent(() => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue'))
   },
-  setup () {
+  setup() {
     return { f7 }
   },
-  data () {
+  data() {
     return {
       inChatSession: false
     }
   },
   computed: {
-    ready () {
+    ready() {
       return useComponentsStore().ready && useStatesStore().ready
     },
-    showHABot () {
-      return (useRuntimeStore().apiEndpoint('habot') && this.allowChat && !useUIOptionsStore().hideChatInput)
+    showHABot() {
+      return useRuntimeStore().apiEndpoint('habot') && this.allowChat && !useUIOptionsStore().hideChatInput
     },
-    overviewPage () {
+    overviewPage() {
       const page = useComponentsStore().page('overview')
       if (page) {
         if (page.component === 'oh-layout-page') return page
@@ -118,18 +118,19 @@ export default {
       }
       return null
     },
-    overviewPageContext () {
+    overviewPageContext() {
       return {
         component: this.overviewPage,
         store: this.context.store,
-        vars: (this.overviewPage && this.overviewPage.config && this.overviewPage.config.defineVars) ? this.overviewPage.config.defineVars : {}
+        vars:
+          this.overviewPage && this.overviewPage.config && this.overviewPage.config.defineVars ? this.overviewPage.config.defineVars : {}
       }
     },
-    pageStyle () {
+    pageStyle() {
       if (!this.overviewPage) return null
       return this.overviewPage.config.style
     },
-    ...mapStores(useUserStore,  useStatesStore, useComponentsStore, useUIOptionsStore, useRuntimeStore)
+    ...mapStores(useUserStore, useStatesStore, useComponentsStore, useUIOptionsStore, useRuntimeStore)
   }
 }
 </script>
