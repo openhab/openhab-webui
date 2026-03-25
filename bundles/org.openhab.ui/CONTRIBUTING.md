@@ -84,6 +84,14 @@ For new components, additional guidelines apply:
 
 - TypeScript should be used over plain JavaScript. See [Vue.js: TypeScript with Composition API](https://vuejs.org/guide/typescript/composition-api.html).
 - The Composition API and composables should be used instead of the Options API and mixins. See [Vue.js: Introduction: API Styles](https://vuejs.org/guide/introduction.html#api-styles).
+- Composition API `<script setup>` code should be ordered according to the following order:
+  1. Constants & Store instantiation
+  1. Composables
+  1. Data/State
+  1. Computed properties
+  1. Watchers
+  1. Lifecycle hooks
+  1. Methods
 - Components should be imported through `<script setup>` to make sure Vite doesn't accidentally tree-shake them.
 
 ## How Do I?
