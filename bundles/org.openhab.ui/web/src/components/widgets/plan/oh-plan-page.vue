@@ -95,7 +95,7 @@ dark-tooltip()
     dark-tooltip()
 
 // override leaflet style
-.leaflet-div-icon
+.oh-plan-page-lmap .leaflet-div-icon
   background: unset
   border: unset
 
@@ -132,8 +132,7 @@ export default {
     LMap,
     LImageOverlay,
     LControl,
-    LFeatureGroup,
-    OhPlanMarker
+    LFeatureGroup
   },
   widget: OhPlanPageDefinition,
   setup(props) {
@@ -159,21 +158,6 @@ export default {
         [0, 0],
         [lat, lng]
       ]
-    },
-    markerComponent() {
-      return (marker) => {
-        return OhPlanMarker
-      }
-    },
-    isMarkerVisible() {
-      return (marker) => {
-        if (this.context.editmode != null) return true
-        const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
-        const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
-        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
-        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
-        return isVisibleMin && isVisibleMax
-      }
     },
     mapOptions() {
       return Object.assign(
@@ -208,6 +192,17 @@ export default {
     }
   },
   methods: {
+    markerComponent(marker) {
+      return OhPlanMarker
+    },
+    isMarkerVisible(marker) {
+      if (this.context.editmode) return true
+      const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
+      const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
+      const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
+      const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
+      return isVisibleMin && isVisibleMax
+    },
     zoomUpdate(zoom) {
       this.currentZoom = zoom
     },
