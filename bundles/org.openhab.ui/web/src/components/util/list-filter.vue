@@ -1,19 +1,26 @@
 <template>
-  <f7-list>
+  <f7-list class="list-filter">
     <f7-list-item accordion-item>
       <template #title>
         Filter
-        <template v-if="filtered">
+        <span v-if="anyFilters">
           (active)
-          <f7-link @click="resetFilters" text="Reset filters" class="margin-right" href="javascript:void(0)" />
-        </template>
+          <f7-link @click="resetFilters" text="Reset Filters" class="margin-right" href="javascript:void(0)" />
+        </span>
+        <span v-if="anyAdvanced" class="show-advanced">
+          <f7-link
+            @click="showAdvanced = !showAdvanced"
+            :text="showAdvanced ? 'Hide Advanced' : 'Show Advanced'"
+            class="margin-right"
+            href="javascript:void(0)" />
+        </span>
       </template>
       <f7-accordion-content>
         <f7-list class="no-hairlines-between">
-          <div v-for="(filter, type) in filters" :key="type">
+          <div v-for="(filter, type) in listedFilters" :key="type">
             <f7-list-item group-title style="height: 2em"> Filter by {{ filter.label }} </f7-list-item>
             <f7-list-item class="padding-bottom">
-              <div v-if="Object.keys(filter.options).length === 0" class="text-color-gray" style="font-size: 0.9em">
+              <div v-if="Object.keys(filter.options ?? {}).length === 0" class="text-color-gray" style="font-size: 0.9em">
                 None of the items have any {{ filter.label.toLowerCase() }} assigned
               </div>
               <div v-else class="chip-wrap">
@@ -42,155 +49,125 @@
   </f7-list>
 </template>
 
-<style scoped>
-.chip-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 0;
-}
+<style scoped lang="stylus">
+.list-filter
+  .chip-wrap
+    display flex
+    flex-wrap wrap
+    gap 6px 0
+
+  span a
+    padding-left 15px
+
+  .accordion-item:not(.accordion-item-opened)
+    .show-advanced
+      display none
 </style>
 
-<script>
-/*
-  This component provides a filter UI for a list of items.
-  It allows users to filter the list based on various criteria.
+<script setup lang="ts">
+import { computed, watch, ref } from 'vue'
+import { type FilterDefinition } from '@/components/useSearch'
 
-  Usage:
-    <list-filter ref="filters" :filters="filters" @toggled="handleFilterToggle" @reset="handleFilterReset" />
+export type ListFilterSelected = Record<string, Set<string>>
 
-  Props:
-    - filters: An object containing filter definitions, each with a label and options.
-      Example, to define two filters: 'kind' and 'status' filters:
-      {
-        kind: {
-          label: "Kind", // => Filter by Kind
-          options: { editable: "Editable", readonly: "Read-only" } // { value: label, ... }
-        },
-        status: {
-          label: "Status", // => Filter by Status
-          options: { online: "Online", offline: "Offline" }
+// define props, model and emits
+const props = defineProps<{
+  filtersDefinitions: Record<string, FilterDefinition>
+  selected: ListFilterSelected
+}>()
+
+const emits = defineEmits<{
+  (e: 'update:selected', value: ListFilterSelected): void
+  (e: 'reset'): void
+}>()
+
+const showAdvanced = ref(false)
+
+// computed properties
+const anyFilters = computed(() => {
+  return Object.values(props.selected).some((set) => set.size > 0)
+})
+
+const anyAdvanced = computed(() => {
+  return Object.entries(props.filtersDefinitions).some(
+    ([type, filter]) => filter.advanced === true && Object.keys(filter.options ?? {}).length > 0
+  )
+})
+
+const listedFilters = computed(() => {
+  return Object.fromEntries(
+    Object.entries(props.filtersDefinitions).filter(([type, filter]) => {
+      const hasOptions = Object.keys(filter.options ?? {}).length > 0
+      if ('advanced' in filter) {
+        return filter.advanced === showAdvanced.value && hasOptions
+      }
+      return hasOptions
+    })
+  )
+})
+
+// watchers
+watch(
+  () => props.filtersDefinitions,
+  (newFiltersDefinitions) => {
+    const _selected: ListFilterSelected = { ...props.selected }
+    // ensure that all filter types are present in the selected object
+    Object.entries(newFiltersDefinitions).forEach(([type, filter]) => {
+      const opts = (filter && filter.options) || {}
+      const valid = new Set(Object.keys(opts))
+
+      const _optionsSelected = _selected[type]
+
+      if (_optionsSelected) {
+        // Remove any selected values that are no longer valid
+        for (const v of Array.from(_optionsSelected)) {
+          if (!valid.has(v)) _optionsSelected.delete(v)
+        }
+
+        // If there are no options left, delete the selection entirely
+        if (valid.size === 0 && _optionsSelected.size > 0) {
+          delete _selected[type]
         }
       }
-
-  Events:
-    - toggled: Emitted when a filter is toggled, passing the type, value, and selection state.
-    - reset: Emitted when all filters are reset.
-*/
-export default {
-  props: {
-    filters: Object
+    })
+    emits('update:selected', _selected)
   },
-  emits: ['toggled', 'reset'],
-  data() {
-    return {
-      /**
-       * This tracks which values are selected for each filter type,
-       *
-       * For example, `this.$refs.componentRef.selected.kind.has('editable')` returns true if 'editable' is selected in 'kind' filter:
-       * @example
-       * { kind: Set(['editable']), status: Set(['online']) }
-       */
-      selected: Object.keys(this.filters || {}).reduce((acc, key) => {
-        acc[key] = new Set()
-        return acc
-      }, {})
-    }
-  },
-  computed: {
-    /**
-     * Whether filtering is active, i.e. any filter has selections.
-     * @return {boolean}
-     */
-    filtered() {
-      return Object.keys(this.filters).some((type) => this.isFilteredBy(type))
-    }
-  },
-  watch: {
-    filters: {
-      deep: true,
-      handler(newFilters = {}) {
-        Object.keys(newFilters).forEach((type) => {
-          const opts = (newFilters[type] && newFilters[type].options) || {}
-          const valid = new Set(Object.keys(opts))
+  { immediate: false, deep: true }
+)
 
-          // Ensure there's a Set for this type
-          if (!this.selected[type]) this.selected[type] = new Set()
+// methods
+function isFilteredBy(type: string, value: string) {
+  const typeSelections = props.selected[type]
+  return typeSelections && typeSelections.has(value)
+}
 
-          const sel = this.selected[type]
-
-          // Remove any selected values that are no longer valid
-          for (const v of Array.from(sel)) {
-            if (!valid.has(v)) sel.delete(v)
-          }
-
-          // If there are no options left, clear the selection entirely
-          if (valid.size === 0 && sel.size > 0) {
-            sel.clear()
-          }
-        })
-
-        // Notify parent(s) that selected values changed so they can recompute
-        // Emit a generic toggled event without specific value so parents using
-        // @toggled will refresh their filtered lists.
-        this.$emit('toggled', this)
-      }
-    }
-  },
-  methods: {
-    /**
-     * Checks if a specific filter type has any selections, or if a specific value is selected.
-     *
-     * Examples:
-     * - `isFilteredBy('kind')` returns true if any 'kind' filter is selected.
-     * - `isFilteredBy('kind', 'readonly')` returns true if 'readonly' is selected in 'kind'.
-     *
-     * Instead of using this method, you might also access the `selected` property directly.
-     *
-     * @param {script} type
-     * @param {*} value
-     * @return {boolean}
-     */
-    isFilteredBy(type, value) {
-      const selections = this.selected[type]
-      if (!selections) {
-        console.warn(`Invalid filter type: '${type}'. This is probably a bug! filters:`, this.filters)
-        return false
-      }
-
-      if (value !== undefined) {
-        return selections.has(value)
-      } else {
-        return selections.size > 0
-      }
-    },
-    /**
-     * Toggles the selection state of a filter value and emits the change.
-     * To be used internally only.
-     *
-     * @param {string} type
-     * @param {*} value
-     */
-    toggleFilter(type, value) {
-      const selections = this.selected[type]
-      if (selections.has(value)) {
-        selections.delete(value)
-      } else {
-        selections.add(value)
-      }
-
-      let selected = selections.has(value)
-      this.$emit('toggled', this, type, value, selected)
-    },
-    /**
-     * Resets/Disables all filters and emits the reset event.
-     * To be used internally only.
-     */
-    resetFilters() {
-      Object.keys(this.selected).forEach((type) => {
-        this.selected[type].clear()
-      })
-      this.$emit('reset', this)
-    }
+// events
+function toggleFilter(type: string, value: string) {
+  const _selected = { ...props.selected }
+  if (!_selected[type]) {
+    _selected[type] = new Set()
   }
+  const typeSelections = _selected[type]
+
+  if (!props.filtersDefinitions[type]) {
+    console.warn(`Invalid filter type: '${type}'. This is probably a bug! filters:`, props.filtersDefinitions)
+    return
+  }
+
+  if (typeSelections.has(value)) {
+    typeSelections.delete(value)
+  } else {
+    if (props.filtersDefinitions[type].singleSelect) {
+      typeSelections.clear()
+    }
+    typeSelections.add(value)
+  }
+
+  emits('update:selected', _selected)
+}
+
+function resetFilters() {
+  emits('update:selected', {} as ListFilterSelected)
+  emits('reset')
 }
 </script>

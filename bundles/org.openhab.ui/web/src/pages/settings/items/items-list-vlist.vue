@@ -12,8 +12,7 @@
           v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-items"
-          search-container=".virtual-list"
-          @searchbar:search="searchbarSearch"
+          custom-search
           :placeholder="searchbarPlaceholder"
           :disable-button="!theme.aurora" />
       </f7-subnavbar>
@@ -81,15 +80,20 @@
 
       <f7-col v-if="ready && items.length > 0">
         <f7-block-title class="no-margin-top">
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && listedItems.length">
+          <span>{{ getListTitle(searchString.toString().length !== 0, filteredList.length, items.length, 'Item', selected.length) }}</span>
+          <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="processFilter" @reset="resetFilter" />
+        <list-filter
+          v-if="ready"
+          ref="filters"
+          :selected="selectedListFilters"
+          @update:selected="onUpdateSelectedListFilters"
+          :filtersDefinitions="filtersDefinitions" />
 
-        <f7-list v-if="!listedItems.length">
+        <f7-list v-if="!filteredList.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
         <f7-list class="searchbar-found col" ref="itemsList" media-list virtual-list :virtual-list-params="vlParams">
@@ -179,19 +183,19 @@ import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import * as Types from '@/assets/item-types'
 import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeAndMetaLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
-
-const ITEM_KINDS = { editable: 'Editable', readonly: 'Non-editable' }
+import { useSearch } from '@/components/useSearch'
+import { getListTitle } from '@/pages/list-helpers'
 
 export default {
   mixins: [ItemMixin, FileDefinition],
@@ -203,7 +207,87 @@ export default {
     EmptyStatePlaceholder
   },
   setup() {
-    return { f7, theme }
+    const filtersDefinitions = {
+      kind: {
+        label: 'Kind',
+        options: { editable: 'Editable', readonly: 'Non-editable' },
+        singleSelect: true,
+        searchbarKeyword: 'is',
+        keywordChecker: (item, value) => (value.toLowerCase() == 'editable' ? !!item.editable : !item.editable)
+      },
+      type: {
+        label: 'Item Type',
+        options: Object.fromEntries(Types.ItemTypes.map((type) => [type.toLowerCase(), type])),
+        keywordChecker: (item, value) => searchValue(item.type, value) || (item.type === 'Group' && searchValue(item.groupType, value))
+      },
+      group: {
+        label: 'Group',
+        options: {},
+        advanced: true,
+        keywordChecker: (item, value) => searchValue(item.groupNames, value)
+      },
+      tag: {
+        label: 'Tag',
+        options: {},
+        advanced: true,
+        keywordChecker: (item, value) => searchValue(item.tags, value)
+      },
+      state: {
+        label: 'State',
+        options: {},
+        advanced: true,
+        keywordChecker: (item, value) => searchValue(item.state + ' ' + item.displayState, value)
+      },
+      unit: {
+        label: 'Unit',
+        options: {},
+        advanced: true,
+        keywordChecker: (item, value) => searchValue(item.unitSymbol, value)
+      },
+      semantics: {
+        label: 'Semantics',
+        options: {},
+        advanced: true,
+        keywordChecker: (item, value) => searchValue(item.metadata?.semantics?.value, value)
+      },
+      metadata: {
+        label: 'Metadata',
+        options: {},
+        advanced: true,
+        keywordChecker: (item, value) => (item.metadata ? searchValue(Object.keys(item.metadata), value) : false)
+      }
+    }
+
+    const haystackFunc = (item) => [item.name, item.label, getItemTypeAndMetaLabel(item)].join(' ').toLowerCase()
+
+    const {
+      search,
+      searchString,
+      searchValue,
+      selectedListFilters,
+      onUpdateSelectedListFilters,
+      persistSearchbarQuery,
+      restoreSearchbarQuery
+    } = useSearch('searchbar', haystackFunc, {
+      filtersDefinitions,
+      persistSearchStringKey: 'items-query'
+    })
+
+    return {
+      f7,
+      theme,
+      filtersDefinitions,
+      selectedListFilters,
+      search,
+      searchString,
+      searchValue,
+      onUpdateSelectedListFilters,
+      persistSearchbarQuery,
+      restoreSearchbarQuery,
+      getListTitle,
+      getNonSemanticTags,
+      getItemTypeAndMetaLabel
+    }
   },
   data() {
     return {
@@ -220,64 +304,69 @@ export default {
         renderExternal: this.renderExternal,
         height: this.height
       },
-      searchQuery: '',
-      filters: {
-        kinds: {
-          label: 'Kind',
-          options: ITEM_KINDS
-        },
-        types: {
-          label: 'Item Type',
-          options: Object.fromEntries(Types.ItemTypes.map((type) => [type, type]))
-        }
-      },
-      selectedItems: [],
-      listedItems: [],
-      excludedUids: new Set(),
+      filteredList: [],
+      selected: [],
       showCheckboxes: false,
       eventSource: null
     }
   },
   methods: {
-    onPageAfterIn(event) {
-      this.load()
+    async onPageAfterIn(event) {
+      await this.load()
+      this.restoreSearchbarQuery()
     },
     onPageBeforeOut(event) {
       this.stopEventSource()
-      useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.persistSearchbarQuery()
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
-
-      if (this.initSearchbar) useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
+      await this.$oh.api.get('/rest/items').then((data) => {
         this.items = data.sort((a, b) => {
           const labelA = a.label || a.name
           const labelB = b.label || b.name
           return labelA.localeCompare(labelB)
         })
+
+        const { tagSet, unitSet, semanticsSet, groupSet, metadataSet } = this.items.reduce(
+          (acc, item) => {
+            if (item.metadata) console.log('item', Object.keys(item.metadata))
+            if (item.tags) item.tags.forEach((tag) => acc.tagSet.add(tag))
+            if (item.unitSymbol) acc.unitSet.add(item.unitSymbol)
+            if (item.metadata?.semantics?.value) item.metadata.semantics.value.split('_').forEach((sem) => acc.semanticsSet.add(sem))
+            if (item.groupNames) item.groupNames.forEach((group) => acc.groupSet.add(group))
+            if (item.metadata) Object.keys(item.metadata).forEach((metadata) => acc.metadataSet.add(metadata))
+            return acc
+          },
+          { tagSet: new Set(), unitSet: new Set(), semanticsSet: new Set(), groupSet: new Set(), metadataSet: new Set() }
+        )
+        this.filtersDefinitions.tag.options = Object.fromEntries([...tagSet].sort().map((tag) => [tag.toLowerCase(), tag]))
+        this.filtersDefinitions.unit.options = Object.fromEntries([...unitSet].sort().map((unit) => [unit.toLowerCase(), unit]))
+        this.filtersDefinitions.semantics.options = Object.fromEntries([...semanticsSet].sort().map((sem) => [sem.toLowerCase(), sem]))
+        this.filtersDefinitions.group.options = Object.fromEntries([...groupSet].sort().map((group) => [group.toLowerCase(), group]))
+        this.filtersDefinitions.metadata.options = Object.fromEntries(
+          [...metadataSet].sort().map((metadata) => [metadata.toLowerCase(), metadata])
+        )
+
         this.initSearchbar = true
         this.loading = false
+
         if (!this.eventSource) this.startEventSource()
         this.ready = true
 
         nextTick(() => {
           this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
           this.updateListedItems()
-          this.processFilter()
 
           const searchbar = this.$refs.searchbar?.$el.f7Searchbar
           if (this.$device.desktop && searchbar) {
             searchbar.$inputEl[0].focus()
           }
-          const lastQuery = useLastSearchQueryStore().lastItemSearchQuery || ''
-          if (lastQuery) {
-            searchbar?.search(lastQuery)
-          }
 
+          // This should no longer be needed now that we are awaiting the load() function, but leaving it in for now just in case.
           // Hard refresh can leave the virtual list measured at zero height until
           // the page is fully visible, so trigger one delayed remeasure.
           setTimeout(() => {
@@ -306,12 +395,6 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    searchbarSearch(event) {
-      this.searchQuery = event?.query
-      if (!this.searchQuery && this.$refs.filters?.filtered) {
-        this.applyFilter()
-      }
-    },
     renderExternal(vl, vlData) {
       this.vlData = vlData
     },
@@ -324,7 +407,7 @@ export default {
         if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
 
-      const nonSemanticTags = this.getNonSemanticTags(item)
+      const nonSemanticTags = getNonSemanticTags(item)
       if (nonSemanticTags.length > 0) {
         vlHeight += 28
         if (theme.ios) vlHeight += 4
@@ -336,7 +419,7 @@ export default {
       this.showCheckboxes = !this.showCheckboxes
     },
     isChecked(item) {
-      return this.selectedItems.indexOf(item) >= 0
+      return this.selected.indexOf(item) >= 0
     },
     click(event, item) {
       if (this.showCheckboxes) {
@@ -347,46 +430,46 @@ export default {
     },
     ctrlClick(event, item) {
       this.toggleItemCheck(event, item.name, item)
-      if (!this.selectedItems.length) this.showCheckboxes = false
+      if (!this.selected.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+        this.selected.splice(this.selected.indexOf(item), 1)
       } else {
-        this.selectedItems.push(item)
+        this.selected.push(item)
       }
     },
     selectDeselectAll() {
       if (this.allSelected) {
-        this.selectedItems = []
+        this.selected = []
       } else {
-        this.selectedItems = this.listedItems.map((i) => i.name)
+        this.selected = this.filteredList.map((i) => i.name)
       }
     },
     copySelected() {
-      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selectedItems)
+      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selected)
     },
     removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected items?`, 'Remove Items', () => {
+      f7.dialog.confirm(`Remove ${this.selected.length} selected items?`, 'Remove Items', () => {
         vm.doRemoveSelected()
       })
     },
     doRemoveSelected() {
-      if (this.selectedItems.some((i) => i.editable === false)) {
+      if (this.selected.some((i) => i.editable === false)) {
         f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
         return
       }
 
       let dialog = f7.dialog.progress('Deleting Items...')
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/items/' + i))
+      const promises = this.selected.map((i) => this.$oh.api.delete('/rest/items/' + i))
       Promise.all(promises)
         .then((data) => {
           showToast('Items removed')
-          this.selectedItems = []
+          this.selected = []
           dialog.close()
           this.load()
         })
@@ -397,86 +480,9 @@ export default {
           f7.dialog.alert('An error occurred while deleting: ' + err)
         })
     },
-    searchAll(query, items) {
-      query = query.toLowerCase()
-      const found = []
-      const foundUids = new Set()
-      items.forEach((item, index) => {
-        if (this.excludedUids.has(item.name)) {
-          return // skip items excluded by filter
-        }
-        const haystack = [item.name, item.label, ...(item.tags || []), this.getItemTypeAndMetaLabel(item)]
-        if (haystack.join(' ').toLowerCase().includes(query)) {
-          found.push(index)
-          foundUids.add(item.name)
-        }
-      })
-
-      if (foundUids.size === 0) {
-        this.selectedItems = []
-      } else {
-        this.selectedItems = this.selectedItems.filter((uid) => foundUids.has(uid))
-      }
-      return found // return array with matched indexes
-    },
-    reapplySearch() {
-      const query = this.searchQuery
-      if (!query) {
-        return
-      }
-      this.$refs.searchbar?.$el.f7Searchbar.search('')
-      this.$refs.searchbar?.$el.f7Searchbar.search(query)
-    },
-    resetFilter() {
-      this.excludedUids.clear()
-      if (this.searchQuery) {
-        this.reapplySearch()
-      } else {
-        this.$refs.itemsList.$el.f7VirtualList.resetFilter()
-      }
-    },
-    applyFilter() {
-      let filteredIndexes = null
-      const selected = this.$refs.filters?.selected
-
-      this.excludedUids.clear()
-      if (selected && this.$refs.filters.filtered) {
-        filteredIndexes = []
-        this.items.forEach((item, index) => {
-          const typeMatch = !selected.types.size || selected.types.has(item.type.split(':')[0])
-          const kind = item.editable ? 'editable' : 'readonly'
-          const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
-          if (kindMatch && typeMatch) {
-            filteredIndexes.push(index)
-          } else {
-            this.excludedUids.add(item.name)
-          }
-        })
-      }
-
-      if (this.excludedUids.size > 0) {
-        this.selectedItems = this.selectedItems.filter((uid) => !this.excludedUids.has(uid))
-      }
-
-      if (this.searchQuery) {
-        this.reapplySearch()
-      } else if (filteredIndexes !== null) {
-        this.$refs.itemsList.$el.f7VirtualList.filterItems(filteredIndexes)
-      } else {
-        this.$refs.itemsList.$el.f7VirtualList.resetFilter()
-      }
-    },
-    processFilter() {
-      const filters = this.$refs.filters
-      if (filters?.filtered) {
-        this.applyFilter()
-      } else {
-        this.resetFilter()
-      }
-    },
     updateListedItems() {
       this.$nextTick(() => {
-        this.listedItems = this.$refs.itemsList.$el.f7VirtualList.filteredItems || this.$refs.itemsList.$el.f7VirtualList.items || []
+        this.filteredList = this.$refs.itemsList.$el.f7VirtualList.filteredItems || this.$refs.itemsList.$el.f7VirtualList.items || []
       })
     }
   },
@@ -484,11 +490,10 @@ export default {
     ready() {
       this.updateListedItems()
     },
-    searchQuery() {
-      this.updateListedItems()
-    },
-    excludedUids: {
-      handler: function () {
+    searchString: {
+      handler() {
+        const matches = this.search(this.items, 'indicies')
+        this.$refs.itemsList?.$el.f7VirtualList.filterItems(matches)
         this.updateListedItems()
       },
       deep: true
@@ -499,19 +504,7 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
-    },
-    listTitle() {
-      let title = this.listedItems.length
-      if (this.searchQuery || this.$refs.filters?.filtered) {
-        title += ` of ${this.items.length} Items found`
-      } else {
-        title += ' Items'
-      }
-      if (this.selectedItems.length > 0) {
-        title += `, ${this.selectedItems.length} selected`
-      }
-      return title
+      return this.selected.length >= this.filteredList.length && this.filteredList.length > 0
     },
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   }

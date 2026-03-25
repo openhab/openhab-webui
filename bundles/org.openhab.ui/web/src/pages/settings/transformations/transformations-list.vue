@@ -140,6 +140,7 @@
 
 <script>
 import { nextTick } from 'vue'
+import { useStorage } from '@vueuse/core'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -147,10 +148,11 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 
 import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
+
+const storagePrefix = 'openhab.ui:search:'
 
 export default {
   props: {
@@ -161,8 +163,8 @@ export default {
     ClipboardIcon
   },
   setup() {
-    const lastSearchQueryStore = useLastSearchQueryStore()
-    return { f7, theme, lastSearchQueryStore }
+    const lastSearchQuery = useStorage(storagePrefix + 'transformation', '', sessionStorage, { flush: 'sync', writeDefaults: false })
+    return { f7, theme, lastSearchQuery }
   },
   data() {
     return {
@@ -209,32 +211,32 @@ export default {
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    onPageAfterIn() {
+    async onPageAfterIn() {
       this.load()
     },
     onPageBeforeOut(event) {
-      this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.lastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
 
       if (this.initSearchbar) {
-        this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+        this.lastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
       }
       this.initSearchbar = false
 
-      api.getTransformations().then((data) => {
-        this.transformations = data.sort((a, b) => (a.label || a.uid).localeCompare(b.label || a.uid))
-        this.loading = false
-        this.ready = true
-        this.initSearchbar = true
+      const _transformations = await api.getTransformations()
+      this.transformations = _transformations.sort((a, b) => (a.label || a.uid).localeCompare(b.label || a.uid))
 
-        nextTick(() => {
-          if (this.$refs.listIndex) this.$refs.listIndex.update()
-          if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
-          this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastTransformationSearchQuery || '')
-        })
+      this.loading = false
+      this.ready = true
+      this.initSearchbar = true
+
+      nextTick(() => {
+        if (this.$refs.listIndex) this.$refs.listIndex.update()
+        if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+        this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQuery || '')
       })
     },
     switchGroupOrder(groupBy) {

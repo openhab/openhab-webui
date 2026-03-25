@@ -404,12 +404,12 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import fastDeepEqual from 'fast-deep-equal/es6'
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
-import TagMixin from '@/components/tags/tag-mixin'
+import { semanticType } from '@/components/tags/tag-helpers'
 import { useDirty } from '@/pages/useDirty'
 import { useTabs } from '@/pages/useTabs'
 
@@ -419,7 +419,6 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { showToast, showAlertDialog } from '@/js/dialog-promises'
 
 export default {
-  mixins: [TagMixin],
   components: {
     SemanticsTreeview,
     CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
@@ -436,7 +435,8 @@ export default {
       dirtyIndicator,
       setupDirtyWatch,
       currentTab,
-      switchTab
+      switchTab,
+      semanticType
     }
   },
   data() {
