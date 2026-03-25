@@ -168,12 +168,8 @@ export default {
     context () {
       return {
         component: this.page,
-        vars: Object.assign(
-          this.page && this.page.config && this.page.config.defineVars
-            ? this.page.config.defineVars
-            : {},
-          this.defineVars
-        ),
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        vars: Object.assign(this.vars, this.page?.config?.defineVars ?? {}, this.defineVars ?? {}),
         store: useStatesStore().trackedItems
       }
     },

@@ -102,7 +102,8 @@ export default {
   },
   data () {
     return {
-      inChatSession: false
+      inChatSession: false,
+      vars: {}
     }
   },
   computed: {
@@ -127,7 +128,8 @@ export default {
       return {
         component: this.overviewPage,
         store: this.context.store,
-        vars: (this.overviewPage && this.overviewPage.config && this.overviewPage.config.defineVars) ? this.overviewPage.config.defineVars : {}
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        vars: Object.assign(this.vars, this.overviewPage?.config?.defineVars ?? {})
       }
     },
     pageStyle () {
