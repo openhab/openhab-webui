@@ -119,7 +119,7 @@ import * as api from '@/api'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useViewArea } from '@/composables/useViewArea'
-import { transformParameterDefault } from '@/components/widgets/helpers.ts'
+import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -271,12 +271,7 @@ export default {
         })
       } else {
         api.getUiComponentInNamespace({ namespace: 'ui:widget', componentUID: this.uid }).then((data) => {
-          data.props.parameters.forEach((p) => {
-            const defaultValue = transformParameterDefault(p)
-            if (defaultValue !== undefined) {
-              p.default = defaultValue
-            }
-          })
+          data.props.parameters = transformParameterDefaults(data.props.parameters)
           this.widgetDefinition = YAML.stringify(data, { toStringOptions })
           nextTick(() => {
             this.loading = false

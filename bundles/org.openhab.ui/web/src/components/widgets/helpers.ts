@@ -1,17 +1,25 @@
 import * as api from '@/api'
 
-export function transformParameterDefault(p: api.ConfigDescriptionParameter & { default?: string }) {
-  if (p.default === undefined) return undefined
-  switch (p.type) {
+/**
+ * Transforms the default value (string) of a parameter to the correct type according to the parameter's type.
+ * @param parameter
+ */
+export function transformParameterDefault(parameter: api.ConfigDescriptionParameter & { default?: string }) {
+  if (parameter.default === undefined) return undefined
+  switch (parameter.type) {
     case 'BOOLEAN':
-      return Boolean(p.default)
+      return Boolean(parameter.default)
     case 'INTEGER':
     case 'DECIMAL':
-      return Number(p.default)
+      return Number(parameter.default)
     case 'TEXT':
-      return p.default
+      return parameter.default
     default:
-      const exhaustiveCheck: never = p.type
-      return p.default
+      const exhaustiveCheck: never = parameter.type
+      return parameter.default
   }
+}
+
+export function transformParameterDefaults(parameters: api.ConfigDescriptionParameter[]) {
+  return parameters.map((p) => ({ ...p, default: transformParameterDefault(p) }))
 }
