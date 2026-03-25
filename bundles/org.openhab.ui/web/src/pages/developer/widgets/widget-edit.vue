@@ -119,7 +119,7 @@ import * as api from '@/api'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useViewArea } from '@/composables/useViewArea'
-import { transformParameterDefault } from '@/components/widgets/useWidgetContext.ts'
+import { transformParameterDefault } from '@/components/widgets/helpers.ts'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 

@@ -9,22 +9,7 @@ import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts
 import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, WidgetContext } from './types'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as api from '@/api'
-
-export function transformParameterDefault(p: api.ConfigDescriptionParameter & { default?: string }) {
-  if (p.default === undefined) return undefined
-  switch (p.type) {
-    case 'BOOLEAN':
-      return Boolean(p.default)
-    case 'INTEGER':
-    case 'DECIMAL':
-      return Number(p.default)
-    case 'TEXT':
-      return p.default
-    default:
-      const exhaustiveCheck: never = p.type
-      return p.default
-  }
-}
+import { transformParameterDefault } from '@/components/widgets/helpers.ts'
 
 /**
  * useWidgetContext must be used as a composable in all widget components.
