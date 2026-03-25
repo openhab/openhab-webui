@@ -3067,6 +3067,9 @@
           },
           "405": {
             "description": "Metadata not editable."
+          },
+          "503": {
+            "description": "Managed provider not available."
           }
         },
         "security": [
@@ -3081,7 +3084,7 @@
         "tags": [
           "items"
         ],
-        "summary": "Removes metadata from an item.",
+        "summary": "Removes metadata in a specific namespace from an item.",
         "operationId": "removeMetadataFromItem",
         "parameters": [
           {
@@ -3109,10 +3112,13 @@
             "description": "OK"
           },
           "404": {
-            "description": "Item not found."
+            "description": "Item or namespace not found."
           },
           "405": {
-            "description": "Meta data not editable."
+            "description": "Metadata not editable."
+          },
+          "503": {
+            "description": "Managed provider not available."
           }
         },
         "security": [
@@ -3278,7 +3284,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EnrichedItem"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/EnrichedItem"
+                    },
+                    {
+                      "$ref": "#/components/schemas/EnrichedGroupItem"
+                    }
+                  ]
                 }
               }
             }
@@ -3856,6 +3869,42 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/items/{itemName}/metadata": {
+      "delete": {
+        "tags": [
+          "items"
+        ],
+        "summary": "Removes all managed metadata from an item.",
+        "operationId": "removeAllMetadataFromItem",
+        "parameters": [
+          {
+            "name": "itemName",
+            "in": "path",
+            "description": "item name",
+            "required": true,
+            "schema": {
+              "pattern": "[a-zA-Z_0-9]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Item not found."
           }
         },
         "security": [
@@ -7670,7 +7719,7 @@
           "context": {
             "type": "string"
           },
-          "defaultValue": {
+          "default": {
             "type": "string"
           },
           "description": {
@@ -7700,7 +7749,7 @@
           "max": {
             "type": "number"
           },
-          "stepsize": {
+          "step": {
             "type": "number"
           },
           "pattern": {
@@ -8104,17 +8153,17 @@
           "typeUID": {
             "type": "string"
           },
-          "label": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
           "description": {
             "type": "string"
           },
           "configuration": {
             "$ref": "#/components/schemas/Configuration"
+          },
+          "label": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
           }
         }
       },
@@ -8144,15 +8193,15 @@
       "Template": {
         "type": "object",
         "properties": {
-          "uid": {
-            "type": "string"
-          },
           "tags": {
             "uniqueItems": true,
             "type": "array",
             "items": {
               "type": "string"
             }
+          },
+          "uid": {
+            "type": "string"
           },
           "visibility": {
             "type": "string",
@@ -8162,10 +8211,10 @@
               "EXPERT"
             ]
           },
-          "label": {
+          "description": {
             "type": "string"
           },
-          "description": {
+          "label": {
             "type": "string"
           }
         }
