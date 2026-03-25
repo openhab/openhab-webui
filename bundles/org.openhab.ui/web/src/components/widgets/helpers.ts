@@ -1,7 +1,7 @@
 import * as api from '@/api'
 
 /**
- * Transforms the default value (string) of a parameter to the correct type according to the parameter's type.
+ * Transforms the default value (string) of a parameter to the correct type according to the parameter's type and return the default value.
  * @param parameter
  */
 export function transformParameterDefault(parameter: api.ConfigDescriptionParameter) {
@@ -20,6 +20,10 @@ export function transformParameterDefault(parameter: api.ConfigDescriptionParame
   }
 }
 
+/**
+ * Transforms the default value properties of all parameters to the correct type according to the parameters' types and return the parameters..
+ * @param parameters
+ */
 export function transformParameterDefaults(parameters: api.ConfigDescriptionParameter[]) {
   return parameters.map((p) => ({ ...p, default: transformParameterDefault(p) }))
 }
