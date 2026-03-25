@@ -77,7 +77,7 @@ export default {
   props: {
     f7router: Object
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -85,10 +85,10 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    load () {
+    load() {
       this.loading = true
       this.$oh.api.get('/rest/items/semantics/health').then((data) => {
         this.semanticsProblems = data
@@ -96,13 +96,13 @@ export default {
         this.ready = true
       })
     },
-    problemKey (semanticsProblem) {
+    problemKey(semanticsProblem) {
       return semanticsProblem.item + '_' + semanticsProblem.reason
     },
-    getLinkForProblem (semanticsProblem) {
+    getLinkForProblem(semanticsProblem) {
       return '/settings/items/' + semanticsProblem.item
     },
-    plural (count) {
+    plural(count) {
       return count === 1 ? '' : 's'
     }
   }

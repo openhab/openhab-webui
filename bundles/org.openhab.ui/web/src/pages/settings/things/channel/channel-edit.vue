@@ -56,10 +56,10 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       configDescription: {},
       config: {},
@@ -67,17 +67,20 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn (event) {
+    onPageAfterIn(event) {
       this.config = Object.assign({}, this.channel.configuration)
-      this.$oh.api.get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`).then((ct) => {
-        this.configDescription = ct
-      }).catch((err) => {
-        if (err === 'Not Found' || err === 404) {
-          this.noConfig = true
-        }
-      })
+      this.$oh.api
+        .get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`)
+        .then((ct) => {
+          this.configDescription = ct
+        })
+        .catch((err) => {
+          if (err === 'Not Found' || err === 404) {
+            this.noConfig = true
+          }
+        })
     },
-    save () {
+    save() {
       let finalChannel = Object.assign({}, this.channel, {
         configuration: this.config
       })

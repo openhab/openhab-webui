@@ -30,18 +30,24 @@ export default {
     metadata: Object
   },
   mixins: [ItemMetadataMixin],
-  setup () {
+  setup() {
     return { theme }
   },
   computed: {
-    synonyms () {
+    synonyms() {
       if (!this.metadata.value) return []
-      return this.metadata.value.split(',').map((s) => s.trim()).join('\n')
+      return this.metadata.value
+        .split(',')
+        .map((s) => s.trim())
+        .join('\n')
     }
   },
   methods: {
-    updateValue (ev) {
-      this.metadata.value = ev.target.value.split('\n').map((s) => s.trim()).join(',')
+    updateValue(ev) {
+      this.metadata.value = ev.target.value
+        .split('\n')
+        .map((s) => s.trim())
+        .join(',')
     }
   }
 }

@@ -21,7 +21,7 @@ export default {
     OhSipclient
   },
   widget: OhSIPClientCardDefinition,
-  setup (props) {
+  setup(props) {
     const { config } = useWidgetContext(props.context)
     return { config }
   }

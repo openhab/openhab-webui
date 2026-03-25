@@ -3,7 +3,10 @@
     v-if="visible"
     class="oh-block"
     :class="scopedCssUid"
-    :style="{ 'z-index': (context.editmode) ? 100 - parentDefaultSlots.indexOf(context.component) : 'auto !important', ...(config.style as Record<string, string>) }">
+    :style="{
+      'z-index': context.editmode ? 100 - parentDefaultSlots.indexOf(context.component) : 'auto !important',
+      ...(config.style as Record<string, string>)
+    }">
     <hr v-if="context.editmode" />
     <f7-block-title v-if="config.title">
       {{ config.title }}
@@ -57,9 +60,10 @@ const props = defineProps<{
   context: WidgetContext
 }>()
 
-const parentDefaultSlots = props.context.parent?.component &&
-  'slots' in props.context.parent.component  && props.context.parent.component.slots.default ?
-  props.context.parent.component.slots?.default : []
+const parentDefaultSlots =
+  props.context.parent?.component && 'slots' in props.context.parent.component && props.context.parent.component.slots.default
+    ? props.context.parent.component.slots?.default
+    : []
 
 const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(props.context)
 </script>

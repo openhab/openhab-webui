@@ -47,7 +47,7 @@ export default {
     invertColor: Boolean,
     store: Object
   },
-  data () {
+  data() {
     return {
       badgeConfigs: {
         temperature: { icon: 'f7:thermometer', unit: '°' },
@@ -58,7 +58,7 @@ export default {
     }
   },
   computed: {
-    config () {
+    config() {
       if (this.badgeOverrides) {
         const badges = Object.assign({}, this.badgeConfigs)
         const override = this.badgeOverrides[this.type]
@@ -68,7 +68,7 @@ export default {
       }
       return this.badgeConfigs[this.type]
     },
-    query () {
+    query() {
       let direct
       switch (this.type) {
         case 'temperature':
@@ -97,7 +97,7 @@ export default {
           return []
       }
     },
-    queryAux () {
+    queryAux() {
       let direct
       switch (this.type) {
         case 'temperature':
@@ -112,13 +112,13 @@ export default {
           return []
       }
     },
-    map () {
+    map() {
       return this.query.map((item) => this.store[item.name].state).filter((state) => Number.isFinite(Number.parseFloat(state)))
     },
-    mapAux () {
+    mapAux() {
       return this.queryAux.map((item) => this.store[item.name].state).filter((state) => Number.isFinite(Number.parseFloat(state)))
     },
-    reduce () {
+    reduce() {
       const ret = this.map.reduce((avg, state, arr, { length }) => {
         const value = Number.parseFloat(state)
         if (Number.isFinite(value)) {
@@ -127,9 +127,9 @@ export default {
         return avg
       }, 0)
 
-      return (this.type === 'temperature') ? Math.round(ret * 10) / 10 : Math.round(ret)
+      return this.type === 'temperature' ? Math.round(ret * 10) / 10 : Math.round(ret)
     },
-    reduceAux () {
+    reduceAux() {
       if (this.type !== 'temperature' && this.type !== 'humidity') return undefined
       const ret = this.mapAux.reduce((avg, state, arr, { length }) => {
         const value = Number.parseFloat(state)

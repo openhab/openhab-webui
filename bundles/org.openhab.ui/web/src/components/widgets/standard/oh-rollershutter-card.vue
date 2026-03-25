@@ -39,11 +39,11 @@ export default {
     OhRollershutter
   },
   widget: OhRollershutterCardDefinition,
-  setup (props) {
+  setup(props) {
     const { config } = useWidgetContext(props.context)
     return { config }
   },
-  data () {
+  data() {
     return {
       value: Math.random()
     }

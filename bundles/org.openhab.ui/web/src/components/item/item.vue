@@ -4,15 +4,15 @@
     media-item
     class="itemlist-item"
     :link="link"
-    :title="(item.label) ? item.label : item.name"
-    :footer="(item.label) ? item.name : '\xa0'"
+    :title="item.label ? item.label : item.name"
+    :footer="item.label ? item.name : '\xa0'"
     :subtitle="noType ? '' : getItemTypeAndMetaLabel(item)"
     :after="state">
     <template #media>
       <oh-icon
         v-if="!noIcon && item.category"
         :icon="item.category"
-        :state="(noState || item.type === 'Image') ? null : context?.store[item.name]?.state || item.state"
+        :state="noState || item.type === 'Image' ? null : context?.store[item.name]?.state || item.state"
         height="32"
         width="32" />
       <span v-else-if="!noIcon" class="item-initial">{{ item.name[0] }}</span>
@@ -48,7 +48,7 @@ export default {
     link: String
   },
   computed: {
-    state () {
+    state() {
       if (this.noState) return
       if (!this.context || !this.context.store) return this.item.state
       return this.context.store[this.item.name].displayState || this.context.store[this.item.name].state

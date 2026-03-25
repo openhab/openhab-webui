@@ -50,7 +50,7 @@ export default {
   components: {
     SemanticsTreeviewItem
   },
-  setup () {
+  setup() {
     const moveState = reactive({
       moving: false,
       moveDelayedOpen: null,
@@ -60,7 +60,7 @@ export default {
     provide('moveState', moveState)
   },
   computed: {
-    rootTags () {
+    rootTags() {
       const tags = []
       if (this.picker && !this.hideNone) {
         tags.push('None')
@@ -80,11 +80,11 @@ export default {
     }
   },
   methods: {
-    tagSelected (tag) {
+    tagSelected(tag) {
       this.$emit('selected', tag)
     }
   },
-  mounted () {
+  mounted() {
     if (this.propertyMode) {
       this.expandedTags.Property = true
     } else if (this.classMode && this.selectedClass) {

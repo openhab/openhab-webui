@@ -12,6 +12,7 @@
       <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar v-else tabbar position="top">
+      <!-- prettier-ignore  -->
       <f7-link
         v-for="tab in modelTabs"
         :key="tab.value"
@@ -50,6 +51,7 @@
           <f7-block class="block-narrow no-margin-bottom">
             <f7-col>
               <f7-segmented strong tag="p">
+                <!-- prettier-ignore -->
                 <f7-button
                   v-for="tab in modelTabs"
                   :key="tab.value"
@@ -85,11 +87,11 @@
                   <f7-list-item
                     v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
                     media-item
-                    :link="(showCardControls) ? undefined : ''"
+                    :link="showCardControls ? undefined : ''"
                     @click="(ev) => cardClicked(ev, card, idx)"
                     :key="idx"
                     :title="card.separator || card.defaultTitle"
-                    :footer="(card.separator) ? '(separator)' : card.key">
+                    :footer="card.separator ? '(separator)' : card.key">
                     <template #content-start>
                       <f7-menu class="configure-layout-menu">
                         <f7-menu-item icon-f7="list_bullet" dropdown>
@@ -216,7 +218,15 @@ import HomeCards from '../../../home/homecards-mixin'
 
 import YAML from 'yaml'
 
-import { OhHomePageDefinition, OhLocationsTabParameters, OhEquipmentTabParameters, OhPropertiesTabParameters, OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
+import {
+  OhHomePageDefinition,
+  OhLocationsTabParameters,
+  OhEquipmentTabParameters,
+  OhPropertiesTabParameters,
+  OhLocationCardParameters,
+  OhEquipmentCardParameters,
+  OhPropertyCardParameters
+} from '@/assets/definitions/widgets/home'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
@@ -242,12 +252,12 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     useViewArea()
 
     return { theme }
   },
-  data () {
+  data() {
     return {
       pageWidgetDefinition: OhHomePageDefinition(),
       locationsTabParameters: OhLocationsTabParameters(),
@@ -272,7 +282,7 @@ export default {
     }
   },
   watch: {
-    pageReady (val) {
+    pageReady(val) {
       if (val) {
         this.modelTabs = [
           { value: 'locations', label: this.$t('home.locations.tab') },
@@ -283,7 +293,7 @@ export default {
     }
   },
   methods: {
-    addWidget (component, widgetType, parentContext, slot) {
+    addWidget(component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -299,55 +309,79 @@ export default {
         this.forceUpdate()
       }
     },
-    getWidgetDefinition (componentType) {
+    getWidgetDefinition(componentType) {
       return ConfigurableWidgets[componentType] ? ConfigurableWidgets[componentType]() : null
     },
-    ensureCardComponentExists (card) {
+    ensureCardComponentExists(card) {
       if (!this.page.slots[this.currentModelTab][0].slots[card.key]) {
         this.page.slots[this.currentModelTab][0].slots[card.key] = [
           {
-            component: (this.currentModelTab) === 'locations' ? 'oh-location-card' : (this.currentModelTab === 'equipment') ? 'oh-equipment-card' : 'oh-property-card',
+            component:
+              this.currentModelTab === 'locations'
+                ? 'oh-location-card'
+                : this.currentModelTab === 'equipment'
+                  ? 'oh-equipment-card'
+                  : 'oh-property-card',
             config: {}
           }
         ]
       }
     },
-    configureCard (card) {
+    configureCard(card) {
       if (!card.key) return
-      if (!this.page.slots[this.currentModelTab] || !this.page.slots[this.currentModelTab][0] || !this.page.slots[this.currentModelTab][0].slots) return
+      if (
+        !this.page.slots[this.currentModelTab] ||
+        !this.page.slots[this.currentModelTab][0] ||
+        !this.page.slots[this.currentModelTab][0].slots
+      )
+        return
       this.ensureCardComponentExists(card)
       return this.configureWidget(this.page.slots[this.currentModelTab][0].slots[card.key][0])
     },
-    editCardCode (card) {
+    editCardCode(card) {
       if (!card.key) return
-      if (!this.page.slots[this.currentModelTab] || !this.page.slots[this.currentModelTab][0] || !this.page.slots[this.currentModelTab][0].slots) return
+      if (
+        !this.page.slots[this.currentModelTab] ||
+        !this.page.slots[this.currentModelTab][0] ||
+        !this.page.slots[this.currentModelTab][0].slots
+      )
+        return
       this.ensureCardComponentExists(card)
       return this.editWidgetCode(this.page.slots[this.currentModelTab][0].slots[card.key][0])
     },
-    addCardSeparator (idx) {
-      const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
+    addCardSeparator(idx) {
+      const orderedCards = this.cardGroups(this.currentModelTab, this.page)
+        .flat()
+        .map((e) => (e.separator ? e : e.key))
       orderedCards.splice(idx, 0, { separator: 'New Section' })
       this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
       this.renameCardSeparator(idx)
     },
-    renameCardSeparator (idx) {
-      const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
+    renameCardSeparator(idx) {
+      const orderedCards = this.cardGroups(this.currentModelTab, this.page)
+        .flat()
+        .map((e) => (e.separator ? e : e.key))
       if (orderedCards[idx].separator) {
-        f7.dialog.prompt('Enter the title of the separator:', null,
+        f7.dialog.prompt(
+          'Enter the title of the separator:',
+          null,
           (title) => {
             orderedCards[idx].separator = title
             this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
           },
           null,
-          orderedCards[idx].separator)
+          orderedCards[idx].separator
+        )
       }
     },
-    removeCardSeparator (idx) {
-      const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
+    removeCardSeparator(idx) {
+      const orderedCards = this.cardGroups(this.currentModelTab, this.page)
+        .flat()
+        .map((e) => (e.separator ? e : e.key))
       orderedCards.splice(idx, 1)
       this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
     },
-    cardClicked (ev, card, idx) {
+    cardClicked(ev, card, idx) {
       ev.cancelBubble = true
       let el = ev.target
       if (el.classList.contains('icon-checkbox')) {
@@ -363,8 +397,10 @@ export default {
       }
       this.configureCard(card)
     },
-    reorderCard (ev) {
-      const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
+    reorderCard(ev) {
+      const orderedCards = this.cardGroups(this.currentModelTab, this.page)
+        .flat()
+        .map((e) => (e.separator ? e : e.key))
       const newOrder = [...orderedCards]
       newOrder.splice(ev.to, 0, newOrder.splice(ev.from, 1)[0])
       this.page.slots[this.currentModelTab][0].config.cardOrder = newOrder
@@ -374,19 +410,35 @@ export default {
         this.cardListId = f7.utils.id()
       })
     },
-    isCardExcluded (card) {
+    isCardExcluded(card) {
       if (!card.key) return
       const page = this.page
       const type = this.currentModelTab
-      const excludedCards = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.excludedCards) ? page.slots[type][0].config.excludedCards : []
+      const excludedCards =
+        page &&
+        page.slots &&
+        page.slots[type] &&
+        page.slots[type][0] &&
+        page.slots[type][0].config &&
+        page.slots[type][0].config.excludedCards
+          ? page.slots[type][0].config.excludedCards
+          : []
       const excludedIdx = excludedCards.indexOf(card.key)
       return excludedIdx >= 0
     },
-    toggleCardDisplay (card) {
+    toggleCardDisplay(card) {
       if (!card.key) return
       const page = this.page
       const type = this.currentModelTab
-      const excludedCards = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.excludedCards) ? page.slots[type][0].config.excludedCards : []
+      const excludedCards =
+        page &&
+        page.slots &&
+        page.slots[type] &&
+        page.slots[type][0] &&
+        page.slots[type][0].config &&
+        page.slots[type][0].config.excludedCards
+          ? page.slots[type][0].config.excludedCards
+          : []
       const excludedIdx = excludedCards.indexOf(card.key)
       if (excludedIdx < 0) {
         this.page.slots[type][0].config.excludedCards = [...excludedCards, card.key]
@@ -394,10 +446,10 @@ export default {
         this.page.slots[type][0].config.excludedCards.splice(excludedIdx, 1)
       }
     },
-    toYaml () {
+    toYaml() {
       this.pageYaml = YAML.stringify(Object.assign({ config: this.page.config }, this.page.slots))
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedTabs = YAML.parse(this.pageYaml)
         this.page.slots = updatedTabs

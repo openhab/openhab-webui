@@ -28,11 +28,9 @@
       <div v-if="graph.legend.linkTypes.length" class="legend-section">
         <div class="legend-subtitle">Connections</div>
         <div v-for="linkType in graph.legend.linkTypes" :key="linkType.id" class="legend-item">
-          <span
-            class="legend-arrow"
-            :class="{ 'legend-arrow--dashed': linkType.lineStyle === 'dashed' }"
-            >{{ getLinkSymbol(linkType) }}</span
-          >
+          <span class="legend-arrow" :class="{ 'legend-arrow--dashed': linkType.lineStyle === 'dashed' }">{{
+            getLinkSymbol(linkType)
+          }}</span>
           <span>{{ linkType.label }}</span>
         </div>
       </div>
@@ -177,32 +175,32 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       showNonFabric: false
     }
   },
   computed: {
     ...mapStores(useUIOptionsStore),
-    isDarkMode () {
+    isDarkMode() {
       return this.uiOptionsStore.darkMode === 'dark'
     },
-    hasNonFabricNodes () {
+    hasNonFabricNodes() {
       if (!this.graph) return false
       return this.graph.nodes.some((n) => n.status === 'unknown')
     },
-    filteredNodes () {
+    filteredNodes() {
       if (!this.graph) return []
       if (this.showNonFabric) return this.graph.nodes
       return this.graph.nodes.filter((n) => n.status !== 'unknown')
     },
-    filteredLinks () {
+    filteredLinks() {
       if (!this.graph) return []
       if (this.showNonFabric) return this.graph.links
       const visibleIds = new Set(this.filteredNodes.map((n) => n.id))
       return this.graph.links.filter((l) => visibleIds.has(l.source) && visibleIds.has(l.target))
     },
-    chartOptions () {
+    chartOptions() {
       if (!this.graph) return null
 
       return {
@@ -216,15 +214,19 @@ export default {
     }
   },
   methods: {
-    getLinkSymbol (linkType) {
+    getLinkSymbol(linkType) {
       switch (linkType.symbol) {
-        case 'double_arrow': return '↔'
-        case 'arrow': return '→'
-        case 'none': return '—'
-        default: return '—'
+        case 'double_arrow':
+          return '↔'
+        case 'arrow':
+          return '→'
+        case 'none':
+          return '—'
+        default:
+          return '—'
       }
     },
-    buildSeries () {
+    buildSeries() {
       const nodes = this.filteredNodes.map((node) => this.buildNodeData(node))
       const links = this.filteredLinks.map((link) => this.buildLinkData(link))
 
@@ -269,7 +271,7 @@ export default {
         }
       }
     },
-    buildNodeData (node) {
+    buildNodeData(node) {
       const roleInfo = this.getRoleInfo(node.role)
       const secondaryRoleInfo = node.secondaryRole ? this.getRoleInfo(node.secondaryRole) : null
 
@@ -291,11 +293,11 @@ export default {
         secondaryRole: secondaryRoleInfo
       }
     },
-    getRoleInfo (roleId) {
+    getRoleInfo(roleId) {
       const role = this.graph.legend.nodeRoles.find((r) => r.id === roleId)
       return role || { color: '#9E9E9E', size: 30, label: 'Unknown' }
     },
-    formatRoleLabel (node) {
+    formatRoleLabel(node) {
       const roleInfo = this.getRoleInfo(node.role)
       if (node.secondaryRole) {
         const secondaryInfo = this.getRoleInfo(node.secondaryRole)
@@ -303,14 +305,12 @@ export default {
       }
       return roleInfo.label
     },
-    buildLinkData (link) {
+    buildLinkData(link) {
       const sourceNode = this.graph.nodes.find((n) => n.id === link.source)
       const targetNode = this.graph.nodes.find((n) => n.id === link.target)
 
       const linkTypeInfo = this.graph.legend.linkTypes.find((t) => t.id === link.type)
-      const qualityInfo = link.quality !== undefined
-        ? this.graph.legend.linkQualities.find((q) => q.value === link.quality)
-        : null
+      const qualityInfo = link.quality !== undefined ? this.graph.legend.linkQualities.find((q) => q.value === link.quality) : null
 
       let symbol, symbolSize
       switch (linkTypeInfo?.symbol) {
@@ -345,7 +345,7 @@ export default {
         }
       }
     },
-    formatTooltip (params) {
+    formatTooltip(params) {
       if (params.dataType === 'node') {
         return this.formatNodeTooltip(params.data)
       } else if (params.dataType === 'edge') {
@@ -353,7 +353,7 @@ export default {
       }
       return ''
     },
-    formatNodeTooltip (data) {
+    formatNodeTooltip(data) {
       let tooltip = `<strong>${data.label}</strong>`
 
       if (data.nodeId) {
@@ -381,7 +381,7 @@ export default {
 
       return tooltip
     },
-    formatEdgeTooltip (data) {
+    formatEdgeTooltip(data) {
       let tooltip = `<strong>${data.sourceLabel}</strong> ↔ <strong>${data.targetLabel}</strong>`
 
       if (data.linkTypeLabel) {

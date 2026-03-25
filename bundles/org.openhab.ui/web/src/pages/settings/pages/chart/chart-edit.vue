@@ -13,7 +13,7 @@
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode ? true : null" @toggle:change="value => togglePreviewMode(value)" />
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />
         Run mode
         <span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
@@ -111,12 +111,12 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     useViewArea()
 
     return { theme }
   },
-  data () {
+  data() {
     return {
       pageWidgetDefinition: OhChartPage.widget(),
       page: {
@@ -135,7 +135,7 @@ export default {
     }
   },
   methods: {
-    addWidget (component, widgetType, parentContext, slot) {
+    addWidget(component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -148,7 +148,7 @@ export default {
         this.forceUpdate()
       }
     },
-    widgetConfigClosed () {
+    widgetConfigClosed() {
       this.currentComponent = null
       this.currentWidget = null
       this.currentSlot = null
@@ -157,15 +157,15 @@ export default {
       this.widgetConfigOpened = false
       this.widgetSlotConfigOpened = false
     },
-    updateWidgetSlotConfig (slotConfig) {
+    updateWidgetSlotConfig(slotConfig) {
       this.currentSlotParent.slots[this.currentSlot] = slotConfig
       this.forceUpdate()
       this.widgetConfigClosed()
     },
-    getWidgetDefinition (componentType) {
+    getWidgetDefinition(componentType) {
       return ChartWidgetsDefinitions[componentType]
     },
-    configureSlot (component, slotName, defaultSlotComponentType) {
+    configureSlot(component, slotName, defaultSlotComponentType) {
       this.currentSlotParent = component
       this.currentWidget = null
       this.currentSlot = slotName
@@ -187,23 +187,26 @@ export default {
         component: WidgetSlotConfigPopup
       }
 
-      this.f7router.navigate({
-        url: 'configure-slot',
-        route: {
-          path: 'configure-slot',
-          popup
+      this.f7router.navigate(
+        {
+          url: 'configure-slot',
+          route: {
+            path: 'configure-slot',
+            popup
+          }
+        },
+        {
+          props: {
+            currentSlot: this.currentSlot,
+            slotConfig: this.currentSlotConfig,
+            getWidgetDefinition: this.getWidgetDefinition,
+            removeComponentFromSlot: this.removeComponentFromSlot,
+            editWidgetCode: this.editWidgetCode,
+            currentSlotDefaultComponentType: this.currentSlotDefaultComponentType,
+            initialConfig: { show: true }
+          }
         }
-      }, {
-        props: {
-          currentSlot: this.currentSlot,
-          slotConfig: this.currentSlotConfig,
-          getWidgetDefinition: this.getWidgetDefinition,
-          removeComponentFromSlot: this.removeComponentFromSlot,
-          editWidgetCode: this.editWidgetCode,
-          currentSlotDefaultComponentType: this.currentSlotDefaultComponentType,
-          initialConfig: { show: true }
-        }
-      })
+      )
 
       f7.once('widgetSlotConfigUpdate', this.updateWidgetSlotConfig)
       f7.once('widgetSlotConfigClosed', () => {
@@ -211,7 +214,7 @@ export default {
         this.widgetConfigClosed()
       })
     },
-    removeComponentFromSlot (component, slot) {
+    removeComponentFromSlot(component, slot) {
       slot.splice(slot.indexOf(component), 1)
       if (this.widgetSlotConfigOpened && slot.length === 0) {
         this.currentSlotParent.slots[this.currentSlot] = undefined
@@ -220,13 +223,13 @@ export default {
       }
       this.forceUpdate()
     },
-    toYaml () {
+    toYaml() {
       this.pageYaml = YAML.stringify({
         config: this.page.config,
         slots: this.page.slots
       })
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
         this.page.config = updatedPage.config

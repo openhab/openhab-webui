@@ -10,7 +10,7 @@
         :title="'Alexa Device Type' + (itemType !== 'Group' ? (!multiple ? '/Attribute' : '/Attributes') : '')"
         :disabled="!editable ? true : null"
         smart-select
-        :smart-select-params="{openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true}"
+        :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }"
         ref="classes">
         <select v-if="itemType === 'Group'" name="classes" @change="updateClasses">
           <option value="" />
@@ -93,7 +93,7 @@ export default {
   components: {
     ConfigSheet
   },
-  data () {
+  data() {
     return {
       classesDefs: Object.keys(AlexaDefinitions),
       itemType: this.item.groupType || this.item.type,
@@ -103,7 +103,7 @@ export default {
       ready: false
     }
   },
-  mounted () {
+  mounted() {
     Promise.all([
       this.$oh.api.get('/rest/services/org.openhab.i18n/config'),
       ...this.item.groupNames.map((groupName) => this.$oh.api.get(`/rest/items/${groupName}?metadata=alexa`))
@@ -116,24 +116,24 @@ export default {
     })
   },
   computed: {
-    classes () {
+    classes() {
       return this.metadata.value ? this.metadata.value.split(',') : []
     },
-    orderedClasses () {
+    orderedClasses() {
       return [...this.classesDefs]
         .filter((cl) => this.isVisible(cl) && this.supportsGroupType(cl) && !this.requiresGroupAttributes(cl))
         .sort((a, b) => a.localeCompare(b))
     },
-    defaultClasses () {
+    defaultClasses() {
       return this.orderedClasses.filter((cl) => cl.split('.').length === 1)
     },
-    genericClasses () {
+    genericClasses() {
       return this.orderedClasses.filter((cl) => cl.split('.').length === 2 && this.supportsMultiInstance(cl))
     },
-    specificClasses () {
+    specificClasses() {
       return this.orderedClasses.filter((cl) => cl.split('.').length === 2 && !this.supportsMultiInstance(cl))
     },
-    parameters () {
+    parameters() {
       return this.classes.reduce((parameters, cl) => {
         const { parameters: params = [] } = this.getDefinition(cl)
         for (const p of params.map((p) => p(this.itemType, this.item, this.metadata.config)).flat()) {
@@ -143,30 +143,33 @@ export default {
         return parameters
       }, [])
     },
-    groupCapabilities () {
+    groupCapabilities() {
       return this.item.members
         .filter((mbr) => mbr.metadata && (mbr.groupType || mbr.type) !== 'Group')
-        .reduce((caps, mbr, idx, arr) => caps.concat(
-          mbr.metadata.alexa.value.split(',').map((cl) => ({
-            name: cl.split('.').pop().trim() || 'N/A',
-            item: mbr.name,
-            isIgnored:
-              !this.isSupportedGroupAttribute(cl) ||
-              !this.hasRequiredGroupAttributes(cl, mbr, arr) ||
-              (!this.supportsMultiInstance(cl) &&
-                arr.findIndex((mbr) => mbr.metadata.alexa.value.split(',').includes(cl)) !== idx)
-          }))
-        ), [])
+        .reduce(
+          (caps, mbr, idx, arr) =>
+            caps.concat(
+              mbr.metadata.alexa.value.split(',').map((cl) => ({
+                name: cl.split('.').pop().trim() || 'N/A',
+                item: mbr.name,
+                isIgnored:
+                  !this.isSupportedGroupAttribute(cl) ||
+                  !this.hasRequiredGroupAttributes(cl, mbr, arr) ||
+                  (!this.supportsMultiInstance(cl) && arr.findIndex((mbr) => mbr.metadata.alexa.value.split(',').includes(cl)) !== idx)
+              }))
+            ),
+          []
+        )
     },
-    groupLinks () {
+    groupLinks() {
       return this.item.groups
         .map((g) => `<a class="text-color-blue" href="/settings/items/${g.name}/metadata/alexa">${g.label || g.name}</a>`)
         .join(', ')
     },
-    isPartOfGroupEndpoint () {
+    isPartOfGroupEndpoint() {
       return this.itemType !== 'Group' && this.item.groups.length > 0
     },
-    docLink () {
+    docLink() {
       if (this.itemType === 'Group') {
         return `${this.docUrl}#group-endpoint`
       } else if (this.classes.length === 0 || !this.classesDefs.includes(this.classes[0])) {
@@ -182,52 +185,52 @@ export default {
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    isSelected (cl) {
+    isSelected(cl) {
       return this.classes.indexOf(cl) >= 0
     },
-    isDefined (cl) {
+    isDefined(cl) {
       return this.item.groups.some((g) => g.members.some((mbr) => mbr.metadata.alexa.value.split(',').includes(cl)))
     },
-    isSupportedGroupAttribute (cl) {
+    isSupportedGroupAttribute(cl) {
       return this.metadata.value === cl.split('.')[0] && this.classesDefs.includes(cl)
     },
-    isVisible (cl) {
+    isVisible(cl) {
       const { visible = () => true } = this.getDefinition(cl)
       return this.hasDefinition(cl) && visible(this.item)
     },
-    getDefinition (cl, item) {
+    getDefinition(cl, item) {
       const itemType = item ? item.groupType || item.type : this.itemType
       const defTypes = Object.keys(AlexaDefinitions[cl] || {})
       const dt = defTypes.find((dt) => dt === itemType || (dt.endsWith('*') && itemType.startsWith(dt.slice(0, -1))))
       return (dt && AlexaDefinitions[cl][dt]) || {}
     },
-    hasDefinition (cl, item) {
+    hasDefinition(cl, item) {
       return Object.keys(this.getDefinition(cl, item)).length > 0
     },
-    hasRequiredGroupAttributes (cl, item, items) {
+    hasRequiredGroupAttributes(cl, item, items) {
       const { requires = [] } = this.getDefinition(cl, item)
       const type = cl.split('.')[0]
       return requires.every((attr) => items.find((i) => i.metadata.alexa.value.split(',').includes(`${type}.${attr}`)))
     },
-    requiresGroupAttributes (cl) {
+    requiresGroupAttributes(cl) {
       const { requires = [] } = this.getDefinition(cl)
       return !this.isPartOfGroupEndpoint && requires.length > 0
     },
-    supportsGroupType (cl) {
+    supportsGroupType(cl) {
       return !this.isPartOfGroupEndpoint || this.item.groups.some((g) => cl.startsWith(`${g.metadata.alexa.value}.`))
     },
-    supportsMultiInstance (cl) {
+    supportsMultiInstance(cl) {
       const { supports = [] } = this.getDefinition(cl)
       return supports.includes('multiInstance')
     },
-    toggleMultiple () {
+    toggleMultiple() {
       this.multiple = !this.multiple
       if (this.metadata.value.indexOf(',') > 0) this.metadata.value = ''
       this.classSelectKey = f7.utils.id()
     },
-    updateClasses () {
+    updateClasses() {
       const value = this.$refs.classes.$el.children[0].f7SmartSelect.getValue()
-      this.metadata.value = (Array.isArray(value)) ? value.join(',') : value
+      this.metadata.value = Array.isArray(value) ? value.join(',') : value
       this.metadata.config = {}
     }
   }

@@ -217,7 +217,7 @@ export default {
     addonId: String,
     f7router: Object
   },
-  data () {
+  data() {
     return {
       addon: null,
       ready: false,
@@ -227,18 +227,18 @@ export default {
     }
   },
   computed: {
-    showConfig () {
+    showConfig() {
       return this.addon && this.addon.installed && (this.addon.configDescriptionURI || this.addon.loggerPackages.length > 0)
     },
-    realAddonId () {
+    realAddonId() {
       if (!this.addon) return null
       return this.addon.uid
     },
-    serviceId () {
+    serviceId() {
       if (!this.addon) return null
-      return (this.addon.uid.indexOf(':') > 0) ? this.addon.uid.substring(0, this.addon.uid.indexOf(':')) : undefined
+      return this.addon.uid.indexOf(':') > 0 ? this.addon.uid.substring(0, this.addon.uid.indexOf(':')) : undefined
     },
-    addonDescription () {
+    addonDescription() {
       if (!this.descriptionReady) return null
       if (!this.addon) return null
       if (this.addon.description && (!this.addon.link || this.addon.link.indexOf('openhab.org/addons') < 0)) return this.addon.description
@@ -249,28 +249,30 @@ export default {
       }
       return 'No description found'
     },
-    docLinkUrl () {
+    docLinkUrl() {
       if (!this.addon) return ''
       if (this.serviceId && this.serviceId !== 'karaf') return this.addon.link ? this.addon.link : ''
-      return useRuntimeStore().websiteUrl +
+      return (
+        useRuntimeStore().websiteUrl +
         `/addons/${this.addon.type.replace('misc', 'integrations').replace('binding', 'bindings').replace('transformation', 'transformations')}` +
         `/${this.addon.id}`
+      )
     },
-    showInstallActions () {
+    showInstallActions() {
       let splitted = this.addon.uid.split(':')
       return splitted.length < 2 || splitted[0] !== 'eclipse'
     },
     ...mapStores(useUIOptionsStore)
   },
   methods: {
-    onPageBeforeIn () {
+    onPageBeforeIn() {
       this.ready = false
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       this.stopEventSource()
     },
-    load () {
+    load() {
       this.stopEventSource()
       let serviceId = null
       if (this.addonId.indexOf(':') > 0) {
@@ -294,8 +296,8 @@ export default {
       const allBindings = await (await fetch(bundlesUrl)).json()
 
       // apply filter for sub-bundles
-      const subBindingPrefix =  `org.openhab.binding.${bindingId}.`
-      const subBindings = allBindings.filter(b => b.type === "dir" && b.name.startsWith(subBindingPrefix))
+      const subBindingPrefix = `org.openhab.binding.${bindingId}.`
+      const subBindings = allBindings.filter((b) => b.type === 'dir' && b.name.startsWith(subBindingPrefix))
 
       // map each sub-bundle to a Promise that fetches its README + extracts label
       return await Promise.all(
@@ -314,7 +316,7 @@ export default {
         })
       )
     },
-    async processDescription () {
+    async processDescription() {
       if (this.addon.author === 'openHAB') {
         // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
         let addonTypeFolder = '_addons_' + this.addon.type
@@ -322,60 +324,68 @@ export default {
         if (this.addon.type !== 'automation') addonTypeFolder += 's'
         const docSrcUrl = `${useRuntimeStore().docSrcUrl}/${addonTypeFolder}/${this.addon.id}`
 
-        fetch(docSrcUrl + '/readme.md').then(async (readme) => {
-          let text = await readme.text()
+        fetch(docSrcUrl + '/readme.md')
+          .then(async (readme) => {
+            let text = await readme.text()
 
-          const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
-          let body
+            const frontmatterSeparators = [...text.matchAll(/^---$/gm)]
+            let body
 
-          if (frontmatterSeparators.length !== 2) {
-            body = '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
-          } else {
-            const frontmatter = text.substring(4, frontmatterSeparators[1].index)
-            text = text.substring(frontmatterSeparators[1].index + 4)
+            if (frontmatterSeparators.length !== 2) {
+              body =
+                '<p>The description is not available for this add-on.</p><h3>Debug Information</h3><blockquote>' + text + '</blockquote>'
+            } else {
+              const frontmatter = text.substring(4, frontmatterSeparators[1].index)
+              text = text.substring(frontmatterSeparators[1].index + 4)
 
-            // expand <!--list-subs--> placeholder
-            const sourcePlaceHolder = /<!--\s*list-subs\s*-->/
-            if (text.match(sourcePlaceHolder)) {
-              let targetBulletList = "\n"
-              const subBindingLinks = await this.getSubBindingLinks(this.addon.id)
-              if (subBindingLinks.length === 0) {
-                targetBulletList += "- _This binding has no sub-bindings._\n"
-              } else {
-                subBindingLinks.forEach(subBindingLink => {
-                  targetBulletList += subBindingLink
-                })
+              // expand <!--list-subs--> placeholder
+              const sourcePlaceHolder = /<!--\s*list-subs\s*-->/
+              if (text.match(sourcePlaceHolder)) {
+                let targetBulletList = '\n'
+                const subBindingLinks = await this.getSubBindingLinks(this.addon.id)
+                if (subBindingLinks.length === 0) {
+                  targetBulletList += '- _This binding has no sub-bindings._\n'
+                } else {
+                  subBindingLinks.forEach((subBindingLink) => {
+                    targetBulletList += subBindingLink
+                  })
+                }
+                targetBulletList += '\n'
+                text = text.replace(sourcePlaceHolder, targetBulletList)
               }
-              targetBulletList += "\n"
-              text = text.replace(sourcePlaceHolder, targetBulletList)
+
+              // simply remove [[toc]] as expanding wastes too much space in dialog box
+              text = text.replace(/\[\[toc\]\]/gi, '')
+
+              // convert MD to HTML
+              body = marked.parse(text)
+
+              // perform a few replaces on HTML body for Markdown readmes on GitHub
+              body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
+              body = body.replace(/<h1.*$/gm, '')
+              body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
+              body = body.replace(/<\/pre>/gm, '</pre></div>')
+              body = body.replace(/<table>/gm, '<div class="data-table"><table>')
+              body = body.replace(/<\/table>/gm, '</table></div>')
+              body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
+              body = body.replace(/<img src="doc/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/doc')
+              body = body.replace(/<img src="contrib/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/contrib')
             }
 
-            // simply remove [[toc]] as expanding wastes too much space in dialog box
-            text = text.replace(/\[\[toc\]\]/gi, "")
-
-            // convert MD to HTML
-            body = marked.parse(text)
-
-            // perform a few replaces on HTML body for Markdown readmes on GitHub
-            body = body.replace(/<p>{% include base.html %}<\/p>\n/gm, '')
-            body = body.replace(/<h1.*$/gm, '')
-            body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
-            body = body.replace(/<\/pre>/gm, '</pre></div>')
-            body = body.replace(/<table>/gm, '<div class="data-table"><table>')
-            body = body.replace(/<\/table>/gm, '</table></div>')
-            body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
-            body = body.replace(/<img src="doc/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/doc')
-            body = body.replace(/<img src="contrib/gm, '<img class="lazy lazy-fade-in" data-src="' + docSrcUrl + '/contrib')
-          }
-
-          this.parsedDescription = body
-          this.descriptionReady = true
-          setTimeout(() => { f7.lazy.create('.addon-description-text') })
-        }).catch((err) => {
-          this.parsedDescription = '<p>The description is unavailable for this add-on.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
-          this.descriptionReady = true
-          setTimeout(() => { f7.lazy.create('.addon-description-text') })
-        })
+            this.parsedDescription = body
+            this.descriptionReady = true
+            setTimeout(() => {
+              f7.lazy.create('.addon-description-text')
+            })
+          })
+          .catch((err) => {
+            this.parsedDescription =
+              '<p>The description is unavailable for this add-on.</p><h3>Debug Information</h3><blockquote>' + err + '</blockquote>'
+            this.descriptionReady = true
+            setTimeout(() => {
+              f7.lazy.create('.addon-description-text')
+            })
+          })
       } else {
         // perform a few replaces for Discourse "cooked" HTML
         let body = this.addon.detailedDescription ? this.addon.detailedDescription : ''
@@ -388,7 +398,9 @@ export default {
         body = body.replace(/<img src="\/\/community-openhab-org/gm, '<img class="lazy lazy-fade-in" data-src="//community-openhab-org')
         this.parsedDescription = body
         this.descriptionReady = true
-        setTimeout(() => { f7.lazy.create('.addon-description-text') })
+        setTimeout(() => {
+          f7.lazy.create('.addon-description-text')
+        })
       }
     }
   }

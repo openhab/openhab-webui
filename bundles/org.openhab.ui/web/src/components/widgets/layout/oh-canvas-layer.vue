@@ -37,10 +37,10 @@ defineOptions({ widget: OhCanvasLayerDefinition })
 
 // props & emits
 const props = defineProps<{
-  context: WidgetContext,
-  gridPitch: number,
-  gridEnable: boolean,
-  id: string,
+  context: WidgetContext
+  gridPitch: number
+  gridEnable: boolean
+  id: string
   preventDeactivation: boolean
 }>()
 
@@ -52,11 +52,11 @@ const { config, defaultSlots, childContext, visible } = useWidgetContext(props.c
 // computed
 const layerPreload = computed(() => config.value?.preload === true)
 const layerVisible = computed(() => (!props.context.editmode && visible.value) || (props.context.editmode && editVisible.value))
-const editVisible = computed(() => !(config.value && (config.value.editVisible === false)))
+const editVisible = computed(() => !(config.value && config.value.editVisible === false))
 
 interface Layer {
-  item: UiComponent,
-  selected: boolean,
+  item: UiComponent
+  selected: boolean
   id: string
 }
 

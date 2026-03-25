@@ -38,11 +38,11 @@
     </f7-row>
     <f7-block-title>{{ t('about.navigationBarsStyle') }}</f7-block-title>
     <f7-row>
-      <f7-col width="50" class="nav-bars-picker nav-bars-picker-empty" @click="bars='light'">
+      <f7-col width="50" class="nav-bars-picker nav-bars-picker-empty" @click="bars = 'light'">
         <div class="demo-navbar" />
         <f7-checkbox v-if="bars === 'light'" checked disabled />
       </f7-col>
-      <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="bars='filled'">
+      <f7-col width="50" class="nav-bars-picker nav-bars-picker-fill" @click="bars = 'filled'">
         <div class="demo-navbar" />
         <f7-checkbox v-if="bars === 'filled'" checked disabled />
       </f7-col>
@@ -168,12 +168,11 @@ import { useI18n } from 'vue-i18n'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-
 export default {
   components: {
     ItemPicker
   },
-  setup () {
+  setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('theme-switcher', mergeLocaleMessage)
     return {
@@ -181,37 +180,51 @@ export default {
     }
   },
   methods: {
-    switchTheme (theme) {
+    switchTheme(theme) {
       localStorage.setItem('openhab.ui:theme', theme)
       localStorage.removeItem('openhab.ui:theme.bars') // reset the bars to their default when switching themes
       location.reload()
     },
-    setCommandItem (value) {
+    setCommandItem(value) {
       localStorage.setItem('openhab.ui:commandItem', value)
-      setTimeout(() => { location.reload() }, 50) // Delay reload, otherwise it doesn't work
+      setTimeout(() => {
+        location.reload()
+      }, 50) // Delay reload, otherwise it doesn't work
     },
-    setDialogListeningItem (value) {
+    setDialogListeningItem(value) {
       useUIOptionsStore().dialogListeningItem = value
     },
-    setDialogLocationItem (value) {
+    setDialogLocationItem(value) {
       useUIOptionsStore().dialogLocationItem = value
     }
   },
   computed: {
-    theme () {
+    theme() {
       return localStorage.getItem('openhab.ui:theme') || 'auto'
     },
-    commandItem () {
+    commandItem() {
       return localStorage.getItem('openhab.ui:commandItem') || ''
     },
-    showDialogOptions () {
+    showDialogOptions() {
       const getUserMediaSupported = !!(window.navigator && window.navigator.mediaDevices && window.navigator.mediaDevices.getUserMedia)
-      return getUserMediaSupported &&
-        !!window.AudioContext &&
-        !!window.crypto
+      return getUserMediaSupported && !!window.AudioContext && !!window.crypto
     },
     ...mapStores(useRuntimeStore, useUIOptionsStore),
-    ...mapWritableState(useUIOptionsStore, [ 'disablePageTransitionAnimation',  'bars', 'homeNavBar', 'homeBackground', 'hideChatInput', 'disableExpandableCardAnimation', 'webAudio', 'dialogEnabled', 'dialogIdentifier', 'dialogListeningItem', 'dialogLocationItem', 'dialogConnectOnWindowEvent', 'dialogTriggerOnConnect' ])
+    ...mapWritableState(useUIOptionsStore, [
+      'disablePageTransitionAnimation',
+      'bars',
+      'homeNavBar',
+      'homeBackground',
+      'hideChatInput',
+      'disableExpandableCardAnimation',
+      'webAudio',
+      'dialogEnabled',
+      'dialogIdentifier',
+      'dialogListeningItem',
+      'dialogLocationItem',
+      'dialogConnectOnWindowEvent',
+      'dialogTriggerOnConnect'
+    ])
   }
 }
 </script>

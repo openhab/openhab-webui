@@ -36,7 +36,7 @@ import { AddonIcons, type AddonType } from '@/assets/addon-store'
 const runtimeStore = useRuntimeStore()
 
 // props
-const props = defineProps<{ addon: api.Addon, size?: string | number, lazy?: boolean }>()
+const props = defineProps<{ addon: api.Addon; size?: string | number; lazy?: boolean }>()
 
 // data
 const addonIcon = AddonIcons[props.addon.type as AddonType]

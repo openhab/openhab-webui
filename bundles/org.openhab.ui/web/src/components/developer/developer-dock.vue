@@ -5,10 +5,14 @@
     <f7-segmented
       strong
       tag="p"
-      style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right));
-                    margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
-                    margin-top: 5px;
-                    margin-bottom: 5px;">
+      style="
+        margin-right: calc(
+          var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right)
+        );
+        margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
+        margin-top: 5px;
+        margin-bottom: 5px;
+      ">
       <f7-button :active="dockView === 'tools'" @click="f7.emit('selectDeveloperDock', { dock: 'tools' })"> Tools </f7-button>
       <f7-button :active="dockView === 'help'" @click="f7.emit('selectDeveloperDock', { dock: 'help' })"> Help </f7-button>
     </f7-segmented>
@@ -16,26 +20,30 @@
       v-if="dockView === 'tools'"
       strong
       tag="p"
-      style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right));
-                    margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
-                    margin-top: 0">
+      style="
+        margin-right: calc(
+          var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right)
+        );
+        margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
+        margin-top: 0;
+      ">
       <f7-button
         :active="activeToolTab === 'pin'"
         icon-f7="pin_fill"
         icon-size="18"
-        @click="f7.emit('selectDeveloperDock', { dock: 'tools', toolTab: 'pin'})"
+        @click="f7.emit('selectDeveloperDock', { dock: 'tools', toolTab: 'pin' })"
         tooltip="Pinned Objects" />
       <f7-button
         :active="activeToolTab === 'events'"
         icon-f7="bolt_horizontal_fill"
         icon-size="18"
-        @click="f7.emit('selectDeveloperDock', { dock: 'tools', toolTab: 'events'})"
+        @click="f7.emit('selectDeveloperDock', { dock: 'tools', toolTab: 'events' })"
         tooltip="Event Monitor" />
       <f7-button
         :active="activeToolTab === 'scripting'"
         icon-f7="pencil_ellipsis_rectangle"
         icon-size="18"
-        @click="f7.emit('selectDeveloperDock', { dock: 'tools', toolTab: 'scripting'})"
+        @click="f7.emit('selectDeveloperDock', { dock: 'tools', toolTab: 'scripting' })"
         tooltip="Code Tools" />
       <f7-button
         :active="activeToolTab === 'tools'"
@@ -48,9 +56,13 @@
       v-if="dockView === 'help'"
       strong
       tag="p"
-      style="margin-right: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right));
-                    margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
-                    margin-top: 0">
+      style="
+        margin-right: calc(
+          var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-right)
+        );
+        margin-left: calc(var(--f7-searchbar-inner-padding-right) + var(--f7-searchbar-in-page-content-margin) + var(--f7-safe-area-left));
+        margin-top: 0;
+      ">
       <f7-button
         :active="activeHelpTab === 'current'"
         icon-f7="doc_richtext"
@@ -121,20 +133,20 @@ export default {
     DeveloperSidebar,
     HelpSidebar
   },
-  setup () {
+  setup() {
     return {
       f7
     }
   },
   computed: {
-    dockView () {
+    dockView() {
       return this.dock
     },
-    activeHelpTab () {
-      return (this.helpTab || 'current')
+    activeHelpTab() {
+      return this.helpTab || 'current'
     },
-    activeToolTab () {
-      return (this.toolTab || 'pin')
+    activeToolTab() {
+      return this.toolTab || 'pin'
     },
     ...mapStores(useUIOptionsStore)
   }

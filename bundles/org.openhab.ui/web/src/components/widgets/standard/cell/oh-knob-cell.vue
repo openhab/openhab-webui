@@ -39,12 +39,12 @@ export default {
     OhKnob
   },
   widget: OhKnobCellDefinition,
-  setup (props) {
+  setup(props) {
     const { childContext, slots } = useWidgetContext(props.context)
     return { childContext, slots }
   },
   computed: {
-    knobContext () {
+    knobContext() {
       return Object.assign({}, this.context, {
         component: {
           component: 'oh-knob',

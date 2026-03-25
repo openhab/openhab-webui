@@ -41,10 +41,10 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       configDescription: {},
       config: {},
@@ -52,20 +52,23 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.channel.id = this.channel.id + '_copy'
       this.channel.uid = this.channel.uid + '_copy'
       this.channel.label = this.channel.label + ' copy'
       this.config = Object.assign({}, this.channel.configuration)
-      this.$oh.api.get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`).then((ct) => {
-        this.configDescription = ct
-      }).catch((err) => {
-        if (err === 'Not Found' || err === 404) {
-          this.noConfig = true
-        }
-      })
+      this.$oh.api
+        .get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`)
+        .then((ct) => {
+          this.configDescription = ct
+        })
+        .catch((err) => {
+          if (err === 'Not Found' || err === 404) {
+            this.noConfig = true
+          }
+        })
     },
-    save () {
+    save() {
       if (!this.channel.id) {
         f7.dialog.alert('Please give a unique identifier')
         return

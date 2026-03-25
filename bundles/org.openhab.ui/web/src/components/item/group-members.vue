@@ -20,7 +20,7 @@
             :editableOnly="true"
             :filterType="compatibleItemTypes"
             :showFilterToggle="true"
-            @input="(members) => pickedMemberNames = members" />
+            @input="(members) => (pickedMemberNames = members)" />
         </f7-list-group>
       </f7-list>
     </f7-card-content>
@@ -48,27 +48,33 @@ export default {
     ItemPicker
   },
   emits: ['updated'],
-  data () {
+  data() {
     return {
       editMembers: false,
       pickedMemberNames: []
     }
   },
   computed: {
-    editableMemberNames () {
+    editableMemberNames() {
       return this.groupItem.members.filter((m) => m.editable).map((m) => m.name)
     },
-    sortedGroupMembers () {
+    sortedGroupMembers() {
       return this.groupItem.members.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     },
-    compatibleItemTypes () {
+    compatibleItemTypes() {
       const groupType = this.groupItem.groupType
       if (groupType) {
         let compatibleItemTypes = []
         compatibleItemTypes.push(groupType)
-        if (groupType.startsWith('Number')) { compatibleItemTypes.push('Switch') }
-        if (groupType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
-        if (groupType === 'Dimmer') { compatibleItemTypes.push('Switch') }
+        if (groupType.startsWith('Number')) {
+          compatibleItemTypes.push('Switch')
+        }
+        if (groupType === 'Color') {
+          compatibleItemTypes.push('Switch', 'Dimmer')
+        }
+        if (groupType === 'Dimmer') {
+          compatibleItemTypes.push('Switch')
+        }
         return compatibleItemTypes
       } else {
         return null
@@ -76,14 +82,14 @@ export default {
     }
   },
   methods: {
-    enableEditMode () {
+    enableEditMode() {
       this.pickedMemberNames = this.editableMemberNames
       this.editMembers = true
     },
-    cancelEditMode () {
+    cancelEditMode() {
       this.editMembers = false
     },
-    updateMembers () {
+    updateMembers() {
       const itemsToAdd = this.pickedMemberNames.filter((m) => !this.editableMemberNames.includes(m))
       const itemsToRemove = this.editableMemberNames.filter((m) => !this.pickedMemberNames.includes(m))
 
@@ -110,11 +116,13 @@ export default {
           Promise.all(promises)
             .then((d) => {
               this.$emit('updated')
-              f7.toast.create({
-                text: 'Member list updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              }).open()
+              f7.toast
+                .create({
+                  text: 'Member list updated',
+                  destroyOnClose: true,
+                  closeTimeout: 2000
+                })
+                .open()
               this.editMembers = false
             })
             .catch((err) => {

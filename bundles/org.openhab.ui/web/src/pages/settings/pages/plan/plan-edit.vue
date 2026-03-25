@@ -2,7 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="plan-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
-        :title="!ready ? '' : ((createMode ? 'Create plan page' : page.config.label) + dirtyIndicator)"
+        :title="!ready ? '' : (createMode ? 'Create plan page' : page.config.label) + dirtyIndicator"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -163,13 +163,13 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     useViewArea()
     const { evaluateExpression } = useWidgetExpression()
 
     return { theme, evaluateExpression }
   },
-  data () {
+  data() {
     return {
       pageWidgetDefinition: OhPlanPage.widget(),
       forceEditMode: true,
@@ -183,12 +183,12 @@ export default {
     }
   },
   methods: {
-    markerIcon (marker) {
+    markerIcon(marker) {
       if (!marker?.config?.icon) return null
       const key = marker.component + '-' + marker.config.coords + ':icon'
       return this.evaluateExpression(key, marker.config.icon, this.context)
     },
-    addWidget (component, widgetType, parentContext, slot) {
+    addWidget(component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -203,12 +203,14 @@ export default {
         this.forceUpdate()
       }
     },
-    getWidgetDefinition (componentType) {
-      const component = Object.values(ConfigurableWidgets).find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
+    getWidgetDefinition(componentType) {
+      const component = Object.values(ConfigurableWidgets).find(
+        (w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType
+      )
       if (!component) return null
       return component.widget()
     },
-    configureMarker (ev, marker, context) {
+    configureMarker(ev, marker, context) {
       let el = ev.target
       ev.cancelBubble = true
       while (!el.classList.contains('media-item')) {
@@ -217,13 +219,13 @@ export default {
       }
       this.context.editmode.configureWidget(marker, context)
     },
-    toYaml () {
+    toYaml() {
       this.pageYaml = YAML.stringify({
         config: this.page.config,
         markers: this.page.slots.default
       })
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
         this.page.config = updatedPage.config

@@ -10,7 +10,7 @@
           <f7-button
             v-else
             class="install-button prevent-active-state-propagation"
-            :text="addon.installed ? 'Remove' : (installActionText || 'Install')"
+            :text="addon.installed ? 'Remove' : installActionText || 'Install'"
             :color="addon.installed ? 'red' : 'blue'"
             round
             small
@@ -26,7 +26,7 @@
             size="15"
             :color="uiOptionsStore.darkMode === 'dark' ? 'white' : 'blue'"
             f7="checkmark_seal_fill"
-            style="margin-top: -3px;" />
+            style="margin-top: -3px" />
         </div>
         <div v-else-if="addon.properties && addon.properties.views" class="addon-card-subtitle">
           <addon-stats-line :addon="addon" :iconSize="15" />
@@ -124,7 +124,7 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 const uiOptionsStore = useUIOptionsStore()
 
 // props
-const props = defineProps<{ addon: api.Addon, headline?: string, installActionText?: string, lazyLogo?: boolean }>()
+const props = defineProps<{ addon: api.Addon; headline?: string; installActionText?: string; lazyLogo?: boolean }>()
 
 // emits
 const emit = defineEmits<{

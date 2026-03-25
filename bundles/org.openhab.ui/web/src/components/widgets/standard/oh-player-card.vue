@@ -37,7 +37,7 @@ export default {
     OhPlayerControls
   },
   widget: OhPlayerCardDefinition,
-  setup (props) {
+  setup(props) {
     const { config, cardChildContext } = useWidgetContext(props.context)
     return { config, cardChildContext }
   }

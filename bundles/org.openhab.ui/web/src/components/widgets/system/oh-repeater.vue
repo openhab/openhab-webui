@@ -32,17 +32,17 @@ export default {
     context: Object
   },
   widget: OhRepeaterDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, evaluateExpression, defaultSlots } = useWidgetContext(props.context)
     return { config, childContext, evaluateExpression, defaultSlots }
   },
-  data () {
+  data() {
     return {
       sourceCache: null
     }
   },
   computed: {
-    childrenContexts () {
+    childrenContexts() {
       const iterationContext = (ctx, el, idx, source) => {
         // takes the context with the added variables
         const loopVars = {}
@@ -65,21 +65,31 @@ export default {
 
       if (this.config.filter) {
         source = source.filter((el, idx, source) =>
-          this.evaluateExpression('filterExpr', '=' + this.config.filter,
-            iterationContext(this.childContext(this.context.component), el, idx, source)))
+          this.evaluateExpression(
+            'filterExpr',
+            '=' + this.config.filter,
+            iterationContext(this.childContext(this.context.component), el, idx, source)
+          )
+        )
       }
       if (this.config.map) {
         source = source.map((el, idx, source) =>
-          this.evaluateExpression('mapExpr', '=' + this.config.map,
-            iterationContext(this.childContext(this.context.component), el, idx, source)))
+          this.evaluateExpression(
+            'mapExpr',
+            '=' + this.config.map,
+            iterationContext(this.childContext(this.context.component), el, idx, source)
+          )
+        )
       }
 
       let contexts = []
       let idx = 0
       for (let i of source) {
-        contexts.push(...this.defaultSlots.map((c) => {
-          return iterationContext(this.childContext(c), i, idx, source)
-        }))
+        contexts.push(
+          ...this.defaultSlots.map((c) => {
+            return iterationContext(this.childContext(c), i, idx, source)
+          })
+        )
 
         idx++
       }
@@ -88,29 +98,43 @@ export default {
     }
   },
   asyncComputed: {
-    source () {
+    source() {
       if (this.config.cacheSource && this.sourceCache) return this.sourceCache
       let sourceResult
       if (this.config.sourceType === 'range') {
         const start = this.config.rangeStart || 0
         const stop = isNaN(this.config.rangeStop) ? 10 : this.config.rangeStop
         const step = this.config.rangeStep || 1
-        sourceResult = Promise.resolve(Array(Math.floor((stop + step - start) / step)).fill(start).map((x, y) => x + y * step))
+        sourceResult = Promise.resolve(
+          Array(Math.floor((stop + step - start) / step))
+            .fill(start)
+            .map((x, y) => x + y * step)
+        )
       } else if (this.config.sourceType === 'itemsWithTags' && this.config.itemTags) {
-        sourceResult = this.$oh.api.get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((d) => Promise.resolve(d.sort(compareItems)))
-        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
+        sourceResult = this.$oh.api
+          .get('/rest/items?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags)
+          .then((d) => Promise.resolve(d.sort(compareItems)))
+        this.sourceCache = this.config.cacheSource ? sourceResult : null
       } else if (this.config.sourceType === 'itemsInGroup') {
-        sourceResult = this.$oh.api.get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags).then((i) => Promise.resolve(i.members.sort(compareItems)))
-        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
+        sourceResult = this.$oh.api
+          .get('/rest/items/' + this.config.groupItem + '?metadata=' + this.config.fetchMetadata + '&tags=' + this.config.itemTags)
+          .then((i) => Promise.resolve(i.members.sort(compareItems)))
+        this.sourceCache = this.config.cacheSource ? sourceResult : null
       } else if (this.config.sourceType === 'itemStateOptions') {
-        sourceResult = this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.stateDescription) ? i.stateDescription.options : []))
-        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
+        sourceResult = this.$oh.api
+          .get('/rest/items/' + this.config.itemOptions)
+          .then((i) => Promise.resolve(i.stateDescription ? i.stateDescription.options : []))
+        this.sourceCache = this.config.cacheSource ? sourceResult : null
       } else if (this.config.sourceType === 'itemCommandOptions') {
-        sourceResult = this.$oh.api.get('/rest/items/' + this.config.itemOptions).then((i) => Promise.resolve((i.commandDescription) ? i.commandDescription.commandOptions : []))
-        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
+        sourceResult = this.$oh.api
+          .get('/rest/items/' + this.config.itemOptions)
+          .then((i) => Promise.resolve(i.commandDescription ? i.commandDescription.commandOptions : []))
+        this.sourceCache = this.config.cacheSource ? sourceResult : null
       } else if (this.config.sourceType === 'rulesWithTags' && this.config.ruleTags) {
-        sourceResult = this.$oh.api.get('/rest/rules?summary=true' + '&tags=' + this.config.ruleTags).then((r) => Promise.resolve(r.sort(compareRules)))
-        this.sourceCache = (this.config.cacheSource) ? sourceResult : null
+        sourceResult = this.$oh.api
+          .get('/rest/rules?summary=true' + '&tags=' + this.config.ruleTags)
+          .then((r) => Promise.resolve(r.sort(compareRules)))
+        this.sourceCache = this.config.cacheSource ? sourceResult : null
       } else {
         sourceResult = Promise.resolve(this.config.in)
       }

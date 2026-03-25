@@ -3,7 +3,7 @@
     <f7-navbar>
       <oh-nav-content :title="type" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -270,10 +270,10 @@ export default {
     ListFilter,
     EmptyStatePlaceholder
   },
-  setup () {
+  setup() {
     return { f7, theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       initSearchbar: false,
@@ -299,22 +299,22 @@ export default {
       templates: []
     }
   },
-  mounted () {
+  mounted() {
     if (this.showScene || this.showScripts) {
       delete this.filters.kinds.options.marketplace
       delete this.filters.kinds.options.template
     }
   },
   watch: {
-    listedUids () {
+    listedUids() {
       this.selectedItems = this.selectedItems.filter((i) => this.listedUids.has(i))
     }
   },
   computed: {
-    type () {
-      return this.showScripts ? 'Scripts' : (this.showScenes ? 'Scenes' : 'Rules')
+    type() {
+      return this.showScripts ? 'Scripts' : this.showScenes ? 'Scenes' : 'Rules'
     },
-    listedItems () {
+    listedItems() {
       if (!this.searchQuery) return this.filteredItems
 
       return this.filteredItems.filter((rule) => {
@@ -324,14 +324,16 @@ export default {
           rule.description,
           this.ruleStatusBadgeText(this.ruleStatuses[rule.uid]),
           ...this.displayedTags(rule)
-        ].join(' ').toLowerCase()
+        ]
+          .join(' ')
+          .toLowerCase()
         return hayStack.includes(this.searchQuery)
       })
     },
-    listedUids () {
+    listedUids() {
       return new Set(this.listedItems.map((rule) => rule.uid))
     },
-    indexedRules () {
+    indexedRules() {
       return this.listedItems.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
         if (!prev[initial]) {
@@ -342,13 +344,13 @@ export default {
         return prev
       }, {})
     },
-    searchPlaceholder () {
+    searchPlaceholder() {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
-    allSelected () {
+    allSelected() {
       return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     },
-    listTitle () {
+    listTitle() {
       let title = this.listedItems.length
       if (this.searchQuery || this.$refs.filters?.filtered) {
         title += ` of ${this.rules.length} ${this.type} found`
@@ -360,54 +362,60 @@ export default {
       }
       return title
     },
-    selectedDeletableItems () {
+    selectedDeletableItems() {
       if (!this.selectedItems.length) return []
       const selectedUids = new Set(this.selectedItems)
       return this.rules.filter((r) => selectedUids.has(r.uid) && r.editable).map((r) => r.uid)
     },
-    enablableItems () {
+    enablableItems() {
       if (!this.selectedItems.length) return 0
       return this.selectedItems.filter((i) => this.isRuleStatusDisabled(this.ruleStatuses[i])).length
     },
-    disablableItems () {
+    disablableItems() {
       if (!this.selectedItems.length) return 0
       return this.selectedItems.filter((i) => this.ruleStatuses[i] && !this.isRuleStatusDisabled(this.ruleStatuses[i])).length
     },
-    regeneratableItemsCount () {
+    regeneratableItemsCount() {
       return this.regeneratableItems.length
     },
-    regeneratableItems () {
+    regeneratableItems() {
       if (!this.selectedItems.length) return []
       return this.selectedItems.filter((i) => {
         const rule = this.rules.find((r) => r.uid === i)
-        return rule && rule.templateUID && rule.templateState && rule.templateState !== 'no-template' && rule.templateState !== 'template-missing' && this.templates.some((t) => t.uid === rule.templateUID)
+        return (
+          rule &&
+          rule.templateUID &&
+          rule.templateState &&
+          rule.templateState !== 'no-template' &&
+          rule.templateState !== 'template-missing' &&
+          this.templates.some((t) => t.uid === rule.templateUID)
+        )
       })
     },
-    canEnable () {
+    canEnable() {
       return this.enablableItems > 0
     },
-    canDisable () {
+    canDisable() {
       return this.disablableItems > 0
     },
-    canRegenerate () {
+    canRegenerate() {
       return this.regeneratableItemsCount > 0
     },
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       this.stopEventSource()
       useLastSearchQueryStore().lastRulesSearchQuery[this.type] = this.$refs.searchbar?.$el.f7Searchbar.query
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar)
-        useLastSearchQueryStore().lastRulesSearchQuery[this.type] = this.$refs.searchbar?.$el.f7Searchbar.query
+      if (this.initSearchbar) useLastSearchQueryStore().lastRulesSearchQuery[this.type] = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
       this.selectedItems = []
@@ -464,9 +472,7 @@ export default {
             if (this.$device.desktop && this.$refs.searchbar) {
               this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
             }
-            this.$refs.searchbar?.$el.f7Searchbar.search(
-              useLastSearchQueryStore().lastRulesSearchQuery[this.type] || ''
-            )
+            this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastRulesSearchQuery[this.type] || '')
           })
 
           if (!this.eventSource) this.startEventSource()
@@ -483,7 +489,7 @@ export default {
         }
       })
     },
-    startEventSource () {
+    startEventSource() {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/*/*', null, (event) => {
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
@@ -504,32 +510,33 @@ export default {
         }
       })
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    toggleCheck () {
+    toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
     },
-    isChecked (item) {
+    isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
     },
-    click (event, item) {
+    click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       }
     },
-    ctrlClick (event, item) {
+    ctrlClick(event, item) {
       this.toggleItemCheck(event, item.uid, item)
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
-    templateClick (event, ctrl, rule) {
+    templateClick(event, ctrl, rule) {
       if (!rule || !rule.templateUID) return
       if (ctrl || this.showCheckboxes) {
         event.stopPropagation()
         if (!this.showCheckboxes) this.showCheckboxes = true
         const rules = this.rules.filter((r) => r.templateUID === rule.templateUID)
-        let unchecked = 0, checked = 0
+        let unchecked = 0,
+          checked = 0
         rules.forEach((r) => {
           if (this.isChecked(r.uid)) {
             checked++
@@ -544,20 +551,21 @@ export default {
         if (ctrl && !this.selectedItems.length) this.showCheckboxes = false
       }
     },
-    search: debounce(function (searchbar, query, previousQuery) { // don't use arrow function here, otherwise `this` is not the Vue instance
+    search: debounce(function (searchbar, query, previousQuery) {
+      // don't use arrow function here, otherwise `this` is not the Vue instance
       this.searchQuery = query.trim().toLowerCase()
     }, 200),
-    clearSearch () {
+    clearSearch() {
       this.searchQuery = null
     },
-    selectDeselectAll () {
+    selectDeselectAll() {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
         this.selectedItems = Array.from(this.listedUids)
       }
     },
-    toggleItemCheck (event, item) {
+    toggleItemCheck(event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.setItemChecked(item, false)
@@ -565,7 +573,7 @@ export default {
         this.setItemChecked(item, true)
       }
     },
-    setItemChecked (item, checked) {
+    setItemChecked(item, checked) {
       if (checked) {
         if (!this.isChecked(item)) {
           this.selectedItems.push(item)
@@ -576,7 +584,7 @@ export default {
         }
       }
     },
-    deleteSelected () {
+    deleteSelected() {
       const vm = this
 
       f7.dialog.confirm(
@@ -587,82 +595,100 @@ export default {
         }
       )
     },
-    doDeleteSelected () {
+    doDeleteSelected() {
       let dialog = f7.dialog.progress('Deleting Rules...')
 
       const promises = this.selectedDeletableItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
-      Promise.all(promises).then((data) => {
-        f7.toast.create({
-          text: (promises.length === 1 ? 'Rule' : 'Rules') + ' deleted',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.selectedItems = []
-        dialog.close()
-        this.load()
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred while deleting: ' + err)
-      })
+      Promise.all(promises)
+        .then((data) => {
+          f7.toast
+            .create({
+              text: (promises.length === 1 ? 'Rule' : 'Rules') + ' deleted',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.selectedItems = []
+          dialog.close()
+          this.load()
+        })
+        .catch((err) => {
+          dialog.close()
+          this.load()
+          console.error(err)
+          f7.dialog.alert('An error occurred while deleting: ' + err)
+        })
     },
-    doDisableEnableSelected (enable) {
+    doDisableEnableSelected(enable) {
       if (!this.selectedItems.length) return
       let dialog = f7.dialog.progress('Please Wait...')
 
       const items = this.selectedItems.filter((i) => Boolean(this.isRuleStatusDisabled(this.ruleStatuses[i])) === Boolean(enable))
       const promises = items.map((i) => this.$oh.api.postPlain('/rest/rules/' + i + '/enable', enable.toString()))
-      Promise.all(promises).then((data) => {
-        f7.toast.create({
-          text: (promises.length === 1 ? 'Rule ' : 'Rules ') + (enable ? 'enabled' : 'disabled'),
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.selectedItems = []
-        dialog.close()
-        this.load()
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
-      })
+      Promise.all(promises)
+        .then((data) => {
+          f7.toast
+            .create({
+              text: (promises.length === 1 ? 'Rule ' : 'Rules ') + (enable ? 'enabled' : 'disabled'),
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.selectedItems = []
+          dialog.close()
+          this.load()
+        })
+        .catch((err) => {
+          dialog.close()
+          this.load()
+          console.error(err)
+          f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
+        })
     },
-    regenerateSelected () {
+    regenerateSelected() {
       if (!this.selectedItems.length) return
       const rules = this.regeneratableItems.map((i) => this.rules.find((r) => r.uid === i))
       if (rules.length === 0) return
       if (rules.length === 1 && rules[0].editable) {
-        this.$oh.api.get('/rest/rules/' + rules[0].uid).then((rule) => {
-          this.f7router.navigate({
-            url: '/settings/rules/stub'
-          }, {
-            reloadCurrent: false,
-            props: {
-              ruleCopy: rule
-            }
+        this.$oh.api
+          .get('/rest/rules/' + rules[0].uid)
+          .then((rule) => {
+            this.f7router.navigate(
+              {
+                url: '/settings/rules/stub'
+              },
+              {
+                reloadCurrent: false,
+                props: {
+                  ruleCopy: rule
+                }
+              }
+            )
           })
-        }).catch((err) => {
-          f7.dialog.alert('An error occurred when retrieving rule "' + rules[0].uid + '": ' + err)
-        })
+          .catch((err) => {
+            f7.dialog.alert('An error occurred when retrieving rule "' + rules[0].uid + '": ' + err)
+          })
       } else {
         const promises = rules.map((r) => this.$oh.api.postPlain('/rest/rules/' + r.uid + '/regenerate'))
-        Promise.all(promises).then(() => {
-          f7.toast.create({
-            text: (rules.length === 1 ? 'Rule' : 'Rules') + ' regenerated from template',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }).catch((err) => {
-          f7.dialog.alert('An error occurred when trying to regenerate rule(s) from template: ' + err)
-        })
+        Promise.all(promises)
+          .then(() => {
+            f7.toast
+              .create({
+                text: (rules.length === 1 ? 'Rule' : 'Rules') + ' regenerated from template',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          })
+          .catch((err) => {
+            f7.dialog.alert('An error occurred when trying to regenerate rule(s) from template: ' + err)
+          })
       }
     },
-    displayedTags (rule) {
+    displayedTags(rule) {
       return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
     },
-    updateFilteredItems () {
+    updateFilteredItems() {
       const filters = this.$refs.filters
       if (filters === undefined || !filters.filtered) {
         this.filteredItems = this.rules
@@ -687,7 +713,7 @@ export default {
       // update rules list
       this.$refs.listIndex.update()
     },
-    templateName (rule) {
+    templateName(rule) {
       let template = this.templates ? this.templates.find((t) => t.uid === rule.templateUID) : undefined
       return template ? template.label : rule.templateUID
     }

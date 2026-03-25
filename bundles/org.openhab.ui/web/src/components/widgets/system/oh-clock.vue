@@ -21,8 +21,8 @@ defineOptions({
 
 // props
 const props = defineProps<{
-  context: WidgetContext,
-  format?: string,
+  context: WidgetContext
+  format?: string
   timezone?: string
 }>()
 

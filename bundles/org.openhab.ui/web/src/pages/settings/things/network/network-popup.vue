@@ -56,25 +56,25 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       networkGraph: null,
       error: null
     }
   },
   computed: {
-    provider () {
+    provider() {
       return networkProviders[this.networkType]
     },
-    title () {
+    title() {
       return this.provider?.title || 'Network Map'
     }
   },
-  mounted () {
+  mounted() {
     this.loadNetworkGraph()
   },
   methods: {
-    async loadNetworkGraph () {
+    async loadNetworkGraph() {
       if (!this.provider) {
         this.error = `Unknown network type: ${this.networkType}`
         return

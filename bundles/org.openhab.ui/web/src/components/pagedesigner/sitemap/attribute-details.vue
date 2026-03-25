@@ -46,7 +46,7 @@ export default {
     placeholder: String,
     fields: String
   },
-  data () {
+  data() {
     return {
       fieldDefaults: {
         type: 'text'
@@ -54,10 +54,10 @@ export default {
     }
   },
   computed: {
-    fieldDefs () {
+    fieldDefs() {
       return this.fields ? JSON.parse(this.fields) : []
     },
-    attributes () {
+    attributes() {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
         return this.widget.config[this.attribute].map((attr, idx) => ({ key: idx + ': ' + JSON.stringify(attr), value: attr }))
       }
@@ -65,7 +65,7 @@ export default {
     }
   },
   methods: {
-    fieldProp (field, prop) {
+    fieldProp(field, prop) {
       const fieldProps = field[Object.keys(field)[0]]
       if (fieldProps[prop] !== undefined) {
         return fieldProps[prop]
@@ -75,7 +75,7 @@ export default {
       }
       return this.fieldDefaults[prop]
     },
-    fieldStyle (field, fieldidx) {
+    fieldStyle(field, fieldidx) {
       let style = {}
       if (this.fieldProp(field, 'width') !== undefined) {
         style.flexGrow = '0'
@@ -89,7 +89,7 @@ export default {
       }
       return style
     },
-    inputFieldStyle (field, fieldidx) {
+    inputFieldStyle(field, fieldidx) {
       let style = {}
       style.width = '100%'
       if (this.fieldProp(field, 'type') === 'number') {
@@ -97,7 +97,7 @@ export default {
       }
       return style
     },
-    updateAttribute ($event, idx, attr, field) {
+    updateAttribute($event, idx, attr, field) {
       let value = $event.target.value
       if (!value) {
         this.removeAttribute(idx)
@@ -109,17 +109,17 @@ export default {
       }
       this.widget.config[this.attribute][idx] = value
     },
-    removeAttribute (idx) {
+    removeAttribute(idx) {
       this.widget.config[this.attribute].splice(idx, 1)
     },
-    addAttribute () {
+    addAttribute() {
       if (this.widget && this.widget.config && this.widget.config[this.attribute]) {
         this.widget.config[this.attribute].push('')
       } else {
         this.widget.config[this.attribute] = ['']
       }
     },
-    onSort (ev) {
+    onSort(ev) {
       const element = this.widget.config[this.attribute][ev.from]
       this.widget.config[this.attribute].splice(ev.from, 1)
       this.widget.config[this.attribute].splice(ev.to, 0, element)

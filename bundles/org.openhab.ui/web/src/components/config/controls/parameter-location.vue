@@ -38,26 +38,29 @@ export default {
     return { theme }
   },
   methods: {
-    updateValue (position) {
+    updateValue(position) {
       this.$emit('input', position)
     },
-    openMapPicker () {
+    openMapPicker() {
       const popup = {
         component: LocationPickerPopup
       }
 
-      this.f7router.navigate({
-        url: 'pick-location',
-        route: {
-          path: 'pick-location',
-          popup
+      this.f7router.navigate(
+        {
+          url: 'pick-location',
+          route: {
+            path: 'pick-location',
+            popup
+          }
+        },
+        {
+          props: {
+            value: this.value,
+            title: this.configDescription.label
+          }
         }
-      }, {
-        props: {
-          value: this.value,
-          title: this.configDescription.label
-        }
-      })
+      )
 
       f7.once('locationUpdate', this.updateValue)
       f7.once('locationPickerClosed', () => {

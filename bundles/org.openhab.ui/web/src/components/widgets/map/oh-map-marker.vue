@@ -33,13 +33,13 @@ export default {
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, performAction }
   },
-  data () {
+  data() {
     return {
       markerKey: f7.utils.id()
     }
   },
   computed: {
-    coords () {
+    coords() {
       if (this.config.item) {
         const itemState = this.context.store[this.config.item]
         if (itemState && itemState.state.indexOf(',') > 0) {
@@ -53,12 +53,12 @@ export default {
     }
   },
   asyncComputed: {
-    async icon () {
+    async icon() {
       if (!this.config.icon?.startsWith('oh:')) {
         this.markerKey = f7.utils.id()
         return {
           iconUrl: markerIcon,
-          iconSize: [25,41],
+          iconSize: [25, 41]
         }
       }
 
@@ -72,7 +72,7 @@ export default {
     }
   },
   watch: {
-    coords (val) {
+    coords(val) {
       if (val) {
         this.$emit('update', val)
       }

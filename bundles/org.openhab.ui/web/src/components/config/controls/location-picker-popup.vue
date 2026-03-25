@@ -37,33 +37,33 @@ export default {
   components: {
     'location-picker': defineAsyncComponent(() => import(/* webpackChunkName: "location-picker" */ './location-picker.vue'))
   },
-  data () {
+  data() {
     return {
       showMap: false,
       currentPosition: null
     }
   },
   watch: {
-    value (val) {
+    value(val) {
       this.currentPosition = val
     }
   },
   methods: {
-    updateValue () {
+    updateValue() {
       if (this.currentPosition) {
         f7.emit('locationUpdate', this.currentPosition)
       }
     },
-    updatePosition (event) {
+    updatePosition(event) {
       if (event.lat && event.lng) {
         this.currentPosition = [event.lat, event.lng].join(',')
       }
     },
-    mapPickerClosed () {
+    mapPickerClosed() {
       this.showMap = false
       f7.emit('locationPickerClosed')
     },
-    mapPickerOpen () {
+    mapPickerOpen() {
       this.currentPosition = this.value
       nextTick(() => {
         this.showMap = true

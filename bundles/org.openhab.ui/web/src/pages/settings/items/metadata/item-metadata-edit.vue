@@ -95,10 +95,10 @@ export default {
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       currentTab: 'config',
@@ -121,7 +121,7 @@ export default {
     }
   },
   computed: {
-    editorControl () {
+    editorControl() {
       switch (this.namespace) {
         case 'stateDescription':
         case 'commandDescription':
@@ -156,7 +156,7 @@ export default {
           return null
       }
     },
-    yamlError () {
+    yamlError() {
       if (this.currentTab !== 'code') return null
       try {
         YAML.parse(this.yaml, { prettyErrors: true })
@@ -165,19 +165,19 @@ export default {
         return e
       }
     },
-    editable () {
+    editable() {
       if (this.namespace === 'semantics') return false
       return this.metadata.editable !== false
     }
   },
   methods: {
-    onPageBeforeIn () {
+    onPageBeforeIn() {
       this.load()
     },
-    onEditorInput (value) {
+    onEditorInput(value) {
       this.yaml = value
     },
-    load () {
+    load() {
       this.$oh.api.get(`/rest/items/${this.itemName}?metadata=${this.namespace}`).then((item) => {
         this.item = item
         if (item.metadata) {
@@ -195,66 +195,76 @@ export default {
         })
       })
     },
-    save () {
+    save() {
       if (!this.editable) return
 
       if (this.currentTab === 'code' && !this.fromYaml()) return
-      this.saveMetadata(this.item, this.namespace, this.metadata).then((data) => {
-        if (this.creationMode) {
-          f7.toast.create({
-            text: 'Metadata created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        } else {
-          f7.toast.create({
-            text: 'Metadata updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-        this.savedMetadata = cloneDeep(this.metadata)
-        this.dirty = false
-        this.f7router.back()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while saving metadata: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
-    },
-    remove () {
-      let nslabel = ([...MetadataNamespaces].find((ns) => ns.name === this.namespace) || { label: this.namespace }).label
-      f7.dialog.confirm(
-        `Are you sure you want to remove all metadata for "${nslabel}"?`,
-        'Remove metadata',
-        () => {
-          this.deleteMetadata(this.item, this.namespace).then(() => {
-            f7.toast.create({
-              text: 'Metadata deleted',
+      this.saveMetadata(this.item, this.namespace, this.metadata)
+        .then((data) => {
+          if (this.creationMode) {
+            f7.toast
+              .create({
+                text: 'Metadata created',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          } else {
+            f7.toast
+              .create({
+                text: 'Metadata updated',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          }
+          this.savedMetadata = cloneDeep(this.metadata)
+          this.dirty = false
+          this.f7router.back()
+        })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Error while saving metadata: ' + err,
               destroyOnClose: true,
               closeTimeout: 2000
-            }).open()
+            })
+            .open()
+        })
+    },
+    remove() {
+      let nslabel = ([...MetadataNamespaces].find((ns) => ns.name === this.namespace) || { label: this.namespace }).label
+      f7.dialog.confirm(`Are you sure you want to remove all metadata for "${nslabel}"?`, 'Remove metadata', () => {
+        this.deleteMetadata(this.item, this.namespace)
+          .then(() => {
+            f7.toast
+              .create({
+                text: 'Metadata deleted',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
             this.dirty = false
             this.f7router.back()
-          }).catch((err) => {
-            f7.toast.create({
-              text: 'Error while deleting metadata: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
           })
-        }
-      )
+          .catch((err) => {
+            f7.toast
+              .create({
+                text: 'Error while deleting metadata: ' + err,
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          })
+      })
     },
-    toYaml () {
+    toYaml() {
       this.yaml = YAML.stringify({
         value: this.metadata.value,
         config: this.metadata.config || {}
       })
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedMetadata = YAML.parse(this.yaml)
         this.metadata.value = updatedMetadata.value

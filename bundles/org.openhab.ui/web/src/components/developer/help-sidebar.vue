@@ -170,33 +170,36 @@ export default {
   props: {
     activeHelpTab: String
   },
-  setup () {
+  setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('about', mergeLocaleMessage)
     return {
       t
     }
   },
-  data () {
+  data() {
     return {
       addons: [],
       faqs: Faqs,
       qstart: Qstart
     }
   },
-  created () {
-    api.getAddons().then((data) => {
-      this.addons = data.filter((addon) => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-    }).catch((err) => {
-      // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
-      if (err.response?.statusText === 'Bad Gateway' || err.response?.status === 502) {
-        console.log('Error while accessing the API, retrying every 5 seconds: ', err)
-        setTimeout(this.load, 5000)
-      }
-    })
+  created() {
+    api
+      .getAddons()
+      .then((data) => {
+        this.addons = data.filter((addon) => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+      })
+      .catch((err) => {
+        // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
+        if (err.response?.statusText === 'Bad Gateway' || err.response?.status === 502) {
+          console.log('Error while accessing the API, retrying every 5 seconds: ', err)
+          setTimeout(this.load, 5000)
+        }
+      })
   },
   computed: {
-    contextPath () {
+    contextPath() {
       const path = useRuntimeStore().pagePath
 
       // script editor docs

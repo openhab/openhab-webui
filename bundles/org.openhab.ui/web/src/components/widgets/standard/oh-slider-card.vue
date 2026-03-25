@@ -1,11 +1,5 @@
 <template>
-  <oh-card
-    :context="context"
-    :content-class="[
-             config.vertical ? 'slider-card-vertical' : '',
-             'display-flex',
-             'justify-content-center',
-           ]">
+  <oh-card :context="context" :content-class="[config.vertical ? 'slider-card-vertical' : '', 'display-flex', 'justify-content-center']">
     <template #content>
       <oh-slider :context="cardChildContext(context.component)" :class="{ 'slider-card-vertical': config.vertical }" />
     </template>
@@ -32,7 +26,7 @@ export default {
     OhSlider
   },
   widget: OhSliderCardDefinition,
-  setup (props) {
+  setup(props) {
     const { config, cardChildContext } = useWidgetContext(props.context)
     return { config, cardChildContext }
   }

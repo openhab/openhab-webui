@@ -1,7 +1,7 @@
 <template>
   <f7-popup @popup:open="onOpen">
     <f7-page class="group-popup-content disable-user-select">
-      <f7-navbar :title="(item) ? item.label || item.name : ''" :back-link="$t('dialogs.back')" />
+      <f7-navbar :title="item ? item.label || item.name : ''" :back-link="$t('dialogs.back')" />
       <div class="group-item-control no-padding no-margin">
         <generic-widget-component v-if="ready && groupControlContext" v-bind="$attrs" :context="groupControlContext" />
       </div>
@@ -27,13 +27,13 @@ export default {
   props: {
     groupItem: String
   },
-  data () {
+  data() {
     return {
       item: null
     }
   },
   computed: {
-    context () {
+    context() {
       if (!this.item) return null
 
       if (this.item.members && this.item.members.length > 0) {
@@ -67,7 +67,7 @@ export default {
         }
       }
     },
-    groupControlContext () {
+    groupControlContext() {
       if (!this.item || !this.item.groupType || this.item.groupType === '') return null
 
       // make a fake item of the group's base type to build the standalone widget for the group
@@ -80,15 +80,15 @@ export default {
         component: itemDefaultStandaloneComponent(itemAsBaseType)
       }
     },
-    ready () {
+    ready() {
       return this.context !== null
     }
   },
   methods: {
-    onOpen () {
+    onOpen() {
       this.load()
     },
-    load () {
+    load() {
       this.$oh.api.get(`/rest/items/${this.groupItem}?metadata=semantics,widget,listWidget,widgetOrder`).then((data) => {
         this.item = data
         // array is sorted in-place

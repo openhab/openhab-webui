@@ -23,7 +23,21 @@
       </div>
       <div v-if="!config.disableBadges" class="location-stats margin-top" :class="config.invertText ? 'invert-text' : ''">
         <span
-          v-for="badgeType in ['alarms', 'battery', 'lights', 'windows', 'doors', 'garagedoors', 'blinds', 'presence', 'lock', 'climate', 'screens', 'projectors', 'speakers']"
+          v-for="badgeType in [
+            'alarms',
+            'battery',
+            'lights',
+            'windows',
+            'doors',
+            'garagedoors',
+            'blinds',
+            'presence',
+            'lock',
+            'climate',
+            'screens',
+            'projectors',
+            'speakers'
+          ]"
           :key="badgeType">
           <status-badge
             v-if="!config.badges || !config.badges.length || config.badges.indexOf(badgeType) >= 0"
@@ -103,21 +117,21 @@ export default {
     StatusBadge,
     MeasurementBadge
   },
-  setup (props) {
+  setup(props) {
     const { config, childContext, slots } = useWidgetContext(props.context)
     return { config, childContext, slots }
   },
-  data () {
+  data() {
     return {
-      activeTab: (this.element.equipment.length === 0 && this.element.properties.length > 0) ? 'properties' : 'equipment',
+      activeTab: this.element.equipment.length === 0 && this.element.properties.length > 0 ? 'properties' : 'equipment',
       type: 'location'
     }
   },
   computed: {
-    badgeOverrides () {
+    badgeOverrides() {
       return this.config.badges || this.context.badgeOverrides
     },
-    propertiesListContext () {
+    propertiesListContext() {
       return {
         store: useStatesStore().trackedItems,
         component: {
@@ -131,7 +145,7 @@ export default {
         }
       }
     },
-    equipmentListContext () {
+    equipmentListContext() {
       return {
         store: useStatesStore().trackedItems,
         component: equipmentListComponent(this.element.item.equipment, this.tabContext, true)

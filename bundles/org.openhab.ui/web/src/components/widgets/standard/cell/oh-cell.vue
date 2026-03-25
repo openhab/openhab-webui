@@ -5,7 +5,7 @@
     class="card-prevent-open oh-cell"
     :swipeToClose="!(noSwipeToClose || config.swipeToClose === false)"
     :backdrop="config.backdrop === undefined || config.backdrop"
-    :animate="(config.animate === false || uiOptionsStore.disableExpandableCardAnimation) ? false : undefined"
+    :animate="config.animate === false || uiOptionsStore.disableExpandableCardAnimation ? false : undefined"
     @card:open="cellOpen"
     @card:opened="cellOpened"
     @card:close="cellClose"
@@ -26,7 +26,7 @@
       <div
         v-else
         class="cell-background"
-        :class="[(config.color) ? 'bg-color-' + config.color : '', { on: isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
+        :class="[config.color ? 'bg-color-' + config.color : '', { on: isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
     <f7-link
       v-show="!opened && hasExpandedControls && hasAction"
@@ -182,32 +182,32 @@ export default {
     noSwipeToClose: Boolean,
     state: String
   },
-  setup (props) {
+  setup(props) {
     const { config, childContext, evaluateExpression, hasAction, slots, defaultSlots } = useWidgetContext(props.context)
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, childContext, hasAction, slots, defaultSlots, performAction }
   },
-  data () {
+  data() {
     return {
       transitioning: false,
       opened: false,
       cardId: f7.utils.id()
     }
   },
-  mounted () {
+  mounted() {
     this.$$(this.$refs.card.$el).on('click', this.click)
     this.$$(this.$refs.card.$el).on('taphold', this.openCell)
     this.$$(this.$refs.card.$el).on('contextmenu', this.openCell)
     window.addEventListener('popstate', this.back)
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.$$(this.$refs.card.$el).off('click')
     this.$$(this.$refs.card.$el).off('taphold')
     this.$$(this.$refs.card.$el).off('contextmenu')
     window.removeEventListener('popstate', this.back)
   },
   computed: {
-    header () {
+    header() {
       if (this.config.header) return this.config.header
       if (this.config.item && this.config.stateAsHeader) {
         if (this.state) return this.state
@@ -215,11 +215,10 @@ export default {
       }
       return null
     },
-    hasExpandedControls () {
-      return this.config.expandable !== false && (this.context.component.component !== 'oh-cell' ||
-        (this.defaultSlots.length > 0))
+    hasExpandedControls() {
+      return this.config.expandable !== false && (this.context.component.component !== 'oh-cell' || this.defaultSlots.length > 0)
     },
-    isOn () {
+    isOn() {
       if (this.config.on !== undefined) return this.config.on
       if (this.config.item) {
         const itemState = this.context.store[this.config.item].state
@@ -227,7 +226,7 @@ export default {
         if (itemState === 'OFF') return false
         const stateParts = itemState.split(',')
         if (stateParts.length === 3) {
-          return (parseFloat(stateParts[2]) > 0)
+          return parseFloat(stateParts[2]) > 0
         } else {
           if (!isNaN(parseFloat(stateParts[0]))) return parseFloat(stateParts[2]) > 0
         }
@@ -235,16 +234,18 @@ export default {
       }
       return false
     },
-    trendWidth () {
+    trendWidth() {
       return this.$refs.cardContent ? this.$refs.cardContent.$el.clientWidth : 0
     },
     ...mapStores(useUIOptionsStore)
   },
   methods: {
-    click (evt) {
-      if (evt.target && evt.target.parentElement &&
-        (this.$$(evt.target.parentElement).hasClass('cell-open-button') ||
-        this.$$(evt.target.parentElement).hasClass('cell-close-button'))) {
+    click(evt) {
+      if (
+        evt.target &&
+        evt.target.parentElement &&
+        (this.$$(evt.target.parentElement).hasClass('cell-open-button') || this.$$(evt.target.parentElement).hasClass('cell-close-button'))
+      ) {
         return
       }
       if (this.opened) return
@@ -255,34 +256,40 @@ export default {
       }
       return false
     },
-    openCell (evt) {
+    openCell(evt) {
       if (evt && evt.preventDefault) evt.preventDefault()
       if (this.context.editmode) return false
       if (!this.hasExpandedControls) return false
       f7.card.open(this.$refs.card.$el)
-      history.pushState({ cardId: this.cardId }, null, window.location.href.split('#cell=')[0] + '#' + f7.utils.serializeObject({ cell: this.cardId }))
+      history.pushState(
+        { cardId: this.cardId },
+        null,
+        window.location.href.split('#cell=')[0] + '#' + f7.utils.serializeObject({ cell: this.cardId })
+      )
       return false
     },
-    closeCell () {
+    closeCell() {
       if (this.context.editmode) return
-      setTimeout(() => { f7.card.close(this.$refs.card.$el) }, 100)
+      setTimeout(() => {
+        f7.card.close(this.$refs.card.$el)
+      }, 100)
     },
-    cellOpen () {
+    cellOpen() {
       this.transitioning = true
     },
-    cellOpened () {
+    cellOpened() {
       this.transitioning = false
       this.opened = true
     },
-    cellClose () {
+    cellClose() {
       if (history.state.cardId && history.state.cardId === this.cardId) history.back()
       this.transitioning = true
       this.opened = false
     },
-    cellClosed () {
+    cellClosed() {
       this.transitioning = false
     },
-    back (evt) {
+    back(evt) {
       if (this.opened) this.closeCell()
     }
   }

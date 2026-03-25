@@ -4,11 +4,11 @@
       <f7-card-content
         :style="config.contentStyle"
         :class="[
-                         ...(Array.isArray(config.contentClass) ? config.contentClass : []),
-                         'oh-gauge-card',
-                         'display-flex',
-                         'justify-content-center',
-                       ]">
+          ...(Array.isArray(config.contentClass) ? config.contentClass : []),
+          'oh-gauge-card',
+          'display-flex',
+          'justify-content-center'
+        ]">
         <f7-link v-if="hasAction" class="oh-gauge-link" @click="performAction">
           <oh-gauge :context="cardChildContext(context.component)" />
         </f7-link>

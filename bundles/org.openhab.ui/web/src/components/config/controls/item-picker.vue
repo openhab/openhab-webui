@@ -116,21 +116,21 @@ export default {
     hideIcon: Boolean
   },
   emits: ['input', 'item-selected'],
-  data () {
+  data() {
     return {
       popupOpen: false,
       unfilteredItems: this.items ?? [],
-      aurora: !this.hideIcon ? (this.auroraIcon || 'f7:list_bullet_indent') : undefined,
-      ios: !this.hideIcon ? (this.iosIcon || 'f7:list_bullet_indent') : undefined,
-      md: !this.hideIcon ? (this.mdIcon || 'f7:list_bullet_indent') : undefined,
+      aurora: !this.hideIcon ? this.auroraIcon || 'f7:list_bullet_indent' : undefined,
+      ios: !this.hideIcon ? this.iosIcon || 'f7:list_bullet_indent' : undefined,
+      md: !this.hideIcon ? this.mdIcon || 'f7:list_bullet_indent' : undefined,
       color: this.iconColor || undefined,
       filtered: true,
       radioGroupName: `item-picker-${Math.random().toString(36).slice(2, 11)}`,
-      selectedValue: this.multiple ? Array.isArray(this.value) ? [...this.value] : [] : this.value ?? null
+      selectedValue: this.multiple ? (Array.isArray(this.value) ? [...this.value] : []) : (this.value ?? null)
     }
   },
   computed: {
-    displayValue () {
+    displayValue() {
       if (!this.setValueText) return ''
       if (this.multiple) {
         return Array.isArray(this.value) ? this.value.join(', ') : ''
@@ -168,11 +168,11 @@ export default {
     }
   },
   watch: {
-    value (newVal) {
-      this.selectedValue = this.multiple ? Array.isArray(newVal) ? [...newVal] : [] : newVal ?? null
+    value(newVal) {
+      this.selectedValue = this.multiple ? (Array.isArray(newVal) ? [...newVal] : []) : (newVal ?? null)
     }
   },
-  async created () {
+  async created() {
     if (!this.items || this.items.length === 0) {
       const query = {
         staticDataOnly: 'true'
@@ -184,28 +184,26 @@ export default {
     }
   },
   methods: {
-    onPopupOpened () {
+    onPopupOpened() {
       nextTick(() => {
         if (this.$device.desktop && this.$refs.searchbar) {
           this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
         }
       })
     },
-    _groupTypeMatches (filter, item) {
+    _groupTypeMatches(filter, item) {
       if (filter === item.groupType) return true
       if (filter.split(':', 1)[0] === item.groupType) return true
       if (!filter.includes(':') && filter === item.groupType?.split(':', 1)[0]) return true
       return false
     },
-    filterGroupItems (items, filterGroupType, filterGroup) {
+    filterGroupItems(items, filterGroupType, filterGroup) {
       const filterGroupTypeArray = Array.isArray(filterGroupType) ? filterGroupType : [filterGroupType]
       const groupsWithoutType = filterGroup ? items.filter((i) => i.type === 'Group' && !i.groupType) : []
-      const groupsWithType = filterGroupTypeArray.flatMap((f) =>
-        items.filter((i) => i.type === 'Group' && this._groupTypeMatches(f, i))
-      )
+      const groupsWithType = filterGroupTypeArray.flatMap((f) => items.filter((i) => i.type === 'Group' && this._groupTypeMatches(f, i)))
       return [...groupsWithoutType, ...groupsWithType]
     },
-    _itemTypeMatches (filter, item) {
+    _itemTypeMatches(filter, item) {
       if (filter === item.type) return true
       if (filter.split(':', 1)[0] === item.type) return true
       if (!filter.includes(':') && filter === item.type.split(':', 1)[0]) return true
@@ -216,27 +214,23 @@ export default {
       }
       return false
     },
-    filterItems (items, filterType) {
+    filterItems(items, filterType) {
       const filterTypeArray = Array.isArray(filterType) ? filterType : [filterType]
-      return filterTypeArray.flatMap((f) =>
-        items.filter((i) => this._itemTypeMatches(f, i))
-      )
+      return filterTypeArray.flatMap((f) => items.filter((i) => this._itemTypeMatches(f, i)))
     },
-    filterSemanticItems (items, filterSemantic) {
-      const filterSemanticArray = (Array.isArray(filterSemantic)) ? filterSemantic : [filterSemantic]
+    filterSemanticItems(items, filterSemantic) {
+      const filterSemanticArray = Array.isArray(filterSemantic) ? filterSemantic : [filterSemantic]
       return filterSemanticArray.flatMap((f) =>
-        items.filter((i) =>
-          i.metadata?.semantics?.value?.includes(f) || i.metadata?.semantics?.config?.relatesTo?.includes(f)
-        )
+        items.filter((i) => i.metadata?.semantics?.value?.includes(f) || i.metadata?.semantics?.config?.relatesTo?.includes(f))
       )
     },
-    openPopup () {
+    openPopup() {
       this.popupOpen = true
     },
-    closePopup () {
+    closePopup() {
       this.popupOpen = false
     },
-    selectItem (item) {
+    selectItem(item) {
       if (this.multiple) {
         const idx = this.selectedValue.indexOf(item.name)
         if (idx >= 0) this.selectedValue.splice(idx, 1)
@@ -249,35 +243,41 @@ export default {
         this.closePopup()
       }
     },
-    updateFromModelPicker (value) {
+    updateFromModelPicker(value) {
       if (this.multiple) {
-        this.$emit('input', value.map((i) => i.name))
+        this.$emit(
+          'input',
+          value.map((i) => i.name)
+        )
       } else {
         this.$emit('input', value.name)
         this.$emit('item-selected', value)
       }
     },
-    pickFromModel (evt) {
+    pickFromModel(evt) {
       const popup = {
         component: ModelPickerPopup
       }
 
-      f7.views.main.router.navigate({
-        url: 'pick-from-model',
-        route: {
-          path: 'pick-from-model',
-          popup
+      f7.views.main.router.navigate(
+        {
+          url: 'pick-from-model',
+          route: {
+            path: 'pick-from-model',
+            popup
+          }
+        },
+        {
+          props: {
+            value: this.value,
+            multiple: this.multiple,
+            allowEmpty: true,
+            popupTitle: this.label,
+            groupsOnly: this.filterType && this.filterType === 'Group',
+            editableOnly: this.editableOnly
+          }
         }
-      }, {
-        props: {
-          value: this.value,
-          multiple: this.multiple,
-          allowEmpty: true,
-          popupTitle: this.label,
-          groupsOnly: this.filterType && this.filterType === 'Group',
-          editableOnly: this.editableOnly
-        }
-      })
+      )
 
       f7.once('itemsPicked', this.updateFromModelPicker)
       f7.once('modelPickerClosed', () => {

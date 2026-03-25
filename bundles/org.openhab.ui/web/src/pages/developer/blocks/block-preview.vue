@@ -58,7 +58,7 @@ export default {
   props: {
     blocksDefinition: Object
   },
-  data () {
+  data() {
     return {
       workspace: null,
       definitionError: null,
@@ -68,24 +68,24 @@ export default {
   computed: {
     ...mapStores(useUIOptionsStore)
   },
-  mounted () {
+  mounted() {
     this.initWorkspace()
     this.defineBlocks()
   },
   watch: {
-    blocksDefinition () {
+    blocksDefinition() {
       this.defineBlocks()
     }
   },
   methods: {
-    initWorkspace () {
+    initWorkspace() {
       this.workspace = Blockly.inject(this.$refs.blockPreview, {
         theme: useUIOptionsStore().darkMode === 'dark' ? 'dark' : undefined,
         trashcan: false,
         readOnly: false
       })
     },
-    defineBlocks () {
+    defineBlocks() {
       try {
         this.definitionError = null
         if (this.blocksDefinition && this.blocksDefinition.slots && this.blocksDefinition.slots.blocks) {
@@ -104,7 +104,7 @@ export default {
         this.definitionError = e.toString()
       }
     },
-    displayCurrentBlock (block) {
+    displayCurrentBlock(block) {
       if (block) this.currentBlock = block.config.type
       if (!this.currentBlock) this.currentBlock = this.blocksDefinition.slots.blocks[0].config.type
       let xml = '<xml>'

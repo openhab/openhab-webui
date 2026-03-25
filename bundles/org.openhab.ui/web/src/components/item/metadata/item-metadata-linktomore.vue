@@ -40,7 +40,7 @@ export default {
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    updateValue (ev) {
+    updateValue(ev) {
       this.metadata.value = ev.target.value
     }
   }

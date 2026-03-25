@@ -80,7 +80,7 @@ const information = computed(() => {
       id: 'author',
       title: 'Provided By',
       value: props.addon.author,
-      afterIcon: (props.addon.verifiedAuthor) ? 'checkmark_seal_fill' : ''
+      afterIcon: props.addon.verifiedAuthor ? 'checkmark_seal_fill' : ''
     })
   }
 

@@ -27,7 +27,7 @@ import { computed } from 'vue'
 import * as api from '@/api'
 
 // props
-const props = defineProps<{ addon: api.Addon, iconSize: string | number }>()
+const props = defineProps<{ addon: api.Addon; iconSize: string | number }>()
 
 // computed
 const likes = computed<number>(() => (props.addon.properties?.like_count as number | undefined) ?? 0)

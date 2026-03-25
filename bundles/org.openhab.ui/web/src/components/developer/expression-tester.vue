@@ -19,17 +19,17 @@ export default {
   props: {
     context: Object
   },
-  setup (props) {
+  setup(props) {
     const { config, evaluateExpression } = useWidgetContext(props.context)
     return { config, evaluateExpression }
   },
-  data () {
+  data() {
     return {
       testExpression: ''
     }
   },
   computed: {
-    result () {
+    result() {
       return this.evaluateExpression('tester', this.testExpression)?.toString()
     }
   }

@@ -92,7 +92,7 @@ export default {
     MasonryGrid,
     MasonryGridItem
   },
-  setup (props) {
+  setup(props) {
     const { config, childContext, visible, defaultSlots } = useWidgetContext(props.context)
     return { config, childContext, visible, defaultSlots }
   }

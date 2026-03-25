@@ -21,7 +21,7 @@ export default {
     OhWebframe
   },
   widget: OhWebFrameCardDefinition,
-  setup (props) {
+  setup(props) {
     const { config, cardChildContext } = useWidgetContext(props.context)
     return { config, cardChildContext }
   }
