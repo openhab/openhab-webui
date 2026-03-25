@@ -4,7 +4,7 @@ import * as api from '@/api'
  * Transforms the default value (string) of a parameter to the correct type according to the parameter's type.
  * @param parameter
  */
-export function transformParameterDefault(parameter: api.ConfigDescriptionParameter & { default?: string }) {
+export function transformParameterDefault(parameter: api.ConfigDescriptionParameter) {
   if (parameter.default === undefined) return undefined
   switch (parameter.type) {
     case 'BOOLEAN':
