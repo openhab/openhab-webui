@@ -9,7 +9,7 @@ import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts
 import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, WidgetContext } from './types'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as api from '@/api'
-import { transformParameterDefault } from '@/components/widgets/helpers.ts'
+import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 
 /**
  * useWidgetContext must be used as a composable in all widget components.
@@ -70,13 +70,7 @@ export function useWidgetContext(context: WidgetContext) {
     if (!context.component) return {}
     if ('props' in context.component && context.component.props.parameters) {
       let defaultValues: Record<string, unknown> = {}
-      // Note: api.ConfigDescriptionParameter uses 'defaultValue', but UI widgets just use 'default'
-      context.component.props.parameters.forEach((p: api.ConfigDescriptionParameter & { default?: string }) => {
-        const defaultValue = transformParameterDefault(p)
-        if (defaultValue !== undefined) {
-          defaultValues[p.name] = defaultValue
-        }
-      })
+      applyParameterDefaults(context.component.props.parameters, defaultValues)
       return Object.assign({}, defaultValues, context.props || {})
     } else {
       return context.props || {}

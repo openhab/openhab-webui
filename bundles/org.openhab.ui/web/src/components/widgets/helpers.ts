@@ -27,3 +27,17 @@ export function transformParameterDefault(parameter: api.ConfigDescriptionParame
 export function transformParameterDefaults(parameters: api.ConfigDescriptionParameter[]) {
   return parameters.map((p) => ({ ...p, default: transformParameterDefault(p) }))
 }
+
+/**
+ * Applies the default values of the parameters to the configuration object if they are not already set.
+ * The applied default values have the correct type according to the parameter's type.
+ * @param parameters
+ * @param configuration
+ */
+export function applyParameterDefaults(parameters: api.ConfigDescriptionParameter[], configuration: Record<string, unknown>) {
+  for (const parameter of parameters) {
+    if (parameter.default !== undefined && configuration[parameter.name] === undefined) {
+      configuration[parameter.name] = transformParameterDefault(parameter)
+    }
+  }
+}
