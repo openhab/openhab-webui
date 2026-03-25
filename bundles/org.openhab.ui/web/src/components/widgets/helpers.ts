@@ -8,7 +8,8 @@ export function transformParameterDefault(parameter: api.ConfigDescriptionParame
   if (parameter.default === undefined) return undefined
   switch (parameter.type) {
     case 'BOOLEAN':
-      return Boolean(parameter.default)
+      // @ts-expect-error pass through boolean default value
+      return parameter.default === true || parameter.default === 'true'
     case 'INTEGER':
     case 'DECIMAL':
       return Number(parameter.default)
