@@ -7,6 +7,7 @@ import type { SeriesComponent, SeriesOption } from '../types.ts'
 import * as api from '@/api'
 import { AggregationFunction, OhAggregateSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
+import { f7 } from 'framework7-vue'
 
 dayjs.extend(IsoWeek)
 
@@ -109,6 +110,10 @@ const aggregateSeries: SeriesComponent = {
       scatterSeries.symbolSize = (v: number[]) => {
         return v.pop()! * (scatterSeries.scatterSymbolSizeFactor ?? 1)
       }
+    }
+
+    if (series.item) {
+      series.id = `oh-aggregate-series#${series.item}#${f7.utils.id()}`
     }
 
     series.data = data
