@@ -2,9 +2,7 @@ import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import ComponentId from '../../component-id'
 import aggregate from '../util/aggregators'
-import applyMarkers from '../util/markers'
 import type { SeriesComponent, SeriesOption } from '../types.ts'
-import * as api from '@/api'
 import { AggregationFunction, OhAggregateSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
 import { f7 } from 'framework7-vue'
@@ -117,9 +115,6 @@ const aggregateSeries: SeriesComponent = {
     }
 
     series.data = data
-
-    // other things
-    applyMarkers(series)
 
     return series
   }

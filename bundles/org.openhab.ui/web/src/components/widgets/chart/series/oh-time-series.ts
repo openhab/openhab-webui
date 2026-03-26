@@ -2,7 +2,6 @@ import { f7 } from 'framework7-vue'
 
 import ComponentId from '../../component-id'
 import MarkArea from './oh-mark-area'
-import applyMarkers from '@/components/widgets/chart/util/markers'
 import type { SeriesComponent, SeriesOption } from '../types.ts'
 import { OhTimeSeries } from '@/types/components/widgets'
 import * as api from '@/api'
@@ -42,8 +41,6 @@ const timeSeries: SeriesComponent = {
         series.id += '#mark-area'
       }
     }
-
-    applyMarkers(series)
 
     if (series.showSymbol === undefined) series.showSymbol = false
     if (!series.tooltip) {
