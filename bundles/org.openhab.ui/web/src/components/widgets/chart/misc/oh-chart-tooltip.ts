@@ -53,21 +53,22 @@ const chartTooltip: MiscChartComponent = {
               ? item.stateDescription?.options.find((o) => o.value === (params.value as string))?.label
               : (params.value as string)
 
-          // @ts-expect-error data access
-          tooltip += `<div>${dayjs((params.data.coord as unknown[][])[0][0]).format('llll')} - ${dayjs((params.data.coord as unknown[][])[1][0]).format('HH:mm')}</div>`
-          tooltip += params.marker as string
-          tooltip += params.name
-          if (state) tooltip += ': ' + state
-          return tooltip
+            // @ts-expect-error data access
+            tooltip += `<div>${dayjs((params.data.coord as unknown[][])[0][0]).format('llll')} - ${dayjs((params.data.coord as unknown[][])[1][0]).format('HH:mm')}</div>`
+            tooltip += params.marker as string
+            tooltip += params.name
+            if (state) tooltip += `<span style="float: right; margin-left: 20px"><b style="text-align: right;">${state}</b></span><br/>`
+            return tooltip
+          }
         }
-        // standard tooltip:
+        // time series tooltip:
+        // - header: x-axis time in 'dd DD.MM.YYYY HH:mm'
+        // - content: for each oh-time-series marker color, series name and formatted value
         if (Array.isArray(params)) {
           if (!params[0] || !('axisType' in params[0])) return ''
-          // header: x-axis time in 'dd DD.MM.YYYY HH:mm'
           if (params[0].axisType === 'xAxis.time' && 'axisValue' in params[0]) {
             tooltip += `<div>${dayjs(params[0].axisValue as string).format('llll')}</div>`
           }
-          // content: for each oh-time-series marker color, series name and formatted value
           params.forEach((p) => {
             if (p.seriesId) {
               const [seriesType, itemName, _id, markArea] = p.seriesId.split('#')
@@ -75,7 +76,8 @@ const chartTooltip: MiscChartComponent = {
               if ((seriesType === 'oh-time-series' && !markArea) || seriesType !== 'oh-time-series') {
                 let state = context.numberFormatter!.format((p.data as number[])[1]!)
                 if (item && item.unitSymbol) state += ' ' + item.unitSymbol
-                tooltip += (p.marker as string) + ' ' + p.seriesName + ': ' + state + '<br />'
+                tooltip += `${p.marker as string} ${p.seriesName}`
+                tooltip += `<span style="float: right; margin-left: 20px"><b style="text-align: right;">${state}</b></span><br/>`
               }
             }
           })
