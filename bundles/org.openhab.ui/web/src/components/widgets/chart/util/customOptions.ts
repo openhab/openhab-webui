@@ -52,11 +52,32 @@ function applyMarkers(series: OhSeriesOption) {
   }
 }
 
+function applyLabelPosition(series: OhSeriesOption) {
+  if (series.labelPosition) {
+    if (!series.label) series.label = {}
+    series.label.show = true
+    series.label.position = series.labelPosition
+
+    delete series.labelPosition
+  }
+}
+
+function applyBarBorderRadius(series: OhSeriesOption) {
+  if (series.barBorderRadius) {
+    if (!series.itemStyle) series.itemStyle = {}
+    series.itemStyle.borderRadius = [series.barBorderRadius, series.barBorderRadius, series.barBorderRadius, series.barBorderRadius]
+
+    delete series.barBorderRadius
+  }
+}
+
 /**
  * Transforms custom options for series into ECharts options.
  * @param series
  */
 export function transformCustomSeriesOptions(series: OhSeriesOption) {
   applyMarkers(series)
+  applyLabelPosition(series)
+  applyBarBorderRadius(series)
   return series
 }
