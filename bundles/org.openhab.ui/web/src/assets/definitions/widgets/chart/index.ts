@@ -34,7 +34,7 @@ const orientParameter = () =>
     true
   )
 
-const showParameter = () => pb('show', 'Show', 'Whether to show or not this component')
+const showParameter = () => pb('show', 'Show', 'Whether to show or not this component').d('true')
 
 const nameParameter = pt('name', 'Name', 'A name which will appear on tooltips and labels')
 
