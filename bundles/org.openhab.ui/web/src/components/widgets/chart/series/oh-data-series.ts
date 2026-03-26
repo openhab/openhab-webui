@@ -1,6 +1,5 @@
 import ComponentId from '../../component-id'
-import type { SeriesComponent, SeriesOption } from '../types.ts'
-import { OhDataSeries } from '@/types/components/widgets'
+import type { SeriesComponent, OhDataSeriesOption } from '../types.ts'
 
 const dataSeries: SeriesComponent = {
   neededItems() {
@@ -9,7 +8,7 @@ const dataSeries: SeriesComponent = {
   get(context, component) {
     // safety guard to prevent crashing due to incorrect user-provided data
     if (!component.config || typeof component.config !== 'object') return {}
-    return context.evaluateExpression<OhDataSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+    return context.evaluateExpression<OhDataSeriesOption>(ComponentId.get(component)!, component.config)
   }
 }
 

@@ -1,12 +1,11 @@
 import ComponentId from '../../component-id'
 import { startOf } from '@/components/widgets/chart/util/time'
-import type { AxisComponent } from '../types'
+import type { AxisComponent, OhTimeAxisOption } from '../types'
 import { OhChart } from '@/types/components/widgets'
-import type { TimeAxisBaseOption } from 'echarts/types/dist/shared'
 
 const timeAxis: AxisComponent = {
   get(context, component, startTime, endTime) {
-    const axis = context.evaluateExpression<TimeAxisBaseOption>(ComponentId.get(component)!, component.config)
+    const axis = context.evaluateExpression<OhTimeAxisOption>(ComponentId.get(component)!, component.config)
     axis.type = 'time'
     const chartType = context.chart.config.chartType
     if (chartType) {
