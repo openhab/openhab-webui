@@ -670,9 +670,31 @@ export enum NameLocation {
   end = 'end'
 }
 
+export enum Style {
+  label = 'label',
+  label_line = 'label+line',
+  label_line_tick = 'label+line+tick'
+}
+
 export enum Orient {
   horizontal = 'horizontal',
   vertical = 'vertical'
+}
+
+export enum LabelPosition {
+  top = 'top',
+  left = 'left',
+  right = 'right',
+  bottom = 'bottom',
+  inside = 'inside',
+  insideLeft = 'insideLeft',
+  insideRight = 'insideRight',
+  insideTop = 'insideTop',
+  insideBottom = 'insideBottom',
+  insideTopLeft = 'insideTopLeft',
+  insideBottomLeft = 'insideBottomLeft',
+  insideTopRight = 'insideTopRight',
+  insideBottomRight = 'insideBottomRight'
 }
 
 export enum OffsetUnit {
