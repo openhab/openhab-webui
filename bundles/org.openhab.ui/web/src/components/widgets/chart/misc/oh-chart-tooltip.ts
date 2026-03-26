@@ -24,16 +24,34 @@ const chartTooltip: MiscChartComponent = {
     if (options.smartFormatter && context.numberFormatter) {
       options.formatter = (params: TopLevelFormatterParams): string => {
         let tooltip = ''
-        // special tooltip for mark area:
-        // - header: time range (start time to end time) in 'dd DD.MM.YYYY HH:mm - HH:mm'
-        // - content: marker colour, series name and value (if available)
-        if (!Array.isArray(params) && params.componentType === 'markArea') {
+        if (!Array.isArray(params)) {
           if (!params.seriesId) return ''
           const [_seriesType, itemName, _id] = params.seriesId.split('#')
           const item = context.items?.[itemName!]
-          const state = item
-            ? item.stateDescription?.options.find((o) => o.value === (params.value as string))?.label
-            : (params.value as string)
+          // tooltip for aggregate & calendar series:
+          // - header: series name
+          // - content: category label and formatted value
+          if (params.componentType === 'series') {
+            let state = context.numberFormatter!.format((params.data as number[])[1]!)
+            if (item && item.unitSymbol) state += ' ' + item.unitSymbol
+            tooltip += `<div>${params.seriesName}</div>`
+            if (params.name) {
+              // aggregate series
+              tooltip += `${params.marker as string} ${params.name}`
+              tooltip += `<span style="float: right; margin-left: 20px"><b style="text-align: right;">${state}</b></span><br/>`
+            } else {
+              // calendar series
+              tooltip += params.marker as string
+              tooltip += `<b style="text-align: right;">${state}</b><br/>`
+            }
+          }
+          // mark area tooltip:
+          // - header: time range (start time to end time) in 'dd DD.MM.YYYY HH:mm - HH:mm'
+          // - content: marker colour, series name and value (if available)
+          if (params.componentType === 'markArea') {
+            const state = item
+              ? item.stateDescription?.options.find((o) => o.value === (params.value as string))?.label
+              : (params.value as string)
 
           // @ts-expect-error data access
           tooltip += `<div>${dayjs((params.data.coord as unknown[][])[0][0]).format('llll')} - ${dayjs((params.data.coord as unknown[][])[1][0]).format('HH:mm')}</div>`
@@ -54,7 +72,7 @@ const chartTooltip: MiscChartComponent = {
             if (p.seriesId) {
               const [seriesType, itemName, _id, markArea] = p.seriesId.split('#')
               const item = context.items?.[itemName!]
-              if (seriesType === 'oh-time-series' && !markArea) {
+              if ((seriesType === 'oh-time-series' && !markArea) || seriesType !== 'oh-time-series') {
                 let state = context.numberFormatter!.format((p.data as number[])[1]!)
                 if (item && item.unitSymbol) state += ' ' + item.unitSymbol
                 tooltip += (p.marker as string) + ' ' + p.seriesName + ': ' + state + '<br />'
