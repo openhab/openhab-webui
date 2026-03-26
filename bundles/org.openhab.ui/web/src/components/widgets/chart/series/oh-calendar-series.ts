@@ -4,6 +4,7 @@ import ComponentId from '../../component-id'
 import type { SeriesComponent, SeriesOption } from '../types.ts'
 import { OhAggregateSeries, OhCalendarSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
+import { f7 } from 'framework7-vue'
 
 const calendarSeries: SeriesComponent = {
   neededItems(context, component) {
@@ -43,6 +44,10 @@ const calendarSeries: SeriesComponent = {
       scatterSeries.symbolSize = (v: number[]) => {
         return v.pop()! * (scatterSeries.scatterSymbolSizeFactor ?? 1)
       }
+    }
+
+    if (series.item) {
+      series.id = `oh-calendar-series#${series.item}#${f7.utils.id()}`
     }
 
     series.data = data
