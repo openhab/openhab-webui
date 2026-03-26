@@ -1,7 +1,9 @@
 import dayjs from 'dayjs'
-import { Marker, type SeriesOption } from '@/components/widgets/chart/types.ts'
+import { type OhAxisOption, type OhSeriesOption } from '@/components/widgets/chart/types.ts'
+import { Style } from '@/types/components/widgets'
+import { Markers } from '@/types/components/widgets/chart/oh-time-series.gen.ts'
 
-export default (series: SeriesOption) => {
+function applyMarkers(series: OhSeriesOption) {
   if (Array.isArray(series.markers)) {
     if (!series.markLine) {
       series.markLine = {
@@ -21,10 +23,10 @@ export default (series: SeriesOption) => {
         data: []
       }
     }
-    if (series.markers.includes(Marker.avg)) {
+    if (series.markers.includes(Markers.avg)) {
       series.markLine.data!.push({ type: 'average', name: 'avg' })
     }
-    if (series.markers.includes(Marker.time)) {
+    if (series.markers.includes(Markers.time)) {
       series.markLine.data!.push({
         label: {
           show: false
@@ -39,11 +41,22 @@ export default (series: SeriesOption) => {
         xAxis: dayjs().format()
       })
     }
-    if (series.markers.includes(Marker.min)) {
+    if (series.markers.includes(Markers.min)) {
       series.markPoint.data!.push({ type: 'min', name: 'min' })
     }
-    if (series.markers.includes(Marker.max)) {
+    if (series.markers.includes(Markers.max)) {
       series.markPoint.data!.push({ type: 'max', name: 'max' })
     }
+
+    delete series.markers
   }
+}
+
+/**
+ * Transforms custom options for series into ECharts options.
+ * @param series
+ */
+export function transformCustomSeriesOptions(series: OhSeriesOption) {
+  applyMarkers(series)
+  return series
 }
