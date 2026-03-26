@@ -229,6 +229,7 @@ const chartComponentsList: WidgetDefinition[] = [
         { value: 'min', label: 'Minimal' }
       ])
         .r()
+        .d('default')
         .v((_, cfg) => cfg.categoryType === 'week'),
       pb('startOnSunday', 'Start Week on Sunday', 'Check to start the week on Sundays instead of Mondays').v(
         (_, cfg) => cfg.categoryType === 'week'
@@ -238,6 +239,7 @@ const chartComponentsList: WidgetDefinition[] = [
         { value: 'short', label: 'Short' }
       ])
         .r()
+        .d('default')
         .v((_, cfg) => cfg.categoryType === 'year'),
       pt('data', 'Category Values', 'Category values to display')
         .m()
