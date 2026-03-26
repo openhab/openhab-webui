@@ -1,4 +1,4 @@
-import { pd, po } from '../helpers.ts'
+import { pd, pn, po, pt } from '../helpers.ts'
 
 export default () => [
   po(
@@ -32,8 +32,21 @@ export default () => [
     { value: '3Y', label: '3Y' },
     { value: '5Y', label: '5Y' },
     { value: '10Y', label: '10Y' }
-  ]).v((value, configuration, configDescription, parameters) => {
+  ]).v((_value, configuration) => {
     return !configuration.chartType
+  }),
+  pn('initialWeek', 'Initial Week', 'The initial week of the year for the chart.')
+    .c('week')
+    .v((_value, configuration) => {
+      return configuration.chartType === 'isoWeek' || configuration.chartType === 'week'
+    }),
+  pt('initialMonth', 'Initial Month', 'The initial month of the year for the chart.')
+    .c('month')
+    .v((_value, configuration) => {
+      return configuration.chartType === 'month'
+    }),
+  pn('initialYear', 'Initial Year', 'The initial year for the chart.').v((_value, configuration) => {
+    return configuration.chartType === 'year'
   }),
   pd('future', 'Future Proportion', 'The proportion of the period that should extend into the future')
     .o([

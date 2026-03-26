@@ -92,7 +92,26 @@ export function useChart(
   const initialEndTime = (): Dayjs => {
     const chartType = config.value.chartType
     if (chartType) {
-      return addOrSubtractPeriod(startOf(chartType), 1 + future.value)
+      let day = dayjs()
+      switch (chartType) {
+        case ChartType.day:
+          break
+        case ChartType.isoWeek:
+          if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek)
+          break
+        case ChartType.week:
+          if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek).isoWeekday(1)
+          break
+        case ChartType.month:
+          if (config.value.initialMonth !== undefined) day = dayjs().month(parseInt(config.value.initialMonth))
+          break
+        case ChartType.year:
+          if (config.value.initialYear !== undefined) day = dayjs().year(config.value.initialYear)
+          break
+        default:
+          const exhaustiveCheck: never = chartType
+      }
+      return addOrSubtractPeriod(startOf(chartType, day), 1 + future.value)
     } else {
       return addOrSubtractPeriod(dayjs(), future.value)
     }
