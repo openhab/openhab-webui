@@ -1,10 +1,11 @@
 import dayjs from 'dayjs'
-import { type OhAxisOption, type OhSeriesOption } from '@/components/widgets/chart/types.ts'
+import { type OhAxisOption, type OhSeriesOption, type OhTimeSeriesOption } from '@/components/widgets/chart/types.ts'
 import { Style } from '@/types/components/widgets'
 import { Markers } from '@/types/components/widgets/chart/oh-time-series.gen.ts'
 
 function applyMarkers(series: OhSeriesOption) {
-  if (Array.isArray(series.markers)) {
+  if ('markers' in series && Array.isArray(series.markers) && series.markers.length > 0) {
+    const markers = (series.markers as OhTimeSeriesOption['markers'])!
     if (!series.markLine) {
       series.markLine = {
         data: [],
@@ -23,10 +24,10 @@ function applyMarkers(series: OhSeriesOption) {
         data: []
       }
     }
-    if (series.markers.includes(Markers.avg)) {
+    if (markers.includes(Markers.avg)) {
       series.markLine.data!.push({ type: 'average', name: 'avg' })
     }
-    if (series.markers.includes(Markers.time)) {
+    if (markers.includes(Markers.time)) {
       series.markLine.data!.push({
         label: {
           show: false
@@ -41,10 +42,10 @@ function applyMarkers(series: OhSeriesOption) {
         xAxis: dayjs().format()
       })
     }
-    if (series.markers.includes(Markers.min)) {
+    if (markers.includes(Markers.min)) {
       series.markPoint.data!.push({ type: 'min', name: 'min' })
     }
-    if (series.markers.includes(Markers.max)) {
+    if (markers.includes(Markers.max)) {
       series.markPoint.data!.push({ type: 'max', name: 'max' })
     }
 
@@ -53,7 +54,7 @@ function applyMarkers(series: OhSeriesOption) {
 }
 
 function applyLabelPosition(series: OhSeriesOption) {
-  if (series.labelPosition) {
+  if ('labelPosition' in series && series.labelPosition) {
     if (!series.label) series.label = {}
     series.label.show = true
     series.label.position = series.labelPosition
@@ -63,7 +64,7 @@ function applyLabelPosition(series: OhSeriesOption) {
 }
 
 function applyBarBorderRadius(series: OhSeriesOption) {
-  if (series.barBorderRadius) {
+  if ('barBorderRadius' in series && series.barBorderRadius) {
     if (!series.itemStyle) series.itemStyle = {}
     series.itemStyle.borderRadius = [series.barBorderRadius, series.barBorderRadius, series.barBorderRadius, series.barBorderRadius]
 
@@ -83,7 +84,7 @@ export function transformCustomSeriesOptions(series: OhSeriesOption) {
 }
 
 function applyAxisStyle(axis: OhAxisOption) {
-  if (axis.style) {
+  if ('style' in axis && axis.style) {
     switch (axis.style) {
       case Style.label:
         // remove line

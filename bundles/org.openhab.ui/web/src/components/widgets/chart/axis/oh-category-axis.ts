@@ -2,9 +2,8 @@ import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import LocaleData from 'dayjs/plugin/localeData'
 import ComponentId from '../../component-id'
-import type { AxisComponent } from '../types'
+import type { AxisComponent, OhCategoryAxisOption } from '../types'
 import { OhCategoryAxis } from '@/types/components/widgets'
-import type { CategoryAxisBaseOption } from 'echarts/types/dist/shared'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(LocaleData)
@@ -23,7 +22,8 @@ const weekdays = {
 const categoryAxis: AxisComponent = {
   get(context, component, startTime, _endTime, inverse) {
     const config = component.config as any as OhCategoryAxis.Config
-    const axis = context.evaluateExpression<CategoryAxisBaseOption>(ComponentId.get(component)!, component.config)
+    // @ts-expect-error component config's type doesn't include the required properties
+    const axis = context.evaluateExpression<OhCategoryAxisOption>(ComponentId.get(component)!, component.config)
     axis.type = 'category'
 
     axis.data = axis.data || []

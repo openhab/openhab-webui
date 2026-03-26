@@ -1,19 +1,19 @@
 import dayjs, { type Dayjs } from 'dayjs'
 import aggregate from '@/components/widgets/chart/util/aggregators'
 import ComponentId from '../../component-id'
-import type { SeriesComponent, SeriesOption } from '../types.ts'
-import { OhAggregateSeries, OhCalendarSeries } from '@/types/components/widgets'
+import type { OhCalendarSeriesOption, SeriesComponent } from '../types.ts'
+import { OhCalendarSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
 import { f7 } from 'framework7-vue'
 
 const calendarSeries: SeriesComponent = {
   neededItems(context, component) {
     if (!component || !component.config || !component.config.item) return []
-    const series = context.evaluateExpression<OhCalendarSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhCalendarSeriesOption>(ComponentId.get(component)!, component.config)
     return series.item ? [series.item] : []
   },
   get(context, component, points) {
-    let series = context.evaluateExpression<OhCalendarSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+    let series = context.evaluateExpression<OhCalendarSeriesOption>(ComponentId.get(component)!, component.config)
     const itemPoints = points.find((p) => p.name === series.item)?.data ?? []
 
     type Group = [Dayjs, string[]]
@@ -36,10 +36,10 @@ const calendarSeries: SeriesComponent = {
       return [arr[0].toDate(), parseFloat(formatter.format(value))]
     })
 
-    if (!series.type) (series.type as unknown as string) = OhAggregateSeries.Type.heatmap
+    if (!series.type) (series.type as unknown as string) = OhCalendarSeries.Type.heatmap
     series.coordinateSystem = 'calendar'
 
-    if (series.type === OhAggregateSeries.Type.scatter) {
+    if (series.type === OhCalendarSeries.Type.scatter) {
       const scatterSeries = series as ScatterSeriesOption & { scatterSymbolSizeFactor?: number }
       scatterSeries.symbolSize = (v: number[]) => {
         return v.pop()! * (scatterSeries.scatterSymbolSizeFactor ?? 1)
