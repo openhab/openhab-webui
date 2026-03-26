@@ -199,12 +199,14 @@ export function useChart(
     const config = evaluateExpression<SeriesConfig>(ComponentId.get(component)!, component.config)
 
     const getter = (data: [api.EnrichedItem, api.ItemHistory][]): SeriesOption =>
-      seriesComponents[component.component]!.get(
-        chartContext.value,
-        component,
-        data.map((d) => d[1]),
-        startTime.value,
-        endTime.value
+      transformCustomSeriesOptions(
+        seriesComponents[component.component]!.get(
+          chartContext.value,
+          component,
+          data.map((d) => d[1]),
+          startTime.value,
+          endTime.value
+        ) as OhSeriesOption
       )
 
     const neededItems = seriesComponents[component.component]!.neededItems(chartContext.value, component).filter((i) => !!i)
