@@ -37,15 +37,7 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 import type { EChartsOption } from 'echarts'
 import { ChartType, type Period, type OhChart, PeriodType } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
-import type {
-  ChartContext,
-  AxisComponent,
-  SeriesComponent,
-  ChartEvaluateExpressionFn,
-  OhSeriesOption,
-  OhAxisOption,
-  OhSeriesConfig
-} from './types'
+import type { ChartContext, AxisComponent, SeriesComponent, ChartEvaluateExpressionFn, OhSeriesOption, OhSeriesConfig } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
 import { transformCustomAxisOptions, transformCustomSeriesOptions } from '@/components/widgets/chart/util/customOptions.ts'
 
@@ -118,7 +110,12 @@ export function useChart(
   const endTime = ref<Dayjs>(initialEndTime())
 
   // computed
-  const numberFormatter = computed(() => new Intl.NumberFormat(runtimeStore.locale))
+  const numberFormatter = computed(
+    () =>
+      new Intl.NumberFormat(runtimeStore.locale, {
+        maximumFractionDigits: config.value.formatterMaxDecimalPlaces ?? 3
+      })
+  )
 
   const startTime = computed(() => addOrSubtractPeriod(endTime.value, -1))
 
