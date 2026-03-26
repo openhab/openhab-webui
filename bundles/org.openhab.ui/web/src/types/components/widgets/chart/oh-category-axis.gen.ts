@@ -1,7 +1,8 @@
 // note: this file is generated and should not be edited by hand
 
 import {
-  NameLocation
+  NameLocation,
+  Style
 } from '../common.gen.ts'
 
 export enum CategoryType {
@@ -29,6 +30,7 @@ export interface Config {
   nameLocation?: NameLocation
   nameGap?: number
   nameRotate?: string
+  style?: Style
   gridIndex?: number
   categoryType: CategoryType
   weekdayFormat: WeekdayFormat
@@ -38,5 +40,6 @@ export interface Config {
 }
 
 export {
-  NameLocation
+  NameLocation,
+  Style
 }
