@@ -56,5 +56,6 @@ export default () => [
       { value: '0.75', label: '75% - 1/4 past, 3/4 future' },
       { value: '1', label: '100% - Future only' }
     ])
-    .d('0')
+    .d('0'),
+  pn('formatterMaxDecimalPlaces', 'Max Decimal Places', 'The maximum number of decimal places to show for values.').d('2')
 ]

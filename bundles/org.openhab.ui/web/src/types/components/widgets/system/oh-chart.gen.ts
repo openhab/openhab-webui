@@ -12,6 +12,7 @@ export interface Config {
   initialMonth?: string
   initialYear?: number
   future?: number
+  formatterMaxDecimalPlaces?: number
 }
 
 export {
