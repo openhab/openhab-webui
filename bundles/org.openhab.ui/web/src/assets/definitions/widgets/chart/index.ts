@@ -362,7 +362,9 @@ const chartComponentsList: WidgetDefinition[] = [
         'smartFormatter',
         'Smart Formatter',
         'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
-      ).a()
+      )
+        .d('true')
+        .a()
     ]),
 
   new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
