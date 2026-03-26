@@ -53,7 +53,6 @@ const clockContext: WidgetContext = {
   },
   config: {},
   props: {},
-  store: null,
   parent: props.context
 }
 
