@@ -37,8 +37,18 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 import type { EChartsOption } from 'echarts'
 import { ChartType, type Period, type OhChart, PeriodType } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
-import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, ChartEvaluateExpressionFn, SeriesConfig } from './types'
+import type {
+  ChartContext,
+  SeriesOption,
+  AxisComponent,
+  SeriesComponent,
+  ChartEvaluateExpressionFn,
+  SeriesConfig,
+  OhSeriesOption,
+  OhAxisOption
+} from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
+import { transformCustomAxisOptions, transformCustomSeriesOptions } from '@/components/widgets/chart/util/customOptions.ts'
 
 const DEFAULT_PERIOD = PeriodType.D
 
@@ -112,7 +122,9 @@ export function useChart(
 
   const xAxis = computed(() => {
     if (!slots.value?.xAxis) return []
-    return slots.value.xAxis.map((a) => axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
+    return slots.value.xAxis.map((a) =>
+      transformCustomAxisOptions(axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value) as OhAxisOption)
+    )
   })
 
   const yAxis = computed(() => {
