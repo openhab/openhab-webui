@@ -81,3 +81,33 @@ export function transformCustomSeriesOptions(series: OhSeriesOption) {
   applyBarBorderRadius(series)
   return series
 }
+
+function applyAxisStyle(axis: OhAxisOption) {
+  if (axis.style) {
+    switch (axis.style) {
+      case Style.label:
+        // remove line
+        if (!axis.axisLine) axis.axisLine = {}
+        axis.axisLine.show = false
+      // eslint-disable-next-line no-fallthrough
+      case Style.label_line:
+        // remove tick
+        if (!axis.axisTick) axis.axisTick = {}
+        axis.axisTick.show = false
+        break
+      case Style.label_line_tick:
+        break
+    }
+
+    delete axis.style
+  }
+}
+
+/**
+ * Transform custom options for axis into ECharts options.
+ * @param axis
+ */
+export function transformCustomAxisOptions(axis: OhAxisOption) {
+  applyAxisStyle(axis)
+  return axis
+}
