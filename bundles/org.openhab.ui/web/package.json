@@ -89,6 +89,7 @@
     "@types/swagger-ui-dist": "^3.30.6",
     "@uiw/codemirror-theme-gruvbox-dark": "^4.25.4",
     "@vue-leaflet/vue-leaflet": "^0.10.1",
+    "@vueuse/core": "^14.2.1",
     "blockly": "^11.2.2",
     "codemirror": "^6.0.2",
     "cronstrue": "^3.12.0",
