@@ -21,7 +21,7 @@ const weekdays = {
 }
 
 const categoryAxis: AxisComponent = {
-  get(context, component, startTime, _endTime, inverse) {
+  get(context, component, startTime, endTime, inverse) {
     const config = component.config as any as OhCategoryAxis.Config
     // @ts-expect-error component config's type doesn't include the required properties
     const axis = context.evaluateExpression<OhCategoryAxisOption>(ComponentId.get(component)!, component.config)
@@ -68,6 +68,12 @@ const categoryAxis: AxisComponent = {
           }
         } else {
           axis.data = [...axisMonths]
+        }
+        break
+      case OhCategoryAxis.CategoryType.years:
+        if (!config.name) axis.name = 'year'
+        for (let year = startTime.year(); year < endTime.year(); year++) {
+          axis.data.push(year)
         }
         break
       case OhCategoryAxis.CategoryType.values:

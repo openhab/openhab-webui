@@ -221,6 +221,7 @@ const chartComponentsList: WidgetDefinition[] = [
         { value: 'week', label: 'Days of week' },
         { value: 'month', label: 'Days of month' },
         { value: 'year', label: 'Months of year' },
+        { value: 'years', label: 'Multiple years' },
         { value: 'values', label: 'Values' }
       ]).r(),
       po('weekdayFormat', 'Weekday Format', 'Format of weekdays labels', [

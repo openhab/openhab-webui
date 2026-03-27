@@ -10,7 +10,14 @@ import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widg
 
 dayjs.extend(IsoWeek)
 
-function dimensionFromDate(chartType: ChartType, startTime: Dayjs, d: Dayjs, dimension?: OhAggregateSeries.Dimension, invert?: boolean) {
+function dimensionFromDate(
+  chartType: ChartType,
+  startTime: Dayjs,
+  endTime: Dayjs,
+  d: Dayjs,
+  dimension?: OhAggregateSeries.Dimension,
+  invert?: boolean
+) {
   switch (dimension) {
     case OhAggregateSeries.Dimension.minute:
       return invert ? 59 - d.minute() : d.minute()
@@ -31,6 +38,10 @@ function dimensionFromDate(chartType: ChartType, startTime: Dayjs, d: Dayjs, dim
         return invert ? length - index - 1 : index
       }
       return invert ? 11 - d.month() : d.month()
+    case OhAggregateSeries.Dimension.year:
+      const length = endTime.year() - startTime.year() - 1
+      const index = d.year() - startTime.year()
+      return invert ? length - index : index
     default:
       return d.toDate()
   }
@@ -52,7 +63,7 @@ const aggregateSeries: SeriesComponent = {
   includeItemState(_context, component) {
     return includeBoundaryAndItemStateFor(component.config)
   },
-  get(context, component, points, startTime) {
+  get(context, component, points, startTime, endTime) {
     const series = context.evaluateExpression<OhAggregateSeriesOption>(ComponentId.get(component)!, component.config)
     const dimension1 = series.dimension1 ?? (context.chart.config.chartType as unknown as OhAggregateSeries.Dimension)
     const dimension2 = series.dimension2
@@ -100,15 +111,15 @@ const aggregateSeries: SeriesComponent = {
         const axisX = series.transpose ? dimension2 : dimension1
         const axisY = series.transpose ? dimension1 : dimension2
         return [
-          dimensionFromDate(chartType, startTime, arr[0], axisX),
-          dimensionFromDate(chartType, startTime, arr[0], axisY, true),
+          dimensionFromDate(chartType, startTime, endTime, arr[0], axisX),
+          dimensionFromDate(chartType, startTime, endTime, arr[0], axisY, true),
           formatter.format(value)
         ]
       } else {
         if (series.transpose) {
-          return [formatter.format(value), dimensionFromDate(chartType, startTime, arr[0], dimension1, true)]
+          return [formatter.format(value), dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1, true)]
         } else {
-          return [dimensionFromDate(chartType, startTime, arr[0], dimension1), formatter.format(value)]
+          return [dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1), formatter.format(value)]
         }
       }
     })
