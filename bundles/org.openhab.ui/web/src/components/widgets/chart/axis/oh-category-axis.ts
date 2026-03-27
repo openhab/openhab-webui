@@ -4,6 +4,7 @@ import LocaleData from 'dayjs/plugin/localeData'
 import ComponentId from '../../component-id'
 import type { AxisComponent, OhCategoryAxisOption } from '../types'
 import { OhCategoryAxis } from '@/types/components/widgets'
+import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widgets/chart/util/time.ts'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(LocaleData)
@@ -25,6 +26,7 @@ const categoryAxis: AxisComponent = {
     // @ts-expect-error component config's type doesn't include the required properties
     const axis = context.evaluateExpression<OhCategoryAxisOption>(ComponentId.get(component)!, component.config)
     axis.type = 'category'
+    const chartType = context.chart.config.chartType
 
     axis.data = axis.data || []
     switch (config.categoryType) {
@@ -58,7 +60,15 @@ const categoryAxis: AxisComponent = {
       case OhCategoryAxis.CategoryType.year:
         if (!config.name) axis.name = 'month'
         const axisMonths = months[config.monthFormat] || months.default
-        axis.data = [...axisMonths]
+        if (chartTypeLongerThanAYear(chartType)) {
+          let year = startTime.year()
+          for (let i = 0; i < mapChartTypeToYears(chartType); i++) {
+            axis.data.push(...axisMonths.map((m) => `${m} ${year}`))
+            year++
+          }
+        } else {
+          axis.data = [...axisMonths]
+        }
         break
       case OhCategoryAxis.CategoryType.values:
         break
@@ -69,6 +79,7 @@ const categoryAxis: AxisComponent = {
 
     if (inverse) axis.data = axis.data.reverse()
 
+    console.log(axis)
     return axis
   }
 }

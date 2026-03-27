@@ -3,13 +3,14 @@ import IsoWeek from 'dayjs/plugin/isoWeek'
 import ComponentId from '../../component-id'
 import aggregate from '../util/aggregators'
 import type { OhAggregateSeriesOption, SeriesComponent } from '../types.ts'
-import { AggregationFunction, OhAggregateSeries } from '@/types/components/widgets'
+import { AggregationFunction, ChartType, OhAggregateSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
 import { f7 } from 'framework7-vue'
+import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widgets/chart/util/time.ts'
 
 dayjs.extend(IsoWeek)
 
-function dimensionFromDate(d: Dayjs, dimension?: OhAggregateSeries.Dimension, invert?: boolean) {
+function dimensionFromDate(chartType: ChartType, startTime: Dayjs, d: Dayjs, dimension?: OhAggregateSeries.Dimension, invert?: boolean) {
   switch (dimension) {
     case OhAggregateSeries.Dimension.minute:
       return invert ? 59 - d.minute() : d.minute()
@@ -23,6 +24,12 @@ function dimensionFromDate(d: Dayjs, dimension?: OhAggregateSeries.Dimension, in
       const daysInMonth = d.daysInMonth()
       return invert ? daysInMonth - d.date() : d.date() - 1
     case OhAggregateSeries.Dimension.month:
+      if (chartTypeLongerThanAYear(chartType)) {
+        const startYear = startTime.year()
+        const index = (d.year() - startYear) * 12 + d.month()
+        const length = mapChartTypeToYears(chartType) * 12
+        return invert ? length - index - 1 : index
+      }
       return invert ? 11 - d.month() : d.month()
     default:
       return d.toDate()
@@ -45,11 +52,12 @@ const aggregateSeries: SeriesComponent = {
   includeItemState(_context, component) {
     return includeBoundaryAndItemStateFor(component.config)
   },
-  get(context, component, points) {
+  get(context, component, points, startTime) {
     const series = context.evaluateExpression<OhAggregateSeriesOption>(ComponentId.get(component)!, component.config)
     const dimension1 = series.dimension1 ?? (context.chart.config.chartType as unknown as OhAggregateSeries.Dimension)
     const dimension2 = series.dimension2
     const boundary = includeBoundaryAndItemStateFor(component.config)
+    const chartType = context.chart.config.chartType
 
     const itemPoints = points.find((p) => p.name === series.item)?.data ?? []
 
@@ -91,12 +99,16 @@ const aggregateSeries: SeriesComponent = {
       if (dimension2) {
         const axisX = series.transpose ? dimension2 : dimension1
         const axisY = series.transpose ? dimension1 : dimension2
-        return [dimensionFromDate(arr[0], axisX), dimensionFromDate(arr[0], axisY, true), formatter.format(value)]
+        return [
+          dimensionFromDate(chartType, startTime, arr[0], axisX),
+          dimensionFromDate(chartType, startTime, arr[0], axisY, true),
+          formatter.format(value)
+        ]
       } else {
         if (series.transpose) {
-          return [formatter.format(value), dimensionFromDate(arr[0], dimension1, true)]
+          return [formatter.format(value), dimensionFromDate(chartType, startTime, arr[0], dimension1, true)]
         } else {
-          return [dimensionFromDate(arr[0], dimension1), formatter.format(value)]
+          return [dimensionFromDate(chartType, startTime, arr[0], dimension1), formatter.format(value)]
         }
       }
     })

@@ -7,6 +7,57 @@ dayjs.extend(IsoWeek)
 dayjs.extend(DayDuration)
 
 /**
+ * Maps a chart type to a dayjs unit.
+ * @param chartType
+ */
+function mapChartTypeToDayJs(chartType: Exclude<ChartType, ''>): dayjs.ManipulateType {
+  switch (chartType) {
+    case ChartType.day:
+      return 'day'
+    case ChartType.isoWeek:
+    case ChartType.week:
+      return 'week'
+    case ChartType.month:
+      return 'month'
+    case ChartType.year:
+    case ChartType.twoYears:
+    case ChartType.threeYears:
+    case ChartType.fiveYears:
+      return 'year'
+    default:
+      const exhaustiveCheck: never = chartType
+      return chartType as unknown as dayjs.ManipulateType
+  }
+}
+
+/**
+ * Whether the chart type's fixed period is longer than a year.
+ * @param chartType
+ */
+export function chartTypeLongerThanAYear(chartType: ChartType) {
+  return chartType === ChartType.twoYears || chartType === ChartType.threeYears || chartType === ChartType.fiveYears
+}
+
+/**
+ * Returns the number of years represented by the given fixed-period chart type.
+ * @param chartType
+ */
+export function mapChartTypeToYears(chartType: ChartType): number {
+  switch (chartType) {
+    case ChartType.year:
+      return 1
+    case ChartType.twoYears:
+      return 2
+    case ChartType.threeYears:
+      return 3
+    case ChartType.fiveYears:
+      return 5
+    default:
+      return 0
+  }
+}
+
+/**
  * Returns the dayjs date/time at the start of the time range of the given chart type.
  * By default, the beginning is relative to now, i.e. if today is Wednesday and `chartType` is `isoWeek`, Monday 00:00 will be returned.
  * If an optional `date` is passed, the start depends on that data, i.e. if last week's Wednesday is passed and `chartType` is `isoWeek`, last week's Monday 00:00 will be returned
@@ -21,6 +72,8 @@ export function startOf(chartType: ChartType, date?: string | number | dayjs.Day
     if (d.day() === 0) return d.startOf('day')
     // Week starting on Sunday
     return d.startOf('isoWeek').subtract(1, 'day')
+  } else if (chartTypeLongerThanAYear(chartType)) {
+    return d.startOf('year').subtract(mapChartTypeToYears(chartType) - 1, 'year')
   }
   return d.startOf(chartType as OpUnitType)
 }
@@ -34,7 +87,7 @@ export function startOf(chartType: ChartType, date?: string | number | dayjs.Day
  * @param date
  * @param direction
  */
-export function addOrSubtractPeriod(chartType: ChartType, period: Period, date: dayjs.Dayjs, direction: number) {
+export function addOrSubtractPeriod(chartType: ChartType, period: Period | null, date: dayjs.Dayjs, direction: number) {
   if (direction === 0) return date
   const fn =
     direction < 0 ? (v: number, d: dayjs.ManipulateType) => date.subtract(v, d) : (v: number, d: dayjs.ManipulateType) => date.add(v, d)
@@ -42,8 +95,9 @@ export function addOrSubtractPeriod(chartType: ChartType, period: Period, date: 
   // Handle full direction units
   for (let i = 0; i < Math.floor(absDirection); i++) {
     if (chartType !== ChartType.dynamic) {
-      date = fn(1, chartType === ChartType.isoWeek ? ChartType.week : chartType)
+      date = fn(chartTypeLongerThanAYear(chartType) ? mapChartTypeToYears(chartType) : 1, mapChartTypeToDayJs(chartType))
     } else {
+      if (!period) throw new Error('Period is required for dynamic chart types')
       const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
       if (span && span[2]) {
         date = fn(parseInt(span[1]!) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
@@ -55,8 +109,9 @@ export function addOrSubtractPeriod(chartType: ChartType, period: Period, date: 
   if (fraction > 0) {
     let nextFullUnit = null
     if (chartType !== ChartType.dynamic) {
-      nextFullUnit = fn(1, chartType === ChartType.isoWeek ? ChartType.week : chartType)
+      nextFullUnit = fn(chartTypeLongerThanAYear(chartType) ? mapChartTypeToYears(chartType) : 1, mapChartTypeToDayJs(chartType))
     } else {
+      if (!period) throw new Error('Period is required for dynamic chart types')
       const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
       if (span && span[2]) {
         nextFullUnit = fn(parseInt(span[1]!) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
