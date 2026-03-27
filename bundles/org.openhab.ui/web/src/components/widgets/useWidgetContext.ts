@@ -9,6 +9,7 @@ import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts
 import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, WidgetContext } from './types'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as api from '@/api'
+import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 
 /**
  * useWidgetContext must be used as a composable in all widget components.
@@ -69,12 +70,7 @@ export function useWidgetContext(context: WidgetContext) {
     if (!context.component) return {}
     if ('props' in context.component && context.component.props.parameters) {
       let defaultValues: Record<string, unknown> = {}
-      // Note: api.ConfigDescriptionParameter uses 'defaultValue', but UI widgets just use 'default'
-      context.component.props.parameters.forEach((p: { name: string; default?: unknown }) => {
-        if (p.default !== undefined) {
-          defaultValues[p.name] = p.default
-        }
-      })
+      applyParameterDefaults(context.component.props.parameters, defaultValues)
       return Object.assign({}, defaultValues, context.props || {})
     } else {
       return context.props || {}
@@ -140,7 +136,7 @@ export function useWidgetContext(context: WidgetContext) {
 
   // methods
   function evaluateExpression(key: string, value: any, _context?: WidgetContext, _props?: Record<string, unknown>): unknown {
-    return _evaluateExpression(key, value, _context || context, _props || props.value)
+    return _evaluateExpression(key, value, _context ?? context, _props ?? props.value)
   }
 
   function childContext(component: api.UiComponent): WidgetContext {
