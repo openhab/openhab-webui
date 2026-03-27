@@ -34,8 +34,8 @@ import { OhRepeater } from '@/types/components/widgets'
 import * as api from '@/api'
 import { ApiError } from '@/js/hey-api'
 
-type SourceType = api.EnrichedItem | api.EnrichedGroupItem | api.EnrichedRule | api.StateOption | api.CommandOption | string | number
-type SourceArray = SourceType[] | null
+type SourceTypeElement = api.EnrichedItem | api.EnrichedGroupItem | api.EnrichedRule | api.StateOption | api.CommandOption | string | number
+type SourceArray = SourceTypeElement[] | null
 
 // define*
 const props = defineProps<{
@@ -50,14 +50,14 @@ const { config, childContext, evaluateExpression, defaultSlots } = useWidgetCont
 // Data/State
 const error = ref<string | null>(null)
 const sourceCache = ref<SourceArray | null>(null)
-const sourceType = ref<SourceType | null>(null)
+const sourceType = ref<OhRepeater.SourceType | null>(null)
 const forKey = ref<string | null>(null)
 
 // Computed properties
 const childrenContexts = computed(() => {
   const { filter, map } = config.value
 
-  const iterationContext = (ctx: WidgetContext, el: SourceType, idx: number, source: SourceArray) => {
+  const iterationContext = (ctx: WidgetContext, el: SourceTypeElement, idx: number, source: SourceArray) => {
     // takes the context with the added variables
     const loopVars = ctx.loop ? { ...ctx.loop } : {}
     loopVars[forKey.value!] = el
@@ -115,7 +115,7 @@ const source = computedAsync(async (): Promise<SourceArray> => {
 
   if (!cfg.sourceType) {
     sourceType.value = OhRepeater.SourceType.array
-    console.warn('oh-repeater: sourceType is not defined, defaulting to "array"')
+    console.debug('oh-repeater: sourceType is not defined, defaulting to "array"')
   } else {
     if (Object.values(OhRepeater.SourceType).includes(cfg.sourceType)) {
       sourceType.value = cfg.sourceType as OhRepeater.SourceType
@@ -155,7 +155,7 @@ const source = computedAsync(async (): Promise<SourceArray> => {
       case OhRepeater.SourceType.array:
       default:
         if (!('in' in cfg)) {
-          error.value = 'oh-repeater: "in" must be defined when sourceType is none or invalid'
+          error.value = 'oh-repeater: "in" must be defined when sourceType "array", none, or invalid'
           console.warn(error.value)
           return []
         }
@@ -176,26 +176,24 @@ const source = computedAsync(async (): Promise<SourceArray> => {
 // Methods
 function simpleHash(obj: object | string): string {
   const str = JSON.stringify(obj)
-  let hash = 0,
-    i,
-    chr
+  let hash = 0
   if (str.length === 0) return hash.toString()
-  for (i = 0; i < str.length; i++) {
-    chr = str.charCodeAt(i)
+  for (let i = 0; i < str.length; i++) {
+    const chr = str.charCodeAt(i)
     hash = (hash << 5) - hash + chr
     hash |= 0 // Convert to 32bit integer
   }
   return (hash >>> 0).toString(36)
 }
 
-function getKey(el: SourceType): string {
+function getKey(el: SourceTypeElement): string {
   let key = 'repeater-'
   switch (sourceType.value) {
     case OhRepeater.SourceType.itemsWithTags:
     case OhRepeater.SourceType.itemsInGroup:
       return key + (el as api.EnrichedItem).name
     case OhRepeater.SourceType.rulesWithTags:
-      return key + simpleHash((el as api.EnrichedRule).uid)
+      return key + (el as api.EnrichedRule).uid
     case OhRepeater.SourceType.itemStateOptions:
       return key + simpleHash(el as api.StateOption)
     case OhRepeater.SourceType.itemCommandOptions:
