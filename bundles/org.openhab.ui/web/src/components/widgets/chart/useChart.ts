@@ -37,8 +37,9 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 import type { EChartsOption } from 'echarts'
 import { ChartType, type Period, type OhChart, PeriodType } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
-import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, ChartEvaluateExpressionFn, SeriesConfig } from './types'
+import type { ChartContext, AxisComponent, SeriesComponent, ChartEvaluateExpressionFn, OhSeriesOption, OhSeriesConfig } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
+import { transformCustomAxisOptions, transformCustomSeriesOptions } from '@/components/widgets/chart/util/customOptions.ts'
 
 const DEFAULT_PERIOD = PeriodType.D
 
@@ -81,7 +82,30 @@ export function useChart(
   const initialEndTime = (): Dayjs => {
     const chartType = config.value.chartType
     if (chartType) {
-      return addOrSubtractPeriod(startOf(chartType), 1 + future.value)
+      let day = dayjs()
+      switch (chartType) {
+        case ChartType.day:
+          break
+        case ChartType.isoWeek:
+          if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek)
+          break
+        case ChartType.week:
+          if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek).isoWeekday(1)
+          break
+        case ChartType.month:
+          if (config.value.initialMonth !== undefined) day = dayjs().month(parseInt(config.value.initialMonth))
+          break
+        case ChartType.year:
+          if (config.value.initialYear !== undefined) day = dayjs().year(config.value.initialYear)
+          break
+        case ChartType.twoYears:
+        case ChartType.threeYears:
+        case ChartType.fiveYears:
+          break
+        default:
+          const exhaustiveCheck: never = chartType
+      }
+      return addOrSubtractPeriod(startOf(chartType, day), 1 + future.value)
     } else {
       return addOrSubtractPeriod(dayjs(), future.value)
     }
@@ -90,7 +114,12 @@ export function useChart(
   const endTime = ref<Dayjs>(initialEndTime())
 
   // computed
-  const numberFormatter = computed(() => new Intl.NumberFormat(runtimeStore.locale))
+  const numberFormatter = computed(
+    () =>
+      new Intl.NumberFormat(runtimeStore.locale, {
+        maximumFractionDigits: config.value.formatterMaxDecimalPlaces ?? 3
+      })
+  )
 
   const startTime = computed(() => addOrSubtractPeriod(endTime.value, -1))
 
@@ -112,7 +141,9 @@ export function useChart(
 
   const xAxis = computed(() => {
     if (!slots.value?.xAxis) return []
-    return slots.value.xAxis.map((a) => axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
+    return slots.value.xAxis.map((a) =>
+      transformCustomAxisOptions(axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
+    )
   })
 
   const yAxis = computed(() => {
@@ -189,22 +220,24 @@ export function useChart(
   })
 
   // async computed
-  const series = shallowRef<SeriesOption[]>([])
+  const series = shallowRef<OhSeriesOption[]>([])
 
   const _items: Record<string, api.EnrichedItem> = {}
   const _itemPromises: Record<string, Promise<api.EnrichedItem>> = {}
   const _persistencePromises: Record<string, Promise<api.ItemHistory>> = {}
 
-  const getSeriesPromises = async (component: api.UiComponent): Promise<SeriesOption> => {
-    const config = evaluateExpression<SeriesConfig>(ComponentId.get(component)!, component.config)
+  const getSeriesPromises = async (component: api.UiComponent): Promise<OhSeriesOption> => {
+    const config = evaluateExpression<OhSeriesConfig>(ComponentId.get(component)!, component.config)
 
-    const getter = (data: [api.EnrichedItem, api.ItemHistory][]): SeriesOption =>
-      seriesComponents[component.component]!.get(
-        chartContext.value,
-        component,
-        data.map((d) => d[1]),
-        startTime.value,
-        endTime.value
+    const getter = (data: [api.EnrichedItem, api.ItemHistory][]): OhSeriesOption =>
+      transformCustomSeriesOptions(
+        seriesComponents[component.component]!.get(
+          chartContext.value,
+          component,
+          data.map((d) => d[1]),
+          startTime.value,
+          endTime.value
+        )
       )
 
     const neededItems = seriesComponents[component.component]!.neededItems(chartContext.value, component).filter((i) => !!i)
@@ -219,11 +252,11 @@ export function useChart(
 
     let boundary =
       seriesComponents[component.component]!.includeBoundary?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
-    if (config.noBoundary === true) boundary = false
+    if ('noBoundary' in config && config.noBoundary === true) boundary = false
 
     let itemState =
       seriesComponents[component.component]!.includeItemState?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
-    if (config.noItemState === true) itemState = false
+    if ('noItemState' in config && config.noItemState === true) itemState = false
 
     neededItems.forEach((neededItem) => {
       if (_itemPromises[neededItem]) {
@@ -242,13 +275,13 @@ export function useChart(
     const combinedPromises = neededItems.map(async (neededItem) => {
       let seriesStartTime = startTime.value
       let seriesEndTime = endTime.value
-      if (config.offsetAmount && config.offsetUnit) {
+      if ('offsetAmount' in config && config.offsetAmount && config.offsetUnit) {
         seriesStartTime = seriesStartTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
         seriesEndTime = seriesEndTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
       }
       const query = {
         itemName: neededItem,
-        serviceId: config.service,
+        serviceId: 'service' in config ? config.service : undefined,
         starttime: seriesStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
         boundary,

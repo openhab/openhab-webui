@@ -34,7 +34,7 @@ const orientParameter = () =>
     true
   )
 
-const showParameter = () => pb('show', 'Show', 'Whether to show or not this component')
+const showParameter = () => pb('show', 'Show', 'Whether to show or not this component').d('true')
 
 const nameParameter = pt('name', 'Name', 'A name which will appear on tooltips and labels')
 
@@ -119,9 +119,15 @@ const offsetUnitParameter = pt(
 
 const axisNameParameters = [nameParameter, nameLocationParameter, nameGapParameter, nameRotateParameter]
 
-const dateAxisParameters = [...axisNameParameters, gridIndexParameter]
+const axisStyleParameter = po('style', 'Axis Style', 'The style of the axis', [
+  { value: 'label', label: 'Label' },
+  { value: 'label+line', label: 'Label & Line' },
+  { value: 'label+line+tick', label: 'Label, Line & Tick' }
+]).d('label+line+tick')
 
-const seriesParameters = [
+const dateAxisParameters = [...axisNameParameters, axisStyleParameter, gridIndexParameter]
+
+const baseSeriesParameter = [
   nameParameter,
   itemParameter,
   persistenceServiceParameter,
@@ -151,13 +157,41 @@ const seriesTypeParameter = (...types: string[]): WidgetDefinitionParameter => {
   )
 }
 
-const lineSeriesSymbolParameter = pb(
+const seriesLabelPositionParameter = po('labelPosition', 'Label Position', 'The position of the labels on the series', [
+  { value: 'top', label: 'Top' },
+  { value: 'left', label: 'Left' },
+  { value: 'right', label: 'Right' },
+  { value: 'bottom', label: 'Bottom' },
+  { value: 'inside', label: 'Inside' },
+  { value: 'insideLeft', label: 'Inside - Left' },
+  { value: 'insideRight', label: 'Inside - Right' },
+  { value: 'insideTop', label: 'Inside - Top' },
+  { value: 'insideBottom', label: 'Inside - Bottom' },
+  { value: 'insideTopLeft', label: 'Inside - Top Left' },
+  { value: 'insideBottomLeft', label: 'Inside - Bottom Left' },
+  { value: 'insideTopRight', label: 'Inside - Top Right' },
+  { value: 'insideBottomRight', label: 'Inside - Bottom Right' }
+]).v((_value, configuration) => {
+  return configuration.type === 'line' || configuration.type === 'bar'
+})
+
+const seriesColorParameter = pt('color', 'Color', 'The color of the series').c('color')
+
+const lineChartSymbolParameter = pb(
   'showSymbol',
   'Show Symbol',
   'Whether to always show the datapoint symbol. It will always be shown during tooltip hover.'
 ).v((_value, configuration) => {
   return configuration.type === 'line'
 })
+
+const barChartBorderRadiusParameter = pn('barBorderRadius', 'Bar Border Radius', 'The radius of the border of the bar.')
+  .d('0')
+  .v((_value, configuration) => {
+    return configuration.type === 'bar'
+  })
+
+const seriesStyleParameters = [seriesLabelPositionParameter, seriesColorParameter, lineChartSymbolParameter, barChartBorderRadiusParameter]
 
 const aggregationFunctionParameter = pt(
   'aggregationFunction',
@@ -187,6 +221,7 @@ const chartComponentsList: WidgetDefinition[] = [
         { value: 'week', label: 'Days of week' },
         { value: 'month', label: 'Days of month' },
         { value: 'year', label: 'Months of year' },
+        { value: 'years', label: 'Multiple years' },
         { value: 'values', label: 'Values' }
       ]).r(),
       po('weekdayFormat', 'Weekday Format', 'Format of weekdays labels', [
@@ -195,6 +230,7 @@ const chartComponentsList: WidgetDefinition[] = [
         { value: 'min', label: 'Minimal' }
       ])
         .r()
+        .d('default')
         .v((_, cfg) => cfg.categoryType === 'week'),
       pb('startOnSunday', 'Start Week on Sunday', 'Check to start the week on Sundays instead of Mondays').v(
         (_, cfg) => cfg.categoryType === 'week'
@@ -204,6 +240,7 @@ const chartComponentsList: WidgetDefinition[] = [
         { value: 'short', label: 'Short' }
       ])
         .r()
+        .d('default')
         .v((_, cfg) => cfg.categoryType === 'year'),
       pt('data', 'Category Values', 'Category values to display')
         .m()
@@ -216,6 +253,7 @@ const chartComponentsList: WidgetDefinition[] = [
     .paramGroup(componentRelationsGroup)
     .params([
       ...axisNameParameters,
+      axisStyleParameter,
       minParameter(),
       maxParameter(),
       pb(
@@ -230,7 +268,7 @@ const chartComponentsList: WidgetDefinition[] = [
     .doc('https://echarts.apache.org/en/option.html#xAxis')
     .paramGroup(nameDisplayGroup)
     .paramGroup(componentRelationsGroup)
-    .params([...axisNameParameters, gridIndexParameter]),
+    .params([...axisNameParameters, axisStyleParameter, gridIndexParameter]),
 
   new WidgetDefinition('oh-calendar-axis', 'Calendar', '')
     .doc('https://echarts.apache.org/en/option.html#calendar')
@@ -242,17 +280,17 @@ const chartComponentsList: WidgetDefinition[] = [
   new WidgetDefinition('oh-data-series', 'Data Series', '')
     .doc('https://echarts.apache.org/en/option.html#series')
     .paramGroup(actionGroup())
-    .params([seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), lineSeriesSymbolParameter, ...actionParams()]),
+    .params([seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), ...seriesStyleParameters, ...actionParams()]),
 
   new WidgetDefinition('oh-time-series', 'Time Series', '')
     .doc('https://echarts.apache.org/en/option.html#series')
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
     .params([
-      ...seriesParameters,
+      ...baseSeriesParameter,
       markersParameter(true),
       seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
-      lineSeriesSymbolParameter,
+      ...seriesStyleParameters,
       xAxisIndexParameter,
       yAxisIndexParameter,
       ...actionParams()
@@ -262,7 +300,7 @@ const chartComponentsList: WidgetDefinition[] = [
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
     .params([
-      ...seriesParameters,
+      ...baseSeriesParameter,
       pd(
         'yValue',
         'Y Value',
@@ -279,10 +317,10 @@ const chartComponentsList: WidgetDefinition[] = [
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
     .params([
-      ...seriesParameters,
+      ...baseSeriesParameter,
       markersParameter(),
       seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
-      lineSeriesSymbolParameter,
+      ...seriesStyleParameters,
       po(
         'dimension1',
         'First Dimension',
@@ -307,9 +345,9 @@ const chartComponentsList: WidgetDefinition[] = [
     .paramGroup(componentRelationsGroup)
     .paramGroup(actionGroup())
     .params([
-      ...seriesParameters,
+      ...baseSeriesParameter,
       seriesTypeParameter('heatmap', 'scatter'),
-      lineSeriesSymbolParameter,
+      seriesColorParameter,
       aggregationFunctionParameter,
       calendarIndexParameter,
       ...actionParams()
@@ -325,7 +363,9 @@ const chartComponentsList: WidgetDefinition[] = [
         'smartFormatter',
         'Smart Formatter',
         'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
-      ).a()
+      )
+        .d('true')
+        .a()
     ]),
 
   new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')

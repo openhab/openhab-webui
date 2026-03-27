@@ -2,15 +2,22 @@ import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import ComponentId from '../../component-id'
 import aggregate from '../util/aggregators'
-import applyMarkers from '../util/markers'
-import type { SeriesComponent, SeriesOption } from '../types.ts'
-import * as api from '@/api'
-import { AggregationFunction, OhAggregateSeries } from '@/types/components/widgets'
+import type { OhAggregateSeriesOption, SeriesComponent } from '../types.ts'
+import { AggregationFunction, ChartType, OhAggregateSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
+import { f7 } from 'framework7-vue'
+import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widgets/chart/util/time.ts'
 
 dayjs.extend(IsoWeek)
 
-function dimensionFromDate(d: Dayjs, dimension?: OhAggregateSeries.Dimension, invert?: boolean) {
+export function dimensionFromDate(
+  chartType: ChartType,
+  startTime: Dayjs,
+  endTime: Dayjs,
+  d: Dayjs,
+  dimension?: OhAggregateSeries.Dimension,
+  invert?: boolean
+) {
   switch (dimension) {
     case OhAggregateSeries.Dimension.minute:
       return invert ? 59 - d.minute() : d.minute()
@@ -24,7 +31,17 @@ function dimensionFromDate(d: Dayjs, dimension?: OhAggregateSeries.Dimension, in
       const daysInMonth = d.daysInMonth()
       return invert ? daysInMonth - d.date() : d.date() - 1
     case OhAggregateSeries.Dimension.month:
+      if (chartTypeLongerThanAYear(chartType)) {
+        const startYear = startTime.year()
+        const index = (d.year() - startYear) * 12 + d.month()
+        const length = mapChartTypeToYears(chartType) * 12
+        return invert ? length - index - 1 : index
+      }
       return invert ? 11 - d.month() : d.month()
+    case OhAggregateSeries.Dimension.year:
+      const length = endTime.year() - startTime.year() - 1
+      const index = d.year() - startTime.year()
+      return invert ? length - index : index
     default:
       return d.toDate()
   }
@@ -37,7 +54,7 @@ function includeBoundaryAndItemStateFor(config: OhAggregateSeries.Config) {
 const aggregateSeries: SeriesComponent = {
   neededItems(context, component) {
     if (!component || !component.config || !component.config.item) return []
-    const series = context.evaluateExpression<OhAggregateSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhAggregateSeriesOption>(ComponentId.get(component)!, component.config)
     return series.item ? [series.item] : []
   },
   includeBoundary(_context, component) {
@@ -46,11 +63,12 @@ const aggregateSeries: SeriesComponent = {
   includeItemState(_context, component) {
     return includeBoundaryAndItemStateFor(component.config)
   },
-  get(context, component, points) {
-    const series = context.evaluateExpression<OhAggregateSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+  get(context, component, points, startTime, endTime) {
+    const series = context.evaluateExpression<OhAggregateSeriesOption>(ComponentId.get(component)!, component.config)
     const dimension1 = series.dimension1 ?? (context.chart.config.chartType as unknown as OhAggregateSeries.Dimension)
     const dimension2 = series.dimension2
     const boundary = includeBoundaryAndItemStateFor(component.config)
+    const chartType = context.chart.config.chartType
 
     const itemPoints = points.find((p) => p.name === series.item)?.data ?? []
 
@@ -92,12 +110,16 @@ const aggregateSeries: SeriesComponent = {
       if (dimension2) {
         const axisX = series.transpose ? dimension2 : dimension1
         const axisY = series.transpose ? dimension1 : dimension2
-        return [dimensionFromDate(arr[0], axisX), dimensionFromDate(arr[0], axisY, true), formatter.format(value)]
+        return [
+          dimensionFromDate(chartType, startTime, endTime, arr[0], axisX),
+          dimensionFromDate(chartType, startTime, endTime, arr[0], axisY, true),
+          formatter.format(value)
+        ]
       } else {
         if (series.transpose) {
-          return [formatter.format(value), dimensionFromDate(arr[0], dimension1, true)]
+          return [formatter.format(value), dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1, true)]
         } else {
-          return [dimensionFromDate(arr[0], dimension1), formatter.format(value)]
+          return [dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1), formatter.format(value)]
         }
       }
     })
@@ -111,10 +133,11 @@ const aggregateSeries: SeriesComponent = {
       }
     }
 
-    series.data = data
+    if (series.item) {
+      series.id = `oh-aggregate-series#${series.item}#${f7.utils.id()}`
+    }
 
-    // other things
-    applyMarkers(series)
+    series.data = data
 
     return series
   }

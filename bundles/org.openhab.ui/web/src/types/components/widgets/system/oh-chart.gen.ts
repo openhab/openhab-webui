@@ -8,7 +8,11 @@ import {
 export interface Config {
   chartType: ChartType
   period?: Period
+  initialWeek?: number
+  initialMonth?: string
+  initialYear?: number
   future?: number
+  formatterMaxDecimalPlaces?: number
 }
 
 export {

@@ -18,7 +18,26 @@
       <f7-menu-item v-else dropdown :text="period">
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item
-            v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y', '3Y', '5Y', '10Y'] as Period[]"
+            v-for="p in [
+              'h',
+              '2h',
+              '4h',
+              '12h',
+              'D',
+              '2D',
+              '3D',
+              'W',
+              '2W',
+              'M',
+              '2M',
+              '4M',
+              '6M',
+              'Y',
+              '2Y',
+              '3Y',
+              '5Y',
+              '10Y'
+            ] as Period[]"
             :key="p"
             @click="setPeriod(p)"
             href="#"
@@ -126,7 +145,7 @@ const { config, slots, evaluateExpression } = useWidgetContext(props.context)
 const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
 
 const chartComposable = useChart(props.context, config, slots, evaluateExpression)
-const { startTime, options, period, earlierPeriod, laterPeriod, setDate, setPeriod } = chartComposable
+const { startTime, endTime, options, period, earlierPeriod, laterPeriod, setDate, setPeriod } = chartComposable
 
 // data (state)
 const ready = ref(false)
@@ -163,6 +182,10 @@ const fixedPeriodLabel = computed(() => {
         return startTime.value.format('MMM YYYY')
       case ChartType.year:
         return startTime.value.format('YYYY')
+      case ChartType.twoYears:
+      case ChartType.threeYears:
+      case ChartType.fiveYears:
+        return `${startTime.value.format('YYYY')} - ${endTime.value.subtract(1, 'year').format('YYYY')}`
       case ChartType.dynamic:
         return ''
       default:
