@@ -22,14 +22,22 @@
         </div>
       </template>
     </f7-list-input>
+
+    <cronexpression-editor v-if="popupOpen" :model-value="value" @update:modelValue="updateValue" v-model:opened="popupOpen" />
   </ul>
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
 import { toString } from 'cronstrue'
-import { f7, theme } from 'framework7-vue'
+import { theme } from 'framework7-vue'
 
 export default {
+  components: {
+    CronexpressionEditor: defineAsyncComponent(
+      () => import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue')
+    )
+  },
   props: {
     configDescription: Object,
     value: String
@@ -38,36 +46,17 @@ export default {
   setup() {
     return { theme }
   },
+  data() {
+    return {
+      popupOpen: false
+    }
+  },
   methods: {
     updateValue(value) {
       this.$emit('input', value)
     },
     openPopup() {
-      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
-        const popup = {
-          component: c.default
-        }
-
-        f7.views.main.router.navigate(
-          {
-            url: 'cron-edit',
-            route: {
-              path: 'cron-edit',
-              popup
-            }
-          },
-          {
-            props: {
-              value: this.value
-            }
-          }
-        )
-
-        f7.once('cronEditorUpdate', this.updateValue)
-        f7.once('cronEditorClosed', () => {
-          f7.off('cronEditorUpdate', this.updateValue)
-        })
-      })
+      this.popupOpen = true
     }
   },
   computed: {
