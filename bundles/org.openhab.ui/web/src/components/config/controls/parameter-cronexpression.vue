@@ -37,24 +37,26 @@ import { validate } from './cronexpression-editor.utils'
 
 export default {
   components: {
-    CronexpressionEditor: defineAsyncComponent(() => import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue'))
+    CronexpressionEditor: defineAsyncComponent(
+      () => import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue')
+    )
   },
   props: {
     configDescription: Object,
     value: String
   },
   emits: ['input', 'update:value'],
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       popupOpen: false,
       inputEl: null
     }
   },
   computed: {
-    translation () {
+    translation() {
       try {
         return toString(this.value, { use24HourTimeFormat: true })
       } catch (err) {
@@ -63,8 +65,8 @@ export default {
     }
   },
   methods: {
-    updateValue (value) {
-      if(!this.inputEl) {
+    updateValue(value) {
+      if (!this.inputEl) {
         this.inputEl = this.$refs.input?.$el?.querySelector('input')
       }
       const errorMessage = validate(value)
@@ -72,9 +74,9 @@ export default {
       this.$emit('input', value)
       this.$emit('update:value', value)
     },
-    openPopup () {
+    openPopup() {
       this.popupOpen = true
-    },
+    }
   }
 }
 </script>

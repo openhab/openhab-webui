@@ -421,7 +421,14 @@ import { computed, ref, watch } from 'vue'
 import { f7 } from 'framework7-vue'
 import Labels from '@/assets/i18n/cron/en'
 import { toString } from 'cronstrue'
-import { CRON_LIMITS, WEEKDAY_TOKENS, expandWeekdaySegment, normalizeSpecificNumericList, normalizeWeekdayToken, parseAndClamp } from './cronexpression-editor.utils'
+import {
+  CRON_LIMITS,
+  WEEKDAY_TOKENS,
+  expandWeekdaySegment,
+  normalizeSpecificNumericList,
+  normalizeWeekdayToken,
+  parseAndClamp
+} from './cronexpression-editor.utils'
 import type { WeekdayToken } from './cronexpression-editor.utils'
 
 enum CronEvery {
@@ -442,8 +449,8 @@ enum CronEvery {
 
 interface CronFieldBase {
   cronEvery: CronEvery
-  increment: { start: number, increment: number }
-  range: { start: number, end: number }
+  increment: { start: number; increment: number }
+  range: { start: number; end: number }
   specific: (number | string)[]
 }
 
@@ -456,7 +463,7 @@ interface CronFieldDay extends CronFieldBase {
 }
 
 interface CronFieldWeek {
-  increment: { start: WeekdayToken, increment: number }
+  increment: { start: WeekdayToken; increment: number }
   specific: WeekdayToken[]
   cronNthDayDay?: WeekdayToken
   cronNthDayNth?: number
@@ -495,7 +502,7 @@ function resetFields(field: string) {
     case 'hour':
       return { ...ResetSpecificBaseField }
     case 'day':
-      return  {
+      return {
         cronEvery: CronEvery.Every,
         increment: { start: 1, increment: 1 },
         range: { start: 1, end: 1 },
@@ -548,20 +555,19 @@ watch(
 
 // Computed
 const cron = computed(() => {
-  const fields = [
-    secondsText.value,
-    minutesText.value,
-    hoursText.value,
-    daysText.value,
-    monthsText.value,
-    weeksText.value,
-  ];
-  if (yearsText.value) fields.push(yearsText.value);
-  return fields.join(' ');
+  const fields = [secondsText.value, minutesText.value, hoursText.value, daysText.value, monthsText.value, weeksText.value]
+  if (yearsText.value) fields.push(yearsText.value)
+  return fields.join(' ')
 })
-const secondsText = computed(() => { return formatBaseCronField(second.value) })
-const minutesText = computed(() => { return formatBaseCronField(minute.value) })
-const hoursText = computed(() => { return formatBaseCronField(hour.value) })
+const secondsText = computed(() => {
+  return formatBaseCronField(second.value)
+})
+const minutesText = computed(() => {
+  return formatBaseCronField(minute.value)
+})
+const hoursText = computed(() => {
+  return formatBaseCronField(hour.value)
+})
 const daysText = computed(() => {
   switch (day.value.cronEvery) {
     case CronEvery.Every:
@@ -605,18 +611,24 @@ const weeksText = computed(() => {
       return (day.value.cronLastSpecificDomDay || 'SUN') + 'L'
     case CronEvery.SomeWeekdayOfMonth:
       return (week.value.cronNthDayDay || 'SUN') + '#' + week.value.cronNthDayNth
-      default:
-        return '*'
+    default:
+      return '*'
   }
 })
-const monthsText = computed(() => { return formatBaseCronField(month.value) })
-const yearsText = computed(() => { return formatBaseCronField(year.value) })
+const monthsText = computed(() => {
+  return formatBaseCronField(month.value)
+})
+const yearsText = computed(() => {
+  return formatBaseCronField(year.value)
+})
 
 const translation = computed(() => {
   try {
-    const parsed = cron.value.trim().split(/[ ]+/);
+    const parsed = cron.value.trim().split(/[ ]+/)
     if (parsed.length < 6) {
-      throw new Error('Error: Cron expression must have at least 6 fields (seconds, minutes, hours, day of month, month, day of week, [year])')
+      throw new Error(
+        'Error: Cron expression must have at least 6 fields (seconds, minutes, hours, day of month, month, day of week, [year])'
+      )
     }
 
     return toString(cron.value, {
@@ -639,10 +651,7 @@ function onClose() {
 }
 
 // Methods
-function formatBaseCronField(
-  field: CronFieldBase,
-  emptyForEvery = false
-) {
+function formatBaseCronField(field: CronFieldBase, emptyForEvery = false) {
   switch (field.cronEvery) {
     case CronEvery.Every:
       return emptyForEvery ? '' : '*'
@@ -657,7 +666,7 @@ function formatBaseCronField(
   }
 }
 
-function restore(val : string) {
+function restore(val: string) {
   second.value = resetFields('second') as CronFieldBase
   minute.value = resetFields('minute') as CronFieldBase
   hour.value = resetFields('hour') as CronFieldBase
@@ -715,7 +724,6 @@ function restoreBase(val: CronFieldBase, expr: string, fieldMin: number, fieldMa
   return val
 }
 
-
 function restoreDayAndWeek(dayExpr: string, weekExpr: string) {
   // Standard cron for day-of-month/day-of-week when the other field carries the schedule.
   if ((dayExpr === '*' || dayExpr === '?') && (weekExpr === '*' || weekExpr === '?')) {
@@ -727,12 +735,27 @@ function restoreDayAndWeek(dayExpr: string, weekExpr: string) {
     day.value.cronEvery = CronEvery.IntervalWeek
     const [start, step] = weekExpr.split('/')
     week.value.increment.start = normalizeWeekdayToken(start || 'SUN')
-    week.value.increment.increment = parseAndClamp(step || String(CRON_LIMITS.week.incrementMin), CRON_LIMITS.week.incrementMin, CRON_LIMITS.week.incrementMin, CRON_LIMITS.week.incrementMax)
+    week.value.increment.increment = parseAndClamp(
+      step || String(CRON_LIMITS.week.incrementMin),
+      CRON_LIMITS.week.incrementMin,
+      CRON_LIMITS.week.incrementMin,
+      CRON_LIMITS.week.incrementMax
+    )
   } else if (dayExpr.includes('/')) {
     day.value.cronEvery = CronEvery.IntervalDay
     const [start, step] = dayExpr.split('/')
-    day.value.increment.start = parseAndClamp(start || String(CRON_LIMITS.dayOfMonth.min), CRON_LIMITS.dayOfMonth.min, CRON_LIMITS.dayOfMonth.min, CRON_LIMITS.dayOfMonth.max)
-    day.value.increment.increment = parseAndClamp(step || String(CRON_LIMITS.dayOfMonth.min), CRON_LIMITS.dayOfMonth.min, CRON_LIMITS.dayOfMonth.min, CRON_LIMITS.dayOfMonth.incrementMax)
+    day.value.increment.start = parseAndClamp(
+      start || String(CRON_LIMITS.dayOfMonth.min),
+      CRON_LIMITS.dayOfMonth.min,
+      CRON_LIMITS.dayOfMonth.min,
+      CRON_LIMITS.dayOfMonth.max
+    )
+    day.value.increment.increment = parseAndClamp(
+      step || String(CRON_LIMITS.dayOfMonth.min),
+      CRON_LIMITS.dayOfMonth.min,
+      CRON_LIMITS.dayOfMonth.min,
+      CRON_LIMITS.dayOfMonth.incrementMax
+    )
   } else if (dayExpr === 'L') {
     day.value.cronEvery = CronEvery.LastDayOfMonth
   } else if (dayExpr === 'LW') {
@@ -742,23 +765,36 @@ function restoreDayAndWeek(dayExpr: string, weekExpr: string) {
     day.value.cronLastSpecificDomDay = normalizeWeekdayToken(weekExpr.slice(0, -1) || 'SUN')
   } else if (dayExpr.startsWith('L-')) {
     day.value.cronEvery = CronEvery.DaysBeforeEndOfMonth
-    day.value.cronDaysBeforeEomMinus = parseAndClamp(dayExpr.slice(2) || String(CRON_LIMITS.dayOfMonth.min), CRON_LIMITS.dayOfMonth.min, CRON_LIMITS.dayOfMonth.min, CRON_LIMITS.dayOfMonth.max)
+    day.value.cronDaysBeforeEomMinus = parseAndClamp(
+      dayExpr.slice(2) || String(CRON_LIMITS.dayOfMonth.min),
+      CRON_LIMITS.dayOfMonth.min,
+      CRON_LIMITS.dayOfMonth.min,
+      CRON_LIMITS.dayOfMonth.max
+    )
   } else if (dayExpr.endsWith('W')) {
     day.value.cronEvery = CronEvery.NearestWeekdayOfMonth
-    day.value.cronDaysNearestWeekday = parseAndClamp(dayExpr.slice(0, -1) || String(CRON_LIMITS.dayOfMonth.min), CRON_LIMITS.dayOfMonth.min, CRON_LIMITS.dayOfMonth.min, CRON_LIMITS.dayOfMonth.max)
+    day.value.cronDaysNearestWeekday = parseAndClamp(
+      dayExpr.slice(0, -1) || String(CRON_LIMITS.dayOfMonth.min),
+      CRON_LIMITS.dayOfMonth.min,
+      CRON_LIMITS.dayOfMonth.min,
+      CRON_LIMITS.dayOfMonth.max
+    )
   } else if (weekExpr.includes('#')) {
     day.value.cronEvery = CronEvery.SomeWeekdayOfMonth
     const [dayOfWeek, nth] = weekExpr.split('#')
     week.value.cronNthDayDay = normalizeWeekdayToken(dayOfWeek || 'SUN')
-    week.value.cronNthDayNth = parseAndClamp(nth || String(CRON_LIMITS.week.nthMin), CRON_LIMITS.week.nthMin, CRON_LIMITS.week.nthMin, CRON_LIMITS.week.nthMax)
+    week.value.cronNthDayNth = parseAndClamp(
+      nth || String(CRON_LIMITS.week.nthMin),
+      CRON_LIMITS.week.nthMin,
+      CRON_LIMITS.week.nthMin,
+      CRON_LIMITS.week.nthMax
+    )
   } else if (weekExpr?.length && weekExpr !== '?') {
     day.value.cronEvery = CronEvery.Specific
-    const specificWeekdays = weekExpr
-      .split(',')
-      .reduce<WeekdayToken[]>((acc, segment) => {
-        acc.push(...expandWeekdaySegment(segment))
-        return acc
-      }, [])
+    const specificWeekdays = weekExpr.split(',').reduce<WeekdayToken[]>((acc, segment) => {
+      acc.push(...expandWeekdaySegment(segment))
+      return acc
+    }, [])
     week.value.specific = specificWeekdays.length ? specificWeekdays : (['SUN'] as WeekdayToken[])
   } else {
     day.value.cronEvery = CronEvery.SpecificDayOfMonth
