@@ -114,7 +114,7 @@ export default {
     configurationWithDefaults() {
       const conf = Object.assign({}, this.configuration)
       this.parameters.forEach((p) => {
-        if (conf[p.name] === undefined && p.default !== undefined) {
+        if (conf[p.name] === undefined && (p.default ?? p.defaultValues !== undefined)) {
           if (typeof p.default === 'function') {
             conf[p.name] = p.default(this.configuration)
           } else if (p.multiple) {
