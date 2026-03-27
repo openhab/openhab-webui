@@ -39,7 +39,8 @@ export class Parameter implements WidgetDefinitionParameter {
   multiple?: boolean
   options?: ParameterOption[]
   limitToOptions?: boolean
-  defaultValue?: string
+  default?: string
+  defaultValues?: string[]
   required?: boolean
 
   visible?: VisibilityFunction
@@ -108,8 +109,12 @@ export class Parameter implements WidgetDefinitionParameter {
    * Sets the default value of the parameter
    * @param value the default value
    */
-  d(value: string): this {
-    this.defaultValue = value
+  d(value: string | string[]): this {
+    if (Array.isArray(value)) {
+      this.defaultValues = value
+    } else {
+      this.default = value
+    }
     return this
   }
 
