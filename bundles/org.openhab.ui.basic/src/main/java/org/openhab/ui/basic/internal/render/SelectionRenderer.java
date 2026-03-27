@@ -12,8 +12,9 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
+import java.util.List;
+import java.util.Objects;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
@@ -22,9 +23,9 @@ import org.openhab.core.items.Item;
 import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.model.sitemap.sitemap.Mapping;
-import org.openhab.core.model.sitemap.sitemap.Selection;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Mapping;
+import org.openhab.core.sitemap.Selection;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.CommandDescription;
 import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
@@ -47,6 +48,7 @@ import com.google.gson.JsonObject;
  *
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -66,7 +68,7 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         String snippet = getSnippet("selection");
 
         snippet = preprocessSnippet(snippet, w);
@@ -78,7 +80,8 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
 
         Item item = null;
         try {
-            item = itemUIRegistry.getItem(w.getItem());
+            String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
+            item = itemUIRegistry.getItem(itemName);
         } catch (ItemNotFoundException e) {
             logger.debug("Failed to retrieve item during widget rendering: {}", e.getMessage());
         }
@@ -114,7 +117,7 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private @Nullable String buildRow(Selection w, @Nullable String lab, String cmd, @Nullable Item item,
@@ -133,7 +136,8 @@ public class SelectionRenderer extends AbstractWidgetRenderer {
             }
         }
 
-        rowSnippet = rowSnippet.replace("%item%", w.getItem() != null ? w.getItem() : "");
+        String widgetItemName = w.getItem();
+        rowSnippet = rowSnippet.replace("%item%", widgetItemName != null ? widgetItemName : "");
         rowSnippet = rowSnippet.replace("%cmd%", escapeHtml(command));
         rowSnippet = rowSnippet.replace("%label%", escapeHtml(label));
 
