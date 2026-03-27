@@ -4,6 +4,7 @@ export const OhButton: OhComponent
 export const OhLink: OhComponent
 export const OhToggle: OhComponent
 export const OhRollershutter: OhComponent
+export const OhJson: OhComponent
 export const OhColorpicker: OhComponent
 export const OhImage: OhComponent
 export const OhVideo: OhComponent

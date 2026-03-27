@@ -25,7 +25,7 @@ function id(x) { return x[0]; }
     widgetclickattr:  'click=',
     widgetreleaseattr:'release=',
     widgetperiodattr: 'period=',
-    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Colorpicker ', 'Colortemperaturepicker', 'Mapview ', 'Button ', 'Default '],
+    nlwidget:         ['Switch ', 'Selection ', 'Slider ', 'Setpoint ', 'Input ', 'Video ', 'Chart ', 'Webview ', 'Json ','Colorpicker ', 'Colortemperaturepicker', 'Mapview ', 'Button ', 'Default '],
     lwidget:          ['Text ', 'Group ', 'Image ', 'Frame ', 'Buttongrid '],
     lparen:           '(',
     rparen:           ')',
@@ -54,7 +54,7 @@ function id(x) { return x[0]; }
     unsignedint:      /[0-9]+/,
     string:           { match: /"(?:\\["\\]|[^\n"\\])*"/, value: x => x.slice(1, -1) }
   })
-  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Colorpicker', 'Colortemperaturepicker', 'Button', 'Default']
+  const requiresItem = ['Group', 'Chart', 'Switch', 'Mapview', 'Slider', 'Selection', 'Setpoint', 'Input ', 'Json', 'Colorpicker', 'Colortemperaturepicker', 'Button', 'Default']
 
   function getSitemap(d) {
     return {
