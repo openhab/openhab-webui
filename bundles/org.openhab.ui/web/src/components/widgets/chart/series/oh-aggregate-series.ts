@@ -10,7 +10,7 @@ import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widg
 
 dayjs.extend(IsoWeek)
 
-function dimensionFromDate(
+export function dimensionFromDate(
   chartType: ChartType,
   startTime: Dayjs,
   endTime: Dayjs,
