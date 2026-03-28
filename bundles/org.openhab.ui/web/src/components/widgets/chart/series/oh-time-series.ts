@@ -2,8 +2,7 @@ import { f7 } from 'framework7-vue'
 
 import ComponentId from '../../component-id'
 import MarkArea from './oh-mark-area'
-import applyMarkers from '@/components/widgets/chart/util/markers'
-import type { SeriesComponent, SeriesOption } from '../types.ts'
+import type { OhTimeSeriesOption, SeriesComponent } from '../types.ts'
 import { OhTimeSeries } from '@/types/components/widgets'
 import * as api from '@/api'
 
@@ -17,11 +16,11 @@ const timeSeries: SeriesComponent = {
         )
         .filter((i) => i !== undefined)
     }
-    const series = context.evaluateExpression<OhTimeSeries.Config>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config)
     return series.item ? [series.item, ...markAreaItems] : markAreaItems
   },
   get(context, component, points, startTime, endTime) {
-    const series = context.evaluateExpression<OhTimeSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config)
     series.data = []
 
     if (series.item) {
@@ -42,8 +41,6 @@ const timeSeries: SeriesComponent = {
         series.id += '#mark-area'
       }
     }
-
-    applyMarkers(series)
 
     if (series.showSymbol === undefined) series.showSymbol = false
     if (!series.tooltip) {
