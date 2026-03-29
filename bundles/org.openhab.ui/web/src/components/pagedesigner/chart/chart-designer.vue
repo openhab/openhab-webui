@@ -51,7 +51,7 @@
             :removeLabel="'Remove Grid'" />
         </f7-menu>
       </div>
-      <div>
+      <div class="skeleton-chart-container">
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
@@ -91,7 +91,7 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :option="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton class="skeleton-chart" :option="skeletonGridOptions(grid, gridIdx)" :autoresize="true" />
       </div>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
@@ -142,7 +142,7 @@
             :removeLabel="'Remove Calendar'" />
         </f7-menu>
       </div>
-      <div>
+      <div class="skeleton-chart-container">
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
@@ -178,10 +178,11 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :option="skeletonCalendarOptions(calendar, calendarIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton class="skeleton-chart" :option="skeletonCalendarOptions(calendar, calendarIdx)" :autoresize="true" />
       </div>
     </f7-block>
 
+    <!-- Other Components -->
     <f7-block class="block-narrow margin-bottom" inset>
       <f7-block-title>Other Components</f7-block-title>
       <f7-row class="margin-bottom">
@@ -247,20 +248,27 @@
 </template>
 
 <style lang="stylus">
+.skeleton-chart-container
+  display grid
+  grid-template-columns 1fr
 .skeleton-series
-  position absolute
-  left 30
-  width calc(100% - 30px)
+  grid-row-start 1
+  grid-column-start 1
   display flex
   justify-content center
   z-index 10
   .card
     width 60%
     margin-top 4rem
-    // overflow-y auto
+    height fit-content
   .item-link
     overflow inherit
     z-index inherit !important
+.skeleton-chart
+  grid-row-start 1
+  grid-column-start 1
+  height 400px
+  width 100%
 .chartdesigner-big-button
   background var(--f7-card-bg-color)
   text-align center
