@@ -1,4 +1,5 @@
-import { ref, computed, watch, shallowRef, type ComputedRef, readonly } from 'vue'
+import { ref, computed, type ComputedRef, readonly } from 'vue'
+import { computedAsync } from '@vueuse/core'
 import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import DayDuration from 'dayjs/plugin/duration'
@@ -188,13 +189,9 @@ export function useChart(
     return slots.value.toolbox.map((c) => OhChartToolbox.get(chartContext.value, c, startTime.value, endTime.value))
   })
 
-  // async computed
-  const series = shallowRef<SeriesOption[]>([])
-
   const _items: Record<string, api.EnrichedItem> = {}
   const _itemPromises: Record<string, Promise<api.EnrichedItem>> = {}
   const _persistencePromises: Record<string, Promise<api.ItemHistory>> = {}
-
   const getSeriesPromises = async (component: api.UiComponent): Promise<SeriesOption> => {
     const config = evaluateExpression<SeriesConfig>(ComponentId.get(component)!, component.config)
 
@@ -268,35 +265,12 @@ export function useChart(
     return Promise.all(combinedPromises).then(getter)
   }
 
-  watch(
-    [slots, startTime, endTime, chartContext],
-    (_newVal, _oldVal, onCleanup) => {
-      let isStale = false
-
-      // invoked when the watch is re-triggered or stopped
-      onCleanup(() => {
-        isStale = true
-      })
-
-      const updateSeries = async (): Promise<void> => {
-        if (!slots.value || !slots.value.series) {
-          series.value = []
-          return
-        }
-        if (!isStale) {
-          // only request series if the watch is not stale, i.e., the most-recently triggered instance
-          const result = await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
-          if (!isStale) {
-            // only update series if the watch is not stale, i.e., the most-recently triggered instance
-            series.value = result
-          }
-        }
-      }
-
-      void updateSeries()
-    },
-    { immediate: true }
-  )
+  const series = computedAsync<SeriesOption[]>(async () => {
+    if (!slots.value || !slots.value.series) {
+      return []
+    }
+    return await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
+  })
 
   const options = computed<EChartsOption>(() => {
     if (!config.value) return {}
