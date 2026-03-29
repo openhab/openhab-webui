@@ -32,9 +32,11 @@ export default () => [
     { value: '3Y', label: '3Y' },
     { value: '5Y', label: '5Y' },
     { value: '10Y', label: '10Y' }
-  ]).v((_value, configuration) => {
-    return !configuration.chartType
-  }),
+  ])
+    .d('D')
+    .v((_value, configuration) => {
+      return !configuration.chartType
+    }),
   pn('initialWeek', 'Initial Week', 'The initial week of the year for the chart.')
     .c('week')
     .v((_value, configuration) => {
