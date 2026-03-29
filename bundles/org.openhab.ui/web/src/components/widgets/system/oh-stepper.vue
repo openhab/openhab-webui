@@ -48,35 +48,48 @@ const stepperConfig = computed<OhStepper.Config>(() => {
 })
 
 const value = computed<number>(() => {
-  const applyOffset = (num: number): number =>
-    !isNaN(stepperConfig.value.offset as number) ? Number(toStepFixed(num + Number(stepperConfig.value.offset))) : num
   if (stepperConfig.value.variable) {
     const variableScope = getVariableScope(props.context.ctxVars ?? {}, props.context.varScope, stepperConfig.value.variable)
     const variableLocation = variableScope ? props.context.ctxVars![variableScope] : props.context.vars
     if (!variableLocation) return 0
     if (stepperConfig.value.variableKey) {
-      return applyOffset(
-        getLastVariableKeyValue(variableLocation[stepperConfig.value.variable]!, stepperConfig.value.variableKey) as number
+      return Number(
+        toStepFixed(
+          applyOffset(
+            getLastVariableKeyValue(variableLocation[stepperConfig.value.variable]!, stepperConfig.value.variableKey) as number,
+            'add'
+          )
+        )
       )
     }
-    return applyOffset(variableLocation[stepperConfig.value.variable] as number)
+    return Number(toStepFixed(applyOffset(variableLocation[stepperConfig.value.variable] as number, 'add')))
   }
-  let value = stepperConfig.value.item ? applyOffset(parseFloat(props.context.store![stepperConfig.value.item]!.state)) : 0
+  let value = stepperConfig.value.item ? applyOffset(parseFloat(props.context.store![stepperConfig.value.item]!.state), 'add') : 0
   if (stepperConfig.value.min !== undefined) value = Math.max(value, stepperConfig.value.min)
   if (stepperConfig.value.max !== undefined) value = Math.min(value, stepperConfig.value.max)
-  return value
+  return Number(toStepFixed(value))
 })
 
 // methods
+const applyOffset = (num: number, op: 'add' | 'subtract') => {
+  if (stepperConfig.value.offset === undefined) return num
+  if (isNaN(stepperConfig.value.offset)) return num
+  if (op === 'add') return num + Number(stepperConfig.value.offset)
+  if (op === 'subtract') return num - Number(stepperConfig.value.offset)
+  return num
+}
 const formatValue = (value: number | string) => {
   return toStepFixed(value)
 }
 const toStepFixed = (value: number | string): string => {
   // uses the number of decimals in the step config to round the provided number
-  if (!stepperConfig.value.step) return value.toString()
-  const nbDecimals = Number(stepperConfig.value.step).toString().replace(',', '.').split('.')[1]
+  const precision =
+    Number(stepperConfig.value.step ?? 0)
+      .toString()
+      .replace(',', '.')
+      .split('.')[1]?.length ?? 0
   // do NOT convert to number, instead return string, otherwise formatting wouldn't work
-  return parseFloat(value as string).toFixed(nbDecimals ? nbDecimals.length : 0)
+  return parseFloat(value as string).toFixed(precision)
 }
 const onPlusMinusClick = () => {
   setTimeout(() => {
@@ -93,9 +106,7 @@ const onInput = () => {
   }, 1500)
 }
 const sendCommand = (cmd: number) => {
-  const applyOffset = (num: number) =>
-    !isNaN(stepperConfig.value.offset as number) ? Number(toStepFixed(num - Number(stepperConfig.value.offset))) : num
-  let newValue = applyOffset(Number(toStepFixed(cmd)))
+  let newValue = applyOffset(Number(toStepFixed(cmd)), 'subtract')
   if (isNaN(newValue)) newValue = stepperConfig.value.min ?? stepperConfig.value.max ?? 0
   if (newValue === value.value) return
   if (stepperConfig.value.variable) {
@@ -104,7 +115,8 @@ const sendCommand = (cmd: number) => {
     if (!variableLocation) return
     if (stepperConfig.value.variableKey) {
       newValue = applyOffset(
-        setVariableKeyValues(variableLocation[stepperConfig.value.variable]!, stepperConfig.value.variableKey, cmd) as number
+        setVariableKeyValues(variableLocation[stepperConfig.value.variable]!, stepperConfig.value.variableKey, cmd) as number,
+        'subtract'
       )
     }
     variableLocation[stepperConfig.value.variable] = newValue
