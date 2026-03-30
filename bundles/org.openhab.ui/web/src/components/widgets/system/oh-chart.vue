@@ -5,7 +5,6 @@
 <script>
 import { OhChartDefinition } from '@/assets/definitions/widgets/system'
 import { defineAsyncComponent } from 'vue'
-import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
   components: {
@@ -15,10 +14,6 @@ export default {
     context: Object
   },
   widget: OhChartDefinition,
-  setup(props) {
-    const { config } = useWidgetContext(props.context)
-    return { config }
-  },
   methods: {
     forceRerender() {
       this.$refs.chart.forceRerender()
