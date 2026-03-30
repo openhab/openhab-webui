@@ -36,7 +36,6 @@
 </style>
 
 <script>
-import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
 import { mapStores } from 'pinia'
 
@@ -51,9 +50,6 @@ export default {
     context: Object
   },
   widget: OhChartPageDefinition,
-  setup(props) {
-    useWidgetContext(props.context)
-  },
   computed: {
     ...mapStores(useUIOptionsStore)
   },
