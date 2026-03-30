@@ -71,7 +71,7 @@
             @click.ctrl="ctrlClick($event, b)"
             @click.meta="ctrlClick($event, b)"
             @click.exact="click($event, b)"
-            :link="`/settings/blocks/${b.uid}`"
+            :link="`/developer/blocks/${b.uid}`"
             :title="b.uid">
             <template #subtitle>
               <div>
