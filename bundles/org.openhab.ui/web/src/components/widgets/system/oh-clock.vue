@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
 import dayjs from 'dayjs'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhClockDefinition } from '@/assets/definitions/widgets/system'
@@ -27,7 +27,7 @@ const props = defineProps<{
 }>()
 
 // composables
-const { config } = useWidgetContext(props.context)
+const { config } = useWidgetContext(computed(() => props.context))
 
 // data (state)
 let timer: number

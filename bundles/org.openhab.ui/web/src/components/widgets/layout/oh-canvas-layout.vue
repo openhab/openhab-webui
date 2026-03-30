@@ -146,7 +146,7 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { computed, nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
@@ -164,7 +164,7 @@ export default {
     OhCanvasLayer
   },
   setup(props) {
-    const { config, childContext } = useWidgetContext(props.context)
+    const { config, childContext } = useWidgetContext(computed(() => props.context))
     return { config, childContext }
   },
   data() {

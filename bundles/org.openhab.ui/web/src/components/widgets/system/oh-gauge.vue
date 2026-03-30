@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhGaugeDefinition } from '@/assets/definitions/widgets/system'
 
@@ -14,7 +15,7 @@ export default {
   },
   widget: OhGaugeDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   computed: {

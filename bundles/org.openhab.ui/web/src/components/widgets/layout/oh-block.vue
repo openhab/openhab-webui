@@ -47,10 +47,10 @@
 </style>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
 import { OhBlockDescription } from '@/assets/definitions/widgets/layout'
-import * as api from '@/api'
 
 defineOptions({
   widget: OhBlockDescription
@@ -65,5 +65,5 @@ const parentDefaultSlots =
     ? props.context.parent.component.slots?.default
     : []
 
-const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(props.context)
+const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(computed(() => props.context))
 </script>

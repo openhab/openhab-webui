@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhList from '../system/oh-list.vue'
 import { OhListCardDefinition } from '@/assets/definitions/widgets/standard/cards'
@@ -22,7 +23,7 @@ export default {
   },
   widget: OhListCardDefinition,
   setup(props) {
-    const { cardChildContext } = useWidgetContext(props.context)
+    const { cardChildContext } = useWidgetContext(computed(() => props.context))
     return { cardChildContext }
   }
 }

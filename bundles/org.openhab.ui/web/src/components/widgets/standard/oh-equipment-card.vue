@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhEquipmentCardParameters } from '@/assets/definitions/widgets/home'
 import EquipmentCard from '@/components/cards/equipment-card.vue'
@@ -16,7 +17,7 @@ export default {
     context: Object
   },
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   computed: {

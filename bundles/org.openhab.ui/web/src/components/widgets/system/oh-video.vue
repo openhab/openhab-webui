@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { computed } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
@@ -43,7 +43,7 @@ export default {
     sendAudio: { type: Boolean }
   },
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   data() {

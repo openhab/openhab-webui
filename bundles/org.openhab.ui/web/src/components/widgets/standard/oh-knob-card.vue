@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhKnob from '../system/oh-knob.vue'
@@ -22,7 +23,7 @@ export default {
   },
   widget: OhKnobCardDefinition,
   setup(props) {
-    const { cardChildContext } = useWidgetContext(props.context)
+    const { cardChildContext } = useWidgetContext(computed(() => props.context))
     return { cardChildContext }
   }
 }

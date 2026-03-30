@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhListItem from './oh-list-item.vue'
 import { OhLabelItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
@@ -23,7 +24,7 @@ export default {
   },
   widget: OhLabelItemDefinition,
   setup(props) {
-    const { config, evaluateExpression } = useWidgetContext(props.context)
+    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, performAction }
   }

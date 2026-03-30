@@ -12,6 +12,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhSlider from '../system/oh-slider.vue'
@@ -27,7 +28,7 @@ export default {
   },
   widget: OhSliderCardDefinition,
   setup(props) {
-    const { config, cardChildContext } = useWidgetContext(props.context)
+    const { config, cardChildContext } = useWidgetContext(computed(() => props.context))
     return { config, cardChildContext }
   }
 }

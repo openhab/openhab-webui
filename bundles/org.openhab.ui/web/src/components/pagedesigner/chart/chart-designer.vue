@@ -285,6 +285,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
@@ -358,7 +359,7 @@ export default {
     EditContextMenu
   },
   setup(props) {
-    useWidgetContext(props.context)
+    useWidgetContext(computed(() => props.context))
   },
   methods: {
     skeletonGridOptions(grid, gridIdx) {

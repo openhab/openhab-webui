@@ -79,6 +79,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
@@ -93,7 +94,7 @@ export default {
     MasonryGridItem
   },
   setup(props) {
-    const { config, childContext, visible, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, visible, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, visible, defaultSlots }
   }
 }

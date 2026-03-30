@@ -11,7 +11,8 @@
 <script>
 import OhListItem from './oh-list-item.vue'
 import { OhToggleItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
-import { useWidgetContext } from '../../useWidgetContext'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { computed } from 'vue'
 
 export default {
   components: {
@@ -22,7 +23,7 @@ export default {
   },
   widget: OhToggleItemDefinition,
   setup(props) {
-    const { config, childContext } = useWidgetContext(props.context)
+    const { config, childContext } = useWidgetContext(computed(() => props.context))
     return { config, childContext }
   },
   computed: {

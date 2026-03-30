@@ -105,7 +105,7 @@ dark-tooltip()
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, computed } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
@@ -136,7 +136,7 @@ export default {
   },
   widget: OhPlanPageDefinition,
   setup(props) {
-    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
+    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, scopedCssUid, childContext, defaultSlots }
   },
   data() {

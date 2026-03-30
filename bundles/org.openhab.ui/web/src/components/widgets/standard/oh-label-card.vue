@@ -59,6 +59,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhTrend from '@/components/widgets/system/oh-trend.vue'
@@ -75,7 +76,7 @@ export default {
   },
   widget: OhLabelCardDefinition,
   setup(props) {
-    const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    const { config, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, hasAction, evaluateExpression, performAction, onTaphold, onContextMenu }
   },

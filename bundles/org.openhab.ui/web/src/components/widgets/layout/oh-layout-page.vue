@@ -35,6 +35,7 @@
 <style lang="stylus"></style>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhBlock from './oh-block.vue'
 import OhMasonry from './oh-masonry.vue'
@@ -42,7 +43,6 @@ import OhGridLayout from './oh-grid-layout.vue'
 import OhCanvasLayout from './oh-canvas-layout.vue'
 import type { WidgetContext } from '../types'
 import type { Router } from 'framework7'
-import { computed } from 'vue'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 const props = defineProps<{
@@ -52,7 +52,7 @@ const props = defineProps<{
 
 defineEmits(['add-block', 'add-masonry'])
 
-const { config, childContext, scopedCssUid, defaultSlots, evaluateExpression } = useWidgetContext(props.context)
+const { config, childContext, scopedCssUid, defaultSlots, evaluateExpression } = useWidgetContext(computed(() => props.context))
 const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
 
 const masonrySlots = computed(() => ('slots' in props.context.component && props.context.component.slots.masonry) || [])

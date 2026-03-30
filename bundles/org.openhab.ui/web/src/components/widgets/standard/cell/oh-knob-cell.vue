@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhKnobCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
@@ -40,7 +41,7 @@ export default {
   },
   widget: OhKnobCellDefinition,
   setup(props) {
-    const { childContext, slots } = useWidgetContext(props.context)
+    const { childContext, slots } = useWidgetContext(computed(() => props.context))
     return { childContext, slots }
   },
   computed: {

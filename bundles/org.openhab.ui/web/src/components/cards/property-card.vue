@@ -31,6 +31,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import itemDefaultListComponent, { itemPathLabel } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
@@ -54,7 +55,7 @@ export default {
     }
   },
   setup(props) {
-    const { config, childContext, slots } = useWidgetContext(props.context)
+    const { config, childContext, slots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, slots }
   },
   computed: {

@@ -9,6 +9,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
 
@@ -19,7 +20,7 @@ export default {
   },
   widget: OhContextDefinition,
   setup(props) {
-    const { childContext, evaluateExpression, defaultSlots } = useWidgetContext(props.context)
+    const { childContext, evaluateExpression, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { childContext, evaluateExpression, defaultSlots }
   },
   data() {

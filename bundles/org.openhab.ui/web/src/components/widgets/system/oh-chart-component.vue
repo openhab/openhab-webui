@@ -122,7 +122,7 @@ let initOptions = echartsLocale
   : {}
 
 // composables
-const { config, slots, evaluateExpression } = useWidgetContext(props.context)
+const { config, slots, evaluateExpression } = useWidgetContext(computed(() => props.context))
 const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
 
 const chartComposable = useChart(props.context, config, slots, evaluateExpression)

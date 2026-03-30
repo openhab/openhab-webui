@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
@@ -20,7 +21,7 @@ export default {
     context: Object
   },
   setup(props) {
-    const { config, evaluateExpression } = useWidgetContext(props.context)
+    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
     return { config, evaluateExpression }
   },
   data() {

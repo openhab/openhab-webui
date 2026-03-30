@@ -98,6 +98,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { mapStores } from 'pinia'
 import CardMixin from './card-mixin'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
@@ -113,7 +114,7 @@ export default {
     element: Object
   },
   setup(props) {
-    const { config, childContext, visible, slots } = useWidgetContext(props.context)
+    const { config, childContext, visible, slots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, visible, slots }
   },
   computed: {

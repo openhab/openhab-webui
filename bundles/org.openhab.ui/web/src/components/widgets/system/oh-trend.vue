@@ -16,6 +16,7 @@
 
 <script>
 import { OhTrendDefinition } from '@/assets/definitions/widgets/system'
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 import Trend from '@hotdogee/vue3-trend'
@@ -30,7 +31,7 @@ export default {
   },
   widget: OhTrendDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   data() {

@@ -56,6 +56,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSliderCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
@@ -71,7 +72,7 @@ export default {
   },
   widget: OhSliderCellDefinition,
   setup(props) {
-    const { config, childContext, slots } = useWidgetContext(props.context)
+    const { config, childContext, slots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, slots }
   },
   computed: {
