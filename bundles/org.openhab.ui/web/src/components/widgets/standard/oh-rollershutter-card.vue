@@ -25,6 +25,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhRollershutter from '../system/oh-rollershutter.vue'
@@ -40,7 +41,7 @@ export default {
   },
   widget: OhRollershutterCardDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   data() {

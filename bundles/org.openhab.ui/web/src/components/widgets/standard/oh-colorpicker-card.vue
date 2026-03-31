@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhColorpicker from '../system/oh-colorpicker.vue'
@@ -22,7 +23,7 @@ export default {
   },
   widget: OhColorpickerCardDefinition,
   setup(props) {
-    useWidgetContext(props.context)
+    useWidgetContext(computed(() => props.context))
   },
   data() {
     return {

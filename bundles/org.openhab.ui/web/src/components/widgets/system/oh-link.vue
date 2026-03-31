@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhLinkDefinition } from '@/assets/definitions/widgets/system'
 
@@ -22,7 +23,7 @@ export default {
   },
   widget: OhLinkDefinition,
   setup(props) {
-    const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, childContext, hasAction, defaultSlots, performAction }
   },

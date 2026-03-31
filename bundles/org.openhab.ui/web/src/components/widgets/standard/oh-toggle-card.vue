@@ -16,6 +16,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhToggle from '../system/oh-toggle.vue'
@@ -31,7 +32,7 @@ export default {
   },
   widget: OhToggleCardDefinition,
   setup(props) {
-    useWidgetContext(props.context)
+    useWidgetContext(computed(() => props.context))
   },
   data() {
     return {

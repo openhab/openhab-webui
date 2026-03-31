@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhSipclient from '../system/oh-sipclient.vue'
@@ -22,7 +23,7 @@ export default {
   },
   widget: OhSIPClientCardDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   }
 }

@@ -147,7 +147,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, computed } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
@@ -162,7 +162,7 @@ export default {
     OhPlaceholderWidget
   },
   setup(props) {
-    const { config, childContext, visible, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, visible, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, visible, defaultSlots }
   },
   data() {

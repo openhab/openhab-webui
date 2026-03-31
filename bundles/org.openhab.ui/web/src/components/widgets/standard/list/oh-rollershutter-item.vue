@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhListItem from './oh-list-item.vue'
 import { OhRollershutterItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
@@ -22,7 +23,7 @@ export default {
   },
   widget: OhRollershutterItemDefinition,
   setup(props) {
-    const { config, childContext } = useWidgetContext(props.context)
+    const { config, childContext } = useWidgetContext(computed(() => props.context))
     return { config, childContext }
   },
   computed: {

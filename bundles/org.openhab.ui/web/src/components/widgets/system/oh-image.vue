@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, computed } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
@@ -26,7 +26,7 @@ export default {
   },
   widget: OhImageDefinition,
   setup(props) {
-    const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    const { config, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, hasAction, performAction }
   },

@@ -64,6 +64,7 @@
 
 <script>
 import { OhListDefinition } from '@/assets/definitions/widgets/system'
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
@@ -72,7 +73,7 @@ export default {
   },
   widget: OhListDefinition,
   setup(props) {
-    const { config, childContext, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, defaultSlots }
   }
 }

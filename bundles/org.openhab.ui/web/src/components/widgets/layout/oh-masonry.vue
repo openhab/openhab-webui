@@ -122,7 +122,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhMasonryDefinition } from '@/assets/definitions/widgets/layout'
 import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
@@ -137,7 +137,7 @@ defineOptions({
   widget: OhMasonryDefinition
 })
 
-const { config, childContext, defaultSlots } = useWidgetContext(props.context!)
+const { config, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
 
 // reactive state
 const dropdownMenuOpened = ref<number | null>(null)

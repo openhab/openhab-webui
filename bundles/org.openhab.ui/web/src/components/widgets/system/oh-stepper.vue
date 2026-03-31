@@ -16,13 +16,13 @@
 </style>
 
 <script setup lang="ts">
+import { computed, useTemplateRef } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhStepperDefinition } from '@/assets/definitions/widgets/system'
 import { getVariableScope, getLastVariableKeyValue, setVariableKeyValues } from '@/components/widgets/variable'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import type { WidgetContext } from '@/components/widgets/types'
-import { computed, useTemplateRef } from 'vue'
 import type { Stepper } from 'framework7'
 import type { OhStepper } from '@/types/components/widgets'
 
@@ -38,7 +38,7 @@ const props = defineProps<{
 }>()
 
 // composables
-const { config } = useWidgetContext(props.context)
+const { config } = useWidgetContext(computed(() => props.context))
 
 // computed
 const stepperConfig = computed<OhStepper.Config>(() => {

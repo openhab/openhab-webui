@@ -70,7 +70,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, computed } from 'vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSwiperDefinition } from '@/assets/definitions/widgets/system'
@@ -87,7 +87,7 @@ export default {
   },
   widget: OhSwiperDefinition,
   setup(props) {
-    const { config, childContext, slots, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, slots, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, slots, defaultSlots }
   },
   computed: {

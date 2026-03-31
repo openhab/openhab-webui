@@ -63,6 +63,7 @@
 
 <script>
 import { f7 } from 'framework7-vue'
+import { computed } from 'vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { LMarker, LTooltip, LIcon, LPopup } from '@vue-leaflet/vue-leaflet'
@@ -84,7 +85,7 @@ export default {
   widget: OhPlanMarkerDefinition,
   emits: ['update'],
   setup(props) {
-    const { config, visible, evaluateExpression } = useWidgetContext(props.context)
+    const { config, visible, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, visible, performAction }
   },

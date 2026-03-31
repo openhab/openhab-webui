@@ -92,6 +92,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
@@ -128,7 +129,7 @@ export default {
   },
   widget: OhSIPClientDefinition,
   setup(props) {
-    const { config, evaluateExpression } = useWidgetContext(props.context)
+    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, performAction }
   },

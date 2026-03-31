@@ -40,6 +40,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhRollershutterDefinition } from '@/assets/definitions/widgets/system'
 
@@ -51,7 +52,7 @@ export default {
   },
   widget: OhRollershutterDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   mounted() {

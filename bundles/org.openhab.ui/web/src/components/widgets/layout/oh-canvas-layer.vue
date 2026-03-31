@@ -47,7 +47,7 @@ const props = defineProps<{
 const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
-const { config, defaultSlots, childContext, visible } = useWidgetContext(props.context)
+const { config, defaultSlots, childContext, visible } = useWidgetContext(computed(() => props.context))
 
 // computed
 const layerPreload = computed(() => config.value?.preload === true)

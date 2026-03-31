@@ -164,6 +164,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
+import { computed } from 'vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhCellDefinition } from '@/assets/definitions/widgets/standard/cells'
@@ -183,7 +184,7 @@ export default {
     state: String
   },
   setup(props) {
-    const { config, childContext, evaluateExpression, hasAction, slots, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, evaluateExpression, hasAction, slots, defaultSlots } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, childContext, hasAction, slots, defaultSlots, performAction }
   },

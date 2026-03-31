@@ -20,6 +20,7 @@
 <script>
 import slideMixin from './slide-mixin'
 import { OhSliderDefinition } from '@/assets/definitions/widgets/system'
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
@@ -29,7 +30,7 @@ export default {
     context: Object
   },
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   data() {

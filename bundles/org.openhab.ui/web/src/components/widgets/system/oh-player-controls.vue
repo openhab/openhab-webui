@@ -34,6 +34,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
 
@@ -45,7 +46,7 @@ export default {
   },
   widget: OhPlayerDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   mounted() {

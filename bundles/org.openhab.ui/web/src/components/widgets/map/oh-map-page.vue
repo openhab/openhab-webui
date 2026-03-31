@@ -39,7 +39,7 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, computed } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
@@ -76,7 +76,7 @@ export default {
   },
   widget: OhMapPageDefinition,
   setup(props) {
-    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
+    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, scopedCssUid, childContext, defaultSlots }
   },
   data() {

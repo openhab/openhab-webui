@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
@@ -16,7 +17,7 @@ export default {
     context: Object
   },
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   computed: {

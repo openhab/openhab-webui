@@ -13,6 +13,7 @@
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 import { OhButtonDefinition } from '@/assets/definitions/widgets/system'
 
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
@@ -22,7 +23,7 @@ export default {
   },
   widget: OhButtonDefinition,
   setup(props) {
-    const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(computed(() => props.context))
     const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, childContext, hasAction, defaultSlots, performAction, onTaphold, onContextMenu }
   },

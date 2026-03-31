@@ -36,6 +36,7 @@
 <script>
 import { OhIconDefinition } from '@/assets/definitions/widgets/system'
 import { Icon } from '@iconify/vue'
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
@@ -56,7 +57,7 @@ export default {
   },
   widget: OhIconDefinition,
   setup(props) {
-    const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    const { config, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, hasAction, performAction }
   },
