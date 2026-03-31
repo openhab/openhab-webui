@@ -204,7 +204,7 @@ import { compareItems } from '@/components/widgets/widget-order'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 export default {
   mixins: [PageDesigner],

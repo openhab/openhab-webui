@@ -95,7 +95,7 @@ import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 import * as api from '@/api'
 
