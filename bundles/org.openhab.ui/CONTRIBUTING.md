@@ -59,22 +59,7 @@ Some of its very helpful features are:
 
 ## Coding Guidelines
 
-- [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) is used as formatter, enforcing Prettier formatting.
 - Vue Reactivity (see [Vue.js: Essentials: Reactivity Fundamentals](https://vuejs.org/guide/essentials/reactivity-fundamentals)) must be used where possible. No direct DOM manipulation!
-- Vue directives such as `v-if`, `v-else`, `v-show`, `v-for` should be placed before other attributes in the `<template>`:
-
-  Bad style:
-
-  ```html
-  <div ref="someDiv" color="blue" @click="toggle" v-if="ready">
-  ```
-
-  Good style:
-
-  ```html
-  <div v-if="ready"  ref="someDiv" color="blue" @click="toggle">
-  ```
-
 - Props (see [Vue.js: Components In-Depth: Props](https://vuejs.org/guide/components/props.html)) are a one-way data binding from parent to child and must not be mutated by the child component. Emit events (see [Vue.js: Components In-Depth: Events](https://vuejs.org/guide/components/events.html)) to share data from child to parent.
 - Computed properties (see [Vue.js: Essentials: Computed Properties](https://vuejs.org/guide/essentials/computed.html)) should be used instead of method calls for getting prop values in the `<template>`. Methods re-evaluate on every rerender, negatively impacting performance.
 - Conditional HTML attributes on HTML elements should be unset using `null` if the condition is false: `condition ? true : null`. This does not apply for Vue components.
@@ -85,11 +70,11 @@ For new components, additional guidelines apply:
 - TypeScript should be used over plain JavaScript. See [Vue.js: TypeScript with Composition API](https://vuejs.org/guide/typescript/composition-api.html).
 - The Composition API and composables should be used instead of the Options API and mixins. See [Vue.js: Introduction: API Styles](https://vuejs.org/guide/introduction.html#api-styles).
 - Composition API `<script setup>` code should be ordered according to the following order:
-  1. Constants, Store instantiation and typescript definitions
-  1. Defines (defineProps, defineEmits, defineModels, defineOptions, defineExpose, ...)
+  1. Constants, store instantiation and type definitions
+  1. Defines (`defineProps`, `defineEmits`, `defineModels`, `defineOptions`, `defineExpose`, ...)
   1. Composables
-  1. Data/State
-  1. Computed properties
+  1. State/Data
+  1. Computed
   1. Watchers
   1. Lifecycle hooks
   1. Methods
