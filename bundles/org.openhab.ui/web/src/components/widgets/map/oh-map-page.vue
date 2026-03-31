@@ -8,7 +8,7 @@
       :zoom-animation="!config.noZoomAnimation"
       :marker-zoom-animation="!config.noMarkerZoomAnimation"
       class="oh-map-page-lmap"
-      :class="{ 'with-tabbar': context.tab, 'voyager-invert': tileProvider === 'CartoDB.Voyager' && uiOptionsStore.darkMode === 'dark' }"
+      :class="{ 'with-tabbar': context.tab }"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
       <l-feature-group v-if="showMarkers" ref="featureGroup">
@@ -36,10 +36,6 @@
 .oh-map-page-lmap .leaflet-div-icon
   background: unset
   border: unset
-
-.oh-map-page-lmap.voyager-invert
-  .leaflet-tile-pane
-    filter invert(1) hue-rotate(180deg) brightness(120%) contrast(80%)
 </style>
 
 <script>
@@ -67,6 +63,8 @@ Icon.Default.mergeOptions({
   shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
+const DEFAULT_TILE_PROVIDER = 'CartoDB.Voyager'
+
 export default {
   props: {
     context: Object
@@ -90,13 +88,10 @@ export default {
       currentCenter: null,
       center: this.context.component.config.initialCenter ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
       showMarkers: false,
-      layer: null
+      tileLayer: null
     }
   },
   computed: {
-    tileProvider() {
-      return this.config.tileLayerProvider || 'CartoDB.Voyager'
-    },
     mapOptions() {
       return Object.assign(
         {
@@ -131,7 +126,7 @@ export default {
     })
   },
   watch: {
-    'uiOptionsStore.darkMode': function (newVal) {
+    'uiOptionsStore.darkMode': function () {
       this.setBackgroundLayer()
     }
   },
@@ -148,18 +143,28 @@ export default {
       }
     },
     setBackgroundLayer() {
+      const tileProvider = this.config.tileLayerProvider || DEFAULT_TILE_PROVIDER
       let overlayLayer
 
-      if (this.layer) {
-        this.$refs.map.leafletObject.removeLayer(this.layer)
+      if (this.tileLayer) {
+        this.$refs.map.leafletObject.removeLayer(this.tileLayer)
       }
 
       try {
-        this.layer = tileLayer.provider(this.tileProvider, this.config.tileLayerProviderOptions)
+        this.tileLayer = tileLayer.provider(tileProvider, this.config.tileLayerProviderOptions)
       } catch {
-        this.layer = tileLayer.provider(this.tileProvider)
+        this.tileLayer = tileLayer.provider(tileProvider)
       }
-      this.layer.addTo(this.$refs.map.leafletObject)
+      this.tileLayer.addTo(this.$refs.map.leafletObject)
+
+      const tilePane = this.$refs.map.leafletObject.getPane('tilePane')
+      if (tilePane) {
+        if (this.uiOptionsStore.darkMode === 'dark' && tileProvider === 'CartoDB.Voyager') {
+          tilePane.style.filter = 'invert(1) hue-rotate(180deg) brightness(120%) contrast(80%)'
+        } else {
+          tilePane.style.filter = 'unset'
+        }
+      }
 
       if (this.config.overlayTileLayerProvider) {
         try {
