@@ -175,8 +175,13 @@
               </template>
               <template #after>
                 <f7-badge
-                  v-if="thing.statusInfo.status === 'ONLINE' && thing.statusInfo.statusDetail === 'NONE' && thing.statusInfo.description && thing.statusInfo.description !== ''"
-                  color="red"  :tooltip="thing.statusInfo.description">
+                  v-if="thing.statusInfo.status === 'ONLINE'
+                    && thing.statusInfo.statusDetail === 'NONE'
+                    && thing.statusInfo.description
+                    && thing.statusInfo.description !== ''"
+                  color="red"
+                  :tooltip="thing.statusInfo.description"
+                  style="margin-right: 8px">
                   <i>i</i>
                 </f7-badge>
                 <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
