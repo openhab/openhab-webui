@@ -1355,12 +1355,12 @@ export default {
       localStorage.setItem('openhab.ui:logviewer.logShowErrors', this.showErrors)
     }
   },
-  mounted () {
+  mounted() {
     if (this.embedded) {
       this.onPageAfterIn()
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.loggingStop()
   }
 }
