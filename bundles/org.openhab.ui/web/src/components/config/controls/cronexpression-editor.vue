@@ -658,7 +658,7 @@ function formatBaseCronField(field: CronFieldBase, emptyForEvery = false) {
     case CronEvery.Increment:
       return field.increment.start + '/' + field.increment.increment
     case CronEvery.Specific:
-      if(field.specific.length === 0) {
+      if (field.specific.length === 0) {
         return emptyForEvery ? '' : '*'
       }
       return field.specific.join(',')
