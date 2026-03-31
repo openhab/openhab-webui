@@ -55,7 +55,7 @@ export interface ChartContext {
   items?: Record<string, api.EnrichedItem>
 }
 
-export type OhCalendarAxisOption = OhCalendarSeries.Config & CalendarOption
+export type OhCalendarAxisOption = OhCalendarAxis.Config & CalendarOption
 export type OhCategoryAxisOption = OhCategoryAxis.Config & CategoryAxisBaseOption
 export type OhTimeAxisOption = OhTimeAxis.Config & TimeAxisBaseOption
 export type OhValueAxisOption = OhValueAxis.Config & NumericAxisBaseOptionCommon
