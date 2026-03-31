@@ -5,15 +5,24 @@ import type { OhCalendarSeriesOption, SeriesComponent } from '../types.ts'
 import { OhCalendarSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
 import { f7 } from 'framework7-vue'
+import { OhCalendarSeriesDefinition } from '@/assets/definitions/widgets/chart'
 
 const calendarSeries: SeriesComponent = {
   neededItems(context, component) {
     if (!component || !component.config || !component.config.item) return []
-    const series = context.evaluateExpression<OhCalendarSeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhCalendarSeriesOption>(
+      ComponentId.get(component)!,
+      component.config,
+      OhCalendarSeriesDefinition
+    )
     return series.item ? [series.item] : []
   },
   get(context, component, points) {
-    let series = context.evaluateExpression<OhCalendarSeriesOption>(ComponentId.get(component)!, component.config)
+    let series = context.evaluateExpression<OhCalendarSeriesOption>(
+      ComponentId.get(component)!,
+      component.config,
+      OhCalendarSeriesDefinition
+    )
     const itemPoints = points.find((p) => p.name === series.item)?.data ?? []
 
     type Group = [Dayjs, string[]]

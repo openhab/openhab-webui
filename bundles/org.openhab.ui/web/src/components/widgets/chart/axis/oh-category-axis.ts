@@ -4,6 +4,7 @@ import LocaleData from 'dayjs/plugin/localeData'
 import ComponentId from '../../component-id'
 import type { AxisComponent, OhCategoryAxisOption } from '../types'
 import { OhCategoryAxis } from '@/types/components/widgets'
+import { OhCategoryAxisDefinition } from '@/assets/definitions/widgets/chart'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(LocaleData)
@@ -23,7 +24,7 @@ const categoryAxis: AxisComponent = {
   get(context, component, startTime, _endTime, inverse) {
     const config = component.config as any as OhCategoryAxis.Config
     // @ts-expect-error component config's type doesn't include the required properties
-    const axis = context.evaluateExpression<OhCategoryAxisOption>(ComponentId.get(component)!, component.config)
+    const axis = context.evaluateExpression<OhCategoryAxisOption>(ComponentId.get(component)!, component.config, OhCategoryAxisDefinition)
     axis.type = 'category'
 
     axis.data = axis.data || []

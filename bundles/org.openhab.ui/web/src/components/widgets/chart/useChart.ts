@@ -1,17 +1,13 @@
-import { ref, computed, type ComputedRef, readonly } from 'vue'
+import { computed, type ComputedRef, readonly, ref } from 'vue'
 import { computedAsync } from '@vueuse/core'
 import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import DayDuration from 'dayjs/plugin/duration'
-
-dayjs.extend(IsoWeek)
-dayjs.extend(DayDuration)
-
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import ComponentId from '../component-id'
 import * as api from '@/api'
-import { startOf, addOrSubtractPeriod as addOrSubtractPeriodUtil } from './util/time.ts'
+import { addOrSubtractPeriod as addOrSubtractPeriodUtil, startOf } from './util/time.ts'
 
 // Axis components
 import OhTimeAxis from './axis/oh-time-axis'
@@ -36,13 +32,28 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 
 // Types
 import type { EChartsOption } from 'echarts'
-import { ChartType, type Period, type OhChart, PeriodType } from '@/types/components/widgets'
+import { ChartType, type OhChart, type Period } from '@/types/components/widgets'
+import { OhChartDefinition } from '@/assets/definitions/widgets/system'
 import type { WidgetContext } from '../types'
-import type { ChartContext, AxisComponent, SeriesComponent, ChartEvaluateExpressionFn, OhSeriesOption, OhSeriesConfig } from './types'
+import type {
+  AxisComponent,
+  ChartComponentEvaluateExpressionFn,
+  ChartContext,
+  OhSeriesConfig,
+  OhSeriesOption,
+  SeriesComponent
+} from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
 import { transformCustomAxisOptions, transformCustomSeriesOptions } from '@/components/widgets/chart/util/customOptions.ts'
+import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
+import cloneDeep from 'lodash/cloneDeep'
+import type { EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
+import type { WidgetDefinition } from '@/assets/definitions/widgets/helpers.ts'
 
-const DEFAULT_PERIOD = PeriodType.D
+dayjs.extend(IsoWeek)
+dayjs.extend(DayDuration)
+
+const DEFAULT_PERIOD: Period = OhChartDefinition().props.parameters.find((p) => p.name === 'period')!.default as Period
 
 const axisComponents: Record<string, AxisComponent> = {
   'oh-time-axis': OhTimeAxis,
@@ -61,23 +72,27 @@ const seriesComponents: Record<string, SeriesComponent> = {
 
 export function useChart(
   context: WidgetContext,
-  config: ComputedRef<OhChart.Config>,
+  rawConfig: ComputedRef<OhChart.Config>,
   slots: ComputedRef<Record<string, api.UiComponent[]>>,
-  evaluateExpression: ChartEvaluateExpressionFn
+  evaluateExpression: EvaluateExpressionFn
 ) {
   const uiOptionsStore = useUIOptionsStore()
   const runtimeStore = useRuntimeStore()
 
-  const speriod = ref<Period>(config.value.period || DEFAULT_PERIOD)
+  const config = computed(() => {
+    const c = cloneDeep(rawConfig.value)
+    // @ts-expect-error c is an object => Record<string, unknown>, but TS doesn't recognise that
+    applyParameterDefaults(OhChartDefinition().props.parameters, c)
+    return c
+  })
+  const period = ref<Period>(config.value.period || DEFAULT_PERIOD)
   // future as boolean allows for backwards compatibility
   const future = computed<number>(() => ((config.value.future as unknown as boolean) === true ? 1 : (config.value.future ?? 0)))
   const orient = ref<string | null>(null)
 
   const addOrSubtractPeriod = (day: Dayjs, direction: number): Dayjs => {
     if (!config.value) return day
-    const chartType = config.value.chartType || ChartType.dynamic
-    const p = evaluateExpression('.period', speriod.value) || (config.value.period as Period) || DEFAULT_PERIOD
-    return addOrSubtractPeriodUtil(chartType, p, day, direction)
+    return addOrSubtractPeriodUtil(config.value.chartType ?? ChartType.dynamic, period.value, day, direction)
   }
 
   const initialEndTime = (): Dayjs => {
@@ -120,14 +135,22 @@ export function useChart(
 
   const startTime = computed(() => addOrSubtractPeriod(endTime.value, -1))
 
-  const period = computed(() => evaluateExpression('.period', speriod.value))
+  const chartComponentEvaluateExpression: ChartComponentEvaluateExpressionFn = <T = unknown>(
+    key: string,
+    value: T,
+    componentDefinition: WidgetDefinition | null
+  ): T => {
+    const v = cloneDeep(value)
+    if (componentDefinition) applyParameterDefaults(componentDefinition.props.parameters, v as Record<string, unknown>)
+    return evaluateExpression(key, v) as T
+  }
 
   const chartContext = computed<ChartContext>(() => ({
     chart: {
       ...(context.component as api.UiComponent),
       config: config.value
     },
-    evaluateExpression,
+    evaluateExpression: chartComponentEvaluateExpression,
     numberFormatter: numberFormatter.value
   }))
 
@@ -295,7 +318,7 @@ export function useChart(
     return Promise.all(combinedPromises).then(getter)
   }
 
-  const series = computedAsync<SeriesOption[]>(async () => {
+  const series = computedAsync<OhSeriesOption[]>(async () => {
     if (!slots.value || !slots.value.series) {
       return []
     }
@@ -330,7 +353,7 @@ export function useChart(
 
   // methods
   const setPeriod = (periodValue: Period) => {
-    speriod.value = periodValue
+    period.value = periodValue
     endTime.value = addOrSubtractPeriod(dayjs(), future.value)
   }
 
@@ -351,7 +374,7 @@ export function useChart(
   return {
     endTime: readonly(endTime),
     startTime,
-    period,
+    period: readonly(period),
     options,
 
     setPeriod,

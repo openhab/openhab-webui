@@ -2,6 +2,7 @@ import { f7 } from 'framework7-vue'
 import ComponentId from '../../component-id'
 import type { OhStateSeriesOption, SeriesComponent } from '../types.ts'
 import type { CustomSeriesRenderItem } from 'echarts'
+import { OhStateSeriesDefinition } from '@/assets/definitions/widgets/chart'
 
 const renderState: CustomSeriesRenderItem = (_params, api) => {
   const yValue = api.value(0)
@@ -32,11 +33,11 @@ export type StateColorMap = Record<string, string>
 
 const stateSeries: SeriesComponent = {
   neededItems(context, component) {
-    const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config, OhStateSeriesDefinition)
     return series.item ? [series.item] : []
   },
   get(context, component, points) {
-    const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config, OhStateSeriesDefinition)
     series.type = 'custom'
     series.renderItem = renderState
     series.encode = {

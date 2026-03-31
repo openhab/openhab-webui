@@ -5,6 +5,7 @@ import type { MiscChartComponent } from '../types'
 import type { OhChartTooltip } from '@/types/components/widgets'
 import type { TooltipComponentOption } from 'echarts'
 import type { TopLevelFormatterParams } from 'echarts/types/dist/shared'
+import { OhChartTooltipDefinition } from '@/assets/definitions/widgets/chart'
 
 dayjs.extend(LocalizedFormat)
 
@@ -12,7 +13,8 @@ const chartTooltip: MiscChartComponent = {
   get(context, component) {
     const options = context.evaluateExpression<OhChartTooltip.Config & TooltipComponentOption>(
       ComponentId.get(component)!,
-      component.config
+      component.config,
+      OhChartTooltipDefinition
     )
     if (options.confine === undefined) options.confine = true
 

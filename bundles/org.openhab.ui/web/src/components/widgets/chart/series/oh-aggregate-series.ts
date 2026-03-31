@@ -6,6 +6,7 @@ import type { OhAggregateSeriesOption, SeriesComponent } from '../types.ts'
 import { AggregationFunction, OhAggregateSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
 import { f7 } from 'framework7-vue'
+import { OhAggregateSeriesDefinition } from '@/assets/definitions/widgets/chart'
 
 dayjs.extend(IsoWeek)
 
@@ -36,7 +37,11 @@ function includeBoundaryAndItemStateFor(config: OhAggregateSeries.Config) {
 const aggregateSeries: SeriesComponent = {
   neededItems(context, component) {
     if (!component || !component.config || !component.config.item) return []
-    const series = context.evaluateExpression<OhAggregateSeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhAggregateSeriesOption>(
+      ComponentId.get(component)!,
+      component.config,
+      OhAggregateSeriesDefinition
+    )
     return series.item ? [series.item] : []
   },
   includeBoundary(_context, component) {
@@ -46,7 +51,11 @@ const aggregateSeries: SeriesComponent = {
     return includeBoundaryAndItemStateFor(component.config)
   },
   get(context, component, points) {
-    const series = context.evaluateExpression<OhAggregateSeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhAggregateSeriesOption>(
+      ComponentId.get(component)!,
+      component.config,
+      OhAggregateSeriesDefinition
+    )
     const dimension1 = series.dimension1 ?? (context.chart.config.chartType as unknown as OhAggregateSeries.Dimension)
     const dimension2 = series.dimension2
     const boundary = includeBoundaryAndItemStateFor(component.config)

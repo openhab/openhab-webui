@@ -20,7 +20,7 @@ import type {
   NumericAxisBaseOptionCommon,
   TimeAxisBaseOption
 } from 'echarts/types/dist/shared'
-import type { WidgetContext } from '@/components/widgets/types'
+import type { WidgetDefinition } from '@/assets/definitions/widgets/helpers.ts'
 
 export type OhAggregateSeriesOption = OhAggregateSeries.Config &
   (LineSeriesOption | BarSeriesOption | HeatmapSeriesOption | ScatterSeriesOption)
@@ -42,14 +42,11 @@ export type OhSeriesOption =
   | OhStateSeriesOption
   | OhDataSeriesOption
 
-/**
- * The same as {@link useWidgetExpression}'s `EvaluateExpressionFn` but without {@link Error} as return type.
- */
-export type ChartEvaluateExpressionFn = <T = unknown>(key: string, value: T, context?: WidgetContext, props?: Record<string, unknown>) => T
+export type ChartComponentEvaluateExpressionFn = <T = unknown>(key: string, value: T, componentDefinition: WidgetDefinition | null) => T
 
 export interface ChartContext {
   chart: Omit<api.RootUiComponent | api.UiComponent, 'config'> & { config: OhChart.Config }
-  evaluateExpression: ChartEvaluateExpressionFn
+  evaluateExpression: ChartComponentEvaluateExpressionFn
   numberFormatter?: Intl.NumberFormat
   series?: OhSeriesOption[]
   items?: Record<string, api.EnrichedItem>

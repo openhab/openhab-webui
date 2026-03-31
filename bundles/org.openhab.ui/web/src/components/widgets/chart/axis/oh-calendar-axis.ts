@@ -1,11 +1,15 @@
 import ComponentId from '../../component-id'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import type { AxisComponent, OhCalendarAxisOption } from '../types'
-import type { CalendarOption } from 'echarts/types/dist/shared'
+import { OhCalendarAxisDefinition } from '@/assets/definitions/widgets/chart'
 
 const calendarAxis: AxisComponent = {
   get(context, component, startTime, endTime) {
-    const calendar = context.evaluateExpression<OhCalendarAxisOption>(ComponentId.get(component)!, component.config)
+    const calendar = context.evaluateExpression<OhCalendarAxisOption>(
+      ComponentId.get(component)!,
+      component.config,
+      OhCalendarAxisDefinition
+    )
     calendar.range = [startTime.toDate(), endTime.subtract(1, 'day').toDate()]
     if (!calendar.dayLabel) calendar.dayLabel = {}
     if (calendar.dayLabel.firstDay === undefined) calendar.dayLabel.firstDay = 1
