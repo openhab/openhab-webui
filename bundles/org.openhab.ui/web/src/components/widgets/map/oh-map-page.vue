@@ -8,7 +8,7 @@
       :zoom-animation="!config.noZoomAnimation"
       :marker-zoom-animation="!config.noMarkerZoomAnimation"
       class="oh-map-page-lmap"
-      :class="{ 'with-tabbar': context.tab }"
+      :class="{ 'with-tabbar': context.tab, 'voyager-invert': tileProvider === 'CartoDB.Voyager' && uiOptionsStore.darkMode === 'dark' }"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
       <l-feature-group v-if="showMarkers" ref="featureGroup">
@@ -33,9 +33,13 @@
     height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
 
 // override leaflet style
-.leaflet-div-icon
+.oh-map-page-lmap .leaflet-div-icon
   background: unset
   border: unset
+
+.oh-map-page-lmap.voyager-invert
+  .leaflet-tile-pane
+    filter invert(1) hue-rotate(180deg) brightness(120%) contrast(80%)
 </style>
 
 <script>
@@ -85,13 +89,14 @@ export default {
       currentZoom: 13,
       currentCenter: null,
       center: this.context.component.config.initialCenter ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
-      attribution:
-        '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       showMarkers: false,
       layer: null
     }
   },
   computed: {
+    tileProvider() {
+      return this.config.tileLayerProvider || 'CartoDB.Voyager'
+    },
     mapOptions() {
       return Object.assign(
         {
@@ -143,8 +148,6 @@ export default {
       }
     },
     setBackgroundLayer() {
-      const defaultProvider = useUIOptionsStore().darkMode === 'dark' ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
-      const provider = this.config.tileLayerProvider || defaultProvider
       let overlayLayer
 
       if (this.layer) {
@@ -152,9 +155,9 @@ export default {
       }
 
       try {
-        this.layer = tileLayer.provider(provider, this.config.tileLayerProviderOptions)
+        this.layer = tileLayer.provider(this.tileProvider, this.config.tileLayerProviderOptions)
       } catch {
-        this.layer = tileLayer.provider(defaultProvider)
+        this.layer = tileLayer.provider(this.tileProvider)
       }
       this.layer.addTo(this.$refs.map.leafletObject)
 

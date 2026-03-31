@@ -1,9 +1,23 @@
 <template>
-  <l-map v-if="showMap" :zoom="zoom" :center="center" :options="mapOptions" @click="mapClicked" ref="map" class="oh-map-picker-lmap">
+  <l-map
+    v-if="showMap"
+    :zoom="zoom"
+    :center="center"
+    :options="mapOptions"
+    @click="mapClicked"
+    ref="map"
+    class="oh-map-picker-lmap"
+    :class="{ invert: uiOptionsStore.darkMode === 'dark' }">
     <l-tile-layer :url="url" :attribution="attribution" />
     <l-marker v-if="marker" :lat-lng="marker" />
   </l-map>
 </template>
+
+<style lang="stylus">
+.oh-map-picker-lmap.invert
+  .leaflet-tile-pane
+    filter invert(1) hue-rotate(180deg) brightness(120%) contrast(80%)
+</style>
 
 <script>
 import { nextTick } from 'vue'
@@ -41,9 +55,9 @@ export default {
       zoom: 1,
       center: latLng(48, 6),
       // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().darkMode}_all/{z}/{x}/{y}.png`,
+      url: `https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`,
       attribution:
-        '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
+        '&copy; <a class="external" target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a class="external" target="_blank" href="https://carto.com/attributions">CARTO</a>',
       marker: null,
       mapOptions: {
         zoomSnap: 0.5
