@@ -118,7 +118,7 @@ import * as StandardListWidgets from '@/components/widgets/standard/list'
 import * as api from '@/api'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
-import { useViewArea } from '@/composables/useViewArea'
+import { useViewArea } from '@/js/composables/useViewArea'
 import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }

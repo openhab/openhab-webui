@@ -148,7 +148,7 @@ const ConfigurableWidgets = {
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 export default {
   mixins: [PageDesigner],

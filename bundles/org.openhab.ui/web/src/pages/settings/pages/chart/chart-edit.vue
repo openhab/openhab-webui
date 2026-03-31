@@ -93,7 +93,7 @@ import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import WidgetSlotConfigPopup from '@/components/pagedesigner/widget-slot-config-popup.vue'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 export default {
   mixins: [PageDesigner],

@@ -11,7 +11,7 @@
 
 <script>
 import modal from './modal-mixin'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 export default {
   mixins: [modal],

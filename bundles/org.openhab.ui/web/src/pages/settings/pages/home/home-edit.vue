@@ -230,7 +230,7 @@ import {
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 const ConfigurableWidgets = {
   'oh-location-card': OhLocationCardParameters,
