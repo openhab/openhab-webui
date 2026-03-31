@@ -679,16 +679,14 @@ export default {
     serverDisplayUrl() {
       return window.location.origin
     },
-    showDockedLogViewer () {
+    showDockedLogViewer() {
       return this.logDockVisible && !this.currentPath.developer?.['log-viewer']
     },
-    logDockStyle () {
+    logDockStyle() {
       const viewportWidth = this.$f7dim?.width || window.innerWidth
       const hasPermanentLeftPanel = viewportWidth >= this.f7params.panel.leftBreakpoint && !this.uiOptionsStore.visibleBreakpointDisabled
       return {
-        left: hasPermanentLeftPanel
-          ? 'calc(var(--f7-panel-width) + var(--f7-safe-area-left))'
-          : 'var(--f7-safe-area-left)',
+        left: hasPermanentLeftPanel ? 'calc(var(--f7-panel-width) + var(--f7-safe-area-left))' : 'var(--f7-safe-area-left)',
         right: 'var(--f7-safe-area-right)'
       }
     },
@@ -735,11 +733,11 @@ export default {
     },
     logDockHeight: {
       immediate: true,
-      handler (val) {
+      handler(val) {
         if (val) document.documentElement.style.setProperty('--log-dock-height', val + 'px')
       }
     },
-    currentUrl () {
+    currentUrl() {
       if (this.logDockFullscreen) this.logDockFullscreen = false
     }
   },
@@ -949,21 +947,22 @@ export default {
       f7.panel.get('left').toggleVisibleBreakpoint()
       useUIOptionsStore().visibleBreakpointDisabled = f7.panel.get('left').visibleBreakpointDisabled
     },
-    setLogDockVisible (visible) {
+    setLogDockVisible(visible) {
       this.logDockVisible = visible
       if (!visible) this.logDockFullscreen = false
       localStorage.setItem('openhab.ui:logDock.visible', String(this.logDockVisible))
     },
-    toggleLogDock () {
+    toggleLogDock() {
       this.setLogDockVisible(!this.logDockVisible)
     },
-    toggleLogDockFullscreen () {
+    toggleLogDockFullscreen() {
       if (!this.logDockVisible) this.setLogDockVisible(true)
       this.logDockFullscreen = !this.logDockFullscreen
     },
-    startDockResize (ev) {
+    startDockResize(ev) {
       const startY = ev.clientY
-      const startHeight = this.logDockHeight || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--log-dock-height')) || 300
+      const startHeight =
+        this.logDockHeight || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--log-dock-height')) || 300
       const minHeight = 120
       const maxHeight = window.innerHeight * 0.85
 
@@ -999,7 +998,7 @@ export default {
         case 76: // L for log pane
           this.toggleLogDock()
           break
-        case 77: { // M for menu
+        case 77: // M for menu
           const leftPanel = f7.panel.get('left')
           if (leftPanel.opened) {
             leftPanel.close()
@@ -1007,7 +1006,6 @@ export default {
             leftPanel.open()
           }
           break
-        }
       }
     },
     updateUrl(newUrl) {
@@ -1213,7 +1211,7 @@ export default {
       this.startAudioWebSocket()
     })
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (window) {
       window.removeEventListener('keydown', this.keyDown)
     }
