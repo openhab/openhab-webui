@@ -141,7 +141,8 @@ export function useChart(
     componentDefinition: WidgetDefinition | null
   ): T => {
     const v = cloneDeep(value)
-    if (componentDefinition) applyParameterDefaults(componentDefinition.props.parameters, v as Record<string, unknown>)
+    if (componentDefinition && v !== null && typeof v === 'object')
+      applyParameterDefaults(componentDefinition.props.parameters, v as Record<string, unknown>)
     return evaluateExpression(key, v) as T
   }
 

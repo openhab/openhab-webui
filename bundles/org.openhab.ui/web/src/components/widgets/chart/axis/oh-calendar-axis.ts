@@ -17,10 +17,10 @@ const calendarAxis: AxisComponent = {
     if (!calendar.monthLabel) calendar.monthLabel = {}
     if (calendar.monthLabel.margin === undefined) calendar.monthLabel.margin = 5
 
-    if (!calendar.top) calendar.top = '100'
-    if (!calendar.bottom) calendar.bottom = '50'
-    if (!calendar.left) calendar.left = '60'
-    if (!calendar.right) calendar.right = '50'
+    if (calendar.top === undefined || calendar.top === null) calendar.top = '100'
+    if (calendar.bottom === undefined || calendar.bottom === null) calendar.bottom = '50'
+    if (calendar.left === undefined || calendar.left === null) calendar.left = '60'
+    if (calendar.right === undefined || calendar.right === null) calendar.right = '50'
 
     if (useUIOptionsStore().darkMode === 'dark') {
       if (!calendar.itemStyle) calendar.itemStyle = {}
