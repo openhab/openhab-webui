@@ -1,6 +1,7 @@
 <template>
   <ul>
     <f7-list-input
+      ref="input"
       :floating-label="theme.md"
       :label="configDescription.label"
       :name="configDescription.name"
@@ -8,8 +9,7 @@
       :required="configDescription.required"
       validate
       :clear-button="!configDescription.required"
-      @input="(evt) => updateValue(evt.target.value)"
-      :error-message-force="exprError"
+      @input="updateValue($event.target.value)"
       type="text">
       <template #content-end>
         <div class="padding-left">
@@ -22,68 +22,60 @@
         </div>
       </template>
     </f7-list-input>
+
+    <teleport to="body">
+      <cronexpression-editor v-if="popupOpen" :model-value="value" @update:model-value="updateValue" v-model:opened="popupOpen" />
+    </teleport>
   </ul>
 </template>
 
 <script>
+import { defineAsyncComponent } from 'vue'
+import { theme } from 'framework7-vue'
 import { toString } from 'cronstrue'
-import { f7, theme } from 'framework7-vue'
+import { validate } from './cronexpression-editor.utils'
 
 export default {
+  components: {
+    CronexpressionEditor: defineAsyncComponent(
+      () => import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue')
+    )
+  },
   props: {
     configDescription: Object,
     value: String
   },
-  emits: ['input'],
+  emits: ['input', 'update:value'],
   setup() {
     return { theme }
   },
-  methods: {
-    updateValue(value) {
-      this.$emit('input', value)
-    },
-    openPopup() {
-      import(/* webpackChunkName: "cronexpression-editor" */ '@/components/config/controls/cronexpression-editor.vue').then((c) => {
-        const popup = {
-          component: c.default
-        }
-
-        f7.views.main.router.navigate(
-          {
-            url: 'cron-edit',
-            route: {
-              path: 'cron-edit',
-              popup
-            }
-          },
-          {
-            props: {
-              value: this.value
-            }
-          }
-        )
-
-        f7.once('cronEditorUpdate', this.updateValue)
-        f7.once('cronEditorClosed', () => {
-          f7.off('cronEditorUpdate', this.updateValue)
-        })
-      })
+  data() {
+    return {
+      popupOpen: false,
+      inputEl: null
     }
   },
   computed: {
     translation() {
       try {
-        const ret = toString(this.value, {
-          use24HourTimeFormat: true,
-          dayOfWeekStartIndexZero: false
-        })
-        return ret
+        return toString(this.value, { use24HourTimeFormat: true })
       } catch (err) {
         return err
       }
+    }
+  },
+  methods: {
+    updateValue(value) {
+      if (!this.inputEl) {
+        this.inputEl = this.$refs.input?.$el?.querySelector('input')
+      }
+      const errorMessage = validate(value)
+      this.inputEl.setCustomValidity(errorMessage)
+      this.$emit('input', value)
+      this.$emit('update:value', value)
     },
-    exprError() {
-      return this.translation.indexOf('Error:') === 0
+    openPopup() {
+      this.popupOpen = true
     }
   }
 }
