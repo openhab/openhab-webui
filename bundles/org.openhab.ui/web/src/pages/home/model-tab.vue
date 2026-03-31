@@ -106,41 +106,56 @@ export default {
     PropertyCard
   },
   computed: {
-    ready () {
+    ready() {
       return useModelStore().ready
     },
-    groups () {
+    groups() {
       return cardGroups(useModelStore(), this.type, this.page)
     }
   },
   methods: {
-    isCardExcluded (card) {
+    isCardExcluded(card) {
       if (!card.key) return
       const page = this.page
       const type = this.type
-      const excludedCards = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.excludedCards) ? page.slots[type][0].config.excludedCards : []
+      const excludedCards =
+        page &&
+        page.slots &&
+        page.slots[type] &&
+        page.slots[type][0] &&
+        page.slots[type][0].config &&
+        page.slots[type][0].config.excludedCards
+          ? page.slots[type][0].config.excludedCards
+          : []
       const excludedIdx = excludedCards.indexOf(card.key)
       return excludedIdx >= 0
     },
-    cardContext (element) {
+    cardContext(element) {
       let context = {
         component: element.card || {
-          component: (this.type === 'locations') ? 'oh-location-card' : (this.type === 'equipment') ? 'oh-equipment-card' : 'oh-property-card',
+          component: this.type === 'locations' ? 'oh-location-card' : this.type === 'equipment' ? 'oh-equipment-card' : 'oh-property-card',
           config: {}
         },
         store: useStatesStore().trackedItems
       }
       const page = this.page
       const type = this.type
-      if (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.badges) {
+      if (
+        page &&
+        page.slots &&
+        page.slots[type] &&
+        page.slots[type][0] &&
+        page.slots[type][0].config &&
+        page.slots[type][0].config.badges
+      ) {
         context.badgeOverrides = page.slots[type][0].config.badges
       }
       return context
     },
-    parentLocationName (item) {
+    parentLocationName(item) {
       return item.parent ? item.parent.label || item.parent.name : ''
     },
-    tabContext (type) {
+    tabContext(type) {
       const page = this.page
       if (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config) {
         return page.slots[type][0].config

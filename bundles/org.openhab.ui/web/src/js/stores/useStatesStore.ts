@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { nextTick, ref } from 'vue'
-import openhab from '@/js/openhab'
+
+import sse from '@/js/openhab/sse'
+import * as api from '@/api'
 
 export type TrackedItems = Record<string, ItemState>
 
@@ -102,17 +104,18 @@ export const useStatesStore = defineStore('states', () => {
     clearTrackingList()
     if (trackerEventSource) {
       console.debug('Closing existing state tracker connection')
-      openhab.sse.close(trackerEventSource)
+      sse.close(trackerEventSource)
       clearStateTracker()
     }
-    const eventSource = openhab.sse.connectStateTracker(
+    const eventSource = sse.connectStateTracker(
       '/rest/events/states',
       (connectionId) => {
         // only one state tracker at any given time!
         trackerConnectionId = connectionId
-        const trackingListJson = JSON.stringify(trackingList.value)
-        console.debug(`Setting initial tracking list (${trackingList.value.length} tracked Items): ` + trackingListJson)
-        void openhab.api.postPlain('/rest/events/states/' + connectionId, trackingListJson, 'text/plain', 'application/json', null)
+        console.debug(`Setting initial tracking list (${trackingList.value.length} tracked Items): `, trackingList.value)
+        api.updateItemListForStateUpdates({ connectionId, body: trackingList.value }).catch((e) => {
+          console.error('Failed to set initial tracking list for state tracker', e)
+        })
         sseConnected.value = true
         ready.value = true
       },
@@ -136,7 +139,7 @@ export const useStatesStore = defineStore('states', () => {
     if (keepConnectionOpen.value) return
     clearTrackingList()
     if (trackerEventSource) {
-      openhab.sse.close(trackerEventSource)
+      sse.close(trackerEventSource)
     }
     clearStateTracker()
   }
@@ -147,7 +150,16 @@ export const useStatesStore = defineStore('states', () => {
       const newState: ItemState = currentState ? { ...currentState, state: command } : { state: command, type: '-' }
       setItemState(itemName, newState)
     }
-    return openhab.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain', { 'X-OpenHAB-Source': 'org.openhab.ui' })
+    // sendItemCommand supports either json/plain text, need to override default json
+    return api
+      .sendItemCommand(
+        { itemName, body: command, 'X-OpenHAB-Source': 'org.openhab.ui' },
+        { headers: { 'Content-Type': 'text/plain' }, bodySerializer: null }
+      )
+      .catch((e) => {
+        console.error(`Failed to send command '${command}' to item '${itemName}'`, e)
+        throw e // rethrow to allow subscribing to command failures
+      })
   }
 
   function isItemTracked(itemName: string) {
@@ -213,9 +225,11 @@ export const useStatesStore = defineStore('states', () => {
         return
       }
       const trackingListJson = JSON.stringify(trackingList.value)
-      console.debug(`Updating tracking list (${trackingList.value.length} tracked Items): ` + trackingListJson)
+      console.debug(`Updating tracking list (${trackingList.value.length} tracked Items): `, trackingList.value)
 
-      void openhab.api.postPlain('/rest/events/states/' + trackerConnectionId, trackingListJson, 'text/plain', 'application/json', null)
+      api.updateItemListForStateUpdates({ connectionId: trackerConnectionId, body: trackingList.value }).catch((e) => {
+        console.error('Failed to update tracking list for state tracker', e)
+      })
     })
   }
 

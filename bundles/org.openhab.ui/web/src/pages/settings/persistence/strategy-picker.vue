@@ -43,7 +43,7 @@ export default {
     disabled: Boolean
   },
   emits: ['strategies-selected'],
-  data () {
+  data() {
     return {
       smartSelectParams: {
         view: f7.view.main,
@@ -52,11 +52,18 @@ export default {
     }
   },
   methods: {
-    select () {
+    select() {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       const smartSelect = this.$refs.smartSelect.$el.children[0].f7SmartSelect
       const value = smartSelect.getValue()
-      if (value === this.value || ((value.length === this.value.length) && value.reduce((av, cv) => { return av || this.value?.includes(cv) }, true))) return
+      if (
+        value === this.value ||
+        (value.length === this.value.length &&
+          value.reduce((av, cv) => {
+            return av || this.value?.includes(cv)
+          }, true))
+      )
+        return
       this.$emit('strategies-selected', value)
     }
   }

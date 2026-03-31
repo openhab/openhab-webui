@@ -12,7 +12,6 @@ import pluginUnicorn from 'eslint-plugin-unicorn';
 import eslintConfigPrettier from 'eslint-config-prettier/flat'
 
 const rules = {
-    'arrow-parens': 'off',
     'comma-dangle': 'error',
     'comma-spacing': 'error',
     'dot-notation': 'off',
@@ -22,7 +21,6 @@ const rules = {
     'space-before-function-paren': ['error', 'always'], // add to main
     'arrow-parens': ['error', 'always'],    // add to main
     // 'brace-style': ['error', '1tbs'], // add to main
-    'eol-last': 'off',
     'import-x/default': 'error',
     'import-x/export': 'error',
     'import-x/extensions': 'off',
@@ -42,7 +40,6 @@ const rules = {
     'no-case-declarations': 'off',
     'no-console': 'off',
     'no-debugger': 'off',
-    'no-unused-vars': 'off',
     'no-irregular-whitespace': 'off',
     // 'es/no-regexp-lookbehind-assertions': 'error', // Supported in Safari  >= 16.4, which breaks iOS 15.x.
     'no-trailing-spaces': 'error',
@@ -78,7 +75,6 @@ const rules = {
     'vue/singleline-html-element-content-newline': 'error',
     'vue/v-on-style': 'error',
     'vue/v-slot-style': 'error',
-    '@typescript-eslint/no-unused-vars': 'warn',
 
     // The following rules should be activated successively. Due to the large amount
     // of required changes, the activations should be clustered in several pull requests.

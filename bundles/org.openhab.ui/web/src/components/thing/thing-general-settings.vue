@@ -101,24 +101,24 @@ export default {
     ClipboardIcon
   },
   computed: {
-    editable () {
+    editable() {
       return this.createMode || (this.thing && this.thing.editable)
     },
-    idErrorMessage () {
+    idErrorMessage() {
       return this.validateThingUID(this.thing.UID, this.thing.ID)
     }
   },
   methods: {
-    computedThingUid () {
-      return (this.thing.bridgeUID)
+    computedThingUid() {
+      return this.thing.bridgeUID
         ? [this.thing.thingTypeUID, this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':') + 1), this.thing.ID].join(':')
         : [this.thing.thingTypeUID, this.thing.ID].join(':')
     },
-    changeUID (event) {
+    changeUID(event) {
       this.thing.ID = event.target.value
       this.thing.UID = this.computedThingUid()
     },
-    updateBridge (value) {
+    updateBridge(value) {
       this.thing.bridgeUID = value
       if (this.createMode) this.thing.UID = this.computedThingUid()
     }

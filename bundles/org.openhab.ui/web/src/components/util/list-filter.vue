@@ -11,7 +11,7 @@
       <f7-accordion-content>
         <f7-list class="no-hairlines-between">
           <div v-for="(filter, type) in filters" :key="type">
-            <f7-list-item group-title style="height: 2em;"> Filter by {{ filter.label }} </f7-list-item>
+            <f7-list-item group-title style="height: 2em"> Filter by {{ filter.label }} </f7-list-item>
             <f7-list-item class="padding-bottom">
               <div class="chip-wrap">
                 <f7-chip
@@ -20,7 +20,7 @@
                   :text="label"
                   :color="isFilteredBy(type, value) ? 'blue' : ''"
                   media-bg-color="blue"
-                  style="margin-right: 6px; cursor: pointer;"
+                  style="margin-right: 6px; cursor: pointer"
                   @click="toggleFilter(type, value)">
                   <template #media>
                     <f7-icon
@@ -48,7 +48,6 @@
 </style>
 
 <script>
-
 /*
   This component provides a filter UI for a list of items.
   It allows users to filter the list based on various criteria.
@@ -79,7 +78,7 @@ export default {
     filters: Object
   },
   emits: ['toggled', 'reset'],
-  data () {
+  data() {
     return {
       /**
        * This tracks which values are selected for each filter type,
@@ -99,7 +98,7 @@ export default {
      * Whether filtering is active, i.e. any filter has selections.
      * @return {boolean}
      */
-    filtered () {
+    filtered() {
       return Object.keys(this.filters).some((type) => this.isFilteredBy(type))
     }
   },
@@ -117,7 +116,7 @@ export default {
      * @param {*} value
      * @return {boolean}
      */
-    isFilteredBy (type, value) {
+    isFilteredBy(type, value) {
       const selections = this.selected[type]
       if (!selections) {
         console.warn(`Invalid filter type: '${type}'. This is probably a bug! filters:`, this.filters)
@@ -137,7 +136,7 @@ export default {
      * @param {string} type
      * @param {*} value
      */
-    toggleFilter (type, value) {
+    toggleFilter(type, value) {
       const selections = this.selected[type]
       if (selections.has(value)) {
         selections.delete(value)
@@ -152,7 +151,7 @@ export default {
      * Resets/Disables all filters and emits the reset event.
      * To be used internally only.
      */
-    resetFilters () {
+    resetFilters() {
       Object.keys(this.selected).forEach((type) => {
         this.selected[type].clear()
       })

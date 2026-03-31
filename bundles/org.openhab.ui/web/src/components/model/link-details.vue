@@ -42,19 +42,19 @@ export default {
     links: Array,
     f7router: Object
   },
-  data () {
+  data() {
     return {
       currentItemName: null,
       enrichedLinks: [],
       ready: true
     }
   },
-  mounted () {
+  mounted() {
     this.f7router.allowPageChange = true
     this.load()
   },
   methods: {
-    load () {
+    load() {
       if (!this.ready) return
       // this.enrichedLinks = []
       this.currentItemName = this.item.name
@@ -62,7 +62,8 @@ export default {
       const thingNames = itemLinks.map((l) => l.channelUID.substring(0, l.channelUID.lastIndexOf(':')))
       const promises = thingNames.map((t) => {
         return new Promise((resolve, reject) => {
-          this.$oh.api.get('/rest/things/' + t)
+          this.$oh.api
+            .get('/rest/things/' + t)
             .then((thing) => resolve(thing))
             .catch((thing) => resolve({ UID: t, label: '(unknown)', channels: [], _invalid: true }))
         })
@@ -92,54 +93,63 @@ export default {
         this.ready = true
       })
     },
-    addLink () {
-      this.f7router.navigate({
-        url: 'links/new',
-        route: {
-          component: AddLinkPage,
-          path: 'links/new'
+    addLink() {
+      this.f7router.navigate(
+        {
+          url: 'links/new',
+          route: {
+            component: AddLinkPage,
+            path: 'links/new'
+          }
+        },
+        {
+          props: {
+            item: this.item
+          }
         }
-      }, {
-        props: {
-          item: this.item
-        }
-      })
+      )
     },
-    editLink (link) {
+    editLink(link) {
       if (link._invalid) {
-        f7.dialog.confirm('This link is invalid, remove it?', 'Invalid Link',
-          () => {
-            this.$oh.api.delete('/rest/links/' + link.link.itemName + '/' + encodeURIComponent(link.link.channelUID)).then(() => {
-              f7.toast.create({
-                text: 'Link deleted',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              }).open()
+        f7.dialog.confirm('This link is invalid, remove it?', 'Invalid Link', () => {
+          this.$oh.api
+            .delete('/rest/links/' + link.link.itemName + '/' + encodeURIComponent(link.link.channelUID))
+            .then(() => {
+              f7.toast
+                .create({
+                  text: 'Link deleted',
+                  destroyOnClose: true,
+                  closeTimeout: 2000
+                })
+                .open()
               const index = this.enrichedLinks.indexOf(link)
               if (index > -1) {
                 this.enrichedLinks.splice(index, 1)
               }
-            }).catch((err) => {
-              f7.toast.create({
-                text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
-                destroyOnClose: true,
-                closeTimeout: 2000
-              }).open()
             })
-          })
+            .catch((err) => {
+              f7.toast
+                .create({
+                  text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
+                  destroyOnClose: true,
+                  closeTimeout: 2000
+                })
+                .open()
+            })
+        })
         return
       }
 
-      this.f7router.navigate('links/edit/' + link.thing.UID + '/' + link.channel.id.replace('#', '%23'))
+      this.f7router.navigate(`/settings/items/${this.item.name}/links/edit/${link.thing.UID}/${link.channel.id.replace('#', '%23')}`)
     }
   },
   watch: {
-    item (value) {
+    item(value) {
       if (value !== this.currentItemName) {
         this.load()
       }
     },
-    links () {
+    links() {
       this.load()
     }
   }

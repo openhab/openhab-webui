@@ -19,8 +19,8 @@
             <div class="float-right align-items-flex-start align-items-center">
               <!-- <f7-toggle class="enable-toggle"></f7-toggle> -->
               <f7-link
-                :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+                :icon-color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+                :tooltip="(rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable') + ($device.desktop ? ' (Ctrl-D)' : '')"
                 icon-ios="f7:pause_circle"
                 icon-md="f7:pause_circle"
                 icon-aurora="f7:pause_circle"
@@ -28,18 +28,18 @@
                 color="orange"
                 @click="toggleDisabled" />
               <f7-link
-                :tooltip="'Activate Now' + (($device.desktop) ? ' (Ctrl-R)' : '')"
+                :tooltip="'Activate Now' + ($device.desktop ? ' (Ctrl-R)' : '')"
                 icon-ios="f7:play_round"
                 icon-md="f7:play_round"
                 icon-aurora="f7:play_round"
                 icon-size="32"
-                :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
+                :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
                 @click="runNow" />
             </div>
             Status:
             <f7-chip class="margin-left" :text="rule.status.status" :color="ruleStatusBadgeColor(rule.status)" />
             <div>
-              <strong>{{ (rule.status.statusDetail !== 'NONE') ? rule.status.statusDetail : '&nbsp;' }}</strong>
+              <strong>{{ rule.status.statusDetail !== 'NONE' ? rule.status.statusDetail : '&nbsp;' }}</strong>
               <br />
               <div v-if="rule.status.description">
                 {{ rule.status.description }}
@@ -268,10 +268,10 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -294,7 +294,8 @@ export default {
   watch: {
     rule: {
       handler: function (newRule, oldRule) {
-        if (!this.loading) { // ignore initial rule assignment
+        if (!this.loading) {
+          // ignore initial rule assignment
           // create rule object clone in order to be able to delete status part
           // which can change from eventsource but doesn't mean a rule modification
           let ruleClone = cloneDeep(this.rule)
@@ -308,7 +309,7 @@ export default {
     }
   },
   methods: {
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -358,7 +359,7 @@ export default {
         }
       })
     },
-    save (noToast) {
+    save(noToast) {
       if (!this.isEditable) return Promise.reject()
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
@@ -375,87 +376,100 @@ export default {
       }
       let saveRule = cloneDeep(this.rule)
       saveRule.tags.push('Scene')
-      const promise = (this.createMode)
+      const promise = this.createMode
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(saveRule), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/rules/' + saveRule.uid, saveRule)
-      return promise.then((data) => {
-        this.dirty = false
-        if (this.createMode) {
-          f7.toast.create({
-            text: 'Scene created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
-          this.load()
-        } else {
-          if (!noToast) {
-            f7.toast.create({
-              text: 'Scene updated',
+      return promise
+        .then((data) => {
+          this.dirty = false
+          if (this.createMode) {
+            f7.toast
+              .create({
+                text: 'Scene created',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
+            this.load()
+          } else {
+            if (!noToast) {
+              f7.toast
+                .create({
+                  text: 'Scene updated',
+                  destroyOnClose: true,
+                  closeTimeout: 2000
+                })
+                .open()
+            }
+            this.savedRule = cloneDeep(this.rule)
+          }
+        })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Error while saving scene: ' + err,
               destroyOnClose: true,
               closeTimeout: 2000
-            }).open()
-          }
-          this.savedRule = cloneDeep(this.rule)
-        }
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while saving scene: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+            })
+            .open()
+        })
     },
-    runNow () {
+    runNow() {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
-        return f7.toast.create({
-          text: `Scene cannot be activated ${(this.rule.status.status === 'RUNNING') ? 'while currently activating, please wait' : 'if it is uninitialized'}!`,
+        return f7.toast
+          .create({
+            text: `Scene cannot be activated ${this.rule.status.status === 'RUNNING' ? 'while currently activating, please wait' : 'if it is uninitialized'}!`,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          })
+          .open()
+      }
+      f7.toast
+        .create({
+          text: 'Activating scene',
           destroyOnClose: true,
           closeTimeout: 2000
-        }).open()
-      }
-      f7.toast.create({
-        text: 'Activating scene',
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
+        })
+        .open()
 
-      const savePromise = (this.isEditable && this.dirty) ? this.save(true) : Promise.resolve()
+      const savePromise = this.isEditable && this.dirty ? this.save(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
-          f7.toast.create({
-            text: 'Error while activating scene: ' + err,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          f7.toast
+            .create({
+              text: 'Error while activating scene: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
         })
       })
     },
-    duplicateRule () {
+    duplicateRule() {
       let ruleClone = cloneDeep(this.rule)
-      this.f7router.navigate({
-        url: '/settings/scenes/duplicate'
-      }, {
-        props: {
-          ruleCopy: ruleClone
-        }
-      })
-    },
-    deleteRule () {
-      f7.dialog.confirm(
-        `Are you sure you want to delete ${this.rule.name}?`,
-        'Delete Scene',
-        () => {
-          this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
-            this.dirty = false
-            this.f7router.back('/settings/scenes/', { force: true })
-          })
+      this.f7router.navigate(
+        {
+          url: '/settings/scenes/duplicate'
+        },
+        {
+          props: {
+            ruleCopy: ruleClone
+          }
         }
       )
     },
-    editModule (ev, mod) {
+    deleteRule() {
+      f7.dialog.confirm(`Are you sure you want to delete ${this.rule.name}?`, 'Delete Scene', () => {
+        this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
+          this.dirty = false
+          this.f7router.back('/settings/scenes/', { force: true })
+        })
+      })
+    },
+    editModule(ev, mod) {
       if (ev.target.tagName.toLowerCase() === 'input') {
         ev.cancelBubble = true
         return
@@ -473,25 +487,28 @@ export default {
         component: SceneConfigureItemPopup
       }
 
-      this.f7router.navigate({
-        url: 'item-config',
-        route: {
-          path: 'item-config',
-          popup
+      this.f7router.navigate(
+        {
+          url: 'item-config',
+          route: {
+            path: 'item-config',
+            popup
+          }
+        },
+        {
+          props: {
+            rule: this.rule,
+            module: mod
+          }
         }
-      }, {
-        props: {
-          rule: this.rule,
-          module: mod
-        }
-      })
+      )
 
       f7.once('sceneItemConfigUpdate', this.updateActionModule)
       f7.once('sceneItemConfigClosed', () => {
         f7.off('sceneItemConfigUpdate', this.updateActionModule)
       })
     },
-    deleteModule (ev, section, mod) {
+    deleteModule(ev, section, mod) {
       let swipeoutElement = ev.target
       if (!this.isEditable) return
       ev.cancelBubble = true
@@ -507,17 +524,17 @@ export default {
         this.buildActionModules()
       })
     },
-    selectItems (items) {
+    selectItems(items) {
       console.log(items)
       this.selectedItems = items
       this.buildActionModules()
     },
-    reorderModule (ev, section) {
+    reorderModule(ev, section) {
       const newSection = [...this.rule[section]]
       newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
       this.rule.section = newSection
     },
-    buildActionModules () {
+    buildActionModules() {
       const modulesToRemove = this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) < 0)
       if (modulesToRemove.length > 0) console.debug('Removing: ' + modulesToRemove.map((m) => m.configuration.itemName).join(', '))
       this.rule.actions = this.rule.actions.filter((a) => this.selectedItems.indexOf(a.configuration.itemName) >= 0)
@@ -546,31 +563,33 @@ export default {
         })
       })
     },
-    updateCommandFromCurrentState (ev, module) {
+    updateCommandFromCurrentState(ev, module) {
       if (ev) ev.cancelBubble = true
       const itemName = module.configuration.itemName
       this.$oh.api.getPlain('/rest/items/' + itemName + '/state').then((state) => {
         module.configuration.command = state
       })
     },
-    testCommand (ev, module) {
+    testCommand(ev, module) {
       if (ev) ev.cancelBubble = true
       const itemName = module.configuration.itemName
       const command = module.configuration.command
       this.$oh.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain').then(() => {
-        f7.toast.create({
-          text: `Updated desired state of ${itemName} to ${command}`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        f7.toast
+          .create({
+            text: `Updated desired state of ${itemName} to ${command}`,
+            destroyOnClose: true,
+            closeTimeout: 2000
+          })
+          .open()
       })
     },
-    updateActionModule (params) {
+    updateActionModule(params) {
       const [itemName, command] = params
       const module = this.rule.actions.find((a) => a.configuration.itemName === itemName)
       if (module) module.configuration.command = command
     },
-    toYaml () {
+    toYaml() {
       const itemsConfig = {}
       this.rule.actions.forEach((a) => {
         itemsConfig[a.configuration.itemName] = a.configuration.command
@@ -582,7 +601,7 @@ export default {
         conditions: this.rule.conditions
       })
     },
-    fromYaml () {
+    fromYaml() {
       if (!this.isEditable) return
       try {
         const updatedRule = YAML.parse(this.ruleYaml)

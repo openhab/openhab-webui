@@ -1,4 +1,5 @@
-import { ref, computed, watch, shallowRef, type ComputedRef, readonly } from 'vue'
+import { ref, computed, type ComputedRef, readonly } from 'vue'
+import { computedAsync } from '@vueuse/core'
 import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import DayDuration from 'dayjs/plugin/duration'
@@ -68,7 +69,7 @@ export function useChart(
 
   const speriod = ref<Period>(config.value.period || DEFAULT_PERIOD)
   // future as boolean allows for backwards compatibility
-  const future = ref<number>((config.value.future as unknown as boolean) === true ? 1 : ((config.value.future as number) ?? 0))
+  const future = computed<number>(() => ((config.value.future as unknown as boolean) === true ? 1 : (config.value.future ?? 0)))
   const orient = ref<string | null>(null)
 
   const addOrSubtractPeriod = (day: Dayjs, direction: number): Dayjs => {
@@ -188,13 +189,9 @@ export function useChart(
     return slots.value.toolbox.map((c) => OhChartToolbox.get(chartContext.value, c, startTime.value, endTime.value))
   })
 
-  // async computed
-  const series = shallowRef<SeriesOption[]>([])
-
   const _items: Record<string, api.EnrichedItem> = {}
   const _itemPromises: Record<string, Promise<api.EnrichedItem>> = {}
   const _persistencePromises: Record<string, Promise<api.ItemHistory>> = {}
-
   const getSeriesPromises = async (component: api.UiComponent): Promise<SeriesOption> => {
     const config = evaluateExpression<SeriesConfig>(ComponentId.get(component)!, component.config)
 
@@ -215,11 +212,14 @@ export function useChart(
     const now = dayjs()
     const isBetweenStartAndEnd =
       dayjs(startTime.value).subtract(5, 'minutes').isBefore(now) && dayjs(endTime.value).add(5, 'minutes').isAfter(now)
+    const isNotFuture = !(future.value > 0)
 
-    let boundary = seriesComponents[component.component]!.includeBoundary?.(chartContext.value, component) ?? isBetweenStartAndEnd
+    let boundary =
+      seriesComponents[component.component]!.includeBoundary?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
     if (config.noBoundary === true) boundary = false
 
-    let itemState = seriesComponents[component.component]!.includeItemState?.(chartContext.value, component) ?? isBetweenStartAndEnd
+    let itemState =
+      seriesComponents[component.component]!.includeItemState?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
     if (config.noItemState === true) itemState = false
 
     neededItems.forEach((neededItem) => {
@@ -265,35 +265,12 @@ export function useChart(
     return Promise.all(combinedPromises).then(getter)
   }
 
-  watch(
-    [slots, startTime, endTime, chartContext],
-    (_newVal, _oldVal, onCleanup) => {
-      let isStale = false
-
-      // invoked when the watch is re-triggered or stopped
-      onCleanup(() => {
-        isStale = true
-      })
-
-      const updateSeries = async (): Promise<void> => {
-        if (!slots.value || !slots.value.series) {
-          series.value = []
-          return
-        }
-        if (!isStale) {
-          // only request series if the watch is not stale, i.e., the most-recently triggered instance
-          const result = await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
-          if (!isStale) {
-            // only update series if the watch is not stale, i.e., the most-recently triggered instance
-            series.value = result
-          }
-        }
-      }
-
-      void updateSeries()
-    },
-    { immediate: true }
-  )
+  const series = computedAsync<SeriesOption[]>(async () => {
+    if (!slots.value || !slots.value.series) {
+      return []
+    }
+    return await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
+  })
 
   const options = computed<EChartsOption>(() => {
     if (!config.value) return {}

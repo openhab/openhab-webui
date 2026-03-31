@@ -44,8 +44,9 @@
             :header="binding.uid"
             :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id).length || undefined"
             badge-color="red"
-            :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
-              binding.description.split('<br>')[0] : binding.description" />
+            :footer="
+              binding.description && binding.description.indexOf('<br>') >= 0 ? binding.description.split('<br>')[0] : binding.description
+            " />
         </f7-list>
       </f7-col>
     </f7-block>
@@ -78,10 +79,10 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -94,7 +95,7 @@ export default {
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.loading = true
       this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
         let installedBindings = data.filter((addon) => addon.type === 'binding' && addon.installed === true)

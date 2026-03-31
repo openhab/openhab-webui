@@ -9,9 +9,10 @@
     </f7-navbar>
     <f7-toolbar position="bottom">
       <f7-link @click="widgetPropsOpened = true"> Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span> </f7-link>
+      <!-- prettier-ignore  -->
       <f7-link
         icon-f7="uiwindow_split_2x1"
-        @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
+        @click="split = split === 'horizontal' ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
       <f7-link @click="redrawWidget"> Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
     <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="widget-editor horizontal">
@@ -114,9 +115,11 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 
 import * as StandardListWidgets from '@/components/widgets/standard/list'
+import * as api from '@/api'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useViewArea } from '@/composables/useViewArea'
+import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -132,11 +135,11 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     useViewArea()
     return { f7, theme }
   },
-  data () {
+  data() {
     return {
       widgetDefinition: null,
       items: [],
@@ -154,27 +157,30 @@ export default {
     }
   },
   computed: {
-    context () {
+    context() {
       return {
-        component: !this.widget.component || this.standardListWidgets.includes(this.widget.component) || this.widget.component.startsWith('f7-list-item')
-          ? {
-            component: 'oh-list-card',
-            config: {
-              mediaList: true,
-              accordionList: true
-            },
-            slots: {
-              default: [this.widget]
-            }
-          }
-          : this.widget,
+        component:
+          !this.widget.component ||
+          this.standardListWidgets.includes(this.widget.component) ||
+          this.widget.component.startsWith('f7-list-item')
+            ? {
+                component: 'oh-list-card',
+                config: {
+                  mediaList: true,
+                  accordionList: true
+                },
+                slots: {
+                  default: [this.widget]
+                }
+              }
+            : this.widget,
         store: useStatesStore().trackedItems,
         props: this.props,
         vars: this.vars,
         ctxVars: this.ctxVars
       }
     },
-    widget () {
+    widget() {
       try {
         if (!this.widgetDefinition) return {}
         return YAML.parse(this.widgetDefinition, { prettyErrors: true, toStringOptions })
@@ -184,26 +190,26 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
       useStatesStore().startTrackingStates()
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
       useStatesStore().stopTrackingStates()
     },
-    onEditorInput (value) {
+    onEditorInput(value) {
       this.widgetDefinition = value
       if (!this.loading) {
         this.dirty = true
       }
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 80:
@@ -224,44 +230,48 @@ export default {
         }
       }
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
       if (this.createMode) {
-        this.widgetDefinition = YAML.stringify({
-          uid: 'widget_' + f7.utils.id(),
-          props: {
-            parameterGroups: [],
-            parameters: [
-              {
-                name: 'prop1',
-                label: 'Prop 1',
-                type: 'TEXT',
-                description: 'A text prop'
-              },
-              {
-                name: 'item',
-                label: 'Item',
-                type: 'TEXT',
-                context: 'item',
-                description: 'An item to control'
-              }
-            ]
+        this.widgetDefinition = YAML.stringify(
+          {
+            uid: 'widget_' + f7.utils.id(),
+            props: {
+              parameterGroups: [],
+              parameters: [
+                {
+                  name: 'prop1',
+                  label: 'Prop 1',
+                  type: 'TEXT',
+                  description: 'A text prop'
+                },
+                {
+                  name: 'item',
+                  label: 'Item',
+                  type: 'TEXT',
+                  context: 'item',
+                  description: 'An item to control'
+                }
+              ]
+            },
+            tags: [],
+            component: 'f7-card',
+            config: {
+              title: '=(props.item) ? "State of " + props.item : "Set props to test!"',
+              footer: '=props.prop1',
+              content: '=items[props.item].displayState || items[props.item].state'
+            }
           },
-          tags: [],
-          component: 'f7-card',
-          config: {
-            title: '=(props.item) ? "State of " + props.item : "Set props to test!"',
-            footer: '=props.prop1',
-            content: '=items[props.item].displayState || items[props.item].state'
-          }
-        }, { toStringOptions })
+          { toStringOptions }
+        )
         nextTick(() => {
           this.loading = false
           this.ready = true
         })
       } else {
-        this.$oh.api.get('/rest/ui/components/ui:widget/' + this.uid).then((data) => {
+        api.getUiComponentInNamespace({ namespace: 'ui:widget', componentUID: this.uid }).then((data) => {
+          data.props.parameters = transformParameterDefaults(data.props.parameters)
           this.widgetDefinition = YAML.stringify(data, { toStringOptions })
           nextTick(() => {
             this.loading = false
@@ -270,7 +280,7 @@ export default {
         })
       }
     },
-    save (stay) {
+    save(stay) {
       if (!this.widget.uid) {
         f7.dialog.alert('Please give an UID to the widget')
         return
@@ -283,43 +293,51 @@ export default {
         return
       }
 
-      const promise = (this.createMode)
-        ? this.$oh.api.postPlain('/rest/ui/components/ui:widget', JSON.stringify(this.widget), 'text/plain', 'application/json')
-        : this.$oh.api.put('/rest/ui/components/ui:widget/' + this.widget.uid, this.widget)
-      promise.then((data) => {
-        this.dirty = false
-        if (this.createMode) {
-          f7.toast.create({
-            text: 'Widget created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.widget.uid), { reloadCurrent: true })
-          this.load()
-        } else {
-          f7.toast.create({
-            text: 'Widget updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-        f7.emit('sidebarRefresh', null)
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while saving page: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      const promise = this.createMode
+        ? api.addUiComponentToNamespace({ namespace: 'ui:widget', rootUiComponent: this.widget })
+        : api.updateUiComponentInNamespace({ namespace: 'ui:widget', componentUID: this.widget.uid, rootUiComponent: this.widget })
+      promise
+        .then(() => {
+          this.dirty = false
+          if (this.createMode) {
+            f7.toast
+              .create({
+                text: 'Widget created',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.widget.uid), { reloadCurrent: true })
+            this.load()
+          } else {
+            f7.toast
+              .create({
+                text: 'Widget updated',
+                destroyOnClose: true,
+                closeTimeout: 2000
+              })
+              .open()
+          }
+          f7.emit('sidebarRefresh', null)
+        })
+        .catch((err) => {
+          f7.toast
+            .create({
+              text: 'Error while saving page: ' + err,
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+        })
     },
-    redrawWidget () {
+    redrawWidget() {
       this.ctxVars = {}
       this.widgetKey = f7.utils.id()
     },
-    widgetPropsClosed () {
+    widgetPropsClosed() {
       this.widgetPropsOpened = false
     },
-    updateWidgetProps () {
+    updateWidgetProps() {
       this.widgetPropsClosed()
     }
   }

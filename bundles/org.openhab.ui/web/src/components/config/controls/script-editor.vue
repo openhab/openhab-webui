@@ -91,7 +91,7 @@ import { gruvboxDark } from '@uiw/codemirror-theme-gruvbox-dark'
 
 const uiOptionsStore = useUIOptionsStore()
 
-const KEYMAP : KeyBinding[] = [
+const KEYMAP: KeyBinding[] = [
   {
     // The default indentWithTab will indent the line regardless of the cursor position.
     // This overrides this behavior so when you're at the beginning of the line, it would indent the line
@@ -138,14 +138,14 @@ const emit = defineEmits<{
   save: []
 }>()
 
-const cmView : ShallowRef<ExtendedEditorView | null> = shallowRef(null)
+const cmView: ShallowRef<ExtendedEditorView | null> = shallowRef(null)
 
 const dynamicCompartment = new Compartment()
 const languageCompartment = new Compartment()
 const asyncCompartment = new Compartment()
 
 const dynamicExtensions = computed((): Extension[] => {
-  const extensions : Extension[] = []
+  const extensions: Extension[] = []
 
   if (uiOptionsStore.darkMode === 'dark') {
     extensions.push(gruvboxDark)
@@ -181,15 +181,18 @@ watch(dynamicExtensions, (newExtensions) => {
   }
 })
 
-watch(() => props.mode, (newMode) => {
-  if (!cmView.value || !newMode) return
-  const extensions = languageCompartmentExtension(newMode)
-  cmView.value.dispatch({
-    effects: languageCompartment.reconfigure(extensions)
+watch(
+  () => props.mode,
+  (newMode) => {
+    if (!cmView.value || !newMode) return
+    const extensions = languageCompartmentExtension(newMode)
+    cmView.value.dispatch({
+      effects: languageCompartment.reconfigure(extensions)
     })
-})
+  }
+)
 
-function onCmReady ({ view }: { view: EditorView }) {
+function onCmReady({ view }: { view: EditorView }) {
   const extendedView = view as ExtendedEditorView
   extendedView.originalMode = props.mode
 
@@ -199,11 +202,11 @@ function onCmReady ({ view }: { view: EditorView }) {
   loadAsyncCompartmentExtensions(view)
 }
 
-function onCmCodeChange (newCode : string) {
+function onCmCodeChange(newCode: string) {
   emit('input', newCode)
 }
 
-async function loadAsyncCompartmentExtensions (cmView: EditorView) {
+async function loadAsyncCompartmentExtensions(cmView: EditorView) {
   if (uiOptionsStore.codeMirrorSettings.vimMode) {
     const { Vim, vim } = await import('@replit/codemirror-vim').catch(() => {
       console.error('Failed to load Vim mode for CodeMirror')

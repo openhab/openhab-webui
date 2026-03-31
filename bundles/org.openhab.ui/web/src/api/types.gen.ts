@@ -6,7 +6,7 @@ export type ClientOptions = {
 
 export type ConfigDescriptionParameter = {
     context?: string;
-    defaultValue?: string;
+    default?: string;
     description?: string;
     label?: string;
     name: string;
@@ -14,7 +14,7 @@ export type ConfigDescriptionParameter = {
     type: 'TEXT' | 'INTEGER' | 'DECIMAL' | 'BOOLEAN';
     min?: number;
     max?: number;
-    stepsize?: number;
+    step?: number;
     pattern?: string;
     readOnly?: boolean;
     multiple?: boolean;
@@ -138,10 +138,10 @@ export type RuleStatusInfo = {
 
 export type Module = {
     typeUID: string;
-    label: string;
-    id: string;
     description: string;
     configuration: Configuration;
+    label: string;
+    id: string;
 };
 
 export type Configuration = {
@@ -158,11 +158,11 @@ export type RuleExecution = {
 };
 
 export type Template = {
-    uid: string;
     tags: Array<string>;
+    uid: string;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-    label: string;
     description: string;
+    label: string;
 };
 
 export type Input = {
@@ -2904,13 +2904,17 @@ export type RemoveMetadataFromItemData = {
 
 export type RemoveMetadataFromItemErrors = {
     /**
-     * Item not found.
+     * Item or namespace not found.
      */
     404: unknown;
     /**
-     * Meta data not editable.
+     * Metadata not editable.
      */
     405: unknown;
+    /**
+     * Managed provider not available.
+     */
+    503: unknown;
 };
 
 export type RemoveMetadataFromItemResponses = {
@@ -2948,6 +2952,10 @@ export type AddMetadataToItemErrors = {
      * Metadata not editable.
      */
     405: unknown;
+    /**
+     * Managed provider not available.
+     */
+    503: unknown;
 };
 
 export type AddMetadataToItemResponses = {
@@ -3097,7 +3105,7 @@ export type GetItemByNameResponses = {
     /**
      * OK
      */
-    200: EnrichedItem;
+    200: EnrichedItem | EnrichedGroupItem;
 };
 
 export type GetItemByNameResponse = GetItemByNameResponses[keyof GetItemByNameResponses];
@@ -3451,6 +3459,32 @@ export type PurgeDatabaseData = {
 };
 
 export type PurgeDatabaseResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type RemoveAllMetadataFromItemData = {
+    body?: never;
+    path: {
+        /**
+         * item name
+         */
+        itemName: string;
+    };
+    query?: never;
+    url: '/items/{itemName}/metadata';
+};
+
+export type RemoveAllMetadataFromItemErrors = {
+    /**
+     * Item not found.
+     */
+    404: unknown;
+};
+
+export type RemoveAllMetadataFromItemResponses = {
     /**
      * OK
      */

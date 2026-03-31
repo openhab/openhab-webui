@@ -10,9 +10,9 @@
     v-bind="config"
     :divider="config.divider && !context.editmode"
     :media-item="context.parent.component.config.mediaList && !config.divider"
-    :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"
+    :badge="config.divider ? 'Divider' : config.listButton ? 'List button' : config.badge"
     :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
-    :link="(hasAction && !context.editmode) ? true : undefined"
+    :link="hasAction && !context.editmode ? true : undefined"
     @click.stop="openAccordionOrPerformAction"
     :class="{ 'oh-equipment-accordion-item': isEquipmentAccordion }"
     ref="f7AccordionContent">
@@ -45,7 +45,11 @@
       </f7-accordion-content>
     </template>
     <template
-      v-if="$slots.media || config.icon || (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)"
+      v-if="
+        $slots.media ||
+        config.icon ||
+        (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)
+      "
       #media>
       <oh-icon
         v-if="config.icon"
@@ -55,7 +59,9 @@
         :color="config.iconColor"
         :state="config.item && config.iconUseState ? context.store[config.item].state : null" />
       <span
-        v-else-if="config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList"
+        v-else-if="
+          config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList
+        "
         class="item-initial"
         >{{ config.title[0].toUpperCase() }}</span
       >
@@ -164,30 +170,30 @@ export default {
     context: Object
   },
   widget: OhListItemDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, evaluateExpression, hasAction, slots } = useWidgetContext(props.context)
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, childContext, hasAction, slots, performAction }
   },
   computed: {
-    isEquipmentAccordion () {
+    isEquipmentAccordion() {
       return this.context.parent.component.config.accordionEquipment && this.accordionSlots.length > 0
     },
-    isRegularAccordion () {
+    isRegularAccordion() {
       return this.context.parent.component.config.accordionList && this.accordionSlots.length > 0
     },
-    accordionSlots () {
+    accordionSlots() {
       if (!this.context.component.slots?.accordion?.length) return []
       return this.context.component.slots.accordion
     }
   },
-  created () {
+  created() {
     if (this.config.divider && !this.context.editmode) {
       window.addEventListener('resize', this.duringResize)
     }
   },
   methods: {
-    openAccordionOrPerformAction () {
+    openAccordionOrPerformAction() {
       if (this.isEquipmentAccordion) {
         f7.accordion.toggle(this.$refs.f7AccordionContent.$el)
       } else {

@@ -47,7 +47,7 @@ export interface WidgetContext {
    */
   loop?: Record<string, unknown>
   props: Record<string, unknown>
-  store: TrackedItems | null
+  store?: TrackedItems
   /**
    * variable.ts variable scope
    */
@@ -55,7 +55,7 @@ export interface WidgetContext {
   vars?: VariableObject
 
   modalConfig?: Record<string, unknown>
-  clipboardtype?: string | null
+  clipboardtype?: string
   /**
    * Whether the widget is displayed in the analyzer.
    */
@@ -65,7 +65,7 @@ export interface WidgetContext {
    */
   tab?: boolean
 
-  parent: WidgetContext | null
+  parent?: WidgetContext
 }
 interface OhComponent extends DefineComponent {
   widget: () => WidgetDefinition

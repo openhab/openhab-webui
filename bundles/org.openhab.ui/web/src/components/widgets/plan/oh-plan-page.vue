@@ -13,13 +13,14 @@
       :key="mapKey"
       class="oh-plan-page-lmap"
       @ready="fitMapBounds"
-      :class="{ 'with-tabbar': context.tab,
-                'oh-plan-white-background': config.backgroundColor === 'white',
-                'oh-plan-black-background': config.backgroundColor === 'black',
-                'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
-                'oh-plan-dark-mode-invert': config.darkModeInvert,
-                'oh-plan-tooltip-black': config.tooltipColor === 'black',
-                'oh-plan-tooltip-blackwhite': config.tooltipColor === 'blackwhite',
+      :class="{
+        'with-tabbar': context.tab,
+        'oh-plan-white-background': config.backgroundColor === 'white',
+        'oh-plan-black-background': config.backgroundColor === 'black',
+        'oh-plan-blackwhite-background': config.backgroundColor === 'blackwhite',
+        'oh-plan-dark-mode-invert': config.darkModeInvert,
+        'oh-plan-tooltip-black': config.tooltipColor === 'black',
+        'oh-plan-tooltip-blackwhite': config.tooltipColor === 'blackwhite'
       }"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
@@ -94,7 +95,7 @@ dark-tooltip()
     dark-tooltip()
 
 // override leaflet style
-.leaflet-div-icon
+.oh-plan-page-lmap .leaflet-div-icon
   background: unset
   border: unset
 
@@ -131,15 +132,14 @@ export default {
     LMap,
     LImageOverlay,
     LControl,
-    LFeatureGroup,
-    OhPlanMarker
+    LFeatureGroup
   },
   widget: OhPlanPageDefinition,
   setup(props) {
     const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
     return { config, scopedCssUid, childContext, defaultSlots }
   },
-  data () {
+  data() {
     return {
       currentZoom: 13,
       currentCenter: null,
@@ -151,41 +151,34 @@ export default {
     }
   },
   computed: {
-    bounds () {
+    bounds() {
       const lat = this.config.imageHeight || 1000
       const lng = this.config.imageWidth || 1000
-      return [[0, 0], [lat, lng]]
+      return [
+        [0, 0],
+        [lat, lng]
+      ]
     },
-    markerComponent() {
-      return (marker) => {
-        return OhPlanMarker
-      }
-    },
-    isMarkerVisible() {
-      return (marker) => {
-        if (this.context.editmode != null) return true
-        const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
-        const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
-        const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
-        const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
-        return isVisibleMin && isVisibleMax
-      }
-    },
-    mapOptions () {
-      return Object.assign({
-        zoomSnap: 0.1,
-        tap: false
-      }, this.config.noZoomOrDrag ? {
-        dragging: false,
-        touchZoom: false,
-        doubleClickZoom: false,
-        scrollWheelZoom: false,
-        zoomControl: false
-      } : {})
+    mapOptions() {
+      return Object.assign(
+        {
+          zoomSnap: 0.1,
+          tap: false
+        },
+        this.config.noZoomOrDrag
+          ? {
+              dragging: false,
+              touchZoom: false,
+              doubleClickZoom: false,
+              scrollWheelZoom: false,
+              zoomControl: false
+            }
+          : {}
+      )
     }
   },
   asyncComputed: {
-    backgroundImageUrl () {
+    backgroundImageUrl() {
       return this.$oh.media.getImage(this.config.imageUrl)
     }
   },
@@ -193,26 +186,36 @@ export default {
     'config.noZoomOrDrag': function (val) {
       this.refreshMap()
     },
-    backgroundImageUrl (val) {
+    backgroundImageUrl(val) {
       this.showMap = true
       this.refreshMap()
     }
   },
   methods: {
-    zoomUpdate (zoom) {
+    markerComponent(marker) {
+      return OhPlanMarker
+    },
+    isMarkerVisible(marker) {
+      if (this.context.editmode) return true
+      const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
+      const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
+      const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
+      const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
+      return isVisibleMin && isVisibleMax
+    },
+    zoomUpdate(zoom) {
       this.currentZoom = zoom
     },
-    centerUpdate (center) {
+    centerUpdate(center) {
       this.currentCenter = center
     },
-    onMarkerUpdate () {
-    },
-    fitMapBounds () {
+    onMarkerUpdate() {},
+    fitMapBounds() {
       if (this.$refs.map) {
         this.$refs.map.leafletObject?.fitBounds(this.bounds)
       }
     },
-    refreshMap () {
+    refreshMap() {
       this.mapKey = f7.utils.id()
       nextTick(() => {
         this.fitMapBounds()

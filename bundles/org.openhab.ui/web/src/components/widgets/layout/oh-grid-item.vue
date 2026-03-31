@@ -161,21 +161,21 @@ export default {
     'grid-item': defineAsyncComponent(() => import('grid-layout-plus').then((mod) => mod.GridItem)),
     OhPlaceholderWidget
   },
-  setup (props) {
+  setup(props) {
     const { config, childContext, visible, defaultSlots } = useWidgetContext(props.context)
     return { config, childContext, visible, defaultSlots }
   },
-  data () {
+  data() {
     return {
       uid: f7.utils.id()
     }
   },
   methods: {
-    movedEvent (i, newX, newY) {
+    movedEvent(i, newX, newY) {
       this.context.component.config.x = newX
       this.context.component.config.y = newY
     },
-    resizedEvent (i, newH, newW, newHPx, newWPx) {
+    resizedEvent(i, newH, newW, newHPx, newWPx) {
       this.context.component.config.w = newW
       this.context.component.config.h = newH
     }

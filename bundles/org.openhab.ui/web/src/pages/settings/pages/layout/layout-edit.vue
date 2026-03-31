@@ -2,7 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onLayoutEditPageBeforeOut" class="layout-editor">
     <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" no-hairline>
       <oh-nav-content
-        :title="!ready ? '' : ((createMode ? 'Create layout page' : page.config.label) + dirtyIndicator)"
+        :title="!ready ? '' : (createMode ? 'Create layout page' : page.config.label) + dirtyIndicator"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -45,13 +45,15 @@
         </f7-block>
 
         <f7-block
-          v-if="ready &&
-                    !(context.component.slots.default && context.component.slots.default.length) &&
-                    !(context.component.slots.masonry && context.component.slots.masonry.length) &&
-                    !(context.component.slots.grid && context.component.slots.grid.length) &&
-                    !(context.component.slots.canvas && context.component.slots.canvas.length) &&
-                    page.uid !== 'overview' &&
-                    !['responsive', 'fixed'].includes(page.config.layoutType)"
+          v-if="
+            ready &&
+            !(context.component.slots.default && context.component.slots.default.length) &&
+            !(context.component.slots.masonry && context.component.slots.masonry.length) &&
+            !(context.component.slots.grid && context.component.slots.grid.length) &&
+            !(context.component.slots.canvas && context.component.slots.canvas.length) &&
+            page.uid !== 'overview' &&
+            !['responsive', 'fixed'].includes(page.config.layoutType)
+          "
           class="block-narrow no-padding">
           <f7-col>
             <f7-list accordion-list>
@@ -218,12 +220,12 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     useViewArea()
 
     return { theme }
   },
-  data () {
+  data() {
     return {
       page: {
         uid: 'page_' + f7.utils.id(),
@@ -244,18 +246,20 @@ export default {
       fullscreen: this.$fullscreen.isFullscreen
     }
   },
-  created () {
+  created() {
     f7.on('svgOnclickConfigUpdate', this.onSvgOnClickConfigUpdate)
   },
-  beforeUnmount () {
+  beforeUnmount() {
     f7.off('svgOnclickConfigUpdate', this.onSvgOnClickConfigUpdate)
   },
   methods: {
-    addWidget (component, widgetType, parentContext, slot = 'default') {
+    addWidget(component, widgetType, parentContext, slot = 'default') {
       const isList = component.component.indexOf('oh-list') === 0
       const isCells = component.component.indexOf('oh-grid-cells') === 0
       if (!component.slots) {
-        console.warn(`slots property is missing on ${component.component}! If adding children fails, add the slots property manually in the code tab:\nslots: {}`)
+        console.warn(
+          `slots property is missing on ${component.component}! If adding children fails, add the slots property manually in the code tab:\nslots: {}`
+        )
         component.slots = {}
       }
       if (!component.slots[slot]) component.slots[slot] = []
@@ -270,11 +274,14 @@ export default {
         let actions
         const doAddWidget = (choice) => {
           const addDefaultSlot = choice.startsWith('oh-list-') || choice.startsWith('oh-swiper-')
-          component.slots[slot].push({
+          const newComponent = {
             component: choice,
-            config: {},
-            slots: addDefaultSlot ? { default: [] } : undefined
-          })
+            config: {}
+          }
+          if (addDefaultSlot) {
+            newComponent.slots = { default: [] }
+          }
+          component.slots[slot].push(newComponent)
           nextTick(() => actions.destroy())
           this.forceUpdate()
         }
@@ -285,18 +292,21 @@ export default {
             component: ModelPickerPopup
           }
 
-          this.f7router.navigate({
-            url: 'pick-from-model',
-            route: {
-              path: 'pick-from-model',
-              popup
+          this.f7router.navigate(
+            {
+              url: 'pick-from-model',
+              route: {
+                path: 'pick-from-model',
+                popup
+              }
+            },
+            {
+              props: {
+                multiple: this.modelPickerAllowMultiple,
+                popupTitle: 'Add from Model'
+              }
             }
-          }, {
-            props: {
-              multiple: this.modelPickerAllowMultiple,
-              popupTitle: 'Add from Model'
-            }
-          })
+          )
 
           f7.once('itemsPicked', this.doAddFromModel)
           f7.once('modelPickerClosed', () => {
@@ -305,38 +315,36 @@ export default {
 
           nextTick(() => actions.destroy())
         }
-        const stdWidgets = (isList) ? StandardListWidgets : (isCells) ? StandardCellWidgets : StandardWidgets
-        const standardWidgetOptions = Object.keys(stdWidgets).filter((k) => !stdWidgets[k].widget().hidden).map((k) => {
-          return {
-            text: stdWidgets[k].widget().label,
-            color: 'blue',
-            onClick: () => doAddWidget(stdWidgets[k].widget().name)
-          }
-        })
-        const customWidgetOptions = useComponentsStore().widgets().map((w) => {
-          return {
-            text: w.uid,
-            color: 'blue',
-            onClick: () => doAddWidget('widget:' + w.uid)
-          }
-        }).sort((a, b) => a.text.localeCompare(b.text))
+        const stdWidgets = isList ? StandardListWidgets : isCells ? StandardCellWidgets : StandardWidgets
+        const standardWidgetOptions = Object.keys(stdWidgets)
+          .filter((k) => !stdWidgets[k].widget().hidden)
+          .map((k) => {
+            return {
+              text: stdWidgets[k].widget().label,
+              color: 'blue',
+              onClick: () => doAddWidget(stdWidgets[k].widget().name)
+            }
+          })
+        const customWidgetOptions = useComponentsStore()
+          .widgets()
+          .map((w) => {
+            return {
+              text: w.uid,
+              color: 'blue',
+              onClick: () => doAddWidget('widget:' + w.uid)
+            }
+          })
+          .sort((a, b) => a.text.localeCompare(b.text))
         actions = f7.actions.create({
           buttons: [
             [
               {
                 label: true,
-                text: (isList)
-                  ? 'Standard Library (List)'
-                  : (isCells)
-                    ? 'Standard Library (Cells)'
-                    : 'Standard Library'
+                text: isList ? 'Standard Library (List)' : isCells ? 'Standard Library (Cells)' : 'Standard Library'
               },
               ...standardWidgetOptions
             ],
-            [
-              { label: true, text: 'Personal Widgets' },
-              ...customWidgetOptions
-            ],
+            [{ label: true, text: 'Personal Widgets' }, ...customWidgetOptions],
             [
               {
                 color: 'blue',
@@ -344,18 +352,16 @@ export default {
                 onClick: addFromModel
               }
             ],
-            [
-              { color: 'red', 'text': 'Cancel', close: true }
-            ]
+            [{ color: 'red', text: 'Cancel', close: true }]
           ]
         })
         actions.open()
       }
     },
-    doAddFromModel (value) {
-      const defaultWidgetFn = (this.addFromModelContext.isList)
+    doAddFromModel(value) {
+      const defaultWidgetFn = this.addFromModelContext.isList
         ? itemDefaultListComponent
-        : (this.addFromModelContext.isCells)
+        : this.addFromModelContext.isCells
           ? itemDefaultCellComponent
           : itemDefaultStandaloneComponent
       const component = this.addFromModelContext.component
@@ -370,7 +376,7 @@ export default {
       this.addFromModelContext = {}
       this.forceUpdate()
     },
-    setLayoutType (layoutType, fixedType) {
+    setLayoutType(layoutType, fixedType) {
       this.page.config.layoutType = layoutType
       this.page.config.fixedType = fixedType
       if (layoutType === 'responsive') {
@@ -382,29 +388,31 @@ export default {
       }
       this.forceUpdate()
     },
-    addBlock (component) {
+    addBlock(component) {
       component.slots.default.push({
         component: 'oh-block',
         config: {},
         slots: { default: [] }
       })
     },
-    addMasonry (component) {
+    addMasonry(component) {
       if (!component.slots.masonry || !component.slots.masonry.length) {
-        this.page.slots.masonry = [{
-          component: 'oh-masonry',
-          config: {},
-          slots: { default: [] }
-        }]
+        this.page.slots.masonry = [
+          {
+            component: 'oh-masonry',
+            config: {},
+            slots: { default: [] }
+          }
+        ]
       }
     },
-    addGridItem (component) {
+    addGridItem(component) {
       component.slots['grid'].push({
         component: 'oh-grid-item',
         config: { x: 5, y: 3, h: 2, w: 2 }
       })
     },
-    addCanvasItem (component) {
+    addCanvasItem(component) {
       component.slots['canvas'].push({
         component: 'oh-canvas-item',
         config: { x: 10, y: 10, h: 50, w: 50 },
@@ -412,13 +420,18 @@ export default {
       })
       this.forceUpdate()
     },
-    getWidgetDefinition (componentType) {
-      const component = Object.values({ ...SystemWidgets, ...LayoutWidgets, ...StandardWidgets, ...StandardListWidgets, ...StandardCellWidgets })
-        .find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
+    getWidgetDefinition(componentType) {
+      const component = Object.values({
+        ...SystemWidgets,
+        ...LayoutWidgets,
+        ...StandardWidgets,
+        ...StandardListWidgets,
+        ...StandardCellWidgets
+      }).find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
       if (!component) return null
       return component.widget()
     },
-    toYaml () {
+    toYaml() {
       this.pageYaml = YAML.stringify({
         config: this.page.config,
         // make sure array is available for existing pages, where the prop might be undefined, by falling back to empty array
@@ -428,12 +441,15 @@ export default {
         canvas: this.page.slots.canvas || []
       })
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
-        if (updatedPage.config && updatedPage.config.layoutType &&
-            updatedPage.config.layoutType === 'fixed' &&
-           ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))) {
+        if (
+          updatedPage.config &&
+          updatedPage.config.layoutType &&
+          updatedPage.config.layoutType === 'fixed' &&
+          ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))
+        ) {
           throw new Error('Using blocks and masonry in fixed layouts is not possible')
         }
 
@@ -449,7 +465,7 @@ export default {
         return false
       }
     },
-    toggleFullscreen () {
+    toggleFullscreen() {
       this.$fullscreen.toggle(document.body, {
         wrap: false,
         callback: (fullscreen) => {
@@ -465,11 +481,11 @@ export default {
         }
       })
     },
-    onLayoutEditPageBeforeOut () {
+    onLayoutEditPageBeforeOut() {
       this.onPageBeforeOut()
       this.$refs.detailsSheet.$el.f7Modal.close()
     },
-    onSvgOnClickConfigUpdate (event) {
+    onSvgOnClickConfigUpdate(event) {
       if (!this.page.config.embeddedSvgActions) {
         this.page.config.embeddedSvgActions = {}
       }

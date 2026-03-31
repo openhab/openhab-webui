@@ -23,12 +23,14 @@ export default {
     size: Number
   },
   methods: {
-    success () {
-      f7.toast.create({
-        text: 'Copied to clipboard',
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
+    success() {
+      f7.toast
+        .create({
+          text: 'Copied to clipboard',
+          destroyOnClose: true,
+          closeTimeout: 2000
+        })
+        .open()
     }
   }
 }

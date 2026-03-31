@@ -7,7 +7,7 @@
     </f7-block>
 
     <f7-block-header v-if="!editable" class="padding-horizontal">
-      <b style="color: var(--f7-theme-color) !important;"
+      <b style="color: var(--f7-theme-color) !important"
         >INFO: This metadata is not editable as it has not been created through the UI. <br />You can try out changes here, but you cannot
         save them.</b
       >
@@ -121,30 +121,52 @@ export default {
   components: {
     ConfigSheet
   },
-  data () {
+  data() {
     return {
       defaultComponent: {},
       currentComponent: {},
       previewContext: {},
       previewWidgetKey: f7.utils.id(),
-      standardWidgets: Object.values(StandardWidgets).filter((c) => c.widget).map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
-      standardListWidgets: Object.values(StandardListWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
-      standardCellWidgets: Object.values(StandardCellWidgets).filter((c) => c.widget && typeof c.widget === 'function').map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
-      systemWidgets: Object.values(SystemWidgets).filter((c) => c.widget & typeof c.widget === 'function').map((c) => c.widget()).sort((a, b) => { return a.name.localeCompare(b.name) }),
+      standardWidgets: Object.values(StandardWidgets)
+        .filter((c) => c.widget)
+        .map((c) => c.widget())
+        .sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        }),
+      standardListWidgets: Object.values(StandardListWidgets)
+        .filter((c) => c.widget && typeof c.widget === 'function')
+        .map((c) => c.widget())
+        .sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        }),
+      standardCellWidgets: Object.values(StandardCellWidgets)
+        .filter((c) => c.widget && typeof c.widget === 'function')
+        .map((c) => c.widget())
+        .sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        }),
+      systemWidgets: Object.values(SystemWidgets)
+        .filter((c) => c.widget & (typeof c.widget === 'function'))
+        .map((c) => c.widget())
+        .sort((a, b) => {
+          return a.name.localeCompare(b.name)
+        }),
       widgetVars: {},
       configDescriptions: {}
     }
   },
   computed: {
-    personalWidgets () {
-      return [...useComponentsStore().widgets()].sort((a, b) => { return a.uid.localeCompare(b.uid) })
+    personalWidgets() {
+      return [...useComponentsStore().widgets()].sort((a, b) => {
+        return a.uid.localeCompare(b.uid)
+      })
     },
-    placeholderTextType () {
+    placeholderTextType() {
       return getDefaultInputType(this.item.type)
     },
     ...mapStores(useComponentsStore)
   },
-  mounted () {
+  mounted() {
     useStatesStore().startTrackingStates()
     // copy the item & remove the metadata to get the default widget
     const defaultItem = Object.assign({}, this.item)
@@ -152,22 +174,24 @@ export default {
       delete defaultItem.metadata[this.namespace]
     }
     this.defaultComponent =
-      (this.namespace === 'cellWidget') ? itemDefaultCellComponent(defaultItem)
-        : (this.namespace === 'listWidget') ? itemDefaultListComponent(defaultItem)
+      this.namespace === 'cellWidget'
+        ? itemDefaultCellComponent(defaultItem)
+        : this.namespace === 'listWidget'
+          ? itemDefaultListComponent(defaultItem)
           : itemDefaultStandaloneComponent(defaultItem)
 
     nextTick(() => {
       this.updateComponent()
     })
   },
-  beforeUnmount () {
+  beforeUnmount() {
     useStatesStore().stopTrackingStates()
   },
   methods: {
-    isSelected (cl) {
+    isSelected(cl) {
       return this.component === cl
     },
-    setPreviewContext () {
+    setPreviewContext() {
       // create new object to be reactive
       this.previewContext = {}
       this.previewContext.store = useStatesStore().trackedItems
@@ -195,7 +219,7 @@ export default {
         this.previewContext.component = this.currentComponent
       }
     },
-    setCurrentComponent () {
+    setCurrentComponent() {
       if (!this.metadata.value || this.metadata.value === ' ') {
         this.currentComponent = Object.assign({}, this.defaultComponent)
         if (typeof this.metadata.config === 'object') {
@@ -209,10 +233,12 @@ export default {
         if (!this.currentComponent.config.item) this.currentComponent.config.item = this.item.name
       }
     },
-    setConfigDescriptions () {
+    setConfigDescriptions() {
       let desc = {}
       if (!this.currentComponent || !this.currentComponent.component) return desc
-      const widget = useComponentsStore().widgets().find((w) => w.uid === this.currentComponent.component.replace('widget:', ''))
+      const widget = useComponentsStore()
+        .widgets()
+        .find((w) => w.uid === this.currentComponent.component.replace('widget:', ''))
       if (widget && widget.props) desc = Object.assign({}, widget.props)
 
       if (this.namespace === 'listWidget') {
@@ -252,14 +278,14 @@ export default {
 
       this.configDescriptions = desc
     },
-    updateComponent () {
+    updateComponent() {
       const value = this.$refs.widgets.$el.children[0].f7SmartSelect.getValue()
       this.metadata.value = value || ' ' // ' ' is used to indicate the default widget
       this.setCurrentComponent()
       this.setConfigDescriptions()
       this.setPreviewContext()
     },
-    widgetConfigUpdated () {
+    widgetConfigUpdated() {
       for (let key in this.metadata.config) {
         // set to '' when the default defines the option but the metadata doesn't (null would be better but the API then removes it)
         if (!this.metadata.config[key] && typeof this.defaultComponent.config[key] === 'string') this.metadata.config[key] = ''

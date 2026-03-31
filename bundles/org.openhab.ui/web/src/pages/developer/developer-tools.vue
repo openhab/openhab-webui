@@ -220,12 +220,12 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return {
       f7
     }
   },
-  data () {
+  data() {
     return {
       currentTab: 'menu',
       sseClient: null,
@@ -241,39 +241,39 @@ export default {
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
-    onPageBeforeRemove () {
+    onPageBeforeRemove() {
       if (this.sseClient) this.$oh.sse.close(this.sseClient)
     },
-    startSSE () {
+    startSSE() {
       this.sseClient = this.$oh.sse.connect('/rest/events', '', (event) => {
         event.time = new Date()
         this.sseEvents.unshift(...[event])
         this.sseEvents.splice(5)
       })
     },
-    stopSSE () {
+    stopSSE() {
       this.$oh.sse.close(this.sseClient)
       this.sseClient = null
       this.sseEvents = []
     },
-    startWS () {
+    startWS() {
       this.wsClient = this.$oh.ws.events([], (event) => {
         event.time = new Date()
         this.wsEvents.unshift(...[event])
         this.wsEvents.splice(5)
       })
     },
-    stopWS () {
+    stopWS() {
       this.$oh.ws.close(this.wsClient)
       this.wsClient = null
       this.wsEvents = []
     },
-    onLogLevelChange () {
+    onLogLevelChange() {
       window.setLogLevel(this.logLevel)
     }
   },
   asyncComputed: {
-    iconUrl () {
+    iconUrl() {
       return this.$oh.media.getIcon(this.icon)
     }
   }

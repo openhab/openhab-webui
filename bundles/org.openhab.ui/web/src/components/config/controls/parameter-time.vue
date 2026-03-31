@@ -41,15 +41,15 @@ export default {
     value: String
   },
   emits: ['input'],
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       picker: null
     }
   },
-  mounted () {
+  mounted() {
     const self = this
     const inputControl = this.$refs.input
     const containerControl = this.$refs.picker
@@ -61,7 +61,9 @@ export default {
       {
         values: (function () {
           let arr = []
-          for (let i = 0; i <= 23; i++) { arr.push(i < 10 ? `0${i}` : i) }
+          for (let i = 0; i <= 23; i++) {
+            arr.push(i < 10 ? `0${i}` : i)
+          }
           return arr
         })()
       },
@@ -74,7 +76,9 @@ export default {
       {
         values: (function () {
           let arr = []
-          for (let i = 0; i <= 59; i++) { arr.push(i < 10 ? `0${i}` : i) }
+          for (let i = 0; i <= 59; i++) {
+            arr.push(i < 10 ? `0${i}` : i)
+          }
           return arr
         })()
       }
@@ -91,10 +95,13 @@ export default {
           values: (() => {
             let arr = []
             let step = this.configDescription.step | this.configDescription.stepsize
-            for (let i = 0; i <= 59; i = i + step % 60) { arr.push(i < 10 ? `0${i}` : i) }
+            for (let i = 0; i <= 59; i = i + (step % 60)) {
+              arr.push(i < 10 ? `0${i}` : i)
+            }
             return arr
           })()
-        })
+        }
+      )
     }
 
     nextTick(() => {
@@ -104,7 +111,7 @@ export default {
         toolbar: false,
         inputReadOnly: false,
         rotateEffect: true,
-        value: (self.value && self.value.indexOf(':') >= 0) ? self.value.split(':') : (self.hasSeconds ? ['00', '00', '00'] : ['00', '00']),
+        value: self.value && self.value.indexOf(':') >= 0 ? self.value.split(':') : self.hasSeconds ? ['00', '00', '00'] : ['00', '00'],
         formatValue: function (values, displayValues) {
           if (self.hasSeconds) return values[0] + ':' + values[1] + ':' + values[2]
           return values[0] + ':' + values[1]
@@ -122,25 +129,25 @@ export default {
       })
     })
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.picker) {
       this.picker.destroy()
     }
   },
   watch: {
-    value (val) {
+    value(val) {
       if (!val || val.indexOf(':') < 0 || !this.picker) return
       this.picker.setValue(val.split(':'))
     }
   },
   computed: {
-    hasSeconds () {
+    hasSeconds() {
       let result = this.configDescription.step || this.configDescription.stepsize
       return result !== undefined && result % 60 !== 0
     }
   },
   methods: {
-    updateValue (event) {
+    updateValue(event) {
       this.$emit('input', event.target.value)
     }
   }

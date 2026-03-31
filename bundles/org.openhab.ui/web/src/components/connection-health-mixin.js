@@ -6,6 +6,7 @@ import { i18n } from '@/js/i18n'
 import reloadMixin from './reload-mixin'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { ApiError } from '@/js/hey-api.ts'
 
 export default {
   mixins: [reloadMixin],
@@ -43,17 +44,22 @@ export default {
         }
       })
 
-      const unsubscribeAction = useStatesStore().$onAction(({ name, store, args, after, onError }) => {
+      useStatesStore().$onAction(({ name, _store, args, _after, onError }) => {
         onError((error) => {
           if (name === 'sendCommand') {
             let reloadButton = true
             let msg = i18n.global.t('error.communicationFailure')
-            switch (error) {
-              case 404:
-              case 'Not Found':
-                msg = i18n.global.t('error.itemNotFound').replace('%s', args[0])
-                reloadButton = false
-                return this.displayFailureToast(msg, reloadButton)
+            if (error instanceof ApiError) {
+              switch (error.response.status) {
+                case 400:
+                  msg = i18n.global.t('error.invalidCommand').replace('%s', args[0])
+                  reloadButton = false
+                  return this.displayFailureToast(msg, reloadButton)
+                case 404:
+                  msg = i18n.global.t('error.itemNotFound').replace('%s', args[0])
+                  reloadButton = false
+                  return this.displayFailureToast(msg, reloadButton)
+              }
             }
             if (this.communicationFailureToast === null) {
               this.communicationFailureToast = this.displayFailureToast(i18n.global.t('error.communicationFailure'), true, true)

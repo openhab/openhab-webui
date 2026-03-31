@@ -9,7 +9,10 @@
           {{ title }}
         </f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="!readOnly && currentRuleModuleType && dirty" @click="updateModuleConfig">
+          <f7-link
+            v-if="!readOnly && currentRuleModuleType && dirty"
+            :class="{ disabled: !isConfigValid }"
+            @click="isConfigValid ? updateModuleConfig() : null">
             {{ $t('dialogs.save') }}
           </f7-link>
           <f7-link v-else @click="close">
@@ -95,7 +98,14 @@
               :smart-select-params="{ view: f7.views.main, openIn: 'popup', closeOnSelect: true }">
               <select
                 name="ruleModuleType"
-                @change="setModuleType(moduleTypes[currentSection].find((t) => t.uid === $refs.ruleModuleTypeSmartSelect.$el.children[0].f7SmartSelect.getValue()), true)">
+                @change="
+                  setModuleType(
+                    moduleTypes[currentSection].find(
+                      (t) => t.uid === $refs.ruleModuleTypeSmartSelect.$el.children[0].f7SmartSelect.getValue()
+                    ),
+                    true
+                  )
+                ">
                 <optgroup v-for="(mt, scope) in groupedModuleTypes(currentSection)" :key="scope" :label="scope">
                   <option
                     v-for="moduleType in mt"
@@ -119,7 +129,7 @@
             :parameters="currentRuleModuleType.configDescriptions"
             :configuration="ruleModule.configuration"
             :readOnly="readOnly"
-            @updated="dirty = true" />
+            @updated="onUpdated" />
           <f7-block v-else>
             <f7-button @click="editBlockly" color="blue" outline fill> Edit Blockly </f7-button>
           </f7-block>
@@ -160,28 +170,29 @@ export default {
     f7router: Object
   },
   emits: ['module-update', 'editNewScript'],
-  setup () {
+  setup() {
     return {
       f7
     }
   },
-  data () {
+  data() {
     return {
       currentRuleModuleType: this.ruleModuleType,
-      advancedTypePicker: false
+      advancedTypePicker: false,
+      isConfigValid: true
     }
   },
   computed: {
-    title () {
+    title() {
       if (this.ruleModule && this.ruleModule.new) return 'Add ' + this.SectionLabels[this.currentSection][1]
       if (this.readOnly) return 'View ' + this.SectionLabels[this.currentSection][1]
       return 'Edit ' + this.SectionLabels[this.currentSection][1]
     },
-    moduleTitleSuggestion () {
+    moduleTitleSuggestion() {
       if (!this.ruleModule || !this.currentRuleModuleType) return 'Title'
       return this.suggestedModuleTitle(this.ruleModule, this.currentRuleModuleType)
     },
-    moduleDescriptionSuggestion () {
+    moduleDescriptionSuggestion() {
       if (!this.ruleModule || !this.currentRuleModuleType) return 'Description'
       return this.suggestedModuleDescription(this.ruleModule, this.currentRuleModuleType)
     }
@@ -195,30 +206,30 @@ export default {
     }
   },
   methods: {
-    setModuleType (val, clearConfig) {
-      const moduleType = (typeof val === 'string') ? this.moduleTypes[this.currentSection].find((t) => t.uid === val) : val
+    setModuleType(val, clearConfig) {
+      const moduleType = typeof val === 'string' ? this.moduleTypes[this.currentSection].find((t) => t.uid === val) : val
       this.ruleModule.type = moduleType.uid
       this.currentRuleModuleType = moduleType
       if (clearConfig) this.ruleModule.configuration = {}
       this.ruleModule.label = this.ruleModule.description = ''
     },
-    moduleConfigClosed () {
+    moduleConfigClosed() {
       f7.emit('ruleModuleConfigClosed')
     },
-    updateModuleConfig () {
-      if (this.$refs.parameters && !this.$refs.parameters.isValid()) {
+    updateModuleConfig() {
+      if (!this.isConfigValid) {
         f7.dialog.alert('Please review the configuration and correct validation errors')
         return
       }
       f7.emit('ruleModuleConfigUpdate', this.ruleModule)
       this.$refs.modulePopup.$el.f7Modal.close()
     },
-    editBlockly () {
+    editBlockly() {
       this.updateModuleConfig()
       f7.views.main.router.navigate(`/settings/rules/${this.rule.uid}/script/${this.ruleModule.id}`)
     },
-    startScripting (language) {
-      const contentType = (language === 'blockly') ? 'application/javascript' : language
+    startScripting(language) {
+      const contentType = language === 'blockly' ? 'application/javascript' : language
       this.ruleModule.configuration.type = contentType
       this.ruleModule.configuration.script = ''
       if (language === 'blockly') {
@@ -228,7 +239,7 @@ export default {
       f7.emit('editNewScript', this.ruleModule)
       this.$refs.modulePopup.$el.f7Modal.close()
     },
-    groupedModuleTypes (section) {
+    groupedModuleTypes(section) {
       const moduleTypes = this.moduleTypes[section].filter((t) => t.visibility === 'VISIBLE')
       let moduleTypesByScope = moduleTypes.reduce((prev, type, i, types) => {
         const scope = type.uid.split('.')[0]
@@ -239,31 +250,37 @@ export default {
         }
         return prev
       }, {})
-      return Object.keys(moduleTypesByScope).sort((s1, s2) => (s1 === 'core') ? -1 : (s2 === 'core') ? 1 : s1.localeCompare(s2))
+      return Object.keys(moduleTypesByScope)
+        .sort((s1, s2) => (s1 === 'core' ? -1 : s2 === 'core' ? 1 : s1.localeCompare(s2)))
         .reduce((prev, key) => {
           prev[key] = moduleTypesByScope[key]
           return prev
         }, {})
     },
-    onBackClicked () {
+    onBackClicked() {
       if (this.dirty) {
         this.confirmLeaveWithoutSaving(this.close)
       } else {
         this.close()
       }
     },
-    close () {
+    close() {
       this.$refs.modulePopup.$el.f7Modal.close()
+    },
+    onUpdated() {
+      this.dirty = true
+      if (!this.$refs.parameters || typeof this.$refs.parameters.isValid !== 'function') return true
+      this.isConfigValid = this.$refs.parameters.isValid()
     }
   },
-  created () {
+  created() {
     this.SectionLabels = {
       triggers: ['When', 'Trigger'],
       actions: ['Then', 'Action'],
       conditions: ['But only if', 'Condition']
     }
   },
-  mounted () {
+  mounted() {
     this.originalModule = cloneDeep(this.ruleModule)
   }
 }

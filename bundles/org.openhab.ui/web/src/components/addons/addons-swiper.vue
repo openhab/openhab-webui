@@ -36,7 +36,7 @@ const instance = getCurrentInstance()
 const global = instance?.appContext.config.globalProperties
 
 // props
-defineProps<{ addonsList: api.Addon[], installActionText?: string, headline?: string }>()
+defineProps<{ addonsList: api.Addon[]; installActionText?: string; headline?: string }>()
 
 // emits
 const emit = defineEmits(['addon-button-click'])
@@ -44,7 +44,7 @@ const emit = defineEmits(['addon-button-click'])
 // computed
 const appWidth = computed(() => (global?.$f7dim as { width: number }).width ?? 0)
 const appHeight = computed(() => (global?.$f7dim as { height: number }).height ?? 0)
-const slidesPerView = computed(() => appWidth.value > appHeight.value ? 3.5 : 1.5)
+const slidesPerView = computed(() => (appWidth.value > appHeight.value ? 3.5 : 1.5))
 
 // methods
 const addonButtonClick = (addon: api.Addon) => emit('addon-button-click', addon)

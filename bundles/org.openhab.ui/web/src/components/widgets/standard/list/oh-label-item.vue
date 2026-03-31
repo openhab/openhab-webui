@@ -1,8 +1,7 @@
 <template>
   <oh-list-item :context="context">
     <template #after>
-      <div
-        v-if="(config.after === undefined) && (context.store[config.item].displayState || (context.store[config.item].state !== 'NULL'))">
+      <div v-if="config.after === undefined && (context.store[config.item].displayState || context.store[config.item].state !== 'NULL')">
         {{ context.store[config.item].displayState || context.store[config.item].state }}
       </div>
     </template>
@@ -23,7 +22,7 @@ export default {
     context: Object
   },
   widget: OhLabelItemDefinition,
-  setup (props) {
+  setup(props) {
     const { config, evaluateExpression } = useWidgetContext(props.context)
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, performAction }

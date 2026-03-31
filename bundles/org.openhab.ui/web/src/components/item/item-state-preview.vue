@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import ItemStandaloneControl from '@/components/item/item-standalone-control.vue'
 import * as api from '@/api'
-import type { WidgetContext } from '../widgets/types';
+import type { WidgetContext } from '../widgets/types'
 
 defineProps<{
   item: api.EnrichedItem

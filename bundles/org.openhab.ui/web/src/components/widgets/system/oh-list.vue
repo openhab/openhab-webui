@@ -12,7 +12,7 @@
     </template>
     <ul v-if="defaultSlots.length > 0">
       <template v-for="(slotComponent, idx) in defaultSlots" :key="idx">
-        <div v-if="context.editmode" style="display: flex; align-items: center;">
+        <div v-if="context.editmode" style="display: flex; align-items: center">
           <f7-menu v-if="context.editmode">
             <f7-menu-item icon-f7="list_bullet" class="margin-left configure-layout-menu" dropdown>
               <f7-menu-dropdown>
@@ -71,7 +71,7 @@ export default {
     context: Object
   },
   widget: OhListDefinition,
-  setup (props) {
+  setup(props) {
     const { config, childContext, defaultSlots } = useWidgetContext(props.context)
     return { config, childContext, defaultSlots }
   }

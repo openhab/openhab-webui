@@ -60,7 +60,7 @@ const loaded = ref<boolean>(false)
 // computed
 const strategies = computed(() => {
   const strategies: Record<string, Array<string>> = {}
-  services.value.forEach((service) => strategies[service.id] = serviceStrategies(service))
+  services.value.forEach((service) => (strategies[service.id] = serviceStrategies(service)))
   return strategies
 })
 
@@ -94,9 +94,9 @@ onMounted(() => {
 const load = async () => {
   loaded.value = false
   const availableServices = (await api.getPersistenceServices())!
-  services.value = (await Promise.all(
-    availableServices.map((service) => loadService(service))
-  )).sort((s1, s2) => s1.label.localeCompare(s2.label))
+  services.value = (await Promise.all(availableServices.map((service) => loadService(service)))).sort((s1, s2) =>
+    s1.label.localeCompare(s2.label)
+  )
   loaded.value = true
 }
 
@@ -114,7 +114,7 @@ const loadService = async (service: api.PersistenceService): Promise<Persistence
 
   let itemsPersisted: api.PersistenceItemInfo | 'not_persisted' | 'unsupported' = 'unsupported'
   try {
-    itemsPersisted = (await api.getItemsForPersistenceService({ serviceId: service.id, itemName: props.item.name }))![0]!
+    itemsPersisted = (await api.getItemsForPersistenceService({ serviceId: service.id, itemName: props.item.name }))![0] ?? 'not_persisted'
   } catch (err: unknown) {
     if (err instanceof ApiError && err.response.status === 404) {
       itemsPersisted = 'not_persisted'
@@ -160,10 +160,14 @@ const matchesItem = (item: api.EnrichedItem | api.EnrichedGroupItem, items: Arra
   if (!negativeMatch) {
     if (items.includes('*')) return true
     itemPattern = itemName
-    groupPatterns = items.filter((configItem) => !configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(0, -1))
+    groupPatterns = items
+      .filter((configItem) => !configItem.startsWith('!') && configItem.endsWith('*'))
+      .map((configItem) => configItem.slice(0, -1))
   } else {
     itemPattern = '!' + itemName
-    groupPatterns = items.filter((configItem) => configItem.startsWith('!') && configItem.endsWith('*')).map((configItem) => configItem.slice(1, -1))
+    groupPatterns = items
+      .filter((configItem) => configItem.startsWith('!') && configItem.endsWith('*'))
+      .map((configItem) => configItem.slice(1, -1))
   }
   if (items.includes(itemPattern)) return true
   return groupPatterns.some((groupName) => groupNames.includes(groupName))

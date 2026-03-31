@@ -5,7 +5,12 @@ export default (series: SeriesOption) => {
   if (Array.isArray(series.markers)) {
     if (!series.markLine) {
       series.markLine = {
-        data: []
+        data: [],
+        tooltip: {
+          // @ts-expect-error ECharts provides no type def for MarkLineOption::formatter
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          formatter: (params: unknown) => dayjs(params.data.xAxis as string).format('llll')
+        }
       }
     }
     if (!series.markPoint) {

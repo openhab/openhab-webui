@@ -47,7 +47,7 @@ export default {
     showTasks: Boolean
   },
   methods: {
-    skipSetupWizard () {
+    skipSetupWizard() {
       f7.dialog.confirm(
         'Are you sure? You currently only have a minimal set of features available and you will need to install all essential add-ons by hand!',
         'Skip Setup Wizard',
@@ -56,7 +56,7 @@ export default {
         }
       )
     },
-    dismissTasks () {
+    dismissTasks() {
       // TODO
     }
   }

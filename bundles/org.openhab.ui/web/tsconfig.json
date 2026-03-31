@@ -17,7 +17,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["audioworklet", "vite/client"]
+    "types": ["audioworklet", "vite/client", "swagger-ui-dist"]
   },
   "include": [
     "env.d.ts",

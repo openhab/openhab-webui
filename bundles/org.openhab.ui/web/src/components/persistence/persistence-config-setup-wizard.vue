@@ -140,7 +140,7 @@ export default {
   components: {
     AddonLogo
   },
-  data () {
+  data() {
     return {
       persistenceServiceId: 'org.openhab.persistence',
       defaultPersistence: null,
@@ -161,19 +161,19 @@ export default {
     }
   },
   watch: {
-    addonsReady (val) {
+    addonsReady(val) {
       if (val) {
         this.loadPersistenceConfig()
       }
     },
-    confirm (val) {
+    confirm(val) {
       if (val) {
         this.updatePersistenceConfig()
       }
     }
   },
   methods: {
-    async loadPersistenceConfig () {
+    async loadPersistenceConfig() {
       try {
         try {
           const serviceConfig = await this.$oh.api.get('/rest/services/' + this.persistenceServiceId + '/config')
@@ -203,7 +203,7 @@ export default {
         this.servicesLoaded = true
       }
     },
-    async loadServiceConfig (service) {
+    async loadServiceConfig(service) {
       try {
         const suggestions = await this.$oh.api.get('/rest/persistence/strategysuggestions?serviceId=' + service.id)
         this.suggestedStrategies[service.id] = suggestions.map((suggestion) => suggestion.name)
@@ -225,7 +225,7 @@ export default {
         } else {
           this.items[service.id] = '*'
         }
-      } catch(err) {
+      } catch (err) {
         if (err === 'Not Found' || err === 404) {
           this.items[service.id] = '*'
           this.configuration[service.id] = this.updateOrCreateConfiguration(service.id)
@@ -239,18 +239,18 @@ export default {
       try {
         const group = await this.$oh.api.get('/rest/items/' + groupName)
         this.groupLabels[groupName] = group.label
-      } catch(err) {
+      } catch (err) {
         if (err === 'Not Found' || err === 404) {
           this.groupExists[groupName] = false
         } else {
-          console.log('Unexpected error trying to find Group \'' + groupName + '\', will not be created if selected when saving: ', err)
+          console.log("Unexpected error trying to find Group '" + groupName + "', will not be created if selected when saving: ", err)
         }
       }
     },
-    isEditable (configuration) {
+    isEditable(configuration) {
       return configuration?.editable
     },
-    isBasicConfig (configuration) {
+    isBasicConfig(configuration) {
       // If there is an existing configuration, we will only present it for configuration in the wizard if it has a basic configuration:
       // - Editable (not defined in a file)
       // - A single configuration
@@ -269,7 +269,7 @@ export default {
       const itemsEmpty = !items.length || (items.length === 1 && items[0] === '')
       return (itemsAll || itemsGroup || itemsEmpty) && !filters.length
     },
-    getStrategies (service) {
+    getStrategies(service) {
       const suggested = this.suggestedStrategies[service.id] || []
       const configured = this.configuredStrategies[service.id] || []
       const common = this.CommonCronStrategies.map((strategy) => strategy.name)
@@ -288,23 +288,25 @@ export default {
       }
       return strategies
     },
-    resetConfiguration (serviceId) {
+    resetConfiguration(serviceId) {
       const label = this.services.find((service) => service.id === serviceId)?.label || serviceId
       f7.dialog.confirm(this.t('setupwizard.persistence-config.services.resetConfig.confirm', label), () => {
         this.configuration[serviceId] = this.updateOrCreateConfiguration(serviceId)
       })
     },
-    updateOrCreateConfiguration (serviceId) {
+    updateOrCreateConfiguration(serviceId) {
       const configuration = this.configuration[serviceId] || {}
       configuration.serviceId = serviceId
-      configuration.configs = [{
-        items: [ this.items[serviceId] ],
-        strategies: this.selectedStrategies[serviceId]
-      }]
+      configuration.configs = [
+        {
+          items: [this.items[serviceId]],
+          strategies: this.selectedStrategies[serviceId]
+        }
+      ]
       configuration.editable = true
       return configuration
     },
-    getPreSelectedStrategies (service) {
+    getPreSelectedStrategies(service) {
       const suggested = this.suggestedStrategies[service.id] || []
       const configured = this.configuredStrategies[service.id] || []
       const selectedStrategies = [...(configured.length ? configured : suggested)]
@@ -330,12 +332,13 @@ export default {
       }
       return selectedStrategies
     },
-    updatePersistenceConfig () {
+    updatePersistenceConfig() {
       this.$oh.api.put('/rest/services/' + this.persistenceServiceId + '/config', {
         default: this.defaultPersistence
       })
       const groupsToAdd = []
-      this.services.map((service) => service.id)
+      this.services
+        .map((service) => service.id)
         .filter((serviceId) => this.isBasicConfig(this.configuration[serviceId]))
         .forEach((serviceId) => {
           this.configuration[serviceId] = this.updateOrCreateConfiguration(serviceId)
@@ -365,7 +368,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.PredefinedStrategies = PredefinedStrategies
     this.CommonCronStrategies = CommonCronStrategies
   }

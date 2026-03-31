@@ -52,8 +52,13 @@
         <item-picker
           :value="currentModule.configuration.itemName"
           label="Item"
-          @input="(val) => currentModule.configuration.itemName = val"
-          @item-selected="(value) => { this.currentItem = value; updateItemEventType('command') }" />
+          @input="(val) => (currentModule.configuration.itemName = val)"
+          @item-selected="
+            (value) => {
+              this.currentItem = value
+              updateItemEventType('command')
+            }
+          " />
       </f7-list-group>
     </f7-list>
     <f7-list>
@@ -63,14 +68,14 @@
         name="command"
         type="text"
         :value="currentModule.configuration.command"
-        @blur="(evt) => currentModule.configuration.command = evt.target.value" />
+        @blur="(evt) => (currentModule.configuration.command = evt.target.value)" />
       <f7-list-input
         v-else-if="itemEventType === 'update'"
         label="to state"
         name="state"
         type="text"
         :value="currentModule.configuration.state"
-        @blur="(evt) => currentModule.configuration.state = evt.target.value" />
+        @blur="(evt) => (currentModule.configuration.state = evt.target.value)" />
     </f7-list>
     <f7-list v-if="itemEventType === 'command' && commandSuggestions.length">
       <f7-list-item
@@ -94,15 +99,15 @@
         type="colorpicker"
         label="Pick a color"
         :color-picker-params="{
-                       targetEl: '#color-picker-value',
-                       targetElSetBackgroundColor: true,
-                       openIn: 'auto',
-                       modules: ['hsb-sliders', 'wheel', 'palette'],
-                       sliderValue: true,
-                       sliderValueEditable: true,
-                       sliderLabel: true,
-                       formatValue: colorToCommand
-                     }"
+          targetEl: '#color-picker-value',
+          targetElSetBackgroundColor: true,
+          openIn: 'auto',
+          modules: ['hsb-sliders', 'wheel', 'palette'],
+          sliderValue: true,
+          sliderValueEditable: true,
+          sliderLabel: true,
+          formatValue: colorToCommand
+        }"
         :value="commandToColor()"
         @change="updateColorCommand">
         <template #media>
@@ -118,7 +123,7 @@
         media-item
         title="Design with Blockly"
         text="A beginner-friendly way to build scripts visually by assembling blocks"
-        :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined "
+        :footer="!isJsAvailable ? 'You need to install the JavaScript Scripting addon before you will be able to run' : undefined"
         link=""
         @click="scriptLanguagePicked('blockly')">
         <template #media>
@@ -213,9 +218,9 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 export default {
   mixins: [ModuleWizard],
   props: {
-    'currentModule': Object,
-    'currentModuleType': Object,
-    'moduleTypes': Object,
+    currentModule: Object,
+    currentModuleType: Object,
+    moduleTypes: Object,
     f7router: Object
   },
   components: {
@@ -223,7 +228,7 @@ export default {
     ConfigSheet
   },
   emits: ['type-select', 'start-script', 'show-advanced'],
-  data () {
+  data() {
     return {
       category: '',
       itemEventType: 'command',
@@ -234,55 +239,65 @@ export default {
     }
   },
   computed: {
-    commandSuggestions () {
+    commandSuggestions() {
       if (!this.currentItem || this.category !== 'item') return []
-      let type = (this.currentItem.type === 'Group' && this.currentItem.groupType) ? this.currentItem.groupType : this.currentItem.type
+      let type = this.currentItem.type === 'Group' && this.currentItem.groupType ? this.currentItem.groupType : this.currentItem.type
 
       if (this.currentItem.commandDescription && this.currentItem.commandDescription.commandOptions) {
         return this.currentItem.commandDescription.commandOptions
       }
       if (type === 'Switch') {
-        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+        return ['ON', 'OFF'].map((c) => {
+          return { command: c, label: c }
+        })
       }
       if (type === 'Rollershutter') {
-        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+        return ['UP', 'DOWN', 'STOP'].map((c) => {
+          return { command: c, label: c }
+        })
       }
       if (type === 'Contact') {
-        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+        return ['UP', 'DOWN', 'STOP'].map((c) => {
+          return { command: c, label: c }
+        })
       }
       if (type === 'Color') {
-        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+        return ['ON', 'OFF'].map((c) => {
+          return { command: c, label: c }
+        })
       }
 
       return []
     }
   },
   methods: {
-    chooseItemCategory () {
+    chooseItemCategory() {
       this.openModelPicker()
     },
-    chooseScriptCategory () {
+    chooseScriptCategory() {
       this.category = 'script'
       let moduleType = this.moduleTypes.find((t) => t.uid === 'script.ScriptAction')
       if (moduleType) {
-        this.languages = moduleType.configDescriptions.find((c) => c.name === 'type').options.map((l) => {
-          return {
-            contentType: l.value,
-            name: l.label.split(' (')[0],
-            version: l.label.split(' (')[1].replace(')', '')
-          }
-        })
+        this.languages = moduleType.configDescriptions
+          .find((c) => c.name === 'type')
+          .options.map((l) => {
+            return {
+              contentType: l.value,
+              name: l.label.split(' (')[0],
+              version: l.label.split(' (')[1].replace(')', '')
+            }
+          })
       }
     },
-    chooseRulesCategory () {
+    chooseRulesCategory() {
       this.category = 'rules'
       this.updateRulesEventType('run')
     },
-    chooseMediaCategory () {
+    chooseMediaCategory() {
       this.category = 'media'
       this.updateMediaEventType('say')
     },
-    updateItemEventType (type) {
+    updateItemEventType(type) {
       this.itemEventType = type
       switch (type) {
         case 'command':
@@ -295,7 +310,7 @@ export default {
           break
       }
     },
-    updateRulesEventType (type) {
+    updateRulesEventType(type) {
       this.rulesEventType = type
       switch (type) {
         case 'run':
@@ -306,7 +321,7 @@ export default {
           break
       }
     },
-    updateMediaEventType (type) {
+    updateMediaEventType(type) {
       this.mediaEventType = type
       switch (type) {
         case 'say':
@@ -317,10 +332,10 @@ export default {
           break
       }
     },
-    updateColorCommand (evt) {
+    updateColorCommand(evt) {
       this.currentModule.configuration.command = evt.target.value
     },
-    commandToColor (evt) {
+    commandToColor(evt) {
       if (!this.currentModule.configuration.command || this.currentModule.configuration.command.split(',').length !== 3) return null
       let color = this.currentModule.configuration.command.split(',')
       color[0] = parseInt(color[0])
@@ -328,7 +343,7 @@ export default {
       color[2] = color[2] / 100
       return { hsb: color }
     },
-    colorToCommand (val) {
+    colorToCommand(val) {
       let hsb = [...val.hsb]
       hsb[0] = Math.round(hsb[0]) % 360
       hsb[1] = Math.round(hsb[1] * 100)
@@ -336,13 +351,13 @@ export default {
       return hsb
       // this.currentModule.configuration.command = hsb.join(',')
     },
-    scriptLanguagePicked (value) {
+    scriptLanguagePicked(value) {
       this.$emit('type-select', 'script.ScriptAction')
       nextTick(() => {
         this.$emit('start-script', value)
       })
     },
-    itemPicked (value) {
+    itemPicked(value) {
       this.category = 'item'
       this.currentItem = value
       this.currentModule.configuration.itemName = value.name

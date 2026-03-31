@@ -38,13 +38,13 @@ export default {
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, performAction }
   },
-  data () {
+  data() {
     return {
       markerKey: f7.utils.id()
     }
   },
   computed: {
-    center () {
+    center() {
       if (this.config.item) {
         const itemState = this.context.store[this.config.item]
         if (itemState && itemState.state.indexOf(',') > 0) {
@@ -56,7 +56,7 @@ export default {
       }
       return null
     },
-    radius () {
+    radius() {
       if (this.config.radiusItem) {
         const itemState = this.context.store[this.config.radiusItem]
         if (itemState && !isNaN(parseFloat(itemState.state))) {
@@ -68,7 +68,7 @@ export default {
       }
       return null
     },
-    markerConfig () {
+    markerConfig() {
       if (!this.config) return {}
       let ret = {}
       Object.assign(ret, this.config)
@@ -77,7 +77,7 @@ export default {
       return ret
     }
   },
-  mounted () {
+  mounted() {
     this.$emit('update', this.center, this.radius)
   }
 }

@@ -42,7 +42,7 @@ export default {
     LinkDetails
   },
   emits: ['item-updated', 'item-created', 'item-removed', 'cancel-create'],
-  setup () {
+  setup() {
     return {
       f7
     }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <f7-block-header class="padding-horizontal">
-      <b style="color: var(--f7-theme-color) !important;">WARNING: Changing the internal unit can corrupt your persisted data!</b>
+      <b style="color: var(--f7-theme-color) !important">WARNING: Changing the internal unit can corrupt your persisted data!</b>
     </f7-block-header>
     <f7-list>
       <f7-list-input
@@ -12,7 +12,7 @@
         placeholder="leave empty to use system default"
         :value="metadata.value"
         :disabled="!editable ? true : null"
-        @blur="(evt) => metadata.value = evt.target.value" />
+        @blur="(evt) => (metadata.value = evt.target.value)" />
     </f7-list>
     <f7-block-footer class="param-description padding-horizontal">
       <small

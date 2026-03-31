@@ -25,23 +25,17 @@ import { f7 } from 'framework7-vue'
 import type { ConfigDescriptionParameter } from '@/api'
 
 const props = defineProps<{
-  configDescription: ConfigDescriptionParameter;
-  value?: string | string[] | null;
+  configDescription: ConfigDescriptionParameter
+  value?: string | string[] | null
 }>()
 
 const emit = defineEmits<{
-  (e: 'input', value: any): void;
+  (e: 'input', value: any): void
 }>()
 
-const labels = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-]
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-const values = [
-  '01', '02', '03', '04', '05', '06',
-  '07', '08', '09', '10', '11', '12'
-]
+const values = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
 
 const itemRef = ref<any>(null)
 

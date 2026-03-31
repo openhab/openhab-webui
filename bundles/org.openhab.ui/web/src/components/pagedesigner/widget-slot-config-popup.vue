@@ -32,7 +32,10 @@
           <f7-block v-else strong> This type of component cannot be configured: {{ slotComponent.component }}. </f7-block>
           <f7-list>
             <f7-list-button color="blue" @click="editWidgetCode(slotComponent)"> Edit YAML </f7-list-button>
-            <f7-list-button color="Remove" @click="removeComponentFromSlot(slotComponent, slotConfig); switchTab(slotConfig.length - 1)">
+            <!-- prettier-ignore  -->
+            <f7-list-button
+              color="Remove"
+              @click="removeComponentFromSlot(slotComponent, slotConfig); switchTab(slotConfig.length - 1)">
               Remove
             </f7-list-button>
           </f7-list>
@@ -68,26 +71,27 @@ export default {
   components: {
     ConfigSheet
   },
-  data () {
+  data() {
     return {
       ready: false,
       currentTab: 0
     }
   },
   methods: {
-    switchTab (idx) {
+    switchTab(idx) {
       this.currentTab = undefined
-      nextTick(() => { this.currentTab = idx })
+      nextTick(() => {
+        this.currentTab = idx
+      })
     },
-    widgetSlotConfigOpened () {
-    },
-    widgetSlotConfigClosed () {
+    widgetSlotConfigOpened() {},
+    widgetSlotConfigClosed() {
       f7.emit('widgetSlotConfigClosed')
     },
-    updateWidgetSlotConfig () {
+    updateWidgetSlotConfig() {
       f7.emit('widgetSlotConfigUpdate', this.slotConfig)
     },
-    addComponentToSlot () {
+    addComponentToSlot() {
       this.slotConfig.push({ component: this.currentSlotDefaultComponentType, config: Object.assign({}, this.initialConfig) })
       this.switchTab(this.slotConfig.length - 1)
     }

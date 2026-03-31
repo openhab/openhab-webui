@@ -154,10 +154,11 @@
               :checkbox="showCheckboxes"
               :checked="isChecked(thing.UID) ? true : null"
               :value="thing.UID"
-              @click.ctrl="(e) => ctrlClick(e, thing)"
-              @click.meta="(e) => ctrlClick(e, thing)"
-              @click.exact="(e) => click(e, thing)"
-              link=""
+              :prevent-router="showCheckboxes"
+              @click.ctrl="ctrlClick($event, thing)"
+              @click.meta="ctrlClick($event, thing)"
+              @click.exact="click($event, thing)"
+              :link="`/settings/things/${thing.UID}`"
               :title="thing.label || thing.UID">
               <template #footer>
                 <div>
@@ -261,10 +262,10 @@ export default {
     EmptyStatePlaceholder,
     ClipboardIcon
   },
-  setup () {
+  setup() {
     return { f7, theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       initSearchbar: false,
@@ -291,18 +292,21 @@ export default {
     }
   },
   watch: {
-    listedUids () {
+    listedUids() {
       this.selectedItems = this.selectedItems.filter((i) => this.listedUids.has(i))
     }
   },
   computed: {
-    emptySearchOrFilterResults () {
+    emptySearchOrFilterResults() {
       return (this.searchQuery || this.$refs.filters?.filtered) && !this.listedItems.length && this.things.length
     },
-    listedItems () {
+    listedItems() {
       if (!this.searchQuery) return this.filteredItems
 
-      const searchTerms = this.searchQuery.split(',').map((s) => s.trim()).filter((s) => s)
+      const searchTerms = this.searchQuery
+        .split(',')
+        .map((s) => s.trim())
+        .filter((s) => s)
       if (!searchTerms.length) return this.filteredItems
 
       return this.filteredItems.filter((thing) => {
@@ -310,10 +314,10 @@ export default {
         return searchTerms.some((t) => haystack.includes(t))
       })
     },
-    listedUids () {
+    listedUids() {
       return new Set(this.listedItems.map((t) => t.UID))
     },
-    indexedThings () {
+    indexedThings() {
       const things = this.listedItems
       if (this.groupBy === 'alphabetical') {
         return things.reduce((prev, thing, i, things) => {
@@ -335,10 +339,12 @@ export default {
 
           return prev
         }, {})
-        return Object.keys(bindingGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
-          objEntries[key] = bindingGroups[key]
-          return objEntries
-        }, {})
+        return Object.keys(bindingGroups)
+          .sort((a, b) => a.localeCompare(b))
+          .reduce((objEntries, key) => {
+            objEntries[key] = bindingGroups[key]
+            return objEntries
+          }, {})
       } else {
         const locationGroups = things.reduce((prev, thing, i, things) => {
           if (!thing.location && !this.showNoLocation) return prev
@@ -350,29 +356,31 @@ export default {
 
           return prev
         }, {})
-        return Object.keys(locationGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
-          objEntries[key] = locationGroups[key]
-          return objEntries
-        }, {})
+        return Object.keys(locationGroups)
+          .sort((a, b) => a.localeCompare(b))
+          .reduce((objEntries, key) => {
+            objEntries[key] = locationGroups[key]
+            return objEntries
+          }, {})
       }
     },
-    thingsCount () {
+    thingsCount() {
       let sum = 0
       Object.keys(this.indexedThings).forEach((key) => {
         sum = sum + this.indexedThings[key].length
       })
       return sum
     },
-    inboxCount () {
+    inboxCount() {
       return this.inbox.length
     },
-    allSelected () {
+    allSelected() {
       return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     },
-    searchPlaceholder () {
+    searchPlaceholder() {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
-    listTitle () {
+    listTitle() {
       let title = this.listedItems.length
       if (this.searchQuery || this.$refs.filters?.filtered) {
         title += ` of ${this.things.length} Things found`
@@ -387,14 +395,14 @@ export default {
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       this.stopEventSource()
       useLastSearchQueryStore().lastThingsSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -416,20 +424,18 @@ export default {
           if (this.$device.desktop && this.$refs.searchbar) {
             this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
           }
-          this.$refs.searchbar?.search(
-            this.searchFor || useLastSearchQueryStore().lastThingsSearchQuery || ''
-          )
+          this.$refs.searchbar?.search(this.searchFor || useLastSearchQueryStore().lastThingsSearchQuery || '')
         })
         if (!this.eventSource) this.startEventSource()
       })
       this.loadInbox()
     },
-    loadInbox () {
+    loadInbox() {
       this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.inbox = data
       })
     },
-    switchGroupOrder (groupBy) {
+    switchGroupOrder(groupBy) {
       this.groupBy = groupBy
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
@@ -441,23 +447,23 @@ export default {
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
-    toggleCheck () {
+    toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
     },
-    selectDeselectAll () {
+    selectDeselectAll() {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
         this.selectedItems = Array.from(this.listedUids)
       }
     },
-    search (searchbar, query, previousQuery) {
+    search(searchbar, query, previousQuery) {
       this.searchQuery = query.trim().toLowerCase()
     },
-    clearSearch () {
+    clearSearch() {
       this.searchQuery = null
     },
-    updateFilteredItems () {
+    updateFilteredItems() {
       const filters = this.$refs.filters
       if (!filters || !filters.filtered) {
         this.filteredItems = this.things
@@ -473,21 +479,19 @@ export default {
         return kindMatch && statusMatch
       })
     },
-    isChecked (item) {
+    isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
     },
-    click (event, item) {
+    click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.UID, item)
-      } else {
-        this.f7router.navigate(item.UID)
       }
     },
-    ctrlClick (event, item) {
+    ctrlClick(event, item) {
       this.toggleItemCheck(event, item.UID, item)
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
-    toggleItemCheck (event, item) {
+    toggleItemCheck(event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
@@ -495,18 +499,14 @@ export default {
         this.selectedItems.push(item)
       }
     },
-    removeSelected () {
+    removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected things?`,
-        'Remove Things',
-        () => {
-          vm.doRemoveSelected()
-        }
-      )
+      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected things?`, 'Remove Things', () => {
+        vm.doRemoveSelected()
+      })
     },
-    doRemoveSelected () {
+    doRemoveSelected() {
       if (this.selectedItems.some((i) => this.things.find((thing) => thing.UID === i).editable === false)) {
         f7.dialog.alert('Some of the selected things are not modifiable because they have been provisioned by files')
         return
@@ -515,68 +515,82 @@ export default {
       let dialog = f7.dialog.progress('Deleting Things...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/things/' + i))
-      Promise.all(promises).then((data) => {
-        f7.toast.create({
-          text: 'Things removed',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.selectedItems = []
-        dialog.close()
-        this.load()
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred while deleting: ' + err)
-      })
+      Promise.all(promises)
+        .then((data) => {
+          f7.toast
+            .create({
+              text: 'Things removed',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.selectedItems = []
+          dialog.close()
+          this.load()
+        })
+        .catch((err) => {
+          dialog.close()
+          this.load()
+          console.error(err)
+          f7.dialog.alert('An error occurred while deleting: ' + err)
+        })
     },
-    doDisableEnableSelected (enable) {
+    doDisableEnableSelected(enable) {
       let dialog = f7.dialog.progress('Please Wait...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.putPlain('/rest/things/' + i + '/enable', enable.toString()))
-      Promise.all(promises).then((data) => {
-        f7.toast.create({
-          text: (enable) ? 'Things enabled' : 'Things disabled',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.selectedItems = []
-        dialog.close()
-        this.load()
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
-      })
+      Promise.all(promises)
+        .then((data) => {
+          f7.toast
+            .create({
+              text: enable ? 'Things enabled' : 'Things disabled',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.selectedItems = []
+          dialog.close()
+          this.load()
+        })
+        .catch((err) => {
+          dialog.close()
+          this.load()
+          console.error(err)
+          f7.dialog.alert('An error occurred while enabling/disabling: ' + err)
+        })
     },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/things/*/added,openhab/things/*/removed,openhab/things/*/updated,openhab/things/*/status,openhab/inbox/*/added,openhab/inbox/*/removed', null, (event) => {
-        const topicParts = event.topic.split('/')
-        if (topicParts[1] === 'inbox') {
-          this.loadInbox()
-        } else {
-          switch (topicParts[3]) {
-            case 'status':
-              const updatedThing = this.things.find((t) => t.UID === topicParts[2])
-              const newStatus = JSON.parse(event.payload)
-              if (updatedThing) {
-                if (updatedThing.statusInfo.status !== newStatus.status) updatedThing.statusInfo.status = newStatus.status
-                if (updatedThing.statusInfo.statusDetail !== newStatus.statusDetail) updatedThing.statusInfo.statusDetail = newStatus.statusDetail
-                if (updatedThing.statusInfo.description !== newStatus.description) updatedThing.statusInfo.description = newStatus.description
-              }
-              break
-            case 'added':
-            case 'removed':
-            case 'updated':
-              this.load()
-              break
+    startEventSource() {
+      this.eventSource = this.$oh.sse.connect(
+        '/rest/events?topics=openhab/things/*/added,openhab/things/*/removed,openhab/things/*/updated,openhab/things/*/status,openhab/inbox/*/added,openhab/inbox/*/removed',
+        null,
+        (event) => {
+          const topicParts = event.topic.split('/')
+          if (topicParts[1] === 'inbox') {
+            this.loadInbox()
+          } else {
+            switch (topicParts[3]) {
+              case 'status':
+                const updatedThing = this.things.find((t) => t.UID === topicParts[2])
+                const newStatus = JSON.parse(event.payload)
+                if (updatedThing) {
+                  if (updatedThing.statusInfo.status !== newStatus.status) updatedThing.statusInfo.status = newStatus.status
+                  if (updatedThing.statusInfo.statusDetail !== newStatus.statusDetail)
+                    updatedThing.statusInfo.statusDetail = newStatus.statusDetail
+                  if (updatedThing.statusInfo.description !== newStatus.description)
+                    updatedThing.statusInfo.description = newStatus.description
+                }
+                break
+              case 'added':
+              case 'removed':
+              case 'updated':
+                this.load()
+                break
+            }
           }
         }
-      })
+      )
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     }

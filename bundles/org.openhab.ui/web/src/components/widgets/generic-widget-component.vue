@@ -36,7 +36,7 @@
         <generic-widget-component
           v-for="(slotComponent, idx) in slotComponents"
           :context="childContext(slotComponent)"
-          :key="slotName + '-' + idx " />
+          :key="slotName + '-' + idx" />
       </template>
     </oh-card>
     <template v-else-if="componentType && componentType.startsWith('widget:')">
@@ -47,11 +47,11 @@
         :is-child="true"
         :context="childWidgetContext"
         :class="scopedCssUid" />
-      <span v-else style="color: red;">Widget not found: {{ componentType }}</span>
+      <span v-else style="color: red">Widget not found: {{ componentType }}</span>
     </template>
     <component
       v-bind="$attrs"
-      :is="widgetRegistry.widget(componentType)"
+      :is="componentType"
       v-else-if="componentType && componentType.startsWith('oh-')"
       ref="component"
       :context="context"
@@ -68,18 +68,10 @@
       {{ config.text }}
     </template>
     <!-- Error renders red text inside <pre> element -->
-    <pre
-      v-else-if="componentType && componentType === 'Error'"
-      class="text-color-red"
-      style="white-space: pre-wrap"
-      >{{ config.error }}</pre
-    >
-    <component
-      :is="widgetRegistry.widget(componentType, true) ?? componentType"
-      v-else
-      ref="component"
-      v-bind="{ ...$attrs, ...config }"
-      :class="scopedCssUid">
+    <pre v-else-if="componentType && componentType === 'Error'" class="text-color-red" style="white-space: pre-wrap">{{
+      config.error
+    }}</pre>
+    <component :is="componentType" v-else ref="component" v-bind="{ ...$attrs, ...config }" :class="scopedCssUid">
       {{ config.content }}
       <template v-if="defaultSlots.length > 0">
         <generic-widget-component
@@ -94,7 +86,6 @@
 <script setup lang="ts">
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import type { WidgetContext } from '@/components/widgets/types'
-import * as widgetRegistry from '@/components/oh-component-registry.ts'
 import Label from '@/components/widgets/Label.vue'
 import { defineAsyncComponent } from 'vue'
 
@@ -105,10 +96,15 @@ defineOptions({
   inheritAttrs: false
 })
 
-const props = withDefaults(defineProps<{
-  context: WidgetContext,
-  isChild?: boolean
-}>(), { isChild: false })
+const props = withDefaults(
+  defineProps<{
+    context: WidgetContext
+    isChild?: boolean
+  }>(),
+  { isChild: false }
+)
 
-const { config, childContext, childWidgetContext, scopedCssUid, visible, componentType, slots, defaultSlots } = useWidgetContext(props.context)
+const { config, childContext, childWidgetContext, scopedCssUid, visible, componentType, slots, defaultSlots } = useWidgetContext(
+  props.context
+)
 </script>

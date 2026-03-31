@@ -6,12 +6,13 @@
     </f7-block>
     <f7-block
       v-else-if="
-                !searchResults.items.length &&
-                  !searchResults.things.length &&
-                  !searchResults.rules.length &&
-                  !searchResults.pages.length &&
-                  !searchResults.scenes.length &&
-                  !searchResults.scripts.length"
+        !searchResults.items.length &&
+        !searchResults.things.length &&
+        !searchResults.rules.length &&
+        !searchResults.pages.length &&
+        !searchResults.scenes.length &&
+        !searchResults.scripts.length
+      "
       class="text-align-center">
       <div>Nothing found</div>
     </f7-block>
@@ -26,10 +27,10 @@
           media-item
           :key="item.name"
           :title="item.label || item.name"
-          :footer="(item.label) ? item.name : ''"
+          :footer="item.label ? item.name : ''"
           link=""
           no-chevron
-          @click="evt => togglePin(evt, 'items', item, 'name')">
+          @click="(evt) => togglePin(evt, 'items', item, 'name')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="item.name" tooltip="Copy Item name" />
@@ -218,7 +219,7 @@
           :footer="page.uid"
           link=""
           no-chevron
-          @click="evt => togglePin(evt, 'pages', page, 'uid')">
+          @click="(evt) => togglePin(evt, 'pages', page, 'uid')">
           <template #after>
             <f7-link color="gray">
               <clipboard-icon :value="page.uid" tooltip="Copy Page UID" />
@@ -399,7 +400,7 @@ export default {
     loading: Boolean
   },
   emits: ['pin', 'unpin'],
-  data () {
+  data() {
     return {
       typesIcons: {
         items: 'square_on_circle',
@@ -420,35 +421,71 @@ export default {
     }
   },
   computed: {
-    filteredSearchResults () {
-      const items = (this.expandedTypes.items) ? this.searchResults.items : (this.searchResults.items ? this.searchResults.items.slice(0, 5) : [])
-      const things = (this.expandedTypes.things) ? this.searchResults.things : (this.searchResults.things ? this.searchResults.things.slice(0, 5) : [])
-      const rules = (this.expandedTypes.rules) ? this.searchResults.rules : (this.searchResults.rules ? this.searchResults.rules.slice(0, 5) : [])
-      const scenes = (this.expandedTypes.scenes) ? this.searchResults.scenes : (this.searchResults.scenes ? this.searchResults.scenes.slice(0, 5) : [])
-      const scripts = (this.expandedTypes.scripts) ? this.searchResults.scripts : (this.searchResults.scripts ? this.searchResults.scripts.slice(0, 5) : [])
-      const pages = (this.expandedTypes.pages) ? this.searchResults.pages : (this.searchResults.pages ? this.searchResults.pages.slice(0, 5) : [])
-      const widgets = (this.expandedTypes.widgets) ? this.searchResults.widgets : (this.searchResults.widgets ? this.searchResults.widgets.slice(0, 5) : [])
-      const transformations = (this.expandedTypes.transformations) ? this.searchResults.transformations : (this.searchResults.transformations ? this.searchResults.transformations.slice(0, 5) : [])
-      const persistenceConfigs = (this.expandedTypes.persistenceConfigs) ? this.searchResults.persistenceConfigs : (this.searchResults.persistenceConfigs ? this.searchResults.persistenceConfigs.slice(0, 5) : [])
+    filteredSearchResults() {
+      const items = this.expandedTypes.items
+        ? this.searchResults.items
+        : this.searchResults.items
+          ? this.searchResults.items.slice(0, 5)
+          : []
+      const things = this.expandedTypes.things
+        ? this.searchResults.things
+        : this.searchResults.things
+          ? this.searchResults.things.slice(0, 5)
+          : []
+      const rules = this.expandedTypes.rules
+        ? this.searchResults.rules
+        : this.searchResults.rules
+          ? this.searchResults.rules.slice(0, 5)
+          : []
+      const scenes = this.expandedTypes.scenes
+        ? this.searchResults.scenes
+        : this.searchResults.scenes
+          ? this.searchResults.scenes.slice(0, 5)
+          : []
+      const scripts = this.expandedTypes.scripts
+        ? this.searchResults.scripts
+        : this.searchResults.scripts
+          ? this.searchResults.scripts.slice(0, 5)
+          : []
+      const pages = this.expandedTypes.pages
+        ? this.searchResults.pages
+        : this.searchResults.pages
+          ? this.searchResults.pages.slice(0, 5)
+          : []
+      const widgets = this.expandedTypes.widgets
+        ? this.searchResults.widgets
+        : this.searchResults.widgets
+          ? this.searchResults.widgets.slice(0, 5)
+          : []
+      const transformations = this.expandedTypes.transformations
+        ? this.searchResults.transformations
+        : this.searchResults.transformations
+          ? this.searchResults.transformations.slice(0, 5)
+          : []
+      const persistenceConfigs = this.expandedTypes.persistenceConfigs
+        ? this.searchResults.persistenceConfigs
+        : this.searchResults.persistenceConfigs
+          ? this.searchResults.persistenceConfigs.slice(0, 5)
+          : []
       return { items, things, rules, scenes, scripts, pages, widgets, transformations, persistenceConfigs }
     }
   },
   watch: {
-    searchResults () {
+    searchResults() {
       this.expandedTypes = {}
     }
   },
   methods: {
-    isPinned (type, obj, keyName) {
+    isPinned(type, obj, keyName) {
       return this.pinnedObjects[type].findIndex((o) => o[keyName] === obj[keyName]) >= 0
     },
-    showingAll (type) {
-      return (this.expandedTypes[type] || this.searchResults[type].length <= 5)
+    showingAll(type) {
+      return this.expandedTypes[type] || this.searchResults[type].length <= 5
     },
-    getPageType (page) {
+    getPageType(page) {
       return this.pageTypes.find((t) => t.componentType === page.component)
     },
-    togglePin (evt, type, obj, keyName) {
+    togglePin(evt, type, obj, keyName) {
       evt.cancelBubble = true
       if (evt.target.tagName.toLowerCase() === 'i') return
       if (this.isPinned(type, obj, keyName)) {

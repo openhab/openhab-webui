@@ -2,7 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="tabs-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
-        :title="!ready ? '' : ((createMode ? 'Create tabbed page' : page.config.label) + dirtyIndicator)"
+        :title="!ready ? '' : (createMode ? 'Create tabbed page' : page.config.label) + dirtyIndicator"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -127,11 +127,11 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     const { evaluateExpression } = useWidgetExpression()
     return { theme, evaluateExpression }
   },
-  data () {
+  data() {
     return {
       page: {
         uid: 'page_' + f7.utils.id(),
@@ -143,7 +143,7 @@ export default {
     }
   },
   methods: {
-    addWidget (component, widgetType, parentContext, slot) {
+    addWidget(component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -159,12 +159,12 @@ export default {
         this.forceUpdate()
       }
     },
-    getWidgetDefinition (componentType) {
+    getWidgetDefinition(componentType) {
       const definition = Object.values(ConfigurableWidgets).find((wd) => typeof wd === 'function' && wd().name === componentType)
       if (!definition) return null
       return definition()
     },
-    configureTab (ev, tab, context) {
+    configureTab(ev, tab, context) {
       let el = ev.target
       ev.cancelBubble = true
       while (!el.classList.contains('media-item')) {
@@ -173,16 +173,16 @@ export default {
       }
       this.context.editmode.configureWidget(tab, context)
     },
-    tabEvaluateExpression (tab, idx, key) {
+    tabEvaluateExpression(tab, idx, key) {
       return this.evaluateExpression('tab-' + idx + '-' + key, tab.config[key], this.context, tab.config.pageConfig)
     },
-    toYaml () {
+    toYaml() {
       this.pageYaml = YAML.stringify({
         config: this.page.config,
         tabs: this.page.slots.default
       })
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
         this.page.config = updatedPage.config

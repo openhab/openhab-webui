@@ -3,7 +3,11 @@
     v-show="configDescription.visible ? configDescription.visible(value, configuration, configDescription, parameters) : true"
     ref="parameter"
     class="config-parameter"
-    :no-hairlines-md="configDescription.type !== 'BOOLEAN' && (!configDescription.options || !configDescription.options.length) && ['item'].indexOf(configDescription.context) < 0">
+    :no-hairlines-md="
+      configDescription.type !== 'BOOLEAN' &&
+      (!configDescription.options || !configDescription.options.length) &&
+      ['item'].indexOf(configDescription.context) < 0
+    ">
     <f7-list-group v-if="(!readOnly && !configDescription.readOnly) || configDescription.context === 'password'">
       <component
         :is="control"
@@ -13,10 +17,10 @@
         :parameters="parameters"
         :configuration="configuration"
         :title="normalizedConfig.title"
-        :f7router
+        :f7router="f7router"
         @input="updateValue" />
     </f7-list-group>
-    <f7-list-item v-else :title="configDescription.label" :after="value !== undefined && value !== null ? value.toString() : 'N/A'" />
+    <f7-list-item v-else :title="configDescription.label" :after="value != null ? value.toString() : 'N/A'" />
     <template #after-list>
       <f7-block-footer class="param-description">
         <div v-if="status" class="param-status-info">
@@ -63,23 +67,16 @@ export default {
   props: {
     configDescription: Object,
     value: [String, Number, Boolean, Array, Object],
-    parameters: Array,
-    configuration: Object,
+    parameters: { type: Array, required: true },
+    configuration: { type: Object, required: true },
     readOnly: Boolean,
-    status: Array
+    status: Array,
+    f7router: Object
   },
   emits: ['update'],
-  setup () {
-    // make f7 optional for Vitest
-    const f7router = f7?.views.main.router
-
-    return {
-      f7router
-    }
-  },
   computed: {
     normalizedConfig() {
-      const cfg = { ... this.configDescription }
+      const cfg = { ...this.configDescription }
       if (cfg.type === 'INTEGER' && cfg.context === 'week') {
         cfg.min = 1
         cfg.max = 53
@@ -87,9 +84,13 @@ export default {
       }
       return cfg
     },
-    control () {
+    control() {
       const configDescription = this.normalizedConfig
-      if (configDescription.options?.length && configDescription.limitToOptions && (!configDescription.context || configDescription.context === 'network-interface' || configDescription.context === 'serial-port')) {
+      if (
+        configDescription.options?.length &&
+        configDescription.limitToOptions &&
+        (!configDescription.context || configDescription.context === 'network-interface' || configDescription.context === 'serial-port')
+      ) {
         return ParameterOptions
       } else if (configDescription.type === 'INTEGER' || configDescription.type === 'DECIMAL') {
         return ParameterNumber
@@ -132,7 +133,7 @@ export default {
       }
       return ParameterText
     },
-    description () {
+    description() {
       let description = this.configDescription.description || ''
       description = description.replace(/<a href="http/g, '<a class="external" target="_blank" href="http') // if class/target already declared, will be overwritten in most browsers
       // TODO: Remove this when proper UoM support is implemented for config parameters
@@ -142,12 +143,12 @@ export default {
       return description
     }
   },
-  mounted () {
+  mounted() {
     // Uncomment to perform initial validation on the field
     // f7.input.validateInputs(this.$refs.parameter.$el)
   },
   methods: {
-    updateValue (value) {
+    updateValue(value) {
       console.debug(`Update ${this.configDescription.name} to ${value}`)
       this.$emit('update', value)
     }

@@ -20,7 +20,7 @@ export default {
     TriggerChannelPicker
   },
   methods: {
-    updateValue (value) {
+    updateValue(value) {
       this.$emit('input', value)
     }
   }

@@ -3,7 +3,7 @@
     <f7-navbar>
       <oh-nav-content title="Transformations" back-link="Settings" back-link-url="/settings/">
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -159,11 +159,11 @@ export default {
     EmptyStatePlaceholder,
     ClipboardIcon
   },
-  setup () {
+  setup() {
     const lastSearchQueryStore = useLastSearchQueryStore()
     return { f7, theme, lastSearchQueryStore }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -175,7 +175,7 @@ export default {
     }
   },
   computed: {
-    indexedTransformations () {
+    indexedTransformations() {
       if (this.groupBy === 'alphabetical') {
         return this.transformations.reduce((prev, transformation, i, transformations) => {
           const label = transformation.label || transformation.uid
@@ -197,22 +197,24 @@ export default {
 
           return prev
         }, {})
-        return Object.keys(typeGroups).sort((a, b) => a.localeCompare(b)).reduce((objEntries, key) => {
-          objEntries[key] = typeGroups[key]
-          return objEntries
-        }, {})
+        return Object.keys(typeGroups)
+          .sort((a, b) => a.localeCompare(b))
+          .reduce((objEntries, key) => {
+            objEntries[key] = typeGroups[key]
+            return objEntries
+          }, {})
       }
     },
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    onPageBeforeOut (event) {
+    onPageBeforeOut(event) {
       this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -234,7 +236,7 @@ export default {
         })
       })
     },
-    switchGroupOrder (groupBy) {
+    switchGroupOrder(groupBy) {
       this.groupBy = groupBy
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
@@ -246,24 +248,24 @@ export default {
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
-    toggleCheck () {
+    toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
     },
-    isChecked (transformation) {
+    isChecked(transformation) {
       return this.selectedTransformations.indexOf(transformation) >= 0
     },
-    click (event, transformation) {
+    click(event, transformation) {
       if (this.showCheckboxes) {
         this.toggleTransformationCheck(event, transformation.uid, transformation)
       } else {
         this.f7router.navigate(transformation.uid)
       }
     },
-    ctrlClick (event, transformation) {
+    ctrlClick(event, transformation) {
       this.toggleTransformationCheck(event, transformation.uid, transformation)
       if (!this.selectedTransformations.length) this.showCheckboxes = false
     },
-    toggleTransformationCheck (event, transformationUid, transformation) {
+    toggleTransformationCheck(event, transformationUid, transformation) {
       if (!transformation.editable) return
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(transformationUid)) {
@@ -272,40 +274,40 @@ export default {
         this.selectedTransformations.push(transformationUid)
       }
     },
-    removeSelected () {
+    removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(
-        `Remove ${this.selectedTransformations.length} selected transformations?`,
-        'Remove Transformations',
-        () => {
-          vm.doRemoveSelected()
-        }
-      )
+      f7.dialog.confirm(`Remove ${this.selectedTransformations.length} selected transformations?`, 'Remove Transformations', () => {
+        vm.doRemoveSelected()
+      })
     },
-    doRemoveSelected () {
+    doRemoveSelected() {
       let dialog = f7.dialog.progress('Deleting Transformations...')
 
       const promises = this.selectedTransformations.map((p) => {
         return api.deleteTransformation({ uid: p })
       })
-      Promise.all(promises).then((data) => {
-        f7.toast.create({
-          text: 'Transformations removed',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.selectedTransformations = []
-        dialog.close()
-        this.load()
-        f7.emit('sidebarRefresh', null) // for what?
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred while deleting: ' + err)
-        f7.emit('sidebarRefresh', null) // for what?
-      })
+      Promise.all(promises)
+        .then((data) => {
+          f7.toast
+            .create({
+              text: 'Transformations removed',
+              destroyOnClose: true,
+              closeTimeout: 2000
+            })
+            .open()
+          this.selectedTransformations = []
+          dialog.close()
+          this.load()
+          f7.emit('sidebarRefresh', null) // for what?
+        })
+        .catch((err) => {
+          dialog.close()
+          this.load()
+          console.error(err)
+          f7.dialog.alert('An error occurred while deleting: ' + err)
+          f7.emit('sidebarRefresh', null) // for what?
+        })
     }
   }
 }
