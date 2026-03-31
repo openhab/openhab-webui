@@ -32,7 +32,7 @@ function parseWeekdayToken(token: string): WeekdayToken | null {
 }
 
 export function normalizeWeekdayToken(token: string): WeekdayToken {
-  return parseWeekdayToken(token) || 'SUN'
+  return parseWeekdayToken(token) ?? 'SUN'
 }
 
 export function toCronWeekdayNumber(token: WeekdayToken): number {
