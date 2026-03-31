@@ -29,6 +29,7 @@ export default () => [
     { value: '4M', label: '4M' },
     { value: '6M', label: '6M' },
     { value: 'Y', label: 'Y' },
+    { value: '2Y', label: '2Y' },
     { value: '3Y', label: '3Y' },
     { value: '5Y', label: '5Y' },
     { value: '10Y', label: '10Y' }
