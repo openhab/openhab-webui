@@ -179,7 +179,7 @@
                     && thing.statusInfo.statusDetail === 'NONE'
                     && thing.statusInfo.description
                     && thing.statusInfo.description !== ''"
-                  color="red"
+                  color="blue"
                   :tooltip="thing.statusInfo.description"
                   style="margin-right: 8px">
                   <i>i</i>
