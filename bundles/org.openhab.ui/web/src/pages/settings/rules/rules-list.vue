@@ -177,7 +177,7 @@
               @click.ctrl="ctrlClick($event, rule)"
               @click.meta="ctrlClick($event, rule)"
               @click.exact="click($event, rule)"
-              :link="`/settings/rules/${rule.uid}`"
+              :link="`${rule.uid}`"
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
