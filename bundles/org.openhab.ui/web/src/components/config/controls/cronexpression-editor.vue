@@ -413,7 +413,7 @@
         .stepper-small
           transform translate(0, 8px)
 .cronexpression-editor-popup
-  --f7-navbar-height 60px
+  --f7-navbar-height 50px
 </style>
 
 <script setup lang="ts">
