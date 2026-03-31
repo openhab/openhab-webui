@@ -95,6 +95,14 @@ export default {
       }
     })
   },
+  watch: {
+    'uiOptionsStore.darkMode': function () {
+      this.showMap = false
+      nextTick(() => {
+        this.showMap = true
+      })
+    }
+  },
   methods: {
     mapClicked(evt) {
       this.marker = latLng(evt.latlng)
