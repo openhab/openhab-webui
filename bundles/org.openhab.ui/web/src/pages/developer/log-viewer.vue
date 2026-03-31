@@ -318,6 +318,9 @@
           :disable-button="false"
           @searchbar:search="handleFilter"
           @searchbar.clear="clearFilter" />
+        <!-- <div class="filter-input-box">
+          <input type="search" placeholder="Filter..." v-model="filterText" @keyup.enter="handleFilter"></input>
+        </div> -->
         <div style="display: flex; flex-wrap: nowrap">
           <f7-badge class="log-period margin-left-half" :color="periodRangeColor" :tooltip="periodRangeTooltip">
             {{ logStart }}&nbsp;>&nbsp;{{ logEnd }}
@@ -325,11 +328,16 @@
           <f7-badge class="margin-horizontal" :color="countersBadgeColor" tooltip="Log entries filtered/total">
             {{ filterCount }}/{{ tableData.length }}
           </f7-badge>
+          <!-- <f7-badge color="red" tooltip="Maximum log entries to be buffered">
+            {{ maxEntries }}
+          </f7-badge> -->
         </div>
       </f7-subnavbar>
     </f7-navbar>
 
     <f7-toolbar bottom>
+      <!-- <f7-link icon-f7="arrow_down_to_line" tooltip="Scroll to latest log entries" :disabled="autoScroll"
+                 :class="{ 'disabled-link': autoScroll }" @click="showLatestLogs" /> -->
       <f7-link
         icon-f7="cloud_download"
         tooltip="Download filtered log as CSV"
