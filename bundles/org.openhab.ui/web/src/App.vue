@@ -269,6 +269,9 @@
                   <f7-icon f7="square_list" color="gray" />
                 </template>
               </f7-list-item>
+              <!-- <f7-list-item link="" @click="f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
+                <f7-icon :f7="runtimeStore.showDeveloperDock ? 'wrench_fill' : 'wrench'" color="gray" />
+              </f7-list-item> -->
             </ul>
           </li>
         </f7-list>
