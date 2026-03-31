@@ -12,6 +12,10 @@ export const CRON_LIMITS = {
 
 export type WeekdayToken = (typeof WEEKDAY_TOKENS)[number]
 
+/**
+ * Parses a stringified token (either `SUN`, `MON`, ... or `1`, `2`, ...) to a {@link WeekdayToken}.
+ * @param token
+ */
 function parseWeekdayToken(token: string): WeekdayToken | null {
   const normalized = token.trim().toUpperCase()
   if (WEEKDAY_TOKENS.includes(normalized as WeekdayToken)) {
@@ -40,6 +44,10 @@ export function formatCronWeekdayList(tokens: WeekdayToken[]): string {
   return tokens.map((token) => String(toCronWeekdayNumber(token))).join(',')
 }
 
+/**
+ * Expands a weekday segment of a cron expression, which can be either a single token (e.g. `MON`) or a range (e.g. `MON-WED`), into an array of {@link WeekdayToken}s.
+ * @param segment
+ */
 export function expandWeekdaySegment(segment: string): WeekdayToken[] {
   const normalized = segment.trim().toUpperCase()
   if (!normalized.length) return []
