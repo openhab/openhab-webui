@@ -94,7 +94,7 @@ export function useChart(
           if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek).isoWeekday(1)
           break
         case ChartType.month:
-          if (config.value.initialMonth !== undefined) day = dayjs().month(parseInt(config.value.initialMonth))
+          if (config.value.initialMonth !== undefined) day = dayjs().month(parseInt(config.value.initialMonth) - 1)
           break
         case ChartType.year:
           if (config.value.initialYear !== undefined) day = dayjs().year(config.value.initialYear)
