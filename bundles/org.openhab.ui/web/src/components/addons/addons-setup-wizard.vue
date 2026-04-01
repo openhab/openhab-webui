@@ -5,10 +5,7 @@
         <f7-block class="addon display-flex flex-direction-column">
           <f7-row no-gap>
             <div style="width: 100%">
-              <f7-checkbox
-                style="margin-right: 0.5rem"
-                :checked="isAddonSelected(addon)"
-                :disabled="addon.installed" />
+              <f7-checkbox style="margin-right: 0.5rem" :checked="isAddonSelected(addon)" :disabled="addon.installed" />
               {{ addon.label }}
               <f7-link style="float: right" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
             </div>
