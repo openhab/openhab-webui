@@ -1,21 +1,5 @@
 <template>
   <f7-block class="sticky-header">
-    <div class="tab-header-row">
-      <f7-link
-        v-if="prev"
-        icon-ios="f7:arrow_left"
-        icon-aurora="f7:arrow_left"
-        icon-md="material:arrow_back"
-        color="blue"
-        @click="$emit('back')" />
-      <span v-else class="tab-header-spacer" aria-hidden="true"></span>
-      <f7-link
-        icon-ios="f7:xmark"
-        icon-aurora="f7:xmark"
-        icon-md="material:close"
-        color="blue"
-        @click="$emit('close')" />
-    </div>
     <f7-login-screen-title>
       <div class="compact-padding" v-if="image">
         <img class="intro-logo" :src="image" type="image/svg+xml" />
@@ -27,24 +11,15 @@
     </f7-login-screen-title>
   </f7-block>
   <f7-block v-if="header || link" strong>
-      <span class="text" v-html="header" />
-      <a v-if="link" class="text-color-blue external" target="_blank" :href="link">
-          {{ t('setupwizard.' + step + '.link') }}</a
-      >
+    <span class="text" v-html="header" />
+    <a v-if="link" class="text-color-blue external" target="_blank" :href="link"> {{ t('setupwizard.' + step + '.link') }}</a>
   </f7-block>
 </template>
 
 <style lang="stylus">
 .setup-wizard
-  .tab-header-row
-    display flex
-    align-items center
-    justify-content space-between
-  .tab-header-spacer
-    width 24px
-    height 24px
   .compact-padding
-    padding-top 0.1rem
+    padding-top 0.5rem
     padding-bottom 0.5rem
   .sticky-header
     position sticky
@@ -59,12 +34,10 @@ export default {
     icon: String,
     image: String,
     title: String,
-    prev: Object,
     step: String,
     link: String,
     t: Function
   },
-  emits: ['back', 'close'],
   computed: {
     header () {
       if (!this.step) return null
