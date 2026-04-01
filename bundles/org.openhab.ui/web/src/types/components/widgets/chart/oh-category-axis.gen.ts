@@ -11,6 +11,7 @@ export enum CategoryType {
   week = 'week',
   month = 'month',
   year = 'year',
+  years = 'years',
   values = 'values'
 }
 

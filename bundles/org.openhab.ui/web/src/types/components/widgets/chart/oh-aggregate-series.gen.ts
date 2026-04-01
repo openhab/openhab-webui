@@ -25,7 +25,8 @@ export enum Dimension {
   isoWeekday = 'isoWeekday',
   weekday = 'weekday',
   date = 'date',
-  month = 'month'
+  month = 'month',
+  year = 'year'
 }
 
 export interface Config {
