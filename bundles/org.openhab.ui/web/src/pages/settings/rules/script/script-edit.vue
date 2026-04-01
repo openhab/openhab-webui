@@ -304,6 +304,7 @@ import DirtyMixin from '../../dirty-mixin'
 import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
@@ -535,13 +536,7 @@ export default {
 
       this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json').then(() => {
         this.resetDirty()
-        f7.toast
-          .create({
-            text: 'Script created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('Script created')
         this.f7router.navigate(this.f7route.url.replace(/(\/add)|(\/duplicate)/, '/' + this.rule.uid), { reloadCurrent: true })
       })
     },
@@ -613,13 +608,7 @@ export default {
     save(noToast) {
       if (!this.editable) return
       if (this.rule.status.status === 'RUNNING') {
-        f7.toast
-          .create({
-            text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be updated while running, please wait!`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(`${this.isScriptRule ? 'Script' : 'Rule'} cannot be updated while running, please wait!`)
         return Promise.reject('saveWhileRunningRejected')
       }
       if (this.isBlockly) {
@@ -652,23 +641,11 @@ export default {
           this.initDirty()
           this.resetDirty()
           if (!noToast) {
-            f7.toast
-              .create({
-                text: (this.isScriptRule ? 'Script' : 'Rule') + ' updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast((this.isScriptRule ? 'Script' : 'Rule') + ' updated')
           }
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving: ' + err)
         })
     },
     onSave() {
@@ -688,43 +665,24 @@ export default {
       this.$oh.api
         .postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString())
         .then((data) => {
-          f7.toast
-            .create({
-              text: (this.isScriptRule ? 'Script' : 'Rule') + (enable ? ' enabled' : ' disabled'),
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast((this.isScriptRule ? 'Script' : 'Rule') + (enable ? ' enabled' : ' disabled'))
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while disabling or enabling: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while disabling or enabling: ' + err)
         })
     },
     runNow() {
       if (this.createMode) return
       if (!this.isMimeTypeAvailable(this.mode)) {
-        return f7.toast
-          .create({
-            text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run, scripting addon for ${this.mimeTypeDescription(this.mode)} is not installed`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(
+          `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run, scripting addon for ${this.mimeTypeDescription(this.mode)} is not installed`
+        )
       }
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
-        return f7.toast
-          .create({
-            text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run ${this.rule.status.status === 'RUNNING' ? 'while already running, please wait' : 'if it is uninitialized'}!`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(
+          `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run ${this.rule.status.status === 'RUNNING' ? 'while already running, please wait' : 'if it is uninitialized'}!`
+        )
+        return
       }
 
       const run = (saveBefore) => {
@@ -733,23 +691,9 @@ export default {
           .then(() => {
             this.$oh.api
               .postPlain('/rest/rules/' + this.rule.uid + '/runnow', '')
-              .then(
-                f7.toast
-                  .create({
-                    text: 'Running ' + (this.isScriptRule ? 'script' : 'rule'),
-                    destroyOnClose: true,
-                    closeTimeout: 2000
-                  })
-                  .open()
-              )
+              .then(showToast('Running ' + (this.isScriptRule ? 'script' : 'rule')))
               .catch((err) => {
-                f7.toast
-                  .create({
-                    text: 'Error while running: ' + err,
-                    destroyOnClose: true,
-                    closeTimeout: 2000
-                  })
-                  .open()
+                showToast('Error while running: ' + err)
               })
           })
           .catch((e) => {

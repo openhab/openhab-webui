@@ -363,6 +363,7 @@ import DirtyMixin from '@/pages/settings/dirty-mixin'
 import { i18n } from '@/js/i18n'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin, TagMixin],
@@ -540,35 +541,17 @@ export default {
           // So need to use the post endpoint with the new uid, but this is refused if the name is still the same and not first deleted.
           await Promise.all(removeTasks.map((fn) => fn()))
           console.debug('Successfully removed tags')
-          f7.toast
-            .create({
-              text: (removeTasks.length === 1 ? 'Tag' : 'Tags') + ' deleted',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast((removeTasks.length === 1 ? 'Tag' : 'Tags') + ' deleted')
         }
         if (addTasks.length > 0) {
           await Promise.all(addTasks.map((fn) => fn()))
           console.debug('Successfully added tags')
-          f7.toast
-            .create({
-              text: (addTasks.length === 1 ? 'Tag' : 'Tags') + ' added',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast((addTasks.length === 1 ? 'Tag' : 'Tags') + ' added')
         }
         if (changeTasks.length > 0) {
           await Promise.all(changeTasks.map((fn) => fn()))
           console.debug('Successfully modified tags')
-          f7.toast
-            .create({
-              text: (changeTasks.length === 1 ? 'Tag' : 'Tags') + ' modified',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast((changeTasks.length === 1 ? 'Tag' : 'Tags') + ' modified')
         }
         this.dirty = false
         useSemanticsStore()

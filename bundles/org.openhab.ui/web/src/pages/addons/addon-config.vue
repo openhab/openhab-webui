@@ -63,6 +63,7 @@ import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import debounce from 'debounce'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin],
@@ -143,13 +144,7 @@ export default {
       }
 
       Promise.all(promises).then(() => {
-        f7.toast
-          .create({
-            text: 'Saved',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('Saved')
       })
       this.dirty = false
       this.f7router.back()

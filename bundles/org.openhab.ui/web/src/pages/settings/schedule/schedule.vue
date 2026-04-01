@@ -96,6 +96,7 @@ import { f7, theme } from 'framework7-vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   components: {
@@ -229,13 +230,7 @@ export default {
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
       Promise.all(promises)
         .then((data) => {
-          f7.toast
-            .create({
-              text: 'Rules removed',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Rules removed')
           this.selectedItems = []
           dialog.close()
           this.load()

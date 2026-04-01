@@ -102,6 +102,7 @@
 <script>
 import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -181,13 +182,7 @@ export default {
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/ui/components/ui:widget/' + i))
       Promise.all(promises)
         .then((data) => {
-          f7.toast
-            .create({
-              text: 'Widgets removed',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Widgets removed')
           this.selectedItems = []
           dialog.close()
           this.load()

@@ -347,6 +347,7 @@ import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin],
@@ -498,23 +499,11 @@ export default {
             this.load()
           }
           if (!noToast) {
-            f7.toast
-              .create({
-                text: 'Persistence configuration saved',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Persistence configuration saved')
           }
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving persistence configuration: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving persistence configuration: ' + err)
         })
     },
     deletePersistence() {

@@ -90,6 +90,7 @@ import ItemForm from '@/components/item/item-form.vue'
 
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
@@ -282,23 +283,11 @@ export default {
       this.saveItem(this.item)
         .then(() => {
           if (this.createMode) {
-            f7.toast
-              .create({
-                text: 'Item created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Item created')
             this.item.created = true
             this.item.editable = true
           } else {
-            f7.toast
-              .create({
-                text: 'Item updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Item updated')
           }
 
           this.doSaveMetadata()
@@ -311,13 +300,7 @@ export default {
           }
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Item not saved: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving item: ' + err)
         })
     },
     doSaveMetadata() {
@@ -350,22 +333,10 @@ export default {
 
       Promise.all([...deletionPromises, ...updatePromises])
         .then(() => {
-          f7.toast
-            .create({
-              text: 'Metadata updated successfully',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Metadata updated successfully')
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving metadata: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving metadata: ' + err)
         })
     },
     updateItem(updatedItem) {

@@ -111,6 +111,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   name: 'item-metadata-matter',
@@ -276,12 +277,7 @@ export default {
       )
         .then(() => {
           this.dirtyItem.clear()
-          f7.toast
-            .create({
-              text: 'Group members updated',
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Group members updated')
         })
         .catch((err) => {
           console.error('Failed to update group members:', err)

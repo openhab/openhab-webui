@@ -155,6 +155,7 @@ import { CodeSnippets, DocumentationLinks } from '@/assets/transformations.js'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin],
@@ -282,13 +283,7 @@ export default {
 
       this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then(() => {
         this.dirty = false
-        f7.toast
-          .create({
-            text: 'Transformation created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('Transformation created')
         this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.transformation.uid), { reloadCurrent: true })
       })
     },
@@ -321,23 +316,11 @@ export default {
           this.dirty = false
           this.savedTransformation = cloneDeep(this.transformation)
           if (!noToast) {
-            f7.toast
-              .create({
-                text: 'Transformation updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Transformation updated')
           }
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving transformation configuration: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving transformation configuration: ' + err)
         })
     },
     deleteTransformation() {

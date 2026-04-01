@@ -37,6 +37,7 @@ import { f7 } from 'framework7-vue'
 
 import Item from './item.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -116,13 +117,7 @@ export default {
           Promise.all(promises)
             .then((d) => {
               this.$emit('updated')
-              f7.toast
-                .create({
-                  text: 'Member list updated',
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              showToast('Member list updated')
               this.editMembers = false
             })
             .catch((err) => {

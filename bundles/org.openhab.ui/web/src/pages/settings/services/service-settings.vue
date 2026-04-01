@@ -30,6 +30,7 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import DirtyMixin from '../dirty-mixin'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin],
@@ -65,13 +66,7 @@ export default {
   methods: {
     save() {
       this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
-        f7.toast
-          .create({
-            text: 'Saved',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('Saved')
       })
       if (this.serviceId === 'org.openhab.i18n') {
         f7.emit('sidebarRefresh', this.config.locale)

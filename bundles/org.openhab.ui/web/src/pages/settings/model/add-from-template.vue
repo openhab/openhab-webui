@@ -104,6 +104,7 @@ import { f7, theme } from 'framework7-vue'
 
 import ModelTreeview from '@/components/model/model-treeview.vue'
 import { compareItems } from '@/components/widgets/widget-order'
+import { showToast } from '@/js/dialog-promises'
 
 function compareModelItems(o1, o2) {
   return compareItems(o1.item || o1, o2.item || o2)
@@ -572,13 +573,7 @@ export default {
         })
         .then((data) => {
           dialog.setProgress(100)
-          f7.toast
-            .create({
-              text: 'Model created',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Model created')
           dialog.close()
           this.f7router.back()
         })

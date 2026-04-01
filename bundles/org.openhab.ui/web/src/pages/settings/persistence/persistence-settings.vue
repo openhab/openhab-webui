@@ -72,7 +72,7 @@
 
 <script>
 import { nextTick } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import DirtyMixin from '../dirty-mixin'
@@ -80,6 +80,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin],
@@ -152,13 +153,7 @@ export default {
     },
     save() {
       this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
-        f7.toast
-          .create({
-            text: 'Default persistence setting saved',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('Default persistence configuration saved')
       })
       this.dirty = false
     },

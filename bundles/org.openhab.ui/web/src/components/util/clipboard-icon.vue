@@ -15,7 +15,7 @@
 </style>
 
 <script>
-import { f7 } from 'framework7-vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -24,13 +24,7 @@ export default {
   },
   methods: {
     success() {
-      f7.toast
-        .create({
-          text: 'Copied to clipboard',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        })
-        .open()
+      showToast('Copied to clipboard')
     }
   }
 }
