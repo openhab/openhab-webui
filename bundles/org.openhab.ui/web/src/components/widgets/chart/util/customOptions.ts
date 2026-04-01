@@ -64,7 +64,7 @@ function applyLabelPosition(series: OhSeriesOption) {
 }
 
 function applyBarBorderRadius(series: OhSeriesOption) {
-  if ('barBorderRadius' in series && series.barBorderRadius) {
+  if ('barBorderRadius' in series && series.barBorderRadius !== undefined) {
     if (!series.itemStyle) series.itemStyle = {}
     series.itemStyle.borderRadius = [series.barBorderRadius, series.barBorderRadius, series.barBorderRadius, series.barBorderRadius]
 
