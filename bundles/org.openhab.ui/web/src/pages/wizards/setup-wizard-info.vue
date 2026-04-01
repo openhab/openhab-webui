@@ -31,16 +31,16 @@ export default {
   computed: {
     body() {
       if (!this.step) return null
-      let body = ''
+      const lines = []
       let index = 1
       while (true) {
         const line = this.t('setupwizard.' + this.step + '.body' + index)
         const hasLine = line !== 'setupwizard.' + this.step + '.body' + index
         if (!hasLine) break
-        body += line
+        lines.push(line)
         index++
       }
-      return body
+      return lines.join(' ')
     }
   }
 }

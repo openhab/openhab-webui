@@ -66,9 +66,16 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   })
   const setupWizardShort = ref<boolean>(localStorage.getItem('openhab.ui:setupWizard.short') === 'true')
   const _storedWizardStepsDone = localStorage.getItem('openhab.ui:setupWizard.stepsDone')
-  const setupWizardStepsDone = ref<Record<string, boolean>>(
-    _storedWizardStepsDone ? (JSON.parse(_storedWizardStepsDone) as Record<string, boolean>) : {}
-  )
+  const parseSetupWizardStepsDone = (): Record<string, boolean> => {
+    if (!_storedWizardStepsDone) return {}
+    try {
+      return JSON.parse(_storedWizardStepsDone) as Record<string, boolean>
+    } catch {
+      // ignore malformed data
+      return {}
+    }
+  }
+  const setupWizardStepsDone = ref<Record<string, boolean>>(parseSetupWizardStepsDone())
 
   const darkMode = computed({
     get: (): 'dark' | 'light' => {

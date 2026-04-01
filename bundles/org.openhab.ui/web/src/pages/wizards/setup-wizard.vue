@@ -36,7 +36,7 @@
           :key="index"
           :title="t('setupwizard.' + step + '.title')"
           :selected="step === currentStep"
-          :style="!wizardStepKeysActive.includes(step) ? 'color: grey; pointerEvents: none; opacity: 0.6' : ''"
+          :style="!wizardStepKeysActive.includes(step) ? 'color: grey; pointer-events: none; opacity: 0.6' : ''"
           :checked="setupWizardStepsDone?.[step]"
           checkbox
           readonly
@@ -498,7 +498,7 @@ export default {
           link: 'https://www.openhab.org/addons/#binding',
           show: { handler: () => this.initSelectedAddons() },
           prev: { step: 'network' },
-          next: { handler: () => this.installAddons(), step: 'rules-intro' },
+          next: { handler: () => this.selectAddons(), step: 'rules-intro' },
           skip: { step: 'rules-intro' }
         },
         'rules-intro': {
@@ -546,12 +546,7 @@ export default {
           link: 'https://www.openhab.org/addons/#persistence',
           show: { handler: () => this.initSelectedAddons() },
           prev: { step: 'ui' },
-          next: {
-            handler: () => {
-              this.selectAddons()
-            },
-            step: 'persistence-config'
-          },
+          next: { handler: () => this.selectAddons(), step: 'persistence-config' },
           skip: { step: 'persistence-config' }
         },
         'persistence-config': {
@@ -617,7 +612,8 @@ export default {
       // list of addons per step, will include pre-selected and already installed, updated in addons setup wizard
       selectedAddonsByType: {},
       installingAddons: false,
-      installingAddonsCancelled: false,
+      isInstallCancelled: false,
+      addonInstallCheckTimer: null,
 
       persistenceConfigConfirm: false
     }
@@ -773,7 +769,7 @@ export default {
       }
       let nextStep = direction.step
       const action = direction.action === 'next' ? 'skip' : direction.action
-      // skip setup tabs that are marked invisble because step is not required with current configuration
+      // skip setup tabs that are marked invisible because step is not required with current configuration
       // and steps marked as extended when using the short wizard
       while (nextStep && this.isInvisible(nextStep)) {
         if (action === 'skip') {
@@ -908,8 +904,8 @@ export default {
         this.suggestedAddons = suggestions.flatMap((s) => s.id).filter((id) => !this.recommendedAddons.includes(id))
         nextTick(() => {
           this.preSelectingAddonTypes.forEach((type) => this.initAddonSelection(type))
+          this.addonSuggestionsReady = true
         })
-        this.addonSuggestionsReady = true
       })
     },
     preSelectedAddonsByType(type) {
@@ -920,46 +916,56 @@ export default {
       this.selectedAddonsByType[type] = [...new Set([...(this.preSelectedAddonsByType(type) || []), ...installed])]
     },
     addAddonSelection(addon) {
-      const oldSelected = this.selectedAddonsByType[this.currentStep]
       if (!this.selectedAddonsByType[this.currentStep]) this.selectedAddonsByType[this.currentStep] = []
+      const oldSelected = this.selectedAddonsByType[this.currentStep]
       this.selectedAddonsByType[this.currentStep].push(addon)
       const newSelected = this.selectedAddonsByType[this.currentStep]
       console.debug(
-        'Adding to add-on selection:',
+        'Adding to add-on selection: ',
         oldSelected.map((a) => a.uid),
         newSelected.map((a) => a.uid)
       )
       nextTick(() => {
         console.log(
-          'Add-ons to install:',
+          'Add-ons to install: ',
           this.toInstallAddons.map((a) => a.uid)
         )
       })
     },
     removeAddonSelection(addon) {
-      const oldSelected = this.selectedAddonsByType[this.currentStep]
       if (!this.selectedAddonsByType[this.currentStep]) this.selectedAddonsByType[this.currentStep] = []
+      const oldSelected = this.selectedAddonsByType[this.currentStep]
       this.selectedAddonsByType[this.currentStep] = this.selectedAddonsByType[this.currentStep].filter((a) => a.uid !== addon.uid)
       const newSelected = this.selectedAddonsByType[this.currentStep]
       console.debug(
-        'removing from add-on selection:',
+        'removing from add-on selection: ',
         oldSelected.map((a) => a.uid),
         newSelected.map((a) => a.uid)
       )
       nextTick(() => {
         console.log(
-          'Add-ons to install:',
+          'Add-ons to install: ',
           this.toInstallAddons.map((a) => a.uid)
         )
       })
     },
     async selectAddons() {
       // Needs to be async, so wizard can stay on page until all add-ons are installed
-      await this.installAddons()
+      try {
+        await this.installAddons()
+      } catch (error) {
+        if (error?.message !== 'cancelled') {
+          const message = error?.message || 'Failed to install selected add-ons.'
+          f7.dialog.alert(message)
+        }
+        throw error
+      }
     },
     installAddons() {
       return new Promise((resolve, reject) => {
         const checkInterval = 2 // check the add-ons statuses every 2 seconds
+        const perAddonTimeoutSeconds = 5 * 60
+        let settled = false
 
         const addons = [...this.toInstallAddons]
         const addonsCount = addons.length
@@ -967,6 +973,9 @@ export default {
           resolve()
           return
         }
+        const overallTimeoutSeconds = Math.min(Math.max(15 * 60, addonsCount * 3 * 60), 30 * 60)
+        const getNowSeconds = () => Math.floor(Date.now() / 1000)
+        const overallDeadline = getNowSeconds() + overallTimeoutSeconds
 
         this.installingAddons = true
         this.isInstallCancelled = false
@@ -974,63 +983,101 @@ export default {
         this.waitingProgress = 0
 
         const checkAddonStatus = (addon) => {
-          return new Promise((resolve, reject) => {
-            this.$oh.api
-              .get('/rest/addons/' + addon.uid)
-              .then((data) => {
-                if (data.installed) {
-                  console.log(`Add-on ${addon.uid} installed!`)
-                  resolve(data)
-                } else {
-                  console.log(`Add-on ${addon.uid} still not installed. Trying again in ${checkInterval} secs...`)
-                  reject(data)
-                }
-              })
-              .catch((err) => {
-                console.log(`Error while querying API to check addon: ${addon.uid}: ${err}'. Trying again in ${checkInterval} secs...`)
-                reject(err)
-              })
+          return this.$oh.api.get('/rest/addons/' + addon.uid).then((data) => {
+            if (data.installed) {
+              console.log(`Add-on ${addon.uid} installed!`)
+              return true
+            }
+            console.log(`Add-on ${addon.uid} still not installed. Trying again in ${checkInterval} secs...`)
+            return false
           })
+        }
+
+        const clearInstallCheckTimer = () => {
+          if (this.addonInstallCheckTimer) {
+            clearInterval(this.addonInstallCheckTimer)
+            this.addonInstallCheckTimer = null
+          }
+        }
+
+        const settleInstall = (error) => {
+          if (settled) return
+          settled = true
+          clearInstallCheckTimer()
+          this.installingAddons = false
+          if (error) {
+            reject(error)
+          } else {
+            resolve()
+          }
         }
 
         const installNextAddon = () => {
           // no more add-ons to install => go to next screen
           if (!addons.length) {
-            this.installingAddons = false
-            resolve()
+            settleInstall()
             return
           }
 
           // cancelled, not installing the next one anymore
           if (this.isInstallCancelled) {
-            this.installingAddons = false
-            reject(new Error('cancelled'))
+            settleInstall(new Error('cancelled'))
+            return
+          }
+
+          if (getNowSeconds() > overallDeadline) {
+            settleInstall(new Error('Timed out while installing selected add-ons.'))
             return
           }
 
           // install next add-on
           const addon = addons.shift()
+          const addonDeadline = getNowSeconds() + perAddonTimeoutSeconds
           this.waitingProgress = ((addonsCount - addons.length) / addonsCount) * 100
           this.waitingProgressText = this.t('setupwizard.addons.progress', { current: addonsCount - addons.length, total: addonsCount })
           console.log('Installing add-on: ' + addon.uid)
           this.waitingProgressTitle = this.t('setupwizard.addons.installingAddon', { addon: addon.label })
 
-          this.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then(() => {
-            if (this.isInstallCancelled) return
-            const checkTimer = setInterval(() => {
-              checkAddonStatus(addon)
-                .then(() => {
-                  addon.installed = true
-                  clearInterval(checkTimer)
-                  nextTick(() => {
-                    installNextAddon()
+          this.$oh.api
+            .post('/rest/addons/' + addon.uid + '/install', {}, 'text')
+            .then(() => {
+              if (this.isInstallCancelled) {
+                settleInstall(new Error('cancelled'))
+                return
+              }
+              clearInstallCheckTimer()
+              this.addonInstallCheckTimer = setInterval(() => {
+                if (this.isInstallCancelled) {
+                  settleInstall(new Error('cancelled'))
+                  return
+                }
+                if (getNowSeconds() > overallDeadline) {
+                  settleInstall(new Error('Timed out while installing selected add-ons.'))
+                  return
+                }
+                if (getNowSeconds() > addonDeadline) {
+                  settleInstall(new Error(`Timed out while installing add-on: ${addon.label || addon.uid}.`))
+                  return
+                }
+                checkAddonStatus(addon)
+                  .then((installed) => {
+                    if (!installed) return
+                    addon.installed = true
+                    clearInstallCheckTimer()
+                    nextTick(() => {
+                      installNextAddon()
+                    })
                   })
-                })
-                .catch(() => {
-                  // just keep going... TODO: implement failure mechanism after a number of failed checks?
-                })
-            }, checkInterval * 1000)
-          })
+                  .catch((err) => {
+                    console.log(`Error while querying API to check addon ${addon.uid}: ${err}`)
+                    settleInstall(err)
+                  })
+              }, checkInterval * 1000)
+            })
+            .catch((err) => {
+              console.log(`Failed to install add-on ${addon.uid}: ${err}`)
+              settleInstall(err)
+            })
         }
 
         installNextAddon()
@@ -1038,6 +1085,10 @@ export default {
     },
     cancelInstall() {
       this.isInstallCancelled = true
+      if (this.addonInstallCheckTimer) {
+        clearInterval(this.addonInstallCheckTimer)
+        this.addonInstallCheckTimer = null
+      }
       this.waitingProgressTitle = this.t('setupwizard.addons.installCancelled')
       this.waitingProgress = 100
     },
@@ -1046,8 +1097,8 @@ export default {
       // we completed this step, store it
       const stepsDone = { ...this.setupWizardStepsDone }
       stepsDone['welcome'] = true
-      if (link.indexOf('model') >= 0) stepsDone.modelLinkClicked = true
-      if (link.indexOf('inbox') >= 0) stepsDone.inboxLinkClicked = true
+      if (target.indexOf('model') >= 0) stepsDone.modelLinkClicked = true
+      if (target.indexOf('inbox') >= 0) stepsDone.inboxLinkClicked = true
       this.setupWizardStepsDone = stepsDone
 
       f7.panel.get('left').enableVisibleBreakpoint()

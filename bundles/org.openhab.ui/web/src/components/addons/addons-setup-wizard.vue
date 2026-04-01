@@ -7,7 +7,14 @@
             <div style="width: 100%">
               <f7-checkbox style="margin-right: 0.5rem" :checked="isAddonSelected(addon)" :disabled="addon.installed" />
               {{ addon.label }}
-              <f7-link style="float: right" icon-f7="doc_text_search" :external="true" color="gray" target="_blank" :href="addon.link" />
+              <f7-link
+                style="float: right"
+                icon-f7="doc_text_search"
+                :external="true"
+                color="gray"
+                target="_blank"
+                :href="addon.link"
+                @click.stop />
             </div>
           </f7-row>
           <f7-row no-gap style="margin-top: 0.5rem; margin-bottom: 0">
@@ -45,7 +52,7 @@
           search-container=".addon-selection-list"
           search-item=".addon-selection-item"
           search-in=".addon-selection-label"
-          disable-button-text="Cancel" />
+          :disable-button-text="t('dialogs.cancel')" />
         <f7-list media-list class="addon-selection-list">
           <f7-list-item
             v-for="addon in filterableAddons"
@@ -200,6 +207,7 @@ export default {
      * @param addon
      */
     toggleAddonSelection(addon) {
+      if (addon.installed) return
       if (this.isAddonSelected(addon)) {
         const index = this.localSelectedAddons.findIndex((a) => addon.uid === a.uid)
         if (index > -1) {
