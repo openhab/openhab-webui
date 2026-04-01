@@ -666,12 +666,12 @@ export default {
         .open()
     },
     chooseAxisSplit(axis: ValueAxisOptions) {
-      const actions = Object.keys(ValueAxisSplitOptions).map((key) => {
+      const actions = Object.values(ValueAxisSplitOptions).map((value) => {
         return {
-          text: ValueAxisSplitOptions[key as keyof typeof ValueAxisSplitOptions],
+          text: value,
           color: 'blue',
           onClick: () => {
-            axis.split = key as ValueAxisSplitOptions
+            axis.split = value as ValueAxisSplitOptions
           }
         }
       })
