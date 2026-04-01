@@ -620,12 +620,14 @@ export default {
         ]
       }).open()
     },
-    chooseAxisSplit (axis : ValueAxisOptions) {
-      const actions = Object.keys(ValueAxisSplitOptions).map((key) => {
+    chooseAxisSplit(axis: ValueAxisOptions) {
+      const actions = Object.values(ValueAxisSplitOptions).map((value) => {
         return {
-          text: ValueAxisSplitOptions[key as keyof typeof ValueAxisSplitOptions],
+          text: value,
           color: 'blue',
-          onClick: () => { axis.split = key as ValueAxisSplitOptions }
+          onClick: () => {
+            axis.split = value as ValueAxisSplitOptions
+          }
         }
       })
       f7.actions.create({
