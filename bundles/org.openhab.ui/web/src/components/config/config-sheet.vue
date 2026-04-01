@@ -99,6 +99,7 @@ export default {
     status: Array,
     readOnly: Boolean,
     setEmptyConfigAsNull: Boolean,
+    setEmptyArrayAsArray: Boolean,
     f7router: Object
   },
   emits: ['updated'],
@@ -173,8 +174,10 @@ export default {
         value === null ||
         (parameter.multiple && Array.isArray(value) && !value.length)
       ) {
-        if (this.setEmptyConfigAsNull) {
-          // deleting the parameter sometimes lead to saves not updating it, so set it explicitely to null
+        if (Array.isArray(value) && this.setEmptyArrayAsArray) {
+          this.configuration[parameter.name] = []
+        } else if (this.setEmptyConfigAsNull) {
+          // deleting the parameter sometimes lead to saves not updating it, so set it explicitly to null
           this.configuration[parameter.name] = null
         } else {
           delete this.configuration[parameter.name]

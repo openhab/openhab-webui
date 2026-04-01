@@ -23,6 +23,7 @@
             :parameterGroups="widget.props.parameterGroups || []"
             :parameters="widget.props.parameters || []"
             :configuration="config"
+            :set-empty-array-as-array="true"
             @updated="updated" />
         </f7-col>
       </f7-block>
