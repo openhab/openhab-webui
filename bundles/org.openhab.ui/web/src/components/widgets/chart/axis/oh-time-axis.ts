@@ -1,7 +1,6 @@
 import ComponentId from '../../component-id'
-import { startOf } from '@/components/widgets/chart/util/time'
+import { addOrSubtractPeriod, startOf } from '@/components/widgets/chart/util/time'
 import type { AxisComponent, OhTimeAxisOption } from '../types'
-import { OhChart } from '@/types/components/widgets'
 import { OhTimeAxisDefinition } from '@/assets/definitions/widgets/chart'
 
 const timeAxis: AxisComponent = {
@@ -19,10 +18,7 @@ const timeAxis: AxisComponent = {
       axis.max = (v: { min: number; max: number }) => {
         if (isNaN(v.min)) return endTime.toDate().getTime()
         if (!isFinite(v.max)) return v.max
-        return startOf(chartType, v.min)
-          .add(1, chartType === OhChart.ChartType.isoWeek ? 'week' : chartType)
-          .toDate()
-          .getTime()
+        return addOrSubtractPeriod(chartType, null, startOf(chartType, v.min), 1).toDate().getTime()
       }
     } else {
       axis.min = startTime.toDate().getTime()
