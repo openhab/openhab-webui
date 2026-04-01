@@ -32,8 +32,8 @@
     <f7-popover id="wizard-steps-popover">
       <f7-list menuList>
         <f7-list-item
-          v-for="(step, index) in wizardStepKeysFiltered"
-          :key="index"
+          v-for="step in wizardStepKeysFiltered"
+          :key="step"
           :title="t('setupwizard.' + step + '.title')"
           :selected="step === currentStep"
           :style="!wizardStepKeysActive.includes(step) ? 'color: grey; pointer-events: none; opacity: 0.6' : ''"
@@ -621,19 +621,27 @@ export default {
   computed: {
     show() {
       if (!this.currentStep) return null
-      return { action: 'show', ...this.wizardSteps[this.currentStep].show }
+      const action = this.wizardSteps[this.currentStep].show
+      if (action) return null
+      return { action: 'show', ...action }
     },
     prev() {
       if (!this.currentStep) return null
-      return { action: 'prev', ...this.wizardSteps[this.currentStep].prev }
+      const action = this.wizardSteps[this.currentStep].prev
+      if (action) return null
+      return { action: 'prev', ...action }
     },
     next() {
       if (!this.currentStep) return null
-      return { action: 'next', ...this.wizardSteps[this.currentStep].next }
+      const action = this.wizardSteps[this.currentStep].next
+      if (action) return null
+      return { action: 'next', ...action }
     },
     skip() {
       if (!this.currentStep) return null
-      return { action: 'skip', ...this.wizardSteps[this.currentStep].skip }
+      const action = this.wizardSteps[this.currentStep].skip
+      if (action) return null
+      return { action: 'skip', ...action }
     },
     locale() {
       if (!this.language) return null
