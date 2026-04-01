@@ -42,7 +42,7 @@ import { ApiError } from '@/js/hey-api.ts'
 const props = defineProps<{ item: api.EnrichedItem | api.EnrichedGroupItem }>()
 
 // data
-interface PersistenceService extends api.PersistenceService {
+interface PersistenceService  extends api.PersistenceService {
   configs: Array<api.PersistenceItemConfiguration>
   aliases: Record<string, string>
   editable: boolean
