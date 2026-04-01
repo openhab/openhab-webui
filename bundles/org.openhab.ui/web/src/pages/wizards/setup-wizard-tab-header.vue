@@ -39,7 +39,7 @@ export default {
     t: Function
   },
   computed: {
-    header () {
+    header() {
       if (!this.step) return null
       const line1 = this.t('setupwizard.' + this.step + '.header1')
       const line2 = this.t('setupwizard.' + this.step + '.header2')
@@ -49,7 +49,7 @@ export default {
       const hasLine3 = line3 !== 'setupwizard.' + this.step + '.header3'
       if (!hasLine1 && !hasLine2 && !hasLine3) return null
       return (hasLine1 ? line1 : '') + (hasLine2 ? '<br>' + line2 : '') + (hasLine3 ? '<br>' + line3 : '') + '<br /><br />'
-    },
+    }
   }
 }
 </script>

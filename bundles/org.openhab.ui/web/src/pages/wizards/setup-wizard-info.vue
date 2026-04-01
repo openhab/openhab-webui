@@ -29,7 +29,7 @@ export default {
     'tab-header': defineAsyncComponent(() => import('./setup-wizard-tab-header.vue'))
   },
   computed: {
-    body () {
+    body() {
       if (!this.step) return null
       let body = ''
       let index = 1
@@ -41,7 +41,7 @@ export default {
         index++
       }
       return body
-    },
+    }
   }
 }
 </script>

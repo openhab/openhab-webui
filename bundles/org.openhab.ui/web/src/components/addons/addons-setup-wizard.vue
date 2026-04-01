@@ -142,7 +142,7 @@ export default {
   components: {
     AddonLogo
   },
-  data () {
+  data() {
     return {
       localSelectedAddons: [...this.selectedAddons],
       shownAddons: [...(this.preSelectedAddons || [])],
@@ -156,15 +156,13 @@ export default {
      * Returns addons available for selection (excluding installed and pre-selected).
      * Filtered by search query if present.
      */
-    filterableAddons () {
+    filterableAddons() {
       const available = this.modalShownAddons
       if (!this.addonSearchQuery) {
         return available
       }
       const query = this.addonSearchQuery.toLowerCase()
-      return available.filter((a) =>
-        a.label.toLowerCase().includes(query) || a.uid.toLowerCase().includes(query)
-      )
+      return available.filter((a) => a.label.toLowerCase().includes(query) || a.uid.toLowerCase().includes(query))
     }
   },
   methods: {
@@ -173,7 +171,7 @@ export default {
      * @param addon
      * @returns {boolean}
      */
-    isAddonSelected (addon) {
+    isAddonSelected(addon) {
       return this.localSelectedAddons.includes(addon)
     },
     /**
@@ -181,7 +179,7 @@ export default {
      * @param addon
      * @returns {boolean}
      */
-    isPreSelectedAddon (addon) {
+    isPreSelectedAddon(addon) {
       return this.preSelectedAddons?.includes(addon)
     },
     /**
@@ -189,7 +187,7 @@ export default {
      * @param addon
      * @returns {string}
      */
-    addonDescription (addon) {
+    addonDescription(addon) {
       const line1 = this.t('setupwizard.addon.' + addon.uid + '.line1')
       const line2 = this.t('setupwizard.addon.' + addon.uid + '.line2')
       const hasLine1 = line1 !== 'setupwizard.addon.' + addon.uid + '.line1'
@@ -201,7 +199,7 @@ export default {
      * Toggles the selection of a single add-on.
      * @param addon
      */
-    toggleAddonSelection (addon) {
+    toggleAddonSelection(addon) {
       if (this.isAddonSelected(addon)) {
         const index = this.localSelectedAddons.findIndex((a) => addon.uid === a.uid)
         if (index > -1) {
@@ -219,13 +217,13 @@ export default {
     /**
      * Opens the add-on selection modal.
      */
-    openAddonSelectionModal () {
+    openAddonSelectionModal() {
       this.showAddonSelectionModal = true
     },
     /**
      * Closes the add-on selection modal.
      */
-    closeAddonSelectionModal () {
+    closeAddonSelectionModal() {
       this.showAddonSelectionModal = false
       this.addonSearchQuery = ''
     }

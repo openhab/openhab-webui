@@ -81,7 +81,13 @@
           <f7-list-item
             :title="t('setupwizard.timezone')"
             smart-select
-            :smart-select-params="{ openIn: 'popup', searchbar: true, virtualList: true, closeOnSelect: true, virtualListHeight: theme.aurora ? 32 : undefined, }">
+            :smart-select-params="{
+              openIn: 'popup',
+              searchbar: true,
+              virtualList: true,
+              closeOnSelect: true,
+              virtualListHeight: theme.aurora ? 32 : undefined
+            }">
             <select name="timezone" v-model="timezone">
               <option disabled value="" />
               <option v-for="option in availableTimezones" :key="option.value" :value="option.value">
@@ -132,7 +138,7 @@
               :value="updatedLocation"
               :config-description="{ label: t('setupwizard.' + currentStep + '.parameterLabel'), name: 'Location' }"
               :f7router
-              @input="(value) => updatedLocation = value"
+              @input="(value) => (updatedLocation = value)"
               :placeholder="t('setupwizard.' + currentStep + '.placeholder')" />
           </f7-list-group>
         </f7-list>
@@ -255,7 +261,7 @@
           </div>
           <div>
             <f7-button
-              v-if="!installingAddons && addonSuggestionsReady && (toInstallAddons.length > 0) && next"
+              v-if="!installingAddons && addonSuggestionsReady && toInstallAddons.length > 0 && next"
               large
               fill
               color="blue"
@@ -445,34 +451,34 @@ export default {
     'parameter-location': defineAsyncComponent(() => import('@/components/config/controls/parameter-location.vue')),
     'parameter-options': defineAsyncComponent(() => import('@/components/config/controls/parameter-options.vue')),
     'tab-header': defineAsyncComponent(() => import('./setup-wizard-tab-header.vue')),
-    'info': defineAsyncComponent(() => import('./setup-wizard-info.vue')),
+    info: defineAsyncComponent(() => import('./setup-wizard-info.vue')),
     AddonsSetupWizard,
     PersistenceConfigSetupWizard
   },
-  setup () {
+  setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('setup-wizard', mergeLocaleMessage)
     return { t, theme, mergeLocaleMessage, introLogo, conceptsImage, rulesImage, uiImage, persistenceImage, semanticsImage }
   },
-  data () {
+  data() {
     return {
       i18nReady: false,
 
       // wizard sequence of steps and functions to be called when changing step
       wizardSteps: {
         // Intro does have to be the first step. Code forces no next step is possible before completing it.
-        'intro': {
+        intro: {
           image: introLogo,
           next: { handler: () => this.beginSetup(), step: 'location' }
         },
-        'location': {
+        location: {
           icon: 'map_pin_ellipse',
-          show: { handler: () => this.updatedLocation = this.location },
+          show: { handler: () => (this.updatedLocation = this.location) },
           prev: { step: 'intro' },
           next: { handler: () => this.setLocation(), step: 'network' },
           skip: { step: 'network' }
         },
-        'network': {
+        network: {
           icon: 'wifi',
           show: { isInvisible: () => !this.multiNetwork },
           prev: { step: 'location' },
@@ -487,7 +493,7 @@ export default {
           prev: { step: 'network' },
           next: { step: 'binding' }
         },
-        'binding': {
+        binding: {
           icon: 'circle_grid_hex_fill',
           link: 'https://www.openhab.org/addons/#binding',
           show: { handler: () => this.initSelectedAddons() },
@@ -503,7 +509,7 @@ export default {
           prev: { step: 'binding' },
           next: { step: 'automation' }
         },
-        'automation': {
+        automation: {
           icon: 'wand_stars',
           link: 'https://www.openhab.org/addons/#automation',
           show: { handler: () => this.initSelectedAddons() },
@@ -519,7 +525,7 @@ export default {
           prev: { step: 'automation' },
           next: { step: 'ui' }
         },
-        'ui': {
+        ui: {
           icon: 'play_rectangle',
           link: 'https://www.openhab.org/addons/#ui',
           show: { handler: () => this.initSelectedAddons() },
@@ -535,19 +541,24 @@ export default {
           prev: { step: 'ui' },
           next: { step: 'persistence' }
         },
-        'persistence': {
+        persistence: {
           icon: 'download_circle',
           link: 'https://www.openhab.org/addons/#persistence',
           show: { handler: () => this.initSelectedAddons() },
           prev: { step: 'ui' },
-          next: { handler: () => { this.selectAddons() }, step: 'persistence-config' },
+          next: {
+            handler: () => {
+              this.selectAddons()
+            },
+            step: 'persistence-config'
+          },
           skip: { step: 'persistence-config' }
         },
         'persistence-config': {
           icon: 'download_circle',
-          show: { isInvisible: () => !this.persistenceInstalled, handler: () => this.persistenceConfigConfirm = false },
+          show: { isInvisible: () => !this.persistenceInstalled, handler: () => (this.persistenceConfigConfirm = false) },
           prev: { step: 'persistence' },
-          next: { handler: () => this.persistenceConfigConfirm = true, step: 'semantics-intro' },
+          next: { handler: () => (this.persistenceConfigConfirm = true), step: 'semantics-intro' },
           skip: { step: 'semantics-intro' }
         },
         'semantics-intro': {
@@ -558,7 +569,7 @@ export default {
           prev: { step: 'persistence-config' },
           next: { step: 'welcome' }
         },
-        'welcome': {
+        welcome: {
           image: introLogo,
           prev: { step: 'intro' },
           next: { handler: (link) => this.finish(link) }
@@ -590,7 +601,15 @@ export default {
       addonSuggestionsReady: false,
       addons: [],
       // all recommended addons, pre-defined
-      recommendedAddons: ['binding-astro', 'automation-jsscripting', 'ui-basic', 'misc-openhabcloud', 'persistence-rrd4j', 'persistence-mapdb', 'persistence-inmemory'],
+      recommendedAddons: [
+        'binding-astro',
+        'automation-jsscripting',
+        'ui-basic',
+        'misc-openhabcloud',
+        'persistence-rrd4j',
+        'persistence-mapdb',
+        'persistence-inmemory'
+      ],
       // addons suggested from suggestion finders
       suggestedAddons: [],
       // addon types that can be selected in wizard
@@ -604,31 +623,31 @@ export default {
     }
   },
   computed: {
-    show () {
+    show() {
       if (!this.currentStep) return null
       return { action: 'show', ...this.wizardSteps[this.currentStep].show }
     },
-    prev () {
+    prev() {
       if (!this.currentStep) return null
       return { action: 'prev', ...this.wizardSteps[this.currentStep].prev }
     },
-    next () {
+    next() {
       if (!this.currentStep) return null
       return { action: 'next', ...this.wizardSteps[this.currentStep].next }
     },
-    skip () {
+    skip() {
       if (!this.currentStep) return null
       return { action: 'skip', ...this.wizardSteps[this.currentStep].skip }
     },
-    locale () {
+    locale() {
       if (!this.language) return null
       if (!this.region) return this.language
       return this.language + '-' + this.region.toLowerCase()
     },
-    multiNetwork () {
-      return (this.networkConfigDescription?.options?.length > 1)
+    multiNetwork() {
+      return this.networkConfigDescription?.options?.length > 1
     },
-    addonsByType () {
+    addonsByType() {
       const addons = {}
       this.addons.forEach((a) => {
         let type = a.type
@@ -639,30 +658,34 @@ export default {
       })
       return addons
     },
-    installedAddonsByType () {
+    installedAddonsByType() {
       const addons = {}
       Object.keys(this.addonsByType).forEach((type) => {
         addons[type] = this.addonsByType[type].filter((a) => a.installed)
       })
       return addons
     },
-    toInstallAddons () {
-      return this.selectedAddonsByType[this.currentStep]?.filter((a => !a.installed)) || []
+    toInstallAddons() {
+      return this.selectedAddonsByType[this.currentStep]?.filter((a) => !a.installed) || []
     },
-    preSelectedAddons () {
+    preSelectedAddons() {
       // all recommended and suggested addons
       return [
-        ...this.addons.filter((a) => this.recommendedAddons.includes(a.uid)).sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase())),
-        ...this.addons.filter((a) => this.suggestedAddons.includes(a.id)).sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
+        ...this.addons
+          .filter((a) => this.recommendedAddons.includes(a.uid))
+          .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase())),
+        ...this.addons
+          .filter((a) => this.suggestedAddons.includes(a.id))
+          .sort((a, b) => a.uid.toUpperCase().localeCompare(b.uid.toUpperCase()))
       ]
     },
-    bindingsInstalled () {
-      return !this.installingAddons && (this.addons.findIndex((a) => a.type === 'binding' && a.installed) >= 0)
+    bindingsInstalled() {
+      return !this.installingAddons && this.addons.findIndex((a) => a.type === 'binding' && a.installed) >= 0
     },
-    persistenceInstalled () {
-      return !this.installingAddons && (this.addons.findIndex((a) => a.type === 'persistence' && a.installed) >= 0)
+    persistenceInstalled() {
+      return !this.installingAddons && this.addons.findIndex((a) => a.type === 'persistence' && a.installed) >= 0
     },
-    wizardStepKeys () {
+    wizardStepKeys() {
       const steps = []
       let step = 'intro'
       while (step) {
@@ -671,30 +694,32 @@ export default {
       }
       return steps
     },
-    wizardIntroStepKeys () {
+    wizardIntroStepKeys() {
       // Collect all steps the are used as concept intro
       return this.wizardStepKeys.filter((step) => this.wizardSteps[step].show?.extended)
     },
-    wizardStepKeysFiltered () {
+    wizardStepKeysFiltered() {
       let steps = this.wizardStepKeys
       if (this.setupWizardShort) steps = steps.filter((step) => !this.wizardSteps[step].show?.extended)
       return steps
     },
-    wizardStepKeysActive () {
-      return this.wizardStepKeysFiltered.filter((step) => step === 'intro' || (this.setupWizardStepsDone?.intro && !this.wizardSteps[step].show?.isInvisible?.()))
+    wizardStepKeysActive() {
+      return this.wizardStepKeysFiltered.filter(
+        (step) => step === 'intro' || (this.setupWizardStepsDone?.intro && !this.wizardSteps[step].show?.isInvisible?.())
+      )
     },
-    wizardStepCount () {
+    wizardStepCount() {
       return this.wizardStepKeysFiltered.length
     },
-    wizardCurrentCount () {
+    wizardCurrentCount() {
       return this.wizardStepKeysFiltered.findIndex((step) => this.currentStep === step) + 1
     },
-    wizardProgress () {
+    wizardProgress() {
       const filled = '<span class="progress-circle filled"></span>'
       const empty = '<span class="progress-circle empty"></span>'
       return filled.repeat(this.wizardCurrentCount) + empty.repeat(this.wizardStepCount - this.wizardCurrentCount)
     },
-    firstStepNotDone () {
+    firstStepNotDone() {
       return this.wizardStepKeysFiltered.find((step) => !this.setupWizardStepsDone?.[step])
     },
     ...mapWritableState(useUIOptionsStore, {
@@ -703,14 +728,14 @@ export default {
     })
   },
   watch: {
-    locale (val) {
+    locale(val) {
       useRuntimeStore().locale = this.locale
       loadLocaleMessages('setup-wizard', this.mergeLocaleMessage)
       // watch on useRuntimeStore().locale in App.vue will update globals
     }
   },
   methods: {
-    async execHandler (handler, ...args) {
+    async execHandler(handler, ...args) {
       const result = handler?.(...args)
       // Wait for handler if it returns a Promise
       if (result instanceof Promise) {
@@ -724,7 +749,7 @@ export default {
       }
       return true
     },
-    async handleTabShow (arg1, arg2) {
+    async handleTabShow(arg1, arg2) {
       // Framework7 tab:show can pass (el) or (event, el) - handle both
       const tabEl = arg2 || arg1
       const id = tabEl?.id || tabEl?.target?.id
@@ -738,11 +763,11 @@ export default {
         }
       })
     },
-    async handler (direction) {
+    async handler(direction) {
       if (!direction) return
       // Extract link if passed as parameter (e.g., when direction is a computed object with link property)
       const link = direction?.link
-      if  (!await this.execHandler(direction?.handler, link)) {
+      if (!(await this.execHandler(direction?.handler, link))) {
         // an error occurred or operation was cancelled, don't move tabs
         return
       }
@@ -759,7 +784,7 @@ export default {
       }
       if (direction?.action === 'next') {
         // we completed this step, store it
-        const stepsDone = { ...(this.setupWizardStepsDone) }
+        const stepsDone = { ...this.setupWizardStepsDone }
         stepsDone[this.currentStep] = true
         this.setupWizardStepsDone = stepsDone
       }
@@ -767,37 +792,39 @@ export default {
         f7.tab.show('#' + nextStep)
       }
     },
-    async toStep (step) {
+    async toStep(step) {
       if (step === this.currentStep) return
       if (this.isInvisible(step)) return
-      if (!await this.execHandler(this.wizardSteps[this.currentStep].skip?.handler)) {
+      if (!(await this.execHandler(this.wizardSteps[this.currentStep].skip?.handler))) {
         // an error occurred or operation was cancelled, don't move tabs
         return
       }
       f7.tab.show('#' + step)
     },
-    isInvisible (step) {
-      return (this.wizardSteps[step].show?.isInvisible?.() || (this.setupWizardShort && this.wizardSteps[step].show?.extended))
+    isInvisible(step) {
+      return this.wizardSteps[step].show?.isInvisible?.() || (this.setupWizardShort && this.wizardSteps[step].show?.extended)
     },
-    beginSetup () {
-      this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
-        language: this.language,
-        region: this.region,
-        timezone: this.timezone
-      }).then(() => {
-        f7.emit('localeChanged')
-      })
-    },
-    getCurrentPosition () {
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          this.updatedLocation = position.coords.latitude + ',' + position.coords.longitude
-        }, (error) => {
-          f7.dialog.alert(
-            error.message,
-            this.t('setupwizard.location.retrieveFromDevice.error')
-          )
+    beginSetup() {
+      this.$oh.api
+        .put('/rest/services/org.openhab.i18n/config', {
+          language: this.language,
+          region: this.region,
+          timezone: this.timezone
         })
+        .then(() => {
+          f7.emit('localeChanged')
+        })
+    },
+    getCurrentPosition() {
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.updatedLocation = position.coords.latitude + ',' + position.coords.longitude
+          },
+          (error) => {
+            f7.dialog.alert(error.message, this.t('setupwizard.location.retrieveFromDevice.error'))
+          }
+        )
       } else {
         f7.dialog.alert(
           this.t('setupwizard.location.retrieveFromDevice.notAvailable.message'),
@@ -805,34 +832,30 @@ export default {
         )
       }
     },
-    skipSetup () {
-      f7.dialog.confirm(
-        this.t('setupwizard.skipSetup.confirm.message'),
-        this.t('setupwizard.skipSetup.confirm.title'),
-        () => {
-          f7.panel.get('left').enableVisibleBreakpoint()
-          nextTick(() => {
-            f7.views.main.router.navigate('/', {
-              transition: 'f7-circle',
-              clearPreviousHistory: true
-            })
+    skipSetup() {
+      f7.dialog.confirm(this.t('setupwizard.skipSetup.confirm.message'), this.t('setupwizard.skipSetup.confirm.title'), () => {
+        f7.panel.get('left').enableVisibleBreakpoint()
+        nextTick(() => {
+          f7.views.main.router.navigate('/', {
+            transition: 'f7-circle',
+            clearPreviousHistory: true
           })
-        }
-      )
+        })
+      })
     },
-    setLocation () {
+    setLocation() {
       this.location = this.updatedLocation
       this.$oh.api.put('/rest/services/org.openhab.i18n/config', {
         location: this.location
       })
     },
-    changeNetwork (newNetwork) {
-      if (newNetwork && (this.network !== newNetwork)) {
+    changeNetwork(newNetwork) {
+      if (newNetwork && this.network !== newNetwork) {
         this.networkChanged = true
         this.network = newNetwork
       }
     },
-    setNetwork () {
+    setNetwork() {
       if (this.networkChanged) {
         this.$oh.api.put('/rest/services/org.openhab.network/config', {
           primaryAddress: this.network
@@ -840,7 +863,7 @@ export default {
       }
       this.addonSuggestionsReady = false
     },
-    initSelectedAddons () {
+    initSelectedAddons() {
       this.getSuggestedAddons()
     },
     /**
@@ -850,7 +873,7 @@ export default {
      * the server enough time to discover suggestions, otherwise load suggestions instantaneous.
      * Also handle the loading progress bar.
      */
-    getSuggestedAddons () {
+    getSuggestedAddons() {
       if (this.addonSuggestionsReady) return
       const loading = () => {
         this.waitingTimeout = setTimeout(() => {
@@ -879,7 +902,7 @@ export default {
      *
      * Sets <code>this.addonSuggestionsReady</code> to <code>true</code> once addon-suggestions are ready.
      */
-    getSuggestions () {
+    getSuggestions() {
       this.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
         // Filter out the recommendaed addons so they can be put first in preSelectedAddons
         this.suggestedAddons = suggestions.flatMap((s) => s.id).filter((id) => !this.recommendedAddons.includes(id))
@@ -889,38 +912,52 @@ export default {
         this.addonSuggestionsReady = true
       })
     },
-    preSelectedAddonsByType (type) {
+    preSelectedAddonsByType(type) {
       return this.addonsByType[type].filter((a) => this.preSelectedAddons.includes(a))
     },
-    initAddonSelection (type) {
+    initAddonSelection(type) {
       const installed = this.installedAddonsByType[type]
       this.selectedAddonsByType[type] = [...new Set([...(this.preSelectedAddonsByType(type) || []), ...installed])]
     },
-    addAddonSelection (addon) {
+    addAddonSelection(addon) {
       const oldSelected = this.selectedAddonsByType[this.currentStep]
       if (!this.selectedAddonsByType[this.currentStep]) this.selectedAddonsByType[this.currentStep] = []
       this.selectedAddonsByType[this.currentStep].push(addon)
       const newSelected = this.selectedAddonsByType[this.currentStep]
-      console.debug('Adding to add-on selection:', oldSelected.map((a) => a.uid), newSelected.map((a) => a.uid))
+      console.debug(
+        'Adding to add-on selection:',
+        oldSelected.map((a) => a.uid),
+        newSelected.map((a) => a.uid)
+      )
       nextTick(() => {
-        console.log('Add-ons to install:', this.toInstallAddons.map((a) => a.uid))
+        console.log(
+          'Add-ons to install:',
+          this.toInstallAddons.map((a) => a.uid)
+        )
       })
     },
-    removeAddonSelection (addon) {
+    removeAddonSelection(addon) {
       const oldSelected = this.selectedAddonsByType[this.currentStep]
       if (!this.selectedAddonsByType[this.currentStep]) this.selectedAddonsByType[this.currentStep] = []
       this.selectedAddonsByType[this.currentStep] = this.selectedAddonsByType[this.currentStep].filter((a) => a.uid !== addon.uid)
       const newSelected = this.selectedAddonsByType[this.currentStep]
-      console.debug('removing from add-on selection:', oldSelected.map((a) => a.uid), newSelected.map((a) => a.uid))
+      console.debug(
+        'removing from add-on selection:',
+        oldSelected.map((a) => a.uid),
+        newSelected.map((a) => a.uid)
+      )
       nextTick(() => {
-        console.log('Add-ons to install:', this.toInstallAddons.map((a) => a.uid))
+        console.log(
+          'Add-ons to install:',
+          this.toInstallAddons.map((a) => a.uid)
+        )
       })
     },
-    async selectAddons () {
+    async selectAddons() {
       // Needs to be async, so wizard can stay on page until all add-ons are installed
       await this.installAddons()
     },
-    installAddons () {
+    installAddons() {
       return new Promise((resolve, reject) => {
         const checkInterval = 2 // check the add-ons statuses every 2 seconds
 
@@ -938,18 +975,21 @@ export default {
 
         const checkAddonStatus = (addon) => {
           return new Promise((resolve, reject) => {
-            this.$oh.api.get('/rest/addons/' + addon.uid).then((data) => {
-              if (data.installed) {
-                console.log(`Add-on ${addon.uid} installed!`)
-                resolve(data)
-              } else {
-                console.log(`Add-on ${addon.uid} still not installed. Trying again in ${checkInterval} secs...`)
-                reject(data)
-              }
-            }).catch((err) => {
-              console.log(`Error while querying API to check addon: ${addon.uid}: ${err}'. Trying again in ${checkInterval} secs...`)
-              reject(err)
-            })
+            this.$oh.api
+              .get('/rest/addons/' + addon.uid)
+              .then((data) => {
+                if (data.installed) {
+                  console.log(`Add-on ${addon.uid} installed!`)
+                  resolve(data)
+                } else {
+                  console.log(`Add-on ${addon.uid} still not installed. Trying again in ${checkInterval} secs...`)
+                  reject(data)
+                }
+              })
+              .catch((err) => {
+                console.log(`Error while querying API to check addon: ${addon.uid}: ${err}'. Trying again in ${checkInterval} secs...`)
+                reject(err)
+              })
           })
         }
 
@@ -963,9 +1003,9 @@ export default {
 
           // cancelled, not installing the next one anymore
           if (this.isInstallCancelled) {
-              this.installingAddons = false
-              reject(new Error('cancelled'))
-              return
+            this.installingAddons = false
+            reject(new Error('cancelled'))
+            return
           }
 
           // install next add-on
@@ -978,15 +1018,17 @@ export default {
           this.$oh.api.post('/rest/addons/' + addon.uid + '/install', {}, 'text').then(() => {
             if (this.isInstallCancelled) return
             const checkTimer = setInterval(() => {
-              checkAddonStatus(addon).then(() => {
-                addon.installed = true
-                clearInterval(checkTimer)
-                nextTick(() => {
-                  installNextAddon()
+              checkAddonStatus(addon)
+                .then(() => {
+                  addon.installed = true
+                  clearInterval(checkTimer)
+                  nextTick(() => {
+                    installNextAddon()
+                  })
                 })
-              }).catch(() => {
-                // just keep going... TODO: implement failure mechanism after a number of failed checks?
-              })
+                .catch(() => {
+                  // just keep going... TODO: implement failure mechanism after a number of failed checks?
+                })
             }, checkInterval * 1000)
           })
         }
@@ -994,16 +1036,15 @@ export default {
         installNextAddon()
       })
     },
-    cancelInstall () {
+    cancelInstall() {
       this.isInstallCancelled = true
       this.waitingProgressTitle = this.t('setupwizard.addons.installCancelled')
       this.waitingProgress = 100
-
     },
-    finish (link) {
+    finish(link) {
       const target = link || '/'
       // we completed this step, store it
-      const stepsDone = { ...(this.setupWizardStepsDone) }
+      const stepsDone = { ...this.setupWizardStepsDone }
       stepsDone['welcome'] = true
       if (link.indexOf('model') >= 0) stepsDone.modelLinkClicked = true
       if (link.indexOf('inbox') >= 0) stepsDone.inboxLinkClicked = true
@@ -1017,30 +1058,32 @@ export default {
         }
       })
     },
-    pageBeforeIn () {
+    pageBeforeIn() {
       f7.panel.get('left').disableVisibleBreakpoint()
       this.currentStep = 'intro'
     },
-    pageBeforeOut () {
+    pageBeforeOut() {
       f7.panel.get('left').enableVisibleBreakpoint()
       // create the overview page to prevent this setup wizard from being launched again automatically
-      this.$oh.api.post('/rest/ui/components/ui:page', {
-        uid: 'overview',
-        component: 'oh-layout-page',
-        config: {
-          label: 'Overview'
-        },
-        slots: {
-          default: [],
-          masonry: null
-        }
-      }).then(() => {
-        // this will force the pages to be refreshed
-        f7.emit('sidebarRefresh', null)
-      })
+      this.$oh.api
+        .post('/rest/ui/components/ui:page', {
+          uid: 'overview',
+          component: 'oh-layout-page',
+          config: {
+            label: 'Overview'
+          },
+          slots: {
+            default: [],
+            masonry: null
+          }
+        })
+        .then(() => {
+          // this will force the pages to be refreshed
+          f7.emit('sidebarRefresh', null)
+        })
     }
   },
-  mounted () {
+  mounted() {
     // hack to eliminate issue in framework7 router where the intro page (after a login) is unresponsive. Note,
     // if the setup-wizard page is reloaded, the page works correctly and is responsive.
     // Diagnosis: While the animate option is set to false when navigating to the setup-wizard (in auth-mixin),
