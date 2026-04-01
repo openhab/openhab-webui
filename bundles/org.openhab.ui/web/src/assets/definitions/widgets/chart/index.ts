@@ -125,6 +125,18 @@ const xAxisStyleParameter = po('style', 'Axis Style', 'The style of the axis', [
   { value: 'label+line+tick', label: 'Label, Line & Tick' }
 ]).d('label+line+tick')
 
+const valueAxisSplitParameter = pt('split', 'Axis Split', 'Split the axis in different sections')
+  .o(
+    [
+      { value: 'line', label: 'Line' },
+      { value: 'minor', label: 'Minor' },
+      { value: 'area', label: 'Area' }
+    ],
+    true,
+    true
+  )
+  .d(['line'])
+
 const baseSeriesParameter = [
   nameParameter,
   itemParameter,
@@ -256,8 +268,9 @@ export const OhValueAxisDefinition = new WidgetDefinition('oh-value-axis', 'Valu
     pb(
       'scale',
       'Do Not Force Scale to Include Zero',
-      'If checked the scale will not necessarily include the origin (has no effect if min or max are set explicitely)'
+      'If checked the scale will not necessarily include the origin (has no effect if min or max are set explicitly)'
     ),
+    valueAxisSplitParameter,
     gridIndexParameter
   ])
 

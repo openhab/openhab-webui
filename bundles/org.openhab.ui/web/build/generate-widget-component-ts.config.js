@@ -20,6 +20,11 @@ export default {
         }
     },
     // component specific modifiers to apply to component files
+    OhValueAxis: {
+        _All: {
+            modifier: (e) => e.replace('split?: Split', 'split?: Split[]')
+        }
+    },
     OhAggregateSeries: {
         Dimension1: {
             modifier: (e) => e.replace('Dimension1', 'Dimension')           // Create common Dimension type
