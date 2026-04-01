@@ -1,7 +1,8 @@
-import { Marker, type VisualMap, type ValueAxisOptions, ValueAxisSplitOptions } from './types'
+import { Marker, type ValueAxisOptions, ValueAxisSplitOptions, type VisualMap } from './types'
 import type { AggregateCoordSettings } from './chart-aggregate'
 import type { TimeCoordSettings } from './chart-time'
-import { OhChartVisualmap, Orient, OhTimeSeries, OhAggregateSeries, OhValueAxis } from '@/types/components/widgets'
+import { OhAggregateSeries, OhChartVisualmap, OhTimeSeries, OhValueAxis, Orient } from '@/types/components/widgets'
+import { Split } from '@/types/components/widgets/chart/oh-value-axis.gen.ts'
 
 import * as api from '@/api'
 
@@ -59,18 +60,22 @@ export function renderVisualMap(visualMap: VisualMap): api.UiComponent[] {
   ]
 }
 
-function getSplitLineConfig(split: ValueAxisSplitOptions | undefined): Record<string, any> {
-  const config: Record<string, any> = {}
+function getSplitLineConfig(split?: ValueAxisSplitOptions): Split[] {
+  const splitConfig: Split[] = []
 
-  const noSplitLine = [ValueAxisSplitOptions.none, ValueAxisSplitOptions.area, ValueAxisSplitOptions.area_minor]
-  if (split && noSplitLine.includes(split)) {
-    config.splitLine = { show: false }
+  const showSplitLine = [
+    ValueAxisSplitOptions.line,
+    ValueAxisSplitOptions.line_minor,
+    ValueAxisSplitOptions.line_area,
+    ValueAxisSplitOptions.all
+  ]
+  if (split && showSplitLine.includes(split)) {
+    splitConfig.push(Split.line)
   }
 
   const showMinorTicks = [ValueAxisSplitOptions.line_minor, ValueAxisSplitOptions.area_minor, ValueAxisSplitOptions.all]
   if (split && showMinorTicks.includes(split)) {
-    config.minorTick = { show: true }
-    config.minorSplitLine = { show: true }
+    splitConfig.push(Split.minor)
   }
 
   const showSplitArea = [
@@ -80,10 +85,10 @@ function getSplitLineConfig(split: ValueAxisSplitOptions | undefined): Record<st
     ValueAxisSplitOptions.all
   ]
   if (split && showSplitArea.includes(split)) {
-    config.splitArea = { show: true }
+    splitConfig.push(Split.area)
   }
 
-  return config
+  return splitConfig
 }
 
 export function renderValueAxis(options: ValueAxisOptions): api.UiComponent {
@@ -110,9 +115,9 @@ export function renderValueAxis(options: ValueAxisOptions): api.UiComponent {
   return {
     component: 'oh-value-axis',
     config: {
-      ...getSplitLineConfig(options.split),
+      split: getSplitLineConfig(options.split),
       ...config
-    }
+    } satisfies OhValueAxis.Config
   }
 }
 
