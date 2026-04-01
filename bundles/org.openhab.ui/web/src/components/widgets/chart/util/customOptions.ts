@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { type OhAxisOption, type OhSeriesOption, type OhTimeSeriesOption } from '@/components/widgets/chart/types.ts'
 import { Style } from '@/types/components/widgets'
 import { Markers } from '@/types/components/widgets/chart/oh-time-series.gen.ts'
+import { Split } from '@/types/components/widgets/chart/oh-value-axis.gen.ts'
 
 function applyMarkers(series: OhSeriesOption) {
   if ('markers' in series && Array.isArray(series.markers) && series.markers.length > 0) {
@@ -83,7 +84,7 @@ export function transformCustomSeriesOptions(series: OhSeriesOption) {
   return series
 }
 
-function applyAxisStyle(axis: OhAxisOption) {
+function applyXAxisStyle(axis: OhAxisOption) {
   if ('style' in axis && axis.style) {
     switch (axis.style) {
       case Style.label:
@@ -109,6 +110,36 @@ function applyAxisStyle(axis: OhAxisOption) {
  * @param axis
  */
 export function transformCustomXAxisOptions(axis: OhAxisOption) {
-  applyAxisStyle(axis)
+  applyXAxisStyle(axis)
+  return axis
+}
+
+function applyYAxisSplit(axis: OhAxisOption) {
+  if ('split' in axis && Array.isArray(axis.split)) {
+    if (!axis.split.includes(Split.line)) {
+      if (!axis.splitLine) axis.splitLine = {}
+      axis.splitLine.show = false
+    }
+    if (axis.split.includes(Split.minor)) {
+      if (!axis.minorTick) axis.minorTick = {}
+      axis.minorTick.show = true
+      if (!axis.minorSplitLine) axis.minorSplitLine = {}
+      axis.minorSplitLine.show = true
+    }
+    if (axis.split.includes(Split.area)) {
+      if (!axis.splitArea) axis.splitArea = {}
+      axis.splitArea.show = true
+    }
+
+    delete axis.split
+  }
+}
+
+/**
+ * Transform custom options for Y-axis into ECharts options.
+ * @param axis
+ */
+export function transformCustomYAxisOptions(axis: OhAxisOption) {
+  applyYAxisSplit(axis)
   return axis
 }
