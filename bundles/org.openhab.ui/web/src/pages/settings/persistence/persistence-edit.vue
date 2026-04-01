@@ -1,23 +1,33 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page
+    ref="pagePersistenceEdit"
+    class="persistence-edit-page"
+    @keydown.stop.prevent.exact.ctrl.s="save"
+    @keydown.stop.prevent.exact.meta.s="save">
     <f7-navbar>
-      <oh-nav-content :title="pageTitle + dirtyIndicator" :editable save-link="Save" @save="save()" :f7router />
+      <oh-nav-content
+        :title="pageTitle + dirtyIndicator"
+        :editable
+        :save-link="dirty ? 'Save' : null"
+        back-link-url="/settings/persistence/"
+        @save="save()"
+        :f7router />
     </f7-navbar>
-    <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design"> Design </f7-link>
-      <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
+    <f7-toolbar ref="persistenceEditTabs" tabbar position="top">
+      <f7-link oh-tab-link="#design" tab-link-active> Design </f7-link>
+      <f7-link oh-tab-link="#code"> Code </f7-link>
     </f7-toolbar>
 
     <f7-tabs>
       <!-- Design Tab -->
-      <f7-tab id="design" :tab-active="currentTab === 'design'">
+      <f7-tab id="design" tab-active>
         <f7-block class="block-narrow">
           <f7-col>
             <div>
               <f7-block-footer style="padding-left: 16px; padding-right: 16px">
                 Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to
                 display graphs in the UI.
-                <f7-link external color="blue" target="_blank" :href="`${runtimeStore.websiteUrl}/link/persistence`">
+                <f7-link external color="blue" target="_blank" :href="`${websiteUrl}/link/persistence`">
                   Learn more about persistence.
                 </f7-link>
               </f7-block-footer>
@@ -27,21 +37,22 @@
         <!-- Skeletons for not ready -->
         <f7-block v-if="!ready" class="block-narrow">
           <f7-col class="modules">
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configuration </f7-block-title>
+            <f7-block>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configurations </f7-block-title>
+              <f7-block-header style="padding-right: 16px"> Items to persist with strategies to use. </f7-block-header>
               <f7-list class="skeleton-text skeleton-effect-blink">
                 <f7-list-item />
               </f7-list>
-            </div>
-            <div>
+            </f7-block>
+            <f7-block>
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Strategies </f7-block-title>
               <f7-list class="skeleton-text skeleton-effect-blink">
                 <f7-list-item />
               </f7-list>
               <!-- Default Strategies -->
-              <strategy-picker title="Default Strategies" class="skeleton-text skeleton-effect-blink" />
-            </div>
-            <div>
+              <strategy-picker class="skeleton-text skeleton-effect-blink" :cron-strategies="[]" :selected-strategies="[]" />
+            </f7-block>
+            <f7-block>
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
               <div v-for="ft in FilterTypes" :key="ft.name">
                 <f7-block-title>
@@ -51,32 +62,32 @@
                   <f7-list-item />
                 </f7-list>
               </div>
-            </div>
-            <div>
+            </f7-block>
+            <f7-block>
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Aliases </f7-block-title>
+              <f7-block-header style="padding-right: 16px">Item names mapped to aliases used in persistence store.</f7-block-header>
               <f7-list class="skeleton-text skeleton-effect-blink">
                 <f7-list-item />
               </f7-list>
-            </div>
+            </f7-block>
           </f7-col>
         </f7-block>
 
         <f7-block v-if="ready" class="block-narrow">
           <f7-col v-if="!editable">
-            <div class="padding-left">Note: {{ notEditableMgs }}</div>
+            <div class="padding-left">Note: {{ notEditableMsg }}</div>
           </f7-col>
           <f7-col class="modules">
             <!-- Configuration -->
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configuration </f7-block-title>
-              <f7-list :media-list="editable" swipeout>
+            <f7-block>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configurations </f7-block-title>
+              <f7-block-header style="padding-right: 16px"> Items to persist with strategies to use. </f7-block-header>
+              <f7-list v-if="editable || persistence!.configs.length > 0" :media-list="editable" swipeout>
                 <f7-list-item
-                  v-for="(cfg, index) in persistence.configs"
+                  v-for="(cfg, index) in persistence!.configs"
                   :key="cfg.items.join()"
-                  :title="cfg.items.join(', ')"
-                  :footer="cfg.strategies.join(', ') + (cfg.filters.length > 0 ? ' - ' + cfg.filters.join(', ') : '')"
                   :link="editable"
-                  @click="(ev) => editConfiguration(ev, index, cfg)"
+                  @click="(ev: MouseEvent) => editConfiguration(ev, index, cfg)"
                   swipeout>
                   <template #media>
                     <f7-link
@@ -85,137 +96,58 @@
                       icon-aurora="f7:minus_circle_filled"
                       icon-ios="f7:minus_circle_filled"
                       icon-md="material:remove_circle_outline"
-                      @click="showSwipeout" />
+                      @click.stop="showSwipeout" />
+                  </template>
+                  <template #title>
+                    <div v-text="configurationAllItemsTitle(cfg.items)" />
+                    <div v-text="configurationGroupsTitle(cfg.items)" />
+                    <div v-text="configurationItemsTitle(cfg.items)" />
+                    <div v-text="configurationGroupsTitle(cfg.items, true)" />
+                    <div v-text="configurationItemsTitle(cfg.items, true)" />
+                  </template>
+                  <template #footer>
+                    <div v-if="cfg.strategies?.length">{{ configurationStrategiesTitle(cfg.strategies) }}</div>
+                    <div v-if="cfg.filters?.length">{{ configurationFiltersTitle(cfg.filters) }}</div>
                   </template>
                   <f7-swipeout-actions v-if="editable" right>
                     <f7-swipeout-button
-                      @click="(ev) => deleteModule(ev, 'configs', index)"
+                      @click.stop="(ev: MouseEvent) => deleteConfiguration(ev, index)"
                       style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
                     </f7-swipeout-button>
                   </f7-swipeout-actions>
                 </f7-list-item>
               </f7-list>
+              <f7-list v-else-if="!editable">
+                <f7-list-item> No configurations defined </f7-list-item>
+              </f7-list>
               <f7-list v-if="editable">
                 <f7-list-item
                   link
                   no-chevron
                   media-item
-                  :color="theme.dark ? 'black' : 'white'"
                   subtitle="Add configuration"
-                  @click="editConfiguration(undefined, null)">
+                  @click="(ev: MouseEvent) => editConfiguration(ev, null, null)">
                   <template #media>
                     <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                   </template>
                 </f7-list-item>
               </f7-list>
-            </div>
-            <!-- Strategies -->
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Strategies </f7-block-title>
-              <!-- Cron Strategies -->
-              <f7-list :media-list="editable" swipeout>
-                <f7-list-item
-                  v-for="(cs, index) in persistence.cronStrategies"
-                  :key="cs.name"
-                  :title="cs.name"
-                  :footer="cs.cronExpression"
-                  :link="editable"
-                  @click="(ev) => editCronStrategy(ev, index, cs)"
-                  swipeout>
-                  <template #media>
-                    <f7-link
-                      v-if="editable"
-                      icon-color="red"
-                      icon-aurora="f7:minus_circle_filled"
-                      icon-ios="f7:minus_circle_filled"
-                      icon-md="material:remove_circle_outline"
-                      @click="showSwipeout" />
-                  </template>
-                  <f7-swipeout-actions v-if="editable" right>
-                    <f7-swipeout-button
-                      @click="(ev) => deleteCronStrategy(ev, index)"
-                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                      Delete
-                    </f7-swipeout-button>
-                  </f7-swipeout-actions>
-                </f7-list-item>
-              </f7-list>
-              <f7-list v-if="editable">
-                <f7-list-item
-                  link
-                  no-chevron
-                  media-item
-                  :color="theme.dark ? 'black' : 'white'"
-                  subtitle="Add cron strategy"
-                  @click="editCronStrategy(undefined, null)">
-                  <template #media>
-                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-                  </template>
-                </f7-list-item>
-              </f7-list>
-              <!-- Filters -->
-              <div>
-                <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
-                <div v-for="ft in FilterTypes" :key="ft.name">
-                  <f7-block-title>
-                    {{ ft.label }}
-                  </f7-block-title>
-                  <f7-list :media-list="editable" swipeout>
-                    <f7-list-item
-                      v-for="(f, index) in persistence[ft.name]"
-                      :key="f.name"
-                      :title="f.name"
-                      :footer="typeof ft.footerFn === 'function' ? ft.footerFn(f) : ''"
-                      :link="editable"
-                      @click="(ev) => editFilter(ev, ft, index, f)"
-                      swipeout>
-                      <template #media>
-                        <f7-link
-                          v-if="editable"
-                          icon-color="red"
-                          icon-aurora="f7:minus_circle_filled"
-                          icon-ios="f7:minus_circle_filled"
-                          icon-md="material:remove_circle_outline"
-                          @click="showSwipeout" />
-                      </template>
-                      <f7-swipeout-actions v-if="editable" right>
-                        <f7-swipeout-button
-                          @click="(ev) => deleteFilter(ev, ft.name, index)"
-                          style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                          Delete
-                        </f7-swipeout-button>
-                      </f7-swipeout-actions>
-                    </f7-list-item>
-                  </f7-list>
-                  <f7-list v-if="editable">
-                    <f7-list-item
-                      link
-                      no-chevron
-                      media-item
-                      :color="theme.dark ? 'black' : 'white'"
-                      :subtitle="'Add ' + ft.label.toLowerCase() + ' filter'"
-                      @click="editFilter(undefined, ft, null)">
-                      <template #media>
-                        <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-                      </template>
-                    </f7-list-item>
-                  </f7-list>
-                </div>
-              </div>
-            </div>
-            <!-- Aliases -->
-            <div>
+            </f7-block>
+            <f7-block>
+              <!-- Aliases -->
               <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Aliases </f7-block-title>
-              <f7-list :media-list="editable" swipeout no-swipeout-opened>
+              <f7-block-header style="padding-right: 16px">Item names mapped to aliases used in persistence store.</f7-block-header>
+              <f7-list v-if="editable || currentItemsWithAlias.length > 0" :media-list="editable" swipeout no-swipeout-opened>
                 <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
                   <template #media>
                     <f7-link
+                      v-if="editable"
                       icon-color="red"
                       icon-aurora="f7:minus_circle_filled"
                       icon-ios="f7:minus_circle_filled"
                       icon-md="material:remove_circle_outline"
-                      @click="showSwipeout" />
+                      @click.stop="showSwipeout" />
                   </template>
                   <div class="alias-label">
                     {{ i }}
@@ -223,29 +155,33 @@
                   <div class="alias-input">
                     <f7-input
                       type="text"
-                      :ref="'alias-input-' + index"
                       placeholder="alias"
                       validate
+                      :read-only="!editable"
                       pattern="[A-Za-z_][A-Za-z0-9_]*"
                       error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
-                      :value="persistence.aliases[i]"
-                      @input="editAlias($event, i, $event.target.value)"
-                      @keydown="keyDown($event, index)" />
+                      :value="persistence?.aliases[i]"
+                      @input="editAlias(i, $event.target.value)"
+                      @blur="checkAliasForDuplicates(i, $event.target.value)"
+                      @keydown.stop.prevent.tab="onAliasTab($event, index)" />
                   </div>
                   <f7-swipeout-actions v-if="editable" right>
                     <f7-swipeout-button
-                      @click="(ev) => deleteAlias(ev, i)"
+                      @click.stop="(ev: MouseEvent) => deleteAlias(ev, i)"
                       style="background-color: var(--f7-swipeout-delete-button-bg-color)">
                       Delete
                     </f7-swipeout-button>
                   </f7-swipeout-actions>
                 </f7-list-item>
               </f7-list>
+              <f7-list v-else-if="!editable">
+                <f7-list-item> No aliases defined </f7-list-item>
+              </f7-list>
               <f7-list v-if="editable">
                 <f7-list-group>
                   <item-picker
                     class="alias-item-picker"
-                    label="Add alias"
+                    label="Select Items to Alias"
                     name="items"
                     :multiple="true"
                     :noModelPicker="true"
@@ -258,18 +194,21 @@
                     @input="updateAliasItems($event)" />
                 </f7-list-group>
               </f7-list>
-            </div>
+            </f7-block>
           </f7-col>
-          <f7-col v-if="editable && !newPersistence">
+          <f7-col v-if="editable" class="persistence-config-links">
             <f7-list>
-              <f7-list-button color="red" @click="deletePersistence"> Remove persistence configuration </f7-list-button>
+              <f7-list-button color="blue" @click="definitionsPopupOpen = true">
+                {{ 'Manage Definitions' }}
+              </f7-list-button>
+              <f7-list-button v-if="!createMode" color="red" @click="deletePersistence"> Remove persistence configuration </f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>
       </f7-tab>
 
       <!-- Code Tab -->
-      <f7-tab id="code" :tab-active="currentTab === 'code'">
+      <f7-tab id="code">
         <f7-icon
           v-if="!editable"
           f7="lock"
@@ -277,7 +216,7 @@
           style="opacity: 0.5; z-index: 4000; user-select: none"
           size="50"
           color="gray"
-          :tooltip="notEditableMgs" />
+          :tooltip="notEditableMsg" />
         <editor
           v-if="currentTab === 'code'"
           class="persistence-code-editor"
@@ -289,6 +228,25 @@
       </f7-tab>
     </f7-tabs>
   </f7-page>
+
+  <!-- Configuration Popup (no router navigation as router gets confused with multiple popups) -->
+  <configuration-popup
+    v-if="ready && persistence"
+    v-model:opened="configurationPopupOpen"
+    :persistence="persistence"
+    :suggested-strategies="suggestedStrategyNames"
+    :item-configuration="currentConfiguration"
+    @update:item-configuration="updateItemConfiguration"
+    @add:item-configuration="addItemConfiguration"
+    @update:definitions="updateDefinitions" />
+
+  <!-- Definitions Popup (no router navigation as router gets confused with multiple popups) -->
+  <definitions-popup
+    v-if="ready && persistence"
+    v-model:opened="definitionsPopupOpen"
+    :persistence="persistence"
+    @update:persistence="updatePersistence"
+    :editable="editable" />
 </template>
 
 <style lang="stylus">
@@ -297,8 +255,16 @@
     overflow-x hidden !important
   .config-sheet, .parameter-group
     margin-top 0 !important
-
 .modules
+  width 100%
+  .block
+    padding-left var(--f7-safe-area-left)
+    padding-right var(--f7-safe-area-right)
+    .block-title
+      padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
+    .block-header
+      padding-left calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-left))
+      padding-right calc(var(--f7-block-padding-horizontal) + var(--f7-safe-area-right))
   .swipeout-opened
     .sortable-handler
       display none
@@ -308,6 +274,25 @@
     margin-bottom 0
   .list
     margin-top 0
+    margin-bottom 0
+
+.module-picker-container
+  .item-content
+    padding-left calc(var(--f7-list-item-padding-horizontal) / 2 + var(--f7-safe-area-left))
+  .item-media
+    padding 0
+    margin-top 8px
+    .icon
+      font-size calc(var(--f7-list-font-size) + 4px)
+  .media-item .item-inner
+    margin-left calc(var(--f7-list-item-media-margin) - 8px)
+  .item-title
+    padding-left 8px
+  .popup-list
+    .item-inner:after
+      display block
+  .defaults-picker
+    cursor pointer
 
 .list-alias-item .item-content .item-inner
   display: flex
@@ -323,526 +308,445 @@
     text-align: right
 .alias-item-picker .item-picker .item-content
   padding-left: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
+  .item-inner::before
+    visibility: hidden
+
+.persistence-config-links
+  margin-top: 2.5rem
 
 .persistence-code-editor.v-codemirror
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>
 
-<script>
-import { defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
+<script setup lang="ts">
+import { defineAsyncComponent, ref, computed, onMounted, provide, type Ref } from 'vue'
+import type { Router } from 'framework7'
+import { f7 } from 'framework7-vue'
 
 import YAML from 'yaml'
-import cloneDeep from 'lodash/cloneDeep'
-import fastDeepEqual from 'fast-deep-equal/es6'
 
-import DirtyMixin from '../dirty-mixin'
-import { FilterTypes, PredefinedStrategies, CommonCronStrategies } from '@/assets/definitions/persistence'
-import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
+import { useDirty } from '../useDirty'
+import { useTabs, confirmCodeSwitch } from '@/composables/useTabs'
+import { CommonCronStrategies, FilterTypeName, persistenceKey, FilterTypes } from '@/assets/definitions/persistence'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
-import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
+import DefinitionsPopup from '@/pages/settings/persistence/definitions-popup.vue'
+import { showConfirmDialog, showToast } from '@/js/dialog-promises'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
-export default {
-  mixins: [DirtyMixin],
-  components: {
-    ItemPicker,
-    StrategyPicker,
-    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
-  },
-  props: {
-    serviceId: String,
-    f7router: Object
-  },
-  setup() {
-    return { theme }
-  },
-  data() {
-    return {
-      newPersistence: false,
-      persistence: {},
-      savedPersistence: {},
-      suggestedStrategies: [],
-      persistenceYaml: '',
-      ready: false,
-      loading: false,
-      currentTab: 'design',
-      currentConfiguration: null,
-      currentCronStrategy: null,
-      currentFilter: null,
+import * as api from '@/api'
+import { ApiError } from '@/js/hey-api'
 
-      notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
-    }
-  },
-  computed: {
-    editable() {
-      return this.newPersistence || (this.persistence && this.persistence.editable === true)
-    },
-    pageTitle() {
-      if (this.newPersistence) return 'Create new persistence configuration'
-      if (!this.ready) return ''
-      if (!this.editable) return `${this.serviceId} persistence configuration details`
-      return `Edit ${this.serviceId} persistence configuration`
-    },
-    strategies() {
-      return this.PredefinedStrategies.concat(this.persistence.cronStrategies.map((cs) => cs.name))
-    },
-    filters() {
-      let names = []
-      for (let i = 0; i < this.FilterTypes.length; i++) {
-        const filterTypeName = this.FilterTypes[i].name
-        if (this.persistence[filterTypeName]) names = names.concat(this.persistence[filterTypeName].map((f) => f.name))
-      }
-      return names
-    },
-    currentItemsWithAlias() {
-      return Object.keys(this.persistence.aliases).sort()
-    },
-    ...mapStores(useRuntimeStore)
-  },
-  watch: {
-    persistence: {
-      handler: function () {
-        if (!this.loading) {
-          // ignore changes during loading
-          this.checkDirty()
-        }
-      },
-      deep: true
-    }
-  },
-  methods: {
-    onPageAfterIn() {
-      if (window) {
-        window.addEventListener('keydown', this.keyDown)
-      }
-      this.load()
-    },
-    onPageBeforeOut() {
-      if (window) {
-        window.removeEventListener('keydown', this.keyDown)
-      }
-    },
-    initializeNewPersistence() {
-      this.newPersistence = true
-      const suggestedCronStrategies = this.suggestedStrategies.filter((s) => s.cronExpression)
-      const suggestedCronStrategyNames = suggestedCronStrategies.map((s) => s.name)
-      const commonCronStrategies = this.CommonCronStrategies.filter((s) => !suggestedCronStrategyNames.includes(s.name))
-      const cronStrategies = suggestedCronStrategies.concat(commonCronStrategies)
-      this.persistence = {
-        serviceId: this.serviceId,
-        configs: [],
-        aliases: [],
-        cronStrategies
-      }
-      // Dynamically add empty arrays for all filter types defined in the FilterTypes object
-      this.FilterTypes.forEach((ft) => {
-        this.persistence[ft.name] = []
-      })
-      this.savedPersistence = cloneDeep(this.persistence)
-      this.ready = true
-    },
-    load() {
-      if (this.loading) return
-      this.loading = true
+const { dirty, dirtyIndicator, setupDirtyWatch } = useDirty('pagePersistenceEdit')
+const { currentTab } = useTabs((tabTo, tabFrom) => confirmCodeSwitch(toYaml, fromYaml, tabTo, tabFrom), 'persistenceEditTabs')
+const { websiteUrl } = useRuntimeStore()
 
-      this.$oh.api.get('/rest/persistence/strategysuggestions?serviceId=' + this.serviceId).then((suggestions) => {
-        this.suggestedStrategies = suggestions
-      })
+let loading = false
+const notEditableMsg = 'This persistence configuration is not editable because it has been provisioned from a file.'
+const editor = defineAsyncComponent(() => import('@/components/config/controls/script-editor.vue'))
 
-      this.$oh.api
-        .get('/rest/persistence/' + this.serviceId)
-        .then((data) => {
-          this.persistence = data
-          this.savedPersistence = cloneDeep(this.persistence)
-          // Ensure arrays for all filter types defined in the FilterTypes object are existent
-          this.FilterTypes.forEach((ft) => {
-            if (!this.persistence[ft.name]) this.persistence[ft.name] = []
-          })
-          this.loading = false
-          this.ready = true
-        })
-        .catch((e) => {
-          if (e === 404 || e === 'Not Found') {
-            this.initializeNewPersistence()
-            this.loading = false
-            this.ready = true
-          } else {
-            Promise.reject(e)
-          }
-        })
-    },
-    async save(noToast) {
-      if (!this.editable) return
-      if (this.currentTab === 'code') this.fromYaml()
+// Props and emits
+const props = defineProps<{
+  serviceId: string
+  f7router: Router.Router
+}>()
 
-      // Update the code tab
-      if (this.persistenceYaml) this.toYaml()
+// Local state
+const persistence = ref<api.PersistenceServiceConfiguration | null>(null)
+const persistenceYaml = ref<string>('')
+const ready = ref<boolean>(false)
+const createMode = ref<boolean>(false)
+const suggestedStrategies = ref<(api.PersistenceStrategy | api.PersistenceCronStrategy)[]>([])
+const configurationPopupOpen = ref<boolean>(false)
+const definitionsPopupOpen = ref<boolean>(false)
 
-      const saveConfirmed = await this.validateAliases()
-      if (!saveConfirmed) return
+// props to pass to popups when opening
+const currentConfiguration = ref<null | any>(null)
 
-      return this.$oh.api
-        .put('/rest/persistence/' + this.persistence.serviceId, this.persistence)
-        .then((data) => {
-          this.savedPersistence = cloneDeep(this.persistence)
-          this.dirty = false
-          if (this.newPersistence) {
-            this.newPersistence = false
-            this.ready = false
-            this.load()
-          }
-          if (!noToast) {
-            f7.toast
-              .create({
-                text: 'Persistence configuration saved',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
-          }
-        })
-        .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving persistence configuration: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
-        })
-    },
-    deletePersistence() {
-      f7.dialog.confirm(
-        `Are you sure you want to delete persistence configuration for ${this.serviceId}?`,
-        'Delete persistence configuration',
-        () => {
-          this.$oh.api.delete('/rest/persistence/' + this.serviceId).then(() => {
-            this.dirty = false
-            this.f7router.back({ force: true })
-          })
-        }
-      )
-    },
-    checkDirty() {
-      this.dirty = !fastDeepEqual(this.persistence, this.savedPersistence)
-    },
-    showSwipeout(ev) {
-      let swipeoutElement = ev.target
-      ev.cancelBubble = true
-      while (!swipeoutElement.classList.contains('swipeout')) {
-        swipeoutElement = swipeoutElement.parentElement
-      }
+// provide access to the persistence object for duplicate checks in popups without prop drilling
+// Cast: popups are only reachable after persistence is loaded and non-null
+provide(persistenceKey, persistence as Ref<api.PersistenceServiceConfiguration>)
 
-      if (swipeoutElement) {
-        f7.swipeout.open(swipeoutElement)
-      }
-    },
-    editConfiguration(ev, index, configuration) {
-      if (!this.editable) return
-      this.currentConfiguration = configuration
+// Watches
+setupDirtyWatch(persistence)
 
-      const popup = {
-        component: ConfigurationPopup
-      }
-      this.f7router.navigate(
-        {
-          url: 'configuration-config',
-          route: {
-            path: 'configuration-config',
-            popup
-          }
-        },
-        {
-          props: {
-            configuration: this.currentConfiguration,
-            strategies: this.strategies,
-            filters: this.filters,
-            suggestedStrategies: this.suggestedStrategies.map((s) => s.name)
-          }
-        }
-      )
+// Computed
+const pageTitle = computed(() => {
+  if (createMode.value) return `New Persistence Configuration [${props.serviceId}]`
+  if (!ready.value) return ''
+  if (!editable.value) return `Persistence Configuration [${props.serviceId}]`
+  return `Edit Persistence Configuration [${props.serviceId}]`
+})
 
-      f7.once('configurationUpdate', (ev) => this.saveConfiguration(index, ev))
-    },
-    saveConfiguration(index, configuration) {
-      const idx = this.persistence.configs.findIndex((cfg) => cfg.items.join() === configuration.items.join())
-      if (index === null && idx !== -1) {
-        f7.dialog.alert('A configuration for this/these Item(s) already exists!')
-        return
-      }
-      this.saveModule('configs', index, configuration)
-    },
-    editCronStrategy(ev, index, cronStrategy) {
-      if (!this.editable) return
-      this.currentCronStrategy = cronStrategy
+const currentItemsWithAlias = computed(() => {
+  return Object.keys(persistence.value?.aliases || {}).sort()
+})
 
-      const popup = {
-        component: CronStrategyPopup
-      }
-      this.f7router.navigate(
-        {
-          url: 'cron-strategy-config',
-          route: {
-            path: 'cron-strategy-config',
-            popup
-          }
-        },
-        {
-          props: {
-            cronStrategy: this.currentCronStrategy
-          }
-        }
-      )
+const suggestedStrategyNames = computed(() => {
+  return suggestedStrategies.value.map((ss) => ss.name)
+})
 
-      f7.once('cronStrategyConfigUpdate', (ev) => this.saveCronStrategy(index, ev))
-    },
-    saveCronStrategy(index, cronStrategy) {
-      const idx = this.persistence.cronStrategies.findIndex((cs) => cs.name === cronStrategy.name)
-      if ((index === null && idx !== -1) || this.PredefinedStrategies.includes(cronStrategy.name)) {
-        f7.dialog.alert('A (cron) strategy with the same name already exists!')
-        return
-      }
-      this.saveModule('cronStrategies', index, cronStrategy)
-    },
-    deleteCronStrategy(ev, index) {
-      // Remove cron strategy from configs, otherwise we get a 400
-      const csName = this.persistence.cronStrategies[index].name
-      this.persistence.configs.forEach((cfg) => {
-        const i = cfg.strategies.findIndex((cs) => cs === csName)
-        cfg.strategies.splice(i, 1)
-      })
-      this.deleteModule(ev, 'cronStrategies', index)
-    },
-    editFilter(ev, filterType, index, filter) {
-      if (!this.editable) return
-      this.currentFilter = filter
+const editable = computed(() => {
+  return persistence.value?.editable || false
+})
 
-      // Stringify values array from equals filter
-      if (filterType.name === 'equalsFilters' && filter) filter.values = filter.values.join(', ')
+// Lifecycle
+onMounted(() => {
+  void load()
+})
 
-      const popup = {
-        component: FilterPopup
-      }
-      this.f7router.navigate(
-        {
-          url: 'filter-config',
-          route: {
-            path: 'filter-config',
-            popup
-          }
-        },
-        {
-          props: {
-            filter: this.currentFilter,
-            filterType,
-            filterConfigDescriptionParameters: filterType.configDescriptionParameters
-          }
-        }
-      )
+// Methods
+async function load() {
+  const success = await loadPersistence(props.serviceId)
 
-      f7.once('filterUpdate', (ev, ftn) => this.saveFilter(ftn, index, ev))
-    },
-    saveFilter(filterTypeName, index, filter) {
-      const idx = this.filters.findIndex((f) => f === filter.name)
-      if (index === null && idx !== -1) {
-        f7.dialog.alert('A filter with the same name already exists!')
-        return
-      }
-      // Convert comma separated string to array for equals filter
-      if (filterTypeName === 'equalsFilters') filter.values = filter.values.split(',').map((v) => v.trim())
-
-      // Ensure that the filter type array exists.
-      // Even though the arrays are created when a new persistence config is initialized, we need this for existing, old configs.
-      if (!this.persistence[filterTypeName]) this.persistence[filterTypeName] = []
-      this.saveModule(filterTypeName, index, filter)
-    },
-    deleteFilter(ev, module, index) {
-      // Remove filter from configs, otherwise we get a 400
-      const filterName = this.persistence[module][index].name
-      this.persistence.configs.forEach((cfg) => {
-        const i = cfg.filters.findIndex((f) => f === filterName)
-        if (i > -1) cfg.filters.splice(i, 1)
-      })
-      this.deleteModule(ev, module, index)
-    },
-    updateAliasItems(items) {
-      if (!this.editable) return
-      const aliases = this.persistence.aliases
-      Object.keys(aliases)
-        .filter((i) => !items.includes(i))
-        .forEach((i) => {
-          delete aliases[i]
-        })
-      items
-        .filter((i) => !Object.keys(aliases).includes(i))
-        .forEach((i) => {
-          aliases[i] = ''
-        })
-      const newAliases = Object.keys(aliases).reduce((obj, key) => {
-        obj[key] = aliases[key]
-        return obj
-      }, {})
-      this.persistence.aliases = newAliases
-    },
-    editAlias(ev, item, alias) {
-      if (!this.editable) return
-      // Warn when alias already exists
-      const duplicate = Object.entries(this.persistence.aliases).find(([i, a]) => item !== i && alias === a)
-      if (duplicate) {
-        f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + duplicate[0])
-        this.persistence.aliases[item] = ''
-        return
-      }
-      this.persistence.aliases[item] = alias
-    },
-    deleteAlias(ev, item) {
-      this.deleteModuleKey(ev, 'aliases', item)
-    },
-    async validateAliases() {
-      const entries = Object.entries(this.persistence.aliases)
-      // Check for invalid alias format
-      const invalidEntry = entries.find(([i, a]) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(a))
-      if (invalidEntry) {
-        const confirmed = await this.showConfirmDialog(
-          `Alias not valid for item ${invalidEntry[0]}!\nSave anyway?`,
-          'Alias Validation Error'
-        )
-        if (!confirmed) return false
-      }
-      // Check for duplicate aliases
-      for (let idx = 1; idx < entries.length; idx++) {
-        const firstIdx = entries.slice(0, idx).findIndex(([i, a]) => a === entries[idx][1])
-        if (firstIdx >= 0) {
-          const confirmed = await this.showConfirmDialog(
-            `Alias "${entries[idx][1]}" for item "${entries[idx][0]}" already exists for item "${entries[firstIdx][0]}".\nSave anyway?`,
-            'Alias Validation Error'
-          )
-          if (!confirmed) return false
-        }
-      }
-      return true
-    },
-    showConfirmDialog(message, title) {
-      return new Promise((resolve) => {
-        f7.dialog.confirm(
-          message,
-          title,
-          () => resolve(true),
-          () => resolve(false)
-        )
-      })
-    },
-    saveModule(module, index, updatedModule) {
-      if (index === null) {
-        console.debug(`Adding ${module}:`)
-        console.debug(updatedModule)
-        this.persistence[module].push(updatedModule)
-      } else {
-        console.debug(`Updating ${module} at index ${index}:`)
-        console.debug(updatedModule)
-        this.persistence[module][index] = updatedModule
-        this.$forceUpdate()
-      }
-      this.checkDirty()
-    },
-    deleteModule(ev, module, index) {
-      if (!this.editable) return
-      let swipeoutElement = ev.target
-      ev.cancelBubble = true
-      while (!swipeoutElement.classList.contains('swipeout')) {
-        swipeoutElement = swipeoutElement.parentElement
-      }
-      f7.swipeout.delete(swipeoutElement, () => {
-        console.debug(`Removing ${module}:`)
-        console.debug(this.persistence[module][index])
-        this.persistence[module].splice(index, 1)
-        this.checkDirty()
-      })
-    },
-    deleteModuleKey(ev, module, key) {
-      if (!this.editable) return
-      let swipeoutElement = ev.target
-      ev.cancelBubble = true
-      while (!swipeoutElement.classList.contains('swipeout')) {
-        swipeoutElement = swipeoutElement.parentElement
-      }
-      f7.swipeout.delete(swipeoutElement, () => {
-        console.debug(`Removing ${module}:`)
-        console.debug(key)
-        delete this.persistence[module][key]
-        this.checkDirty()
-      })
-    },
-    onEditorInput(value) {
-      this.persistenceYaml = value
-      this.dirty = true
-    },
-    toYaml() {
-      const toCode = {
-        configurations: this.persistence.configs,
-        aliases: this.persistence.aliases,
-        cronStrategies: this.persistence.cronStrategies
-      }
-      this.FilterTypes.forEach((ft) => {
-        toCode[ft.name] = this.persistence[ft.name]
-      })
-      this.persistenceYaml = YAML.stringify(toCode)
-    },
-    fromYaml() {
-      if (!this.editable) return false
-      try {
-        const updatedPersistence = YAML.parse(this.persistenceYaml)
-        this.persistence.configs = updatedPersistence.configurations
-        this.persistence.aliases = updatedPersistence.aliases
-        this.persistence.cronStrategies = updatedPersistence.cronStrategies
-        this.FilterTypes.forEach((ft) => {
-          this.persistence[ft.name] = updatedPersistence[ft.name]
-        })
-        return true
-      } catch (e) {
-        f7.dialog.alert(e).open()
-        return false
-      }
-    },
-    keyDown(ev, index) {
-      if (ev.key === 'Tab') {
-        ev.stopPropagation()
-        ev.preventDefault()
-        const newIndex = index || 0
-        const total = this.currentItemsWithAlias.length
-        let targetIndex
-        if (ev.shiftKey) {
-          targetIndex = newIndex - 1 < 0 ? total - 1 : newIndex - 1
-        } else {
-          targetIndex = newIndex + 1 >= total ? 0 : newIndex + 1
-        }
-        const ref = this.$refs[`alias-input-${targetIndex}`]
-        const target = Array.isArray(ref) ? ref[0] : ref
-        if (target && target.$el) {
-          const inputEl = target.$el.querySelector('input')
-          if (inputEl) inputEl.focus()
-        }
-      } else if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
-        switch (ev.keyCode) {
-          case 83:
-            this.save()
-            ev.stopPropagation()
-            ev.preventDefault()
-            break
-        }
-      }
-    }
-  },
-  created() {
-    this.PredefinedStrategies = PredefinedStrategies
-    this.FilterTypes = FilterTypes
-    this.CommonCronStrategies = CommonCronStrategies
+  if (!success) {
+    // Failed to load - go back or show error
+    return
   }
+
+  // Success or new persistence - initialize if needed
+  if (createMode.value) {
+    initializeNewPersistence()
+  }
+
+  dirty.value = false
+  ready.value = true
+}
+
+async function loadPersistence(serviceId: string): Promise<boolean> {
+  if (loading) return false
+  loading = true
+
+  // Load suggestions in parallel (don't await, failure is OK)
+  suggestedStrategies.value =
+    (await api
+      .getPersistenceServiceStrategySuggestions({ serviceId })
+      .then((suggestions) => {
+        return suggestions || []
+      })
+      .catch(() => {
+        console.log('Getting persistence strategy suggestions failed for serviceId:', serviceId, '- default to no suggestions')
+      })) || []
+
+  try {
+    createMode.value = false
+    persistence.value = (await api.getPersistenceServiceConfiguration({ serviceId })) || null
+    if (!persistence.value || Object.keys(persistence.value).length === 0) {
+      // Empty object would be because of a 204
+      console.log('Persistence configuration not found (204) for serviceId:', serviceId, '- creating new configuration')
+      createMode.value = true
+    }
+    loading = false
+    return true
+  } catch (err) {
+    // Only handle 404 from persistence endpoint as "new persistence"
+    if (err instanceof ApiError && err.response.status === 404) {
+      console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
+      createMode.value = true
+      loading = false
+      return true
+    } else {
+      console.error('Error loading persistence configuration for serviceId:', serviceId, '- Error:', err)
+      showToast('Error loading persistence configuration')
+      loading = false
+      return false
+    }
+  }
+}
+
+function initializeNewPersistence() {
+  const suggestedCronStrategies = suggestedStrategies.value.filter((s): s is api.PersistenceCronStrategy => 'cronExpression' in s)
+  const suggestedCronStrategyNames = suggestedCronStrategies.map((s) => s.name)
+  const commonCronStrategies = (CommonCronStrategies || []).filter((s) => !suggestedCronStrategyNames.includes(s.name))
+  const cronStrategies = suggestedCronStrategies.concat(commonCronStrategies)
+  persistence.value = {
+    serviceId: props.serviceId,
+    configs: [],
+    aliases: {},
+    cronStrategies: cronStrategies,
+    defaults: [],
+    timeFilters: [],
+    equalsFilters: [],
+    thresholdFilters: [],
+    includeFilters: [],
+    editable: true
+  } satisfies api.PersistenceServiceConfiguration
+}
+
+async function save() {
+  if (!editable.value || !persistence.value) return
+
+  try {
+    if (currentTab.value === 'code') fromYaml()
+  } catch (err) {
+    console.error('Error parsing YAML for persistence configuration:', err)
+    showToast('Error parsing YAML for persistence configuration, not saved.')
+    return
+  }
+
+  // Keep the code tab synchronized with current in-memory config
+  if (persistenceYaml.value) toYaml()
+
+  if (!(await validateAliases())) return
+
+  try {
+    await api.putPersistenceServiceConfiguration({
+      serviceId: props.serviceId,
+      persistenceServiceConfiguration: persistence.value
+    })
+    createMode.value = false
+    dirty.value = false
+    showToast('Persistence configuration saved')
+  } catch (err) {
+    console.error('Unable to save persistence configuration:', err)
+    showToast('Error saving persistence configuration')
+  }
+}
+
+async function deletePersistence() {
+  if (!editable.value || !persistence.value) return
+  if (
+    !(await showConfirmDialog(
+      `Are you sure you want to delete persistence configuration for ${props.serviceId}?`,
+      'Delete persistence configuration'
+    ))
+  )
+    return
+
+  try {
+    await api.deletePersistenceServiceConfiguration({ serviceId: props.serviceId })
+    showToast('Persistence configuration deleted')
+    props.f7router.navigate('/settings/persistence/', { reloadCurrent: true, ignoreCache: true })
+  } catch (err) {
+    console.error('Error deleting persistence configuration for serviceId:', props.serviceId, '- Error:', err)
+    showToast('Error deleting persistence configuration')
+  }
+}
+
+function showSwipeout(ev: MouseEvent) {
+  const swipeoutElement = (ev.target as HTMLElement).closest('.swipeout')
+  if (swipeoutElement instanceof HTMLElement) {
+    f7.swipeout.open(swipeoutElement)
+  }
+}
+
+const configurationAllItemsTitle = computed(() => (items: string[]) => {
+  if (!items) return null
+  const itemList = items.filter((item) => item === '*')
+  return itemList.length ? 'All Items' : null
+})
+
+const configurationGroupsTitle = computed(() => (items: string[], exclude: boolean = false) => {
+  if (!items) return null
+  let itemList = []
+  if (exclude) {
+    itemList = items.filter((item) => item.match(/^![^!*]+\*$/)).map((item) => item.slice(1, -1))
+  } else {
+    itemList = items.filter((item) => item.match(/^[^!*]+\*$/)).map((item) => item.slice(0, -1))
+  }
+  return itemList.length ? (exclude ? 'Not members of: ' : 'Members of: ') + itemList.join(', ') : null
+})
+
+const configurationItemsTitle = computed(() => (items: string[], exclude: boolean = false) => {
+  if (!items) return null
+  let itemList = []
+  if (exclude) {
+    itemList = items.filter((item) => item.match(/^![^!*]+$/)).map((item) => item.slice(1))
+  } else {
+    itemList = items.filter((item) => item.match(/^[^!*]+$/))
+  }
+  return itemList.length ? (exclude ? 'Not: ' : '') + itemList.join(', ') : null
+})
+
+const configurationStrategiesTitle = computed(() => (strategies: string[]) => {
+  if (!(strategies && strategies.length)) return null
+  return strategies.join(', ')
+})
+
+const configurationFiltersTitle = computed(() => (filters: string[]) => {
+  if (!(filters && filters.length)) return null
+  return 'filters: ' + filters.join(', ')
+})
+
+function editConfiguration(ev: MouseEvent, index: number | null, configuration: api.PersistenceItemConfiguration | null) {
+  if (!editable.value) return
+
+  currentConfiguration.value = configuration
+  configurationPopupOpen.value = true
+}
+
+function deleteConfiguration(ev: MouseEvent, index: number) {
+  if (!editable.value) return
+  const swipeoutElement = (ev.target as HTMLElement).closest('.swipeout')
+  if (swipeoutElement instanceof HTMLElement) {
+    f7.swipeout.delete(swipeoutElement, () => {
+      persistence.value!.configs.splice(index, 1)
+    })
+  }
+}
+
+function addItemConfiguration(itemConfiguration: api.PersistenceItemConfiguration) {
+  if (!editable.value || !persistence.value) return
+  // Check for duplicate configuration
+  const idx = persistence.value.configs.findIndex((cfg) => cfg.items.join() === itemConfiguration.items.join())
+  if (idx !== -1) {
+    f7.dialog.alert('A configuration for this/these Item(s) already exists!')
+    return
+  }
+  persistence.value.configs.push(itemConfiguration)
+}
+
+function updateItemConfiguration(itemConfiguration: api.PersistenceItemConfiguration | null) {
+  if (!editable.value || !persistence.value || !itemConfiguration) return
+  const idx = persistence.value.configs.findIndex((cfg) => cfg.items.join() === itemConfiguration.items.join())
+  if (idx !== -1) {
+    persistence.value.configs[idx] = itemConfiguration
+  }
+}
+
+function updateAliasItems(items: string[]) {
+  if (!editable.value || !persistence.value) return
+  const newAliases: Record<string, string> = {}
+  items.forEach((item) => {
+    newAliases[item] = persistence.value!.aliases[item] ?? ''
+  })
+  persistence.value.aliases = newAliases
+}
+
+function editAlias(item: string, alias: string) {
+  if (!editable.value || !persistence.value) return
+  persistence.value.aliases[item] = alias
+}
+
+function checkAliasForDuplicates(item: string, alias: string) {
+  if (!editable.value || !alias || !persistence.value) return
+  // Warn when alias already exists for a different item
+  // TODO add support to ensure the alias does not match an existing item name
+  const duplicate = Object.keys(persistence.value.aliases).find((key) => item !== key && persistence.value!.aliases[key] === alias)
+  if (duplicate) {
+    f7.dialog.alert('Alias ' + alias + ' for item ' + item + ' already exists for item ' + duplicate)
+    persistence.value.aliases[item] = ''
+  }
+}
+
+function deleteAlias(ev: MouseEvent, item: string) {
+  if (!editable.value || !persistence.value) return
+
+  const swipeoutElement = (ev.target as HTMLElement).closest('.swipeout')
+  if (swipeoutElement instanceof HTMLElement) {
+    f7.swipeout.delete(swipeoutElement, () => {
+      const { [item]: _, ...rest } = persistence.value!.aliases
+      persistence.value!.aliases = rest
+    })
+  }
+}
+
+async function validateAliases() {
+  if (!persistence.value) return false
+
+  const entries = Object.entries(persistence.value.aliases)
+  if (entries.length === 0) return true
+  // Check for invalid alias format
+  const invalidEntry = entries.find(([, a]) => !/^[A-Za-z_][A-Za-z0-9_]*$/.test(a))
+  if (invalidEntry) {
+    if (!(await showConfirmDialog(`Alias not valid for item ${invalidEntry[0]}!\nSave anyway?`, 'Alias Validation Error'))) return false
+  }
+  // Check for duplicate aliases
+  const seenAliases = new Map<string, string>() // alias -> itemName
+  for (const [item, alias] of entries) {
+    if (alias && seenAliases.has(alias)) {
+      const firstItem = seenAliases.get(alias)!
+      if (
+        !(await showConfirmDialog(
+          `Alias "${alias}" for item "${item}" already exists for item "${firstItem}".\nSave anyway?`,
+          'Alias Validation Error'
+        ))
+      )
+        return false
+    }
+    if (alias) {
+      seenAliases.set(alias, item)
+    }
+  }
+  return true
+}
+
+function updateDefinitions(persistenceWithUpdates: api.PersistenceServiceConfiguration) {
+  if (!editable.value || !persistence.value) return
+  // Merge strategies and filters from the popup back into main persistence
+  persistence.value.cronStrategies = persistenceWithUpdates.cronStrategies
+  Object.values(FilterTypeName).forEach((filterTypeName) => {
+    persistence.value![filterTypeName] = persistenceWithUpdates[filterTypeName]
+  })
+}
+
+function updatePersistence(updatedPersistence: api.PersistenceServiceConfiguration) {
+  if (!editable.value || !persistence.value) return
+  persistence.value = updatedPersistence
+}
+
+function onEditorInput(value: string) {
+  persistenceYaml.value = value
+}
+
+function toYaml(): boolean {
+  if (!persistence.value) return false
+
+  const toCode = {
+    configs: persistence.value.configs,
+    aliases: persistence.value.aliases,
+    cronStrategies: persistence.value.cronStrategies,
+    [FilterTypeName.EqualsFilters]: persistence.value.equalsFilters,
+    [FilterTypeName.TimeFilters]: persistence.value.timeFilters,
+    [FilterTypeName.ThresholdFilters]: persistence.value.thresholdFilters,
+    [FilterTypeName.IncludeFilters]: persistence.value.includeFilters
+  }
+  persistenceYaml.value = YAML.stringify(toCode)
+  return true
+}
+
+function fromYaml() {
+  if (!editable.value || !persistence.value) return true
+  const updatedPersistence: unknown = YAML.parse(persistenceYaml.value)
+
+  if (typeof updatedPersistence !== 'object' || updatedPersistence === null) {
+    throw new Error('Invalid YAML format: expected an object at the root level.')
+  }
+
+  // TODO - better validation
+  persistence.value.configs = 'configs' in updatedPersistence ? (updatedPersistence.configs as api.PersistenceItemConfiguration[]) : []
+  persistence.value.aliases = 'aliases' in updatedPersistence ? (updatedPersistence.aliases as typeof persistence.value.aliases) : {}
+  persistence.value.cronStrategies =
+    'cronStrategies' in updatedPersistence ? (updatedPersistence.cronStrategies as api.PersistenceCronStrategy[]) : []
+  persistence.value[FilterTypeName.EqualsFilters] =
+    FilterTypeName.EqualsFilters in updatedPersistence ? (updatedPersistence[FilterTypeName.EqualsFilters] as api.PersistenceFilter[]) : []
+  persistence.value[FilterTypeName.TimeFilters] =
+    FilterTypeName.TimeFilters in updatedPersistence ? (updatedPersistence[FilterTypeName.TimeFilters] as api.PersistenceFilter[]) : []
+  persistence.value[FilterTypeName.ThresholdFilters] =
+    FilterTypeName.ThresholdFilters in updatedPersistence
+      ? (updatedPersistence[FilterTypeName.ThresholdFilters] as api.PersistenceFilter[])
+      : []
+  persistence.value[FilterTypeName.IncludeFilters] =
+    FilterTypeName.IncludeFilters in updatedPersistence
+      ? (updatedPersistence[FilterTypeName.IncludeFilters] as api.PersistenceFilter[])
+      : []
+
+  return true
+}
+
+function onAliasTab(ev: KeyboardEvent, index: number) {
+  const pageElement = (ev.target as HTMLElement | null)?.closest('.persistence-edit-page')
+  if (!pageElement) return
+
+  const aliasInputs = pageElement.querySelectorAll<HTMLInputElement>('.list-alias-item .alias-input input')
+  const total = aliasInputs.length
+  if (!total) return
+
+  const direction = ev.shiftKey ? -1 : 1
+  const targetIndex = (index + direction + total) % total
+  aliasInputs[targetIndex]?.focus()
 }
 </script>
