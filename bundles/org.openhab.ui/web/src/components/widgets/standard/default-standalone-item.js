@@ -57,6 +57,15 @@ export default function itemDefaultStandaloneComponent(item) {
       }
     }
 
+    if (item.type === 'JSon') {
+      component = {
+        component: 'oh-json-card',
+        config: {
+          readOnly: !!stateDescription.readOnly
+        }
+      }
+    }
+
     if (item.type === 'Rollershutter' && !stateDescription.readOnly) {
       component = {
         component: 'oh-rollershutter-card',
@@ -176,3 +185,5 @@ export default function itemDefaultStandaloneComponent(item) {
 
   return component
 }
+
+
