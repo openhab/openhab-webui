@@ -47,7 +47,7 @@
           <f7-nav-title :title="t('setupwizard.' + type + '.selectAddons')" />
         </f7-navbar>
         <f7-searchbar
-          v-model="addonSearchQuery"
+          v-model:value="addonSearchQuery"
           :placeholder="t('setupwizard.' + type + '.selectAddons.placeholder')"
           search-container=".addon-selection-list"
           search-item=".addon-selection-item"

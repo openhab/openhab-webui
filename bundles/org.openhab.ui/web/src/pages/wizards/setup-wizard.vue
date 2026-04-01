@@ -900,7 +900,7 @@ export default {
      */
     getSuggestions() {
       this.$oh.api.get('/rest/addons/suggestions').then((suggestions) => {
-        // Filter out the recommendaed addons so they can be put first in preSelectedAddons
+        // Filter out the recommended addons so they can be put first in preSelectedAddons
         this.suggestedAddons = suggestions.flatMap((s) => s.id).filter((id) => !this.recommendedAddons.includes(id))
         nextTick(() => {
           this.preSelectingAddonTypes.forEach((type) => this.initAddonSelection(type))
