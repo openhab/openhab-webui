@@ -1,8 +1,8 @@
 import { f7 } from 'framework7-vue'
 import ComponentId from '../../component-id'
-import type { SeriesComponent, StateSeriesOption } from '../types.ts'
-import { OhStateSeries } from '@/types/components/widgets'
+import type { OhStateSeriesOption, SeriesComponent } from '../types.ts'
 import type { CustomSeriesRenderItem } from 'echarts'
+import { OhStateSeriesDefinition } from '@/assets/definitions/widgets/chart'
 
 const renderState: CustomSeriesRenderItem = (_params, api) => {
   const yValue = api.value(0)
@@ -33,11 +33,11 @@ export type StateColorMap = Record<string, string>
 
 const stateSeries: SeriesComponent = {
   neededItems(context, component) {
-    const series = context.evaluateExpression<OhStateSeries.Config>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config, OhStateSeriesDefinition)
     return series.item ? [series.item] : []
   },
   get(context, component, points) {
-    const series = context.evaluateExpression<OhStateSeries.Config & StateSeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config, OhStateSeriesDefinition)
     series.type = 'custom'
     series.renderItem = renderState
     series.encode = {
@@ -48,13 +48,13 @@ const stateSeries: SeriesComponent = {
     }
     series.colorBy = 'data'
     series.clip = true
-    if (!series.label) series.label = ({} as StateSeriesOption['label'])!
+    if (!series.label) series.label = {}
     if (series.label.show === undefined) series.label.show = true
     if (!series.label.position) series.label.position = 'insideLeft'
     // @ts-expect-error formatter not defined on type - TODO: Check whether it works
     if (!series.label.formatter) series.label.formatter = '{@[3]}'
     if (!series.labelLayout) series.labelLayout = { hideOverlap: true }
-    if (!series.tooltip) series.tooltip = ({} as StateSeriesOption['tooltip'])!
+    if (!series.tooltip) series.tooltip = {}
     if (series.tooltip.formatter === undefined) {
       series.tooltip.formatter = (params) => {
         if (!Array.isArray(params.value) || params.value.length < 3) return ''

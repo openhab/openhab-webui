@@ -15,7 +15,8 @@ export default {
   get(context: ChartContext, component: api.UiComponent, points: api.ItemHistory[], _startTime: Dayjs, endTime: Dayjs) {
     const markArea = context.evaluateExpression<Config & MarkAreaComponentOption>(
       ComponentId.get(component)!,
-      component.config as unknown as Config & MarkAreaComponentOption
+      component.config as unknown as Config & MarkAreaComponentOption,
+      null
     )
 
     const states = (markArea.states && !Array.isArray(markArea.states) ? [markArea.states] : (markArea.states as string[])) || [

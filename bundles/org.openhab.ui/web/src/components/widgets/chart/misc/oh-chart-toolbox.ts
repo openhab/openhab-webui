@@ -2,6 +2,7 @@ import ComponentId from '../../component-id'
 import type { MiscChartComponent } from '../types'
 import type { ToolboxComponentOption } from 'echarts'
 import type { OhChartToolbox } from '@/types/components/widgets'
+import { OhChartToolboxDefinition } from '@/assets/definitions/widgets/chart'
 
 const presetFeatures = {
   saveAsImage: { title: 'Save as Image' },
@@ -15,7 +16,8 @@ const chartToolbox: MiscChartComponent = {
   get(context, component) {
     const options = context.evaluateExpression<OhChartToolbox.Config & ToolboxComponentOption>(
       ComponentId.get(component)!,
-      component.config as unknown as OhChartToolbox.Config & ToolboxComponentOption
+      component.config as unknown as OhChartToolbox.Config & ToolboxComponentOption,
+      OhChartToolboxDefinition
     )
 
     if (options.presetFeatures && !options.feature) {

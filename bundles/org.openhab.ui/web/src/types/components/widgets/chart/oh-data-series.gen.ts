@@ -1,6 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
 import {
+  LabelPosition,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
@@ -20,7 +21,10 @@ export enum Type {
 
 export interface Config {
   type?: Type
+  labelPosition?: LabelPosition
+  color?: string
   showSymbol?: boolean
+  barBorderRadius?: number
   action?: Action
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -52,6 +56,7 @@ export interface Config {
 }
 
 export {
+  LabelPosition,
   Action,
   ActionHttpMethod,
   ActionPageTransition,

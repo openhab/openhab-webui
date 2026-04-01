@@ -2,6 +2,7 @@ import ComponentId from '../../component-id'
 import type { MiscChartComponent } from '../types'
 import type { OhChartVisualmap } from '@/types/components/widgets'
 import type { VisualMapComponentOption } from 'echarts'
+import { OhChartVisualmapDefinition } from '@/assets/definitions/widgets/chart'
 
 const presetPalettes = {
   greenred: ['#50a3ba', '#eac736', '#d94e5d'],
@@ -13,7 +14,8 @@ const chartVisualMap: MiscChartComponent = {
   get(context, component) {
     const options = context.evaluateExpression<OhChartVisualmap.Config & VisualMapComponentOption>(
       ComponentId.get(component)!,
-      component.config
+      component.config,
+      OhChartVisualmapDefinition
     )
     if (options.presetPalette && (!options.inRange || !options.inRange.color)) {
       if (options.presetPalette in presetPalettes) {
