@@ -8,6 +8,9 @@ declare module '@vue/runtime-core' {
     $fullscreen: typeof import('vue-fullscreen').api
   }
 }
-declare namespace Intl {
-  function supportedValuesOf(key: 'timeZone'): string[]
+
+declare global {
+  declare namespace Intl {
+    function supportedValuesOf(key: 'timeZone'): string[]
+  }
 }
