@@ -199,10 +199,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
   })
 
-  watch(
-    codeMirrorSettings,
-    (newValue) => {
-      localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
+  watch(codeMirrorSettings, (newValue) => {
+    localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
   })
   watch(setupWizardShort, (newValue) => {
     localStorage.setItem('openhab.ui:setupWizard.short', newValue?.toString())
