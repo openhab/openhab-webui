@@ -408,9 +408,9 @@
 
 // Disable tab switching animation while keeping scrollable tabs,
 // this avoids animation flashing tabs that are not defined in the right order
-.tabs-animated-wrap .tabs
+.setup-wizard .tabs-animated-wrap .tabs
   transition none
-.tab
+.setup-wizard .tab
   transition none
 
 .view-master-detail
@@ -1085,10 +1085,6 @@ export default {
     },
     cancelInstall() {
       this.isInstallCancelled = true
-      if (this.addonInstallCheckTimer) {
-        clearInterval(this.addonInstallCheckTimer)
-        this.addonInstallCheckTimer = null
-      }
       this.waitingProgressTitle = this.t('setupwizard.addons.installCancelled')
       this.waitingProgress = 100
     },
