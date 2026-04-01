@@ -621,27 +621,19 @@ export default {
   computed: {
     show() {
       if (!this.currentStep) return null
-      const action = this.wizardSteps[this.currentStep].show
-      if (action) return null
-      return { action: 'show', ...action }
+      return { action: 'show', ...this.wizardSteps[this.currentStep].show }
     },
     prev() {
       if (!this.currentStep) return null
-      const action = this.wizardSteps[this.currentStep].prev
-      if (action) return null
-      return { action: 'prev', ...action }
+      return { action: 'prev', ...this.wizardSteps[this.currentStep].prev }
     },
     next() {
       if (!this.currentStep) return null
-      const action = this.wizardSteps[this.currentStep].next
-      if (action) return null
-      return { action: 'next', ...action }
+      return { action: 'next', ...this.wizardSteps[this.currentStep].next }
     },
     skip() {
       if (!this.currentStep) return null
-      const action = this.wizardSteps[this.currentStep].skip
-      if (action) return null
-      return { action: 'skip', ...action }
+      return { action: 'skip', ...this.wizardSteps[this.currentStep].skip }
     },
     locale() {
       if (!this.language) return null
