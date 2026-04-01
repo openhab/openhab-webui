@@ -60,7 +60,7 @@ export function renderVisualMap(visualMap: VisualMap): api.UiComponent[] {
   ]
 }
 
-function getSplitLineConfig(split?: ValueAxisSplitOptions): Split[] {
+function getSplitLineConfig(split: ValueAxisSplitOptions): Split[] {
   const splitConfig: Split[] = []
 
   const showSplitLine = [
@@ -112,12 +112,15 @@ export function renderValueAxis(options: ValueAxisOptions): api.UiComponent {
     }
   }
 
+  if (options.split) {
+    config.split = getSplitLineConfig(options.split)
+  }
+
   return {
     component: 'oh-value-axis',
     config: {
-      split: getSplitLineConfig(options.split),
       ...config
-    } satisfies OhValueAxis.Config
+    }
   }
 }
 
