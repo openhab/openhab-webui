@@ -181,7 +181,7 @@ const props = defineProps<{
 }>()
 
 // data
-interface ExtendedFileFormatItem  extends api.FileFormatItem {
+interface ExtendedFileFormatItem extends api.FileFormatItem {
   existing?: api.EnrichedItem
   existingLinks?: api.ItemChannelLink[]
 }

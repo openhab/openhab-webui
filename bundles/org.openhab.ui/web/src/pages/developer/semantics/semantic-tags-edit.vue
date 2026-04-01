@@ -526,9 +526,9 @@ export default {
         return
       }
 
-      const addTasks = addedTags.map((t) =>  () => this.$oh.api.post('/rest/tags', t))
-      const changeTasks = modifiedTags.map((t) =>  () => this.$oh.api.put('/rest/tags/' + t.uid, t))
-      const removeTasks = removedTags.map((t) =>  () => this.$oh.api.delete('/rest/tags/' + t.uid))
+      const addTasks = addedTags.map((t) => () => this.$oh.api.post('/rest/tags', t))
+      const changeTasks = modifiedTags.map((t) => () => this.$oh.api.put('/rest/tags/' + t.uid, t))
+      const removeTasks = removedTags.map((t) => () => this.$oh.api.delete('/rest/tags/' + t.uid))
       if (addTasks.length <= 0 && changeTasks.length <= 0 && removeTasks.length <= 0) {
         this.dirty = false
         return
