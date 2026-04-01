@@ -119,13 +119,11 @@ const offsetUnitParameter = pt(
 
 const axisNameParameters = [nameParameter, nameLocationParameter, nameGapParameter, nameRotateParameter]
 
-const axisStyleParameter = po('style', 'Axis Style', 'The style of the axis', [
+const xAxisStyleParameter = po('style', 'Axis Style', 'The style of the axis', [
   { value: 'label', label: 'Label' },
   { value: 'label+line', label: 'Label & Line' },
   { value: 'label+line+tick', label: 'Label, Line & Tick' }
 ]).d('label+line+tick')
-
-const dateAxisParameters = [...axisNameParameters, axisStyleParameter, gridIndexParameter]
 
 const baseSeriesParameter = [
   nameParameter,
@@ -213,7 +211,9 @@ export const OhCategoryAxisDefinition = new WidgetDefinition('oh-category-axis',
   .paramGroup(nameDisplayGroup)
   .paramGroup(componentRelationsGroup)
   .params([
-    ...dateAxisParameters,
+    ...axisNameParameters,
+    xAxisStyleParameter,
+    gridIndexParameter,
     po('categoryType', 'Categories', 'Type of categories to display', [
       { value: 'hour', label: 'Minutes of hour' },
       { value: 'day', label: 'Hours of day' },
@@ -251,7 +251,6 @@ export const OhValueAxisDefinition = new WidgetDefinition('oh-value-axis', 'Valu
   .paramGroup(componentRelationsGroup)
   .params([
     ...axisNameParameters,
-    axisStyleParameter,
     minParameter(),
     maxParameter(),
     pb(
@@ -266,7 +265,7 @@ export const OhTimeAxisDefinition = new WidgetDefinition('oh-time-axis', 'Time A
   .doc('https://echarts.apache.org/en/option.html#xAxis')
   .paramGroup(nameDisplayGroup)
   .paramGroup(componentRelationsGroup)
-  .params([...axisNameParameters, axisStyleParameter, gridIndexParameter])
+  .params([...axisNameParameters, xAxisStyleParameter, gridIndexParameter])
 
 export const OhCalendarAxisDefinition = new WidgetDefinition('oh-calendar-axis', 'Calendar', '')
   .doc('https://echarts.apache.org/en/option.html#calendar')

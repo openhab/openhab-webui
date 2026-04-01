@@ -44,7 +44,7 @@ import type {
   SeriesComponent
 } from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
-import { transformCustomAxisOptions, transformCustomSeriesOptions } from '@/components/widgets/chart/util/customOptions.ts'
+import { transformCustomXAxisOptions, transformCustomSeriesOptions } from '@/components/widgets/chart/util/customOptions.ts'
 import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 import cloneDeep from 'lodash/cloneDeep'
 import type { EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
@@ -163,7 +163,7 @@ export function useChart(
   const xAxis = computed(() => {
     if (!slots.value?.xAxis) return []
     return slots.value.xAxis.map((a) =>
-      transformCustomAxisOptions(axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
+      transformCustomXAxisOptions(axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
     )
   })
 

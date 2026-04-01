@@ -105,10 +105,10 @@ function applyAxisStyle(axis: OhAxisOption) {
 }
 
 /**
- * Transform custom options for axis into ECharts options.
+ * Transform custom options for X-axis into ECharts options.
  * @param axis
  */
-export function transformCustomAxisOptions(axis: OhAxisOption) {
+export function transformCustomXAxisOptions(axis: OhAxisOption) {
   applyAxisStyle(axis)
   return axis
 }
