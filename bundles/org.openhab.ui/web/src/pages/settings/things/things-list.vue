@@ -182,12 +182,17 @@
                     thing.statusInfo.description !== ''
                   "
                   color="blue"
-                  :tooltip="thing.statusInfo.description"
                   style="margin-right: 8px">
                   <i>i</i>
+                  <f7-tooltip>
+                    <div v-html="thing.statusInfo.description"></div>
+                  </f7-tooltip>
                 </f7-badge>
-                <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
+                <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)">
                   {{ thingStatusBadgeText(thing.statusInfo) }}
+                  <f7-tooltip>
+                    <div v-html="thing.statusInfo.description"></div>
+                  </f7-tooltip>
                 </f7-badge>
               </template>
               <template #after-title>
