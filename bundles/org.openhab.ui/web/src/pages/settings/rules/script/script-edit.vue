@@ -675,7 +675,7 @@ export default {
       if (this.createMode) return
       if (!this.isMimeTypeAvailable(this.mode)) {
         showToast(
-          `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run, scripting addon for ${this.mimeTypeDescription(this.mode)} is not installed`
+          `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run, scripting add-on for ${this.mimeTypeDescription(this.mode)} is not installed`
         )
       }
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
@@ -693,7 +693,7 @@ export default {
               .postPlain('/rest/rules/' + this.rule.uid + '/runnow', '')
               .then(showToast('Running ' + (this.isScriptRule ? 'script' : 'rule')))
               .catch((err) => {
-                showToast('Error while running: ' + err)
+                showToast('Error while running script: ' + err)
               })
           })
           .catch((e) => {

@@ -144,7 +144,7 @@ export default {
     },
     testCommand() {
       this.$oh.api.postPlain('/rest/items/' + this.itemName, this.command, 'text/plain', 'text/plain').then((state) => {
-        showToast(`Sent comment ${this.command} to ${this.itemName}`)
+        showToast(`Sent command ${this.command} to ${this.itemName}`)
       })
     },
     initializeControl() {
