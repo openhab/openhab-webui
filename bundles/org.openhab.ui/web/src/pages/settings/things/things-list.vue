@@ -179,13 +179,13 @@
                     {{ thingStatusBadgeText(thing.statusInfo) }}
                   </f7-badge>
                   <span
-                    class="badge-marker-dot"
                     v-if="
                       thing.statusInfo.status === 'ONLINE' &&
                       thing.statusInfo.statusDetail === 'NONE' &&
                       thing.statusInfo.description &&
                       thing.statusInfo.description !== ''
-                    ">
+                    "
+                    class="badge-marker-dot">
                   </span>
                 </div>
               </template>
@@ -238,8 +238,8 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background-color: var(--f7-color-blue);
   border: 1px solid var(--f7-list-bg-color);
   border-radius: 50%;
