@@ -238,10 +238,10 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   background-color: var(--f7-color-blue);
-  border: 1px solid var(--f7-block-bg-color);
+  border: 1px solid var(--f7-list-bg-color);
   border-radius: 50%;
   pointer-events: none;
 }
