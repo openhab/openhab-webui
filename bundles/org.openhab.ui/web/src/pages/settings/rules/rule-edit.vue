@@ -356,6 +356,7 @@ import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
 import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
@@ -489,15 +490,11 @@ export default {
           // no need for an event source, the rule doesn't exist yet
         } else if (this.stubMode) {
           if (!this.ruleCopy || !this.ruleCopy.templateUID) {
-            f7.toast
-              .create({
-                text: !this.ruleCopy
-                  ? "Failed to create rule stub because there's no source rule"
-                  : "Failed to create rule stub because there's no template UID",
-                destroyOnClose: true,
-                closeTimeout: 4000
-              })
-              .open()
+            showToast(
+              !this.ruleCopy
+                ? "Failed to create rule stub because there's no source rule"
+                : "Failed to create rule stub because there's no template UID"
+            )
             this.f7router.back()
           }
           const ruleStub = this.ruleCopy
@@ -510,13 +507,7 @@ export default {
             this.templates = templateData
             let template = this.templates.find((t) => t.uid === ruleStub.templateUID)
             if (!template) {
-              f7.toast
-                .create({
-                  text: 'Template "' + ruleStub.templateUID + '" not found',
-                  destroyOnClose: true,
-                  closeTimeout: 4000
-                })
-                .open()
+              showToast(`Template ${ruleStub.templateUID} not found`)
               this.f7router.back()
             }
             this.currentTemplate = template
@@ -569,13 +560,7 @@ export default {
         .then((data) => {
           this.dirty = false
           if (this.createMode) {
-            f7.toast
-              .create({
-                text: 'Rule created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Rule created')
             this.f7router.navigate(
               this.f7route.url
                 .replace('/add', '/' + this.rule.uid)
@@ -585,39 +570,21 @@ export default {
             )
             this.load()
           } else if (this.stubMode) {
-            f7.toast
-              .create({
-                text: 'Rule regenerated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Rule regenerated')
             this.f7router.navigate(this.f7route.url.replace('/stub', '/' + this.rule.uid).replace('/schedule/', '/rules/'), {
               reloadCurrent: true
             })
             this.load()
           } else {
             if (!noToast) {
-              f7.toast
-                .create({
-                  text: 'Rule updated',
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              showToast('Rule updated')
             }
             this.savedRule = cloneDeep(this.rule)
           }
           // if (!stay) this.f7router.back()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving rule: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving rule: ' + err)
         })
     },
     duplicateRule() {
@@ -642,13 +609,7 @@ export default {
         this.$oh.api
           .postPlain('/rest/rules/' + this.rule.uid + '/regenerate')
           .then(() => {
-            f7.toast
-              .create({
-                text: 'Rule regenerated from template',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Rule regenerated from template')
             this.load()
           })
           .catch((err) => {
@@ -673,33 +634,18 @@ export default {
     runNow() {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
-        return f7.toast
-          .create({
-            text: `Rule cannot be run ${this.rule.status.status === 'RUNNING' ? 'while already running, please wait' : 'if it is uninitialized'}!`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(
+          `Rule cannot be run ${this.rule.status.status === 'RUNNING' ? 'while already running, please wait' : 'if it is uninitialized'}!`
+        )
+        return
       }
-      f7.toast
-        .create({
-          text: 'Running rule',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        })
-        .open()
+      showToast('Running rule...')
 
       const savePromise = this.isEditable && this.dirty ? this.save(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while running rule: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while running rule: ' + err)
         })
       })
     },

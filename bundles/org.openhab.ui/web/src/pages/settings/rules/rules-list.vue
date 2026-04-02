@@ -251,6 +251,7 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListFilter from '@/components/util/list-filter.vue'
+import { showToast } from '@/js/dialog-promises'
 
 const ITEM_KINDS = {
   editable: 'Editable',
@@ -601,13 +602,7 @@ export default {
       const promises = this.selectedDeletableItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
       Promise.all(promises)
         .then((data) => {
-          f7.toast
-            .create({
-              text: (promises.length === 1 ? 'Rule' : 'Rules') + ' deleted',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast((promises.length === 1 ? 'Rule' : 'Rules') + ' deleted')
           this.selectedItems = []
           dialog.close()
           this.load()
@@ -627,13 +622,7 @@ export default {
       const promises = items.map((i) => this.$oh.api.postPlain('/rest/rules/' + i + '/enable', enable.toString()))
       Promise.all(promises)
         .then((data) => {
-          f7.toast
-            .create({
-              text: (promises.length === 1 ? 'Rule ' : 'Rules ') + (enable ? 'enabled' : 'disabled'),
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast((promises.length === 1 ? 'Rule ' : 'Rules ') + (enable ? 'enabled' : 'disabled'))
           this.selectedItems = []
           dialog.close()
           this.load()
@@ -672,13 +661,7 @@ export default {
         const promises = rules.map((r) => this.$oh.api.postPlain('/rest/rules/' + r.uid + '/regenerate'))
         Promise.all(promises)
           .then(() => {
-            f7.toast
-              .create({
-                text: (rules.length === 1 ? 'Rule' : 'Rules') + ' regenerated from template',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast((rules.length === 1 ? 'Rule' : 'Rules') + ' regenerated from template')
           })
           .catch((err) => {
             f7.dialog.alert('An error occurred when trying to regenerate rule(s) from template: ' + err)

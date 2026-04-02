@@ -170,6 +170,7 @@ import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -338,13 +339,7 @@ export default {
       })
       Promise.all(promises)
         .then((data) => {
-          f7.toast
-            .create({
-              text: 'Pages removed',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Pages removed')
           this.selectedItems = []
           dialog.close()
           this.load()

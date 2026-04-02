@@ -11,6 +11,7 @@ import DirtyMixin from '../dirty-mixin'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin],
@@ -172,35 +173,17 @@ export default {
           this.dirty = false
           this.savedPage = cloneDeep(this.page)
           if (this.createMode) {
-            f7.toast
-              .create({
-                text: 'Page created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Page created')
             this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.page.uid), { reloadCurrent: true })
             this.load()
           } else {
-            f7.toast
-              .create({
-                text: 'Page updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Page updated')
           }
           f7.emit('sidebarRefresh', null)
         })
         .catch((err) => {
           console.error('Error while saving page: ', err)
-          f7.toast
-            .create({
-              text: 'Error while saving page: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving page: ' + err)
         })
     },
     widgetConfigClosed() {

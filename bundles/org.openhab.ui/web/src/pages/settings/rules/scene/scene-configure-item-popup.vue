@@ -96,6 +96,7 @@
 <script>
 import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   components: {},
@@ -138,24 +139,12 @@ export default {
     updateCommandFromCurrentState() {
       this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state').then((state) => {
         this.command = state
-        f7.toast
-          .create({
-            text: `Updated desired state of ${this.itemName} to ${state}`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(`Updated desired state of ${this.itemName} to ${state}`)
       })
     },
     testCommand() {
       this.$oh.api.postPlain('/rest/items/' + this.itemName, this.command, 'text/plain', 'text/plain').then((state) => {
-        f7.toast
-          .create({
-            text: `Sent comment ${this.command} to ${this.itemName}`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(`Sent command ${this.command} to ${this.itemName}`)
       })
     },
     initializeControl() {

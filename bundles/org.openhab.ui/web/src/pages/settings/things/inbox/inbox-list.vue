@@ -220,6 +220,7 @@ import { f7, theme } from 'framework7-vue'
 
 import ThingInboxMixin from '@/pages/settings/things/thing-inbox-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [ThingInboxMixin],
@@ -463,13 +464,7 @@ export default {
 
       Promise.all(promises)
         .then(() => {
-          f7.toast
-            .create({
-              text: successMessage,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(successMessage)
           const searchFor = this.selectedItems.join(',')
           this.selectedItems = []
           dialog.close()

@@ -437,6 +437,7 @@ import { useThingEditStore } from '@/js/stores/useThingEditStore.ts'
 import { mapState } from 'pinia'
 
 import * as api from '@/api'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [ThingStatus, DirtyMixin, FileDefinition],
@@ -819,22 +820,10 @@ export default {
       api
         .enableThing({ thingUID: this.thingId, body: enable.toString() })
         .then((data) => {
-          f7.toast
-            .create({
-              text: enable ? 'Thing enabled' : 'Thing disabled',
-              destroyOnClose: true,
-              closeTimeout: 3000
-            })
-            .open()
+          showToast(enable ? 'Thing enabled' : 'Thing disabled')
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while disabling or enabling: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 4000
-            })
-            .open()
+          showToast('Error while disabling or enabling: ' + err)
         })
     },
     keyDown(ev) {
@@ -931,13 +920,7 @@ export default {
                 Promise.all(deletePromises)
                   .then(() => {
                     dialog.close()
-                    f7.toast
-                      .create({
-                        text: 'All items unlinked and removed',
-                        destroyOnClose: true,
-                        closeTimeout: 2000
-                      })
-                      .open()
+                    showToast('All items unlinked and removed')
                     this.load()
                   })
                   .catch((err) => {
@@ -948,13 +931,7 @@ export default {
                   })
               } else {
                 dialog.close()
-                f7.toast
-                  .create({
-                    text: 'All items unlinked',
-                    destroyOnClose: true,
-                    closeTimeout: 2000
-                  })
-                  .open()
+                showToast('All items unlinked')
                 this.load()
               }
             })
@@ -982,13 +959,7 @@ export default {
                   this.thing.statusInfo = JSON.parse(event.payload)
                   break
                 case 'removed':
-                  f7.toast
-                    .create({
-                      text: 'The Thing was deleted',
-                      destroyOnClose: true,
-                      closeTimeout: 2000
-                    })
-                    .open()
+                  showToast('The Thing was deleted')
                   this.f7router.back('/settings/things/', { force: true })
                   break
                 case 'updated':
@@ -1024,13 +995,7 @@ export default {
                             default:
                               break
                           }
-                          f7.toast
-                            .create({
-                              text: resultMessage,
-                              destroyOnClose: true,
-                              closeTimeout: 2000
-                            })
-                            .open()
+                          showToast(resultMessage)
                           this.load(true)
                           break
                       }
@@ -1202,22 +1167,10 @@ export default {
         api
           .updateThingFirmware({ thingUID: this.thingId, firmwareVersion: firmware.version })
           .then(() => {
-            f7.toast
-              .create({
-                text: 'Firmware update started',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Firmware update started')
           })
           .catch((err) => {
-            f7.toast
-              .create({
-                text: 'Error starting firmware update: ' + err,
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Error starting firmware update: ' + err)
           })
       })
     },

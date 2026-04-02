@@ -126,6 +126,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { nextTick } from 'vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [ThingStatus, LinkMixin, DirtyMixin],
@@ -270,23 +271,11 @@ export default {
         this.$oh.api
           .delete('/rest/links/' + itemName + '/' + channelUID)
           .then(() => {
-            f7.toast
-              .create({
-                text: 'Link deleted',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Link deleted')
             this.f7router.back()
           })
           .catch((err) => {
-            f7.toast
-              .create({
-                text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Link not deleted (links defined in a .items file are not editable from this screen): ' + err)
           })
       })
     },
@@ -303,33 +292,15 @@ export default {
               this.$oh.api
                 .delete('/rest/items/' + itemName)
                 .then(() => {
-                  f7.toast
-                    .create({
-                      text: 'Link and item deleted',
-                      destroyOnClose: true,
-                      closeTimeout: 2000
-                    })
-                    .open()
+                  showToast('Link and item deleted')
                 })
                 .catch((err) => {
-                  f7.toast
-                    .create({
-                      text: 'Link deleted but error while deleting item: ' + err,
-                      destroyOnClose: true,
-                      closeTimeout: 2000
-                    })
-                    .open()
+                  showToast('Link deleted but error while deleting item: ' + err)
                 })
               this.f7router.back()
             })
             .catch((err) => {
-              f7.toast
-                .create({
-                  text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              showToast('Link not deleted (links defined in a .items file are not editable from this screen): ' + err)
             })
         }
       )
@@ -351,25 +322,13 @@ export default {
         .delete('/rest/links/' + itemName + '/' + channelUID)
         .then(() => {
           this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
-            f7.toast
-              .create({
-                text: 'Link updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Link updated')
             this.dirty = false
             this.f7router.back()
           })
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Link not updated (links defined in a .items file are not editable from this screen): ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Link not updated (links defined in a .items file are not editable from this screen): ' + err)
         })
     }
   }

@@ -17,6 +17,7 @@ import type { VariableValue, WidgetContext } from '@/components/widgets/types'
 import openhab from '@/js/openhab'
 import * as api from '@/api'
 import type { ComputedRef } from 'vue'
+import { showToast } from '@/js/dialog-promises'
 
 type ActionPrefix = '' | 'taphold_'
 
@@ -48,13 +49,7 @@ function showActionFeedback(prefix: string, actionConfig: ActionConfig, text?: s
       })
       .open()
   } else {
-    f7.toast
-      .create({
-        text: feedbackText,
-        destroyOnClose: true,
-        closeTimeout: 2000
-      })
-      .open()
+    void showToast(feedbackText)
   }
 }
 
@@ -281,13 +276,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
               )
               showActionFeedback(prefix, actionConfig)
             } catch (e) {
-              f7.toast
-                .create({
-                  text: 'Error while running rule: ' + (e as string),
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              void showToast('Error while running rule: ' + (e as string))
             }
             break
           case Action.popup:

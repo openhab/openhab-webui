@@ -642,6 +642,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
 import * as api from '@/api'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [RuleStatus, ThingStatus],
@@ -1038,22 +1039,10 @@ export default {
       this.$oh.api
         .putPlain('/rest/things/' + thing.UID + '/enable', enable.toString())
         .then((data) => {
-          f7.toast
-            .create({
-              text: enable ? 'Thing enabled' : 'Thing disabled',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(enable ? 'Thing enabled' : 'Thing disabled')
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while disabling or enabling: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while disabling or enabling: ' + err)
         })
     },
     toggleRuleDisabled(rule, type = 'Rule') {
@@ -1061,49 +1050,22 @@ export default {
       this.$oh.api
         .postPlain('/rest/rules/' + rule.uid + '/enable', enable.toString())
         .then((data) => {
-          f7.toast
-            .create({
-              text: enable ? `${type} enabled` : `${type} disabled`,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(enable ? `${type} enabled` : `${type} disabled`)
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: `Error while disabling or enabling ${type.toLowerCase()}: ` + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(`Error while disabling or enabling ${type.toLowerCase()}: ` + err)
         })
     },
     runRuleNow(rule, type = 'Rule') {
       if (rule.status.status === 'RUNNING' || rule.status.status === 'UNINITIALIZED') {
-        return f7.toast
-          .create({
-            text: `${type} cannot be run ${rule.status.status === 'RUNNING' ? 'while already running, please wait' : 'if it is uninitialized'}!`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(
+          `${type} cannot be run ${rule.status.status === 'RUNNING' ? 'while already running, please wait' : 'if it is uninitialized'}!`
+        )
+        return
       }
-      f7.toast
-        .create({
-          text: `Running ${type.toLowerCase()}`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        })
-        .open()
+      showToast(`Running ${type.toLowerCase()}`)
       this.$oh.api.postPlain('/rest/rules/' + rule.uid + '/runnow', '').catch((err) => {
-        f7.toast
-          .create({
-            text: `Error while running ${type.toLowerCase()}: ` + err,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(`Error while running ${type.toLowerCase()}: ` + err)
       })
     },
     openScriptingScratchpad() {
@@ -1148,13 +1110,7 @@ export default {
                             tags: ['Script', 'Scratchpad']
                           }
                           this.$oh.api.postPlain('/rest/rules', JSON.stringify(scratchpad), 'text/plain', 'application/json').then(() => {
-                            f7.toast
-                              .create({
-                                text: 'Scratchpad script created',
-                                destroyOnClose: true,
-                                closeTimeout: 2000
-                              })
-                              .open()
+                            showToast('Scratchpad script created')
                             f7.views.main.router.navigate('/settings/scripts/scratchpad', { animate: false })
                           })
                         }

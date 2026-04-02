@@ -95,6 +95,7 @@ import { f7 } from 'framework7-vue'
 
 import TagInput from '@/components/tags/tag-input.vue'
 import cloneDeep from 'lodash/cloneDeep'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   components: {
@@ -118,13 +119,7 @@ export default {
         delete this.page.config.visibleTo
       } else {
         this.page.config.visibleTo = value
-        f7.toast
-          .create({
-            text: 'Please be advised: the visibility restriction is not a security feature - items can be controlled by other means!',
-            closeButton: true,
-            destroyOnClose: true
-          })
-          .open()
+        showToast('Please be advised: the visibility restriction is not a security feature - pages can be accessed by other means!')
       }
     },
     duplicatePage() {
@@ -138,13 +133,7 @@ export default {
         this.$oh.api
           .delete('/rest/ui/components/ui:page/' + this.page.uid)
           .then((data) => {
-            f7.toast
-              .create({
-                text: `Page '${this.page.uid}' deleted`,
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast(`Page '${this.page.uid}' deleted`)
             this.f7router.back('/settings/pages/', { force: true })
           })
           .catch((err) => {

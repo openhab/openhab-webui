@@ -338,6 +338,7 @@ use([
 
 import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
+import { showToast } from '@/js/dialog-promises'
 
 dayjs.extend(IsoWeek)
 
@@ -551,13 +552,7 @@ export default {
       }
 
       if (automaticAxisCreated) {
-        f7.toast
-          .create({
-            text: 'Missing axes have been created automatically.',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('Missing axes have been created automatically.')
       }
 
       let component = {

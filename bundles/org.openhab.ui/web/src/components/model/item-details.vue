@@ -59,6 +59,7 @@ import { f7 } from 'framework7-vue'
 import Item from '@/components/item/item.vue'
 import ItemForm from '@/components/item/item-form.vue'
 import ItemMixin from '@/components/item/item-mixin'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [ItemMixin],
@@ -119,23 +120,11 @@ export default {
       this.editMode = false
       this.saveItem(this.editedItem)
         .then(() => {
-          f7.toast
-            .create({
-              text: 'Item updated',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Item updated')
           this.$emit('item-updated', this.editedItem)
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Item not saved: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Item not saved: ' + err)
         })
     },
     create() {
@@ -146,13 +135,7 @@ export default {
 
       this.saveItem(this.editedItem)
         .then(() => {
-          f7.toast
-            .create({
-              text: 'Item created',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Item created')
           this.model.item = this.editedItem
           this.model.item.created = true
           this.model.item.editable = true
@@ -160,13 +143,7 @@ export default {
           this.onModelChange()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Item not saved: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Item not created: ' + err)
         })
     },
     remove() {
@@ -182,26 +159,14 @@ export default {
       this.$oh.api
         .delete('/rest/items/' + this.model.item.name)
         .then((data) => {
-          f7.toast
-            .create({
-              text: 'Item removed',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Item removed')
           this.model.item.created = true
           this.model.item.editable = true
           this.$emit('item-removed', this.model.item)
           this.onModelChange()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Item not removed: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Item not removed: ' + err)
         })
     },
     edit() {

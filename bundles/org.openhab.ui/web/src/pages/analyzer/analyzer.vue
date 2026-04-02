@@ -409,6 +409,7 @@ import {
 import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/types/components/widgets'
 import type { TimeCoordSettings, TimeSeriesOptions } from './chart-time'
 import type { CalendarSeriesOptions } from './chart-calendar'
+import { showToast } from '@/js/dialog-promises'
 
 enum CoordSystemsName {
   time = 'time',
@@ -745,21 +746,9 @@ export default {
         : api.updateUiComponentInNamespace({ namespace: 'ui:page', componentUID: uid, rootUiComponent: chartPage as api.RootUiComponent })
       promise.then((data) => {
         if (overwrite) {
-          f7.toast
-            .create({
-              text: this.t('analyzer.page.updated'),
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(this.t('analyzer.page.updated'))
         } else {
-          f7.toast
-            .create({
-              text: this.t('analyzer.page.created'),
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(this.t('analyzer.page.created'))
         }
         f7.emit('sidebarRefresh' as Framework7Events, null)
       })

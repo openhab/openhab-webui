@@ -166,6 +166,7 @@ import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [auth],
@@ -231,13 +232,7 @@ export default {
         .postPlain('/rest/auth/logout', payload, 'application/json', 'application/x-www-form-urlencoded')
         .then((data) => {
           f7.swipeout.delete(swipeoutElement, () => {})
-          f7.toast
-            .create({
-              text: this.t('profile.sessions.delete.success'),
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(this.t('profile.sessions.delete.success'))
         })
         .catch((err) => {
           f7.dialog.alert(this.t('profile.sessions.delete.error') + err)
@@ -253,13 +248,7 @@ export default {
         .delete('/rest/auth/apitokens/' + apiToken.name)
         .then((data) => {
           f7.swipeout.delete(swipeoutElement, () => {})
-          f7.toast
-            .create({
-              text: this.t('profile.apiTokens.delete.success'),
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(this.t('profile.apiTokens.delete.success'))
         })
         .catch((err) => {
           f7.dialog.alert(this.t('profile.apiTokens.delete.error') + err)
