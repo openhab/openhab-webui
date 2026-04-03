@@ -19,7 +19,7 @@
           @click="handler(prev)" />
       </f7-nav-left>
       <f7-nav-title v-if="currentStep !== 'welcome'" class="wizard-progress-title">
-        <f7-link popover-open="#wizard-steps-popover" style="height: 2rem;">
+        <f7-link popover-open="#wizard-steps-popover" style="height: 2rem">
           <span v-for="i in wizardCurrentCount" :key="i" class="progress-circle filled" />
           <span v-for="i in wizardStepCount - wizardCurrentCount" :key="i" class="progress-circle empty" />
         </f7-link>
@@ -99,22 +99,22 @@
           </f7-list-item>
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
-            <f7-button
-              v-if="next && firstStepNotDone && firstStepNotDone !== 'intro'"
-              large
-              fill
-              color="blue"
-              :text="t('setupwizard.skipToNext')"
-              class="margin-bottom"
-              @click="toStep(firstStepNotDone)" />
-            <f7-button
-              v-if="next"
-              large
-              :fill="!firstStepNotDone || firstStepNotDone === 'intro'"
-              color="blue"
-              :text="t('setupwizard.beginSetup')"
-              @click="handler(next)" />
-            <f7-button large color="blue" :text="t('setupwizard.skipSetup')" @click="skipSetup" />
+          <f7-button
+            v-if="next && firstStepNotDone && firstStepNotDone !== 'intro'"
+            large
+            fill
+            color="blue"
+            :text="t('setupwizard.skipToNext')"
+            class="margin-bottom"
+            @click="toStep(firstStepNotDone)" />
+          <f7-button
+            v-if="next"
+            large
+            :fill="!firstStepNotDone || firstStepNotDone === 'intro'"
+            color="blue"
+            :text="t('setupwizard.beginSetup')"
+            @click="handler(next)" />
+          <f7-button large color="blue" :text="t('setupwizard.skipSetup')" @click="skipSetup" />
         </f7-block>
         <f7-list>
           <f7-list-item :title="t('setupwizard.short')">
@@ -158,14 +158,14 @@
           </f7-block-footer>
         </f7-block>
         <f7-block v-if="networksReady" class="display-flex flex-direction-column padding">
-            <f7-button
-              v-if="updatedLocation && next"
-              large
-              fill
-              color="blue"
-              :text="t('setupwizard.' + currentStep + '.next')"
-              @click="handler(next)" />
-            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
+          <f7-button
+            v-if="updatedLocation && next"
+            large
+            fill
+            color="blue"
+            :text="t('setupwizard.' + currentStep + '.next')"
+            @click="handler(next)" />
+          <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
         </f7-block>
       </f7-tab>
 
@@ -187,14 +187,14 @@
           </f7-list-group>
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
-            <f7-button
-              v-if="network && next"
-              large
-              fill
-              color="blue"
-              :text="t('setupwizard.' + currentStep + '.next')"
-              @click="handler(next)" />
-            <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
+          <f7-button
+            v-if="network && next"
+            large
+            fill
+            color="blue"
+            :text="t('setupwizard.' + currentStep + '.next')"
+            @click="handler(next)" />
+          <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
         </f7-block>
       </f7-tab>
 
@@ -206,7 +206,7 @@
           :image="wizardSteps[currentStep].image"
           :link="wizardSteps[currentStep].link" />
         <f7-block class="display-flex flex-direction-column padding">
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
+          <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
         </f7-block>
       </f7-tab>
 
