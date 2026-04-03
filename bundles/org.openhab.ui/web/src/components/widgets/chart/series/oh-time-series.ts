@@ -11,8 +11,8 @@ const timeSeries: SeriesComponent = {
   neededItems(context, component) {
     let markAreaItems: string[] = []
     if ('slots' in component && Array.isArray((component as api.RootUiComponent).slots.markArea)) {
-      markAreaItems = (component as api.RootUiComponent).slots
-        .markArea.map((a, i) =>
+      markAreaItems = (component as api.RootUiComponent).slots.markArea
+        .map((a, i) =>
           context.evaluateExpression<string | undefined>(
             ComponentId.get(component)! + '.mitem' + i,
             (a.config as OhTimeSeries.Config).item,
