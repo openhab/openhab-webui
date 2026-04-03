@@ -20,7 +20,8 @@
       </f7-nav-left>
       <f7-nav-title v-if="currentStep !== 'welcome'" class="wizard-progress-title">
         <f7-link popover-open="#wizard-steps-popover">
-          <span v-html="wizardProgress"></span>
+          <span v-for="i in wizardCurrentCount" :key="i" class="progress-circle filled" />
+          <span v-for="i in wizardStepCount - wizardCurrentCount" :key="i" class="progress-circle empty" />
         </f7-link>
       </f7-nav-title>
       <f7-nav-right>
@@ -712,11 +713,6 @@ export default {
     },
     wizardCurrentCount() {
       return this.wizardStepKeysFiltered.findIndex((step) => this.currentStep === step) + 1
-    },
-    wizardProgress() {
-      const filled = '<span class="progress-circle filled"></span>'
-      const empty = '<span class="progress-circle empty"></span>'
-      return filled.repeat(this.wizardCurrentCount) + empty.repeat(this.wizardStepCount - this.wizardCurrentCount)
     },
     firstStepNotDone() {
       return this.wizardStepKeysFiltered.find((step) => !this.setupWizardStepsDone?.[step])
