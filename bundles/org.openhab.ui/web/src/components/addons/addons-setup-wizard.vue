@@ -5,7 +5,7 @@
         <f7-block class="addon display-flex flex-direction-column">
           <f7-row no-gap>
             <div style="width: 100%">
-              <f7-checkbox style="margin-right: 0.5rem" :checked="isAddonSelected(addon)" :disabled="addon.installed" />
+              <f7-checkbox :key="selectedAddons.length" style="margin-right: 0.5rem" :checked="isAddonSelected(addon)" :disabled="addon.installed" />
               {{ addon.label }}
               <f7-link
                 style="float: right"
