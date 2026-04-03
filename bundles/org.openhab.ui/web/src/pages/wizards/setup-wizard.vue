@@ -105,6 +105,7 @@
               fill
               color="blue"
               :text="t('setupwizard.skipToNext')"
+              class="margin-bottom"
               @click="toStep(firstStepNotDone)" />
             <f7-button
               v-if="next"
@@ -331,6 +332,7 @@
               :fill="!setupWizardStepsDone.modelLinkClicked"
               color="blue"
               :text="t('setupwizard.welcome.modelLink')"
+              :class="{ 'margin-bottom': !setupWizardStepsDone.modelLinkClicked }"
               @click="handler({ ...next, link: '/settings/model/' })" />
             <f7-button
               v-if="next && bindingsInstalled"
@@ -338,6 +340,7 @@
               :fill="setupWizardStepsDone.modelLinkClicked && !setupWizardStepsDone.inboxLinkClicked"
               color="blue"
               :text="t('setupwizard.welcome.inboxLink')"
+              :class="{ 'margin-bottom': setupWizardStepsDone.modelLinkClicked && !setupWizardStepsDone.inboxLinkClicked }"
               @click="handler({ ...next, link: '/settings/things/inbox' })" />
             <f7-button
               v-if="next"
