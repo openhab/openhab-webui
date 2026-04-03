@@ -405,8 +405,8 @@ function generateAudioPacketHeader(sampleRate: number, bitDepth: number, channel
   const view = new DataView(new ArrayBuffer(AUDIO_PACKET_HEADER_LENGTH))
   let id = new Uint8Array(2)
   crypto.getRandomValues(id)
-  view.setUint8(0, id[0]!)
-  view.setUint8(1, id[1]!)
+  view.setUint8(0, id[0])
+  view.setUint8(1, id[1])
   view.setInt32(2, sampleRate, true)
   view.setUint8(6, bitDepth)
   view.setUint8(7, channels)
@@ -430,7 +430,7 @@ function audioToInt16Buffer(audioSamples: Float32Array): ArrayBuffer {
   const output = new DataView(new ArrayBuffer(audioSamples.length * bytesPerSample))
   let offset = 0
   for (let i = 0; i < audioSamples.length; i += 1, offset += bytesPerSample) {
-    const floatValue = Math.max(-1, Math.min(1, audioSamples[i]!))
+    const floatValue = Math.max(-1, Math.min(1, audioSamples[i]))
     output.setInt16(offset, floatValue < 0 ? floatValue * 0x8000 : floatValue * 0x7fff, true)
   }
   return output.buffer

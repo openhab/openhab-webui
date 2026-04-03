@@ -30,7 +30,7 @@ import * as api from '@/api'
 const props = defineProps<{ addon: api.Addon; iconSize: string | number }>()
 
 // computed
-const likes = computed<number>(() => (props.addon.properties?.like_count as number | undefined) ?? 0)
-const views = computed<number>(() => (props.addon.properties?.views as number | undefined) ?? 0)
-const posts = computed<number>(() => (props.addon.properties?.posts_count as number | undefined) ?? 0)
+const likes = computed<number>(() => (props.addon.properties?.like_count as unknown as number | undefined) ?? 0)
+const views = computed<number>(() => (props.addon.properties?.views as unknown as number | undefined) ?? 0)
+const posts = computed<number>(() => (props.addon.properties?.posts_count as unknown as number | undefined) ?? 0)
 </script>

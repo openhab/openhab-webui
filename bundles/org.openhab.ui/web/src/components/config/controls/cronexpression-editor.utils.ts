@@ -25,7 +25,7 @@ function parseWeekdayToken(token: string): WeekdayToken | null {
   const dayNumber = parseInt(normalized, 10)
   if (dayNumber >= 1 && dayNumber <= 7) {
     // Numeric weekdays follow Quartz cron numbering: 1=SUN, 2=MON, ..., 7=SAT.
-    return WEEKDAY_TOKENS[dayNumber - 1]!
+    return WEEKDAY_TOKENS[dayNumber - 1]
   }
 
   return null

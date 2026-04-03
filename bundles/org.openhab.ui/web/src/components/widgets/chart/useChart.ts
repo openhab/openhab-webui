@@ -167,27 +167,27 @@ export function useChart(
   const xAxis = computed(() => {
     if (!slots.value?.xAxis) return []
     return slots.value.xAxis.map((a) =>
-      transformCustomXAxisOptions(axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
+      transformCustomXAxisOptions(axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value))
     )
   })
 
   const yAxis = computed(() => {
     if (!slots.value || !slots.value.yAxis) return []
     return slots.value.yAxis.map((a) =>
-      transformCustomYAxisOptions(axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value, true))
+      transformCustomYAxisOptions(axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value, true))
     )
   })
 
   const calendar = computed(() => {
     if (!slots.value?.calendar) return []
     return slots.value.calendar.map((a) =>
-      axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value, orient.value === 'vertical')
+      axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value, orient.value === 'vertical')
     )
   })
 
   const singleAxis = computed(() => {
     if (!slots.value?.singleAxis) return []
-    return slots.value.singleAxis.map((a) => axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
+    return slots.value.singleAxis.map((a) => axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value))
   })
 
   const tooltip = computed<ComponentOption[]>(() => {
@@ -255,7 +255,7 @@ export function useChart(
 
     const getter = (data: [api.EnrichedItem, api.ItemHistory][]): OhSeriesOption =>
       transformCustomSeriesOptions(
-        seriesComponents[component.component]!.get(
+        seriesComponents[component.component].get(
           chartContext.value,
           component,
           data.map((d) => d[1]),
@@ -264,7 +264,7 @@ export function useChart(
         )
       )
 
-    const neededItems = seriesComponents[component.component]!.neededItems(chartContext.value, component).filter((i) => !!i)
+    const neededItems = seriesComponents[component.component].neededItems(chartContext.value, component).filter((i) => !!i)
     if (neededItems.length === 0) {
       return getter([])
     }
@@ -275,15 +275,15 @@ export function useChart(
     const isNotFuture = !(future.value > 0)
 
     let boundary =
-      seriesComponents[component.component]!.includeBoundary?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
+      seriesComponents[component.component].includeBoundary?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
     if ('noBoundary' in config && config.noBoundary === true) boundary = false
 
     let itemState =
-      seriesComponents[component.component]!.includeItemState?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
+      seriesComponents[component.component].includeItemState?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
     if ('noItemState' in config && config.noItemState === true) itemState = false
 
     neededItems.forEach((neededItem) => {
-      if (_itemPromises[neededItem]) {
+      if (_itemPromises[neededItem] !== undefined) {
         // do nothing
       } else if (_items[neededItem]) {
         _itemPromises[neededItem] = Promise.resolve(_items[neededItem])
@@ -312,14 +312,14 @@ export function useChart(
         itemState
       }
       const key = `${neededItem}-${query.serviceId ?? 'default'}-${query.starttime}-${query.endtime}-${boundary.toString()}-${itemState.toString()}`
-      if (!_persistencePromises[key]) {
+      if (_persistencePromises[key] === undefined) {
         _persistencePromises[key] = api.getItemDataFromPersistenceService(query).then((result) => {
           delete _persistencePromises[key]
           return result!
         })
       }
 
-      return await Promise.all([_itemPromises[neededItem] as Promise<api.EnrichedItem>, _persistencePromises[key]])
+      return await Promise.all([_itemPromises[neededItem], _persistencePromises[key]])
     })
 
     return Promise.all(combinedPromises).then(getter)

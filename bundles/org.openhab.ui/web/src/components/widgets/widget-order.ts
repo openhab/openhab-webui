@@ -45,12 +45,12 @@ export function compareParents(i1: api.EnrichedItem | ItemWithModelPath, i2: api
 
       // widgetOrder comparison...
       const order1 =
-        i1.modelPath[d]!.metadata && i1.modelPath[d]!.metadata!.widgetOrder
-          ? (i1.modelPath[d]!.metadata!.widgetOrder!.value as number)
+        i1.modelPath[d].metadata && i1.modelPath[d].metadata!.widgetOrder
+          ? (i1.modelPath[d].metadata!.widgetOrder.value as number)
           : Infinity
       const order2 =
-        i2.modelPath[d]!.metadata && i2.modelPath[d]!.metadata!.widgetOrder
-          ? (i2.modelPath[d]!.metadata!.widgetOrder!.value as number)
+        i2.modelPath[d].metadata && i2.modelPath[d].metadata!.widgetOrder
+          ? (i2.modelPath[d].metadata!.widgetOrder.value as number)
           : Infinity
       if (order1 !== order2) {
         modelOrder = order1 < order2 ? -1 : 1
@@ -58,8 +58,8 @@ export function compareParents(i1: api.EnrichedItem | ItemWithModelPath, i2: api
       }
 
       // ... or lexicographical comparison
-      const nameOrLabel1 = i1.modelPath[d]!.label || i1.modelPath[d]!.name
-      const nameOrLabel2 = i2.modelPath[d]!.label || i2.modelPath[d]!.name
+      const nameOrLabel1 = i1.modelPath[d].label || i1.modelPath[d].name
+      const nameOrLabel2 = i2.modelPath[d].label || i2.modelPath[d].name
       modelOrder = nameOrLabel1.localeCompare(nameOrLabel2)
       if (modelOrder !== 0) break
     }

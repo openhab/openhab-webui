@@ -133,11 +133,11 @@ const emit = defineEmits<{
 
 // computed
 const autoHeadline = computed<string>(() => {
-  const likeCount = props.addon.properties.like_count as number | undefined
+  const likeCount = props.addon.properties.like_count as unknown as number | undefined
   if (likeCount && likeCount >= 20) return 'Top'
-  const views = props.addon.properties.views as number | undefined
+  const views = props.addon.properties.views as unknown as number | undefined
   if (views && views >= 1000) return 'Popular'
-  const postsCount = props.addon.properties.posts_count as number | undefined
+  const postsCount = props.addon.properties.posts_count as unknown as number | undefined
   if (postsCount && postsCount >= 15) return 'Hot'
   return ''
 })

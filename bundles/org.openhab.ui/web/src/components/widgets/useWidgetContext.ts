@@ -115,7 +115,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
     }
     if (context.value.vars) {
       for (const varKey in context.value.vars) {
-        widgetVars.value[varKey] = context.value.vars[varKey] as VariableValue
+        widgetVars.value[varKey] = context.value.vars[varKey]
       }
     }
     const extendedWidget =

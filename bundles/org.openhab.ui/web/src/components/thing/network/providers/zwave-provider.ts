@@ -69,7 +69,7 @@ export class ZWaveNetworkProvider implements NetworkGraphProvider {
     const controllerIds = new Set<string>()
 
     zWaveNodes.forEach((thing) => {
-      const nodeId = thing.properties.zwave_nodeid!
+      const nodeId = thing.properties.zwave_nodeid
       const isController = !thing.bridgeUID
       const listening = thing.properties.zwave_listening === 'true'
 
