@@ -87,6 +87,7 @@
       width 100%
       display flex
       .logo-square
+        flex-shrink 0
         background white
         border-radius 10%
         width 64px
@@ -113,6 +114,7 @@
     align-self flex-start
     margin-top 0.3rem
     .selection-logo
+      flex-shrink 0
       background white
       border-radius 10%
       width 48px
