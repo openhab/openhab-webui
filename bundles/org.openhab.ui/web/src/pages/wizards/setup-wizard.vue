@@ -99,7 +99,6 @@
           </f7-list-item>
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
-          <div>
             <f7-button
               v-if="next && firstStepNotDone && firstStepNotDone !== 'intro'"
               large
@@ -115,7 +114,6 @@
               :text="t('setupwizard.beginSetup')"
               @click="handler(next)" />
             <f7-button large color="blue" :text="t('setupwizard.skipSetup')" @click="skipSetup" />
-          </div>
         </f7-block>
         <f7-list>
           <f7-list-item :title="t('setupwizard.short')">
@@ -159,7 +157,6 @@
           </f7-block-footer>
         </f7-block>
         <f7-block v-if="networksReady" class="display-flex flex-direction-column padding">
-          <div>
             <f7-button
               v-if="updatedLocation && next"
               large
@@ -168,7 +165,6 @@
               :text="t('setupwizard.' + currentStep + '.next')"
               @click="handler(next)" />
             <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
-          </div>
         </f7-block>
       </f7-tab>
 
@@ -190,7 +186,6 @@
           </f7-list-group>
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
-          <div>
             <f7-button
               v-if="network && next"
               large
@@ -199,7 +194,6 @@
               :text="t('setupwizard.' + currentStep + '.next')"
               @click="handler(next)" />
             <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
-          </div>
         </f7-block>
       </f7-tab>
 
@@ -211,9 +205,7 @@
           :image="wizardSteps[currentStep].image"
           :link="wizardSteps[currentStep].link" />
         <f7-block class="display-flex flex-direction-column padding">
-          <div>
             <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
-          </div>
         </f7-block>
       </f7-tab>
 
@@ -231,7 +223,7 @@
             </div>
             <div>{{ t('setupwizard.addons.suggestionsWaitMessage') }}</div>
           </f7-block>
-          <div v-if="!installingAddons">
+          <div v-else-if="!installingAddons">
             <f7-block v-if="!addonSuggestionsReady" class="text-align-center">
               <f7-preloader />
               <div>Loading...</div>
@@ -752,24 +744,23 @@ export default {
     },
     async handleTabShow(arg1, arg2) {
       // Framework7 tab:show can pass (el) or (event, el) - handle both
-      const tabEl = arg2 || arg1
-      const id = tabEl?.id || tabEl?.target?.id
+      const tabEl = arg2 ?? arg1
+      const id = tabEl?.id ?? tabEl?.target?.id
       if (id) this.currentStep = id
       await this.execHandler(this.show?.handler)
-      // Scroll the active tab to top
-      nextTick(() => {
-        const activeTab = document.querySelector('#' + id)
-        if (activeTab) {
-          activeTab.scrollTop = 0
-        }
-      })
+      // Scroll the active tab to the top
+      await nextTick()
+      const activeTab = document.querySelector('#' + id)
+      if (activeTab) {
+        activeTab.scrollTop = 0
+      }
     },
     async handler(direction) {
       if (!direction) return
-      // Extract link if passed as parameter (e.g., when direction is a computed object with link property)
+      // Extract link if passed as a parameter (e.g., when a direction is a computed object with link property)
       const link = direction?.link
       if (!(await this.execHandler(direction?.handler, link))) {
-        // an error occurred or operation was cancelled, don't move tabs
+        // an error occurred or the operation was canceled, don't switch tabs
         return
       }
       let nextStep = direction.step
@@ -797,7 +788,7 @@ export default {
       if (step === this.currentStep) return
       if (this.isInvisible(step)) return
       if (!(await this.execHandler(this.wizardSteps[this.currentStep].skip?.handler))) {
-        // an error occurred or operation was cancelled, don't move tabs
+        // an error occurred or the operation was canceled, don't switch tabs
         return
       }
       f7.tab.show('#' + step)
@@ -871,7 +862,7 @@ export default {
      * Manages the loading process of suggested add-ons.
      *
      * If the network config has changed, first wait 10 seconds before loading add-on suggestions to give
-     * the server enough time to discover suggestions, otherwise load suggestions instantaneous.
+     * the server enough time to discover suggestions, otherwise load suggestions instantaneously.
      * Also handle the loading progress bar.
      */
     getSuggestedAddons() {
@@ -955,7 +946,7 @@ export default {
       })
     },
     async selectAddons() {
-      // Needs to be async, so wizard can stay on page until all add-ons are installed
+      // Needs to be async, so the wizard can stay on page until all add-ons are installed
       try {
         await this.installAddons()
       } catch (error) {
