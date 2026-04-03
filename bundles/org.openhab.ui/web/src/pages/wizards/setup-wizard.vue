@@ -19,7 +19,7 @@
           @click="handler(prev)" />
       </f7-nav-left>
       <f7-nav-title v-if="currentStep !== 'welcome'" class="wizard-progress-title">
-        <f7-link popover-open="#wizard-steps-popover">
+        <f7-link popover-open="#wizard-steps-popover" style="height: 2rem;">
           <span v-for="i in wizardCurrentCount" :key="i" class="progress-circle filled" />
           <span v-for="i in wizardStepCount - wizardCurrentCount" :key="i" class="progress-circle empty" />
         </f7-link>
