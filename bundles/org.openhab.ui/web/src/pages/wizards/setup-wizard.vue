@@ -230,19 +230,25 @@
             <div>{{ t('setupwizard.addons.suggestionsWaitMessage') }}</div>
           </f7-block>
           <div v-if="!installingAddons">
-            <addons-setup-wizard
-              v-if="addonSuggestionsReady"
-              :enableAddonSelection="true"
-              :addons="addonsByType[addonType]"
-              :type="addonType"
-              :selectedAddons="selectedAddonsByType[addonType] || []"
-              :preSelectedAddons="preSelectedAddonsByType(addonType)"
-              @added="addAddonSelection"
-              @removed="removeAddonSelection"
-              :t />
-            <f7-block-footer class="margin-bottom">
-              <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
-            </f7-block-footer>
+            <f7-block v-if="!addonSuggestionsReady" class="text-align-center">
+              <f7-preloader />
+              <div>Loading...</div>
+              <br />
+            </f7-block>
+            <template v-else>
+              <addons-setup-wizard
+                :enableAddonSelection="true"
+                :addons="addonsByType[addonType]"
+                :type="addonType"
+                :selectedAddons="selectedAddonsByType[addonType] || []"
+                :preSelectedAddons="preSelectedAddonsByType(addonType)"
+                @added="addAddonSelection"
+                @removed="removeAddonSelection"
+                :t />
+              <f7-block-footer class="margin-bottom">
+                <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
+              </f7-block-footer>
+            </template>
           </div>
           <div v-else>
             <f7-block-header class="padding">
