@@ -35,8 +35,8 @@ import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n.ts'
 
 const props = defineProps<{
-  title: string
   step: string
+  title?: string
   icon?: string
   image?: string
   link?: string

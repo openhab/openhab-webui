@@ -22,9 +22,9 @@ import SetupWizardTabHeader from '@/pages/wizards/setup-wizard-tab-header.vue'
 
 const props = defineProps<{
   step: string
-  icon: string
-  image: string
-  link: string
+  icon?: string
+  image?: string
+  link?: string
 }>()
 
 const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
