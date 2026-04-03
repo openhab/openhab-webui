@@ -46,7 +46,7 @@ export function addOrSubtractPeriod(chartType: ChartType, period: Period, date: 
     } else {
       const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
       if (span && span[2]) {
-        date = fn(parseInt(span[1]!) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
+        date = fn(parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
       }
     }
   }
@@ -59,7 +59,7 @@ export function addOrSubtractPeriod(chartType: ChartType, period: Period, date: 
     } else {
       const span = period.match(/^([\d]*)([smhdDwWMQyY])$/)
       if (span && span[2]) {
-        nextFullUnit = fn(parseInt(span[1]!) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
+        nextFullUnit = fn(parseInt(span[1]) || 1, span[2].replace(/[DWY]/, (x) => x.toLowerCase()) as unknown as dayjs.ManipulateType)
       }
     }
     if (!nextFullUnit) return date

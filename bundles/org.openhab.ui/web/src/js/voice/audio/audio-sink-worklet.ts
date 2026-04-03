@@ -30,8 +30,8 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
   }
 
   process(_: any, outputs: Float32Array[][]) {
-    const frameLength = outputs[0]![0]!.length
-    const channels = outputs[0]!.length
+    const frameLength = outputs[0][0].length
+    const channels = outputs[0].length
     const bufferSize = frameLength * channels
     const dataAvailable = this.audioCache.available(bufferSize)
     if (!dataAvailable) {
@@ -60,16 +60,16 @@ class AudioSinkWorklet extends AudioWorkletProcessor {
 
   private writeAudioSamples(audioData: Float32Array, outputs: Float32Array[][], channels: number) {
     if (channels === 1) {
-      outputs[0]![0]!.set(audioData, 0)
+      outputs[0][0].set(audioData, 0)
     } else {
       // move the interlaced audio samples to the correct channel
-      const channelsData = outputs[0]!
+      const channelsData = outputs[0]
       const audioDataLength = audioData.length
       for (let sampleNumber = 0; sampleNumber < audioDataLength; sampleNumber++) {
-        const sample = audioData[sampleNumber]!
+        const sample = audioData[sampleNumber]
         const channelIndex = sampleNumber % channels
         const frameIndex = (sampleNumber - channelIndex) / channels
-        channelsData[channelIndex]![frameIndex] = sample
+        channelsData[channelIndex][frameIndex] = sample
       }
     }
   }
@@ -102,7 +102,7 @@ class AudioCache {
    */
   readAudioData(n: number) {
     this.length -= n
-    let currentBuffer = this.buffers[0]!
+    let currentBuffer = this.buffers[0]
     const nextOffset = n + this.offset
     if (nextOffset <= currentBuffer.length) {
       // Scenario 1: The current buffer has enough samples to satisfy the request
@@ -121,7 +121,7 @@ class AudioCache {
       this.offset = 0
       this.buffers.shift()
 
-      let required = n - partialChunks[0]!.length
+      let required = n - partialChunks[0].length
 
       // 2. Consume subsequent buffers until we have enough samples to satisfy the request
       while (required > 0) {

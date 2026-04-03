@@ -12,11 +12,11 @@ const renderState: CustomSeriesRenderItem = (_params, api) => {
   const yHeight = parseFloat(api.value(4) as string)
 
   if (state === 'UNDEF' || state === 'NULL') return
-  const height = (api.size!([0, 1]) as number[])[1]! * yHeight
+  const height = (api.size!([0, 1]) as number[])[1] * yHeight
   const rectShape = {
     x: start[0],
-    y: start[1]! - height / 2,
-    width: end[0]! - start[0]!,
+    y: start[1] - height / 2,
+    width: end[0] - start[0],
     height
   }
   return (
@@ -76,7 +76,7 @@ const stateSeries: SeriesComponent = {
 
       if ('mapState' in series) {
         for (let i = 0; i < itemPoints.length; i++) {
-          itemPoints[i]!.state = (series.mapState as MapStateFunction)(itemPoints[i]!.state)
+          itemPoints[i].state = (series.mapState as MapStateFunction)(itemPoints[i].state)
         }
       }
 
@@ -84,16 +84,16 @@ const stateSeries: SeriesComponent = {
       let itemStartTime: Date | null = null
       for (let i = 0; i < itemPoints.length; i++) {
         // Merge timeframes with equal state
-        if (itemPoints[i + 1] && itemPoints[i]!.state === itemPoints[i + 1]!.state) {
-          itemStartTime = itemStartTime || new Date(itemPoints[i]!.time)
+        if (itemPoints[i + 1] && itemPoints[i].state === itemPoints[i + 1].state) {
+          itemStartTime = itemStartTime || new Date(itemPoints[i].time)
           continue
         }
 
-        itemStartTime = itemStartTime || new Date(itemPoints[i]!.time)
-        const itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1]!.time : itemPoints[itemPoints.length - 1]!.time)
-        const stateColor = 'stateColor' in series ? (series.stateColor as StateColorMap)[itemPoints[i]!.state] : undefined
+        itemStartTime = itemStartTime || new Date(itemPoints[i].time)
+        const itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1].time : itemPoints[itemPoints.length - 1].time)
+        const stateColor = 'stateColor' in series ? (series.stateColor as StateColorMap)[itemPoints[i].state] : undefined
         data.push({
-          value: [series.yValue || 0, itemStartTime, itemEndTime, itemPoints[i]!.state, series.yHeight || 0.6],
+          value: [series.yValue || 0, itemStartTime, itemEndTime, itemPoints[i].state, series.yHeight || 0.6],
           itemStyle: {
             color: stateColor
           }

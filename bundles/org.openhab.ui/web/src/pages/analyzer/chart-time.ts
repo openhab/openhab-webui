@@ -141,14 +141,14 @@ const timeCoordSystem: CoordSystem = {
     categoryGridSize = Math.min(categoryGridSize, GRID_CONFIG.MAX_CATEGORY_GRID_PERCENT)
 
     if (valueGrid) {
-      slots.grid!.push({
+      slots.grid.push({
         component: 'oh-chart-grid',
         config: {
           includeLabels: true,
           bottom: categoryGrid ? `${categoryGridSize + GRID_CONFIG.GRID_PADDING_PERCENT}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX
         }
       })
-      slots.xAxis!.push({ component: 'oh-time-axis', config: { gridIndex: 0 } })
+      slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: 0 } })
       slots.yAxis = timeCoordSettings.valueAxesOptions.map((a) => {
         return renderValueAxis(a)
       })
@@ -156,12 +156,12 @@ const timeCoordSystem: CoordSystem = {
 
     let categoryGridIndex = valueGrid ? 1 : 0
     if (categoryGrid) {
-      slots.grid!.push({
+      slots.grid.push({
         component: 'oh-chart-grid',
         config: { includeLabels: true, top: valueGrid ? `${100 - categoryGridSize}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX }
       })
-      slots.xAxis!.push({ component: 'oh-time-axis', config: { gridIndex: categoryGridIndex } })
-      slots.yAxis!.push({
+      slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: categoryGridIndex } })
+      slots.yAxis.push({
         component: 'oh-category-axis',
         config: {
           data: timeCoordSettings.categoryAxisValues.map((item) => {
@@ -175,9 +175,9 @@ const timeCoordSystem: CoordSystem = {
       })
     }
 
-    if (slots.yAxis!.length === 0) {
+    if (slots.yAxis.length === 0) {
       // add a default axis if none was found (for instance, only discrete values)
-      slots.yAxis!.push({
+      slots.yAxis.push({
         component: 'oh-value-axis',
         config: {
           gridIndex: 0
@@ -195,7 +195,7 @@ const timeCoordSystem: CoordSystem = {
             item: item.name,
             name: seriesOptions.name,
             xAxisIndex: categoryGridIndex,
-            yAxisIndex: slots.yAxis!.length - 1,
+            yAxisIndex: slots.yAxis.length - 1,
             yValue: seriesOptions.yValue
           } satisfies OhStateSeries.Config
         }

@@ -248,10 +248,10 @@ export const useModelStore = defineStore('model', () => {
         locations.value = locationItems.map((l) => _buildLocationModelCard(l, l.name || ''))
         equipment.value = Object.keys(equipmentStruct)
           .sort((a: string, b: string) => (i18n.global as Composer).t(a).localeCompare((i18n.global as Composer).t(b)))
-          .map((k) => _buildEquipmentModelCard(equipmentStruct[k]!, k))
+          .map((k) => _buildEquipmentModelCard(equipmentStruct[k], k))
         properties.value = Object.keys(propertyStruct)
           .sort((a: string, b: string) => (i18n.global as Composer).t(a).localeCompare((i18n.global as Composer).t(b)))
-          .map((k) => _buildPropertyModelCard(propertyStruct[k]!, k))
+          .map((k) => _buildPropertyModelCard(propertyStruct[k], k))
 
         ready.value = true
       })

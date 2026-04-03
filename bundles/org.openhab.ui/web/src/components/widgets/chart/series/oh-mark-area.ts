@@ -43,7 +43,7 @@ export default {
       } else if (!isInState && wasInState && currentArea) {
         // End of area
         currentArea.push({ xAxis: new Date(p.time) })
-        if (rollingState) currentArea[0]!.value = rollingState
+        if (rollingState) currentArea[0].value = rollingState
         // @ts-expect-error currentArea's type isn't type-compatible, but it still works
         markArea.data!.push(currentArea)
         currentArea = null

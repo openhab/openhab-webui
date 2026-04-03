@@ -68,12 +68,12 @@ const aggregateSeries: SeriesComponent = {
     if (groupStart === OhAggregateSeries.Dimension.weekday || groupStart === OhAggregateSeries.Dimension.isoWeekday) groupStart = 'day'
 
     if (boundary && itemPoints.length) {
-      const stime = dayjs(itemPoints[0]!.time)
+      const stime = dayjs(itemPoints[0].time)
       const start = stime.startOf(groupStart)
       if (!stime.isSame(start)) {
         itemPoints.unshift({ time: start.valueOf(), state: NaN.toString() })
       }
-      const etime = dayjs(itemPoints[itemPoints.length - 1]!.time)
+      const etime = dayjs(itemPoints[itemPoints.length - 1].time)
       if (etime.isSame(etime.endOf(groupStart))) {
         itemPoints.splice(-1, 1)
       }
@@ -82,8 +82,8 @@ const aggregateSeries: SeriesComponent = {
     type Group = [Dayjs, string[]]
     const groups: Group[] = itemPoints.reduce((acc: Group[], p) => {
       const start = dayjs(p.time).startOf(groupStart)
-      if (acc.length && acc[acc.length - 1]![0].isSame(start)) {
-        acc[acc.length - 1]![1].push(p.state)
+      if (acc.length && acc[acc.length - 1][0].isSame(start)) {
+        acc[acc.length - 1][1].push(p.state)
       } else {
         acc.push([start, [p.state]])
       }

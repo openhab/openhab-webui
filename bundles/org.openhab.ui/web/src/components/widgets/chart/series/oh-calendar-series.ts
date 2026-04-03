@@ -28,8 +28,8 @@ const calendarSeries: SeriesComponent = {
     type Group = [Dayjs, string[]]
     const groups: Group[] = itemPoints.reduce((acc: Group[], p) => {
       let day = dayjs(p.time).startOf('day')
-      if (acc.length && acc[acc.length - 1]![0].isSame(day)) {
-        acc[acc.length - 1]![1].push(p.state)
+      if (acc.length && acc[acc.length - 1][0].isSame(day)) {
+        acc[acc.length - 1][1].push(p.state)
       } else {
         acc.push([day, [p.state]])
       }
