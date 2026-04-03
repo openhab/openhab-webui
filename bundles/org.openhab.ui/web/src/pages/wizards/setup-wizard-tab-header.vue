@@ -48,7 +48,7 @@ export default {
       const hasLine2 = line2 !== 'setupwizard.' + this.step + '.header2'
       const hasLine3 = line3 !== 'setupwizard.' + this.step + '.header3'
       if (!hasLine1 && !hasLine2 && !hasLine3) return null
-      return (hasLine1 ? line1 : '') + (hasLine2 ? '<br>' + line2 : '') + (hasLine3 ? '<br>' + line3 : '') + '<br /><br />'
+      return (hasLine1 ? line1 : '') + (hasLine2 ? '<br>' + line2 : '') + (hasLine3 ? '<br>' + line3 : '') + '<br />'
     }
   }
 }
