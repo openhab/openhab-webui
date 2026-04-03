@@ -52,10 +52,11 @@
       </f7-list>
     </f7-popover>
 
+    <!-- Content -->
     <f7-tabs animated>
       <!-- Intro step -->
       <f7-tab id="intro" tab-active @tab:show="handleTabShow">
-        <setup-wizard-tab-header :image="wizardSteps[currentStep].image" :step="currentStep" :link="wizardSteps[currentStep].link" />
+        <setup-wizard-tab-header :image="logo" :step="currentStep" :link="wizardSteps[currentStep].link" />
         <f7-list v-if="i18nReady" form style="margin-top: 4rem">
           <f7-list-item
             :title="t('setupwizard.language')"
@@ -318,7 +319,7 @@
       <f7-tab id="welcome" @tab:show="handleTabShow">
         <setup-wizard-tab-header
           :title="t('setupwizard.welcome.title')"
-          :image="wizardSteps[currentStep].image"
+          :image="logo"
           :step="currentStep"
           :link="wizardSteps[currentStep].link" />
         <f7-block>
@@ -426,12 +427,13 @@
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
-import { mapWritableState } from 'pinia'
+import { mapStores, mapWritableState } from 'pinia'
 
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
 
-import introLogo from '@/images/openhab-logo.svg'
+import openhabLogo from '@/images/openhab-logo.svg'
+import openhabLogoDark from '@/images/openhab-logo-dark.svg'
 import conceptsImage from '@/images/wizard-concepts.png'
 import rulesImage from '@/images/wizard-rules.png'
 import uiImage from '@/images/wizard-ui.png'
@@ -461,7 +463,7 @@ export default {
   setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('setup-wizard', mergeLocaleMessage)
-    return { t, theme, mergeLocaleMessage, introLogo, conceptsImage, rulesImage, uiImage, persistenceImage, semanticsImage }
+    return { t, theme, mergeLocaleMessage, conceptsImage, rulesImage, uiImage, persistenceImage, semanticsImage }
   },
   data() {
     return {
@@ -471,7 +473,7 @@ export default {
       wizardSteps: {
         // Intro does have to be the first step. Code forces no next step is possible before completing it.
         intro: {
-          image: introLogo,
+          // image: depends on computed logo, set in template
           next: { handler: () => this.beginSetup(), step: 'location' }
         },
         location: {
@@ -568,7 +570,7 @@ export default {
           next: { step: 'welcome' }
         },
         welcome: {
-          image: introLogo,
+          // image: depends on computed logo, set in template
           prev: { step: 'intro' },
           next: { handler: (link) => this.finish(link) }
         }
@@ -622,6 +624,9 @@ export default {
     }
   },
   computed: {
+    logo() {
+      return this.uiOptionsStore.darkMode === 'dark' ? openhabLogoDark : openhabLogo
+    },
     show() {
       if (!this.currentStep) return null
       return { action: 'show', ...this.wizardSteps[this.currentStep].show }
@@ -717,6 +722,7 @@ export default {
     firstStepNotDone() {
       return this.wizardStepKeysFiltered.find((step) => !this.setupWizardStepsDone?.[step])
     },
+    ...mapStores(useUIOptionsStore),
     ...mapWritableState(useUIOptionsStore, {
       setupWizardShort: 'setupWizardShort',
       setupWizardStepsDone: 'setupWizardStepsDone'
