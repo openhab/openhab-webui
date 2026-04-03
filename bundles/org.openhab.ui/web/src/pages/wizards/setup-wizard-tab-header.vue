@@ -12,6 +12,7 @@
   </f7-block>
   <f7-block v-if="header || link" strong>
     <span class="text" v-html="header" />
+    <br v-if="link" />
     <a v-if="link" class="text-color-blue external" target="_blank" :href="link"> {{ t('setupwizard.' + step + '.link') }}</a>
   </f7-block>
 </template>
