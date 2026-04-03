@@ -1,5 +1,5 @@
 <template>
-  <tab-header :icon="icon" :title="t('setupwizard.' + step + '.title')" :step="step" :t="t" />
+  <setup-wizard-tab-header :title="t('setupwizard.' + step + '.title')" :step="step" :icon="icon" />
   <f7-login-screen-title>
     <div class="padding">
       <img style="width: 85%" :src="image" />
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import SetupWizardTabHeader from '@/pages/wizards/setup-wizard-tab-header.vue'
 
 export default {
   props: {
@@ -26,7 +26,7 @@ export default {
     t: Function
   },
   components: {
-    'tab-header': defineAsyncComponent(() => import('./setup-wizard-tab-header.vue'))
+    SetupWizardTabHeader,
   },
   computed: {
     body() {
