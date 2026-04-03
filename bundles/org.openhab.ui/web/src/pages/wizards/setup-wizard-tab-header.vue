@@ -28,28 +28,32 @@
     background var(--f7-page-bg-color)
 </style>
 
-<script>
-export default {
-  props: {
-    icon: String,
-    image: String,
-    title: String,
-    step: String,
-    link: String,
-    t: Function
-  },
-  computed: {
-    header() {
-      if (!this.step) return null
-      const line1 = this.t('setupwizard.' + this.step + '.header1')
-      const line2 = this.t('setupwizard.' + this.step + '.header2')
-      const line3 = this.t('setupwizard.' + this.step + '.header3')
-      const hasLine1 = line1 !== 'setupwizard.' + this.step + '.header1'
-      const hasLine2 = line2 !== 'setupwizard.' + this.step + '.header2'
-      const hasLine3 = line3 !== 'setupwizard.' + this.step + '.header3'
-      if (!hasLine1 && !hasLine2 && !hasLine3) return null
-      return (hasLine1 ? line1 : '') + (hasLine2 ? '<br>' + line2 : '') + (hasLine3 ? '<br>' + line3 : '') + '<br />'
-    }
-  }
-}
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { loadLocaleMessages } from '@/js/i18n.ts'
+
+const props = defineProps<{
+  title: string
+  step: string
+  icon?: string
+  image?: string
+  link?: string
+}>()
+
+const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+loadLocaleMessages('setup-wizard', mergeLocaleMessage)
+
+const header = computed(() => {
+  if (!props.step) return null
+
+  const baseKey = `setupwizard.${props.step}`
+  const keys = [`${baseKey}.header1`, `${baseKey}.header2`, `${baseKey}.header3`]
+
+  const lines = keys.map((key) => t(key)).filter((line) => !line.startsWith(baseKey))
+
+  if (lines.length === 0) return null
+
+  return lines.join('<br>') + '<br />'
+})
 </script>
