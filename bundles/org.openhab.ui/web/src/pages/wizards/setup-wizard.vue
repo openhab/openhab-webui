@@ -321,9 +321,11 @@
         <f7-block v-if="bindingsInstalled">
           {{ t('setupwizard.welcome.bindingsInstalled') }}
         </f7-block>
-        <f7-block-footer class="margin-bottom">
-          <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
-        </f7-block-footer>
+        <f7-block>
+          <f7-block-footer class="margin-bottom">
+            <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
+          </f7-block-footer>
+        </f7-block>
         <f7-block class="display-flex flex-direction-column padding" style="margin-top: 4rem">
           <div>
             <f7-button
