@@ -14,34 +14,38 @@
   </f7-block>
 </template>
 
-<script>
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { loadLocaleMessages } from '@/js/i18n.ts'
 import SetupWizardTabHeader from '@/pages/wizards/setup-wizard-tab-header.vue'
 
-export default {
-  props: {
-    step: String,
-    icon: String,
-    image: String,
-    link: String,
-    t: Function
-  },
-  components: {
-    SetupWizardTabHeader,
-  },
-  computed: {
-    body() {
-      if (!this.step) return null
-      const lines = []
-      let index = 1
-      while (true) {
-        const line = this.t('setupwizard.' + this.step + '.body' + index)
-        const hasLine = line !== 'setupwizard.' + this.step + '.body' + index
-        if (!hasLine) break
-        lines.push(line)
-        index++
-      }
-      return lines.join(' ')
-    }
+const props = defineProps<{
+  step: string
+  icon: string
+  image: string
+  link: string
+}>()
+
+const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+loadLocaleMessages('setup-wizard', mergeLocaleMessage)
+
+const body = computed(() => {
+  if (!props.step) return null
+
+  const lines: string[] = []
+  let index = 1
+
+  while (true) {
+    const key = `setupwizard.${props.step}.body${index}`
+    const translated = t(key)
+
+    if (translated === key) break
+
+    lines.push(translated)
+    index++
   }
-}
+
+  return lines.length > 0 ? lines.join(' ') : null
+})
 </script>
