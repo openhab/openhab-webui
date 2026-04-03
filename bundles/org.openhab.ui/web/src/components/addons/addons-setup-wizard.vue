@@ -151,7 +151,6 @@ export default {
   },
   data() {
     return {
-      localSelectedAddons: [...this.selectedAddons],
       shownAddons: [...(this.preSelectedAddons || [])],
       modalShownAddons: this.addons?.filter((a) => !a.installed && !this.isPreSelectedAddon(a)) || [],
       showAddonSelectionModal: false,
@@ -179,7 +178,7 @@ export default {
      * @returns {boolean}
      */
     isAddonSelected(addon) {
-      return this.localSelectedAddons.includes(addon)
+      return this.selectedAddons.includes(addon)
     },
     /**
      * Whether the given add-on is pre-selected.
@@ -210,13 +209,8 @@ export default {
     toggleAddonSelection(addon) {
       if (addon.installed) return
       if (this.isAddonSelected(addon)) {
-        const index = this.localSelectedAddons.findIndex((a) => addon.uid === a.uid)
-        if (index > -1) {
-          this.localSelectedAddons.splice(index, 1)
-        }
         this.$emit('removed', addon)
       } else {
-        this.localSelectedAddons.push(addon)
         this.$emit('added', addon)
         if (!this.shownAddons.includes(addon)) {
           this.shownAddons.push(addon)
