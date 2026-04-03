@@ -9,8 +9,7 @@
     {{ body }}
     <br /><br />
     <a class="text-color-blue external" target="_blank" :href="link"> {{ t('setupwizard.documentationLink') }}</a>
-    <br /><br />
-    {{ t('setupwizard.' + step + '.nextDescription') }}
+    <br />
   </f7-block>
 </template>
 
