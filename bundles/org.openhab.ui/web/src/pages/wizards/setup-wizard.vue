@@ -54,7 +54,7 @@
     <f7-tabs animated>
       <!-- Intro step -->
       <f7-tab id="intro" tab-active @tab:show="handleTabShow">
-        <tab-header :image="wizardSteps[currentStep].image" :step="currentStep" :link="wizardSteps[currentStep].link" :t="t" />
+        <setup-wizard-tab-header :image="wizardSteps[currentStep].image" :step="currentStep" :link="wizardSteps[currentStep].link" />
         <f7-list v-if="i18nReady" form style="margin-top: 4rem">
           <f7-list-item
             :title="t('setupwizard.language')"
@@ -126,12 +126,11 @@
 
       <!-- Location setup -->
       <f7-tab id="location" @tab:show="handleTabShow">
-        <tab-header
+        <setup-wizard-tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
           :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
+          :link="wizardSteps[currentStep].link" />
         <f7-list>
           <f7-list-group>
             <parameter-location
@@ -173,12 +172,11 @@
 
       <!-- Primary network selection -->
       <f7-tab id="network" @tab:show="handleTabShow">
-        <tab-header
+        <setup-wizard-tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
           :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
+          :link="wizardSteps[currentStep].link" />
         <f7-list>
           <f7-list-group>
             <parameter-options
@@ -205,12 +203,11 @@
 
       <!-- Intro steps explaining concepts -->
       <f7-tab v-for="introStep in wizardIntroStepKeys" :key="introStep" :id="introStep" @tab:show="handleTabShow">
-        <info
+        <setup-wizard-info
           :step="currentStep"
           :icon="wizardSteps[currentStep].icon"
           :image="wizardSteps[currentStep].image"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
+          :link="wizardSteps[currentStep].link" />
         <f7-block class="display-flex flex-direction-column padding">
           <div>
             <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
@@ -220,12 +217,11 @@
 
       <!-- Steps for add-on selection and installation -->
       <f7-tab v-for="addonType in preSelectingAddonTypes" :key="addonType" :id="addonType" @tab:show="handleTabShow">
-        <tab-header
+        <setup-wizard-tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
           :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
+          :link="wizardSteps[currentStep].link" />
         <f7-block class="padding">
           <f7-block v-if="waitingForAddonSuggestions">
             <div class="display-flex justify-content-center margin-bottom">
@@ -288,12 +284,11 @@
 
       <!-- Configure persistence -->
       <f7-tab id="persistence-config" @tab:show="handleTabShow">
-        <tab-header
+        <setup-wizard-tab-header
           :icon="wizardSteps[currentStep].icon"
           :title="t('setupwizard.' + currentStep + '.title')"
           :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
+          :link="wizardSteps[currentStep].link" />
         <persistence-config-setup-wizard :addons="addons" :addonsReady="persistenceInstalled" :confirm="persistenceConfigConfirm" :t />
         <f7-block-footer class="margin-bottom">
           <small>{{ t('setupwizard.' + currentStep + '.footer') }}</small>
@@ -314,12 +309,11 @@
 
       <!-- Welcome -->
       <f7-tab id="welcome" @tab:show="handleTabShow">
-        <tab-header
+        <setup-wizard-tab-header
           :title="t('setupwizard.welcome.title')"
           :image="wizardSteps[currentStep].image"
           :step="currentStep"
-          :link="wizardSteps[currentStep].link"
-          :t="t" />
+          :link="wizardSteps[currentStep].link" />
         <f7-block>
           {{ t('setupwizard.welcome.model') }}
         </f7-block>
@@ -439,6 +433,8 @@ import semanticsImage from '@/images/wizard-semantics.png'
 
 import AddonsSetupWizard from '@/components/addons/addons-setup-wizard.vue'
 import PersistenceConfigSetupWizard from '@/components/persistence/persistence-config-setup-wizard.vue'
+import SetupWizardTabHeader from '@/pages/wizards/setup-wizard-tab-header.vue'
+import SetupWizardInfo from '@/pages/wizards/setup-wizard-info.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
@@ -450,8 +446,8 @@ export default {
   components: {
     'parameter-location': defineAsyncComponent(() => import('@/components/config/controls/parameter-location.vue')),
     'parameter-options': defineAsyncComponent(() => import('@/components/config/controls/parameter-options.vue')),
-    'tab-header': defineAsyncComponent(() => import('./setup-wizard-tab-header.vue')),
-    info: defineAsyncComponent(() => import('./setup-wizard-info.vue')),
+    SetupWizardInfo,
+    SetupWizardTabHeader,
     AddonsSetupWizard,
     PersistenceConfigSetupWizard
   },
