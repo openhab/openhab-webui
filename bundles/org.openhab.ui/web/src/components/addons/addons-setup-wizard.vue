@@ -187,7 +187,8 @@ export default {
      * @returns {boolean}
      */
     isPreSelectedAddon(addon) {
-      return this.preSelectedAddons?.includes(addon)
+      if (!this.preSelectedAddons) return false
+      return this.preSelectedAddons.includes(addon)
     },
     /**
      * Returns the add-on description.
