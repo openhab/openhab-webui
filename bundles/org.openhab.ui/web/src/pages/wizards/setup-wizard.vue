@@ -627,6 +627,7 @@ export default {
     },
     prev() {
       if (!this.currentStep) return null
+      if (this.currentStep === 'intro') return null
       return { action: 'prev', ...this.wizardSteps[this.currentStep].prev }
     },
     next() {
