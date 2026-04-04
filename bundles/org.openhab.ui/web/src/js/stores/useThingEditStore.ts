@@ -21,7 +21,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const savedThing = ref<api.EnrichedThing | null>(null)
   const thingType = ref<api.ThingType | null>(null)
   const channelTypes = ref<api.ChannelType[] | null>(null)
-  const configDescriptions = ref<api.ConfigDescription | null>(null)
+  const configDescriptions = ref<api.EnrichedConfigDescription | null>(null)
   const thingActions = ref<api.ThingAction[] | null>(null)
   const configStatusInfo = ref<api.ConfigStatusMessage[] | null>(null)
   const firmwares = ref<api.Firmware[] | null>(null)
