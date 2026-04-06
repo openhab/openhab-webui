@@ -25,5 +25,6 @@ export default () => [
     'ICE candidates timeout',
     "WebRTC ICE candidates discovery timeout length in milliseconds (optional), defaults to '2000', '0' to disable"
   ).a(),
-  pb('sendAudio', 'Two Way Audio', 'Send audio to the WebRTC connection if supported (requires WebRTC player type)').a()
+  pb('sendAudio', 'Two Way Audio', 'Send audio to the WebRTC connection if supported (requires WebRTC player type)').a(),
+  pb('micActive', 'External Mic Control', 'Control microphone activation externally (e.g. via an expression); hides the built-in mic button when set (requires WebRTC player type with sendAudio)').a()
 ]
