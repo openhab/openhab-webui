@@ -11,7 +11,7 @@
       Sorry, your browser doesn't support embedded videos.
     </video>
     <button
-      v-if="sendAudio"
+      v-if="sendAudio && micActive === undefined"
       class="oh-video-mic"
       :class="{ active: isMicOn }"
       @click="toggleMic"
@@ -37,7 +37,8 @@ export default {
     startMuted: { type: Boolean },
     hideControls: { type: Boolean },
     posterURL: { type: String },
-    sendAudio: { type: Boolean }
+    sendAudio: { type: Boolean },
+    micActive: { type: Boolean, default: undefined }
   },
   data() {
     return {
@@ -53,6 +54,15 @@ export default {
     },
     sendAudio(value) {
       if (value === false && this.isMicOn) {
+        this.isMicOn = false
+        this.disableMicrophone()
+      }
+    },
+    micActive(value) {
+      if (value === true && !this.isMicOn) {
+        this.isMicOn = true
+        this.enableMicrophone(this.webrtc, this.audioTransceiver)
+      } else if (value === false && this.isMicOn) {
         this.isMicOn = false
         this.disableMicrophone()
       }
