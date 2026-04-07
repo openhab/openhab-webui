@@ -68,8 +68,8 @@
     <bnd.version>7.2.3</bnd.version>
     <eea.version>2.4.0</eea.version>
     <jackson.annotations.version>2.20</jackson.annotations.version>
-    <karaf.version>4.4.11</karaf.version>
-    <karaf.maven.plugin.version>4.4.11</karaf.maven.plugin.version>
+    <karaf.version>4.5.0-SNAPSHOT</karaf.version>
+    <karaf.maven.plugin.version>4.5.0-SNAPSHOT</karaf.maven.plugin.version>
     <ohc.version>5.2.0-SNAPSHOT</ohc.version>
     <sat.version>0.18.0</sat.version>
     <spotless.version>2.44.3</spotless.version>
@@ -92,24 +92,24 @@
           <configuration>
             <bnd><![CDATA[Bundle-SymbolicName: ${project.artifactId}
 Automatic-Module-Name: ${def;bsn}
-Import-Package: \\
-  io.swagger.v3.oas.annotations.*;resolution:=optional,\\
-  javax.annotation.security.*;resolution:=optional,\\
-  org.eclipse.jdt.annotation.*;resolution:=optional,\\
-  org.openhab.core.automation.annotation.*;resolution:=optional;version=!,\\
-  org.openhab.*;version=!,\\
-  com.google.common.*;version="14.0",\\
+Import-Package: \
+  io.swagger.v3.oas.annotations.*;resolution:=optional,\
+  jakarta.annotation.security.*;resolution:=optional,\
+  org.eclipse.jdt.annotation.*;resolution:=optional,\
+  org.openhab.core.automation.annotation.*;resolution:=optional;version=!,\
+  org.openhab.*;version=!,\
+  com.google.common.*;version="14.0",\
   *
--exportcontents: \\
-  !*.internal.*,\\
-  !*.impl.*, \\
+-exportcontents: \
+  !*.internal.*,\
+  !*.impl.*, \
   org.openhab.*
 -noimportjava: true
 -sources: false
 -contract: *
 -includeresource: -${.}/NOTICE, -${.}/*.xsd
--fixupmessages: \\
-  'Unused Import-Package instructions';is:=ignore,\\
+-fixupmessages: \
+  'Unused Import-Package instructions';is:=ignore,\
   'Unused Export-Package instructions';is:=ignore]]></bnd>
             <!--
               -dsannotations-options: norequirements
