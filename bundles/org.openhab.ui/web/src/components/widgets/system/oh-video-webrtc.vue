@@ -4,7 +4,7 @@
       ref="videoPlayer"
       :autoplay="this.startManually ? false : true"
       :controls="this.hideControls ? false : true"
-      :muted="startMuted ? true : false"
+      :muted="isMuted"
       :poster="computedPosterUrl"
       playsinline
       style="max-width: 100%">
@@ -38,14 +38,16 @@ export default {
     hideControls: { type: Boolean },
     posterURL: { type: String },
     sendAudio: { type: Boolean },
-    micActive: { type: Boolean, default: undefined }
+    micActive: { type: Boolean, default: undefined },
+    muteActive: { type: Boolean, default: undefined }
   },
   data() {
     return {
       webrtc: null,
       localAudioStream: null,
       audioTransceiver: null,
-      isMicOn: false
+      isMicOn: false,
+      isMuted: false
     }
   },
   watch: {
@@ -66,6 +68,13 @@ export default {
         this.isMicOn = false
         this.disableMicrophone()
       }
+    },
+    muteActive(value) {
+      if (value === true) {
+        this.isMuted = true
+      } else if (value === false) {
+        this.isMuted = false
+      }
     }
   },
   computed: {
@@ -80,6 +89,9 @@ export default {
           : `${this.posterURL}&_ts=${ts}`
         : this.posterURL
     }
+  },
+  mounted() {
+    this.isMuted = this.startMuted || false
   },
   methods: {
     stopStream() {
