@@ -12,19 +12,20 @@
  */
 package org.openhab.ui.habot.tile.internal;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.ui.tiles.Tile;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.http.HttpContext;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
+import org.osgi.service.servlet.context.ServletContextHelper;
+import org.osgi.service.servlet.whiteboard.HttpWhiteboardConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,29 +40,48 @@ public class HABotTile implements Tile {
 
     public static final String HABOT_ALIAS = "/habot";
     public static final String RESOURCES_BASE = "web/dist/pwa-mat";
+    private static final String CONTEXT_NAME = "org.openhab.ui.habot.context";
 
     private final Logger logger = LoggerFactory.getLogger(HABotTile.class);
 
-    private final HttpService httpService;
+    private final BundleContext bundleContext;
+    private @Nullable ServiceRegistration<ServletContextHelper> contextRegistration;
+    private @Nullable ServiceRegistration<Object> resourceRegistration;
 
     @Activate
-    public HABotTile(Map<String, Object> configProps, BundleContext context, final @Reference HttpService httpService) {
-        this.httpService = httpService;
-        try {
-            Object useGzipCompression = configProps.get("useGzipCompression");
-            HttpContext httpContext = new HABotHttpContext(httpService.createDefaultHttpContext(), RESOURCES_BASE,
-                    (useGzipCompression != null && Boolean.parseBoolean(useGzipCompression.toString())));
+    public HABotTile(Map<String, Object> configProps, BundleContext context) {
+        this.bundleContext = context;
 
-            httpService.registerResources(HABOT_ALIAS, RESOURCES_BASE, httpContext);
-            logger.info("Started HABot at " + HABOT_ALIAS);
-        } catch (NamespaceException e) {
-            logger.error("Error during HABot startup: {}", e.getMessage());
-        }
+        Object useGzipCompression = configProps.get("useGzipCompression");
+        boolean gzipEnabled = useGzipCompression != null && Boolean.parseBoolean(useGzipCompression.toString());
+
+        Dictionary<String, Object> contextProps = new Hashtable<>();
+        contextProps.put(HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_NAME, CONTEXT_NAME);
+        contextProps.put(HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_PATH, HABOT_ALIAS);
+
+        HABotHttpContext httpContext = new HABotHttpContext(context.getBundle(), RESOURCES_BASE, gzipEnabled);
+        contextRegistration = bundleContext.registerService(ServletContextHelper.class, httpContext, contextProps);
+
+        Dictionary<String, Object> resourceProps = new Hashtable<>();
+        resourceProps.put(HttpWhiteboardConstants.HTTP_WHITEBOARD_RESOURCE_PATTERN, "/*");
+        resourceProps.put(HttpWhiteboardConstants.HTTP_WHITEBOARD_RESOURCE_PREFIX, "/" + RESOURCES_BASE);
+        resourceProps.put(HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_SELECT,
+                "(" + HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_NAME + "=" + CONTEXT_NAME + ")");
+
+        resourceRegistration = bundleContext.registerService(Object.class, new Object(), resourceProps);
+        logger.info("Started HABot at {}", HABOT_ALIAS);
     }
 
     @Deactivate
     protected void deactivate() {
-        httpService.unregister(HABOT_ALIAS);
+        if (resourceRegistration != null) {
+            resourceRegistration.unregister();
+            resourceRegistration = null;
+        }
+        if (contextRegistration != null) {
+            contextRegistration.unregister();
+            contextRegistration = null;
+        }
         logger.info("Stopped HABot");
     }
 

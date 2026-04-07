@@ -15,10 +15,10 @@ package org.openhab.ui.cometvisu.internal.util;
 import java.io.File;
 import java.nio.file.Path;
 
-import javax.ws.rs.core.Response.Status;
-
 import org.openhab.ui.cometvisu.internal.ManagerSettings;
 import org.openhab.ui.cometvisu.internal.MountPoint;
+
+import jakarta.ws.rs.core.Response.Status;
 
 /**
  * A File that can be places in a MountPoint

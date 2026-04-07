@@ -12,8 +12,8 @@
  */
 package org.openhab.ui.cometvisu.internal.backend.model.config.pure;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 /**
  * add two attributes to the pages element that are not defined in the XSD
