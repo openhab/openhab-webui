@@ -56,15 +56,22 @@
         <artifactId>jaxb2-maven-plugin</artifactId>
         <version>3.2.0</version>
         <dependencies>
+          <!-- codemodel is listed explicitly so it precedes the legacy com.sun.xml.bind:jaxb-xjc
+               that the plugin pulls in itself, which shades an older com.sun.codemodel -->
+          <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>codemodel</artifactId>
+            <version>4.0.9</version>
+          </dependency>
           <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.9</version>
+            <version>4.0.9</version>
           </dependency>
           <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-xjc</artifactId>
-            <version>2.3.9</version>
+            <version>4.0.9</version>
           </dependency>
         </dependencies>
         <executions>
@@ -115,6 +122,7 @@
                 <java8>true</java8>
                 <dateLibrary>java8</dateLibrary>
                 <generatePom>false</generatePom>
+                <useJakartaEe>true</useJakartaEe>
                 <useSwaggerAnnotations>false</useSwaggerAnnotations>
                 <useBeanValidation>false</useBeanValidation>
                 <hideGenerationTimestamp>true</hideGenerationTimestamp>
