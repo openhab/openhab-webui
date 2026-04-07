@@ -22,8 +22,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.JAXBElement;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.openhab.core.items.Item;
 import org.openhab.core.library.types.DecimalType;
@@ -70,6 +68,8 @@ import org.openhab.ui.cometvisu.internal.backend.model.config.pure.Widgetinfo;
 import org.openhab.ui.cometvisu.internal.servlet.CometVisuApp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.xml.bind.JAXBElement;
 
 /**
  * a set of helper methods to convert an openHAB sitemap to a CometVisu config

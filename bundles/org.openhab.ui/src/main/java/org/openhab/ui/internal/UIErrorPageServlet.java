@@ -16,18 +16,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Set;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletErrorPage;
+import org.osgi.service.servlet.whiteboard.propertytypes.HttpWhiteboardServletErrorPage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Returns the index file whenever pages cannot be found. This allows the UI to route to a page based on the URL or
@@ -58,7 +58,7 @@ public class UIErrorPageServlet extends HttpServlet {
                 logger.warn("The index file ({}) does not exist", INDEX_FILE);
                 return;
             }
-            String requestURI = (String) req.getAttribute("javax.servlet.error.request_uri");
+            String requestURI = (String) req.getAttribute("jakarta.servlet.error.request_uri");
             int status = isValidRoute(requestURI) ? 200 : 404;
             logger.debug("Returning index file as response with status {} for request URI: {}", status, requestURI);
             resp.setContentType("text/html");
