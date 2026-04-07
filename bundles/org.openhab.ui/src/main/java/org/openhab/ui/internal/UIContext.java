@@ -30,6 +30,6 @@ import org.osgi.service.servlet.whiteboard.HttpWhiteboardConstants;
         HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_INIT_PARAM_PREFIX + "redirectWelcome=false",
         HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_INIT_PARAM_PREFIX + "preCompressed=true",
         HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_INIT_PARAM_PREFIX
-                + "etags=true" }, service = ServletContextHelper.class)
+                + "etags=true" }, service = { ServletContextHelper.class, UIContext.class })
 public class UIContext extends ServletContextHelper {
 }
