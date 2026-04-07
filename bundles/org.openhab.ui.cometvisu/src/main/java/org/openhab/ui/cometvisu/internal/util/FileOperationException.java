@@ -12,7 +12,7 @@
  */
 package org.openhab.ui.cometvisu.internal.util;
 
-import javax.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response.Status;
 
 /**
  * Exception on file system operations that return a status code for the rest response
