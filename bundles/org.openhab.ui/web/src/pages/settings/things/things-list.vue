@@ -181,7 +181,6 @@
                   <span
                     v-if="
                       thing.statusInfo.status === 'ONLINE' &&
-                      thing.statusInfo.statusDetail === 'NONE' &&
                       thing.statusInfo.description &&
                       thing.statusInfo.description !== ''
                     "
