@@ -179,11 +179,7 @@
                     {{ thingStatusBadgeText(thing.statusInfo) }}
                   </f7-badge>
                   <span
-                    v-if="
-                      thing.statusInfo.status === 'ONLINE' &&
-                      thing.statusInfo.description &&
-                      thing.statusInfo.description !== ''
-                    "
+                    v-if="thing.statusInfo.status === 'ONLINE' && thing.statusInfo.description && thing.statusInfo.description !== ''"
                     class="badge-marker-dot">
                   </span>
                 </div>
