@@ -48,5 +48,8 @@
   "page.unavailable.text": "You are not allowed to view this page because of visibility restrictions.",
 
   "persistence.title": "No persistence add-on installed",
-  "persistence.text": "With persistence you can store Item states over time, no matter they are historic or future values. To configure persistence, you need at least one persistence add-on to be installed."
+  "persistence.text": "With persistence you can store Item states over time, no matter they are historic or future values. To configure persistence, you need at least one persistence add-on to be installed.",
+
+  "sitemaps.title": "No sitemaps yet",
+  "sitemaps.text": "Sitemaps are a declarative way to define the structure of a user interface for UIs that support them (BasicUI, mobile apps...). They are made of widgets to display item states or send commands to items.<br><br>Click the button below to create your first sitemap."
 }
