@@ -2,26 +2,30 @@ import { f7 } from 'framework7-vue'
 
 import ComponentId from '../../component-id'
 import MarkArea from './oh-mark-area'
-import applyMarkers from '@/components/widgets/chart/util/markers'
-import type { SeriesComponent, SeriesOption } from '../types.ts'
+import type { OhTimeSeriesOption, SeriesComponent } from '../types.ts'
 import { OhTimeSeries } from '@/types/components/widgets'
 import * as api from '@/api'
+import { OhTimeSeriesDefinition } from '@/assets/definitions/widgets/chart'
 
 const timeSeries: SeriesComponent = {
   neededItems(context, component) {
     let markAreaItems: string[] = []
     if ('slots' in component && Array.isArray((component as api.RootUiComponent).slots.markArea)) {
-      markAreaItems = (component as api.RootUiComponent).slots
-        .markArea!.map((a, i) =>
-          context.evaluateExpression<string | undefined>(ComponentId.get(component)! + '.mitem' + i, (a.config as OhTimeSeries.Config).item)
+      markAreaItems = (component as api.RootUiComponent).slots.markArea
+        .map((a, i) =>
+          context.evaluateExpression<string | undefined>(
+            ComponentId.get(component)! + '.mitem' + i,
+            (a.config as OhTimeSeries.Config).item,
+            null
+          )
         )
         .filter((i) => i !== undefined)
     }
-    const series = context.evaluateExpression<OhTimeSeries.Config>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config, OhTimeSeriesDefinition)
     return series.item ? [series.item, ...markAreaItems] : markAreaItems
   },
   get(context, component, points, startTime, endTime) {
-    const series = context.evaluateExpression<OhTimeSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config, OhTimeSeriesDefinition)
     series.data = []
 
     if (series.item) {
@@ -36,14 +40,12 @@ const timeSeries: SeriesComponent = {
 
     // other things
     if ('slots' in component && Array.isArray((component as api.RootUiComponent).slots.markArea)) {
-      const markAreaComponent = (component as api.RootUiComponent).slots.markArea![0]
+      const markAreaComponent = (component as api.RootUiComponent).slots.markArea[0]
       if (markAreaComponent) {
         series.markArea = MarkArea.get(context, markAreaComponent, points, startTime, endTime)
         series.id += '#mark-area'
       }
     }
-
-    applyMarkers(series)
 
     if (series.showSymbol === undefined) series.showSymbol = false
     if (!series.tooltip) {

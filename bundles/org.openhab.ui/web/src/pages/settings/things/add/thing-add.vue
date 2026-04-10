@@ -58,6 +58,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
 import ThingMixin from '@/components/thing/thing-mixin'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [ThingMixin],
@@ -169,13 +170,7 @@ export default {
       this.$oh.api
         .post('/rest/things', this.thing)
         .then(() => {
-          f7.toast
-            .create({
-              text: 'Thing created',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Thing created')
           this.f7router.navigate('/settings/things/' + this.thing.UID)
         })
         .catch((error) => {

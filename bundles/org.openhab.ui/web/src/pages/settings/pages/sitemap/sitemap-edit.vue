@@ -379,6 +379,7 @@ import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin, SitemapMixin],
@@ -548,23 +549,11 @@ export default {
         .then((data) => {
           this.dirty = false
           if (this.createMode) {
-            f7.toast
-              .create({
-                text: 'Sitemap created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Sitemap created')
             this.load()
             this.f7router.navigate(this.f7route.url.replace('/add', '/' + sitemap.uid), { reloadCurrent: true })
           } else {
-            f7.toast
-              .create({
-                text: 'Sitemap updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Sitemap updated')
             this.lastCleanSitemap = this.stripClosed(this.sitemap)
             this.setParents(sitemap)
           }
@@ -572,13 +561,7 @@ export default {
           // if (!stay) this.f7router.back()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving sitemap: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving sitemap: ' + err)
         })
     },
     validateWidgets(stay) {

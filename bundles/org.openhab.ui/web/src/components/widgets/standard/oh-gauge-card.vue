@@ -25,6 +25,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhGauge from '../system/oh-gauge.vue'
@@ -41,7 +42,7 @@ export default {
   },
   widget: OhGaugeCardDefinition,
   setup(props) {
-    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, cardChildContext, hasAction, performAction }
   }

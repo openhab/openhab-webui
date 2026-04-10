@@ -243,7 +243,7 @@ export interface OhCanvasItemEmits {
 const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
-const { config, visible, childContext, defaultSlots } = useWidgetContext(props.context)
+const { config, visible, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
 
 // data (state)
 const root = ref<VNodeRef | null>(null)

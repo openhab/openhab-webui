@@ -5,6 +5,7 @@ import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { watch } from 'vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -278,24 +279,14 @@ export default {
      */
     flashEmbeddedSvgComponents() {
       if (!this.$refs.canvasBackground) {
-        f7.toast
-          .create({
-            text: 'SVG embedding has not been properly configured. Ensure that the Image URL points to an SVG file.',
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('SVG embedding has not been properly configured. Ensure that the Image URL points to an SVG file.')
         return
       }
       const svg = this.$refs.canvasBackground.querySelector('svg')
       const subElements = svg.querySelectorAll('[openhab]')
 
       if (subElements.length === 0) {
-        f7.toast
-          .create({
-            text: 'No SVG elements with an "openhab" attribute found.',
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('No SVG elements with an "openhab" attribute found.')
         return
       }
 

@@ -478,6 +478,7 @@ import { theme, f7 } from 'framework7-vue'
 
 import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [MovablePopupMixin],
@@ -943,13 +944,7 @@ export default {
         // v-clipboard works without https, but it can only copy plain text
         copyToClipboard(logs, {
           onSuccess: () => {
-            f7.toast
-              .create({
-                text: 'Table copied as text to clipboard',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Table copied as text to clipboard')
           }
         })
         return
@@ -977,13 +972,7 @@ export default {
       navigator.clipboard
         .write([clipboardItem])
         .then(() => {
-          f7.toast
-            .create({
-              text: 'Table copied as HTML to clipboard',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Table copied as HTML to clipboard')
         })
         .catch((err) => {
           console.error('Failed to copy table: ', err)

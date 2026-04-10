@@ -30,6 +30,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhLabelCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
@@ -43,7 +44,7 @@ export default {
   },
   widget: OhLabelCellDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   computed: {

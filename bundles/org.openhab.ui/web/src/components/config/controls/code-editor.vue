@@ -95,6 +95,7 @@ import Editor from '@/components/config/controls/script-editor.vue'
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
 import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [MovablePopup],
@@ -220,13 +221,7 @@ export default {
               errors = null
               // show a toast message instead of the error popup
               // The codemirror editor will show the error in the editor
-              f7.toast
-                .create({
-                  text: 'YAML syntax error. Please check your code.',
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              showToast('YAML syntax error. Please check your code.')
             } else {
               // clean up the error message and turn it into an array to be displayed as a list
               errors = errors
@@ -265,13 +260,7 @@ export default {
     copy() {
       copyToClipboard(this.code, {
         onSuccess: () => {
-          f7.toast
-            .create({
-              text: 'Code copied to clipboard',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Code copied to clipboard')
         }
       })
     },
@@ -279,13 +268,7 @@ export default {
       f7.dialog.confirm('Are you sure you want to revert the changes?', () => {
         this.code = this.originalCode
         this.dirty = false
-        f7.toast
-          .create({
-            text: 'Code reverted to original',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('Code reverted to original')
       })
     }
   }

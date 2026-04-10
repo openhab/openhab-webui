@@ -1,8 +1,8 @@
 import { f7 } from 'framework7-vue'
 import ComponentId from '../../component-id'
-import type { SeriesComponent, StateSeriesOption } from '../types.ts'
-import { OhStateSeries } from '@/types/components/widgets'
+import type { OhStateSeriesOption, SeriesComponent } from '../types.ts'
 import type { CustomSeriesRenderItem } from 'echarts'
+import { OhStateSeriesDefinition } from '@/assets/definitions/widgets/chart'
 
 const renderState: CustomSeriesRenderItem = (_params, api) => {
   const yValue = api.value(0)
@@ -12,11 +12,11 @@ const renderState: CustomSeriesRenderItem = (_params, api) => {
   const yHeight = parseFloat(api.value(4) as string)
 
   if (state === 'UNDEF' || state === 'NULL') return
-  const height = (api.size!([0, 1]) as number[])[1]! * yHeight
+  const height = (api.size!([0, 1]) as number[])[1] * yHeight
   const rectShape = {
     x: start[0],
-    y: start[1]! - height / 2,
-    width: end[0]! - start[0]!,
+    y: start[1] - height / 2,
+    width: end[0] - start[0],
     height
   }
   return (
@@ -33,11 +33,11 @@ export type StateColorMap = Record<string, string>
 
 const stateSeries: SeriesComponent = {
   neededItems(context, component) {
-    const series = context.evaluateExpression<OhStateSeries.Config>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config, OhStateSeriesDefinition)
     return series.item ? [series.item] : []
   },
   get(context, component, points) {
-    const series = context.evaluateExpression<OhStateSeries.Config & StateSeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config, OhStateSeriesDefinition)
     series.type = 'custom'
     series.renderItem = renderState
     series.encode = {
@@ -48,13 +48,13 @@ const stateSeries: SeriesComponent = {
     }
     series.colorBy = 'data'
     series.clip = true
-    if (!series.label) series.label = ({} as StateSeriesOption['label'])!
+    if (!series.label) series.label = {}
     if (series.label.show === undefined) series.label.show = true
     if (!series.label.position) series.label.position = 'insideLeft'
     // @ts-expect-error formatter not defined on type - TODO: Check whether it works
     if (!series.label.formatter) series.label.formatter = '{@[3]}'
     if (!series.labelLayout) series.labelLayout = { hideOverlap: true }
-    if (!series.tooltip) series.tooltip = ({} as StateSeriesOption['tooltip'])!
+    if (!series.tooltip) series.tooltip = {}
     if (series.tooltip.formatter === undefined) {
       series.tooltip.formatter = (params) => {
         if (!Array.isArray(params.value) || params.value.length < 3) return ''
@@ -76,7 +76,7 @@ const stateSeries: SeriesComponent = {
 
       if ('mapState' in series) {
         for (let i = 0; i < itemPoints.length; i++) {
-          itemPoints[i]!.state = (series.mapState as MapStateFunction)(itemPoints[i]!.state)
+          itemPoints[i].state = (series.mapState as MapStateFunction)(itemPoints[i].state)
         }
       }
 
@@ -84,16 +84,16 @@ const stateSeries: SeriesComponent = {
       let itemStartTime: Date | null = null
       for (let i = 0; i < itemPoints.length; i++) {
         // Merge timeframes with equal state
-        if (itemPoints[i + 1] && itemPoints[i]!.state === itemPoints[i + 1]!.state) {
-          itemStartTime = itemStartTime || new Date(itemPoints[i]!.time)
+        if (itemPoints[i + 1] && itemPoints[i].state === itemPoints[i + 1].state) {
+          itemStartTime = itemStartTime || new Date(itemPoints[i].time)
           continue
         }
 
-        itemStartTime = itemStartTime || new Date(itemPoints[i]!.time)
-        const itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1]!.time : itemPoints[itemPoints.length - 1]!.time)
-        const stateColor = 'stateColor' in series ? (series.stateColor as StateColorMap)[itemPoints[i]!.state] : undefined
+        itemStartTime = itemStartTime || new Date(itemPoints[i].time)
+        const itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1].time : itemPoints[itemPoints.length - 1].time)
+        const stateColor = 'stateColor' in series ? (series.stateColor as StateColorMap)[itemPoints[i].state] : undefined
         data.push({
-          value: [series.yValue || 0, itemStartTime, itemEndTime, itemPoints[i]!.state, series.yHeight || 0.6],
+          value: [series.yValue || 0, itemStartTime, itemEndTime, itemPoints[i].state, series.yHeight || 0.6],
           itemStyle: {
             color: stateColor
           }

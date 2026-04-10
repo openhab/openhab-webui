@@ -33,13 +33,13 @@
     height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
 
 // override leaflet style
-.leaflet-div-icon
+.oh-map-page-lmap .leaflet-div-icon
   background: unset
   border: unset
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, computed } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
@@ -63,6 +63,8 @@ Icon.Default.mergeOptions({
   shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
+const DEFAULT_TILE_PROVIDER = 'CartoDB.Voyager'
+
 export default {
   props: {
     context: Object
@@ -76,7 +78,7 @@ export default {
   },
   widget: OhMapPageDefinition,
   setup(props) {
-    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(props.context)
+    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, scopedCssUid, childContext, defaultSlots }
   },
   data() {
@@ -85,10 +87,8 @@ export default {
       currentZoom: 13,
       currentCenter: null,
       center: this.context.component.config.initialCenter ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
-      attribution:
-        '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
       showMarkers: false,
-      layer: null
+      tileLayer: null
     }
   },
   computed: {
@@ -126,7 +126,7 @@ export default {
     })
   },
   watch: {
-    'uiOptionsStore.darkMode': function (newVal) {
+    'uiOptionsStore.darkMode': function () {
       this.setBackgroundLayer()
     }
   },
@@ -143,20 +143,28 @@ export default {
       }
     },
     setBackgroundLayer() {
-      const defaultProvider = useUIOptionsStore().darkMode === 'dark' ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
-      const provider = this.config.tileLayerProvider || defaultProvider
+      const tileProvider = this.config.tileLayerProvider || DEFAULT_TILE_PROVIDER
       let overlayLayer
 
-      if (this.layer) {
-        this.$refs.map.leafletObject.removeLayer(this.layer)
+      if (this.tileLayer) {
+        this.$refs.map.leafletObject.removeLayer(this.tileLayer)
       }
 
       try {
-        this.layer = tileLayer.provider(provider, this.config.tileLayerProviderOptions)
+        this.tileLayer = tileLayer.provider(tileProvider, this.config.tileLayerProviderOptions)
       } catch {
-        this.layer = tileLayer.provider(defaultProvider)
+        this.tileLayer = tileLayer.provider(tileProvider)
       }
-      this.layer.addTo(this.$refs.map.leafletObject)
+      this.tileLayer.addTo(this.$refs.map.leafletObject)
+
+      const tilePane = this.$refs.map.leafletObject.getPane('tilePane')
+      if (tilePane) {
+        if (this.uiOptionsStore.darkMode === 'dark' && tileProvider === 'CartoDB.Voyager') {
+          tilePane.style.filter = 'invert(1) hue-rotate(180deg) brightness(120%) contrast(80%)'
+        } else {
+          tilePane.style.filter = 'unset'
+        }
+      }
 
       if (this.config.overlayTileLayerProvider) {
         try {

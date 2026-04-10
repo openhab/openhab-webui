@@ -19,6 +19,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhVideo from '../system/oh-video.vue'
@@ -34,7 +35,7 @@ export default {
   },
   widget: OhVideoCardDefinition,
   setup(props) {
-    const { cardChildContext } = useWidgetContext(props.context)
+    const { cardChildContext } = useWidgetContext(computed(() => props.context))
     return { cardChildContext }
   }
 }

@@ -85,6 +85,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import ItemMetadataMixin from '@/components/item/metadata/item-metadata-mixin'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -188,13 +189,7 @@ export default {
     updatedLinkedItem() {
       this.dirtyItem.forEach((it) =>
         this.$oh.api.put(`/rest/items/${it.name}/metadata/homekit`, it.metadata.homekit).then((data) => {
-          f7.toast
-            .create({
-              text: 'Metadata of group items updated. Please visit the items to review additional HomeKit configuration parameters.',
-              destroyOnClose: true,
-              closeTimeout: 3000
-            })
-            .open()
+          showToast('Metadata of group items updated. Please visit the items to review additional HomeKit configuration parameters.')
         })
       )
       this.dirtyItem.clear()

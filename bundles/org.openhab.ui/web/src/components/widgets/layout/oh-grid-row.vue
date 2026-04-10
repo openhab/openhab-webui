@@ -46,6 +46,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhGridCol from './oh-grid-col.vue'
 
@@ -60,7 +61,7 @@ export default {
   },
   widget: OhGridRowDefinition,
   setup(props) {
-    const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, scopedCssUid, visible, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, scopedCssUid, visible, defaultSlots }
   }
 }

@@ -150,6 +150,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 
 import * as api from '@/api'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -289,13 +290,7 @@ export default {
       })
       Promise.all(promises)
         .then((data) => {
-          f7.toast
-            .create({
-              text: 'Transformations removed',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Transformations removed')
           this.selectedTransformations = []
           dialog.close()
           this.load()

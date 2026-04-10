@@ -1,4 +1,4 @@
-import { pd, po } from '../helpers.ts'
+import { pd, pn, po, pt } from '../helpers.ts'
 
 export default () => [
   po(
@@ -29,11 +29,27 @@ export default () => [
     { value: '4M', label: '4M' },
     { value: '6M', label: '6M' },
     { value: 'Y', label: 'Y' },
+    { value: '2Y', label: '2Y' },
     { value: '3Y', label: '3Y' },
     { value: '5Y', label: '5Y' },
     { value: '10Y', label: '10Y' }
-  ]).v((value, configuration, configDescription, parameters) => {
-    return !configuration.chartType
+  ])
+    .d('D')
+    .v((_value, configuration) => {
+      return !configuration.chartType
+    }),
+  pn('initialWeek', 'Initial Week', 'The initial week of the year for the chart.')
+    .c('week')
+    .v((_value, configuration) => {
+      return configuration.chartType === 'isoWeek' || configuration.chartType === 'week'
+    }),
+  pt('initialMonth', 'Initial Month', 'The initial month of the year for the chart.')
+    .c('month')
+    .v((_value, configuration) => {
+      return configuration.chartType === 'month'
+    }),
+  pn('initialYear', 'Initial Year', 'The initial year for the chart.').v((_value, configuration) => {
+    return configuration.chartType === 'year'
   }),
   pd('future', 'Future Proportion', 'The proportion of the period that should extend into the future')
     .o([
@@ -43,5 +59,6 @@ export default () => [
       { value: '0.75', label: '75% - 1/4 past, 3/4 future' },
       { value: '1', label: '100% - Future only' }
     ])
-    .d('0')
+    .d('0'),
+  pn('formatterMaxDecimalPlaces', 'Max Decimal Places', 'The maximum number of decimal places to show for values.').d('2')
 ]

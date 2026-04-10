@@ -84,6 +84,7 @@ import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
 import ItemMetadataLinktomore from '@/components/item/metadata/item-metadata-linktomore.vue'
 import DirtyMixin from '../../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin.js'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
@@ -202,34 +203,16 @@ export default {
       this.saveMetadata(this.item, this.namespace, this.metadata)
         .then((data) => {
           if (this.creationMode) {
-            f7.toast
-              .create({
-                text: 'Metadata created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Metadata created')
           } else {
-            f7.toast
-              .create({
-                text: 'Metadata updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Metadata updated')
           }
           this.savedMetadata = cloneDeep(this.metadata)
           this.dirty = false
           this.f7router.back()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving metadata: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving metadata: ' + err)
         })
     },
     remove() {
@@ -237,24 +220,12 @@ export default {
       f7.dialog.confirm(`Are you sure you want to remove all metadata for "${nslabel}"?`, 'Remove metadata', () => {
         this.deleteMetadata(this.item, this.namespace)
           .then(() => {
-            f7.toast
-              .create({
-                text: 'Metadata deleted',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Metadata deleted')
             this.dirty = false
             this.f7router.back()
           })
           .catch((err) => {
-            f7.toast
-              .create({
-                text: 'Error while deleting metadata: ' + err,
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Error while deleting metadata: ' + err)
           })
       })
     },

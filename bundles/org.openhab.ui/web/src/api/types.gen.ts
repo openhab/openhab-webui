@@ -139,9 +139,9 @@ export type RuleStatusInfo = {
 export type Module = {
     typeUID: string;
     description: string;
-    configuration: Configuration;
     label: string;
     id: string;
+    configuration: Configuration;
 };
 
 export type Configuration = {
@@ -158,9 +158,9 @@ export type RuleExecution = {
 };
 
 export type Template = {
-    tags: Array<string>;
     uid: string;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
+    tags: Array<string>;
     description: string;
     label: string;
 };
@@ -316,10 +316,36 @@ export type StateOption = {
     label: string;
 };
 
-export type ConfigDescription = {
+export type EnrichedConfigDescription = {
     uri?: string;
-    parameters: Array<ConfigDescriptionParameter>;
+    parameters: Array<EnrichedConfigDescriptionParameter>;
     parameterGroups: Array<ConfigDescriptionParameterGroup>;
+};
+
+export type EnrichedConfigDescriptionParameter = {
+    context?: string;
+    default?: string;
+    description?: string;
+    label?: string;
+    name: string;
+    required?: boolean;
+    type: 'TEXT' | 'INTEGER' | 'DECIMAL' | 'BOOLEAN';
+    min?: number;
+    max?: number;
+    step?: number;
+    pattern?: string;
+    readOnly?: boolean;
+    multiple?: boolean;
+    multipleLimit?: number;
+    groupName?: string;
+    advanced?: boolean;
+    verify?: boolean;
+    limitToOptions?: boolean;
+    unit?: string;
+    unitLabel?: string;
+    options?: Array<ParameterOption>;
+    filterCriteria?: Array<FilterCriteria>;
+    defaultValues?: Array<string>;
 };
 
 export type DiscoveryInfo = {
@@ -882,6 +908,12 @@ export type Transformation = {
         [key: string]: string;
     };
     editable: boolean;
+};
+
+export type ConfigDescription = {
+    uri?: string;
+    parameters: Array<ConfigDescriptionParameter>;
+    parameterGroups: Array<ConfigDescriptionParameterGroup>;
 };
 
 export type RootUiComponent = {
@@ -2416,7 +2448,7 @@ export type GetConfigDescriptionsResponses = {
     /**
      * OK
      */
-    200: Array<ConfigDescription>;
+    200: Array<EnrichedConfigDescription>;
 };
 
 export type GetConfigDescriptionsResponse = GetConfigDescriptionsResponses[keyof GetConfigDescriptionsResponses];
@@ -2454,7 +2486,7 @@ export type GetConfigDescriptionByUriResponses = {
     /**
      * OK
      */
-    200: ConfigDescription;
+    200: EnrichedConfigDescription;
 };
 
 export type GetConfigDescriptionByUriResponse = GetConfigDescriptionByUriResponses[keyof GetConfigDescriptionByUriResponses];

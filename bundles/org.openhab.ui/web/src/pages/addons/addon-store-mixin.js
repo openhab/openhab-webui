@@ -1,6 +1,7 @@
 import { f7 } from 'framework7-vue'
 
 import AddonDetailsSheet from './addon-details-sheet.vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   components: {
@@ -72,13 +73,7 @@ export default {
               f7.emit('addonChange', null)
               break
             case 'failed':
-              f7.toast
-                .create({
-                  text: `Installation of add-on ${topicParts[2]} failed`,
-                  closeButton: true,
-                  destroyOnClose: true
-                })
-                .open()
+              showToast(`Installation of add-on ${topicParts[2]} failed`)
               this.stopEventSource()
               this.load()
               break

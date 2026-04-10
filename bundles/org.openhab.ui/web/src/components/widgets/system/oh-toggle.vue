@@ -26,6 +26,7 @@
 import { OhToggleDefinition } from '@/assets/definitions/widgets/system'
 
 import { getVariableScope, getLastVariableKeyValue, setVariableKeyValues } from '@/components/widgets/variable'
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
@@ -36,7 +37,7 @@ export default {
     context: Object
   },
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   mounted() {

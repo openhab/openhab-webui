@@ -38,6 +38,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhImage from '../system/oh-image.vue'
@@ -54,7 +55,7 @@ export default {
   },
   widget: OhImageCardDefinition,
   setup(props) {
-    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, cardChildContext, hasAction, performAction }
   }

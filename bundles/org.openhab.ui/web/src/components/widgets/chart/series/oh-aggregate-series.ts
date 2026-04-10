@@ -2,11 +2,11 @@ import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import ComponentId from '../../component-id'
 import aggregate from '../util/aggregators'
-import applyMarkers from '../util/markers'
-import type { SeriesComponent, SeriesOption } from '../types.ts'
-import * as api from '@/api'
+import type { OhAggregateSeriesOption, SeriesComponent } from '../types.ts'
 import { AggregationFunction, OhAggregateSeries } from '@/types/components/widgets'
 import { type ScatterSeriesOption } from 'echarts'
+import { f7 } from 'framework7-vue'
+import { OhAggregateSeriesDefinition } from '@/assets/definitions/widgets/chart'
 
 dayjs.extend(IsoWeek)
 
@@ -37,7 +37,11 @@ function includeBoundaryAndItemStateFor(config: OhAggregateSeries.Config) {
 const aggregateSeries: SeriesComponent = {
   neededItems(context, component) {
     if (!component || !component.config || !component.config.item) return []
-    const series = context.evaluateExpression<OhAggregateSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhAggregateSeriesOption>(
+      ComponentId.get(component)!,
+      component.config,
+      OhAggregateSeriesDefinition
+    )
     return series.item ? [series.item] : []
   },
   includeBoundary(_context, component) {
@@ -47,7 +51,11 @@ const aggregateSeries: SeriesComponent = {
     return includeBoundaryAndItemStateFor(component.config)
   },
   get(context, component, points) {
-    const series = context.evaluateExpression<OhAggregateSeries.Config & SeriesOption>(ComponentId.get(component)!, component.config)
+    const series = context.evaluateExpression<OhAggregateSeriesOption>(
+      ComponentId.get(component)!,
+      component.config,
+      OhAggregateSeriesDefinition
+    )
     const dimension1 = series.dimension1 ?? (context.chart.config.chartType as unknown as OhAggregateSeries.Dimension)
     const dimension2 = series.dimension2
     const boundary = includeBoundaryAndItemStateFor(component.config)
@@ -60,12 +68,12 @@ const aggregateSeries: SeriesComponent = {
     if (groupStart === OhAggregateSeries.Dimension.weekday || groupStart === OhAggregateSeries.Dimension.isoWeekday) groupStart = 'day'
 
     if (boundary && itemPoints.length) {
-      const stime = dayjs(itemPoints[0]!.time)
+      const stime = dayjs(itemPoints[0].time)
       const start = stime.startOf(groupStart)
       if (!stime.isSame(start)) {
         itemPoints.unshift({ time: start.valueOf(), state: NaN.toString() })
       }
-      const etime = dayjs(itemPoints[itemPoints.length - 1]!.time)
+      const etime = dayjs(itemPoints[itemPoints.length - 1].time)
       if (etime.isSame(etime.endOf(groupStart))) {
         itemPoints.splice(-1, 1)
       }
@@ -74,8 +82,8 @@ const aggregateSeries: SeriesComponent = {
     type Group = [Dayjs, string[]]
     const groups: Group[] = itemPoints.reduce((acc: Group[], p) => {
       const start = dayjs(p.time).startOf(groupStart)
-      if (acc.length && acc[acc.length - 1]![0].isSame(start)) {
-        acc[acc.length - 1]![1].push(p.state)
+      if (acc.length && acc[acc.length - 1][0].isSame(start)) {
+        acc[acc.length - 1][1].push(p.state)
       } else {
         acc.push([start, [p.state]])
       }
@@ -111,10 +119,11 @@ const aggregateSeries: SeriesComponent = {
       }
     }
 
-    series.data = data
+    if (series.item) {
+      series.id = `oh-aggregate-series#${series.item}#${f7.utils.id()}`
+    }
 
-    // other things
-    applyMarkers(series)
+    series.data = data
 
     return series
   }

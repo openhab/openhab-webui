@@ -15,7 +15,7 @@ function mergeChannels(input: Float32Array[]): Float32Array {
   for (let s = 0; s < samples; s++) {
     let sum = 0
     for (let c = 0; c < channels; c++) {
-      sum += input[c]![s]!
+      sum += input[c][s]
     }
     output[s] = sum * mixRatio
   }
@@ -27,7 +27,7 @@ function mergeChannels(input: Float32Array[]): Float32Array {
  */
 class AudioSourceWorklet extends AudioWorkletProcessor {
   process(inputs: Float32Array[][]) {
-    const merged = mergeChannels(inputs[0]!)
+    const merged = mergeChannels(inputs[0])
     this.port.postMessage(merged, [merged.buffer])
     return true
   }

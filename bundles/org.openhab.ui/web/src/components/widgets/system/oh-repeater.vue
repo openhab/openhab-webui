@@ -45,7 +45,7 @@ const props = defineProps<{
 defineOptions({ inheritAttrs: false, widget: OhRepeaterDefinition })
 
 // Composables
-const { config, childContext, evaluateExpression, defaultSlots } = useWidgetContext(props.context)
+const { config, childContext, evaluateExpression, defaultSlots } = useWidgetContext(computed(() => props.context))
 
 // Data/State
 const error = ref<string | null>(null)

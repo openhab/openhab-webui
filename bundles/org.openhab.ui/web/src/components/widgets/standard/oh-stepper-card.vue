@@ -12,6 +12,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhStepper from '../system/oh-stepper.vue'
@@ -27,7 +28,7 @@ export default {
   },
   widget: OhStepperCardDefinition,
   setup(props) {
-    const { cardChildContext } = useWidgetContext(props.context)
+    const { cardChildContext } = useWidgetContext(computed(() => props.context))
     return { cardChildContext }
   }
 }

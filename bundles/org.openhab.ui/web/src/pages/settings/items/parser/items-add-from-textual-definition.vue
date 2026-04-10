@@ -169,6 +169,7 @@ import * as api from '@/api'
 import { type CodeEditorType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
 import { storeToRefs } from 'pinia'
 import { ApiError } from '@/js/hey-api.ts'
+import { showToast } from '@/js/dialog-promises'
 
 const uiOptionsStore = useUIOptionsStore()
 
@@ -330,13 +331,7 @@ const add = () => {
       Promise.all(linksAndMetadataPromises)
         .then(() => {
           dialog.setProgress(100)
-          f7.toast
-            .create({
-              text: 'Items created and linked',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Items created and linked')
           dialog.close()
           props.f7router.back()
         })

@@ -484,9 +484,9 @@ const smartSelectParams = { openIn: 'popover', view: f7.view.main }
 function resetFields(field: string) {
   const ResetSpecificBaseField = {
     cronEvery: CronEvery.Specific,
-    increment: { start: 1, increment: 1 },
-    range: { start: 1, end: 1 },
-    specific: []
+    increment: { start: 0, increment: 1 },
+    range: { start: 0, end: 1 },
+    specific: [0]
   }
 
   const ResetEveryBaseField = {
@@ -658,6 +658,9 @@ function formatBaseCronField(field: CronFieldBase, emptyForEvery = false) {
     case CronEvery.Increment:
       return field.increment.start + '/' + field.increment.increment
     case CronEvery.Specific:
+      if (field.specific.length === 0) {
+        return emptyForEvery ? '' : '*'
+      }
       return field.specific.join(',')
     case CronEvery.Range:
       return field.range.start + '-' + field.range.end

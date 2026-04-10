@@ -127,6 +127,7 @@ import YAML from 'yaml'
 import BlocklyEditor from '@/components/config/controls/blockly-editor.vue'
 import BlockPreview from './block-preview.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
+import { showToast } from '@/js/dialog-promises'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -339,35 +340,17 @@ export default {
         .then((data) => {
           this.dirty = false
           if (this.createMode) {
-            f7.toast
-              .create({
-                text: 'Block library created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Block library created')
             this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.blocks.uid), { reloadCurrent: true })
             this.load()
           } else {
-            f7.toast
-              .create({
-                text: 'Block library updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Block library updated')
           }
           // f7.emit('sidebarRefresh', null)
           // if (!stay) this.f7router.back()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving block library: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving block library: ' + err)
         })
     }
   }

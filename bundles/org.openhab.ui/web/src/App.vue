@@ -492,7 +492,7 @@ import auth from '@/components/auth-mixin'
 import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
 
-import { useDialog } from '@/composables/useDialog'
+import { useDialog } from '@/js/composables/useDialog'
 
 import { i18n, loadLocaleMessages } from '@/js/i18n'
 

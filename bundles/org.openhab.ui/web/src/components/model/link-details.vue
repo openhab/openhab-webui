@@ -34,6 +34,7 @@
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import { f7 } from 'framework7-vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [ThingStatus],
@@ -115,26 +116,14 @@ export default {
           this.$oh.api
             .delete('/rest/links/' + link.link.itemName + '/' + encodeURIComponent(link.link.channelUID))
             .then(() => {
-              f7.toast
-                .create({
-                  text: 'Link deleted',
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              showToast('Link deleted')
               const index = this.enrichedLinks.indexOf(link)
               if (index > -1) {
                 this.enrichedLinks.splice(index, 1)
               }
             })
             .catch((err) => {
-              f7.toast
-                .create({
-                  text: 'Link not deleted (links defined in a .items file are not editable from this screen): ' + err,
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              showToast('Link not deleted (links defined in a .items file are not editable from this screen): ' + err)
             })
         })
         return

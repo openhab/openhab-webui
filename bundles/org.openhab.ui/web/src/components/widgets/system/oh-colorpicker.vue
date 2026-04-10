@@ -21,6 +21,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhColorpickerDefinition } from '@/assets/definitions/widgets/system'
 
@@ -32,7 +33,7 @@ export default {
   },
   widget: OhColorpickerDefinition,
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   data() {

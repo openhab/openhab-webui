@@ -42,6 +42,7 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
@@ -59,7 +60,7 @@ export default {
     footer: Object
   },
   setup(props) {
-    const { config, hasAction, evaluateExpression } = useWidgetContext(props.context)
+    const { config, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, hasAction, performAction, onTaphold, onContextMenu }
   },

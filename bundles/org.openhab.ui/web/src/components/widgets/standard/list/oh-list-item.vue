@@ -159,6 +159,7 @@
 
 <script>
 import { f7 } from 'framework7-vue'
+import { computed } from 'vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhListItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
@@ -171,7 +172,7 @@ export default {
   },
   widget: OhListItemDefinition,
   setup(props) {
-    const { config, childContext, evaluateExpression, hasAction, slots } = useWidgetContext(props.context)
+    const { config, childContext, evaluateExpression, hasAction, slots } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, childContext, hasAction, slots, performAction }
   },

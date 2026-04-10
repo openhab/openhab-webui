@@ -285,6 +285,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
@@ -337,6 +338,7 @@ use([
 
 import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
+import { showToast } from '@/js/dialog-promises'
 
 dayjs.extend(IsoWeek)
 
@@ -358,7 +360,7 @@ export default {
     EditContextMenu
   },
   setup(props) {
-    useWidgetContext(props.context)
+    useWidgetContext(computed(() => props.context))
   },
   methods: {
     skeletonGridOptions(grid, gridIdx) {
@@ -550,13 +552,7 @@ export default {
       }
 
       if (automaticAxisCreated) {
-        f7.toast
-          .create({
-            text: 'Missing axes have been created automatically.',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast('Missing axes have been created automatically.')
       }
 
       let component = {

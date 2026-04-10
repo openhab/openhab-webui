@@ -162,6 +162,7 @@ import reloadMixin from '../components/reload-mixin.js'
 import { loadLocaleMessages } from '@/js/i18n'
 import { useI18n } from 'vue-i18n'
 import * as api from '@/api'
+import { showToast } from '@/js/dialog-promises.js'
 
 export default {
   mixins: [reloadMixin],
@@ -234,13 +235,7 @@ export default {
       let el = document.getElementById('textual-systeminfo')
       el.select()
       document.execCommand('copy')
-      f7.toast
-        .create({
-          text: 'Copied to clipboard',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        })
-        .open()
+      showToast('Copied to clipboard')
     }
   }
 }

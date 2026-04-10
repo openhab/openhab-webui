@@ -180,6 +180,7 @@ import LinkMixin from '@/pages/settings/things/link/link-mixin'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore.js'
 import { mapStores } from 'pinia'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [ItemMixin, uomMixin, LinkMixin],
@@ -380,25 +381,13 @@ export default {
       if (this.createMode) {
         this.saveItem(this.newItem).then((data) => {
           this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
-            f7.toast
-              .create({
-                text: 'Item and link created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Item and link created')
             this.f7router.back()
           })
         })
       } else {
         this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
-          f7.toast
-            .create({
-              text: 'Link created',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Link created')
           this.f7router.back()
         })
       }

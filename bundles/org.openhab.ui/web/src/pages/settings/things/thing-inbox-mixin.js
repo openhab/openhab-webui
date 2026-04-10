@@ -2,6 +2,7 @@ import { f7 } from 'framework7-vue'
 
 import ThingMixin from '@/components/thing/thing-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -21,23 +22,11 @@ export default {
       return this.$oh.api
         .postPlain(`/rest/inbox/${entry.thingUID}/approve${newThingId ? '?newThingId=' + newThingId : ''}`, label)
         .then(() => {
-          f7.toast
-            .create({
-              text: 'Entry approved',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Entry approved')
           return Promise.resolve()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error during thing creation: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error during thing creation: ' + err)
           return Promise.reject(err)
         })
     },
@@ -45,23 +34,11 @@ export default {
       this.$oh.api
         .postPlain(`/rest/inbox/${entry.thingUID}/ignore`)
         .then((res) => {
-          f7.toast
-            .create({
-              text: 'Entry ignored',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Entry ignored')
           loadFn()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while ignoring entry: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while ignoring entry: ' + err)
           loadFn()
         })
     },
@@ -69,23 +46,11 @@ export default {
       this.$oh.api
         .postPlain(`/rest/inbox/${entry.thingUID}/unignore`)
         .then((res) => {
-          f7.toast
-            .create({
-              text: 'Entry unignored',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Entry unignored')
           loadFn()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while unignoring entry: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while unignoring entry: ' + err)
           loadFn()
         })
     },
@@ -93,23 +58,11 @@ export default {
       this.$oh.api
         .delete('/rest/inbox/' + entry.thingUID)
         .then((res) => {
-          f7.toast
-            .create({
-              text: 'Entry removed',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Entry removed')
           loadFn()
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while removing entry: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while removing entry: ' + err)
           loadFn()
         })
     },

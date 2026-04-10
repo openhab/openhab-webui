@@ -105,6 +105,8 @@ import { f7, theme } from 'framework7-vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ThingInboxMixin from '@/pages/settings/things/thing-inbox-mixin'
 
+import { showToast } from '@/js/dialog-promises'
+
 export default {
   mixins: [ThingInboxMixin],
   components: {
@@ -290,13 +292,7 @@ export default {
         let dialog = f7.dialog.progress('Adding Things')
         Promise.all(promises)
           .then((data) => {
-            f7.toast
-              .create({
-                text: 'Things added',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Things added')
             dialog.close()
             setTimeout(() => {
               this.f7router.navigate('/settings/things/', { reloadCurrent: true })

@@ -17,6 +17,7 @@ import type { VariableValue, WidgetContext } from '@/components/widgets/types'
 import openhab from '@/js/openhab'
 import * as api from '@/api'
 import type { ComputedRef } from 'vue'
+import { showToast } from '@/js/dialog-promises'
 
 type ActionPrefix = '' | 'taphold_'
 
@@ -48,13 +49,7 @@ function showActionFeedback(prefix: string, actionConfig: ActionConfig, text?: s
       })
       .open()
   } else {
-    f7.toast
-      .create({
-        text: feedbackText,
-        destroyOnClose: true,
-        closeTimeout: 2000
-      })
-      .open()
+    void showToast(feedbackText)
   }
 }
 
@@ -196,9 +191,9 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             if (!state) return false
             let cmd = state === actionToggleCommand ? actionToggleCommandAlt : actionToggleCommand
             // special behavior for Color, Dimmer
-            if (actionToggleCommand === 'OFF' && state.split(',').length === 3 && parseInt(state.split(',')[2]!) === 0)
+            if (actionToggleCommand === 'OFF' && state.split(',').length === 3 && parseInt(state.split(',')[2]) === 0)
               cmd = actionToggleCommandAlt
-            if (actionToggleCommand === 'ON' && state.split(',').length === 3 && parseInt(state.split(',')[2]!) > 0)
+            if (actionToggleCommand === 'ON' && state.split(',').length === 3 && parseInt(state.split(',')[2]) > 0)
               cmd = actionToggleCommandAlt
             if (actionToggleCommand === 'OFF' && state.indexOf(',') < 0 && parseInt(state) === 0) cmd = actionToggleCommandAlt
             if (actionToggleCommand === 'ON' && state.indexOf(',') < 0 && parseInt(state) > 0) cmd = actionToggleCommandAlt
@@ -219,12 +214,12 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
                   if (option.includes('=')) {
                     if (option.startsWith('"') && option.includes('"="') && option.endsWith('"')) {
                       const parts = option.split('"="')
-                      cmd = parts[0]!.substring(1).trim()
-                      label = parts[1]!.substring(0, parts[1]!.length - 1).trim()
+                      cmd = parts[0].substring(1).trim()
+                      label = parts[1].substring(0, parts[1].length - 1).trim()
                     } else {
                       const parts = option.split('=')
-                      cmd = parts[0]!.trim()
-                      label = parts[1]!.trim()
+                      cmd = parts[0].trim()
+                      label = parts[1].trim()
                     }
                   } else {
                     cmd = option
@@ -281,13 +276,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
               )
               showActionFeedback(prefix, actionConfig)
             } catch (e) {
-              f7.toast
-                .create({
-                  text: 'Error while running rule: ' + (e as string),
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              void showToast('Error while running rule: ' + (e as string))
             }
             break
           case Action.popup:
@@ -424,7 +413,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             const actionVariableLocation = actionVariableScope ? ctx.ctxVars![actionVariableScope] : ctx.vars
             if (!actionVariableLocation) return false
             if (actionVariableKey) {
-              actionVariableValue = setVariableKeyValues(actionVariableLocation[actionVariable]!, actionVariableKey, actionVariableValue)
+              actionVariableValue = setVariableKeyValues(actionVariableLocation[actionVariable], actionVariableKey, actionVariableValue)
             }
             actionVariableLocation[actionVariable] = actionVariableValue!
             break

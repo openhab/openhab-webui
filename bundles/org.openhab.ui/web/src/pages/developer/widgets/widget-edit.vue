@@ -118,8 +118,9 @@ import * as StandardListWidgets from '@/components/widgets/standard/list'
 import * as api from '@/api'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
-import { useViewArea } from '@/composables/useViewArea'
+import { useViewArea } from '@/js/composables/useViewArea'
 import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
+import { showToast } from '@/js/dialog-promises'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -300,34 +301,16 @@ export default {
         .then(() => {
           this.dirty = false
           if (this.createMode) {
-            f7.toast
-              .create({
-                text: 'Widget created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Widget created')
             this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.widget.uid), { reloadCurrent: true })
             this.load()
           } else {
-            f7.toast
-              .create({
-                text: 'Widget updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Widget updated')
           }
           f7.emit('sidebarRefresh', null)
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving page: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving widget: ' + err)
         })
     },
     redrawWidget() {

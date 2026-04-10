@@ -41,6 +41,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhPlaceholderWidget from './oh-placeholder-widget.vue'
 
@@ -55,7 +56,7 @@ export default {
   },
   widget: OhGridColDefinition,
   setup(props) {
-    const { config, childContext, visible, scopedCssUid, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, visible, scopedCssUid, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, visible, scopedCssUid, defaultSlots }
   }
 }

@@ -34,7 +34,7 @@ const orientParameter = () =>
     true
   )
 
-const showParameter = () => pb('show', 'Show', 'Whether to show or not this component')
+const showParameter = () => pb('show', 'Show', 'Whether to show or not this component').d('true')
 
 const nameParameter = pt('name', 'Name', 'A name which will appear on tooltips and labels')
 
@@ -119,9 +119,25 @@ const offsetUnitParameter = pt(
 
 const axisNameParameters = [nameParameter, nameLocationParameter, nameGapParameter, nameRotateParameter]
 
-const dateAxisParameters = [...axisNameParameters, gridIndexParameter]
+const xAxisStyleParameter = po('style', 'Axis Style', 'The style of the axis', [
+  { value: 'label', label: 'Label' },
+  { value: 'label+line', label: 'Label & Line' },
+  { value: 'label+line+tick', label: 'Label, Line & Tick' }
+]).d('label+line+tick')
 
-const seriesParameters = [
+const valueAxisSplitParameter = pt('split', 'Axis Split', 'Split the axis in different sections')
+  .o(
+    [
+      { value: 'line', label: 'Line' },
+      { value: 'minor', label: 'Minor' },
+      { value: 'area', label: 'Area' }
+    ],
+    true,
+    true
+  )
+  .d(['line'])
+
+const baseSeriesParameter = [
   nameParameter,
   itemParameter,
   persistenceServiceParameter,
@@ -151,7 +167,27 @@ const seriesTypeParameter = (...types: string[]): WidgetDefinitionParameter => {
   )
 }
 
-const lineSeriesSymbolParameter = pb(
+const seriesLabelPositionParameter = po('labelPosition', 'Label Position', 'The position of the labels on the series', [
+  { value: 'top', label: 'Top' },
+  { value: 'left', label: 'Left' },
+  { value: 'right', label: 'Right' },
+  { value: 'bottom', label: 'Bottom' },
+  { value: 'inside', label: 'Inside' },
+  { value: 'insideLeft', label: 'Inside - Left' },
+  { value: 'insideRight', label: 'Inside - Right' },
+  { value: 'insideTop', label: 'Inside - Top' },
+  { value: 'insideBottom', label: 'Inside - Bottom' },
+  { value: 'insideTopLeft', label: 'Inside - Top Left' },
+  { value: 'insideBottomLeft', label: 'Inside - Bottom Left' },
+  { value: 'insideTopRight', label: 'Inside - Top Right' },
+  { value: 'insideBottomRight', label: 'Inside - Bottom Right' }
+]).v((_value, configuration) => {
+  return configuration.type === 'line' || configuration.type === 'bar'
+})
+
+const seriesColorParameter = pt('color', 'Color', 'The color of the series').c('color')
+
+const lineChartSymbolParameter = pb(
   'showSymbol',
   'Show Symbol',
   'Whether to always show the datapoint symbol. It will always be shown during tooltip hover.'
@@ -159,265 +195,297 @@ const lineSeriesSymbolParameter = pb(
   return configuration.type === 'line'
 })
 
+const barChartBorderRadiusParameter = pn('barBorderRadius', 'Bar Border Radius', 'The radius of the border of the bar.')
+  .d('0')
+  .v((_value, configuration) => {
+    return configuration.type === 'bar'
+  })
+
+const seriesStyleParameters = [seriesLabelPositionParameter, seriesColorParameter, lineChartSymbolParameter, barChartBorderRadiusParameter]
+
 const aggregationFunctionParameter = pt(
   'aggregationFunction',
   'Aggregation Function',
   'How to reduce the data points in a same aggregation cluster to a single value. If not specified, the average function will be used.'
 ).o(aggregationTypeOptions, true)
 
-const chartComponentsList: WidgetDefinition[] = [
-  new WidgetDefinition('oh-chart-grid', 'Cartesian Grid', '')
-    .doc('https://echarts.apache.org/en/option.html#grid')
-    .paramGroup(positionGroup)
-    .params([
-      ...positionParameters,
-      pb('show', 'Show', ''),
-      pb('containLabel', 'Contain label', 'Whether the grid region contains the axis tick labels')
-    ]),
+export const OhChartGridDefinition = new WidgetDefinition('oh-chart-grid', 'Cartesian Grid', '')
+  .doc('https://echarts.apache.org/en/option.html#grid')
+  .paramGroup(positionGroup)
+  .params([
+    ...positionParameters,
+    pb('show', 'Show', ''),
+    pb('containLabel', 'Contain label', 'Whether the grid region contains the axis tick labels')
+  ])
 
-  new WidgetDefinition('oh-category-axis', 'Category Axis', '')
-    .doc('https://echarts.apache.org/en/option.html#xAxis')
-    .paramGroup(nameDisplayGroup)
-    .paramGroup(componentRelationsGroup)
-    .params([
-      ...dateAxisParameters,
-      po('categoryType', 'Categories', 'Type of categories to display', [
-        { value: 'hour', label: 'Minutes of hour' },
-        { value: 'day', label: 'Hours of day' },
-        { value: 'week', label: 'Days of week' },
-        { value: 'month', label: 'Days of month' },
-        { value: 'year', label: 'Months of year' },
-        { value: 'values', label: 'Values' }
-      ]).r(),
-      po('weekdayFormat', 'Weekday Format', 'Format of weekdays labels', [
-        { value: 'default', label: 'Long (default)' },
-        { value: 'short', label: 'Short' },
-        { value: 'min', label: 'Minimal' }
-      ])
-        .r()
-        .v((_, cfg) => cfg.categoryType === 'week'),
-      pb('startOnSunday', 'Start Week on Sunday', 'Check to start the week on Sundays instead of Mondays').v(
-        (_, cfg) => cfg.categoryType === 'week'
-      ),
-      po('monthFormat', 'Month Format', 'Format of months labels', [
-        { value: 'default', label: 'Long (default)' },
-        { value: 'short', label: 'Short' }
-      ])
-        .r()
-        .v((_, cfg) => cfg.categoryType === 'year'),
-      pt('data', 'Category Values', 'Category values to display')
-        .m()
-        .v((_, cfg) => cfg.categoryType === 'values')
-    ]),
-
-  new WidgetDefinition('oh-value-axis', 'Value Axis', '')
-    .doc('https://echarts.apache.org/en/option.html#yAxis')
-    .paramGroup(nameDisplayGroup)
-    .paramGroup(componentRelationsGroup)
-    .params([
-      ...axisNameParameters,
-      minParameter(),
-      maxParameter(),
-      pb(
-        'scale',
-        'Do Not Force Scale to Include Zero',
-        'If checked the scale will not necessarily include the origin (has no effect if min or max are set explicitely)'
-      ),
-      gridIndexParameter
-    ]),
-
-  new WidgetDefinition('oh-time-axis', 'Time Axis', '')
-    .doc('https://echarts.apache.org/en/option.html#xAxis')
-    .paramGroup(nameDisplayGroup)
-    .paramGroup(componentRelationsGroup)
-    .params([...axisNameParameters, gridIndexParameter]),
-
-  new WidgetDefinition('oh-calendar-axis', 'Calendar', '')
-    .doc('https://echarts.apache.org/en/option.html#calendar')
-    .paramGroup(nameDisplayGroup)
-    .paramGroup(componentRelationsGroup)
-    .paramGroup(actionGroup())
-    .params([...positionParameters, orientParameter(), gridIndexParameter, ...actionParams()]),
-
-  new WidgetDefinition('oh-data-series', 'Data Series', '')
-    .doc('https://echarts.apache.org/en/option.html#series')
-    .paramGroup(actionGroup())
-    .params([seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), lineSeriesSymbolParameter, ...actionParams()]),
-
-  new WidgetDefinition('oh-time-series', 'Time Series', '')
-    .doc('https://echarts.apache.org/en/option.html#series')
-    .paramGroup(componentRelationsGroup)
-    .paramGroup(actionGroup())
-    .params([
-      ...seriesParameters,
-      markersParameter(true),
-      seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
-      lineSeriesSymbolParameter,
-      xAxisIndexParameter,
-      yAxisIndexParameter,
-      ...actionParams()
-    ]),
-
-  new WidgetDefinition('oh-state-series', 'State Series', '')
-    .paramGroup(componentRelationsGroup)
-    .paramGroup(actionGroup())
-    .params([
-      ...seriesParameters,
-      pd(
-        'yValue',
-        'Y Value',
-        'The position the state timeline should appear on the Y axis (in graph coordinates). If Y axis is a category axis, this should be the index of the category'
-      ),
-      pd('yHeight', 'Y Height', 'The height the state timeline bar in graph coordinates (default is 0.6)'),
-      xAxisIndexParameter,
-      yAxisIndexParameter,
-      ...actionParams()
-    ]),
-
-  new WidgetDefinition('oh-aggregate-series', 'Aggregate Series', '')
-    .doc('https://echarts.apache.org/en/option.html#series')
-    .paramGroup(componentRelationsGroup)
-    .paramGroup(actionGroup())
-    .params([
-      ...seriesParameters,
-      markersParameter(),
-      seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
-      lineSeriesSymbolParameter,
-      po(
-        'dimension1',
-        'First Dimension',
-        'The largest data point cluster size.<br />It should be consistent with the chart type, and match the type of a category axis where this series will appear.',
-        dimensionTypeOptions
-      ),
-      po(
-        'dimension2',
-        'Second Dimension',
-        'The smallest data point cluster size.<br />Set only when you have 2 category axes (for instance day of the week and hour of the day), and make sure to match the type of the 2nd axis.',
-        dimensionTypeOptions
-      ),
-      pb('transpose', 'Transpose', 'Enable when the first dimension should be mapped to the Y axis instead of the X axis'),
-      aggregationFunctionParameter,
-      xAxisIndexParameter,
-      yAxisIndexParameter,
-      ...actionParams()
-    ]),
-
-  new WidgetDefinition('oh-calendar-series', 'Calendar Series', '')
-    .doc('https://echarts.apache.org/en/option.html#series')
-    .paramGroup(componentRelationsGroup)
-    .paramGroup(actionGroup())
-    .params([
-      ...seriesParameters,
-      seriesTypeParameter('heatmap', 'scatter'),
-      lineSeriesSymbolParameter,
-      aggregationFunctionParameter,
-      calendarIndexParameter,
-      ...actionParams()
-    ]),
-
-  new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '')
-    .doc('https://echarts.apache.org/en/option.html#tooltip')
-    .params([
-      showParameter(),
-      orientParameter(),
-      pb('confine', 'Confine', 'Keep the tooltip within the chart bounds'),
-      pb(
-        'smartFormatter',
-        'Smart Formatter',
-        'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
-      ).a()
-    ]),
-
-  new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
-    .doc('https://echarts.apache.org/en/option.html#visualMap')
-    .paramGroup(
-      pg(
-        'boundariesGroup',
-        'Boundaries',
-        'Values considered in range for this visual map (by default [0, 200])<br/><strong>These cannot be determined from the series and have to be defined manually!</strong>'
-      )
-    )
-    .paramGroup(pg('appearanceGroup', 'Appearance'))
-    .paramGroup(positionGroup)
-    .params([
-      showParameter(),
-      minParameter().g('boundariesGroup'),
-      maxParameter().g('boundariesGroup'),
-      po('type', 'Type', 'Type of visual map - continuous or piecewise', [
-        { value: 'continuous', label: 'Continuous' },
-        { value: 'piecewise', label: 'Piecewise' }
-      ]).g('appearanceGroup'),
-      orientParameter().g('appearanceGroup'),
-      pb('calculable', 'Show handles', 'Show handles to filter data in continuous mode')
-        .g('appearanceGroup')
-        .v((_, cfg) => cfg.type !== 'piecewise'),
-      pn('pieces', 'Number of pieces', 'Number of pieces in piecewise mode')
-        .g('appearanceGroup')
-        .v((_, cfg) => cfg.type === 'piecewise'),
-      po(
-        'presetPalette',
-        'Preset color palette',
-        'Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient',
-        [
-          { value: 'yellowred', label: 'Yellow-Red' },
-          { value: 'greenred', label: 'Green-Yellow-Red' },
-          { value: 'whiteblue', label: 'White-Blue' },
-          { value: 'bluered', label: 'Blue-red' }
-        ]
-      ).g('appearanceGroup'),
-      ...positionParameters
-    ]),
-
-  new WidgetDefinition('oh-chart-datazoom', 'Data Zoom', '')
-    .doc('https://echarts.apache.org/en/option.html#dataZoom')
-    .paramGroup(pg(positionGroup.name, positionGroup.label ?? '', 'Applicable only to slider types'))
-    .params([
-      po('type', 'Type', 'Type: slider (default) or inside (allows to zoom with the mousewheel or a pinch gesture)', [
-        { value: 'slider', label: 'Slider' },
-        { value: 'inside', label: 'Inside' }
-      ]).r(),
-      showParameter().v((_value, configuration) => {
-        return configuration.type === 'slider'
-      }),
-      orientParameter().v((_value, configuration) => {
-        return configuration.type === 'slider'
-      }),
-      ...positionParameters.map((o) => {
-        return {
-          ...o,
-          visible: (_value, configuration) => {
-            return configuration.type === 'slider'
-          }
-        } as WidgetDefinitionParameter
-      })
-    ]),
-
-  new WidgetDefinition('oh-chart-legend', 'Legend', '')
-    .doc('https://echarts.apache.org/en/option.html#legend')
-    .paramGroup(positionGroup)
-    .params([showParameter(), orientParameter(), ...positionParameters]),
-
-  new WidgetDefinition('oh-chart-title', 'Title', '')
-    .doc('https://echarts.apache.org/en/option.html#title')
-    .paramGroup(positionGroup)
-    .params([showParameter(), pt('text', 'Title', ''), pt('subtext', 'Subtitle', ''), ...positionParameters]),
-
-  new WidgetDefinition('oh-chart-toolbox', 'Toolbox', '')
-    .doc('https://echarts.apache.org/en/option.html#toolbox')
-    .paramGroup(positionGroup)
-    .params([
-      showParameter(),
-      po('presetFeatures', 'Features', '', [
-        { value: 'saveAsImage', label: 'Save as Image' },
-        { value: 'restore', label: 'Restore' },
-        { value: 'dataView', label: 'Data Table' },
-        { value: 'dataZoom', label: 'Drag Range to Zoom' },
-        { value: 'magicType', label: 'Change Chart Type' }
-      ])
-        .m()
-        .r(),
-      ...positionParameters
+export const OhCategoryAxisDefinition = new WidgetDefinition('oh-category-axis', 'Category Axis', '')
+  .doc('https://echarts.apache.org/en/option.html#xAxis')
+  .paramGroup(nameDisplayGroup)
+  .paramGroup(componentRelationsGroup)
+  .params([
+    ...axisNameParameters,
+    xAxisStyleParameter,
+    gridIndexParameter,
+    po('categoryType', 'Categories', 'Type of categories to display', [
+      { value: 'hour', label: 'Minutes of hour' },
+      { value: 'day', label: 'Hours of day' },
+      { value: 'week', label: 'Days of week' },
+      { value: 'month', label: 'Days of month' },
+      { value: 'year', label: 'Months of year' },
+      { value: 'values', label: 'Values' }
+    ]).r(),
+    po('weekdayFormat', 'Weekday Format', 'Format of weekdays labels', [
+      { value: 'default', label: 'Long (default)' },
+      { value: 'short', label: 'Short' },
+      { value: 'min', label: 'Minimal' }
     ])
+      .r()
+      .d('default')
+      .v((_, cfg) => cfg.categoryType === 'week'),
+    pb('startOnSunday', 'Start Week on Sunday', 'Check to start the week on Sundays instead of Mondays').v(
+      (_, cfg) => cfg.categoryType === 'week'
+    ),
+    po('monthFormat', 'Month Format', 'Format of months labels', [
+      { value: 'default', label: 'Long (default)' },
+      { value: 'short', label: 'Short' }
+    ])
+      .r()
+      .d('default')
+      .v((_, cfg) => cfg.categoryType === 'year'),
+    pt('data', 'Category Values', 'Category values to display')
+      .m()
+      .v((_, cfg) => cfg.categoryType === 'values')
+  ])
+
+export const OhValueAxisDefinition = new WidgetDefinition('oh-value-axis', 'Value Axis', '')
+  .doc('https://echarts.apache.org/en/option.html#yAxis')
+  .paramGroup(nameDisplayGroup)
+  .paramGroup(componentRelationsGroup)
+  .params([
+    ...axisNameParameters,
+    minParameter(),
+    maxParameter(),
+    pb(
+      'scale',
+      'Do Not Force Scale to Include Zero',
+      'If checked the scale will not necessarily include the origin (has no effect if min or max are set explicitly)'
+    ),
+    valueAxisSplitParameter,
+    gridIndexParameter
+  ])
+
+export const OhTimeAxisDefinition = new WidgetDefinition('oh-time-axis', 'Time Axis', '')
+  .doc('https://echarts.apache.org/en/option.html#xAxis')
+  .paramGroup(nameDisplayGroup)
+  .paramGroup(componentRelationsGroup)
+  .params([...axisNameParameters, xAxisStyleParameter, gridIndexParameter])
+
+export const OhCalendarAxisDefinition = new WidgetDefinition('oh-calendar-axis', 'Calendar', '')
+  .doc('https://echarts.apache.org/en/option.html#calendar')
+  .paramGroup(nameDisplayGroup)
+  .paramGroup(componentRelationsGroup)
+  .paramGroup(actionGroup())
+  .params([...positionParameters, orientParameter(), gridIndexParameter, ...actionParams()])
+
+export const OhDataSeriesDefinition = new WidgetDefinition('oh-data-series', 'Data Series', '')
+  .doc('https://echarts.apache.org/en/option.html#series')
+  .paramGroup(actionGroup())
+  .params([seriesTypeParameter('line', 'bar', 'heatmap', 'scatter', 'gauge', 'pie'), ...seriesStyleParameters, ...actionParams()])
+
+export const OhTimeSeriesDefinition = new WidgetDefinition('oh-time-series', 'Time Series', '')
+  .doc('https://echarts.apache.org/en/option.html#series')
+  .paramGroup(componentRelationsGroup)
+  .paramGroup(actionGroup())
+  .params([
+    ...baseSeriesParameter,
+    markersParameter(true),
+    seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+    ...seriesStyleParameters,
+    xAxisIndexParameter,
+    yAxisIndexParameter,
+    ...actionParams()
+  ])
+
+export const OhStateSeriesDefinition = new WidgetDefinition('oh-state-series', 'State Series', '')
+  .paramGroup(componentRelationsGroup)
+  .paramGroup(actionGroup())
+  .params([
+    ...baseSeriesParameter,
+    pd(
+      'yValue',
+      'Y Value',
+      'The position the state timeline should appear on the Y axis (in graph coordinates). If Y axis is a category axis, this should be the index of the category'
+    ),
+    pd('yHeight', 'Y Height', 'The height the state timeline bar in graph coordinates (default is 0.6)'),
+    xAxisIndexParameter,
+    yAxisIndexParameter,
+    ...actionParams()
+  ])
+
+export const OhAggregateSeriesDefinition = new WidgetDefinition('oh-aggregate-series', 'Aggregate Series', '')
+  .doc('https://echarts.apache.org/en/option.html#series')
+  .paramGroup(componentRelationsGroup)
+  .paramGroup(actionGroup())
+  .params([
+    ...baseSeriesParameter,
+    markersParameter(),
+    seriesTypeParameter('line', 'bar', 'heatmap', 'scatter'),
+    ...seriesStyleParameters,
+    po(
+      'dimension1',
+      'First Dimension',
+      'The largest data point cluster size.<br />It should be consistent with the chart type, and match the type of a category axis where this series will appear.',
+      dimensionTypeOptions
+    ),
+    po(
+      'dimension2',
+      'Second Dimension',
+      'The smallest data point cluster size.<br />Set only when you have 2 category axes (for instance day of the week and hour of the day), and make sure to match the type of the 2nd axis.',
+      dimensionTypeOptions
+    ),
+    pb('transpose', 'Transpose', 'Enable when the first dimension should be mapped to the Y axis instead of the X axis'),
+    aggregationFunctionParameter,
+    xAxisIndexParameter,
+    yAxisIndexParameter,
+    ...actionParams()
+  ])
+
+export const OhCalendarSeriesDefinition = new WidgetDefinition('oh-calendar-series', 'Calendar Series', '')
+  .doc('https://echarts.apache.org/en/option.html#series')
+  .paramGroup(componentRelationsGroup)
+  .paramGroup(actionGroup())
+  .params([
+    ...baseSeriesParameter,
+    seriesTypeParameter('heatmap', 'scatter'),
+    seriesColorParameter,
+    aggregationFunctionParameter,
+    calendarIndexParameter,
+    ...actionParams()
+  ])
+
+export const OhChartTooltipDefinition = new WidgetDefinition('oh-chart-tooltip', 'Tooltip', '')
+  .doc('https://echarts.apache.org/en/option.html#tooltip')
+  .params([
+    showParameter(),
+    orientParameter(),
+    pb('confine', 'Confine', 'Keep the tooltip within the chart bounds'),
+    pb(
+      'smartFormatter',
+      'Smart Formatter',
+      'Automatically format numbers according to local configuration (e.g., decimal places) & Display markArea information'
+    )
+      .d('true')
+      .a()
+  ])
+
+export const OhChartVisualmapDefinition = new WidgetDefinition('oh-chart-visualmap', 'Visual Map', '')
+  .doc('https://echarts.apache.org/en/option.html#visualMap')
+  .paramGroup(
+    pg(
+      'boundariesGroup',
+      'Boundaries',
+      'Values considered in range for this visual map (by default [0, 200])<br/><strong>These cannot be determined from the series and have to be defined manually!</strong>'
+    )
+  )
+  .paramGroup(pg('appearanceGroup', 'Appearance'))
+  .paramGroup(positionGroup)
+  .params([
+    showParameter(),
+    minParameter().g('boundariesGroup'),
+    maxParameter().g('boundariesGroup'),
+    po('type', 'Type', 'Type of visual map - continuous or piecewise', [
+      { value: 'continuous', label: 'Continuous' },
+      { value: 'piecewise', label: 'Piecewise' }
+    ]).g('appearanceGroup'),
+    orientParameter().g('appearanceGroup'),
+    pb('calculable', 'Show handles', 'Show handles to filter data in continuous mode')
+      .g('appearanceGroup')
+      .v((_, cfg) => cfg.type !== 'piecewise'),
+    pn('pieces', 'Number of pieces', 'Number of pieces in piecewise mode')
+      .g('appearanceGroup')
+      .v((_, cfg) => cfg.type === 'piecewise'),
+    po(
+      'presetPalette',
+      'Preset color palette',
+      'Choose from a selection of preset color palettes for the values in range. The default is a yellow (low) to red (high) gradient',
+      [
+        { value: 'yellowred', label: 'Yellow-Red' },
+        { value: 'greenred', label: 'Green-Yellow-Red' },
+        { value: 'whiteblue', label: 'White-Blue' },
+        { value: 'bluered', label: 'Blue-red' }
+      ]
+    ).g('appearanceGroup'),
+    ...positionParameters
+  ])
+
+export const OhChartDatazoomDefinition = new WidgetDefinition('oh-chart-datazoom', 'Data Zoom', '')
+  .doc('https://echarts.apache.org/en/option.html#dataZoom')
+  .paramGroup(pg(positionGroup.name, positionGroup.label ?? '', 'Applicable only to slider types'))
+  .params([
+    po('type', 'Type', 'Type: slider (default) or inside (allows to zoom with the mousewheel or a pinch gesture)', [
+      { value: 'slider', label: 'Slider' },
+      { value: 'inside', label: 'Inside' }
+    ]).r(),
+    showParameter().v((_value, configuration) => {
+      return configuration.type === 'slider'
+    }),
+    orientParameter().v((_value, configuration) => {
+      return configuration.type === 'slider'
+    }),
+    ...positionParameters.map((o) => {
+      return {
+        ...o,
+        visible: (_value, configuration) => {
+          return configuration.type === 'slider'
+        }
+      } as WidgetDefinitionParameter
+    })
+  ])
+
+export const OhChartLegendDefinition = new WidgetDefinition('oh-chart-legend', 'Legend', '')
+  .doc('https://echarts.apache.org/en/option.html#legend')
+  .paramGroup(positionGroup)
+  .params([showParameter(), orientParameter(), ...positionParameters])
+
+export const OhChartTitleDefinition = new WidgetDefinition('oh-chart-title', 'Title', '')
+  .doc('https://echarts.apache.org/en/option.html#title')
+  .paramGroup(positionGroup)
+  .params([showParameter(), pt('text', 'Title', ''), pt('subtext', 'Subtitle', ''), ...positionParameters])
+
+export const OhChartToolboxDefinition = new WidgetDefinition('oh-chart-toolbox', 'Toolbox', '')
+  .doc('https://echarts.apache.org/en/option.html#toolbox')
+  .paramGroup(positionGroup)
+  .params([
+    showParameter(),
+    po('presetFeatures', 'Features', '', [
+      { value: 'saveAsImage', label: 'Save as Image' },
+      { value: 'restore', label: 'Restore' },
+      { value: 'dataView', label: 'Data Table' },
+      { value: 'dataZoom', label: 'Drag Range to Zoom' },
+      { value: 'magicType', label: 'Change Chart Type' }
+    ])
+      .m()
+      .r(),
+    ...positionParameters
+  ])
+
+const chartComponentsList: WidgetDefinition[] = [
+  OhChartGridDefinition,
+  OhCategoryAxisDefinition,
+  OhValueAxisDefinition,
+  OhTimeAxisDefinition,
+  OhCalendarAxisDefinition,
+  OhDataSeriesDefinition,
+  OhTimeSeriesDefinition,
+  OhStateSeriesDefinition,
+  OhAggregateSeriesDefinition,
+  OhCalendarSeriesDefinition,
+  OhChartTooltipDefinition,
+  OhChartVisualmapDefinition,
+  OhChartDatazoomDefinition,
+  OhChartLegendDefinition,
+  OhChartTitleDefinition,
+  OhChartToolboxDefinition
 ]
 
 const chartComponents: Record<string, WidgetDefinition> = Object.fromEntries(chartComponentsList.map((c) => [c.name, c]))

@@ -253,6 +253,7 @@ import DirtyMixin from '../../dirty-mixin'
 
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [RuleMixin, RuleStatus, DirtyMixin],
@@ -383,68 +384,34 @@ export default {
         .then((data) => {
           this.dirty = false
           if (this.createMode) {
-            f7.toast
-              .create({
-                text: 'Scene created',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              })
-              .open()
+            showToast('Scene created')
             this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
             this.load()
           } else {
             if (!noToast) {
-              f7.toast
-                .create({
-                  text: 'Scene updated',
-                  destroyOnClose: true,
-                  closeTimeout: 2000
-                })
-                .open()
+              showToast('Scene updated')
             }
             this.savedRule = cloneDeep(this.rule)
           }
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while saving scene: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while saving scene: ' + err)
         })
     },
     runNow() {
       if (this.createMode) return
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
-        return f7.toast
-          .create({
-            text: `Scene cannot be activated ${this.rule.status.status === 'RUNNING' ? 'while currently activating, please wait' : 'if it is uninitialized'}!`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(
+          `Scene cannot be activated ${this.rule.status.status === 'RUNNING' ? 'while currently activating, please wait' : 'if it is uninitialized'}!`
+        )
       }
-      f7.toast
-        .create({
-          text: 'Activating scene',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        })
-        .open()
+      showToast('Activating scene')
 
       const savePromise = this.isEditable && this.dirty ? this.save(true) : Promise.resolve()
 
       savePromise.then(() => {
         this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while activating scene: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while activating scene: ' + err)
         })
       })
     },
@@ -575,13 +542,7 @@ export default {
       const itemName = module.configuration.itemName
       const command = module.configuration.command
       this.$oh.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain').then(() => {
-        f7.toast
-          .create({
-            text: `Updated desired state of ${itemName} to ${command}`,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        showToast(`Updated desired state of ${itemName} to ${command}`)
       })
     },
     updateActionModule(params) {

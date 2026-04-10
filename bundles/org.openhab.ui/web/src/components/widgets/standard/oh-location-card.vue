@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import LocationCard from '@/components/cards/location-card.vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhLocationCardParameters } from '@/assets/definitions/widgets/home'
@@ -15,7 +16,7 @@ export default {
     context: Object
   },
   setup(props) {
-    const { config } = useWidgetContext(props.context)
+    const { config } = useWidgetContext(computed(() => props.context))
     return { config }
   },
   computed: {

@@ -6,6 +6,7 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import * as api from '@/api'
 import { ApiError, getErrorMessage } from '../hey-api'
+import { showToast } from '../dialog-promises'
 
 /**
  * The thing edit store is used by thing-details.vue to store data independent of the component's lifecycle.
@@ -20,7 +21,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const savedThing = ref<api.EnrichedThing | null>(null)
   const thingType = ref<api.ThingType | null>(null)
   const channelTypes = ref<api.ChannelType[] | null>(null)
-  const configDescriptions = ref<api.ConfigDescription | null>(null)
+  const configDescriptions = ref<api.EnrichedConfigDescription | null>(null)
   const thingActions = ref<api.ThingAction[] | null>(null)
   const configStatusInfo = ref<api.ConfigStatusMessage[] | null>(null)
   const firmwares = ref<api.Firmware[] | null>(null)
@@ -206,23 +207,11 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
           // if still dirty, save again to save the configuration
           save()
         }
-        f7.toast
-          .create({
-            text: successMessage,
-            destroyOnClose: true,
-            closeTimeout: 2000
-          })
-          .open()
+        void showToast(successMessage)
       })
       .catch((err: ApiError | Error) => {
         if ('response' in err && err.response && (err.response.status === 409 || err.response.statusText === 'Conflict')) {
-          f7.toast
-            .create({
-              text: 'Cannot modify configuration of uninitialized Thing',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          void showToast('Cannot modify configuration of uninitialized Thing.')
         }
       })
   }

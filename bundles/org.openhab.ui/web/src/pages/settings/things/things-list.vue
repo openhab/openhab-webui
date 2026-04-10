@@ -257,6 +257,7 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListFilter from '@/components/util/list-filter.vue'
+import { showToast } from '@/js/dialog-promises'
 
 const ITEM_KINDS = {
   editable: 'Editable',
@@ -537,13 +538,7 @@ export default {
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/things/' + i))
       Promise.all(promises)
         .then((data) => {
-          f7.toast
-            .create({
-              text: 'Things removed',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Things removed')
           this.selectedItems = []
           dialog.close()
           this.load()
@@ -561,13 +556,7 @@ export default {
       const promises = this.selectedItems.map((i) => this.$oh.api.putPlain('/rest/things/' + i + '/enable', enable.toString()))
       Promise.all(promises)
         .then((data) => {
-          f7.toast
-            .create({
-              text: enable ? 'Things enabled' : 'Things disabled',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(enable ? 'Things enabled' : 'Things disabled')
           this.selectedItems = []
           dialog.close()
           this.load()

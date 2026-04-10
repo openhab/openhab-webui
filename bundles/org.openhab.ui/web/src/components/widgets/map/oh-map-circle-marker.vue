@@ -16,6 +16,7 @@
 
 <script>
 import { f7 } from 'framework7-vue'
+import { computed } from 'vue'
 
 import { LCircle, LTooltip } from '@vue-leaflet/vue-leaflet'
 
@@ -34,7 +35,7 @@ export default {
   widget: OhMapCircleMarkerDefinition,
   emits: ['update'],
   setup(props) {
-    const { config, evaluateExpression } = useWidgetContext(props.context)
+    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
     const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
     return { config, performAction }
   },

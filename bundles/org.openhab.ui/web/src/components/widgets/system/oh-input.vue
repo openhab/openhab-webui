@@ -51,6 +51,7 @@
 <script>
 import dayjs from 'dayjs'
 
+import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhInputDefinition } from '@/assets/definitions/widgets/system'
 import { getDefaultInputType } from '@/assets/definitions/widgets/system/input.js'
@@ -64,7 +65,7 @@ export default {
   },
   widget: OhInputDefinition,
   setup(props) {
-    const { config, childContext, defaultSlots } = useWidgetContext(props.context)
+    const { config, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
     return { config, childContext, defaultSlots }
   },
   data() {

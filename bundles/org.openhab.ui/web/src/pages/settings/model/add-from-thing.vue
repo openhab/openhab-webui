@@ -138,6 +138,7 @@ import generateTextualDefinition from './generate-textual-definition'
 import cloneDeep from 'lodash/cloneDeep'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [ThingStatus, ItemMixin],
@@ -323,13 +324,7 @@ export default {
               Promise.all(linkPromises)
                 .then((data) => {
                   dialog.setProgress(100)
-                  f7.toast
-                    .create({
-                      text: 'Items created and linked',
-                      destroyOnClose: true,
-                      closeTimeout: 2000
-                    })
-                    .open()
+                  showToast('Items created and linked')
                   dialog.close()
                   this.f7router.back()
                 })

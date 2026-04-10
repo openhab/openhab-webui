@@ -15,7 +15,8 @@ export default {
   get(context: ChartContext, component: api.UiComponent, points: api.ItemHistory[], _startTime: Dayjs, endTime: Dayjs) {
     const markArea = context.evaluateExpression<Config & MarkAreaComponentOption>(
       ComponentId.get(component)!,
-      component.config as unknown as Config & MarkAreaComponentOption
+      component.config as unknown as Config & MarkAreaComponentOption,
+      null
     )
 
     const states = (markArea.states && !Array.isArray(markArea.states) ? [markArea.states] : (markArea.states as string[])) || [
@@ -42,7 +43,7 @@ export default {
       } else if (!isInState && wasInState && currentArea) {
         // End of area
         currentArea.push({ xAxis: new Date(p.time) })
-        if (rollingState) currentArea[0]!.value = rollingState
+        if (rollingState) currentArea[0].value = rollingState
         // @ts-expect-error currentArea's type isn't type-compatible, but it still works
         markArea.data!.push(currentArea)
         currentArea = null

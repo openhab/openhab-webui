@@ -1,17 +1,13 @@
-import { ref, computed, type ComputedRef, readonly } from 'vue'
+import { computed, type ComputedRef, readonly, ref } from 'vue'
 import { computedAsync } from '@vueuse/core'
 import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import DayDuration from 'dayjs/plugin/duration'
-
-dayjs.extend(IsoWeek)
-dayjs.extend(DayDuration)
-
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import ComponentId from '../component-id'
 import * as api from '@/api'
-import { startOf, addOrSubtractPeriod as addOrSubtractPeriodUtil } from './util/time.ts'
+import { addOrSubtractPeriod as addOrSubtractPeriodUtil, startOf } from './util/time.ts'
 
 // Axis components
 import OhTimeAxis from './axis/oh-time-axis'
@@ -36,12 +32,32 @@ import OhChartToolbox from './misc/oh-chart-toolbox'
 
 // Types
 import type { EChartsOption } from 'echarts'
-import { ChartType, type Period, type OhChart, PeriodType } from '@/types/components/widgets'
+import { ChartType, type OhChart, type Period } from '@/types/components/widgets'
+import { OhChartDefinition } from '@/assets/definitions/widgets/system'
 import type { WidgetContext } from '../types'
-import type { ChartContext, SeriesOption, AxisComponent, SeriesComponent, ChartEvaluateExpressionFn, SeriesConfig } from './types'
+import type {
+  AxisComponent,
+  ChartComponentEvaluateExpressionFn,
+  ChartContext,
+  OhSeriesConfig,
+  OhSeriesOption,
+  SeriesComponent
+} from './types'
 import type { ComponentOption } from 'echarts/types/dist/shared'
+import {
+  transformCustomXAxisOptions,
+  transformCustomSeriesOptions,
+  transformCustomYAxisOptions
+} from '@/components/widgets/chart/util/customOptions.ts'
+import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
+import cloneDeep from 'lodash/cloneDeep'
+import type { EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
+import type { WidgetDefinition } from '@/assets/definitions/widgets/helpers.ts'
 
-const DEFAULT_PERIOD = PeriodType.D
+dayjs.extend(IsoWeek)
+dayjs.extend(DayDuration)
+
+const DEFAULT_PERIOD: Period = OhChartDefinition().props.parameters.find((p) => p.name === 'period')!.default as Period
 
 const axisComponents: Record<string, AxisComponent> = {
   'oh-time-axis': OhTimeAxis,
@@ -60,29 +76,52 @@ const seriesComponents: Record<string, SeriesComponent> = {
 
 export function useChart(
   context: WidgetContext,
-  config: ComputedRef<OhChart.Config>,
+  rawConfig: ComputedRef<OhChart.Config>,
   slots: ComputedRef<Record<string, api.UiComponent[]>>,
-  evaluateExpression: ChartEvaluateExpressionFn
+  evaluateExpression: EvaluateExpressionFn
 ) {
   const uiOptionsStore = useUIOptionsStore()
   const runtimeStore = useRuntimeStore()
 
-  const speriod = ref<Period>(config.value.period || DEFAULT_PERIOD)
+  const config = computed(() => {
+    const c = cloneDeep(rawConfig.value)
+    // @ts-expect-error c is an object => Record<string, unknown>, but TS doesn't recognise that
+    applyParameterDefaults(OhChartDefinition().props.parameters, c)
+    return c
+  })
+  const period = ref<Period>(config.value.period || DEFAULT_PERIOD)
   // future as boolean allows for backwards compatibility
   const future = computed<number>(() => ((config.value.future as unknown as boolean) === true ? 1 : (config.value.future ?? 0)))
   const orient = ref<string | null>(null)
 
   const addOrSubtractPeriod = (day: Dayjs, direction: number): Dayjs => {
     if (!config.value) return day
-    const chartType = config.value.chartType || ChartType.dynamic
-    const p = evaluateExpression('.period', speriod.value) || (config.value.period as Period) || DEFAULT_PERIOD
-    return addOrSubtractPeriodUtil(chartType, p, day, direction)
+    return addOrSubtractPeriodUtil(config.value.chartType ?? ChartType.dynamic, period.value, day, direction)
   }
 
   const initialEndTime = (): Dayjs => {
     const chartType = config.value.chartType
     if (chartType) {
-      return addOrSubtractPeriod(startOf(chartType), 1 + future.value)
+      let day = dayjs()
+      switch (chartType) {
+        case ChartType.day:
+          break
+        case ChartType.isoWeek:
+          if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek)
+          break
+        case ChartType.week:
+          if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek).isoWeekday(1)
+          break
+        case ChartType.month:
+          if (config.value.initialMonth !== undefined) day = dayjs().month(parseInt(config.value.initialMonth) - 1)
+          break
+        case ChartType.year:
+          if (config.value.initialYear !== undefined) day = dayjs().year(config.value.initialYear)
+          break
+        default:
+          const exhaustiveCheck: never = chartType
+      }
+      return addOrSubtractPeriod(startOf(chartType, day), 1 + future.value)
     } else {
       return addOrSubtractPeriod(dayjs(), future.value)
     }
@@ -91,18 +130,32 @@ export function useChart(
   const endTime = ref<Dayjs>(initialEndTime())
 
   // computed
-  const numberFormatter = computed(() => new Intl.NumberFormat(runtimeStore.locale))
+  const numberFormatter = computed(
+    () =>
+      new Intl.NumberFormat(runtimeStore.locale, {
+        maximumFractionDigits: config.value.formatterMaxDecimalPlaces ?? 3
+      })
+  )
 
   const startTime = computed(() => addOrSubtractPeriod(endTime.value, -1))
 
-  const period = computed(() => evaluateExpression('.period', speriod.value))
+  const chartComponentEvaluateExpression: ChartComponentEvaluateExpressionFn = <T = unknown>(
+    key: string,
+    value: T,
+    componentDefinition: WidgetDefinition | null
+  ): T => {
+    const v = cloneDeep(value)
+    if (componentDefinition && v !== null && typeof v === 'object')
+      applyParameterDefaults(componentDefinition.props.parameters, v as Record<string, unknown>)
+    return evaluateExpression(key, v) as T
+  }
 
   const chartContext = computed<ChartContext>(() => ({
     chart: {
       ...(context.component as api.UiComponent),
       config: config.value
     },
-    evaluateExpression,
+    evaluateExpression: chartComponentEvaluateExpression,
     numberFormatter: numberFormatter.value
   }))
 
@@ -113,24 +166,28 @@ export function useChart(
 
   const xAxis = computed(() => {
     if (!slots.value?.xAxis) return []
-    return slots.value.xAxis.map((a) => axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
+    return slots.value.xAxis.map((a) =>
+      transformCustomXAxisOptions(axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value))
+    )
   })
 
   const yAxis = computed(() => {
     if (!slots.value || !slots.value.yAxis) return []
-    return slots.value.yAxis.map((a) => axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value, true))
+    return slots.value.yAxis.map((a) =>
+      transformCustomYAxisOptions(axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value, true))
+    )
   })
 
   const calendar = computed(() => {
     if (!slots.value?.calendar) return []
     return slots.value.calendar.map((a) =>
-      axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value, orient.value === 'vertical')
+      axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value, orient.value === 'vertical')
     )
   })
 
   const singleAxis = computed(() => {
     if (!slots.value?.singleAxis) return []
-    return slots.value.singleAxis.map((a) => axisComponents[a.component]!.get(chartContext.value, a, startTime.value, endTime.value))
+    return slots.value.singleAxis.map((a) => axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value))
   })
 
   const tooltip = computed<ComponentOption[]>(() => {
@@ -192,19 +249,22 @@ export function useChart(
   const _items: Record<string, api.EnrichedItem> = {}
   const _itemPromises: Record<string, Promise<api.EnrichedItem>> = {}
   const _persistencePromises: Record<string, Promise<api.ItemHistory>> = {}
-  const getSeriesPromises = async (component: api.UiComponent): Promise<SeriesOption> => {
-    const config = evaluateExpression<SeriesConfig>(ComponentId.get(component)!, component.config)
 
-    const getter = (data: [api.EnrichedItem, api.ItemHistory][]): SeriesOption =>
-      seriesComponents[component.component]!.get(
-        chartContext.value,
-        component,
-        data.map((d) => d[1]),
-        startTime.value,
-        endTime.value
+  const getSeriesPromises = async (component: api.UiComponent): Promise<OhSeriesOption> => {
+    const config = evaluateExpression<OhSeriesConfig>(ComponentId.get(component)!, component.config)
+
+    const getter = (data: [api.EnrichedItem, api.ItemHistory][]): OhSeriesOption =>
+      transformCustomSeriesOptions(
+        seriesComponents[component.component].get(
+          chartContext.value,
+          component,
+          data.map((d) => d[1]),
+          startTime.value,
+          endTime.value
+        )
       )
 
-    const neededItems = seriesComponents[component.component]!.neededItems(chartContext.value, component).filter((i) => !!i)
+    const neededItems = seriesComponents[component.component].neededItems(chartContext.value, component).filter((i) => !!i)
     if (neededItems.length === 0) {
       return getter([])
     }
@@ -215,15 +275,15 @@ export function useChart(
     const isNotFuture = !(future.value > 0)
 
     let boundary =
-      seriesComponents[component.component]!.includeBoundary?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
-    if (config.noBoundary === true) boundary = false
+      seriesComponents[component.component].includeBoundary?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
+    if ('noBoundary' in config && config.noBoundary === true) boundary = false
 
     let itemState =
-      seriesComponents[component.component]!.includeItemState?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
-    if (config.noItemState === true) itemState = false
+      seriesComponents[component.component].includeItemState?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
+    if ('noItemState' in config && config.noItemState === true) itemState = false
 
     neededItems.forEach((neededItem) => {
-      if (_itemPromises[neededItem]) {
+      if (_itemPromises[neededItem] !== undefined) {
         // do nothing
       } else if (_items[neededItem]) {
         _itemPromises[neededItem] = Promise.resolve(_items[neededItem])
@@ -239,33 +299,33 @@ export function useChart(
     const combinedPromises = neededItems.map(async (neededItem) => {
       let seriesStartTime = startTime.value
       let seriesEndTime = endTime.value
-      if (config.offsetAmount && config.offsetUnit) {
+      if ('offsetAmount' in config && config.offsetAmount && config.offsetUnit) {
         seriesStartTime = seriesStartTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
         seriesEndTime = seriesEndTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
       }
       const query = {
         itemName: neededItem,
-        serviceId: config.service,
+        serviceId: 'service' in config ? config.service : undefined,
         starttime: seriesStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
         boundary,
         itemState
       }
       const key = `${neededItem}-${query.serviceId ?? 'default'}-${query.starttime}-${query.endtime}-${boundary.toString()}-${itemState.toString()}`
-      if (!_persistencePromises[key]) {
+      if (_persistencePromises[key] === undefined) {
         _persistencePromises[key] = api.getItemDataFromPersistenceService(query).then((result) => {
           delete _persistencePromises[key]
           return result!
         })
       }
 
-      return await Promise.all([_itemPromises[neededItem] as Promise<api.EnrichedItem>, _persistencePromises[key]])
+      return await Promise.all([_itemPromises[neededItem], _persistencePromises[key]])
     })
 
     return Promise.all(combinedPromises).then(getter)
   }
 
-  const series = computedAsync<SeriesOption[]>(async () => {
+  const series = computedAsync<OhSeriesOption[]>(async () => {
     if (!slots.value || !slots.value.series) {
       return []
     }
@@ -300,7 +360,7 @@ export function useChart(
 
   // methods
   const setPeriod = (periodValue: Period) => {
-    speriod.value = periodValue
+    period.value = periodValue
     endTime.value = addOrSubtractPeriod(dayjs(), future.value)
   }
 
@@ -321,7 +381,7 @@ export function useChart(
   return {
     endTime: readonly(endTime),
     startTime,
-    period,
+    period: readonly(period),
     options,
 
     setPeriod,
