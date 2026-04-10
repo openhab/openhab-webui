@@ -299,9 +299,7 @@ describe('blocks-logic', () => {
 
     test('has help URL', () => {
       const block = workspace.newBlock('oh_logic_undefined')
-      expect(block.helpUrl).toBe(
-        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic'
-      )
+      expect(block.helpUrl).toBe('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic')
     })
 
     test('has no inputs except dummy label', () => {
@@ -379,26 +377,20 @@ describe('blocks-logic', () => {
 
     test('has help URL', () => {
       const block = workspace.newBlock('oh_logic_multiple')
-      expect(block.helpUrl).toBe(
-        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic'
-      )
+      expect(block.helpUrl).toBe('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic')
     })
 
     test('shows "all of" label for AND', () => {
       const block = workspace.newBlock('oh_logic_multiple')
       block.setFieldValue('AND', 'operand')
-      const labelField = block
-        .getInput('OPERAND_LABEL')!
-        .fieldRow.find((f) => f.name === 'OPERAND_LABEL_TEXT')
+      const labelField = block.getInput('OPERAND_LABEL')!.fieldRow.find((f) => f.name === 'OPERAND_LABEL_TEXT')
       expect(labelField!.getValue()).toBe('all of')
     })
 
     test('shows "any of" label for OR', () => {
       const block = workspace.newBlock('oh_logic_multiple')
       block.setFieldValue('OR', 'operand')
-      const labelField = block
-        .getInput('OPERAND_LABEL')!
-        .fieldRow.find((f) => f.name === 'OPERAND_LABEL_TEXT')
+      const labelField = block.getInput('OPERAND_LABEL')!.fieldRow.find((f) => f.name === 'OPERAND_LABEL_TEXT')
       expect(labelField!.getValue()).toBe('any of')
     })
 
