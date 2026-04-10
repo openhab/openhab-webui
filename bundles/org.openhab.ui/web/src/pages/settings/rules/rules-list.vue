@@ -173,11 +173,10 @@
               class="rulelist-item"
               :checkbox="showCheckboxes ? true : null"
               :checked="isChecked(rule.uid) ? true : null"
-              :prevent-router="showCheckboxes"
-              @click.ctrl="ctrlClick($event, rule)"
-              @click.meta="ctrlClick($event, rule)"
-              @click.exact="click($event, rule)"
-              :link="`${rule.uid}`"
+              @click.ctrl="(e) => ctrlClick(e, rule)"
+              @click.meta="(e) => ctrlClick(e, rule)"
+              @click.exact="(e) => click(e, rule)"
+              link=""
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
@@ -524,6 +523,8 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
+      } else {
+        this.f7router.navigate(item.uid)
       }
     },
     ctrlClick(event, item) {

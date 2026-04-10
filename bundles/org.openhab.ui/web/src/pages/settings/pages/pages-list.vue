@@ -92,11 +92,10 @@
               :checkbox="showCheckboxes && page.uid !== 'overview'"
               :checked="isChecked((page.component === 'Sitemap' ? 'system:sitemap:' : 'ui:page:') + page.uid)"
               :disabled="showCheckboxes && page.uid === 'overview' ? true : null"
-              :prevent-router="showCheckboxes && page.uid !== 'overview'"
-              @click.ctrl="ctrlClick($event, page)"
-              @click.meta="ctrlClick($event, page)"
-              @click.exact="click($event, page)"
-              :link="`/settings/pages/${getPageType(page).type}/${page.uid}`"
+              @click.ctrl="(e) => ctrlClick(e, page)"
+              @click.meta="(e) => ctrlClick(e, page)"
+              @click.exact="(e) => click(e, page)"
+              link=""
               :title="page.config.label"
               :subtitle="getPageType(page).label"
               :footer="page.uid"
@@ -291,6 +290,8 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
+      } else {
+        this.f7router.navigate(this.getPageType(item).type + '/' + item.uid)
       }
     },
     ctrlClick(event, item) {

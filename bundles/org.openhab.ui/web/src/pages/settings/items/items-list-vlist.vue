@@ -107,13 +107,12 @@
               class="itemlist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(item.name)"
-              :prevent-router="showCheckboxes"
-              @click.ctrl="ctrlClick($event, item)"
-              @click.meta="ctrlClick($event, item)"
-              @click.exact="click($event, item)"
-              :link="`/settings/items/${item.name}`"
-              :title="item.label ? item.label : item.name"
-              :footer="item.label ? item.name : '\xa0'"
+              @click.ctrl="(e) => ctrlClick(e, item)"
+              @click.meta="(e) => ctrlClick(e, item)"
+              @click.exact="(e) => click(e, item)"
+              link=""
+              :title="(item.label) ? item.label : item.name"
+              :footer="(item.label) ? item.name : '\xa0'"
               :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
               :after="item.state ? item.state : '\xa0'">
@@ -337,6 +336,8 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.name, item)
+      } else {
+        this.f7router.navigate(item.name)
       }
     },
     ctrlClick(event, item) {
