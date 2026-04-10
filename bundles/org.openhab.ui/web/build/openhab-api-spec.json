@@ -2235,7 +2235,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ConfigDescription"
+                    "$ref": "#/components/schemas/EnrichedConfigDescription"
                   }
                 }
               }
@@ -2283,7 +2283,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConfigDescription"
+                  "$ref": "#/components/schemas/EnrichedConfigDescription"
                 }
               }
             }
@@ -8156,14 +8156,14 @@
           "description": {
             "type": "string"
           },
-          "configuration": {
-            "$ref": "#/components/schemas/Configuration"
-          },
           "label": {
             "type": "string"
           },
           "id": {
             "type": "string"
+          },
+          "configuration": {
+            "$ref": "#/components/schemas/Configuration"
           }
         }
       },
@@ -8193,13 +8193,6 @@
       "Template": {
         "type": "object",
         "properties": {
-          "tags": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
           "uid": {
             "type": "string"
           },
@@ -8210,6 +8203,13 @@
               "HIDDEN",
               "EXPERT"
             ]
+          },
+          "tags": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "description": {
             "type": "string"
@@ -8673,7 +8673,7 @@
           }
         }
       },
-      "ConfigDescription": {
+      "EnrichedConfigDescription": {
         "required": [
           "parameterGroups",
           "parameters"
@@ -8686,13 +8686,107 @@
           "parameters": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ConfigDescriptionParameter"
+              "$ref": "#/components/schemas/EnrichedConfigDescriptionParameter"
             }
           },
           "parameterGroups": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ConfigDescriptionParameterGroup"
+            }
+          }
+        }
+      },
+      "EnrichedConfigDescriptionParameter": {
+        "required": [
+          "name",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "string"
+          },
+          "default": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "TEXT",
+              "INTEGER",
+              "DECIMAL",
+              "BOOLEAN"
+            ]
+          },
+          "min": {
+            "type": "number"
+          },
+          "max": {
+            "type": "number"
+          },
+          "step": {
+            "type": "number"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "multiple": {
+            "type": "boolean"
+          },
+          "multipleLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "groupName": {
+            "type": "string"
+          },
+          "advanced": {
+            "type": "boolean"
+          },
+          "verify": {
+            "type": "boolean"
+          },
+          "limitToOptions": {
+            "type": "boolean"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "unitLabel": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParameterOption"
+            }
+          },
+          "filterCriteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterCriteria"
+            }
+          },
+          "defaultValues": {
+            "type": "array",
+            "items": {
+              "type": "string"
             }
           }
         }
@@ -10380,6 +10474,30 @@
           },
           "editable": {
             "type": "boolean"
+          }
+        }
+      },
+      "ConfigDescription": {
+        "required": [
+          "parameterGroups",
+          "parameters"
+        ],
+        "type": "object",
+        "properties": {
+          "uri": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConfigDescriptionParameter"
+            }
+          },
+          "parameterGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConfigDescriptionParameterGroup"
+            }
           }
         }
       },
