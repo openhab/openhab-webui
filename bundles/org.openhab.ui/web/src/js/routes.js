@@ -545,10 +545,7 @@ export default [
             path: ':uid',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(WidgetEditPage, ({ to }) => (to.params.uid === 'add' ? { createMode: true } : {})),
-            options: {
-              animate: false
-            }
+            async: loadAsync(WidgetEditPage, ({ to }) => (to.params.uid === 'add' ? { createMode: true } : {}))
           }
         ]
       },
