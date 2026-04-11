@@ -14,8 +14,8 @@ package org.openhab.ui.internal;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.http.context.ServletContextHelper;
-import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
+import org.osgi.service.servlet.context.ServletContextHelper;
+import org.osgi.service.servlet.whiteboard.HttpWhiteboardConstants;
 
 /**
  * The {@link UIContext} is the shared context for Main UI servlets
@@ -30,6 +30,6 @@ import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
         HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_INIT_PARAM_PREFIX + "redirectWelcome=false",
         HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_INIT_PARAM_PREFIX + "preCompressed=true",
         HttpWhiteboardConstants.HTTP_WHITEBOARD_CONTEXT_INIT_PARAM_PREFIX
-                + "etags=true" }, service = ServletContextHelper.class)
+                + "etags=true" }, service = { ServletContextHelper.class, UIContext.class })
 public class UIContext extends ServletContextHelper {
 }
