@@ -46,12 +46,20 @@ export default {
       webrtc: null,
       localAudioStream: null,
       audioTransceiver: null,
+      offerAbortController: null,
+      webrtcSendChannel: null,
+      popupElement: null,
+      isStopping: false,
       isMicOn: false,
       isMuted: false
     }
   },
   watch: {
     src(value) {
+      if (!value) {
+        this.stopStream()
+        return
+      }
       this.startStream()
     },
     sendAudio(value) {
@@ -92,19 +100,116 @@ export default {
   },
   mounted() {
     this.isMuted = this.startMuted || false
+    this.attachPopupLifecycleListeners()
+  },
+  beforeUnmount() {
+    this.detachPopupLifecycleListeners()
+    this.stopStream()
   },
   methods: {
+    attachPopupLifecycleListeners() {
+      const wrapper = this.$el
+      if (!wrapper || typeof wrapper.closest !== 'function') {
+        return
+      }
+      const popup = wrapper.closest('.popup')
+      if (!popup) {
+        return
+      }
+      this.popupElement = popup
+      popup.addEventListener('popup:close', this.onPopupClose)
+      popup.addEventListener('popup:opened', this.onPopupOpened)
+    },
+    detachPopupLifecycleListeners() {
+      const popup = this.popupElement
+      if (!popup) {
+        return
+      }
+      popup.removeEventListener('popup:close', this.onPopupClose)
+      popup.removeEventListener('popup:opened', this.onPopupOpened)
+      this.popupElement = null
+    },
+    onPopupClose() {
+      this.stopStream()
+    },
+    onPopupOpened() {
+      if (this.inForeground && this.src && !this.webrtc) {
+        this.startStream()
+      }
+    },
+    resetVideoElement() {
+      const videoPlayer = this.$refs.videoPlayer
+      if (!videoPlayer) {
+        return
+      }
+      try {
+        const stream = videoPlayer.srcObject
+        if (stream && typeof stream.getTracks === 'function') {
+          stream.getTracks().forEach((track) => {
+            try {
+              track.stop()
+            } catch (e) {}
+          })
+        }
+      } catch (e) {}
+
+      try {
+        videoPlayer.pause()
+      } catch (e) {}
+      videoPlayer.srcObject = null
+      try {
+        videoPlayer.removeAttribute('src')
+        videoPlayer.load()
+      } catch (e) {}
+    },
     stopStream() {
+      if (this.isStopping) {
+        return
+      }
+      const hasActiveStream = !!(
+        this.offerAbortController ||
+        this.webrtc ||
+        this.webrtcSendChannel ||
+        (this.$refs.videoPlayer && this.$refs.videoPlayer.srcObject)
+      )
+      if (!hasActiveStream) {
+        return
+      }
+      this.isStopping = true
       console.debug('WebRTC Closing Connection')
-      if (this.webrtc) {
-        this.webrtc.isClosed = true
-        try {
-          this.disableMicrophone()
-        } catch (e) {}
-        this.webrtc.close()
-        // see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/close
-        this.audioTransceiver = null
-        this.webrtc = null
+      try {
+        if (this.offerAbortController) {
+          try {
+            this.offerAbortController.abort()
+          } catch (e) {}
+          this.offerAbortController = null
+        }
+        if (this.webrtcSendChannel) {
+          try {
+            this.webrtcSendChannel.onclose = null
+          } catch (e) {}
+          try {
+            this.webrtcSendChannel.close()
+          } catch (e) {}
+          this.webrtcSendChannel = null
+        }
+        if (this.webrtc) {
+          this.webrtc.isClosed = true
+          try {
+            this.disableMicrophone()
+          } catch (e) {}
+          try {
+            this.webrtc.ontrack = null
+            this.webrtc.onnegotiationneeded = null
+          } catch (e) {}
+          this.webrtc.close()
+          // see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/close
+          this.audioTransceiver = null
+          this.webrtc = null
+        }
+        this.resetVideoElement()
+      } finally {
+        this.isStopping = false
       }
     },
     startStream() {
@@ -136,14 +241,25 @@ export default {
         this.enableMicrophone(webrtc, this.audioTransceiver)
       }
       webrtc.onnegotiationneeded = function handleNegotiationNeeded() {
+        self.offerAbortController = new AbortController()
         // WebRTC lifecycle to create a live stream
         webrtc
           .createOffer()
           .then((offer) => webrtc.setLocalDescription(offer))
           .then(() => waitForCandidates(self.candidatesTimeout))
           .then(() => sendOffer())
-          .then((answer) => webrtc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: answer })))
+          .then((answer) => {
+            if (webrtc.isClosed || self.webrtc !== webrtc) {
+              return
+            }
+            return webrtc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: answer }))
+          })
           .catch((e) => console.warn(e))
+          .finally(() => {
+            if (self.offerAbortController) {
+              self.offerAbortController = null
+            }
+          })
 
         // waits x amount of time for ICE candidates before resolving
         function waitForCandidates(timeout = 2000) {
@@ -172,12 +288,17 @@ export default {
           return new Promise((resolve, reject) => {
             fetch(self.src, {
               method: 'POST',
+              signal: self.offerAbortController ? self.offerAbortController.signal : undefined,
               body: new URLSearchParams({
                 data: btoa(webrtc.localDescription.sdp)
               })
             })
               .then((response) => response.text())
               .then((data) => {
+                if (webrtc.isClosed || self.webrtc !== webrtc) {
+                  reject(new Error('WebRTC connection already closed'))
+                  return
+                }
                 const answer = atob(data)
                 console.debug('Answer: ', answer)
                 resolve(answer)
@@ -188,10 +309,11 @@ export default {
       }
       // creates a channel needed by nest(?) cameras, we also use this to restart streams if closed
       const webrtcSendChannel = webrtc.createDataChannel('dataSendChannel')
+      this.webrtcSendChannel = webrtcSendChannel
       webrtcSendChannel.onclose = (_event) => {
         console.debug(`${webrtcSendChannel.label} has closed`)
         // if we did not close this, restart the stream
-        if (!webrtc.isClosed) {
+        if (!webrtc.isClosed && this.webrtc === webrtc && !this.isStopping) {
           console.warn(`${webrtcSendChannel.label} closed prematurely, restarting`)
           self.startStream()
         }
