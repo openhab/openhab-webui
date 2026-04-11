@@ -6,7 +6,8 @@ export const dimensionTypeOptions: ParameterOption[] = [
   { value: 'isoWeekday', label: 'Day of Week (starting on Monday)' },
   { value: 'weekday', label: 'Day of Week (starting on Sunday)' },
   { value: 'date', label: 'Day of Month' },
-  { value: 'month', label: 'Month of Year' }
+  { value: 'month', label: 'Month of Year' },
+  { value: 'year', label: 'Year' }
 ]
 
 export const aggregationTypeOptions: ParameterOption[] = [

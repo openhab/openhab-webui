@@ -126,7 +126,10 @@ export enum ChartType {
   isoWeek = 'isoWeek',
   week = 'week',
   month = 'month',
-  year = 'year'
+  year = 'year',
+  twoYears = 'twoYears',
+  threeYears = 'threeYears',
+  fiveYears = 'fiveYears'
 }
 
 export type Period = `${number}${PeriodType}` | PeriodType
