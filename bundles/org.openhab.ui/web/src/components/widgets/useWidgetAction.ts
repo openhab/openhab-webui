@@ -136,7 +136,6 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
     if (!cfg) cfg = config.value
     if (!cfg || !ctx) return false
 
-    console.log(`useWidgetAction::performAction called by ${ctx.component.component} with config`, cfg)
 
     let processedPrefix = processPrefix(prefix)
     const actionPropsParameterGroup = cfg[`${processedPrefix}actionPropsParameterGroup`]
@@ -391,6 +390,22 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             if (!actionHttpUrl) return false
             const actionHttpMethod = actionConfig[`${processedPrefix}actionHttpMethod`] || 'GET'
             const actionHttpBody = actionConfig[`${processedPrefix}actionHttpBody`]
+            const actionHttpVariable = actionConfig[`${processedPrefix}actionVariable`]
+            let actionHttpVariableValue: VariableValue | undefined = actionConfig[`${processedPrefix}actionVariableValue`]
+            const actionHttpVariableKey = actionConfig[`${processedPrefix}actionVariableKey`]
+            if (actionHttpVariable) {
+              const actionHttpVariableScope = ctx.ctxVars ? getVariableScope(ctx.ctxVars, ctx.varScope, actionHttpVariable) : null
+              const actionHttpVariableLocation = actionHttpVariableScope ? ctx.ctxVars![actionHttpVariableScope] : ctx.vars
+              if (!actionHttpVariableLocation) return false
+              if (actionHttpVariableKey) {
+                actionHttpVariableValue = setVariableKeyValues(
+                  actionHttpVariableLocation[actionHttpVariable],
+                  actionHttpVariableKey,
+                  actionHttpVariableValue
+                )
+              }
+              actionHttpVariableLocation[actionHttpVariable] = actionHttpVariableValue!
+            }
             console.log(`Performing HTTP ${actionHttpMethod} request to ${actionHttpUrl}`)
             try {
               await fetch(actionHttpUrl, {
