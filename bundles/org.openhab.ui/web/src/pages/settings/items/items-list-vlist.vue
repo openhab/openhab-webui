@@ -111,8 +111,8 @@
               @click.meta="(e) => ctrlClick(e, item)"
               @click.exact="(e) => click(e, item)"
               link=""
-              :title="(item.label) ? item.label : item.name"
-              :footer="(item.label) ? item.name : '\xa0'"
+              :title="item.label ? item.label : item.name"
+              :footer="item.label ? item.name : '\xa0'"
               :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
               :after="item.state ? item.state : '\xa0'">
