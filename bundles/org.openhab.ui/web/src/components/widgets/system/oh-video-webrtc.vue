@@ -71,7 +71,11 @@ export default {
     micActive(value) {
       if (value === true && !this.isMicOn) {
         this.isMicOn = true
-        this.enableMicrophone(this.webrtc, this.audioTransceiver)
+        if (this.webrtc) {
+          this.enableMicrophone(this.webrtc, this.audioTransceiver)
+        } else if (this.inForeground && this.src) {
+          this.startStream()
+        }
       } else if (value === false && this.isMicOn) {
         this.isMicOn = false
         this.disableMicrophone()
@@ -344,7 +348,8 @@ export default {
           return
         }
         // If already enabled, do nothing
-        if (this.localAudioStream && this.localAudioStream.getAudioTracks().some((t) => t.enabled)) {
+        if (this.localAudioStream && this.localAudioStream.getAudioTracks().some((t) => t.enabled)
+            && audioTransceiver && audioTransceiver.sender && audioTransceiver.sender.track) {
           return
         }
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
