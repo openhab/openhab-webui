@@ -378,8 +378,7 @@
     <Teleport to="body">
       <div v-if="showDockedLogViewer" class="log-dock" :class="{ fullscreen: logDockFullscreen }" :style="logDockStyle">
         <div class="log-dock-resize-handle" @pointerdown.prevent="startDockResize" />
-        <log-viewer
-          embedded
+        <log-viewer-embedded
           :fullscreen="logDockFullscreen"
           @hide="setLogDockVisible(false)"
           @toggle-fullscreen="toggleLogDockFullscreen" />
@@ -537,7 +536,7 @@ import buildInfo from '@/assets/build-info'
 
 import routes from '@/js/routes.js'
 import PanelRight from '@/pages/panel-right.vue'
-import LogViewer from '@/pages/developer/log-viewer.vue'
+import LogViewerEmbedded from '@/pages/developer/log-viewer/log-viewer-embedded.vue'
 import { getPageIcon } from '@/pages/page-type'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
@@ -569,7 +568,7 @@ export default {
   components: {
     EmptyStatePlaceholder,
     PanelRight,
-    LogViewer,
+    LogViewerEmbedded,
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
   setup() {
@@ -971,22 +970,22 @@ export default {
 
       // Claim our known shortcuts unconditionally so the OS/browser never
       // inserts an extended character (e.g. ¬, Ð, ˝) even when an input is focused.
-      const ourKeys = [68, 70, 76, 77] // D, F, L, M
-      if (!ourKeys.includes(ev.keyCode)) return
+      const ourKeys = ['KeyD', 'KeyF', 'KeyL', 'KeyM']
+      if (!ourKeys.includes(ev.code)) return
       ev.preventDefault()
       ev.stopPropagation()
 
-      switch (ev.keyCode) {
-        case 68: // D for developer dock
+      switch (ev.code) {
+        case 'KeyD':
           this.toggleDeveloperDock()
           break
-        case 70: // F for fullscreen log pane
+        case 'KeyF':
           if (this.logDockVisible) this.toggleLogDockFullscreen()
           break
-        case 76: // L for log pane
+        case 'KeyL':
           this.toggleLogDock()
           break
-        case 77: // M for menu
+        case 'KeyM':
           const leftPanel = f7.panel.get('left')
           if (leftPanel.opened) {
             leftPanel.close()
