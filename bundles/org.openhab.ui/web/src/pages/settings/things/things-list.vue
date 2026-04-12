@@ -217,7 +217,7 @@
   </f7-page>
 </template>
 
-<style scoped lang="stylus">
+<style lang="stylus">
 .things-list
   margin-bottom calc(var(--f7-fab-size) + 2 * calc(var(--f7-fab-margin) + var(--f7-safe-area-bottom)))
 
