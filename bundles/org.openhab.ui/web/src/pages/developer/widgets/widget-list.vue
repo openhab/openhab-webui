@@ -68,11 +68,10 @@
             class="widgetlist-item"
             :checkbox="showCheckboxes"
             :checked="isChecked(widget.uid)"
-            :prevent-router="showCheckboxes"
-            @click.ctrl="ctrlClick($event, widget)"
-            @click.meta="ctrlClick($event, widget)"
-            @click.exact="click($event, widget)"
-            :link="`/developer/widgets/${widget.uid}`"
+            @click.ctrl="(e) => ctrlClick(e, widget)"
+            @click.meta="(e) => ctrlClick(e, widget)"
+            @click.exact="(e) => click(e, widget)"
+            link=""
             :title="widget.uid">
             <template #subtitle>
               <div>
@@ -155,6 +154,8 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
+      } else {
+        this.f7router.navigate(item.uid, { animate: false })
       }
     },
     ctrlClick(event, item) {
