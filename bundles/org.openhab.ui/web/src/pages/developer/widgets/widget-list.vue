@@ -68,10 +68,11 @@
             class="widgetlist-item"
             :checkbox="showCheckboxes"
             :checked="isChecked(widget.uid)"
-            @click.ctrl="(e) => ctrlClick(e, widget)"
-            @click.meta="(e) => ctrlClick(e, widget)"
-            @click.exact="(e) => click(e, widget)"
-            link=""
+            prevent-router
+            @click.ctrl="ctrlClick($event, widget)"
+            @click.meta="ctrlClick($event, widget)"
+            @click.exact="click($event, widget)"
+            :link="`${encodeURIComponent(widget.uid)}`"
             :title="widget.uid">
             <template #subtitle>
               <div>

@@ -67,10 +67,11 @@
             class="blockslist-item"
             :checkbox="showCheckboxes"
             :checked="isChecked(b.uid) ? true : null"
-            @click.ctrl="(e) => ctrlClick(e, b)"
-            @click.meta="(e) => ctrlClick(e, b)"
-            @click.exact="(e) => click(e, b)"
-            link=""
+            prevent-router
+            @click.ctrl="ctrlClick($event, b)"
+            @click.meta="ctrlClick($event, b)"
+            @click.exact="click($event, b)"
+            :link="`${b.uid}`"
             :title="b.uid">
             <template #subtitle>
               <div>
