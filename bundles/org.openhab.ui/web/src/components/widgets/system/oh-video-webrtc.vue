@@ -69,6 +69,13 @@ export default {
       }
     },
     micActive(value) {
+      if (this.sendAudio !== true) {
+        if (this.isMicOn) {
+          this.isMicOn = false
+          this.disableMicrophone()
+        }
+        return
+      }
       if (value === true && !this.isMicOn) {
         this.isMicOn = true
         if (this.webrtc) {
@@ -103,7 +110,13 @@ export default {
     }
   },
   mounted() {
-    this.isMuted = this.startMuted || false
+    this.isMuted = this.muteActive !== undefined ? this.muteActive : (this.startMuted || false)
+    if (this.sendAudio === true && this.micActive === true) {
+      this.isMicOn = true
+      if (this.inForeground && this.src && !this.webrtc) {
+        this.startStream()
+      }
+    }
     this.attachPopupLifecycleListeners()
   },
   beforeUnmount() {
@@ -245,13 +258,14 @@ export default {
         this.enableMicrophone(webrtc, this.audioTransceiver)
       }
       webrtc.onnegotiationneeded = function handleNegotiationNeeded() {
-        self.offerAbortController = new AbortController()
+        const offerAbortController = new AbortController()
+        self.offerAbortController = offerAbortController
         // WebRTC lifecycle to create a live stream
         webrtc
           .createOffer()
           .then((offer) => webrtc.setLocalDescription(offer))
           .then(() => waitForCandidates(self.candidatesTimeout))
-          .then(() => sendOffer())
+          .then(() => sendOffer(offerAbortController))
           .then((answer) => {
             if (webrtc.isClosed || self.webrtc !== webrtc) {
               return
@@ -260,7 +274,7 @@ export default {
           })
           .catch((e) => console.warn(e))
           .finally(() => {
-            if (self.offerAbortController) {
+            if (self.offerAbortController === offerAbortController) {
               self.offerAbortController = null
             }
           })
@@ -287,12 +301,12 @@ export default {
           })
         }
         // Sends our SDP offer to the remote server, expects a SDP answer back
-        function sendOffer() {
+        function sendOffer(offerAbortController) {
           console.debug('Offer: ', webrtc.localDescription.sdp)
           return new Promise((resolve, reject) => {
             fetch(self.src, {
               method: 'POST',
-              signal: self.offerAbortController ? self.offerAbortController.signal : undefined,
+              signal: offerAbortController ? offerAbortController.signal : undefined,
               body: new URLSearchParams({
                 data: btoa(webrtc.localDescription.sdp)
               })

@@ -10,7 +10,8 @@
       :hideControls="config.hideControls"
       :posterURL="posterSrc"
       :sendAudio="config.sendAudio"
-      :micActive="config.micActive" />
+      :micActive="config.micActive"
+      :muteActive="config.muteActive" />
     <oh-video-videojs
       v-else
       :src="src"
@@ -41,8 +42,7 @@ export default {
   },
   props: {
     context: Object,
-    sendAudio: { type: Boolean },
-    micActive: { type: Boolean }
+    sendAudio: { type: Boolean }
   },
   setup(props) {
     const { config } = useWidgetContext(computed(() => props.context))
