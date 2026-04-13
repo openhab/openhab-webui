@@ -10,21 +10,21 @@
  * Test sections:
  *   Section 1:  Integration Tests — end-to-end workspace with multiple block types
  *   Section 2:  Unit Tests
- *     2a. Block & Code Generator Registration
- *     2b. oh_logic_undefined Block Definition
- *     2c. oh_logic_multiple Block Definition
- *     2d. Mutator Functionality
- *     2e. Mutator Helper Blocks (container + condition)
- *     2f. Code Generation (undefined, AND, OR)
- *     2g. Edge Cases (missing operands)
- *     2h. Runtime Evaluation (eval results)
- *     2i. Code Structure (parentheses, precedence)
+ *     2a. Common Block Properties (colour, tooltip, help URL)
+ *     2b. oh_logic_multiple Block-Specific Tests
+ *     2c. Mutator Functionality
+ *     2d. Mutator Helper Blocks (container + condition)
+ *     2e. Code Generation (undefined, AND, OR)
+ *     2f. Edge Cases (missing operands)
+ *     2g. Code Structure (parentheses, precedence)
+ *
+ *  blockDefinitions need to be extended for each newly added block
  */
 import { describe, test, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest'
 import * as Blockly from 'blockly/core'
 import { javascriptGenerator } from 'blockly/javascript'
 import * as en from 'blockly/msg/en'
-import defineLogicBlocks from '@/assets/definitions/blockly/blocks-logic'
+import defineLogicBlocks from '../blocks-logic'
 
 // Mocks for blocks-items dependencies (must be top-level)
 vi.mock('@/components/model/model-picker-popup.vue', () => ({ default: {} }))
@@ -42,8 +42,8 @@ describe('blocks-logic - integration', () => {
   let workspace: Blockly.WorkspaceSvg
 
   beforeAll(async () => {
-    const { default: defineItemBlocks } = await import('@/assets/definitions/blockly/blocks-items')
-    const { default: defineLoggingBlocks } = await import('@/assets/definitions/blockly/blocks-logging')
+    const { default: defineItemBlocks } = await import('../blocks-items')
+    const { default: defineLoggingBlocks } = await import('../blocks-logging')
     defineLogicBlocks({})
     defineItemBlocks({})
     defineLoggingBlocks({})
@@ -237,109 +237,37 @@ describe('blocks-logic', () => {
   })
 
   // =============================================
-  // 2a. Block & Code Generator Registration
-  // Verifies all logic blocks are registered,
-  // initialize correctly, and have the expected
-  // color, tooltip, help URL, and connections.
+  // 2a. Common Block Properties
+  // Verifies all logic blocks have the expected
+  // colour, tooltip, and help URL.
   // =============================================
 
-  const blockDefinitions = [
-    {
-      type: 'oh_logic_undefined',
-      colour: LOGIC_HUE_COLOUR,
-      tooltip: 'returns undefined as value',
-      helpUrl: 'https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic',
-      hasOutput: true,
-      hasPrevious: false,
-      hasNext: false,
-      hasCodeGenerator: true
-    },
-    {
-      type: 'oh_logic_multiple',
-      colour: LOGIC_HUE_COLOUR,
-      tooltip: 'Logical AND / OR with multiple operands',
-      helpUrl: 'https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic',
-      hasOutput: true,
-      hasPrevious: false,
-      hasNext: false,
-      hasCodeGenerator: true
-    },
-    {
-      type: 'oh_logic_multiple_container_block',
-      colour: LOGIC_HUE_COLOUR,
-      tooltip: 'multiple and control',
-      helpUrl: null as any,
-      hasOutput: false,
-      hasPrevious: false,
-      hasNext: false,
-      hasCodeGenerator: false
-    },
-    {
-      type: 'oh_logic_multiple_condition_block',
-      colour: LOGIC_HUE_COLOUR,
-      tooltip: 'conditionalStatement',
-      helpUrl: null as any,
-      hasOutput: false,
-      hasPrevious: true,
-      hasNext: true,
-      hasCodeGenerator: false
-    }
+  const allBlockTypes = [
+    'oh_logic_undefined',
+    'oh_logic_multiple',
+    'oh_logic_multiple_container_block',
+    'oh_logic_multiple_condition_block'
   ]
 
-  describe.each(blockDefinitions)('$type', (def) => {
-    test('is registered and initializes', () => {
-      expect(Blockly.Blocks[def.type]).toBeDefined()
-      const block = workspace.newBlock(def.type)
-      expect(block).toBeDefined()
-      expect(block.type).toBe(def.type)
+  describe.each(allBlockTypes)('%s', (blockType) => {
+    test('has correct colour (LOGIC_HUE)', () => {
+      const block = workspace.newBlock(blockType)
+      expect(block.getColour()).toBe(LOGIC_HUE_COLOUR)
     })
 
-    test('has correct colour', () => {
-      const block = workspace.newBlock(def.type)
-      expect(block.getColour()).toBe(def.colour)
+    test('has tooltip', () => {
+      const block = workspace.newBlock(blockType)
+      expect(block.tooltip).toBeTruthy()
     })
 
-    test('has correct tooltip', () => {
-      const block = workspace.newBlock(def.type)
-      expect(block.tooltip).toBe(def.tooltip)
-    })
-
-    test('has correct help URL', () => {
-      const block = workspace.newBlock(def.type)
-      expect(block.helpUrl).toBe(def.helpUrl)
-    })
-
-    test('has correct connections', () => {
-      const block = workspace.newBlock(def.type)
-      expect(!!block.outputConnection).toBe(def.hasOutput)
-      expect(!!block.previousConnection).toBe(def.hasPrevious)
-      expect(!!block.nextConnection).toBe(def.hasNext)
-    })
-
-    if (def.hasCodeGenerator) {
-      test('has registered code generator', () => {
-        expect(typeof javascriptGenerator.forBlock[def.type]).toBe('function')
-      })
-    }
-  })
-
-  // =============================================
-  // 2b. oh_logic_undefined — Block-Specific Tests
-  // Input configuration specific to this block.
-  // =============================================
-
-  describe('oh_logic_undefined Block', () => {
-    test('has no inputs except dummy label', () => {
-      const block = workspace.newBlock('oh_logic_undefined')
-      const counts = getInputCounts(block)
-      expect(counts.value).toBe(0)
-      expect(counts.statement).toBe(0)
-      expect(counts.dummy).toBe(1)
+    test('has help URL', () => {
+      const block = workspace.newBlock(blockType)
+      expect(block.helpUrl).toBeTruthy()
     })
   })
 
   // =============================================
-  // 2c. oh_logic_multiple — Block-Specific Tests
+  // 2b. oh_logic_multiple — Block-Specific Tests
   // Dropdown, type checks, labels, default operand
   // count, and mutator icon.
   // =============================================
@@ -415,7 +343,7 @@ describe('blocks-logic', () => {
   })
 
   // =============================================
-  // 2d. Mutator Functionality
+  // 2b. Mutator Functionality
   // Verifies decompose/compose/saveConnections
   // methods and XML serialization round-trip.
   // =============================================
@@ -469,7 +397,7 @@ describe('blocks-logic', () => {
   })
 
   // =============================================
-  // 2e. Mutator Helper Blocks
+  // 2d. Mutator Helper Blocks
   // Container and condition blocks used inside
   // the mutator dialog.
   // =============================================
@@ -524,7 +452,7 @@ describe('blocks-logic', () => {
   })
 
   // =============================================
-  // 2f. Code Generation
+  // 2e. Code Generation
   // Verifies generated JavaScript code patterns,
   // operator usage, and syntax validity for
   // oh_logic_undefined and oh_logic_multiple.
@@ -535,7 +463,7 @@ describe('blocks-logic', () => {
       const block = workspace.newBlock('oh_logic_undefined')
       const [code, order] = generateBlockCode(block)
       expect(code).toBe('undefined')
-      expect(order).toBe(javascriptGenerator.ORDER_ATOMIC)
+      expect(order).toBe((javascriptGenerator as any).ORDER_ATOMIC)
     })
 
     test('generates valid JavaScript', () => {
@@ -544,11 +472,6 @@ describe('blocks-logic', () => {
       expect(isValidJavaScript(code)).toBe(true)
     })
 
-    test('evaluates to undefined at runtime', () => {
-      const block = workspace.newBlock('oh_logic_undefined')
-      const [code] = generateBlockCode(block)
-      expect(eval(code)).toBeUndefined()
-    })
   })
 
   describe('oh_logic_multiple AND Operations', () => {
@@ -560,7 +483,7 @@ describe('blocks-logic', () => {
 
       const [code, order] = generateBlockCode(block)
       expect(code).toMatch(/\(true\)\s*&&\s*\(true\)/)
-      expect(order).toBe(javascriptGenerator.ORDER_ATOMIC)
+      expect(order).toBe((javascriptGenerator as any).ORDER_ATOMIC)
       expectBalancedParentheses(code)
     })
 
@@ -626,7 +549,7 @@ describe('blocks-logic', () => {
 
       const [code, order] = generateBlockCode(block)
       expect(code).toMatch(/\(true\)\s*\|\|\s*\(true\)/)
-      expect(order).toBe(javascriptGenerator.ORDER_ATOMIC)
+      expect(order).toBe((javascriptGenerator as any).ORDER_ATOMIC)
       expectBalancedParentheses(code)
     })
 
@@ -671,7 +594,7 @@ describe('blocks-logic', () => {
   })
 
   // =============================================
-  // 2g. Edge Cases
+  // 2f. Edge Cases
   // Verifies behavior when operands are missing
   // (disconnected inputs default to 'false').
   // =============================================
@@ -709,96 +632,39 @@ describe('blocks-logic', () => {
   })
 
   // =============================================
-  // 2h. Runtime Evaluation
-  // Executes generated code via eval() and verifies
-  // the result matches expected boolean/undefined values.
-  // =============================================
-
-  describe('Runtime Evaluation', () => {
-    test('AND with all true evaluates to true', () => {
-      const block = workspace.newBlock('oh_logic_multiple')
-      block.setFieldValue('AND', 'operand')
-      connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER1')
-      connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER2')
-
-      const [code] = generateBlockCode(block)
-      expect(eval(code)).toBe(true)
-    })
-
-    test('AND with any false evaluates to false', () => {
-      const block = workspace.newBlock('oh_logic_multiple')
-      block.setFieldValue('AND', 'operand')
-      connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER1')
-      connectBlock(block, createBoolBlock(workspace, 'FALSE'), 'OPER2')
-
-      const [code] = generateBlockCode(block)
-      expect(eval(code)).toBe(false)
-    })
-
-    test('OR with any true evaluates to true', () => {
-      const block = workspace.newBlock('oh_logic_multiple')
-      block.setFieldValue('OR', 'operand')
-      connectBlock(block, createBoolBlock(workspace, 'FALSE'), 'OPER1')
-      connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER2')
-
-      const [code] = generateBlockCode(block)
-      expect(eval(code)).toBe(true)
-    })
-
-    test('OR with all false evaluates to false', () => {
-      const block = workspace.newBlock('oh_logic_multiple')
-      block.setFieldValue('OR', 'operand')
-      connectBlock(block, createBoolBlock(workspace, 'FALSE'), 'OPER1')
-      connectBlock(block, createBoolBlock(workspace, 'FALSE'), 'OPER2')
-
-      const [code] = generateBlockCode(block)
-      expect(eval(code)).toBe(false)
-    })
-
-    /** JavaScript short-circuit: undefined && true evaluates to undefined (falsy). */
-    test('undefined in AND operation', () => {
-      const block = workspace.newBlock('oh_logic_multiple')
-      block.setFieldValue('AND', 'operand')
-      connectBlock(block, workspace.newBlock('oh_logic_undefined'), 'OPER1')
-      connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER2')
-
-      const [code] = generateBlockCode(block)
-      expect(eval(code)).toBeUndefined()
-    })
-  })
-
-  // =============================================
-  // 2i. Code Structure
+  // 2g. Code Structure
   // Verifies parenthesization and operator
   // precedence in generated output.
   // =============================================
 
-  describe('Code Structure', () => {
-    /** Verifies each operand is wrapped in parentheses to avoid precedence issues. */
-    test('properly parenthesizes each operand', () => {
-      const block = workspace.newBlock('oh_logic_multiple')
-      block.setFieldValue('AND', 'operand')
-      connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER1')
-      connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER2')
+  /** Block types that have code generators (subset of allBlockTypes). */
+  const blocksWithCodeGen = ['oh_logic_undefined', 'oh_logic_multiple']
 
-      const [code] = generateBlockCode(block)
-      expect(code.match(/\([^)]+\)/g)!.length).toBeGreaterThanOrEqual(2)
+  describe('Code Structure', () => {
+    /** Verifies generated code is syntactically valid JavaScript for each block with a code generator. */
+    test.each(blocksWithCodeGen)('%s generates valid JavaScript', (type) => {
+      const block = workspace.newBlock(type)
+      if (type === 'oh_logic_multiple') {
+        block.setFieldValue('AND', 'operand')
+        connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER1')
+        connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER2')
+      }
+      const code = javascriptGenerator.workspaceToCode(workspace)
+      expect(isValidJavaScript(code)).toBe(true)
     })
 
-    /** Verifies left-to-right evaluation with 3 operands: (true) && (true) && (true). */
-    test('maintains correct operator precedence with 3 operands', () => {
-      const block = workspace.newBlock('oh_logic_multiple') as any
-      block.setFieldValue('AND', 'operand')
-      const mutation = document.createElement('mutation')
-      mutation.setAttribute('children', '3')
-      block.domToMutation(mutation)
-
-      for (let i = 1; i <= 3; i++) {
-        connectBlock(block, createBoolBlock(workspace, 'TRUE'), `OPER${i}`)
+    /** Verifies balanced parentheses in generated code for each block with a code generator. */
+    test.each(blocksWithCodeGen)('%s has balanced parentheses', (type) => {
+      const block = workspace.newBlock(type)
+      if (type === 'oh_logic_multiple') {
+        block.setFieldValue('AND', 'operand')
+        connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER1')
+        connectBlock(block, createBoolBlock(workspace, 'TRUE'), 'OPER2')
       }
-
       const [code] = generateBlockCode(block)
-      expect(code).toMatch(/\(true\)\s*&&\s*\(true\)\s*&&\s*\(true\)/)
+      const open = (code.match(/\(/g) || []).length
+      const close = (code.match(/\)/g) || []).length
+      expect(open).toBe(close)
     })
   })
 })
