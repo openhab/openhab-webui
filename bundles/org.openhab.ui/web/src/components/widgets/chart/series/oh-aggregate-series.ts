@@ -46,6 +46,7 @@ export function dimensionFromDate(
       return invert ? length - index : index
     default:
       const exhaustiveCheck: never = dimension
+      return d.toDate()
   }
 }
 
