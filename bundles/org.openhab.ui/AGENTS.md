@@ -71,7 +71,9 @@ All web development happens in the `web/` directory.
 ### Building and Testing
 - Use `npm run build` to create a production build of the web application.
 - Use `npm run test:unit` to run unit tests with Vitest.
-- Write unit tests for utilities, and composables where appropriate. Focus on testing logic and behavior rather than implementation details. Store tests alongside the code they test, using the `.test.ts` suffix (e.g., `useWidget.test.ts` for `useWidget.ts`).
+- Write unit tests for utilities, and composables where appropriate. Focus on testing logic and behavior rather than implementation details. 
+  Store tests alongside the code they test, using the `.test.ts` suffix (e.g., `useWidget.test.ts` for `useWidget.ts`). 
+  An exception to the rule is if the amount of testfiles significantly clutters the source directory, in which case a separate `__tests__/` directory can be used.
 
 ## File-Specific Guidelines
 

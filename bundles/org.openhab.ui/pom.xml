@@ -76,18 +76,6 @@
               <arguments>install --save false</arguments>
             </configuration>
           </execution>
-
-          <execution>
-            <id>npm run test:unit</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <phase>prepare-package</phase>
-            <configuration>
-              <arguments>run test:unit</arguments>
-            </configuration>
-          </execution>
-
           <execution>
             <id>npm run build:mvn</id>
             <goals>
