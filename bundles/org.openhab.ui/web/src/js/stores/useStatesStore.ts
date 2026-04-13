@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, reactive } from 'vue'
 
 import sse from '@/js/openhab/sse'
 import * as api from '@/api'
@@ -47,14 +47,9 @@ export const useStatesStore = defineStore('states', () => {
   function ensureItemTracking(itemName: string): ItemState {
     if (itemName === 'undefined') return UndefinedItemState
 
-    let itemState = itemStates.value.get(itemName)
+    const itemState = itemStates.value.get(itemName)
     if (!isItemTracked(itemName)) {
       pendingNewItems.add(itemName)
-
-      if (!itemState) {
-        itemState = UndefinedItemState
-        setItemState(itemName, itemState)
-      }
 
       // Start processing interval if not already running
       if (processingIntervalId === null) {
@@ -64,7 +59,7 @@ export const useStatesStore = defineStore('states', () => {
       }
     }
 
-    return itemState!
+    return itemState ?? UndefinedItemState
   }
 
   /* global ProxyHandler:readonly */
@@ -89,7 +84,7 @@ export const useStatesStore = defineStore('states', () => {
     }
   }
 
-  const trackedItems = ref<TrackedItems>(new Proxy({}, handler))
+  const trackedItems = reactive<TrackedItems>(new Proxy({}, handler))
   const trackingList = ref<Array<string>>([])
   let trackerConnectionId: string | null = null
   let trackerEventSource: EventSource | null = null
