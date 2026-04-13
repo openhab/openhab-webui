@@ -97,6 +97,11 @@ Displays a video player from a URL or an item
     Control microphone activation externally (e.g. via an expression); hides the built-in mic button when set (requires WebRTC player type with sendAudio)
   </PropDescription>
 </PropBlock>
+<PropBlock type="BOOLEAN" name="muteActive" label="External Mute Control">
+  <PropDescription>
+    Control stream mute state externally (e.g. via an expression); keeps audio output muted when true (requires WebRTC player type)
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 
