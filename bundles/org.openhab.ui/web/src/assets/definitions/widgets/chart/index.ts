@@ -195,11 +195,11 @@ const lineChartSymbolParameter = pb(
   return configuration.type === 'line'
 })
 
-const barChartBorderRadiusParameter = pn('barBorderRadius', 'Bar Border Radius', 'The radius of the border of the bar.')
-  .d('0')
-  .v((_value, configuration) => {
+const barChartBorderRadiusParameter = pn('barBorderRadius', 'Bar Border Radius', 'The radius of the border of the bar.').v(
+  (_value, configuration) => {
     return configuration.type === 'bar'
-  })
+  }
+)
 
 const seriesStyleParameters = [seriesLabelPositionParameter, seriesColorParameter, lineChartSymbolParameter, barChartBorderRadiusParameter]
 
