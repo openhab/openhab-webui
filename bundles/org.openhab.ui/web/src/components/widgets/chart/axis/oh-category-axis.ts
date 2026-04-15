@@ -5,6 +5,7 @@ import ComponentId from '../../component-id'
 import type { AxisComponent, OhCategoryAxisOption } from '../types'
 import { OhCategoryAxis } from '@/types/components/widgets'
 import { OhCategoryAxisDefinition } from '@/assets/definitions/widgets/chart'
+import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widgets/chart/util/time.ts'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(LocaleData)
@@ -21,11 +22,12 @@ const weekdays = {
 }
 
 const categoryAxis: AxisComponent = {
-  get(context, component, startTime, _endTime, inverse) {
+  get(context, component, startTime, endTime, inverse) {
     const config = component.config as any as OhCategoryAxis.Config
     // @ts-expect-error component config's type doesn't include the required properties
     const axis = context.evaluateExpression<OhCategoryAxisOption>(ComponentId.get(component)!, component.config, OhCategoryAxisDefinition)
     axis.type = 'category'
+    const chartType = context.chart.config.chartType
 
     axis.data = axis.data || []
     switch (config.categoryType) {
@@ -59,7 +61,21 @@ const categoryAxis: AxisComponent = {
       case OhCategoryAxis.CategoryType.year:
         if (!config.name) axis.name = 'month'
         const axisMonths = months[config.monthFormat] || months.default
-        axis.data = [...axisMonths]
+        if (chartTypeLongerThanAYear(chartType)) {
+          let year = startTime.year()
+          for (let i = 0; i < mapChartTypeToYears(chartType); i++) {
+            axis.data.push(...axisMonths.map((m) => `${m} ${year}`))
+            year++
+          }
+        } else {
+          axis.data = [...axisMonths]
+        }
+        break
+      case OhCategoryAxis.CategoryType.years:
+        if (!config.name) axis.name = 'year'
+        for (let year = startTime.year(); year < endTime.year(); year++) {
+          axis.data.push(year)
+        }
         break
       case OhCategoryAxis.CategoryType.values:
         break

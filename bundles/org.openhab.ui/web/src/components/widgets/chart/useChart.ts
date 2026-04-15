@@ -118,6 +118,10 @@ export function useChart(
         case ChartType.year:
           if (config.value.initialYear !== undefined) day = dayjs().year(config.value.initialYear)
           break
+        case ChartType.twoYears:
+        case ChartType.threeYears:
+        case ChartType.fiveYears:
+          break
         default:
           const exhaustiveCheck: never = chartType
       }
