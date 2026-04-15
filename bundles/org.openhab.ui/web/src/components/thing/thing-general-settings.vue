@@ -57,20 +57,20 @@
                 @input="thing.location = $event.target.value"
                 :clear-button="ready && !readOnly" />
             </f7-list>
-            <f7-block-title v-if="ready && thingType.supportedBridgeTypeUIDs.length"> Parent Bridge </f7-block-title>
+            <f7-block-title v-if="ready && thingType?.supportedBridgeTypeUIDs?.length"> Parent Bridge </f7-block-title>
             <f7-block-footer
-              v-if="ready && thingType.supportedBridgeTypeUIDs.length && !thing.bridgeUID"
+              v-if="ready && thingType?.supportedBridgeTypeUIDs?.length && !thing.bridgeUID"
               class="padding-left padding-right">
               This type of Thing needs to be associated to a working Bridge to function properly.
             </f7-block-footer>
-            <f7-list v-if="ready && thingType.supportedBridgeTypeUIDs.length" inline-labels no-hairlines-md>
+            <f7-list v-if="ready && thingType?.supportedBridgeTypeUIDs?.length" inline-labels no-hairlines-md>
               <f7-list-group v-if="editable">
                 <thing-picker
                   title="Bridge"
                   name="bridge"
                   :value="thing.bridgeUID"
                   @input="updateBridge"
-                  :filterType="thingType.supportedBridgeTypeUIDs" />
+                  :filterType="thingType?.supportedBridgeTypeUIDs" />
               </f7-list-group>
               <f7-list-item v-else title="Bridge" :after="thing.bridgeUID" />
             </f7-list>
@@ -101,24 +101,24 @@ export default {
     ClipboardIcon
   },
   computed: {
-    editable () {
+    editable() {
       return this.createMode || (this.thing && this.thing.editable)
     },
-    idErrorMessage () {
+    idErrorMessage() {
       return this.validateThingUID(this.thing.UID, this.thing.ID)
     }
   },
   methods: {
-    computedThingUid () {
-      return (this.thing.bridgeUID)
+    computedThingUid() {
+      return this.thing.bridgeUID
         ? [this.thing.thingTypeUID, this.thing.bridgeUID.substring(this.thing.bridgeUID.lastIndexOf(':') + 1), this.thing.ID].join(':')
         : [this.thing.thingTypeUID, this.thing.ID].join(':')
     },
-    changeUID (event) {
+    changeUID(event) {
       this.thing.ID = event.target.value
       this.thing.UID = this.computedThingUid()
     },
-    updateBridge (value) {
+    updateBridge(value) {
       this.thing.bridgeUID = value
       if (this.createMode) this.thing.UID = this.computedThingUid()
     }

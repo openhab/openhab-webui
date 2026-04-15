@@ -96,6 +96,7 @@
 <script>
 import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   components: {},
@@ -104,7 +105,7 @@ export default {
     module: Object
   },
   emits: ['closed', 'update', 'sceneItemConfigUpdate'],
-  data () {
+  data() {
     return {
       ready: false,
       itemName: null,
@@ -115,7 +116,7 @@ export default {
     }
   },
   methods: {
-    itemConfigOpened () {
+    itemConfigOpened() {
       this.itemName = this.module.configuration.itemName
       this.command = this.module.configuration.command
       this.$oh.api.get('/rest/items/' + this.itemName).then((item) => {
@@ -124,57 +125,51 @@ export default {
         this.ready = true
       })
     },
-    itemConfigClosed () {
+    itemConfigClosed() {
       if (this.colorpicker) this.colorpicker.destroy()
       f7.emit('sceneItemConfigClosed')
       this.$emit('closed')
     },
-    updateItemConfig () {
+    updateItemConfig() {
       if (this.colorpicker) this.colorpicker.destroy()
       f7.emit('sceneItemConfigUpdate', [this.itemName, this.command])
       this.$emit('update', [this.itemName, this.command])
       this.itemConfigClosed()
     },
-    updateCommandFromCurrentState () {
+    updateCommandFromCurrentState() {
       this.$oh.api.getPlain('/rest/items/' + this.itemName + '/state').then((state) => {
         this.command = state
-        f7.toast.create({
-          text: `Updated desired state of ${this.itemName} to ${state}`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast(`Updated desired state of ${this.itemName} to ${state}`)
       })
     },
-    testCommand () {
+    testCommand() {
       this.$oh.api.postPlain('/rest/items/' + this.itemName, this.command, 'text/plain', 'text/plain').then((state) => {
-        f7.toast.create({
-          text: `Sent comment ${this.command} to ${this.itemName}`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast(`Sent command ${this.command} to ${this.itemName}`)
       })
     },
-    initializeControl () {
+    initializeControl() {
       if (this.item.commandDescription && this.item.commandDescription.commandOptions) return // no control if command options
       if (this.item.type === 'Color' || this.item.groupType === 'Color') {
         this.control = 'colorpicker'
         const vm = this
         nextTick(() => {
-          this.colorpicker = f7.colorPicker.create(Object.assign({}, this.config, {
-            containerEl: this.$refs.colorpicker,
-            modules: ['wheel'],
-            value: (this.command.split(',').length === 3) ? { hsb: this.color } : null,
-            on: {
-              change (colorpicker, value) {
-                let command = [...value.hsb]
-                command[0] = Math.round(command[0]) % 360
-                command[1] = Math.round(command[1] * 100)
-                command[2] = Math.round(command[2] * 100)
-                command = command.join(',')
-                vm.command = command
+          this.colorpicker = f7.colorPicker.create(
+            Object.assign({}, this.config, {
+              containerEl: this.$refs.colorpicker,
+              modules: ['wheel'],
+              value: this.command.split(',').length === 3 ? { hsb: this.color } : null,
+              on: {
+                change(colorpicker, value) {
+                  let command = [...value.hsb]
+                  command[0] = Math.round(command[0]) % 360
+                  command[1] = Math.round(command[1] * 100)
+                  command[2] = Math.round(command[2] * 100)
+                  command = command.join(',')
+                  vm.command = command
+                }
               }
-            }
-          }))
+            })
+          )
         })
       } else if (this.item.type === 'Switch' || this.item.groupType === 'Switch') {
         this.control = 'toggle'
@@ -183,43 +178,44 @@ export default {
       } else if (this.item.type === 'Rollershutter' || this.item.groupType === 'Rollershutter') {
         this.control = 'rollershutter'
       } else if (this.item.type === 'Number' || this.item.groupType === 'Number') {
-        if (this.item.tags.find((t) => [
-          'ColorTemperature',
-          'Temperature',
-          'Brightness',
-          'Level',
-          'SoundVolume',
-          'Setpoint'
-        ].includes(t))) {
+        if (this.item.tags.find((t) => ['ColorTemperature', 'Temperature', 'Brightness', 'Level', 'SoundVolume', 'Setpoint'].includes(t))) {
           this.control = 'slider'
         }
       }
     }
   },
   computed: {
-    commandSuggestions () {
+    commandSuggestions() {
       if (!this.item) return []
-      let type = (this.item.type === 'Group' && this.item.groupType) ? this.item.groupType : this.item.type
+      let type = this.item.type === 'Group' && this.item.groupType ? this.item.groupType : this.item.type
 
       if (this.item.commandDescription && this.item.commandDescription.commandOptions) {
         return this.item.commandDescription.commandOptions
       }
       if (type === 'Switch') {
-        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+        return ['ON', 'OFF'].map((c) => {
+          return { command: c, label: c }
+        })
       }
       if (type === 'Rollershutter') {
-        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+        return ['UP', 'DOWN', 'STOP'].map((c) => {
+          return { command: c, label: c }
+        })
       }
       if (type === 'Contact') {
-        return ['UP', 'DOWN', 'STOP'].map((c) => { return { command: c, label: c } })
+        return ['UP', 'DOWN', 'STOP'].map((c) => {
+          return { command: c, label: c }
+        })
       }
       if (type === 'Color') {
-        return ['ON', 'OFF'].map((c) => { return { command: c, label: c } })
+        return ['ON', 'OFF'].map((c) => {
+          return { command: c, label: c }
+        })
       }
 
       return []
     },
-    color () {
+    color() {
       if (this.item.type === 'Color' && this.command && this.command.split(',').length === 3) {
         let color = this.command.split(',')
         color[0] = parseInt(color[0])
@@ -229,7 +225,7 @@ export default {
       }
       return null
     },
-    sliderConfig () {
+    sliderConfig() {
       if (!this.item) return {}
       const sd = this.item.stateDescription || { minimum: 0, maximum: 100, step: 1 }
       return {

@@ -1,25 +1,27 @@
 <template>
-  <l-marker ref="marker" v-if="coords" :key="markerKey" :lat-lng="coords" @click="performAction">
+  <l-marker v-if="coords" ref="marker" :key="markerKey" :lat-lng="coords" @click="performAction">
     <l-tooltip v-if="config.label">
       {{ config.label }}
     </l-tooltip>
-    <l-icon v-if="icon" :icon-size="icon.iconSize" :icon-url="icon.iconUrl" :shadow-url="icon?.shadowUrl" />
+    <l-icon v-if="icon" :icon-size="icon.iconSize" :icon-url="icon.iconUrl" />
   </l-marker>
 </template>
 
 <script>
 import { f7 } from 'framework7-vue'
+import { computed } from 'vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { LMarker, LTooltip, LIcon } from '@vue-leaflet/vue-leaflet'
-import { actionsMixin } from '../widget-actions'
 import { OhMapMarkerDefinition } from '@/assets/definitions/widgets/map'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     LMarker,
     LTooltip,
@@ -27,13 +29,18 @@ export default {
   },
   widget: OhMapMarkerDefinition,
   emits: ['update'],
-  data () {
+  setup(props) {
+    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, performAction }
+  },
+  data() {
     return {
       markerKey: f7.utils.id()
     }
   },
   computed: {
-    coords () {
+    coords() {
       if (this.config.item) {
         const itemState = this.context.store[this.config.item]
         if (itemState && itemState.state.indexOf(',') > 0) {
@@ -47,13 +54,12 @@ export default {
     }
   },
   asyncComputed: {
-    async icon () {
+    async icon() {
       if (!this.config.icon?.startsWith('oh:')) {
         this.markerKey = f7.utils.id()
         return {
           iconUrl: markerIcon,
-          shadowUrl: markerShadow,
-          iconSize: null
+          iconSize: [25, 41]
         }
       }
 
@@ -67,7 +73,7 @@ export default {
     }
   },
   watch: {
-    coords (val) {
+    coords(val) {
       if (val) {
         this.$emit('update', val)
       }

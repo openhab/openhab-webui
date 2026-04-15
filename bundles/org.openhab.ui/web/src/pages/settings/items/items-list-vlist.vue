@@ -3,10 +3,10 @@
     <f7-navbar>
       <oh-nav-content title="Items" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="(!theme.md) ? ((showCheckboxes) ? 'Done' : 'Select') : ''" />
+          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
         <f7-searchbar
           v-if="initSearchbar"
@@ -63,8 +63,8 @@
         <f7-list media-list class="col wide">
           <f7-list-group>
             <f7-list-item
-              media-item
               v-for="n in 20"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Label of the item"
@@ -107,15 +107,16 @@
               class="itemlist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(item.name)"
-              @click.ctrl="(e) => ctrlClick(e, item)"
-              @click.meta="(e) => ctrlClick(e, item)"
-              @click.exact="(e) => click(e, item)"
-              link=""
-              :title="(item.label) ? item.label : item.name"
-              :footer="(item.label) ? item.name : '\xa0'"
+              prevent-router
+              @click.ctrl="ctrlClick($event, item)"
+              @click.meta="ctrlClick($event, item)"
+              @click.exact="click($event, item)"
+              :link="`${encodeURIComponent(item.name)}`"
+              :title="item.label ? item.label : item.name"
+              :footer="item.label ? item.name : '\xa0'"
               :subtitle="getItemTypeAndMetaLabel(item)"
               :style="`top: ${vlData.topPosition}px`"
-              :after="(item.state) ? item.state : '\xa0'">
+              :after="item.state ? item.state : '\xa0'">
               <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
               <template #media>
                 <oh-icon
@@ -194,6 +195,7 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListFilter from '@/components/util/list-filter.vue'
+import { showToast } from '@/js/dialog-promises'
 
 const ITEM_KINDS = { editable: 'Editable', readonly: 'Non-editable' }
 
@@ -206,10 +208,10 @@ export default {
     ListFilter,
     EmptyStatePlaceholder
   },
-  setup () {
+  setup() {
     return { f7, theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       initSearchbar: false,
@@ -243,19 +245,18 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn (event) {
+    onPageAfterIn(event) {
       this.load()
     },
-    onPageBeforeOut (event) {
+    onPageBeforeOut(event) {
       this.stopEventSource()
       useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar)
-        useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      if (this.initSearchbar) useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
       this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
@@ -281,32 +282,36 @@ export default {
         })
       })
     },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/items/*/added,openhab/items/*/removed,openhab/items/*/updated', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[3]) {
-          case 'added':
-          case 'removed':
-          case 'updated':
-            this.load()
-            break
+    startEventSource() {
+      this.eventSource = this.$oh.sse.connect(
+        '/rest/events?topics=openhab/items/*/added,openhab/items/*/removed,openhab/items/*/updated',
+        null,
+        (event) => {
+          const topicParts = event.topic.split('/')
+          switch (topicParts[3]) {
+            case 'added':
+            case 'removed':
+            case 'updated':
+              this.load()
+              break
+          }
         }
-      })
+      )
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    searchbarSearch (event) {
+    searchbarSearch(event) {
       this.searchQuery = event?.query
       if (!this.searchQuery && this.$refs.filters?.filtered) {
         this.applyFilter()
       }
     },
-    renderExternal (vl, vlData) {
+    renderExternal(vl, vlData) {
       this.vlData = vlData
     },
-    height (item) {
+    height(item) {
       let vlHeight
       if (theme.ios) vlHeight = 79.19
       if (theme.aurora) vlHeight = 66.37
@@ -323,24 +328,24 @@ export default {
       }
       return vlHeight
     },
-    toggleCheck () {
+    toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
     },
-    isChecked (item) {
+    isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
     },
-    click (event, item) {
+    click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.name, item)
       } else {
         this.f7router.navigate(item.name)
       }
     },
-    ctrlClick (event, item) {
+    ctrlClick(event, item) {
       this.toggleItemCheck(event, item.name, item)
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
-    toggleItemCheck (event, item) {
+    toggleItemCheck(event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
         this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
@@ -348,28 +353,24 @@ export default {
         this.selectedItems.push(item)
       }
     },
-    selectDeselectAll () {
+    selectDeselectAll() {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
         this.selectedItems = this.listedItems.map((i) => i.name)
       }
     },
-    copySelected () {
+    copySelected() {
       this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selectedItems)
     },
-    removeSelected () {
+    removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected items?`,
-        'Remove Items',
-        () => {
-          vm.doRemoveSelected()
-        }
-      )
+      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected items?`, 'Remove Items', () => {
+        vm.doRemoveSelected()
+      })
     },
-    doRemoveSelected () {
+    doRemoveSelected() {
       if (this.selectedItems.some((i) => i.editable === false)) {
         f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
         return
@@ -378,23 +379,21 @@ export default {
       let dialog = f7.dialog.progress('Deleting Items...')
 
       const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/items/' + i))
-      Promise.all(promises).then((data) => {
-        f7.toast.create({
-          text: 'Items removed',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-        this.selectedItems = []
-        dialog.close()
-        this.load()
-      }).catch((err) => {
-        dialog.close()
-        this.load()
-        console.error(err)
-        f7.dialog.alert('An error occurred while deleting: ' + err)
-      })
+      Promise.all(promises)
+        .then((data) => {
+          showToast('Items removed')
+          this.selectedItems = []
+          dialog.close()
+          this.load()
+        })
+        .catch((err) => {
+          dialog.close()
+          this.load()
+          console.error(err)
+          f7.dialog.alert('An error occurred while deleting: ' + err)
+        })
     },
-    searchAll (query, items) {
+    searchAll(query, items) {
       query = query.toLowerCase()
       const found = []
       const foundUids = new Set()
@@ -416,7 +415,7 @@ export default {
       }
       return found // return array with matched indexes
     },
-    reapplySearch () {
+    reapplySearch() {
       const query = this.searchQuery
       if (!query) {
         return
@@ -424,7 +423,7 @@ export default {
       this.$refs.searchbar?.$el.f7Searchbar.search('')
       this.$refs.searchbar?.$el.f7Searchbar.search(query)
     },
-    resetFilter () {
+    resetFilter() {
       this.excludedUids.clear()
       if (this.searchQuery) {
         this.reapplySearch()
@@ -432,7 +431,7 @@ export default {
         this.$refs.itemsList.$el.f7VirtualList.resetFilter()
       }
     },
-    applyFilter () {
+    applyFilter() {
       let filteredIndexes = null
       const selected = this.$refs.filters?.selected
 
@@ -463,7 +462,7 @@ export default {
         this.$refs.itemsList.$el.f7VirtualList.resetFilter()
       }
     },
-    processFilter () {
+    processFilter() {
       const filters = this.$refs.filters
       if (filters?.filtered) {
         this.applyFilter()
@@ -471,17 +470,17 @@ export default {
         this.resetFilter()
       }
     },
-    updateListedItems () {
+    updateListedItems() {
       this.$nextTick(() => {
         this.listedItems = this.$refs.itemsList.$el.f7VirtualList.filteredItems || this.$refs.itemsList.$el.f7VirtualList.items || []
       })
     }
   },
   watch: {
-    ready () {
+    ready() {
       this.updateListedItems()
     },
-    searchQuery () {
+    searchQuery() {
       this.updateListedItems()
     },
     excludedUids: {
@@ -492,13 +491,13 @@ export default {
     }
   },
   computed: {
-    searchbarPlaceholder () {
+    searchbarPlaceholder() {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
-    allSelected () {
+    allSelected() {
       return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     },
-    listTitle () {
+    listTitle() {
       let title = this.listedItems.length
       if (this.searchQuery || this.$refs.filters?.filtered) {
         title += ` of ${this.items.length} Items found`

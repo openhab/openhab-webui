@@ -25,7 +25,7 @@
         :height="config.iconHeight || config.iconSize || 40"
         :state="config.iconUseState ? state : undefined" />
     </l-icon>
-    <l-icon v-else :icon-url="DefaultIcon.iconUrl" :shadow-url="DefaultIcon.shadowUrl" />
+    <l-icon v-else :icon-url="DefaultIcon.iconUrl" :icon-size="DefaultIcon.iconSize" />
     <l-popup v-if="context.editmode && !dragging">
       <div class="display-flex">
         <f7-link
@@ -63,17 +63,19 @@
 
 <script>
 import { f7 } from 'framework7-vue'
+import { computed } from 'vue'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { LMarker, LTooltip, LIcon, LPopup } from '@vue-leaflet/vue-leaflet'
-import { actionsMixin } from '../widget-actions'
 import { OhPlanMarkerDefinition } from '@/assets/definitions/widgets/plan'
 
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     LMarker,
     LTooltip,
@@ -82,31 +84,35 @@ export default {
   },
   widget: OhPlanMarkerDefinition,
   emits: ['update'],
-  data () {
+  setup(props) {
+    const { config, visible, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, visible, performAction }
+  },
+  data() {
     return {
       markerKey: 'marker-' + f7.utils.id(),
       dragging: false
     }
   },
-  created () {
+  created() {
     this.DefaultIcon = {
       iconUrl: markerIcon,
-      shadowUrl: markerShadow
+      iconSize: [25, 41]
     }
   },
   computed: {
-    coords () {
-      return (this.config.coords) ? this.config.coords.split(',') : [250, 250]
+    coords() {
+      return this.config.coords ? this.config.coords.split(',') : [250, 250]
     },
-    hasCustomIcon () {
+    hasCustomIcon() {
       return this.config.useTooltipAsLabel || this.config.icon
     },
-    iconSize () {
-      if (this.hasCustomIcon) return null
+    iconSize() {
       const iconSize = this.config.iconSize || 40
       return [iconSize, iconSize]
     },
-    tooltipOptions () {
+    tooltipOptions() {
       return {
         permanent: this.config.tooltipPermanent,
         direction: this.config.tooltipDirection || 'auto',
@@ -114,26 +120,32 @@ export default {
         opacity: this.config.tooltipOpacity || 0.9
       }
     },
-    state () {
+    state() {
       if (this.config.item) {
         return this.context.store[this.config.item].state
       }
       return null
     },
-    tooltipStyle () {
-      return Object.assign({
-        fontSize: this.config.tooltipFontSize,
-        color: this.config.tooltipColor
-      }, this.config.tooltipStyle)
+    tooltipStyle() {
+      return Object.assign(
+        {
+          fontSize: this.config.tooltipFontSize,
+          color: this.config.tooltipColor
+        },
+        this.config.tooltipStyle
+      )
     },
-    iconStyle () {
-      return Object.assign({
-        transform: 'rotate(' + this.config.iconRotation + 'deg)'
-      }, this.config.iconStyle)
+    iconStyle() {
+      return Object.assign(
+        {
+          transform: 'rotate(' + this.config.iconRotation + 'deg)'
+        },
+        this.config.iconStyle
+      )
     }
   },
   asyncComputed: {
-    tooltip () {
+    tooltip() {
       if (this.config.tooltip) {
         return this.config.tooltip
       } else if (this.config.item) {
@@ -145,10 +157,10 @@ export default {
     }
   },
   methods: {
-    onMove (latlng) {
+    onMove(latlng) {
       this.context.component.config.coords = [latlng.lat, latlng.lng].join(',')
     },
-    onClick (event) {
+    onClick(event) {
       if (this.context.editmode) {
         // this.context.editmode.configureWidget(this.context.component, this.context.parent)
       } else {
@@ -156,7 +168,7 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.$emit('update', this.coords)
   }
 }

@@ -13,7 +13,7 @@
           </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           :init="initSearchbar"
@@ -77,7 +77,7 @@
         <span />
       </f7-toolbar>
 
-      <f7-block strong class="no-padding" v-if="ready">
+      <f7-block v-if="ready" strong class="no-padding">
         <model-treeview
           class="model-picker-treeview"
           :root-nodes="rootNodes"
@@ -131,10 +131,10 @@ export default {
     ModelTreeview
   },
   emits: ['closed', 'input'],
-  setup () {
+  setup() {
     return { f7, theme }
   },
-  data () {
+  data() {
     return {
       initSearchbar: false,
       doubleClickStarted: null,
@@ -144,11 +144,17 @@ export default {
     }
   },
   computed: {
-    rootNodes () {
+    rootNodes() {
       if (this.semanticOnly) {
-        return [this.rootLocations, this.rootEquipment, (!this.groupsOnly) ? this.rootPoints : []]
+        return [this.rootLocations, this.rootEquipment, !this.groupsOnly ? this.rootPoints : []]
       } else {
-        return [this.rootLocations, this.rootEquipment, (!this.groupsOnly) ? this.rootPoints : [], this.rootGroups, (!this.groupsOnly) ? this.rootItems : []].flat()
+        return [
+          this.rootLocations,
+          this.rootEquipment,
+          !this.groupsOnly ? this.rootPoints : [],
+          this.rootGroups,
+          !this.groupsOnly ? this.rootItems : []
+        ].flat()
       }
     },
     ...mapWritableState(useRuntimeStore, {
@@ -162,34 +168,34 @@ export default {
     })
   },
   methods: {
-    onOpen () {
+    onOpen() {
       this.selectedItem = null
       this.initSearchbar = false
       this.checkedItems = []
       this.load()
     },
-    onClose () {
+    onClose() {
       this.ready = false
       this.$emit('closed')
       f7.emit('modelPickerClosed')
     },
-    pickItems () {
+    pickItems() {
       let pickedItems
       if (this.multiple) {
         pickedItems = this.checkedItems.map((i) => i.item)
       } else {
-        pickedItems = (this.selectedItem) ? this.selectedItem.item : null
+        pickedItems = this.selectedItem ? this.selectedItem.item : null
       }
       this.$emit('input', pickedItems)
       f7.emit('itemsPicked', pickedItems)
       this.$refs.modelPicker.$el.f7Modal.close()
     },
-    modelItem (item) {
+    modelItem(item) {
       const modelItem = {
         item,
         opened: false,
         checked: false,
-        class: (item.metadata && item.metadata.semantics) ? item.metadata.semantics.value : '',
+        class: item.metadata && item.metadata.semantics ? item.metadata.semantics.value : '',
         children: {
           locations: [],
           equipment: [],
@@ -211,14 +217,18 @@ export default {
       modelItem.checkable = this.multiple
       if (!this.multiple && this.value === item.name) {
         this.selectItem(modelItem)
-      } else if (this.multiple && Array.isArray(this.value) && this.value.findIndex((i) => typeof i === 'string' ? i === item.name : i.name === item.name) >= 0) {
+      } else if (
+        this.multiple &&
+        Array.isArray(this.value) &&
+        this.value.findIndex((i) => (typeof i === 'string' ? i === item.name : i.name === item.name)) >= 0
+      ) {
         modelItem.checked = true
         this.checkedItems.push(modelItem)
       }
 
       return modelItem
     },
-    load () {
+    load() {
       this.loadModel().then(() => {
         nextTick(() => {
           this.initSearchbar = true
@@ -226,32 +236,34 @@ export default {
         })
       })
     },
-    selectItem (item) {
+    selectItem(item) {
       if (!this.multiple) {
         this.selectedItem = item
         if (this.doubleClickStarted && this.doubleClickItem === item) {
           this.pickItems()
         } else {
-          this.doubleClickStarted = setTimeout(() => { this.doubleClickStarted = null }, 500)
+          this.doubleClickStarted = setTimeout(() => {
+            this.doubleClickStarted = null
+          }, 500)
           this.doubleClickItem = item
         }
       } else if (item.children && item.opened !== undefined) {
         item.opened = !item.opened
       }
     },
-    checkItem (item, check) {
+    checkItem(item, check) {
       if (check) {
         this.checkedItems.push(item)
       } else {
         this.checkedItems.splice(this.checkedItems.indexOf(item), 1)
       }
     },
-    changeNonSemantic () {
+    changeNonSemantic() {
       this.rootGroups = []
       this.rootItems = []
       this.load()
     },
-    toggleExpanded () {
+    toggleExpanded() {
       this.expanded = !this.expanded
       this.applyExpandedOption()
     }

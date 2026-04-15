@@ -39,7 +39,7 @@
         </f7-block>
         <f7-block class="no-margin no-padding">
           <f7-list accordion-list>
-            <f7-list-item class="faq-title" accordion-item v-for="faq in faqs" :key="faq.title" :title="faq.title">
+            <f7-list-item v-for="faq in faqs" class="faq-title" accordion-item :key="faq.title" :title="faq.title">
               <f7-accordion-content>
                 <f7-block>
                   <p v-if="faq.goto">
@@ -161,6 +161,8 @@ import Qstart from '@/assets/definitions/help/help-qstart-defs.json'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { mapStores } from 'pinia'
 
+import * as api from '@/api'
+
 export default {
   components: {
     Context
@@ -168,33 +170,36 @@ export default {
   props: {
     activeHelpTab: String
   },
-  setup () {
+  setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('about', mergeLocaleMessage)
     return {
       t
     }
   },
-  data () {
+  data() {
     return {
       addons: [],
       faqs: Faqs,
       qstart: Qstart
     }
   },
-  created () {
-    this.$oh.api.get('/rest/addons').then((data) => {
-      this.addons = data.filter((addon) => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
-    }).catch((err) => {
-      // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
-      if (err === 'Bad Gateway' || err === 502) {
-        console.log('Error while accessing the API, retrying every 5 seconds: ', err)
-        setTimeout(this.load, 5000)
-      }
-    })
+  created() {
+    api
+      .getAddons()
+      .then((data) => {
+        this.addons = data.filter((addon) => addon.installed).sort((a, b) => a.label.toUpperCase().localeCompare(b.label.toUpperCase()))
+      })
+      .catch((err) => {
+        // sometimes we get 502 errors ('Jersey is not ready yet!'), keep trying
+        if (err.response?.statusText === 'Bad Gateway' || err.response?.status === 502) {
+          console.log('Error while accessing the API, retrying every 5 seconds: ', err)
+          setTimeout(this.load, 5000)
+        }
+      })
   },
   computed: {
-    contextPath () {
+    contextPath() {
       const path = useRuntimeStore().pagePath
 
       // script editor docs

@@ -9,19 +9,21 @@
     </f7-navbar>
     <f7-toolbar position="bottom">
       <f7-link @click="previewOpened = true"> Preview<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span> </f7-link>
+      <!-- prettier-ignore  -->
       <f7-link
         icon-f7="uiwindow_split_2x1"
-        @click="split = (split === 'horizontal') ? 'vertical' : 'horizontal'; blockKey = f7.utils.id();" />
+        @click="split = split === 'horizontal' ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
       <f7-link @click="refreshBlocks"> Refresh<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
-    <f7-block :key="blockKey + '-h'" v-if="split === 'horizontal'" class="blocks-editor horizontal">
+    <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="blocks-editor horizontal">
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="blocks-code">
           <editor
             class="blocks-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=blocks"
             :value="blocksDefinition"
-            @input="onEditorInput" />
+            @input="onEditorInput"
+            @save="save()" />
         </f7-col>
       </f7-row>
       <f7-row v-if="ready" resizable>
@@ -38,7 +40,8 @@
             class="blocks-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=blocks"
             :value="blocksDefinition"
-            @input="onEditorInput" />
+            @input="onEditorInput"
+            @save="save()" />
         </f7-col>
         <f7-col v-if="ready" resizable style="min-width: 20px" class="block-preview-pane padding-right margin-bottom">
           <block-preview :blocks-definition="blocks" :key="previewKey" />
@@ -124,6 +127,7 @@ import YAML from 'yaml'
 import BlocklyEditor from '@/components/config/controls/blockly-editor.vue'
 import BlockPreview from './block-preview.vue'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
+import { showToast } from '@/js/dialog-promises'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -140,10 +144,10 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     return { theme, f7 }
   },
-  data () {
+  data() {
     return {
       blocksDefinition: null,
       items: [],
@@ -161,7 +165,7 @@ export default {
     }
   },
   computed: {
-    blocks () {
+    blocks() {
       try {
         if (!this.blocksDefinition) return {}
         return YAML.parse(this.blocksDefinition, { prettyErrors: true, toStringOptions })
@@ -171,38 +175,38 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    onEditorInput (value) {
+    onEditorInput(value) {
       this.blocksDefinition = value
       if (!this.loading) {
         this.dirty = true
       }
     },
-    refreshBlocks () {
+    refreshBlocks() {
       this.previewKey = f7.utils.id()
     },
-    previewClosed () {
+    previewClosed() {
       this.previewOpened = false
       this.previewMode = 'blockly'
     },
-    togglePreviewMode (mode) {
+    togglePreviewMode(mode) {
       this.previewMode = mode
       if (mode === 'code') {
         this.previewBlockSource = this.$refs.blocklyPreviewEditor.getBlocks()
         this.previewGeneratedCode = this.$refs.blocklyPreviewEditor.getCode()
       }
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 66:
@@ -237,71 +241,74 @@ export default {
         }
       }
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
       if (this.createMode) {
         const uid = f7.utils.id()
-        this.blocksDefinition = YAML.stringify({
-          uid: 'blocklibrary_' + uid,
-          tags: [],
-          component: 'BlockLibrary',
-          config: {
-            name: 'Block Library ' + uid
-          },
-          slots: {
-            blocks: [
-              {
-                component: 'BlockType',
-                config: {
-                  type: 'block1',
-                  message0: 'Do %1 with %2 and %3 then %4',
-                  args0: [
-                    {
-                      type: 'field_dropdown',
-                      name: 'OPTION1',
-                      options: [
-                        ['something', 'option1'],
-                        ['something else', 'option2']
-                      ]
-                    },
-                    {
-                      type: 'field_input',
-                      name: 'TEXT1',
-                      text: 'some text'
-                    },
-                    {
-                      type: 'input_value',
-                      name: 'NAME'
-                    },
-                    {
-                      type: 'input_statement',
-                      name: 'NAME'
-                    }
-                  ],
-                  previousStatement: null,
-                  nextStatement: null,
-                  colour: 90,
-                  tooltip: '',
-                  helpUrl: ''
-                },
-                slots: {
-                  code: [
-                    {
-                      component: 'BlockCodeTemplate',
-                      config: {
-                        template:
-                          '/* Incomplete example skeleton, check out\n' +
-                          '   https://openhab.org/link/blocklib-tutorial\n' +
-                          '   to learn how to build block libraries */\n'
+        this.blocksDefinition = YAML.stringify(
+          {
+            uid: 'blocklibrary_' + uid,
+            tags: [],
+            component: 'BlockLibrary',
+            config: {
+              name: 'Block Library ' + uid
+            },
+            slots: {
+              blocks: [
+                {
+                  component: 'BlockType',
+                  config: {
+                    type: 'block1',
+                    message0: 'Do %1 with %2 and %3 then %4',
+                    args0: [
+                      {
+                        type: 'field_dropdown',
+                        name: 'OPTION1',
+                        options: [
+                          ['something', 'option1'],
+                          ['something else', 'option2']
+                        ]
+                      },
+                      {
+                        type: 'field_input',
+                        name: 'TEXT1',
+                        text: 'some text'
+                      },
+                      {
+                        type: 'input_value',
+                        name: 'NAME'
+                      },
+                      {
+                        type: 'input_statement',
+                        name: 'NAME'
                       }
-                    }
-                  ]
+                    ],
+                    previousStatement: null,
+                    nextStatement: null,
+                    colour: 90,
+                    tooltip: '',
+                    helpUrl: ''
+                  },
+                  slots: {
+                    code: [
+                      {
+                        component: 'BlockCodeTemplate',
+                        config: {
+                          template:
+                            '/* Incomplete example skeleton, check out\n' +
+                            '   https://openhab.org/link/blocklib-tutorial\n' +
+                            '   to learn how to build block libraries */\n'
+                        }
+                      }
+                    ]
+                  }
                 }
-              }
-            ]
-          }
-        }, { toStringOptions })
+              ]
+            }
+          },
+          { toStringOptions }
+        )
         nextTick(() => {
           this.loading = false
           this.ready = true
@@ -316,7 +323,7 @@ export default {
         })
       }
     },
-    save (stay) {
+    save(stay) {
       if (!this.blocks.uid) {
         f7.dialog.alert('Please give an ID to the block library')
         return
@@ -326,35 +333,25 @@ export default {
         return
       }
 
-      const promise = (this.createMode)
+      const promise = this.createMode
         ? this.$oh.api.postPlain('/rest/ui/components/ui:blocks', JSON.stringify(this.blocks), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/ui/components/ui:blocks/' + this.blocks.uid, this.blocks)
-      promise.then((data) => {
-        this.dirty = false
-        if (this.createMode) {
-          f7.toast.create({
-            text: 'Block library created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.blocks.uid), { reloadCurrent: true })
-          this.load()
-        } else {
-          f7.toast.create({
-            text: 'Block library updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
-        // f7.emit('sidebarRefresh', null)
-        // if (!stay) this.f7router.back()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while saving block library: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      promise
+        .then((data) => {
+          this.dirty = false
+          if (this.createMode) {
+            showToast('Block library created')
+            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.blocks.uid), { reloadCurrent: true })
+            this.load()
+          } else {
+            showToast('Block library updated')
+          }
+          // f7.emit('sidebarRefresh', null)
+          // if (!stay) this.f7router.back()
+        })
+        .catch((err) => {
+          showToast('Error while saving block library: ' + err)
+        })
     }
   }
 }

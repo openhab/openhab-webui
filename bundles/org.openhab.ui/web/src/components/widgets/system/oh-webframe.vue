@@ -9,11 +9,18 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
 import { OhWebFrameDefinition } from '@/assets/definitions/widgets/system'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin],
-  widget: OhWebFrameDefinition
+  widget: OhWebFrameDefinition,
+  props: {
+    context: Object
+  },
+  setup(props) {
+    const { config } = useWidgetContext(computed(() => props.context))
+    return { config }
+  }
 }
 </script>

@@ -1,5 +1,5 @@
 // Block libraries components definitions, for hinting in the editor
-import { WidgetDefinition, pt, pb, pn } from '../widgets/helpers.js'
+import { WidgetDefinition, pt, pb, pn } from '../widgets/helpers.ts'
 
 export const BlockLibrariesComponentDefinitions = {
   BlockLibraryDefinition: () =>

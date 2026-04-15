@@ -6,10 +6,10 @@ export type IconType = 'svg' | 'png'
  * Convert a Blob to a data URL.
  * @param blob
  */
-function blobToDataURL(blob: Blob): Promise<string> {
+async function blobToDataURL(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onerror = () => reject(new Error('Failed to read blob as data URL: ' + reader.error))
+    reader.onerror = () => reject(new Error('Failed to read blob as data URL: ' + reader.error?.toString()))
     reader.onload = () => resolve(reader.result as string)
     reader.readAsDataURL(blob)
   })
@@ -21,7 +21,7 @@ function blobToDataURL(blob: Blob): Promise<string> {
  * @param url
  */
 async function fetchWithAuth(url: string): Promise<string> {
-  const creds: any = getBasicCredentials()
+  const creds = getBasicCredentials()
 
   // If no credentials, return the URL (async function wraps it in a Promise)
   if (!creds) return url
@@ -39,14 +39,14 @@ async function fetchWithAuth(url: string): Promise<string> {
 }
 
 export default {
-  getIcon: (icon: string, format: IconType = 'svg', state?: string, iconSet?: string) => {
+  getIcon: async (icon: string, format: IconType = 'svg', state?: string, iconSet?: string) => {
     const params = new URLSearchParams({ format, anyFormat: 'true' })
     if (state) params.append('state', state)
     if (iconSet) params.append('iconset', iconSet)
 
     return fetchWithAuth(`/icon/${icon}?${params.toString()}`)
   },
-  getImage: (url: string) => {
+  getImage: async (url: string) => {
     return fetchWithAuth(url)
   }
 }

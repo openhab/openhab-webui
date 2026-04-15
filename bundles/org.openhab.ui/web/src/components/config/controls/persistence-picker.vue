@@ -1,6 +1,6 @@
 <template>
   <ul class="persistence-picker-container">
-    <f7-list-item :title="title || 'Persistence'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect" v-if="ready">
+    <f7-list-item v-if="ready" :title="title || 'Persistence'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect">
       <select :name="name" @change="select" :required="required">
         <option value="" />
         <option v-for="service in services" :value="service.id" :key="service.id" :selected="value === service.id ? true : null">
@@ -9,7 +9,7 @@
       </select>
     </f7-list-item>
     <!-- for placeholder purposes before persistence services are loaded -->
-    <f7-list-item link v-show="!ready" :title="title" />
+    <f7-list-item v-show="!ready" link :title="title" />
   </ul>
 </template>
 
@@ -33,7 +33,7 @@ export default {
     openOnReady: Boolean
   },
   emits: ['persistencePicked', 'input'],
-  data () {
+  data() {
     return {
       ready: false,
       services: [],
@@ -45,7 +45,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.smartSelectParams.closeOnSelect = true
     this.$oh.api.get('/rest/persistence').then((data) => {
       this.services = data.sort((a, b) => {
@@ -69,10 +69,10 @@ export default {
     })
   },
   methods: {
-    open () {
+    open() {
       this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
     },
-    select (e) {
+    select(e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
       f7.emit('persistencePicked', e.target.value)

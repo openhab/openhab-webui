@@ -1,4 +1,5 @@
 import { f7 } from 'framework7-vue'
+import { showToast } from '@/js/dialog-promises'
 
 import YAML from 'yaml'
 
@@ -48,22 +49,10 @@ export default {
       this.$oh.api
         .postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString())
         .then((data) => {
-          f7.toast
-            .create({
-              text: enable ? 'Enabled' : 'Disabled',
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(enable ? 'Enabled' : 'Disabled')
         })
         .catch((err) => {
-          f7.toast
-            .create({
-              text: 'Error while disabling or enabling: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast('Error while disabling or enabling: ' + err)
         })
     },
     keyDown(ev) {

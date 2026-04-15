@@ -1,6 +1,6 @@
 <template>
   <div>
-    <item-state-preview v-if="model.item.created !== false" :item="model.item" :context="context" :key="f7.utils.id()" />
+    <item-state-preview v-if="model.item.created !== false" :item="model.item" :context="context" />
 
     <f7-block-title>Item</f7-block-title>
     <item-details
@@ -42,7 +42,7 @@ export default {
     LinkDetails
   },
   emits: ['item-updated', 'item-created', 'item-removed', 'cancel-create'],
-  setup () {
+  setup() {
     return {
       f7
     }

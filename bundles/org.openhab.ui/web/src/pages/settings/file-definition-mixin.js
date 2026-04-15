@@ -1,5 +1,6 @@
 import { f7 } from 'framework7-vue'
 import api from '@/js/openhab/api'
+import { showToast } from '@/js/dialog-promises'
 
 /**
  * File Definition Mixin
@@ -21,13 +22,7 @@ function executeFileDefinitionCopy(vueInstance, copyOptions) {
         dialogTitle: `Copy ${copyOptions.label} File Definition`,
         dialogText: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
         onSuccess: () => {
-          f7.toast
-            .create({
-              text: `${copyOptions.label} ${copyOptions.format} definition copied to clipboard:\n${copyOptions.objectName}`,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            })
-            .open()
+          showToast(`${copyOptions.label} ${copyOptions.format} definition copied to clipboard:\n${copyOptions.objectName}`)
         },
         onError: () => {
           f7.dialog.alert(`Error copying ${copyOptions.label} ${copyOptions.format} definition to the clipboard`, 'Error')

@@ -12,8 +12,9 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
+import java.util.List;
+import java.util.Objects;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.core.i18n.LocaleProvider;
@@ -27,9 +28,9 @@ import org.openhab.core.library.items.RollershutterItem;
 import org.openhab.core.library.items.SwitchItem;
 import org.openhab.core.library.types.OnOffType;
 import org.openhab.core.library.types.QuantityType;
-import org.openhab.core.model.sitemap.sitemap.Mapping;
-import org.openhab.core.model.sitemap.sitemap.Switch;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Mapping;
+import org.openhab.core.sitemap.Switch;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.CommandDescription;
 import org.openhab.core.types.CommandOption;
 import org.openhab.core.types.State;
@@ -51,6 +52,7 @@ import org.slf4j.LoggerFactory;
  * @author Kai Kreuzer - Initial contribution and API
  * @author Vlad Ivanov - BasicUI changes
  * @author Laurent Garnier - Use icon instead of label for button if icon is set
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -74,7 +76,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Switch s = (Switch) w;
 
         String snippetName = null;
@@ -82,7 +84,8 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         int nbButtons = 0;
         boolean multiline = false;
         try {
-            item = itemUIRegistry.getItem(w.getItem());
+            String itemName = Objects.requireNonNull(w.getItem()); // Checked at creation there is an item
+            item = itemUIRegistry.getItem(itemName);
             if (s.getMappings().isEmpty()) {
                 if (item instanceof RollershutterItem) {
                     snippetName = "rollerblind";
@@ -168,7 +171,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         snippet = processColor(w, snippet);
 
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 
     private void buildButton(Switch w, @Nullable String lab, String cmd, @Nullable String releaseCmd,

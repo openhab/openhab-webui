@@ -19,7 +19,7 @@
     </f7-block>
 
     <!-- Grids -->
-    <f7-block strong :style="{ zIndex: 100 - gridIdx }" v-for="(grid, gridIdx) in context.component.slots.grid" :key="gridIdx">
+    <f7-block v-for="(grid, gridIdx) in context.component.slots.grid" strong :style="{ zIndex: 100 - gridIdx }" :key="gridIdx">
       <f7-block-title>Grid {{ gridIdx }}</f7-block-title>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
@@ -51,7 +51,7 @@
             :removeLabel="'Remove Grid'" />
         </f7-menu>
       </div>
-      <div>
+      <div class="skeleton-chart-container">
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
@@ -64,7 +64,7 @@
                 :subtitle="series.config.item"
                 :after="`X: ${series.config.xAxisIndex} Y: ${series.config.yAxisIndex}`"
                 link="#"
-                @click="ev => configureSeries(ev, series, context)">
+                @click="(ev) => configureSeries(ev, series, context)">
                 <template #content-start>
                   <f7-menu class="configure-layout-menu">
                     <edit-context-menu
@@ -91,7 +91,7 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :option="skeletonGridOptions(grid, gridIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton class="skeleton-chart" :option="skeletonGridOptions(grid, gridIdx)" :autoresize="true" />
       </div>
       <div>
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
@@ -142,7 +142,7 @@
             :removeLabel="'Remove Calendar'" />
         </f7-menu>
       </div>
-      <div>
+      <div class="skeleton-chart-container">
         <div class="skeleton-series">
           <f7-card class="elevation-4">
             <f7-list media-list>
@@ -154,7 +154,7 @@
                 :title="series.config.name"
                 :subtitle="series.config.item"
                 link="#"
-                @click="ev => configureSeries(ev, series, context)">
+                @click="(ev) => configureSeries(ev, series, context)">
                 <template #content-start>
                   <f7-menu class="configure-layout-menu">
                     <edit-context-menu
@@ -178,10 +178,11 @@
             </f7-list>
           </f7-card>
         </div>
-        <chart-skeleton :option="skeletonCalendarOptions(calendar, calendarIdx)" style="height: 400px; width: 100%" :autoresize="true" />
+        <chart-skeleton class="skeleton-chart" :option="skeletonCalendarOptions(calendar, calendarIdx)" :autoresize="true" />
       </div>
     </f7-block>
 
+    <!-- Other Components -->
     <f7-block class="block-narrow margin-bottom" inset>
       <f7-block-title>Other Components</f7-block-title>
       <f7-row class="margin-bottom">
@@ -247,20 +248,27 @@
 </template>
 
 <style lang="stylus">
+.skeleton-chart-container
+  display grid
+  grid-template-columns 1fr
 .skeleton-series
-  position absolute
-  left 30
-  width calc(100% - 30px)
+  grid-row-start 1
+  grid-column-start 1
   display flex
   justify-content center
   z-index 10
   .card
     width 60%
     margin-top 4rem
-    // overflow-y auto
+    height fit-content
   .item-link
     overflow inherit
     z-index inherit !important
+.skeleton-chart
+  grid-row-start 1
+  grid-column-start 1
+  height 400px
+  width 100%
 .chartdesigner-big-button
   background var(--f7-card-bg-color)
   text-align center
@@ -277,7 +285,8 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import widget from '@/components/widgets/widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import EditContextMenu from '@/components/pagedesigner/edit-menu.vue'
 
 import { use } from 'echarts/core'
@@ -285,18 +294,51 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart } from 'echarts/charts'
 import { LabelLayout } from 'echarts/features'
 import {
-  TitleComponent, LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
-  DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
+  TitleComponent,
+  LegendComponent,
+  LegendScrollComponent,
+  GridComponent,
+  SingleAxisComponent,
+  ToolboxComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  MarkLineComponent,
+  MarkPointComponent,
+  MarkAreaComponent,
+  VisualMapComponent,
+  CalendarComponent
 } from 'echarts/components'
 import VChart from 'vue-echarts'
 import 'echarts/theme/dark.js'
 
-use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
-  LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
-  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
+use([
+  CanvasRenderer,
+  LineChart,
+  BarChart,
+  GaugeChart,
+  HeatmapChart,
+  PieChart,
+  ScatterChart,
+  CustomChart,
+  TitleComponent,
+  LegendComponent,
+  LegendScrollComponent,
+  GridComponent,
+  SingleAxisComponent,
+  ToolboxComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  MarkLineComponent,
+  MarkPointComponent,
+  MarkAreaComponent,
+  VisualMapComponent,
+  CalendarComponent,
+  LabelLayout
+])
 
 import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
+import { showToast } from '@/js/dialog-promises'
 
 dayjs.extend(IsoWeek)
 
@@ -310,28 +352,34 @@ const defaultSlotComponentType = {
 }
 
 export default {
-  mixins: [widget],
+  props: {
+    context: Object
+  },
   components: {
     'chart-skeleton': VChart,
     EditContextMenu
   },
+  setup(props) {
+    useWidgetContext(computed(() => props.context))
+  },
   methods: {
-    skeletonGridOptions (grid, gridIdx) {
+    skeletonGridOptions(grid, gridIdx) {
       let options = {}
       options.grid = grid.config
 
       let axisTypes = ['xAxis', 'yAxis']
       axisTypes.forEach((axisType) => {
-        let skeletonAxis = JSON.parse(JSON.stringify(
-          this.context.component.slots[axisType]
-            .filter((a) => a.config.gridIndex === gridIdx)))
-        skeletonAxis = skeletonAxis.map((a) => { delete a.config.gridIndex; return a.config })
+        let skeletonAxis = JSON.parse(JSON.stringify(this.context.component.slots[axisType].filter((a) => a.config.gridIndex === gridIdx)))
+        skeletonAxis = skeletonAxis.map((a) => {
+          delete a.config.gridIndex
+          return a.config
+        })
         options[axisType] = skeletonAxis
       })
 
       return options
     },
-    skeletonCalendarOptions (calendar, calendarIdx) {
+    skeletonCalendarOptions(calendar, calendarIdx) {
       let options = {}
       let calendarOptions = Object.assign({}, calendar.config)
       if (!calendarOptions.dayLabel) calendarOptions.dayLabel = {}
@@ -343,7 +391,11 @@ export default {
       // calculate range based on chart type and/or initial period
       const chartType = this.context.component.config.chartType
       const period = this.context.component.config.period || 'M'
-      let endTime = (chartType) ? dayjs().startOf(chartType).add(1, chartType === 'isoWeek' ? 'week' : chartType) : dayjs()
+      let endTime = chartType
+        ? dayjs()
+            .startOf(chartType)
+            .add(1, chartType === 'isoWeek' ? 'week' : chartType)
+        : dayjs()
       let startTime = endTime
 
       const fn = endTime.subtract
@@ -351,20 +403,48 @@ export default {
         startTime = fn.apply(endTime, [1, chartType === 'isoWeek' ? 'week' : chartType])
       } else {
         switch (period) {
-          case 'h': startTime = fn.apply(endTime, [1, 'hour']); break
-          case '2h': startTime = fn.apply(endTime, [2, 'hour']); break
-          case '4h': startTime = fn.apply(endTime, [4, 'hour']); break
-          case '12h': startTime = fn.apply(endTime, [12, 'hour']); break
-          case 'D': startTime = fn.apply(endTime, [1, 'day']); break
-          case '2D': startTime = fn.apply(endTime, [2, 'day']); break
-          case '3D': startTime = fn.apply(endTime, [3, 'day']); break
-          case 'W': startTime = fn.apply(endTime, [1, 'week']); break
-          case '2W': startTime = fn.apply(endTime, [2, 'week']); break
-          case 'M': startTime = fn.apply(endTime, [1, 'month']); break
-          case '2M': startTime = fn.apply(endTime, [2, 'month']); break
-          case '4M': startTime = fn.apply(endTime, [4, 'month']); break
-          case '6M': startTime = fn.apply(endTime, [6, 'month']); break
-          case 'Y': startTime = fn.apply(endTime, [365, 'day']); break
+          case 'h':
+            startTime = fn.apply(endTime, [1, 'hour'])
+            break
+          case '2h':
+            startTime = fn.apply(endTime, [2, 'hour'])
+            break
+          case '4h':
+            startTime = fn.apply(endTime, [4, 'hour'])
+            break
+          case '12h':
+            startTime = fn.apply(endTime, [12, 'hour'])
+            break
+          case 'D':
+            startTime = fn.apply(endTime, [1, 'day'])
+            break
+          case '2D':
+            startTime = fn.apply(endTime, [2, 'day'])
+            break
+          case '3D':
+            startTime = fn.apply(endTime, [3, 'day'])
+            break
+          case 'W':
+            startTime = fn.apply(endTime, [1, 'week'])
+            break
+          case '2W':
+            startTime = fn.apply(endTime, [2, 'week'])
+            break
+          case 'M':
+            startTime = fn.apply(endTime, [1, 'month'])
+            break
+          case '2M':
+            startTime = fn.apply(endTime, [2, 'month'])
+            break
+          case '4M':
+            startTime = fn.apply(endTime, [4, 'month'])
+            break
+          case '6M':
+            startTime = fn.apply(endTime, [6, 'month'])
+            break
+          case 'Y':
+            startTime = fn.apply(endTime, [365, 'day'])
+            break
         }
       }
 
@@ -392,29 +472,35 @@ export default {
 
       return options
     },
-    gridSeries (grid, gridIdx) {
-      const gridxAxisIndexes = this.context.component.slots.xAxis.map((a, idx) => (a.config.gridIndex === gridIdx) ? idx : null).filter((i) => i !== null)
-      const gridyAxisIndexes = this.context.component.slots.yAxis.map((a, idx) => (a.config.gridIndex === gridIdx) ? idx : null).filter((i) => i !== null)
-      return this.context.component.slots.series.filter((s) => gridxAxisIndexes.indexOf(s.config.xAxisIndex) >= 0 && gridyAxisIndexes.indexOf(s.config.yAxisIndex) >= 0)
+    gridSeries(grid, gridIdx) {
+      const gridxAxisIndexes = this.context.component.slots.xAxis
+        .map((a, idx) => (a.config.gridIndex === gridIdx ? idx : null))
+        .filter((i) => i !== null)
+      const gridyAxisIndexes = this.context.component.slots.yAxis
+        .map((a, idx) => (a.config.gridIndex === gridIdx ? idx : null))
+        .filter((i) => i !== null)
+      return this.context.component.slots.series.filter(
+        (s) => gridxAxisIndexes.indexOf(s.config.xAxisIndex) >= 0 && gridyAxisIndexes.indexOf(s.config.yAxisIndex) >= 0
+      )
     },
-    calendarSeries (calendar, calendarIdx) {
+    calendarSeries(calendar, calendarIdx) {
       return this.context.component.slots.series.filter((s) => s.config.calendarIndex === calendarIdx)
     },
-    addGrid () {
+    addGrid() {
       if (!this.context.component.slots.grid) this.context.component.slots.grid = []
       this.context.component.slots.grid.push({
         component: 'oh-chart-grid',
         config: {}
       })
     },
-    addCalendar () {
+    addCalendar() {
       if (!this.context.component.slots.calendar) this.context.component.slots.calendar = []
       this.context.component.slots.calendar.push({
         component: 'oh-calendar-axis',
         config: {}
       })
     },
-    addAxis (gridIdx, axis, type) {
+    addAxis(gridIdx, axis, type) {
       if (!this.context.component.slots[axis]) this.context.component.slots[axis] = []
       this.context.component.slots[axis].push({
         component: type,
@@ -423,7 +509,7 @@ export default {
         }
       })
     },
-    addCalendarSeries (type, calendarIdx) {
+    addCalendarSeries(type, calendarIdx) {
       if (!this.context.component.slots.series) this.context.component.slots.series = []
       this.context.component.slots.series.push({
         component: type,
@@ -434,7 +520,7 @@ export default {
         }
       })
     },
-    addSeries (type, gridIdx) {
+    addSeries(type, gridIdx) {
       if (!this.context.component.slots.series) this.context.component.slots.series = []
       let automaticAxisCreated = false
       let firstXAxis = this.context.component.slots.xAxis.find((a) => a.config.gridIndex === gridIdx)
@@ -466,11 +552,7 @@ export default {
       }
 
       if (automaticAxisCreated) {
-        f7.toast.create({
-          text: 'Missing axes have been created automatically.',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast('Missing axes have been created automatically.')
       }
 
       let component = {
@@ -495,7 +577,7 @@ export default {
 
       this.context.component.slots.series.push(component)
     },
-    configureSeries (ev, series, context) {
+    configureSeries(ev, series, context) {
       let el = ev.target
       ev.cancelBubble = true
       while (!el.classList.contains('media-item')) {
@@ -504,7 +586,7 @@ export default {
       }
       this.context.editmode.configureWidget(series, context)
     },
-    configureSlot (slotName) {
+    configureSlot(slotName) {
       this.context.editmode.configureSlot(this.context.component, slotName, defaultSlotComponentType[slotName])
     }
   }

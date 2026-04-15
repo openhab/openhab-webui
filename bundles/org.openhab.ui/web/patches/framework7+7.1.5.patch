@@ -39,3 +39,16 @@ index f607800..24e6369 100644
      "./less": "./framework7.less",
      "./less/bundle": "./framework7-bundle.less",
      "./css": "./framework7.css",
+diff --git a/node_modules/framework7/shared/utils.d.ts b/node_modules/framework7/shared/utils.d.ts
+index c88ac4c..e29088b 100644
+--- a/node_modules/framework7/shared/utils.d.ts
++++ b/node_modules/framework7/shared/utils.d.ts
+@@ -66,7 +66,7 @@ export interface Utils {
+   /** Returns unique number, increased by 1 with every call */
+   uniqueNumber: () => number;
+   /** Generates random ID-like string */
+-  id: (mask: string, map: string) => string;
++  id: (mask?: string, map?: string) => string;
+   /** Returns preloader inner content for MD theme */
+   mdPreloaderContent: () => string;
+   /** Returns preloader inner content for iOS theme */

@@ -26,7 +26,7 @@
             :parameters="inputConfigDescriptions"
             :configuration="actionInput"
             :read-only="executing" />
-          <div class="margin" v-else>There is no input to be configured for this action.</div>
+          <div v-else class="margin">There is no input to be configured for this action.</div>
         </f7-col>
         <!-- Executing Spinner -->
         <f7-col v-if="executing" class="text-align-center padding-top margin-top">
@@ -54,8 +54,8 @@
                 <f7-list-item
                   v-if="key === 'result'"
                   :floating-label="theme.md"
-                  :title="action.outputs.find(o => o.name === key)?.label || 'Result'"
-                  :footer="action.outputs.find(o => o.name === key)?.description">
+                  :title="action.outputs.find((o) => o.name === key)?.label || 'Result'"
+                  :footer="action.outputs.find((o) => o.name === key)?.description">
                   <template #after>
                     <div>
                       {{ actionOutput[key] }}
@@ -65,10 +65,10 @@
                 <!-- Render QR code if the key is qrCode -->
                 <!-- Render QR code if the action output type is qrCode in the action output definition from REST -->
                 <f7-list-item
-                  v-else-if="key === 'qrCode' || action.outputs.find(o => o.name === key)?.type === 'qrCode'"
+                  v-else-if="key === 'qrCode' || action.outputs.find((o) => o.name === key)?.type === 'qrCode'"
                   :floating-label="theme.md"
-                  :title="action.outputs.find(o => o.name === key)?.label || 'QR Code'"
-                  :footer="action.outputs.find(o => o.name === key)?.description">
+                  :title="action.outputs.find((o) => o.name === key)?.label || 'QR Code'"
+                  :footer="action.outputs.find((o) => o.name === key)?.description">
                   <template #after>
                     <vue-qrcode :value="actionOutput[key]" />
                   </template>
@@ -77,8 +77,8 @@
                 <f7-list-item
                   v-else
                   :floating-label="theme.md"
-                  :title="action.outputs.find(o => o.name === key)?.label || key"
-                  :footer="action.outputs.find(o => o.name === key)?.description">
+                  :title="action.outputs.find((o) => o.name === key)?.label || key"
+                  :footer="action.outputs.find((o) => o.name === key)?.description">
                   <template #after>
                     <div>
                       {{ actionOutput[key] }}
@@ -124,10 +124,10 @@ export default {
     thingUID: String,
     action: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       executing: false,
       actionInput: {},
@@ -135,7 +135,7 @@ export default {
     }
   },
   computed: {
-    inputConfigDescriptions () {
+    inputConfigDescriptions() {
       return this.action.inputConfigDescriptions.map((c) => {
         if (!c.label) c.label = c.name
         return c
@@ -143,19 +143,18 @@ export default {
     }
   },
   methods: {
-    execute () {
+    execute() {
       if (this.$refs.configSheet?.isValid() === false) {
         f7.dialog.alert('Please review the input and correct validation errors')
         return
       }
       this.executing = true
-      this.$oh.api.post(`/rest/actions/${this.thingUID}/${encodeURIComponent(this.action.actionUid)}`, this.actionInput)
-        .then((data) => {
-          this.actionOutput = data
-          this.executing = false
-        })
+      this.$oh.api.post(`/rest/actions/${this.thingUID}/${encodeURIComponent(this.action.actionUid)}`, this.actionInput).then((data) => {
+        this.actionOutput = data
+        this.executing = false
+      })
     },
-    close () {
+    close() {
       this.$refs.modulePopup.$el.f7Modal.close()
     }
   }

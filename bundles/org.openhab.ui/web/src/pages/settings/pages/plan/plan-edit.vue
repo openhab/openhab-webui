@@ -2,7 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="plan-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
-        :title="!ready ? '' : ((createMode ? 'Create plan page' : page.config.label) + dirtyIndicator)"
+        :title="!ready ? '' : (createMode ? 'Create plan page' : page.config.label) + dirtyIndicator"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -26,11 +26,11 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block class="block-narrow" v-if="ready && !previewMode">
+        <f7-block v-if="ready && !previewMode" class="block-narrow">
           <page-settings :page="page" :createMode="createMode" :f7router />
         </f7-block>
 
-        <f7-block class="block-narrow" style="padding-bottom: 8rem" v-if="ready && !previewMode">
+        <f7-block v-if="ready && !previewMode" class="block-narrow" style="padding-bottom: 8rem">
           <f7-col>
             <f7-block-title>Background Configuration</f7-block-title>
             <config-sheet
@@ -98,7 +98,8 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=plan"
           :value="pageYaml"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
     </f7-tabs>
@@ -144,7 +145,7 @@ const ConfigurableWidgets = {
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 export default {
@@ -157,17 +158,18 @@ export default {
   },
   props: {
     createMode: Boolean,
+    pageCopy: Object,
     uid: String,
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     useViewArea()
     const { evaluateExpression } = useWidgetExpression()
 
     return { theme, evaluateExpression }
   },
-  data () {
+  data() {
     return {
       pageWidgetDefinition: OhPlanPage.widget(),
       forceEditMode: true,
@@ -181,12 +183,12 @@ export default {
     }
   },
   methods: {
-    markerIcon (marker) {
+    markerIcon(marker) {
       if (!marker?.config?.icon) return null
       const key = marker.component + '-' + marker.config.coords + ':icon'
       return this.evaluateExpression(key, marker.config.icon, this.context)
     },
-    addWidget (component, widgetType, parentContext, slot) {
+    addWidget(component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -201,12 +203,14 @@ export default {
         this.forceUpdate()
       }
     },
-    getWidgetDefinition (componentType) {
-      const component = Object.values(ConfigurableWidgets).find((w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType)
+    getWidgetDefinition(componentType) {
+      const component = Object.values(ConfigurableWidgets).find(
+        (w) => w.widget && typeof w.widget === 'function' && w.widget().name === componentType
+      )
       if (!component) return null
       return component.widget()
     },
-    configureMarker (ev, marker, context) {
+    configureMarker(ev, marker, context) {
       let el = ev.target
       ev.cancelBubble = true
       while (!el.classList.contains('media-item')) {
@@ -215,13 +219,13 @@ export default {
       }
       this.context.editmode.configureWidget(marker, context)
     },
-    toYaml () {
+    toYaml() {
       this.pageYaml = YAML.stringify({
         config: this.page.config,
         markers: this.page.slots.default
       })
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
         this.page.config = updatedPage.config

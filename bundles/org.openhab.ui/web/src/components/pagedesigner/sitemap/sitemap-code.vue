@@ -61,16 +61,16 @@ export default {
     sitemap: Object
   },
   emits: ['updated'],
-  data () {
+  data() {
     return {
       sitemapDsl: ''
     }
   },
-  created () {
+  created() {
     this.sitemapDsl = dslUtil.toDsl(this.sitemap)
   },
   methods: {
-    updateSitemap (value) {
+    updateSitemap(value) {
       this.sitemapDsl = value
       const parsed = this.parsedSitemap
       if (!parsed.error) {
@@ -79,7 +79,7 @@ export default {
     }
   },
   computed: {
-    parsedSitemap () {
+    parsedSitemap() {
       try {
         const parser = new Parser(Grammar.fromCompiled(grammar.default))
         parser.feed(this.sitemapDsl.trim().replace(/\t/g, ' '))

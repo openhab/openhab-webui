@@ -1,15 +1,14 @@
 <template>
   <div v-if="ready" class="disable-user-select model-tab">
     <div v-for="(elements, idx) in groups" :key="idx">
-      <f7-block-title medium v-if="elements.length > 0 && elements[0].separator">
+      <f7-block-title v-if="elements.length > 0 && elements[0].separator" medium>
         {{ elements[0].separator }}
       </f7-block-title>
-      <div class="model-cards-section" v-if="elements.length > 0">
+      <div v-if="elements.length > 0" class="model-cards-section">
         <div v-for="(element, idx) in elements.filter((e) => !isCardExcluded(e))" :key="idx">
           <location-card
             v-if="type === 'locations' && !element.separator && (element.equipment.length > 0 || element.properties.length > 0)"
             :key="element.key"
-            type="location"
             :element="element"
             :context="cardContext(element)"
             :parent-location="parentLocationName(element.item)"
@@ -17,14 +16,12 @@
           <equipment-card
             v-if="type === 'equipment' && !element.separator"
             :key="element.key"
-            type="equipment"
             :element="element"
             :context="cardContext(element)"
             :tab-context="tabContext(type)" />
           <property-card
             v-if="type === 'properties' && !element.separator"
             :key="element.key"
-            type="property"
             :element="element"
             :context="cardContext(element)"
             :tab-context="tabContext(type)" />
@@ -109,41 +106,56 @@ export default {
     PropertyCard
   },
   computed: {
-    ready () {
+    ready() {
       return useModelStore().ready
     },
-    groups (state) {
+    groups() {
       return cardGroups(useModelStore(), this.type, this.page)
     }
   },
   methods: {
-    isCardExcluded (card) {
+    isCardExcluded(card) {
       if (!card.key) return
       const page = this.page
       const type = this.type
-      const excludedCards = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.excludedCards) ? page.slots[type][0].config.excludedCards : []
+      const excludedCards =
+        page &&
+        page.slots &&
+        page.slots[type] &&
+        page.slots[type][0] &&
+        page.slots[type][0].config &&
+        page.slots[type][0].config.excludedCards
+          ? page.slots[type][0].config.excludedCards
+          : []
       const excludedIdx = excludedCards.indexOf(card.key)
       return excludedIdx >= 0
     },
-    cardContext (element) {
+    cardContext(element) {
       let context = {
         component: element.card || {
-          component: (this.type === 'locations') ? 'oh-location-card' : (this.type === 'equipment') ? 'oh-equipment-card' : 'oh-property-card',
+          component: this.type === 'locations' ? 'oh-location-card' : this.type === 'equipment' ? 'oh-equipment-card' : 'oh-property-card',
           config: {}
         },
         store: useStatesStore().trackedItems
       }
       const page = this.page
       const type = this.type
-      if (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.badges) {
+      if (
+        page &&
+        page.slots &&
+        page.slots[type] &&
+        page.slots[type][0] &&
+        page.slots[type][0].config &&
+        page.slots[type][0].config.badges
+      ) {
         context.badgeOverrides = page.slots[type][0].config.badges
       }
       return context
     },
-    parentLocationName (item) {
+    parentLocationName(item) {
       return item.parent ? item.parent.label || item.parent.name : ''
     },
-    tabContext (type) {
+    tabContext(type) {
       const page = this.page
       if (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config) {
         return page.slots[type][0].config

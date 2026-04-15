@@ -21,7 +21,7 @@
               :value="currentCronStrategy.name"
               @input="currentCronStrategy.name = $event.target.value"
               :disabled="!createMode ? true : null"
-              :info="(createMode) ? 'Note: cannot be changed after the creation' : ''"
+              :info="createMode ? 'Note: cannot be changed after the creation' : ''"
               required
               validate
               pattern="[A-Za-z0-9_]+"
@@ -58,7 +58,7 @@ export default {
     cronStrategy: Object
   },
   emits: ['cronStrategyConfigUpdate'],
-  data () {
+  data() {
     return {
       createMode: !this.cronStrategy,
       currentCronStrategy: this.cronStrategy || {
@@ -74,7 +74,7 @@ export default {
     }
   },
   methods: {
-    updateModuleConfig () {
+    updateModuleConfig() {
       if (!f7.input.validateInputs(this.$refs.name.$el) && !f7.input.validateInputs(this.$refs.cronExpression.$el)) {
         f7.dialog.alert('Please review the configuration and correct validation errors')
         return

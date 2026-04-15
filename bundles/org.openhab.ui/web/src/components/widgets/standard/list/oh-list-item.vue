@@ -10,25 +10,25 @@
     v-bind="config"
     :divider="config.divider && !context.editmode"
     :media-item="context.parent.component.config.mediaList && !config.divider"
-    :badge="(config.divider) ? 'Divider' : (config.listButton) ? 'List button' : config.badge"
+    :badge="config.divider ? 'Divider' : config.listButton ? 'List button' : config.badge"
     :accordion-item="isRegularAccordion && !config.divider && !context.editmode"
-    :link="(hasAction && !context.editmode) ? true : undefined"
+    :link="hasAction && !context.editmode ? true : undefined"
     @click.stop="openAccordionOrPerformAction"
     :class="{ 'oh-equipment-accordion-item': isEquipmentAccordion }"
     ref="f7AccordionContent">
-    <template #inner v-if="$slots.inner">
+    <template v-if="$slots.inner" #inner>
       <slot name="inner" />
     </template>
-    <template #content v-if="$slots.content">
+    <template v-if="$slots.content" #content>
       <slot name="content" />
     </template>
-    <template #root-end v-if="$slots['root-end']">
+    <template v-if="$slots['root-end']" #root-end>
       <slot name="root-end" />
     </template>
-    <template #footer v-if="$slots.footer">
+    <template v-if="$slots.footer" #footer>
       <slot name="footer" />
     </template>
-    <template #after v-if="$slots.after || context.component.slots?.after?.length">
+    <template v-if="$slots.after || context.component.slots?.after?.length" #after>
       <template v-if="context.component.slots?.after?.length">
         <generic-widget-component :context="childContext(context.component.slots.after[0])" />
       </template>
@@ -45,8 +45,12 @@
       </f7-accordion-content>
     </template>
     <template
-      #media
-      v-if="$slots.media || config.icon || (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)">
+      v-if="
+        $slots.media ||
+        config.icon ||
+        (config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList)
+      "
+      #media>
       <oh-icon
         v-if="config.icon"
         :icon="config.icon"
@@ -55,7 +59,9 @@
         :color="config.iconColor"
         :state="config.item && config.iconUseState ? context.store[config.item].state : null" />
       <span
-        v-else-if="config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList"
+        v-else-if="
+          config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList
+        "
         class="item-initial"
         >{{ config.title[0].toUpperCase() }}</span
       >
@@ -152,76 +158,47 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
+import { computed } from 'vue'
 
-import mixin from '../../widget-mixin'
-import { actionsMixin } from '../../widget-actions'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhListItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
   name: 'oh-list-item',
-  mixins: [mixin, actionsMixin],
+  props: {
+    context: Object
+  },
   widget: OhListItemDefinition,
+  setup(props) {
+    const { config, childContext, evaluateExpression, hasAction, slots } = useWidgetContext(computed(() => props.context))
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, childContext, hasAction, slots, performAction }
+  },
   computed: {
-    isEquipmentAccordion () {
+    isEquipmentAccordion() {
       return this.context.parent.component.config.accordionEquipment && this.accordionSlots.length > 0
     },
-    isRegularAccordion () {
+    isRegularAccordion() {
       return this.context.parent.component.config.accordionList && this.accordionSlots.length > 0
     },
-    accordionSlots () {
+    accordionSlots() {
       if (!this.context.component.slots?.accordion?.length) return []
       return this.context.component.slots.accordion
     }
   },
-  mounted () {
-    mixin.mounted.call(this)
-    if (this.config.divider && !this.context.editmode) {
-      nextTick(() => {
-        this.trimTitle()
-      })
-    }
-  },
-  created () {
+  created() {
     if (this.config.divider && !this.context.editmode) {
       window.addEventListener('resize', this.duringResize)
     }
   },
-  unmounted () {
-    window.removeEventListener('resize', this.duringResize)
-    if (this.timer) clearTimeout(this.timer)
-  },
   methods: {
-    openAccordionOrPerformAction () {
+    openAccordionOrPerformAction() {
       if (this.isEquipmentAccordion) {
         f7.accordion.toggle(this.$refs.f7AccordionContent.$el)
       } else {
         this.performAction()
-      }
-    },
-    duringResize () {
-      if (this.timer) clearTimeout(this.timer)
-      this.timer = setTimeout(this.resized, 200)
-    },
-    resized () {
-      if (this.$refs.divider && this.$refs.divider.$el && this.$refs.divider.$el.firstChild) {
-        this.$refs.divider.$el.firstChild.textContent = this.config.title
-      }
-      this.trimTitle()
-    },
-    trimTitle () {
-      if (this.$refs.divider && this.$refs.divider.$el && this.$refs.divider.$el.firstChild) {
-        let element = this.$refs.divider.$el.firstChild
-        let trimCount = 0
-        if (element.scrollWidth > element.offsetWidth) {
-          let value = '…' + element.textContent
-          do {
-            value = '…' + value.slice(2)
-            trimCount++
-            element.textContent = value
-          } while (element.scrollWidth > element.offsetWidth && trimCount < 100)
-        }
       }
     }
   }

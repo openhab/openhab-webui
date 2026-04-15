@@ -13,7 +13,7 @@
       <f7-link @click="switchTab('tree')" :tab-link-active="currentTab === 'tree'" tab-link="#tree"> Design </f7-link>
       <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
+    <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedTag == null }" @click="selectTag(null)"> Clear </f7-link>
       <div class="padding-left padding-right text-align-center" style="font-size: 12px">
         <div>
@@ -43,7 +43,7 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block v-else class="semantics-tree-wrapper no-margin-top" :class="{ 'sheet-opened' : detailsOpened }">
+        <f7-block v-else class="semantics-tree-wrapper no-margin-top" :class="{ 'sheet-opened': detailsOpened }">
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
@@ -112,7 +112,7 @@
                         :clear-button="selectedTag.editable"
                         placeholder="label"
                         required
-                        @input="($event) => selectedTag.label = $event.target.value" />
+                        @input="($event) => (selectedTag.label = $event.target.value)" />
                       <f7-list-input
                         label="Description"
                         :value="selectedTag.description"
@@ -121,7 +121,7 @@
                         :disabled="!selectedTag.editable ? true : null"
                         :clear-button="selectedTag.editable"
                         placeholder="description"
-                        @input="($event) => selectedTag.description = $event.target.value" />
+                        @input="($event) => (selectedTag.description = $event.target.value)" />
                     </f7-list>
                   </f7-card-content>
                   <f7-card-footer v-if="selectedTag.editable">
@@ -174,7 +174,8 @@
           class="semantic-tag-code-editor"
           mode="application/vnd.openhab.tag+yaml"
           :value="editingTagsYaml"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
       </f7-tab>
     </f7-tabs>
 
@@ -204,7 +205,7 @@
             Synonyms
           </f7-link>
         </f7-toolbar>
-        <f7-block style="margin-bottom: 6rem;" v-if="selectedTag && detailsTab === 'tag'">
+        <f7-block v-if="selectedTag && detailsTab === 'tag'" style="margin-bottom: 6rem">
           <f7-list class="tag-detail" inline-labels>
             <f7-list-input
               label="Name"
@@ -222,7 +223,7 @@
               :disabled="!selectedTag.editable ? true : null"
               :clear-button="selectedTag.editable"
               placeholder="label"
-              @input="($event) => selectedTag.label = $event.target.value" />
+              @input="($event) => (selectedTag.label = $event.target.value)" />
             <f7-list-input
               label="Description"
               :value="selectedTag.description"
@@ -231,11 +232,11 @@
               :disabled="!selectedTag.editable ? true : null"
               :clear-button="selectedTag.editable"
               placeholder="description"
-              @input="($event) => selectedTag.description = $event.target.value" />
+              @input="($event) => (selectedTag.description = $event.target.value)" />
           </f7-list>
           <f7-button v-if="selectedTag.editable" color="red" @click="removeTag"> Remove </f7-button>
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedTag && detailsTab === 'synonyms'">
+        <f7-block v-if="selectedTag && detailsTab === 'synonyms'" style="margin-bottom: 6rem">
           <f7-list class="synonyms">
             <f7-list-input
               v-for="(synonym, index) in selectedTag.synonyms"
@@ -362,22 +363,23 @@ import DirtyMixin from '@/pages/settings/dirty-mixin'
 import { i18n } from '@/js/i18n'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin, TagMixin],
   components: {
     SemanticsTreeview,
-    'editor': defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return {
       theme
     }
   },
-  data () {
+  data() {
     return {
       semanticTags: [],
       selectedTag: null,
@@ -420,23 +422,23 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
       this.detailsOpened = false
     },
-    onPageAfterOut () {
+    onPageAfterOut() {
       if (this.dirty) {
         useSemanticsStore().loadSemantics(i18n)
       }
     },
-    onEditorInput (value) {
+    onEditorInput(value) {
       if (value !== this.editableSemanticTagsYaml) {
         this.dirty = this.nonCodeDirty || true
       } else {
@@ -444,7 +446,7 @@ export default {
       }
       this.editingTagsYaml = value
     },
-    switchTab (tab) {
+    switchTab(tab) {
       if (this.currentTab === tab) return
       // avoid error with existing details sheet when switching tabs
       const sheet = this.$refs['details-sheet']?.$el.f7Modal
@@ -465,14 +467,14 @@ export default {
         this.currentTab = tab
       }
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         this.save()
         ev.stopPropagation()
         ev.preventDefault()
       }
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -494,7 +496,7 @@ export default {
         this.ready = true
       })
     },
-    async save () {
+    async save() {
       if (!this.dirty) return
       if (this.currentTab === 'code') {
         if (!this.fromYaml()) {
@@ -505,21 +507,23 @@ export default {
 
       const editableTags = this.semanticTags.filter((t) => t.editable)
       const addedTags = editableTags.filter((t) => !useSemanticsStore().Tags.find((c) => c.uid === t.uid))
-      const modifiedTags = editableTags.filter((t) => useSemanticsStore().Tags.find((c) => (c.uid === t.uid) && !fastDeepEqual(c, t)))
+      const modifiedTags = editableTags.filter((t) => useSemanticsStore().Tags.find((c) => c.uid === t.uid && !fastDeepEqual(c, t)))
       const removedTags = useSemanticsStore().Tags.filter((c) => !this.semanticTags.find((t) => t.uid === c.uid))
       console.debug('Added: ', addedTags, 'Removed: ', removedTags, 'Modified: ', modifiedTags)
 
-      if (addedTags.some((t) => {
-        if ((!t.name || !t.label) || modifiedTags.some((t) => !t.name || !t.label)) {
-          f7.dialog.alert(`${t.name}: Tag name and label required`)
-          return true
-        }
-        if (useSemanticsStore().Tags.find((c) => c.name === t.name) && !removedTags.find((r) => r.name === t.name)) {
-          f7.dialog.alert(`${t.name}: Tag names must be unique`)
-          return true
-        }
-        return false
-      })) {
+      if (
+        addedTags.some((t) => {
+          if (!t.name || !t.label || modifiedTags.some((t) => !t.name || !t.label)) {
+            f7.dialog.alert(`${t.name}: Tag name and label required`)
+            return true
+          }
+          if (useSemanticsStore().Tags.find((c) => c.name === t.name) && !removedTags.find((r) => r.name === t.name)) {
+            f7.dialog.alert(`${t.name}: Tag names must be unique`)
+            return true
+          }
+          return false
+        })
+      ) {
         return
       }
 
@@ -537,54 +541,44 @@ export default {
           // So need to use the post endpoint with the new uid, but this is refused if the name is still the same and not first deleted.
           await Promise.all(removeTasks.map((fn) => fn()))
           console.debug('Successfully removed tags')
-          f7.toast.create({
-            text: (removeTasks.length === 1 ? 'Tag' : 'Tags') + ' deleted',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          showToast((removeTasks.length === 1 ? 'Tag' : 'Tags') + ' deleted')
         }
         if (addTasks.length > 0) {
           await Promise.all(addTasks.map((fn) => fn()))
           console.debug('Successfully added tags')
-          f7.toast.create({
-            text: (addTasks.length === 1 ? 'Tag' : 'Tags') + ' added',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          showToast((addTasks.length === 1 ? 'Tag' : 'Tags') + ' added')
         }
         if (changeTasks.length > 0) {
           await Promise.all(changeTasks.map((fn) => fn()))
           console.debug('Successfully modified tags')
-          f7.toast.create({
-            text: (changeTasks.length === 1 ? 'Tag' : 'Tags') + ' modified',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          showToast((changeTasks.length === 1 ? 'Tag' : 'Tags') + ' modified')
         }
         this.dirty = false
-        useSemanticsStore().loadSemantics(i18n).then(() => {
-          this.load()
-        })
+        useSemanticsStore()
+          .loadSemantics(i18n)
+          .then(() => {
+            this.load()
+          })
       } catch (error) {
         console.error(error)
         f7.dialog.alert('Error saving: ' + error)
       }
     },
-    toggleExpanded () {
+    toggleExpanded() {
       this.expanded = !this.expanded
       this.semanticTags.forEach((t) => {
         this.expandedTags[t.uid] = this.expanded
       })
       this.expandToSelection()
     },
-    expandToSelection () {
+    expandToSelection() {
       this.selectedTag?.parent?.split('_').reduce((prev, p) => {
-        const parent = (prev ? (prev + '_') : '') + p
+        const parent = (prev ? prev + '_' : '') + p
         this.expandedTags[parent] = true
         return parent
       }, '')
     },
-    showFiltered (filter) {
+    showFiltered(filter) {
       if (filter) {
         if (!this.filtering) {
           this.filtering = true
@@ -601,7 +595,7 @@ export default {
         }
       }
     },
-    selectTag (tag) {
+    selectTag(tag) {
       if (this.selectedTag === tag) return
       this.selectedTag = null
       if (!tag) {
@@ -622,7 +616,7 @@ export default {
         })
       })
     },
-    addTag () {
+    addTag() {
       if (!this.selectedTag) return
       const tag = {
         uid: this.selectedTag.uid + '_',
@@ -638,12 +632,12 @@ export default {
       this.expandedTags[tag.parent] = true
       this.detailsTab = 'tag'
     },
-    removeTag () {
+    removeTag() {
       if (!this.selectedTag) return
       this.semanticTags.splice(this.semanticTags.indexOf(this.selectedTag), 1)
       this.selectTag(null)
     },
-    updateName (ev) {
+    updateName(ev) {
       const name = ev.target.value
       this.selectedTag.name = name
       const oldUid = this.selectedTag.uid
@@ -651,14 +645,14 @@ export default {
       this.selectedTag.uid = newUid
       this.expandedTags[newUid] = this.expandedTags[oldUid]
     },
-    addSynonym (event) {
+    addSynonym(event) {
       const newValue = event.target.value.trim()
       if (newValue && !this.selectedTag.synonyms.includes(newValue)) {
         this.selectedTag.synonyms.splice(this.selectedTag.synonyms.length, 0, newValue)
       }
       this.newSynonym = ''
     },
-    updateSynonyms (event, index) {
+    updateSynonyms(event, index) {
       const newValue = event.target.value.trim()
       if (newValue) {
         this.selectedTag.synonyms.splice(index, 1, newValue)
@@ -666,24 +660,26 @@ export default {
         this.selectedTag.synonyms.splice(index, 1)
       }
     },
-    clearSelection (ev) {
+    clearSelection(ev) {
       if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {
         this.selectTag(null)
       }
     },
-    toYaml () {
-      const tags = this.semanticTags.filter((t) => t.editable).map((t) => {
-        return {
-          name: t.name,
-          label: t.label,
-          description: t.description,
-          synonyms: [...t.synonyms],
-          parent: t.parent
-        }
-      })
+    toYaml() {
+      const tags = this.semanticTags
+        .filter((t) => t.editable)
+        .map((t) => {
+          return {
+            name: t.name,
+            label: t.label,
+            description: t.description,
+            synonyms: [...t.synonyms],
+            parent: t.parent
+          }
+        })
       return YAML.stringify(tags)
     },
-    fromYaml () {
+    fromYaml() {
       const tags = [...this.semanticTags].filter((t) => !t.editable)
       const editableTags = this.semanticTags.filter((t) => t.editable)
       try {

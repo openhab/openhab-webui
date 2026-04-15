@@ -14,7 +14,7 @@
         </f7-button>
       </f7-col>
     </f7-block>
-    <f7-block form v-if="configDescription && config" class="block-narrow">
+    <f7-block v-if="configDescription && config" form class="block-narrow">
       <f7-col>
         <f7-block-title medium> Add-on configuration </f7-block-title>
         <config-sheet
@@ -23,7 +23,7 @@
           :configuration="config" />
       </f7-col>
     </f7-block>
-    <f7-block form v-if="loggerPackages.length > 0" class="block-narrow">
+    <f7-block v-if="loggerPackages.length > 0" form class="block-narrow">
       <f7-col>
         <f7-block-title medium> Add-on log settings </f7-block-title>
         <f7-list class="col wide">
@@ -63,6 +63,7 @@ import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import debounce from 'debounce'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin],
@@ -73,10 +74,10 @@ export default {
     addonId: String,
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       addon: {},
       configDescription: null,
@@ -92,10 +93,10 @@ export default {
     }
   },
   computed: {
-    type () {
+    type() {
       return this.addonId.split('-')[0]
     },
-    name () {
+    name() {
       return this.addonId.split('-')[1]
     }
   },
@@ -119,7 +120,7 @@ export default {
       const loggersChanged = this.loggersLoaded && !fastDeepEqual(this.loggerPackages, this.originalLoggerPackages)
       this.dirty = configChanged || loggersChanged
     }, 100),
-    save () {
+    save() {
       let promises = []
 
       const originalLoggerMap = Object.fromEntries(this.originalLoggerPackages.map((l) => [l.loggerName, l.level]))
@@ -134,30 +135,31 @@ export default {
       })
 
       if (this.configDescription && this.config) {
-        promises.push(this.$oh.api.put('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : ''), this.config))
+        promises.push(
+          this.$oh.api.put(
+            '/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : ''),
+            this.config
+          )
+        )
       }
 
       Promise.all(promises).then(() => {
-        f7.toast.create({
-          text: 'Saved',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast('Saved')
       })
       this.dirty = false
       this.f7router.back()
     },
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         this.save()
         ev.stopPropagation()
@@ -165,7 +167,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     let serviceSeparator = this.addonId.indexOf(':')
     if (serviceSeparator === -1) {
       this.strippedAddonId = this.addonId
@@ -182,11 +184,13 @@ export default {
       if (configDescriptionURI) {
         this.$oh.api.get('/rest/config-descriptions/' + configDescriptionURI).then((data2) => {
           this.configDescription = data2
-          this.$oh.api.get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : '')).then((data3) => {
-            this.originalConfig = data3
-            this.config = cloneDeep(data3)
-            this.configLoaded = true
-          })
+          this.$oh.api
+            .get('/rest/addons/' + this.strippedAddonId + '/config' + (this.serviceId ? '?serviceId=' + this.serviceId : ''))
+            .then((data3) => {
+              this.originalConfig = data3
+              this.config = cloneDeep(data3)
+              this.configLoaded = true
+            })
         })
       }
       if (Array.isArray(this.addon.loggerPackages)) {

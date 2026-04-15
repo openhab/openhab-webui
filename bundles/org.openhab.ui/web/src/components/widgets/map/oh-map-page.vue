@@ -1,24 +1,26 @@
 <template>
-  <l-map
-    ref="map"
-    :zoom="zoom"
-    :center="center"
-    :options="mapOptions"
-    :zoom-animation="!config.noZoomAnimation"
-    :marker-zoom-animation="!config.noMarkerZoomAnimation"
-    class="oh-map-page-lmap"
-    :class="{ 'with-tabbar': context.tab }"
-    @update:center="centerUpdate"
-    @update:zoom="zoomUpdate">
-    <l-feature-group ref="featureGroup" v-if="showMarkers">
-      <component
-        v-for="(marker, idx) in context.component.slots.default"
-        :key="idx"
-        :is="markerComponent(marker)"
-        :context="childContext(marker)"
-        @update="onMarkerUpdate" />
-    </l-feature-group>
-  </l-map>
+  <div ref="page" :class="scopedCssUid">
+    <l-map
+      ref="map"
+      :zoom="zoom"
+      :center="center"
+      :options="mapOptions"
+      :zoom-animation="!config.noZoomAnimation"
+      :marker-zoom-animation="!config.noMarkerZoomAnimation"
+      class="oh-map-page-lmap"
+      :class="{ 'with-tabbar': context.tab }"
+      @update:center="centerUpdate"
+      @update:zoom="zoomUpdate">
+      <l-feature-group v-if="showMarkers" ref="featureGroup">
+        <component
+          :is="markerComponent(marker)"
+          v-for="(marker, idx) in defaultSlots"
+          :key="idx"
+          :context="childContext(marker)"
+          @update="onMarkerUpdate" />
+      </l-feature-group>
+    </l-map>
+  </div>
 </template>
 
 <style lang="stylus">
@@ -31,16 +33,16 @@
     height calc(100% - var(--f7-safe-area-top) - var(--f7-navbar-height) - var(--f7-tabbar-labels-height)) !important
 
 // override leaflet style
-.leaflet-div-icon
+.oh-map-page-lmap .leaflet-div-icon
   background: unset
   border: unset
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, computed } from 'vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import mixin from '../widget-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { tileLayer, latLng, Icon } from 'leaflet'
 import { LMap, LTileLayer, LFeatureGroup } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -51,6 +53,7 @@ import OhMapMarker from './oh-map-marker.vue'
 import OhMapCircleMarker from './oh-map-circle-marker.vue'
 
 import 'leaflet-providers'
+import { mapStores } from 'pinia'
 
 // Do NOT remove: required for Leaflet to render in prod build
 delete Icon.Default.prototype._getIconUrl
@@ -60,8 +63,12 @@ Icon.Default.mergeOptions({
   shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
+const DEFAULT_TILE_PROVIDER = 'CartoDB.Voyager'
+
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     LMap,
     LTileLayer,
@@ -70,32 +77,40 @@ export default {
     OhMapCircleMarker
   },
   widget: OhMapPageDefinition,
-  data () {
+  setup(props) {
+    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
+    return { config, scopedCssUid, childContext, defaultSlots }
+  },
+  data() {
     return {
       zoom: this.context.component.config.initialZoom || 4,
       currentZoom: 13,
       currentCenter: null,
-      center: (this.context.component.config.initialCenter) ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
-      // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://a.basemaps.cartocdn.com/${useUIOptionsStore().getDarkMode()}_all/{z}/{x}/{y}.png`,
-      attribution: '&copy; <a class="external" target="_blank" href="http://osm.org/copyright">OpenStreetMap</a>, &copy; <a class="external" target="_blank" href="https://carto.com/attribution/">CARTO</a>',
-      showMarkers: false
+      center: this.context.component.config.initialCenter ? latLng(this.context.component.config.initialCenter.split(',')) : latLng(48, 6),
+      showMarkers: false,
+      tileLayer: null
     }
   },
   computed: {
-    mapOptions () {
-      return Object.assign({
-        zoomSnap: 0.1
-      }, this.config.noZoomOrDrag ? {
-        dragging: false,
-        touchZoom: false,
-        doubleClickZoom: false,
-        scrollWheelZoom: false,
-        zoomControl: false
-      } : {})
-    }
+    mapOptions() {
+      return Object.assign(
+        {
+          zoomSnap: 0.1
+        },
+        this.config.noZoomOrDrag
+          ? {
+              dragging: false,
+              touchZoom: false,
+              doubleClickZoom: false,
+              scrollWheelZoom: false,
+              zoomControl: false
+            }
+          : {}
+      )
+    },
+    ...mapStores(useUIOptionsStore)
   },
-  mounted () {
+  mounted() {
     // vue-leaflet docs say the leafletObject should be ready on the next tick after mounting,
     // but it isn't, so we have to wait for the map to be ready before we can initialise
     const check = () => {
@@ -110,10 +125,15 @@ export default {
       check()
     })
   },
-  methods: {
-    initialize () {
+  watch: {
+    'uiOptionsStore.darkMode': function () {
       this.setBackgroundLayer()
-      if (this.context.component.slots) {
+    }
+  },
+  methods: {
+    initialize() {
+      this.setBackgroundLayer()
+      if (this.defaultSlots.length) {
         // "dynamic" markers need to be initialised after the background layer;
         // otherwise Leaflet will throw Invalid LatLng object: (NaN, NaN)
         nextTick(() => {
@@ -122,16 +142,29 @@ export default {
         })
       }
     },
-    setBackgroundLayer () {
-      const defaultProvider = (useUIOptionsStore().getDarkMode() === 'dark') ? 'CartoDB.DarkMatter' : 'CartoDB.Positron'
-      const provider = this.config.tileLayerProvider || defaultProvider
-      let layer, overlayLayer
-      try {
-        layer = tileLayer.provider(provider, this.config.tileLayerProviderOptions)
-      } catch {
-        layer = tileLayer.provider(defaultProvider)
+    setBackgroundLayer() {
+      const tileProvider = this.config.tileLayerProvider || DEFAULT_TILE_PROVIDER
+      let overlayLayer
+
+      if (this.tileLayer) {
+        this.$refs.map.leafletObject.removeLayer(this.tileLayer)
       }
-      layer.addTo(this.$refs.map.leafletObject)
+
+      try {
+        this.tileLayer = tileLayer.provider(tileProvider, this.config.tileLayerProviderOptions)
+      } catch {
+        this.tileLayer = tileLayer.provider(tileProvider)
+      }
+      this.tileLayer.addTo(this.$refs.map.leafletObject)
+
+      const tilePane = this.$refs.map.leafletObject.getPane('tilePane')
+      if (tilePane) {
+        if (this.uiOptionsStore.darkMode === 'dark' && tileProvider === 'CartoDB.Voyager') {
+          tilePane.style.filter = 'invert(1) hue-rotate(180deg) brightness(120%) contrast(80%)'
+        } else {
+          tilePane.style.filter = 'unset'
+        }
+      }
 
       if (this.config.overlayTileLayerProvider) {
         try {
@@ -146,13 +179,13 @@ export default {
       }
       this.$refs.map.leafletObject.invalidateSize()
     },
-    zoomUpdate (zoom) {
+    zoomUpdate(zoom) {
       this.currentZoom = zoom
     },
-    centerUpdate (center) {
+    centerUpdate(center) {
       this.currentCenter = center
     },
-    markerComponent (marker) {
+    markerComponent(marker) {
       switch (marker.component) {
         case 'oh-map-marker':
           return OhMapMarker
@@ -162,7 +195,7 @@ export default {
           return null
       }
     },
-    onMarkerUpdate () {
+    onMarkerUpdate() {
       nextTick(() => {
         const bounds = this.$refs.featureGroup.leafletObject.getBounds()
         if (bounds.isValid()) {

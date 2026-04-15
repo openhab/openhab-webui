@@ -1,6 +1,6 @@
 <template>
   <f7-block class="developer-sidebar">
-    <f7-row :inner="false" v-if="!theme.md">
+    <f7-row v-if="!theme.md" :inner="false">
       <f7-searchbar
         ref="searchbar"
         style="width: 100%"
@@ -10,7 +10,7 @@
         @searchbar:search="search"
         @searchbar:clear="clearSearch" />
     </f7-row>
-    <f7-row style="width: 100%" :inner="false" v-else>
+    <f7-row v-else style="width: 100%" :inner="false">
       <f7-searchbar
         ref="searchbar"
         custom-search
@@ -50,14 +50,14 @@
             </f7-accordion-content>
           </f7-list-item>
         </f7-list>
-        <f7-block class="no-margin no-padding" v-if="!isAnythingPinned">
+        <f7-block v-if="!isAnythingPinned" class="no-margin no-padding">
           <p class="padding-horizontal">Use the search box above or the button below to temporarily pin objects here for quick access.</p>
           <p class="padding-horizontal">
             <f7-button fill color="blue" @click="openModelPicker"> Pin Items from Model </f7-button>
           </p>
         </f7-block>
         <!-- Pinned Items -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.items.length">
+        <f7-block v-if="developerStore.pinnedObjects.items.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Items</span>
             <span style="margin-left: auto">
@@ -106,7 +106,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Things -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.things.length">
+        <f7-block v-if="developerStore.pinnedObjects.things.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Things</span>
             <span style="margin-left: auto">
@@ -154,7 +154,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Rules -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.rules.length">
+        <f7-block v-if="developerStore.pinnedObjects.rules.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Rules</span>
             <span style="margin-left: auto">
@@ -209,7 +209,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Scenes -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.scenes.length">
+        <f7-block v-if="developerStore.pinnedObjects.scenes.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Scenes</span>
             <span style="margin-left: auto">
@@ -236,14 +236,14 @@
                     </f7-link>
                     <f7-link
                       class="margin-right"
-                      :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                      :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'"
+                      :icon-color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+                      :tooltip="rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable'"
                       icon-f7="pause_circle"
                       icon-size="18"
                       @click="toggleRuleDisabled(rule, 'Scene')" />
                     <f7-link
                       class="margin-right"
-                      :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
+                      :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
                       icon-f7="play"
                       icon-size="18"
                       tooltip="Run"
@@ -264,7 +264,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Scripts -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.scripts.length">
+        <f7-block v-if="developerStore.pinnedObjects.scripts.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Scripts</span>
             <span style="margin-left: auto">
@@ -291,14 +291,14 @@
                     </f7-link>
                     <f7-link
                       class="margin-right"
-                      :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-                      :tooltip="(rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable'"
+                      :icon-color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+                      :tooltip="rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable'"
                       icon-f7="pause_circle"
                       icon-size="18"
                       @click="toggleRuleDisabled(rule, 'Script')" />
                     <f7-link
                       class="margin-right"
-                      :color="(rule.status.status === 'IDLE') ? 'blue' : 'gray'"
+                      :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
                       icon-f7="play"
                       icon-size="18"
                       tooltip="Run"
@@ -319,7 +319,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Pages -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.pages.length">
+        <f7-block v-if="developerStore.pinnedObjects.pages.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Pages</span>
             <span style="margin-left: auto">
@@ -364,7 +364,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Widgets -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.widgets.length">
+        <f7-block v-if="developerStore.pinnedObjects.widgets.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Widgets</span>
             <span style="margin-left: auto">
@@ -395,7 +395,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Transformations -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.transformations.length">
+        <f7-block v-if="developerStore.pinnedObjects.transformations.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Transformations</span>
             <span style="margin-left: auto">
@@ -436,7 +436,7 @@
           </f7-list>
         </f7-block>
         <!-- Pinned Persistence configs -->
-        <f7-block class="no-margin no-padding" v-if="developerStore.pinnedObjects.persistenceConfigs.length">
+        <f7-block v-if="developerStore.pinnedObjects.persistenceConfigs.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
             <span>Pinned Persistence Configs</span>
             <span style="margin-left: auto">
@@ -516,20 +516,21 @@
         </f7-block>
         <expression-tester
           :context="{
-          component: {
-            config: {
-              style: {
-                fontFamily: 'monospace'
-              },
-              noBorder: true,
-              noShadow: true,
-              text: ''
-            }
-          },
-          editmode: true,
-          vars: {},
-          store: statesStore.trackedItems
-        }" />
+            component: {
+              config: {
+                style: {
+                  fontFamily: 'monospace',
+                  'word-break': 'break-all'
+                },
+                noBorder: true,
+                noShadow: true,
+                text: ''
+              }
+            },
+            editmode: true,
+            vars: {},
+            store: statesStore.trackedItems
+          }" />
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal"> Scripting Scratchpad </f7-block-title>
           <f7-list>
@@ -640,6 +641,9 @@ import ThingStatus from '@/components/thing/thing-status-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
+import * as api from '@/api'
+import { showToast } from '@/js/dialog-promises'
+
 export default {
   mixins: [RuleStatus, ThingStatus],
   components: {
@@ -654,11 +658,11 @@ export default {
     searchFor: String
   },
   watch: {
-    searchFor (val) {
+    searchFor(val) {
       if (val) this.$refs.searchbar.$el.f7Searchbar.search(val)
     }
   },
-  data () {
+  data() {
     return {
       searchQuery: '',
       searchResultsLoading: false,
@@ -697,7 +701,7 @@ export default {
       theme
     }
   },
-  created () {
+  created() {
     const fuseOptions = {
       threshold: 0, // precise search, no fuzzy matching
       ignoreLocation: true, // search anywhere in the string
@@ -768,17 +772,17 @@ export default {
     Object.values(this.SEARCH).forEach((options) => Object.assign(options, fuseOptions))
   },
   computed: {
-    context () {
+    context() {
       return {
         store: useStatesStore().trackedItems
       }
     },
-    isAnythingPinned () {
+    isAnythingPinned() {
       return Object.values(useDeveloperStore().pinnedObjects).some((obj) => obj.length > 0)
     },
     ...mapStores(useDeveloperStore, useStatesStore)
   },
-  mounted () {
+  mounted() {
     this.startEventSource()
     nextTick(() => {
       if (this.$device.desktop && this.$refs.searchbar) {
@@ -787,34 +791,37 @@ export default {
       }
     })
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.stopEventSource()
     if (this.addThingAutocomplete) this.addThingAutocomplete.destroy()
   },
   methods: {
-    addItemsFromModel (value) {
+    addItemsFromModel(value) {
       useDeveloperStore().pinnedObjects.items = [...value]
     },
-    openModelPicker () {
+    openModelPicker() {
       const popup = {
         component: ModelPickerPopup
       }
 
-      f7.views.main.router.navigate({
-        url: 'pick-from-model',
-        route: {
-          path: 'pick-from-model',
-          popup
+      f7.views.main.router.navigate(
+        {
+          url: 'pick-from-model',
+          route: {
+            path: 'pick-from-model',
+            popup
+          }
+        },
+        {
+          props: {
+            value: useDeveloperStore().pinnedObjects.items,
+            multiple: true,
+            allowEmpty: true,
+            popupTitle: 'Pin Items from Model',
+            actionLabel: 'Pin'
+          }
         }
-      }, {
-        props: {
-          value: useDeveloperStore().pinnedObjects.items,
-          multiple: true,
-          allowEmpty: true,
-          popupTitle: 'Pin Items from Model',
-          actionLabel: 'Pin'
-        }
-      })
+      )
 
       f7.once('itemsPicked', this.addItemsFromModel)
       f7.once('modelPickerClosed', () => {
@@ -826,13 +833,13 @@ export default {
      *
      * @returns {Promise} load promise
      */
-    async loadPersistenceConfigs () {
-      return this.$oh.api.get('/rest/persistence').then((data) => {
+    async loadPersistenceConfigs() {
+      return api.getPersistenceServices().then((data) => {
         const labels = {}
         data.forEach((p) => {
           labels[p.id] = p.label
         })
-        const loadPromises = data.map((p) => this.$oh.api.get('/rest/persistence/' + p.id))
+        const loadPromises = data.map((p) => api.getPersistenceServiceConfiguration({ serviceId: p.id }))
         const configs = []
 
         Promise.allSettled(loadPromises).then((results) => {
@@ -847,7 +854,7 @@ export default {
         return configs
       })
     },
-    search (searchbar, query, previousQuery) {
+    search(searchbar, query, previousQuery) {
       if (!query) {
         this.clearSearch()
         return
@@ -861,15 +868,15 @@ export default {
       const promises = this.cachedObjects
         ? this.cachedObjects.map((o) => Promise.resolve(o))
         : [
-          this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'), // 0
-          this.$oh.api.get('/rest/things?summary=true'), // 1
-          this.$oh.api.get('/rest/rules?summary=false'), // 2
-          Promise.resolve(useComponentsStore().pages()), // 3
-          this.$oh.api.get('/rest/ui/components/system:sitemap'), // 4
-          Promise.resolve(useComponentsStore().widgets()), // 5
-          this.$oh.api.get('/rest/transformations'), // 6
-          this.loadPersistenceConfigs() // 7
-        ]
+            this.$oh.api.get('/rest/items?staticDataOnly=true&metadata=.*'), // 0
+            this.$oh.api.get('/rest/things?summary=true'), // 1
+            this.$oh.api.get('/rest/rules?summary=false'), // 2
+            Promise.resolve(useComponentsStore().pages()), // 3
+            this.$oh.api.get('/rest/ui/components/system:sitemap'), // 4
+            Promise.resolve(useComponentsStore().widgets()), // 5
+            this.$oh.api.get('/rest/transformations'), // 6
+            this.loadPersistenceConfigs() // 7
+          ]
 
       this.searchResultsLoading = true
       Promise.all(promises).then((data) => {
@@ -910,7 +917,7 @@ export default {
         const transformations = this.searchData(this.cachedFuseObjects.transformations, query)
         const persistenceConfigs = this.searchData(this.cachedFuseObjects.persistence, query)
 
-        this.searchResults =  {
+        this.searchResults = {
           items,
           things,
           rules,
@@ -924,7 +931,7 @@ export default {
         this.searchResultsLoading = false
       })
     },
-    searchData (fuse, query) {
+    searchData(fuse, query) {
       if (!query) return []
 
       return fuse
@@ -936,27 +943,37 @@ export default {
           return nameA.localeCompare(nameB)
         })
     },
-    clearSearch () {
+    clearSearch() {
       this.searching = false
       this.searchResultsLoading = false
       this.searchQuery = ''
       this.cachedObjects = null
       this.cachedFuseObjects = null
-      this.searchResults = { items: [], things: [], rules: [], scenes: [], scripts: [], pages: [], widgets: [], transformations: [], persistenceConfigs: [] }
+      this.searchResults = {
+        items: [],
+        things: [],
+        rules: [],
+        scenes: [],
+        scripts: [],
+        pages: [],
+        widgets: [],
+        transformations: [],
+        persistenceConfigs: []
+      }
     },
-    pin (type, obj) {
+    pin(type, obj) {
       useDeveloperStore().pinnedObjects[type].push(obj)
     },
-    unpin (type, obj, keyName) {
+    unpin(type, obj, keyName) {
       let index = useDeveloperStore().pinnedObjects[type].findIndex((o) => o[keyName] === obj[keyName])
       if (index >= 0) {
         useDeveloperStore().pinnedObjects[type].splice(index, 1)
       }
     },
-    unpinAll (type) {
+    unpinAll(type) {
       useDeveloperStore().pinnedObjects[type] = []
     },
-    savePinCollection (evt) {
+    savePinCollection(evt) {
       this.newCollectionName = this.newCollectionName.trim()
       if (!this.newCollectionName) return
 
@@ -974,7 +991,7 @@ export default {
         save()
       }
     },
-    deletePinCollection (name) {
+    deletePinCollection(name) {
       f7.dialog.confirm(
         `Are you sure you want to delete the '${name}' collection? This action cannot be undone.`,
         'Delete Pin Collection?',
@@ -983,7 +1000,7 @@ export default {
         }
       )
     },
-    loadPinCollection (name) {
+    loadPinCollection(name) {
       const pinCollection = useDeveloperStore().pinCollections[name]
       if (!pinCollection) return
 
@@ -1006,10 +1023,10 @@ export default {
         load()
       }
     },
-    getPageType (page) {
+    getPageType(page) {
       return this.pageTypes.find((t) => t.componentType === page.component)
     },
-    showItem (evt, item) {
+    showItem(evt, item) {
       evt.cancelBubble = true
       if (this.$$(evt.target).closest('.itemlist-actions').length) return
       const itemEl = this.$$(evt.target).closest('.itemlist-item')
@@ -1017,115 +1034,97 @@ export default {
       this.openedItem = item
       nextTick(() => this.$refs.itemPopover.$el.f7Modal.open(itemEl[0]))
     },
-    toggleThingDisabled (thing) {
-      const enable = (thing.statusInfo.statusDetail === 'DISABLED')
-      this.$oh.api.putPlain('/rest/things/' + thing.UID + '/enable', enable.toString()).then((data) => {
-        f7.toast.create({
-          text: enable ? 'Thing enabled' : 'Thing disabled',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while disabling or enabling: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+    toggleThingDisabled(thing) {
+      const enable = thing.statusInfo.statusDetail === 'DISABLED'
+      this.$oh.api
+        .putPlain('/rest/things/' + thing.UID + '/enable', enable.toString())
+        .then((data) => {
+          showToast(enable ? 'Thing enabled' : 'Thing disabled')
+        })
+        .catch((err) => {
+          showToast('Error while disabling or enabling: ' + err)
+        })
     },
-    toggleRuleDisabled (rule, type = 'Rule') {
-      const enable = (rule.status.statusDetail === 'DISABLED')
-      this.$oh.api.postPlain('/rest/rules/' + rule.uid + '/enable', enable.toString()).then((data) => {
-        f7.toast.create({
-          text: (enable) ? `${type} enabled` : `${type} disabled`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        f7.toast.create({
-          text: `Error while disabling or enabling ${type.toLowerCase()}: ` + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+    toggleRuleDisabled(rule, type = 'Rule') {
+      const enable = rule.status.statusDetail === 'DISABLED'
+      this.$oh.api
+        .postPlain('/rest/rules/' + rule.uid + '/enable', enable.toString())
+        .then((data) => {
+          showToast(enable ? `${type} enabled` : `${type} disabled`)
+        })
+        .catch((err) => {
+          showToast(`Error while disabling or enabling ${type.toLowerCase()}: ` + err)
+        })
     },
-    runRuleNow (rule, type = 'Rule') {
+    runRuleNow(rule, type = 'Rule') {
       if (rule.status.status === 'RUNNING' || rule.status.status === 'UNINITIALIZED') {
-        return f7.toast.create({
-          text: `${type} cannot be run ${(rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast(
+          `${type} cannot be run ${rule.status.status === 'RUNNING' ? 'while already running, please wait' : 'if it is uninitialized'}!`
+        )
+        return
       }
-      f7.toast.create({
-        text: `Running ${type.toLowerCase()}`,
-        destroyOnClose: true,
-        closeTimeout: 2000
-      }).open()
+      showToast(`Running ${type.toLowerCase()}`)
       this.$oh.api.postPlain('/rest/rules/' + rule.uid + '/runnow', '').catch((err) => {
-        f7.toast.create({
-          text: `Error while running ${type.toLowerCase()}: ` + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast(`Error while running ${type.toLowerCase()}: ` + err)
       })
     },
-    openScriptingScratchpad () {
-      this.$oh.api.get('/rest/rules/scratchpad')
+    openScriptingScratchpad() {
+      this.$oh.api
+        .get('/rest/rules/scratchpad')
         .then((data) => {
           f7.views.main.router.navigate('/settings/scripts/scratchpad', { animate: false })
         })
         .catch(() => {
           this.$oh.api.get('/rest/module-types/script.ScriptAction').then((data) => {
             const languages = data.configDescriptions.find((c) => c.name === 'type').options
-            f7.actions.create({
-              buttons: [
-                [
-                  { label: true, text: 'Scripting Language' },
-                  ...languages.map((l) => {
-                    return {
-                      text: l.label,
-                      color: 'blue',
-                      onClick: () => {
-                        const scratchpad = {
-                          uid: 'scratchpad',
-                          name: '-Scratchpad-',
-                          description: 'Created from the developer sidebar on ' + new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
-                          triggers: [],
-                          conditions: [],
-                          actions: [
-                            {
-                              id: 'script',
-                              type: 'script.ScriptAction',
-                              configuration: {
-                                type: l.value,
-                                script: ''
+            f7.actions
+              .create({
+                buttons: [
+                  [
+                    { label: true, text: 'Scripting Language' },
+                    ...languages.map((l) => {
+                      return {
+                        text: l.label,
+                        color: 'blue',
+                        onClick: () => {
+                          const scratchpad = {
+                            uid: 'scratchpad',
+                            name: '-Scratchpad-',
+                            description:
+                              'Created from the developer sidebar on ' +
+                              new Date().toLocaleDateString() +
+                              ' ' +
+                              new Date().toLocaleTimeString(),
+                            triggers: [],
+                            conditions: [],
+                            actions: [
+                              {
+                                id: 'script',
+                                type: 'script.ScriptAction',
+                                configuration: {
+                                  type: l.value,
+                                  script: ''
+                                }
                               }
-                            }
-                          ],
-                          tags: ['Script', 'Scratchpad']
+                            ],
+                            tags: ['Script', 'Scratchpad']
+                          }
+                          this.$oh.api.postPlain('/rest/rules', JSON.stringify(scratchpad), 'text/plain', 'application/json').then(() => {
+                            showToast('Scratchpad script created')
+                            f7.views.main.router.navigate('/settings/scripts/scratchpad', { animate: false })
+                          })
                         }
-                        this.$oh.api.postPlain('/rest/rules', JSON.stringify(scratchpad), 'text/plain', 'application/json').then(() => {
-                          f7.toast.create({
-                            text: 'Scratchpad script created',
-                            destroyOnClose: true,
-                            closeTimeout: 2000
-                          }).open()
-                          f7.views.main.router.navigate('/settings/scripts/scratchpad', { animate: false })
-                        })
                       }
-                    }
-                  })
-                ],
-                [
-                  { color: 'red', text: 'Cancel', close: true }
+                    })
+                  ],
+                  [{ color: 'red', text: 'Cancel', close: true }]
                 ]
-              ]
-            }).open()
+              })
+              .open()
           })
         })
     },
-    quickAddThing () {
+    quickAddThing() {
       if (this.addThingAutocomplete) {
         this.addThingAutocomplete.value = []
         this.addThingAutocomplete.open()
@@ -1133,100 +1132,123 @@ export default {
         f7.preloader.show()
         const self = this
         this.$oh.api.get('/rest/thing-types').then((data) => {
-          const listedThingTypes = data.filter((t) => t.listed).map((t) => { return { UID: t.UID, label: `${t.label} (${t.UID})` } }).sort((a, b) => a.label.localeCompare(b.label))
+          const listedThingTypes = data
+            .filter((t) => t.listed)
+            .map((t) => {
+              return { UID: t.UID, label: `${t.label} (${t.UID})` }
+            })
+            .sort((a, b) => a.label.localeCompare(b.label))
           f7.preloader.hide()
-          this.addThingAutocomplete = f7.autocomplete.create({
-            openIn: 'popup',
-            autoFocus: true,
-            value: [],
-            pageTitle: 'Select Thing Type',
-            searchbarPlaceholder: 'Search thing types',
-            requestSourceOnOpen: true,
-            multiple: false,
-            valueProperty: 'UID',
-            textProperty: 'label',
-            url: 'quick-add-thing/',
-            source (query, render) {
-              if (query.length === 0) {
-                render(listedThingTypes)
-              } else {
-                render(listedThingTypes.filter((t) => (t.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || t.UID.toLowerCase().indexOf(query.toLowerCase()) >= 0)))
+          this.addThingAutocomplete = f7.autocomplete
+            .create({
+              openIn: 'popup',
+              autoFocus: true,
+              value: [],
+              pageTitle: 'Select Thing Type',
+              searchbarPlaceholder: 'Search thing types',
+              requestSourceOnOpen: true,
+              multiple: false,
+              valueProperty: 'UID',
+              textProperty: 'label',
+              url: 'quick-add-thing/',
+              source(query, render) {
+                if (query.length === 0) {
+                  render(listedThingTypes)
+                } else {
+                  render(
+                    listedThingTypes.filter(
+                      (t) =>
+                        t.label.toLowerCase().indexOf(query.toLowerCase()) >= 0 || t.UID.toLowerCase().indexOf(query.toLowerCase()) >= 0
+                    )
+                  )
+                }
+              },
+              on: {
+                change(value) {
+                  if (!value.length) return
+                  f7.views.main.router.navigate('/settings/things/add/' + value[0].UID.split(':')[0] + '/' + value[0].UID, {
+                    animate: false
+                  })
+                }
               }
-            },
-            on: {
-              change (value) {
-                if (!value.length) return
-                f7.views.main.router.navigate('/settings/things/add/' + value[0].UID.split(':')[0] + '/' + value[0].UID, { animate: false })
-              }
-            }
-          }).open()
+            })
+            .open()
         })
       }
     },
-    changeEventTopicFilter () {
-      f7.dialog.prompt('Filter events by topics (comma-separated, wildcards accepted):',
+    changeEventTopicFilter() {
+      f7.dialog.prompt(
+        'Filter events by topics (comma-separated, wildcards accepted):',
         'Event Monitor',
         (filter) => {
           this.eventTopicFilter = filter
         },
         null,
-        this.eventTopicFilter)
+        this.eventTopicFilter
+      )
     },
-    startSSE () {
+    startSSE() {
       this.sseEvents = []
-      this.sseClient = this.$oh.sse.connect('/rest/events' + (this.eventTopicFilter ? '?topics=' + this.eventTopicFilter : ''), '', (event) => {
-        event.time = new Date()
-        this.sseEvents.unshift(...[event])
-        this.sseEvents.splice(20)
-      })
+      this.sseClient = this.$oh.sse.connect(
+        '/rest/events' + (this.eventTopicFilter ? '?topics=' + this.eventTopicFilter : ''),
+        '',
+        (event) => {
+          event.time = new Date()
+          this.sseEvents.unshift(...[event])
+          this.sseEvents.splice(20)
+        }
+      )
     },
-    stopSSE () {
+    stopSSE() {
       this.$oh.sse.close(this.sseClient)
       this.sseClient = null
     },
-    startEventSource () {
-      this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/*/*,openhab/things/*/*,openhab/addons/*/*', null, (event) => {
-        const topicParts = event.topic.split('/')
-        switch (topicParts[1]) {
-          case 'addons':
-            if (this.addThingAutocomplete) this.addThingAutocomplete.destroy()
-            break
-          case 'things':
-            switch (topicParts[3]) {
-              case 'removed':
-                this.unpin('things', { UID: topicParts[2] }, 'UID')
-                break
-              case 'status':
-                const updatedThing = useDeveloperStore().pinnedObjects.things.find((t) => t.UID === topicParts[2])
-                if (!updatedThing) break
-                const newStatus = JSON.parse(event.payload)
-                if (updatedThing) {
-                  if (updatedThing.statusInfo.status !== newStatus.status)
-                    updatedThing.statusInfo.status = newStatus.status
-                  if (updatedThing.statusInfo.statusDetail !== newStatus.statusDetail)
-                    updatedThing.statusInfo.statusDetail = newStatus.statusDetail
-                  if (updatedThing.statusInfo.description !== newStatus.description)
-                    updatedThing.statusInfo.description = newStatus.description
-                }
-            }
-            break
-          case 'rules':
-            switch (topicParts[3]) {
-              case 'removed':
-                this.unpin('rules', { uid: topicParts[2] }, 'uid')
-                break
-              case 'state':
-                let rule = useDeveloperStore().pinnedObjects.rules.find((r) => r.uid === topicParts[2])
-                if (!rule) rule = useDeveloperStore().pinnedObjects.scenes.find((r) => r.uid === topicParts[2])
-                if (!rule) rule = useDeveloperStore().pinnedObjects.scripts.find((r) => r.uid === topicParts[2])
-                if (!rule) break
-                rule.status = JSON.parse(event.payload)
-            }
-            break
+    startEventSource() {
+      this.eventSource = this.$oh.sse.connect(
+        '/rest/events?topics=openhab/rules/*/*,openhab/things/*/*,openhab/addons/*/*',
+        null,
+        (event) => {
+          const topicParts = event.topic.split('/')
+          switch (topicParts[1]) {
+            case 'addons':
+              if (this.addThingAutocomplete) this.addThingAutocomplete.destroy()
+              break
+            case 'things':
+              switch (topicParts[3]) {
+                case 'removed':
+                  this.unpin('things', { UID: topicParts[2] }, 'UID')
+                  break
+                case 'status':
+                  const updatedThing = useDeveloperStore().pinnedObjects.things.find((t) => t.UID === topicParts[2])
+                  if (!updatedThing) break
+                  const newStatus = JSON.parse(event.payload)
+                  if (updatedThing) {
+                    if (updatedThing.statusInfo.status !== newStatus.status) updatedThing.statusInfo.status = newStatus.status
+                    if (updatedThing.statusInfo.statusDetail !== newStatus.statusDetail)
+                      updatedThing.statusInfo.statusDetail = newStatus.statusDetail
+                    if (updatedThing.statusInfo.description !== newStatus.description)
+                      updatedThing.statusInfo.description = newStatus.description
+                  }
+              }
+              break
+            case 'rules':
+              switch (topicParts[3]) {
+                case 'removed':
+                  this.unpin('rules', { uid: topicParts[2] }, 'uid')
+                  break
+                case 'state':
+                  let rule = useDeveloperStore().pinnedObjects.rules.find((r) => r.uid === topicParts[2])
+                  if (!rule) rule = useDeveloperStore().pinnedObjects.scenes.find((r) => r.uid === topicParts[2])
+                  if (!rule) rule = useDeveloperStore().pinnedObjects.scripts.find((r) => r.uid === topicParts[2])
+                  if (!rule) break
+                  rule.status = JSON.parse(event.payload)
+              }
+              break
+          }
         }
-      })
+      )
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     }

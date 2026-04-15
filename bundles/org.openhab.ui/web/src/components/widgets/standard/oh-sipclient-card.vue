@@ -7,17 +7,24 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhSipclient from '../system/oh-sipclient.vue'
 import { OhSIPClientCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhSipclient
   },
-  widget: OhSIPClientCardDefinition
+  widget: OhSIPClientCardDefinition,
+  setup(props) {
+    const { config } = useWidgetContext(computed(() => props.context))
+    return { config }
+  }
 }
 </script>

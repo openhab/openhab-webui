@@ -3,9 +3,9 @@
     <f7-navbar>
       <oh-nav-content title="API Explorer" back-link="Developer Tools" back-link-url="/developer/" :f7router />
     </f7-navbar>
-    <f7-block>
+    <f7-block class="no-padding no-margin">
       <f7-col>
-        <f7-card id="swaggerUi" />
+        <div class="no-margin" id="swaggerUi" />
       </f7-col>
     </f7-block>
   </f7-page>
@@ -17,7 +17,6 @@
   padding-bottom 5px
   color var(--f7-text-color) !important
   .wrapper
-    padding 0
     max-width inherit
   .information-container, .scheme-container, .authorization__btn
     display none
@@ -115,44 +114,46 @@
   right 10px !important
 </style>
 
-<script>
-import auth from '@/components/auth-mixin.js'
+<script setup lang="ts">
+import { type Router } from 'framework7'
+import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from '@/js/openhab/auth'
 
-export default {
-  mixins: [auth],
-  props: {
-    f7router: Object
-  },
-  methods: {
-    onPageAfterIn () {
-      const swaggerCss = import(/* webpackChunkName: "swagger-css" */ 'swagger-ui-dist/swagger-ui.css')
-      const swaggerModule = import(/* webpackChunkName: "swagger" */ 'swagger-ui-dist')
-      const refreshToken = this.refreshAccessToken()
+import 'swagger-ui-dist/swagger-ui.css'
+import { SwaggerUIBundle, type SwaggerRequest } from 'swagger-ui-dist'
 
-      Promise.all([swaggerModule, swaggerCss, refreshToken]).then((results) => {
-        const SwaggerUI = results[0].SwaggerUIBundle
-        const tokenResponse = results[2]
-        SwaggerUI({
-          url: '/rest/spec',
-          dom_id: '#swaggerUi',
-          deepLinking: false,
-          defaultModelsExpandDepth: 0,
-          tagsSorter: 'alpha',
-          operationsSorter: 'alpha',
-          filter: true,
-          docExpansion: 'none',
-          syntaxHighlight: false,
-          requestInterceptor: (req) => {
-            if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) {
-              req.headers['X-OPENHAB-TOKEN'] = tokenResponse.access_token
-            } else {
-              req.headers['Authorization'] = 'Bearer ' + tokenResponse.access_token
-            }
-            return req
-          }
-        })
-      })
-    }
+// props and emits
+defineProps<{
+  f7router: Router.Router
+}>()
+
+// Events
+function onPageAfterIn() {
+  SwaggerUIBundle({
+    url: '/rest/spec',
+    dom_id: '#swaggerUi',
+    deepLinking: false,
+    defaultModelsExpandDepth: 0,
+    tagsSorter: 'alpha',
+    operationsSorter: 'alpha',
+    filter: true,
+    docExpansion: 'none',
+    syntaxHighlight: false,
+    requestInterceptor
+  })
+}
+
+// Methods
+function requestInterceptor(req: SwaggerRequest) {
+  const accessToken = getAccessToken()
+  if (getTokenInCustomHeader()) {
+    req.headers['X-OPENHAB-TOKEN'] = accessToken
+  } else {
+    req.headers['Authorization'] = 'Bearer ' + accessToken
   }
+  const basicCredentials = getBasicCredentials()
+  if (basicCredentials) {
+    req.headers['Authorization'] = 'Basic ' + btoa(basicCredentials.id + ':' + basicCredentials.password)
+  }
+  return req
 }
 </script>

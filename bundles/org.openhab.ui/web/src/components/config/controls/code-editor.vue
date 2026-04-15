@@ -3,7 +3,7 @@
     v-if="readOnly"
     f7="lock"
     class="float-right margin"
-    style="opacity: 0.5; z-index: 4000; user-select: none;"
+    style="opacity: 0.5; z-index: 4000; user-select: none"
     size="50"
     color="gray"
     :tooltip="readOnlyMsg" />
@@ -94,28 +94,8 @@ import Editor from '@/components/config/controls/script-editor.vue'
 
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
-
-const MediaType = Object.freeze({
-  YAML: 'application/yaml',
-  THING_DSL: 'text/vnd.openhab.dsl.thing',
-  ITEM_DSL: 'text/vnd.openhab.dsl.item',
-  JSON: 'application/json'
-})
-
-const SupportedMediaTypes = {
-  items: {
-    YAML: MediaType.YAML,
-    DSL: MediaType.ITEM_DSL
-  },
-  things: {
-    YAML: MediaType.YAML,
-    DSL: MediaType.THING_DSL
-  }
-}
-
-const DefaultMediaTypes = {
-  YAML: MediaType.YAML
-}
+import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [MovablePopup],
@@ -137,7 +117,7 @@ export default {
   // @changed event is emitted when the code is changed in the editor
   //          The code editor's dirty status is passed as a boolean argument.
   emits: ['changed', 'parsed'],
-  data () {
+  data() {
     return {
       code: null,
       originalCode: null,
@@ -147,24 +127,16 @@ export default {
     }
   },
   computed: {
-    editorMode () {
-      if (this.uiOptionsStore.codeEditorType === 'YAML') {
-        switch (this.objectType) {
-          case 'items':
-            return 'application/vnd.openhab.item+yaml'
-          case 'things':
-            return 'application/vnd.openhab.thing+yaml'
-        }
-      }
+    editorMode() {
       return this.mediaTypes[this.uiOptionsStore.codeEditorType]
     },
-    mediaTypes () {
+    mediaTypes() {
       return SupportedMediaTypes[this.objectType] || DefaultMediaTypes
     },
     ...mapStores(useUIOptionsStore)
   },
   watch: {
-    dirty () {
+    dirty() {
       this.$emit('changed', this.dirty)
     }
   },
@@ -177,13 +149,15 @@ export default {
      * @param {string} codeType - Optional. The type of code to generate (e.g. YAML, DSL)
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been generated
      */
-    generateCode (codeType, onSuccessCallback) {
+    generateCode(codeType, onSuccessCallback) {
       codeType ||= this.uiOptionsStore.codeEditorType
       const sourceMediaType = MediaType.JSON
-      const targetMediaType = this.mediaTypes[codeType]
+      let targetMediaType = this.mediaTypes[codeType]
+      targetMediaType = targetMediaType.split('+')[0] // remove the +thing or +item suffix, if present
       const payload = {}
       payload[this.objectType] = [this.object]
-      this.$oh.api.postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
+      this.$oh.api
+        .postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
         .then((code) => {
           // DSL returns different line endings on different platforms and CodeMirror normalizes everything to \n, leading to dirty flag set on load for Windows,
           // therefore normalize before loading in editor.
@@ -207,17 +181,19 @@ export default {
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed
      * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
      */
-    parseCode (onSuccessCallback, onFailureCallback) {
-      const sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
+    parseCode(onSuccessCallback, onFailureCallback) {
+      let sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      sourceMediaType = sourceMediaType.split('+')[0] // remove the +thing or +item suffix, if present
       const targetMediaType = MediaType.JSON
-      this.$oh.api.request({
-        method: 'POST',
-        url: '/rest/file-format/parse',
-        data: this.code,
-        processData: false,
-        contentType: sourceMediaType,
-        headers: { accept: targetMediaType }
-      })
+      this.$oh.api
+        .request({
+          method: 'POST',
+          url: '/rest/file-format/parse',
+          data: this.code,
+          processData: false,
+          contentType: sourceMediaType,
+          headers: { accept: targetMediaType }
+        })
         .then((data) => {
           let object = JSON.parse(data.data)
           object = object[this.objectType]
@@ -245,19 +221,14 @@ export default {
               errors = null
               // show a toast message instead of the error popup
               // The codemirror editor will show the error in the editor
-              f7.toast.create({
-                text: 'YAML syntax error. Please check your code.',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              }).open()
+              showToast('YAML syntax error. Please check your code.')
             } else {
               // clean up the error message and turn it into an array to be displayed as a list
               errors = errors
                 .replace(/^.*? to Yaml\w+DTO: /s, '')
                 .split('\n')
                 .map((line) => {
-                  return line.replace(/^invalid thing.* (?=channel id)/, '')
-                    .replace(/\s*\(class org\.openhab\.core.*?\)/, '')
+                  return line.replace(/^invalid thing.* (?=channel id)/, '').replace(/\s*\(class org\.openhab\.core.*?\)/, '')
                 })
                 .slice(0, 8) // limit to 8 lines
             }
@@ -270,12 +241,12 @@ export default {
           }
         })
     },
-    onEditorInput (value) {
+    onEditorInput(value) {
       this.code = value
       this.dirty = this.code !== this.originalCode
       this.$emit('changed', this.dirty)
     },
-    switchCodeType (type) {
+    switchCodeType(type) {
       if (this.uiOptionsStore.codeEditorType === type) return
 
       if (this.readOnly || !this.dirty) {
@@ -286,26 +257,18 @@ export default {
         })
       }
     },
-    copy () {
+    copy() {
       copyToClipboard(this.code, {
         onSuccess: () => {
-          f7.toast.create({
-            text: 'Code copied to clipboard',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          showToast('Code copied to clipboard')
         }
       })
     },
-    revertChanges () {
+    revertChanges() {
       f7.dialog.confirm('Are you sure you want to revert the changes?', () => {
         this.code = this.originalCode
         this.dirty = false
-        f7.toast.create({
-          text: 'Code reverted to original',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast('Code reverted to original')
       })
     }
   }

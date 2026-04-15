@@ -22,7 +22,7 @@
           @input="updateParameter('label', $event)"
           clear-button />
         <f7-list-group v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'">
-          <item-picker label="Item" :value="widget.config.item" @input="(value) => widget.config.item = value" />
+          <item-picker label="Item" :value="widget.config.item" @input="(value) => (widget.config.item = value)" />
         </f7-list-group>
         <ul v-if="widget.component !== 'Sitemap'">
           <f7-list-input
@@ -79,7 +79,7 @@
             style="padding-left: 0"
             title="Persistence service"
             :value="widget.config.service"
-            @input="(value) => widget.config.service = value" />
+            @input="(value) => (widget.config.service = value)" />
           <f7-list-input
             v-if="supports('period')"
             label="Period"
@@ -217,7 +217,7 @@
         </ul>
       </f7-list>
     </f7-card-content>
-    <f7-card-footer key="sitemap-widget-buttons-edit-mode" v-if="widget.component !== 'Sitemap'">
+    <f7-card-footer v-if="widget.component !== 'Sitemap'" key="sitemap-widget-buttons-edit-mode">
       <!-- <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button> -->
       <f7-segmented>
         <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" />
@@ -257,18 +257,18 @@ export default {
     createMode: Boolean
   },
   emits: ['moveup', 'movedown', 'duplicate', 'remove'],
-  data () {
+  data() {
     return {
       iconInputId: '',
       iconAutocomplete: null
     }
   },
   methods: {
-    initializeAutocomplete (inputElement) {
+    initializeAutocomplete(inputElement) {
       this.iconAutocomplete = f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
-        source (query, render) {
+        source(query, render) {
           if (!query || !query.length) {
             render([])
           } else {
@@ -277,29 +277,29 @@ export default {
         }
       })
     },
-    supports (parameter) {
+    supports(parameter) {
       if (!this.ADDITIONAL_CONTROLS[this.widget.component]) return false
-      return (this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0)
+      return this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0
     },
-    updateParameter (parameter, $event) {
+    updateParameter(parameter, $event) {
       let value = $event.target.value
       if (value && $event.target.type === 'number' && !isNaN(value)) {
         value = parseFloat(value)
       }
       this.widget.config[parameter] = value
     },
-    remove () {
+    remove() {
       this.$emit('remove')
     }
   },
-  mounted () {
+  mounted() {
     if (!this.widget) return
     const iconControl = this.$refs.icon
     if (!iconControl || !iconControl.$el) return
     const inputElement = this.$$(iconControl.$el).find('input')
     this.initializeAutocomplete(inputElement)
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.iconControl) {
       f7.autocomplete.destroy(this.iconControl)
     }

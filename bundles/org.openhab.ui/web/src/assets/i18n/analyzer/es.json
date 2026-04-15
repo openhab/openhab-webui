@@ -13,6 +13,7 @@
   "analyzer.series.table.type.bar": "Barra",
   "analyzer.series.table.type.line": "Línea",
   "analyzer.series.table.type.area": "Área",
+  "analyzer.series.table.type.state": "Estado",
   "analyzer.series.table.type.heatmap": "Mapa de calor",
   "analyzer.series.table.na": "N/D",
   "analyzer.coords": "Coordenadas",
@@ -20,7 +21,8 @@
   "analyzer.coords.period.dynamic": "Dinámico",
   "analyzer.coords.period.fixed": "Fijo",
   "analyzer.coords.period.day": "Día",
-  "analyzer.coords.period.isoWeek": "Semana",
+  "analyzer.coords.period.isoWeek": "Semana (Lunes)",
+  "analyzer.coords.period.week": "Semana (Dom)",
   "analyzer.coords.period.month": "Mes",
   "analyzer.coords.period.year": "Año",
   "analyzer.coords.coordSystem": "Sistema de coordenadas",
@@ -55,8 +57,8 @@
   "analyzer.aggregations.max": "Máximo",
   "analyzer.aggregations.first": "Primero (reciente)",
   "analyzer.aggregations.last": "Último (antiguo)",
-  "analyzer.aggregations.diff_first": "Diferencia de primeros",
-  "analyzer.aggregations.diff_last": "Diferencia de últimos",
+  "analyzer.aggregations.diff_first": "Diferencia de los primeros",
+  "analyzer.aggregations.diff_last": "Diferencia de los últimos",
   "analyzer.dialogs.header.markers": "Marcadores",
   "analyzer.dialogs.header.aggregation": "Función de agregación",
   "analyzer.dialogs.header.split": "Dividir ejes",
@@ -66,5 +68,7 @@
   "analyzer.dialogs.save.replace.message": "Ya existe una página con el ID {uid}, ¿quieres sobrescribirla?",
   "analyzer.dialogs.save.replace.title": "La página ya existe",
   "analyzer.page.updated": "Página de gráfico actualizada",
-  "analyzer.page.created": "Página de gráfico actualizada"
+  "analyzer.page.created": "Página de gráfico actualizada",
+  "analyzer.invalid-configuration.title": "Configuración no válida",
+  "analyzer.invalid-configuration.text": "Por favor, asegúrese de que se han pasado todos los parámetros de consulta requeridos/la configuración es válida."
 }

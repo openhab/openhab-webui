@@ -11,7 +11,7 @@
     @card:closed="cardClosed">
     <f7-card-content :padding="false">
       <div
-        :class="(!backgroundImageUrl) ? `bg-color-${color}` : undefined"
+        :class="!backgroundImageUrl ? `bg-color-${color}` : undefined"
         :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
         <f7-card-header
           :text-color="config.invertText ? 'black' : 'white'"
@@ -19,10 +19,10 @@
           :style="{ height: `calc(var(--f7-safe-area-top) + ${headerHeight})` }">
           <img v-if="config.backgroundImage" class="card-background lazy" :src="backgroundImageUrl" :style="config.backgroundImageStyle" />
           <slot name="header">
-            <div v-if="context && context.component.slots && context.component.slots.header">
+            <div v-if="'header' in slots">
               <generic-widget-component
+                v-for="(slotComponent, idx) in slots.header"
                 :context="childContext(slotComponent)"
-                v-for="(slotComponent, idx) in context.component.slots.header"
                 :key="'header-' + idx" />
             </div>
             <div v-else>
@@ -98,21 +98,30 @@
 </style>
 
 <script>
+import { computed } from 'vue'
 import { mapStores } from 'pinia'
 import CardMixin from './card-mixin'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   mixins: [CardMixin],
   props: {
-    headerHeight: [String, Number]
+    context: Object,
+    headerHeight: [String, Number],
+    type: String,
+    element: Object
+  },
+  setup(props) {
+    const { config, childContext, visible, slots } = useWidgetContext(computed(() => props.context))
+    return { config, childContext, visible, slots }
   },
   computed: {
     ...mapStores(useUIOptionsStore)
   },
   asyncComputed: {
-    backgroundImageUrl () {
+    backgroundImageUrl() {
       if (this.config.backgroundImage) {
         return this.$oh.media.getImage(this.config.backgroundImage)
       } else {

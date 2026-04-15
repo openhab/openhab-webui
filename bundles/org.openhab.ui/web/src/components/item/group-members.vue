@@ -19,15 +19,15 @@
             label="Members"
             :editableOnly="true"
             :filterType="compatibleItemTypes"
-            :filterToggle="true"
-            @input="(members) => pickedMemberNames = members" />
+            :showFilterToggle="true"
+            @input="(members) => (pickedMemberNames = members)" />
         </f7-list-group>
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" v-if="!editMembers" @click="enableEditMode"> Change </f7-button>
-      <f7-button color="blue" v-if="editMembers" fill raised @click="updateMembers"> Apply </f7-button>
-      <f7-button color="blue" v-if="editMembers" @click="cancelEditMode"> Cancel </f7-button>
+      <f7-button v-if="!editMembers" color="blue" @click="enableEditMode"> Change </f7-button>
+      <f7-button v-if="editMembers" color="blue" fill raised @click="updateMembers"> Apply </f7-button>
+      <f7-button v-if="editMembers" color="blue" @click="cancelEditMode"> Cancel </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>
@@ -37,6 +37,7 @@ import { f7 } from 'framework7-vue'
 
 import Item from './item.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   props: {
@@ -48,27 +49,33 @@ export default {
     ItemPicker
   },
   emits: ['updated'],
-  data () {
+  data() {
     return {
       editMembers: false,
       pickedMemberNames: []
     }
   },
   computed: {
-    editableMemberNames () {
+    editableMemberNames() {
       return this.groupItem.members.filter((m) => m.editable).map((m) => m.name)
     },
-    sortedGroupMembers () {
+    sortedGroupMembers() {
       return this.groupItem.members.toSorted((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
     },
-    compatibleItemTypes () {
+    compatibleItemTypes() {
       const groupType = this.groupItem.groupType
       if (groupType) {
         let compatibleItemTypes = []
         compatibleItemTypes.push(groupType)
-        if (groupType.startsWith('Number')) { compatibleItemTypes.push('Switch') }
-        if (groupType === 'Color') { compatibleItemTypes.push('Switch', 'Dimmer') }
-        if (groupType === 'Dimmer') { compatibleItemTypes.push('Switch') }
+        if (groupType.startsWith('Number')) {
+          compatibleItemTypes.push('Switch')
+        }
+        if (groupType === 'Color') {
+          compatibleItemTypes.push('Switch', 'Dimmer')
+        }
+        if (groupType === 'Dimmer') {
+          compatibleItemTypes.push('Switch')
+        }
         return compatibleItemTypes
       } else {
         return null
@@ -76,14 +83,14 @@ export default {
     }
   },
   methods: {
-    enableEditMode () {
+    enableEditMode() {
       this.pickedMemberNames = this.editableMemberNames
       this.editMembers = true
     },
-    cancelEditMode () {
+    cancelEditMode() {
       this.editMembers = false
     },
-    updateMembers () {
+    updateMembers() {
       const itemsToAdd = this.pickedMemberNames.filter((m) => !this.editableMemberNames.includes(m))
       const itemsToRemove = this.editableMemberNames.filter((m) => !this.pickedMemberNames.includes(m))
 
@@ -110,11 +117,7 @@ export default {
           Promise.all(promises)
             .then((d) => {
               this.$emit('updated')
-              f7.toast.create({
-                text: 'Member list updated',
-                destroyOnClose: true,
-                closeTimeout: 2000
-              }).open()
+              showToast('Member list updated')
               this.editMembers = false
             })
             .catch((err) => {

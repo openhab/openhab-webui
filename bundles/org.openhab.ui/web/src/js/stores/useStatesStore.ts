@@ -1,8 +1,10 @@
 import { defineStore } from 'pinia'
 import { nextTick, ref } from 'vue'
-import openhab from '@/js/openhab'
 
-export type TrackedItems = Map<string, ItemState>
+import sse from '@/js/openhab/sse'
+import * as api from '@/api'
+
+export type TrackedItems = Record<string, ItemState>
 
 export interface ItemState {
   state: string
@@ -10,9 +12,16 @@ export interface ItemState {
   numericState?: number
   unit?: string
   type: string
+  toString: () => string
 }
 
-const UndefinedItemState: ItemState = { state: '-', type: '-' }
+const UndefinedItemState: ItemState = {
+  state: '-',
+  type: '-',
+  toString() {
+    return JSON.stringify(this)
+  }
+}
 
 const PendingItemsProcessingInterval = 100
 
@@ -31,7 +40,7 @@ const INVALID_PROPS = new Set([
 ])
 
 export const useStatesStore = defineStore('states', () => {
-  const itemStates = ref<TrackedItems>(new Map())
+  const itemStates = ref<Map<string, ItemState>>(new Map())
   const pendingNewItems = new Set<string>()
   let processingIntervalId: number | null = null
 
@@ -59,25 +68,28 @@ export const useStatesStore = defineStore('states', () => {
   }
 
   /* global ProxyHandler:readonly */
-  const handler: ProxyHandler<Record<string, ItemState>> = {
-    get(obj: Record<string, ItemState>, prop: string | symbol): ItemState {
-      if (prop === '_keys') return Object.keys(itemStates.value) as any
+  const handler: ProxyHandler<TrackedItems> = {
+    get(obj: TrackedItems, prop: string | symbol): ItemState {
+      /* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access */
+      if (prop === '_keys') return Array.from(itemStates.value.keys()) as any
       if (prop === '__ob__') return (obj as any).__ob__
+      if (prop === 'toString') return (() => '[object TrackedItems]') as any
 
       // to avoid the Vue devtools requesting invalid items in development
       if (INVALID_PROPS.has(prop.toString())) return {} as any
       if (typeof prop !== 'string') return {} as any
+      /* eslint-enable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access */
 
       const itemName = prop
       return ensureItemTracking(itemName)
     },
-    set(_target: Record<string, ItemState>, prop: string | symbol, value: any, _receiver: Record<string, ItemState>): boolean {
+    set(_target: TrackedItems, prop: string | symbol, value: string, _receiver: TrackedItems): boolean {
       setItemState(prop.toString(), { state: value, type: '-' })
       return true
     }
   }
 
-  const trackedItems = ref<Record<string, ItemState>>(new Proxy({}, handler))
+  const trackedItems = ref<TrackedItems>(new Proxy({}, handler))
   const trackingList = ref<Array<string>>([])
   let trackerConnectionId: string | null = null
   let trackerEventSource: EventSource | null = null
@@ -92,29 +104,30 @@ export const useStatesStore = defineStore('states', () => {
     clearTrackingList()
     if (trackerEventSource) {
       console.debug('Closing existing state tracker connection')
-      openhab.sse.close(trackerEventSource)
+      sse.close(trackerEventSource)
       clearStateTracker()
     }
-    const eventSource = openhab.sse.connectStateTracker(
+    const eventSource = sse.connectStateTracker(
       '/rest/events/states',
       (connectionId) => {
         // only one state tracker at any given time!
         trackerConnectionId = connectionId
-        const trackingListJson = JSON.stringify(trackingList.value)
-        console.debug(`Setting initial tracking list (${trackingList.value.length} tracked Items): ` + trackingListJson)
-        openhab.api.postPlain('/rest/events/states/' + connectionId, trackingListJson, 'text/plain', 'application/json', null)
+        console.debug(`Setting initial tracking list (${trackingList.value.length} tracked Items): `, trackingList.value)
+        api.updateItemListForStateUpdates({ connectionId, body: trackingList.value }).catch((e) => {
+          console.error('Failed to set initial tracking list for state tracker', e)
+        })
         sseConnected.value = true
         ready.value = true
       },
-      (updates) => {
-        for (const item in updates) {
-          setItemState(item, updates[item])
+      (updates: Record<string, ItemState>) => {
+        for (const [key, value] of Object.entries(updates)) {
+          setItemState(key, value)
         }
       },
       () => {
         sseConnected.value = false
       },
-      (healthy) => {
+      (healthy: boolean) => {
         sseConnected.value = healthy
       }
     )
@@ -126,18 +139,27 @@ export const useStatesStore = defineStore('states', () => {
     if (keepConnectionOpen.value) return
     clearTrackingList()
     if (trackerEventSource) {
-      openhab.sse.close(trackerEventSource)
+      sse.close(trackerEventSource)
     }
     clearStateTracker()
   }
 
-  async function sendCommand(itemName: string, command: string, updateState: boolean = false) {
+  async function sendCommand(itemName: string, command: string, updateState: boolean = false): Promise<any> {
     if (updateState) {
       const currentState = itemStates.value.get(itemName)
       const newState: ItemState = currentState ? { ...currentState, state: command } : { state: command, type: '-' }
       setItemState(itemName, newState)
     }
-    return openhab.api.postPlain('/rest/items/' + itemName, command, 'text/plain', 'text/plain', { 'X-OpenHAB-Source': 'org.openhab.ui' })
+    // sendItemCommand supports either json/plain text, need to override default json
+    return api
+      .sendItemCommand(
+        { itemName, body: command, 'X-OpenHAB-Source': 'org.openhab.ui' },
+        { headers: { 'Content-Type': 'text/plain' }, bodySerializer: null }
+      )
+      .catch((e) => {
+        console.error(`Failed to send command '${command}' to item '${itemName}'`, e)
+        throw e // rethrow to allow subscribing to command failures
+      })
   }
 
   function isItemTracked(itemName: string) {
@@ -197,15 +219,17 @@ export const useStatesStore = defineStore('states', () => {
     }
 
     pendingTrackingListUpdate = true
-    nextTick(() => {
+    void nextTick(() => {
       pendingTrackingListUpdate = false
       if (!trackerConnectionId) {
         return
       }
       const trackingListJson = JSON.stringify(trackingList.value)
-      console.debug(`Updating tracking list (${trackingList.value.length} tracked Items): ` + trackingListJson)
+      console.debug(`Updating tracking list (${trackingList.value.length} tracked Items): `, trackingList.value)
 
-      openhab.api.postPlain('/rest/events/states/' + trackerConnectionId, trackingListJson, 'text/plain', 'application/json', null)
+      api.updateItemListForStateUpdates({ connectionId: trackerConnectionId, body: trackingList.value }).catch((e) => {
+        console.error('Failed to update tracking list for state tracker', e)
+      })
     })
   }
 
@@ -214,6 +238,16 @@ export const useStatesStore = defineStore('states', () => {
   }
 
   function setItemState(itemName: string, itemState: ItemState) {
+    if (!Object.prototype.hasOwnProperty.call(itemState, 'toString')) {
+      Object.defineProperty(itemState, 'toString', {
+        value: function () {
+          return JSON.stringify(this)
+        },
+        enumerable: false, // Hides it from Object.keys and iterations
+        configurable: false, // Prevent changing its type or deleting it
+        writable: false
+      })
+    }
     itemStates.value.set(itemName, itemState)
     return true
   }

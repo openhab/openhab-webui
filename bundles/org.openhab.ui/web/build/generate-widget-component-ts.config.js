@@ -1,10 +1,17 @@
 export default {
     defaultExportAs: 'enum',
-    '*': {      // global modifer applied to all components
-        modifier: (e) => e.replace('actionAnalyzerItems: string', 'actionAnalyzerItems?: string | string[]') // Fix array type
+    '*': { // global modifier applied to all components
+        modifier: (e) => e
+          .replace('actionAnalyzerItems: string', 'actionAnalyzerItems?: string | string[]') // Fix array type
+          .replace('taphold_actionAnalyzerItems: string', 'taphold_actionAnalyzerItems?: string | string[]') // Fix array type
+          .replace('actionPageDefineVars?: string', 'actionPageDefineVars?: Record<string, unknown>[]')
+          .replace('taphold_actionPageDefineVars?: string', 'taphold_actionPageDefineVars?: Record<string, unknown>[]')
     },
     // modifiers to apply to all components in common.ts
-    _Common: { 
+    _Common: {
+        '*': {
+            modifier: (e) => e.replace('export enum Period {', 'export type Period = `${number}${PeriodType}` | PeriodType\n\nexport enum PeriodType {')
+        },
         ChartType: {
             modifier: (e) => e.replace('none', 'dynamic')
         },
@@ -13,6 +20,11 @@ export default {
         }
     },
     // component specific modifiers to apply to component files
+    OhValueAxis: {
+        _All: {
+            modifier: (e) => e.replace('split?: Split', 'split?: Split[]')
+        }
+    },
     OhAggregateSeries: {
         Dimension1: {
             modifier: (e) => e.replace('Dimension1', 'Dimension')           // Create common Dimension type

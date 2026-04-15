@@ -1,11 +1,5 @@
 <template>
-  <oh-card
-    :context="context"
-    :content-class="[
-             config.vertical ? 'slider-card-vertical' : '',
-             'display-flex',
-             'justify-content-center',
-           ]">
+  <oh-card :context="context" :content-class="[config.vertical ? 'slider-card-vertical' : '', 'display-flex', 'justify-content-center']">
     <template #content>
       <oh-slider :context="cardChildContext(context.component)" :class="{ 'slider-card-vertical': config.vertical }" />
     </template>
@@ -18,17 +12,24 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhSlider from '../system/oh-slider.vue'
 import { OhSliderCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhSlider
   },
-  widget: OhSliderCardDefinition
+  widget: OhSliderCardDefinition,
+  setup(props) {
+    const { config, cardChildContext } = useWidgetContext(computed(() => props.context))
+    return { config, cardChildContext }
+  }
 }
 </script>

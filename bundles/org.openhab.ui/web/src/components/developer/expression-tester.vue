@@ -4,7 +4,7 @@
     <f7-list media-list>
       <f7-list-input type="textarea" title="Expression" placeholder="Try '=2+3' or '=items.MyItem.state'" v-model:value="testExpression" />
     </f7-list>
-    <f7-block strong v-if="result">
+    <f7-block v-if="result" strong>
       <div :class="config.class" :style="config.style">
         {{ result }}
       </div>
@@ -13,17 +13,24 @@
 </template>
 
 <script>
-import Mixin from '@/components/widgets/widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [Mixin],
-  data () {
+  props: {
+    context: Object
+  },
+  setup(props) {
+    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    return { config, evaluateExpression }
+  },
+  data() {
     return {
       testExpression: ''
     }
   },
   computed: {
-    result () {
+    result() {
       return this.evaluateExpression('tester', this.testExpression)?.toString()
     }
   }

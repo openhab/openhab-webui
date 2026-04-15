@@ -18,7 +18,7 @@
       :icon-size="config.iconSize" />
     <!-- Show dial menu when there`s no call -->
     <f7-button
-      v-else-if="(!session || sessionState === 'ended')"
+      v-else-if="!session || sessionState === 'ended'"
       :style="computedButtonStyle"
       icon-f7="phone_fill_arrow_up_right"
       icon-color="green"
@@ -34,7 +34,7 @@
         icon-color="green"
         :icon-size="config.iconSize"
         @click.stop="answer()">
-        {{ (!config.hideCallerId) ? remoteParty : '' }}
+        {{ !config.hideCallerId ? remoteParty : '' }}
       </f7-button>
       <f7-button
         :style="computedButtonStyle"
@@ -92,12 +92,12 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhSIPClientDefinition } from '@/assets/definitions/widgets/system'
 import foregroundService from '../widget-foreground-service'
-import { actionsMixin } from '../widget-actions'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
-import { WidgetDefinition, pg, pt, pi } from '@/assets/definitions/widgets/helpers.js'
+import { WidgetDefinition, pg, pt, pi } from '@/assets/definitions/widgets/helpers.ts'
 
 // Thanks to Joseph Sardin, https://bigsoundbank.com
 // ringFile source: https://bigsoundbank.com/detail-0375-phone-ring-5.html
@@ -105,9 +105,13 @@ import ringFile from './oh-sipclient-ringtone.mp3'
 import ringBackFile from './oh-sipclient-ringback.mp3'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
+
+// dynamic import for better chunking
+const jssip = (await import('jssip')).default
 
 export default {
-  data () {
+  data() {
     return {
       connected: false,
       session: null, // internal state is not tracked -> reactivity is limited
@@ -119,10 +123,18 @@ export default {
       f7router: f7.views.main.router
     }
   },
-  mixins: [mixin, foregroundService, actionsMixin],
+  mixins: [foregroundService],
+  props: {
+    context: Object
+  },
   widget: OhSIPClientDefinition,
+  setup(props) {
+    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, performAction }
+  },
   computed: {
-    computedButtonStyle () {
+    computedButtonStyle() {
       return {
         'min-height': this.config.iconSize + 'px',
         height: '100%',
@@ -131,7 +143,7 @@ export default {
     }
   },
   methods: {
-    startForegroundActivity () {
+    startForegroundActivity() {
       // Load device specific configuration
       this.localConfig = JSON.parse(localStorage.getItem('openhab.ui:sipConfig'))
       // Init phonebook Map
@@ -149,7 +161,8 @@ export default {
       if (!navigator.mediaDevices) {
         f7.dialog.alert('To use the SIP widget, please make sure that HTTPS is in use and WebRTC is supported by this browser.')
       } else {
-        navigator.mediaDevices.getUserMedia({ audio: true, video: this.config.enableVideo })
+        navigator.mediaDevices
+          .getUserMedia({ audio: true, video: this.config.enableVideo })
           .then((stream) => {
             // Store MediaDevices access here to stop it when foreground is left
             // Do NOT stop MediaDevices access here (keep Mic/Camera access) to improve call startup time
@@ -163,7 +176,7 @@ export default {
           })
       }
     },
-    stopForegroundActivity () {
+    stopForegroundActivity() {
       // Stop MediaDevices access here, otherwise Mic/Camera access will stay active on iOS
       if (this.stream) this.stream.getTracks().forEach((track) => track.stop())
       if (this.phone) this.phone.stop()
@@ -172,124 +185,123 @@ export default {
     /**
      * Starts the JsSIP UserAgent and connects to the SIP server.
      */
-    sipStart () {
+    sipStart() {
       if (this.phone) this.phone.stop() // Reconnect to reload config
       this.context.component.config = { ...this.config, ...this.localConfig } // Merge local device configuration
 
-      import(/* webpackChunkName: "jssip" */ 'jssip').then((JsSIP) => { // Lazy load jssip
-        if (this.config.enableSIPDebug) {
-          JsSIP.debug.enable('JsSIP:*')
-        } else {
-          JsSIP.debug.disable()
+      if (this.config.enableSIPDebug) {
+        jssip.debug.enable('JsSIP:*')
+      } else {
+        jssip.debug.disable()
+      }
+      // SIP user agent setup
+      this.remoteAudio = new window.Audio()
+      const url = new URL(this.config.websocketUrl, window.location.origin)
+      if (url.protocol.indexOf('http') === 0) {
+        url.protocol = url.protocol.replace('http', 'ws')
+      }
+      const socket = new jssip.WebSocketInterface(url.toString())
+      const configuration = {
+        sockets: [socket],
+        uri: 'sip:' + this.config.username + '@' + this.config.domain,
+        authorization_user: this.config.authorizationUser ?? undefined,
+        password: this.config.password,
+        session_timers: false,
+        register: this.config.disableRegister !== true
+      }
+      this.phone = new jssip.UA(configuration)
+
+      // Update connected status on connection changes
+      this.phone.on('connected', () => {
+        this.connected = true
+        this.updateStateItem('connected')
+        console.info(this.LOGGER_PREFIX + ': Connected to SIP server')
+        if (this.config.autoDial && this.config.disableRegister === true) {
+          this.autoDial()
         }
-        // SIP user agent setup
-        this.remoteAudio = new window.Audio()
-        const url = new URL(this.config.websocketUrl, window.location.origin)
-        if (url.protocol.indexOf('http') === 0) {
-          url.protocol = url.protocol.replace('http', 'ws')
+      })
+      this.phone.on('disconnected', () => {
+        this.connected = false
+        this.updateStateItem('disconnected')
+        console.info(this.LOGGER_PREFIX + ': Disconnected from SIP server')
+      })
+      this.phone.on('registered', () => {
+        this.updateStateItem('registered')
+        console.info(this.LOGGER_PREFIX + ': SIP registration successful')
+        if (this.config.autoDial) {
+          // give a little time to account for an incoming call after registration before calling
+          setTimeout(() => this.autoDial(), 1000)
         }
-        const socket = new JsSIP.WebSocketInterface(url.toString())
-        const configuration = {
-          sockets: [socket],
-          uri: 'sip:' + this.config.username + '@' + this.config.domain,
-          authorization_user: this.config.authorizationUser ?? undefined,
-          password: this.config.password,
-          session_timers: false,
-          register: (this.config.disableRegister !== true)
-        }
-        this.phone = new JsSIP.UA(configuration)
+      })
 
-        // Update connected status on connection changes
-        this.phone.on('connected', () => {
-          this.connected = true
-          this.updateStateItem('connected')
-          console.info(this.LOGGER_PREFIX + ': Connected to SIP server')
-          if (this.config.autoDial && this.config.disableRegister === true) {
-            this.autoDial()
-          }
-        })
-        this.phone.on('disconnected', () => {
-          this.connected = false
-          this.updateStateItem('disconnected')
-          console.info(this.LOGGER_PREFIX + ': Disconnected from SIP server')
-        })
-        this.phone.on('registered', () => {
-          this.updateStateItem('registered')
-          console.info(this.LOGGER_PREFIX + ': SIP registration successful')
-          if (this.config.autoDial) {
-            // give a little time to account for an incoming call after registration before calling
-            setTimeout(() => this.autoDial(), 1000)
-          }
-        })
+      // Register event for new incoming or outgoing call event
+      this.phone.on('newRTCSession', (data) => {
+        this.session = data.session
+        this.sessionState = 'in-progress'
+        const remoteParty = this.session.remote_identity.uri.user
+        const remotePartyWithHost = `${this.session.remote_identity.uri.user}@${this.session.remote_identity.uri.host}`
 
-        // Register event for new incoming or outgoing call event
-        this.phone.on('newRTCSession', (data) => {
-          this.session = data.session
-          this.sessionState = 'in-progress'
-          const remoteParty = this.session.remote_identity.uri.user
-          const remotePartyWithHost = `${this.session.remote_identity.uri.user}@${this.session.remote_identity.uri.host}`
+        this.remoteParty =
+          this.phonebook.size > 0 ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
 
-          this.remoteParty = (this.phonebook.size > 0) ? this.phonebook.get(this.session.remote_identity.uri.user) : this.session.remote_identity.uri.user
-
-          if (this.session.direction === 'outgoing') {
-            this.updateStateItem('outgoing:' + remotePartyWithHost)
-            // Handle accepted call
-            this.session.on('accepted', () => {
-              this.sessionState = 'established'
-              this.stopTones()
-              this.updateStateItem('outgoing-accepted:' + remotePartyWithHost)
-              console.info(this.LOGGER_PREFIX + ': Outgoing call in progress')
-            })
-          } else if (this.session.direction === 'incoming') {
-            console.info(this.LOGGER_PREFIX + ': Incoming call from ' + this.remoteParty)
-            this.playTone(ringFile)
-            this.updateStateItem('incoming:' + remotePartyWithHost)
-            // Handle accepted call
-            this.session.on('accepted', () => {
-              this.sessionState = 'established'
-              this.updateStateItem('incoming-accepted:' + remotePartyWithHost)
-              console.info(this.LOGGER_PREFIX + ': Incoming call in progress')
-            })
-            if (this.config.autoAnswer) {
-              const autoAnswer = this.config.autoAnswer.toString()
-              if (autoAnswer.trim() === '*') {
-                this.answer()
-              } else {
-                const parts = autoAnswer.split(',')
-                parts.forEach((part) => {
-                  if ((part.indexOf('@') > 0 && part === remotePartyWithHost) || part === remoteParty) {
-                    this.answer()
-                  }
-                })
-              }
+        if (this.session.direction === 'outgoing') {
+          this.updateStateItem('outgoing:' + remotePartyWithHost)
+          // Handle accepted call
+          this.session.on('accepted', () => {
+            this.sessionState = 'established'
+            this.stopTones()
+            this.updateStateItem('outgoing-accepted:' + remotePartyWithHost)
+            console.info(this.LOGGER_PREFIX + ': Outgoing call in progress')
+          })
+        } else if (this.session.direction === 'incoming') {
+          console.info(this.LOGGER_PREFIX + ': Incoming call from ' + this.remoteParty)
+          this.playTone(ringFile)
+          this.updateStateItem('incoming:' + remotePartyWithHost)
+          // Handle accepted call
+          this.session.on('accepted', () => {
+            this.sessionState = 'established'
+            this.updateStateItem('incoming-accepted:' + remotePartyWithHost)
+            console.info(this.LOGGER_PREFIX + ': Incoming call in progress')
+          })
+          if (this.config.autoAnswer) {
+            const autoAnswer = this.config.autoAnswer.toString()
+            if (autoAnswer.trim() === '*') {
+              this.answer()
+            } else {
+              const parts = autoAnswer.split(',')
+              parts.forEach((part) => {
+                if ((part.indexOf('@') > 0 && part === remotePartyWithHost) || part === remoteParty) {
+                  this.answer()
+                }
+              })
             }
           }
-          // Handle ended call
-          this.session.on('ended', () => {
-            this.session = null
-            this.sessionState = 'ended'
-            this.stopMedia()
-            this.updateStateItem('ended:' + remotePartyWithHost)
-            console.info(this.LOGGER_PREFIX + ': Call ended')
-          })
-          // Handle failed call
-          this.session.on('failed', (event) => {
-            this.session = null
-            this.sessionState = 'ended'
-            this.stopTones()
-            this.stopMedia()
-            this.updateStateItem('failed:' + remotePartyWithHost)
-            console.info(this.LOGGER_PREFIX + ': Call failed. Reason: ' + event.cause)
-          })
+        }
+        // Handle ended call
+        this.session.on('ended', () => {
+          this.session = null
+          this.sessionState = 'ended'
+          this.stopMedia()
+          this.updateStateItem('ended:' + remotePartyWithHost)
+          console.info(this.LOGGER_PREFIX + ': Call ended')
         })
-        this.phone.start()
+        // Handle failed call
+        this.session.on('failed', (event) => {
+          this.session = null
+          this.sessionState = 'ended'
+          this.stopTones()
+          this.stopMedia()
+          this.updateStateItem('failed:' + remotePartyWithHost)
+          console.info(this.LOGGER_PREFIX + ': Call failed. Reason: ' + event.cause)
+        })
       })
+      this.phone.start()
     },
     /**
      * Plays a given tone. Might not properly work on all browsers and devices.
      * @param {*} file file to be played
      */
-    playTone (file) {
+    playTone(file) {
       if (this.config.enableTones === true) {
         console.info(this.LOGGER_PREFIX + ': Starting to play tone')
         this.audio = new Audio(file)
@@ -304,7 +316,7 @@ export default {
     /**
      * Stops all played tones.
      */
-    stopTones () {
+    stopTones() {
       if (this.config.enableTones === true) {
         console.info(this.LOGGER_PREFIX + ': Stop playing tone')
         this.audio.pause()
@@ -313,16 +325,15 @@ export default {
     /**
      * Attaches MediaStreams (remote audio, remote & eventually local video) for the SIP call.
      */
-    attachMedia () {
+    attachMedia() {
       this.session.connection.addEventListener('track', (track) => {
         if (this.config.enableVideo) {
           this.$refs.remoteVideo.srcObject = track.streams[0]
           if (this.config.enableLocalVideo) {
             this.showLocalVideo = true
-            navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-              .then((stream) => {
-                this.$refs.localVideo.srcObject = stream
-              })
+            navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then((stream) => {
+              this.$refs.localVideo.srcObject = stream
+            })
           }
         } else {
           this.remoteAudio.srcObject = track.streams[0]
@@ -333,7 +344,7 @@ export default {
     /**
      * Stops all MediaStreams (remote audio, remote & eventually local video) of the SIP call.
      */
-    stopMedia () {
+    stopMedia() {
       if (this.config.enableVideo) {
         this.$refs.remoteVideo.srcObject = null
         if (this.config.enableLocalVideo) {
@@ -347,93 +358,117 @@ export default {
         this.remoteAudio.pause()
       }
     },
-    call (target) {
+    call(target) {
       console.info(this.LOGGER_PREFIX + ': Calling ' + this.remoteParty + ' ...')
       this.phone.call(target, { mediaConstraints: { audio: true, video: this.config.enableVideo } })
       this.attachMedia()
       this.playTone(ringBackFile)
     },
-    answer () {
+    answer() {
       this.stopTones()
       this.session.answer({ mediaConstraints: { audio: true, video: this.config.enableVideo } })
       this.attachMedia()
     },
-    sendDTMF () {
+    sendDTMF() {
       const options = {
         duration: 160,
         interToneGap: 640
       }
       this.session.sendDTMF(this.config.dtmfString, options)
     },
-    localSettingsPopup () {
+    localSettingsPopup() {
       console.info(this.LOGGER_PREFIX + ': Opening local settings popup.')
       const popup = { component: WidgetConfigPopup }
-      this.f7router.navigate({ url: 'local-sip-settings', route: { path: 'local-sip-settings', popup } }, {
-        props: {
-          component: {
-            config: this.localConfig || {}
-          },
-          widget: new WidgetDefinition('localSipSettings', 'local SIP client settings', '')
-            .paramGroup(pg('sipCredentials', 'SIP Credentials', 'These are not stored on the openHAB server, but instead locally in your browser. ' +
-              'Local settings allow each UI client to have its own SIP account and therefore to establish an intercom between multiple UI clients. ' +
-              'Note: You still need to configure the SIP domain and other options in the widget settings!'), [
-              pt('username', 'Local SIP Username', 'Used instead of the username from widget settings and stored on the openHAB server.'),
-              pt('password', 'Local SIP Password', 'Used instead of the password from the widget settings and stored on the openHAB server.'),
-              pt('ownSipAddress', 'Local SIP Address', 'SIP Address (phone number) of this local client. Used by the client to remove itself from the dial ' +
-                'popup, which is configured with the phonebook option in the widget settings.'),
-              pi('sipStateItem', 'State Item', 'Used instead of the SIP connection state Item from the widget settings and stored on the openHAB server.').a()
-            ])
+      this.f7router.navigate(
+        { url: 'local-sip-settings', route: { path: 'local-sip-settings', popup } },
+        {
+          props: {
+            component: {
+              config: this.localConfig || {}
+            },
+            widget: new WidgetDefinition('localSipSettings', 'local SIP client settings', '').paramGroup(
+              pg(
+                'sipCredentials',
+                'SIP Credentials',
+                'These are not stored on the openHAB server, but instead locally in your browser. ' +
+                  'Local settings allow each UI client to have its own SIP account and therefore to establish an intercom between multiple UI clients. ' +
+                  'Note: You still need to configure the SIP domain and other options in the widget settings!'
+              ),
+              [
+                pt('username', 'Local SIP Username', 'Used instead of the username from widget settings and stored on the openHAB server.'),
+                pt(
+                  'password',
+                  'Local SIP Password',
+                  'Used instead of the password from the widget settings and stored on the openHAB server.'
+                ),
+                pt(
+                  'ownSipAddress',
+                  'Local SIP Address',
+                  'SIP Address (phone number) of this local client. Used by the client to remove itself from the dial ' +
+                    'popup, which is configured with the phonebook option in the widget settings.'
+                ),
+                pi(
+                  'sipStateItem',
+                  'State Item',
+                  'Used instead of the SIP connection state Item from the widget settings and stored on the openHAB server.'
+                ).a()
+              ]
+            )
+          }
         }
-      })
+      )
       f7.on('widgetConfigUpdate', this.storeLocalConfig)
       f7.once('widgetConfigClosed', () => f7.off('widgetConfigUpdate', this.storeLocalConfig))
     },
-    storeLocalConfig (config) {
+    storeLocalConfig(config) {
       this.localConfig = config
       localStorage.setItem('openhab.ui:sipConfig', JSON.stringify(this.localConfig))
       this.sipStart() // reload config
     },
-    dial () {
+    dial() {
       if (this.config.phonebook !== undefined && this.phonebook.size <= 1) {
         this.call(this.config.phonebook.split('=')[0])
       } else if (this.phonebook.size > 1) {
         const actionsPromise = new Promise((resolve, reject) => {
           if (this.phonebook.size > 0) {
-            resolve(Array.from(this.phonebook.keys()).filter((key) => this.config.ownSipAddress ? this.config.ownSipAddress !== key : true).map((key) => {
-              return {
-                text: this.phonebook.get(key) || key,
-                color: 'blue',
-                onClick: () => {
-                  this.call(key)
-                }
-              }
-            }))
+            resolve(
+              Array.from(this.phonebook.keys())
+                .filter((key) => (this.config.ownSipAddress ? this.config.ownSipAddress !== key : true))
+                .map((key) => {
+                  return {
+                    text: this.phonebook.get(key) || key,
+                    color: 'blue',
+                    onClick: () => {
+                      this.call(key)
+                    }
+                  }
+                })
+            )
           }
         })
         actionsPromise.then((actions) => {
-          f7.actions.create({
-            buttons: [
-              actions,
-              [{ text: 'Cancel', color: 'red' }]
-            ]
-          }).open()
+          f7.actions
+            .create({
+              buttons: [actions, [{ text: 'Cancel', color: 'red' }]]
+            })
+            .open()
         })
       } else {
         f7.dialog.alert('Please configure phonebook entries')
       }
     },
-    autoDial () {
+    autoDial() {
       const session = this.session
       if (!session || !(session.isInProgress() || session.isEstablished())) {
         this.call(this.config.autoDial.toString())
       }
     },
-    updateStateItem (newStatus) {
+    updateStateItem(newStatus) {
       if (!this.config.sipStateItem) return
       useStatesStore().sendCommand(this.config.sipStateItem, newStatus)
     }
   },
-  created () {
+  created() {
     this.LOGGER_PREFIX = 'oh-sipclient'
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <f7-treeview-item
     selectable
-    :label="tag.label + (showNames && tag.name ? ' (' + tag.name + ')': '')"
+    :label="tag.label + (showNames && tag.name ? ' (' + tag.name + ')' : '')"
     :icon-ios="icon('ios')"
     :icon-aurora="icon('aurora')"
     :icon-md="icon('md')"
@@ -83,79 +83,83 @@ export default {
     Draggable,
     SemanticsTreeviewItem: 'semantics-treeview-item'
   },
-  setup () {
+  setup() {
     return {
       moveState: inject('moveState')
     }
   },
   computed: {
-    children () {
-      return this.semanticTags.filter((tag) => (tag.parent === this.tag.uid)).sort((t1, t2) => {
-        return t1.label.localeCompare(t2.label)
-      })
+    children() {
+      return this.semanticTags
+        .filter((tag) => tag.parent === this.tag.uid)
+        .sort((t1, t2) => {
+          return t1.label.localeCompare(t2.label)
+        })
     },
-    iconColor () {
-      return (this.tag.editable || this.picker) ? (useUIOptionsStore().getDarkMode() === 'dark' ? 'white' : 'black') : 'gray'
+    iconColor() {
+      return this.tag.editable || this.picker ? (useUIOptionsStore().darkMode === 'dark' ? 'white' : 'black') : 'gray'
     },
-    canHaveChildren () {
+    canHaveChildren() {
       return (this.children.length > 0 || this.moveState.moving) === true
     },
-    synonyms () {
+    synonyms() {
       return this.tag?.synonyms?.join(', ') || ''
     },
-    tooltip () {
+    tooltip() {
       let tooltip = this.tag.description
       if (this.synonyms) {
         tooltip = tooltip + '<br>(' + this.synonyms + ')'
       }
       return tooltip
     },
-    selected () {
+    selected() {
       return this.selectedTag && this.selectedTag.uid === this.tag.uid
     }
   },
   methods: {
-    icon (theme) {
+    icon(theme) {
       const type = this.tag.uid.split('_')[0]
       if (type === 'Location') {
-        return (theme === 'md') ? 'material:place' : 'f7:placemark'
+        return theme === 'md' ? 'material:place' : 'f7:placemark'
       } else if (type === 'Equipment') {
-        return (theme === 'md') ? 'material:payments' : 'f7:cube_box'
+        return theme === 'md' ? 'material:payments' : 'f7:cube_box'
       } else if (type === 'Point') {
-        return (theme === 'md') ? 'material:flash_on' : 'f7:bolt_fill'
+        return theme === 'md' ? 'material:flash_on' : 'f7:bolt_fill'
       } else if (type === 'None') {
         return ''
       } else {
         return 'material:label_outline'
       }
     },
-    select (event) {
+    select(event) {
       if (this.$$(event.target).is('.treeview-toggle')) return
       this.$emit('selected', this.tag)
     },
-    setTagOpened (opened, uid) {
+    setTagOpened(opened, uid) {
       const tagUid = uid || this.tag.uid
       this.expandedTags[tagUid] = opened
     },
-    onDragStart (event) {
+    onDragStart(event) {
       console.debug('Drag start event:', event)
       this.moveState.moving = true
     },
-    onDragChange (event) {
+    onDragChange(event) {
       console.debug('Drag change event:', event)
       if (event.added) {
         const tag = event.added.element
         const oldUid = tag.uid
         const newUid = this.tag.uid + '_' + tag.name
-        this.semanticTags.filter((t) => t.uid.startsWith(oldUid)).forEach((t) => {
-          const uid = t.uid
-          t.uid = t.uid.replace(oldUid, newUid)
-          t.parent = t.uid.slice(0, t.uid.lastIndexOf('_'))
-          this.setTagOpened(!!this.expandedTags[uid], t.uid)
-        })
+        this.semanticTags
+          .filter((t) => t.uid.startsWith(oldUid))
+          .forEach((t) => {
+            const uid = t.uid
+            t.uid = t.uid.replace(oldUid, newUid)
+            t.parent = t.uid.slice(0, t.uid.lastIndexOf('_'))
+            this.setTagOpened(!!this.expandedTags[uid], t.uid)
+          })
       }
     },
-    onDragMove (event) {
+    onDragMove(event) {
       console.debug('Drag move - event:', event)
       // Cancel opening previous group we moved over as we moved away from it
       const movedToSamePlace = event.relatedContext?.element?.uid === this.moveState.moveTarget?.uid
@@ -172,7 +176,7 @@ export default {
       }
       return true
     },
-    onDragEnd (event) {
+    onDragEnd(event) {
       console.debug('Drag end event:', event)
       this.moveState.moving = false
     }

@@ -3,11 +3,7 @@
     <template #content-root>
       <f7-card-content
         :style="config.contentStyle"
-        :class="[
-                         ...(Array.isArray(config.contentClass) ? config.contentClass : []),
-                         'oh-image-card',
-                         'no-padding',
-                       ]">
+        :class="[...(Array.isArray(config.contentClass) ? config.contentClass : []), 'oh-image-card', 'no-padding']">
         <f7-list v-if="hasAction" class="image-link">
           <f7-list-item class="oh-image-clickable" link="#" no-chevron @click="performAction">
             <template #content-start>
@@ -42,18 +38,26 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
-import { actionsMixin } from '../widget-actions'
 import OhImage from '../system/oh-image.vue'
 import { OhImageCardDefinition } from '@/assets/definitions/widgets/standard/cards'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhImage
   },
-  widget: OhImageCardDefinition
+  widget: OhImageCardDefinition,
+  setup(props) {
+    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, cardChildContext, hasAction, performAction }
+  }
 }
 </script>

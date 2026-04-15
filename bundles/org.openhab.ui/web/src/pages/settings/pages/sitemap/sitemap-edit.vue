@@ -2,7 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar no-hairline>
       <oh-nav-content
-        :title="!ready ? '' : ((createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label) + dirtyIndicator)"
+        :title="!ready ? '' : (createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label) + dirtyIndicator"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -11,11 +11,11 @@
       <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
       <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'"> Code </f7-link>
     </f7-toolbar>
-    <f7-toolbar bottom class="toolbar-details" v-if="currentTab === 'tree'">
+    <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedWidget == null }" @click="selectedWidget = null"> Clear </f7-link>
       <div class="padding-right text-align-right">
         <label class="advanced-label">
-          <f7-checkbox style="margin-left: 5px; padding-right: 5px;" v-model:checked="sitemapIncludeItemName" />
+          <f7-checkbox style="margin-left: 5px; padding-right: 5px" v-model:checked="sitemapIncludeItemName" />
           Show item name
         </label>
       </div>
@@ -72,9 +72,13 @@
                   :widget="selectedWidget"
                   attribute="buttons"
                   placeholder="command = label = icon"
-                  :fields="JSON.stringify([{row: {width: '10%', type: 'number', min: 1, placeholder: 'row'}},
-                                                            {column: {width: '10%', type: 'number', min: 1, placeholder: 'col'}},
-                                                            {command: {}}])" />
+                  :fields="
+                    JSON.stringify([
+                      { row: { width: '10%', type: 'number', min: 1, placeholder: 'row' } },
+                      { column: { width: '10%', type: 'number', min: 1, placeholder: 'col' } },
+                      { command: {} }
+                    ])
+                  " />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.component === 'Switch'">
                 <div><f7-block-title>Mappings</f7-block-title></div>
@@ -130,8 +134,8 @@
         <f7-actions ref="widgetTypeSelection" id="widget-type-selection" :grid="true">
           <f7-actions-group>
             <f7-actions-button
-              class="widget-button"
               v-for="widgetType in addableWidgetTypes"
+              class="widget-button"
               :key="widgetType.type"
               @click="addWidget(widgetType.type)">
               <template #media>
@@ -221,7 +225,7 @@
             Colors
           </f7-link>
         </f7-toolbar>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'widget'">
+        <f7-block v-if="selectedWidget && detailsTab === 'widget'" style="margin-bottom: 6rem">
           <widget-details
             :widget="selectedWidget"
             :createMode="createMode"
@@ -230,28 +234,32 @@
             @movedown="moveWidgetDown"
             @moveup="moveWidgetUp" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'visibility'">
+        <f7-block v-if="selectedWidget && detailsTab === 'visibility'" style="margin-bottom: 6rem">
           <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'buttons'">
+        <f7-block v-if="selectedWidget && detailsTab === 'buttons'" style="margin-bottom: 6rem">
           <attribute-details
             :widget="selectedWidget"
             attribute="buttons"
             placeholder="command = label = icon"
-            :fields="JSON.stringify([{row: {width: '10%', type: 'number', min: 1, placeholder: 'row'}},
-                                                      {column: {width: '10%', type: 'number', min: 1, placeholder: 'col'}},
-                                                      {command: {}}])" />
+            :fields="
+              JSON.stringify([
+                { row: { width: '10%', type: 'number', min: 1, placeholder: 'row' } },
+                { column: { width: '10%', type: 'number', min: 1, placeholder: 'col' } },
+                { command: {} }
+              ])
+            " />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'mappings'">
+        <f7-block v-if="selectedWidget && detailsTab === 'mappings'" style="margin-bottom: 6rem">
           <attribute-details
             :widget="selectedWidget"
             attribute="mappings"
             :placeholder="selectedWidget.component === 'Switch' ? 'cmd:releaseCmd = label = icon' : 'command = label = icon'" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'icons'">
+        <f7-block v-if="selectedWidget && detailsTab === 'icons'" style="margin-bottom: 6rem">
           <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
         </f7-block>
-        <f7-block style="margin-bottom: 6rem" v-if="selectedWidget && detailsTab === 'colors'">
+        <f7-block v-if="selectedWidget && detailsTab === 'colors'" style="margin-bottom: 6rem">
           <div><f7-block-title>Label Color</f7-block-title></div>
           <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
           <div v-if="canShowValue">
@@ -371,6 +379,7 @@ import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import DirtyMixin from '@/pages/settings/dirty-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin, SitemapMixin],
@@ -387,10 +396,10 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -414,15 +423,15 @@ export default {
     }
   },
   computed: {
-    hasChildren () {
+    hasChildren() {
       if (!this.selectedWidget) return false
-      return (Array.isArray(this.selectedWidget.slots?.widgets) && this.selectedWidget.slots.widgets.length)
+      return Array.isArray(this.selectedWidget.slots?.widgets) && this.selectedWidget.slots.widgets.length
     },
-    canShowValue () {
+    canShowValue() {
       if (!this.selectedWidget) return false
       return this.WIDGET_TYPES_SHOWING_VALUE.includes(this.selectedWidget.component)
     },
-    addableWidgetTypes () {
+    addableWidgetTypes() {
       if (!this.selectedWidget) return
       return this.allowedWidgetTypes(this.selectedWidget)
     },
@@ -432,7 +441,7 @@ export default {
   },
   watch: {
     sitemap: {
-      handler (newVal) {
+      handler(newVal) {
         if (this.loading) return
         if (!fastDeepEqual(this.stripClosed(newVal), this.lastCleanSitemap)) {
           this.dirty = true
@@ -442,33 +451,33 @@ export default {
       },
       deep: true
     },
-    currentTab (newTab, oldTab) {
+    currentTab(newTab, oldTab) {
       if (oldTab === 'tree' && this.$refs.detailsSheet) {
         this.$refs.detailsSheet.$el.f7Modal.close()
       }
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
       this.detailsOpened = false
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         this.save(!this.createMode)
         ev.stopPropagation()
         ev.preventDefault()
       }
     },
-    stripClosed (obj) {
+    stripClosed(obj) {
       // Remove the closed field as it is only used for expanding the tree, and should not impact the dirty state
       if (Array.isArray(obj)) {
         return obj.map(this.stripClosed)
@@ -484,14 +493,14 @@ export default {
         return obj
       }
     },
-    setParents (widget) {
+    setParents(widget) {
       // keep parents with widget for drag and drop
       widget.slots?.widgets?.forEach((w) => {
         w.parent = widget
         this.setParents(w)
       })
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -514,7 +523,7 @@ export default {
         })
       }
     },
-    save (stay, force) {
+    save(stay, force) {
       this.cleanConfig(this.sitemap)
       if (!this.sitemap.uid) {
         f7.dialog.alert('Please give an ID to the sitemap')
@@ -533,43 +542,33 @@ export default {
 
       const sitemap = this.preProcessSitemapSave(this.sitemap)
 
-      const promise = (this.createMode)
+      const promise = this.createMode
         ? this.$oh.api.postPlain('/rest/ui/components/system:sitemap', JSON.stringify(sitemap), 'text/plain', 'application/json')
         : this.$oh.api.put('/rest/ui/components/system:sitemap/' + sitemap.uid, sitemap)
-      promise.then((data) => {
-        this.dirty = false
-        if (this.createMode) {
-          f7.toast.create({
-            text: 'Sitemap created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          this.load()
-          this.f7router.navigate(this.f7route.url.replace('/add', '/' + sitemap.uid), { reloadCurrent: true })
-        } else {
-          f7.toast.create({
-            text: 'Sitemap updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          this.lastCleanSitemap = this.stripClosed(this.sitemap)
-          this.setParents(sitemap)
-        }
-        f7.emit('sidebarRefresh', null)
-        // if (!stay) this.f7router.back()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while saving sitemap: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      promise
+        .then((data) => {
+          this.dirty = false
+          if (this.createMode) {
+            showToast('Sitemap created')
+            this.load()
+            this.f7router.navigate(this.f7route.url.replace('/add', '/' + sitemap.uid), { reloadCurrent: true })
+          } else {
+            showToast('Sitemap updated')
+            this.lastCleanSitemap = this.stripClosed(this.sitemap)
+            this.setParents(sitemap)
+          }
+          f7.emit('sidebarRefresh', null)
+          // if (!stay) this.f7router.back()
+        })
+        .catch((err) => {
+          showToast('Error while saving sitemap: ' + err)
+        })
     },
-    validateWidgets (stay) {
+    validateWidgets(stay) {
       let scope = this
       if (Array.isArray(this.sitemap.slots?.widgets) && this.sitemap.slots.widgets.length) {
         let validationWarnings = []
-        const widgetList = this.sitemap.slots.widgets.reduce(function iter (widgets, widget) {
+        const widgetList = this.sitemap.slots.widgets.reduce(function iter(widgets, widget) {
           widgets.push(widget)
           if (Array.isArray(widget.slots?.widgets)) {
             return widget.slots.widgets.reduce(iter, widgets)
@@ -578,13 +577,16 @@ export default {
         }, [])
         let isFrame = [false]
         let siblingIsFrame = [undefined]
-        this.sitemap.slots.widgets.forEach(function iter (widget) {
+        this.sitemap.slots.widgets.forEach(function iter(widget) {
           let label = scope.widgetErrorLabel(widget.config)
           if (isFrame[isFrame.length - 1] && widget.component === 'Frame') {
             validationWarnings.push('Frame widget ' + label + ', frame not allowed in frame')
           }
           if (siblingIsFrame[siblingIsFrame.length - 1] !== undefined) {
-            if ((siblingIsFrame[siblingIsFrame.length - 1] && (widget.component !== 'Frame')) || (!siblingIsFrame[siblingIsFrame.length - 1] && (widget.component === 'Frame'))) {
+            if (
+              (siblingIsFrame[siblingIsFrame.length - 1] && widget.component !== 'Frame') ||
+              (!siblingIsFrame[siblingIsFrame.length - 1] && widget.component === 'Frame')
+            ) {
               validationWarnings.push('Widget ' + label + ', only frames or no frames at all allowed in linkable widget')
             }
           }
@@ -597,163 +599,203 @@ export default {
             siblingIsFrame.pop()
           }
         })
-        widgetList.filter((widget) => widget.component === 'Frame').forEach((widget) => {
-          if (!widget.slots?.widgets || !widget.slots.widgets.length) {
-            let label = scope.widgetErrorLabel(widget.config)
-            validationWarnings.push(widget.component + ' widget ' + label + ' should not be empty')
-          }
-        })
-        widgetList.filter((widget) => this.WIDGET_TYPES_REQUIRING_ITEM.includes(widget.component)).forEach((widget) => {
-          if (!widget.config?.item) {
-            let label = scope.widgetErrorLabel(widget.config)
-            validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
-          }
-        })
-        widgetList.filter((widget) => widget.component === 'Video' || widget.component === 'Webview').forEach((widget) => {
-          if (!widget.config?.url) {
-            let label = scope.widgetErrorLabel(widget.config)
-            validationWarnings.push(widget.component + ' widget ' + label + ', no url configured')
-          }
-        })
-        widgetList.filter((widget) => widget.component === 'Chart').forEach((widget) => {
-          if (!(widget.config?.period && this.REGEX_PERIOD.test(widget.config.period))) {
-            let label = scope.widgetErrorLabel(widget.config)
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config?.period)
-          }
-          if (widget.config?.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.config.yAxisDecimalPattern)) {
-            let label = scope.widgetErrorLabel(widget.config)
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config?.yAxisDecimalPattern)
-          }
-        })
-        widgetList.filter((widget) => widget.component === 'Input').forEach((widget) => {
-          if (widget.config?.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint)) {
-            let label = scope.widgetErrorLabel(widget.config)
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config?.inputHint)
-          }
-        })
-        widgetList.filter((widget) => ['Slider', 'Setpoint', 'Colortemperaturepicker'].includes(widget.component)).forEach((widget) => {
-          let label = scope.widgetErrorLabel(widget.config)
-          if (widget.config?.step <= 0) {
-            validationWarnings.push(widget.component + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.config.step)
-          }
-          if (widget.config?.minValue > widget.config?.maxValue) {
-            validationWarnings.push(widget.component + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + widget.config.minValue + ' > ' + widget.config.maxValue)
-          }
-        })
-        widgetList.filter((widget) => widget.component === 'Buttongrid').forEach((widget) => {
-          let label = scope.widgetErrorLabel(widget.config)
-          if (!widget.config?.item && !widget.slots?.widgets?.length) {
-            validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
-          }
-          if (!(widget.config?.buttons?.length || widget.slots?.widgets?.length)) {
-            validationWarnings.push(widget.component + ' widget ' + label + ', no buttons defined')
-          }
-          let positions = []
-          if (widget.config?.buttons?.length) {
-            positions = widget.config.buttons.map((param) => { return { row: param.row, column: param.column } })
-          } else if (widget.slots?.widgets?.length) {
-            positions = widget.slots.widgets.filter((widget) => widget.config).map((widget) => { return { row: widget.config.row, column: widget.config.column } })
-          }
-          let occurrences = {}
-          const duplicates = positions.filter((pos) => {
-            const jsonpos = JSON.stringify(pos)
-            if (occurrences[jsonpos]) return true
-            occurrences[jsonpos] = true
-            return false
+        widgetList
+          .filter((widget) => widget.component === 'Frame')
+          .forEach((widget) => {
+            if (!widget.slots?.widgets || !widget.slots.widgets.length) {
+              let label = scope.widgetErrorLabel(widget.config)
+              validationWarnings.push(widget.component + ' widget ' + label + ' should not be empty')
+            }
           })
-          duplicates.forEach((duplicate) =>
-            validationWarnings.push(widget.component + ' widget ' + label + ', duplicate button position : row ' + duplicate.row + ' column ' + duplicate.column)
-          )
-        })
-        widgetList.filter((widget) => widget.component === 'Button').forEach((widget) => {
-          let label = scope.widgetErrorLabel(widget.config)
-          let parentWidget = widgetList.find((w) => {
-            if (w.slots?.widgets?.includes(widget)) return w
-            return undefined
-          })
-          if (!(parentWidget?.component === 'Buttongrid')) {
-            validationWarnings.push(widget.component + ' widget ' + label + ', can only be defined inside a Buttongrid component')
-          }
-          if (!(widget.config?.item)) {
-            // if there is an item configured on the Buttongrid level, we will use that when saving
-            if (!((parentWidget?.component === 'Buttongrid') && parentWidget?.config?.item)) {
+        widgetList
+          .filter((widget) => this.WIDGET_TYPES_REQUIRING_ITEM.includes(widget.component))
+          .forEach((widget) => {
+            if (!widget.config?.item) {
+              let label = scope.widgetErrorLabel(widget.config)
               validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
             }
-          }
-          if (!(widget.config?.row) || isNaN(widget.config?.row) || (widget.config?.row <= 0) || (widget.config?.row > 12)) {
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid row configured: ' + widget.config.row)
-          }
-          if (!(widget.config?.column) || isNaN(widget.config?.column) || (widget.config?.column <= 0)) {
-            validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + widget.config.column)
-          }
-          if (!(widget.config?.cmd)) {
-            validationWarnings.push(widget.component + ' widget ' + label + ', no click command defined')
-          }
-        })
+          })
+        widgetList
+          .filter((widget) => widget.component === 'Video' || widget.component === 'Webview')
+          .forEach((widget) => {
+            if (!widget.config?.url) {
+              let label = scope.widgetErrorLabel(widget.config)
+              validationWarnings.push(widget.component + ' widget ' + label + ', no url configured')
+            }
+          })
+        widgetList
+          .filter((widget) => widget.component === 'Chart')
+          .forEach((widget) => {
+            if (!(widget.config?.period && this.REGEX_PERIOD.test(widget.config.period))) {
+              let label = scope.widgetErrorLabel(widget.config)
+              validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config?.period)
+            }
+            if (widget.config?.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.config.yAxisDecimalPattern)) {
+              let label = scope.widgetErrorLabel(widget.config)
+              validationWarnings.push(
+                widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config?.yAxisDecimalPattern
+              )
+            }
+          })
+        widgetList
+          .filter((widget) => widget.component === 'Input')
+          .forEach((widget) => {
+            if (widget.config?.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint)) {
+              let label = scope.widgetErrorLabel(widget.config)
+              validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config?.inputHint)
+            }
+          })
+        widgetList
+          .filter((widget) => ['Slider', 'Setpoint', 'Colortemperaturepicker'].includes(widget.component))
+          .forEach((widget) => {
+            let label = scope.widgetErrorLabel(widget.config)
+            if (widget.config?.step <= 0) {
+              validationWarnings.push(widget.component + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.config.step)
+            }
+            if (widget.config?.minValue > widget.config?.maxValue) {
+              validationWarnings.push(
+                widget.component +
+                  ' widget ' +
+                  label +
+                  ', minValue must be less than or equal maxValue: ' +
+                  widget.config.minValue +
+                  ' > ' +
+                  widget.config.maxValue
+              )
+            }
+          })
+        widgetList
+          .filter((widget) => widget.component === 'Buttongrid')
+          .forEach((widget) => {
+            let label = scope.widgetErrorLabel(widget.config)
+            if (!widget.config?.item && !widget.slots?.widgets?.length) {
+              validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
+            }
+            if (!(widget.config?.buttons?.length || widget.slots?.widgets?.length)) {
+              validationWarnings.push(widget.component + ' widget ' + label + ', no buttons defined')
+            }
+            let positions = []
+            if (widget.config?.buttons?.length) {
+              positions = widget.config.buttons.map((param) => {
+                return { row: param.row, column: param.column }
+              })
+            } else if (widget.slots?.widgets?.length) {
+              positions = widget.slots.widgets
+                .filter((widget) => widget.config)
+                .map((widget) => {
+                  return { row: widget.config.row, column: widget.config.column }
+                })
+            }
+            let occurrences = {}
+            const duplicates = positions.filter((pos) => {
+              const jsonpos = JSON.stringify(pos)
+              if (occurrences[jsonpos]) return true
+              occurrences[jsonpos] = true
+              return false
+            })
+            duplicates.forEach((duplicate) =>
+              validationWarnings.push(
+                widget.component + ' widget ' + label + ', duplicate button position : row ' + duplicate.row + ' column ' + duplicate.column
+              )
+            )
+          })
+        widgetList
+          .filter((widget) => widget.component === 'Button')
+          .forEach((widget) => {
+            let label = scope.widgetErrorLabel(widget.config)
+            let parentWidget = widgetList.find((w) => {
+              if (w.slots?.widgets?.includes(widget)) return w
+              return undefined
+            })
+            if (!(parentWidget?.component === 'Buttongrid')) {
+              validationWarnings.push(widget.component + ' widget ' + label + ', can only be defined inside a Buttongrid component')
+            }
+            if (!widget.config?.item) {
+              // if there is an item configured on the Buttongrid level, we will use that when saving
+              if (!(parentWidget?.component === 'Buttongrid' && parentWidget?.config?.item)) {
+                validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
+              }
+            }
+            if (!widget.config?.row || isNaN(widget.config?.row) || widget.config?.row <= 0 || widget.config?.row > 12) {
+              validationWarnings.push(widget.component + ' widget ' + label + ', invalid row configured: ' + widget.config.row)
+            }
+            if (!widget.config?.column || isNaN(widget.config?.column) || widget.config?.column <= 0) {
+              validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + widget.config.column)
+            }
+            if (!widget.config?.cmd) {
+              validationWarnings.push(widget.component + ' widget ' + label + ', no click command defined')
+            }
+          })
         widgetList.forEach((widget) => {
           if (widget.config) {
             let label = scope.widgetErrorLabel(widget.config)
-            Object.keys(widget.config).filter((attr) => ['buttons', 'mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)).forEach((attr) => {
-              widget.config[attr].forEach((param) => {
-                if (((attr === 'mappings') && !this.validateMapping(widget.component, param)) ||
-                    ((['visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr)) && !this.validateRule(attr, param))) {
-                  validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
-                }
-                if (attr === 'buttons') {
-                  if (!param.row || isNaN(param.row) || (param.row <= 0) || (param.row > 12)) {
-                    validationWarnings.push(widget.component + ' widget ' + label + ', invalid row configured: ' + param.row)
+            Object.keys(widget.config)
+              .filter((attr) => ['buttons', 'mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr))
+              .forEach((attr) => {
+                widget.config[attr].forEach((param) => {
+                  if (
+                    (attr === 'mappings' && !this.validateMapping(widget.component, param)) ||
+                    (['visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr) && !this.validateRule(attr, param))
+                  ) {
+                    validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
                   }
-                  if (!param.column || isNaN(param.column) || (param.column <= 0)) {
-                    validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + param.column)
+                  if (attr === 'buttons') {
+                    if (!param.row || isNaN(param.row) || param.row <= 0 || param.row > 12) {
+                      validationWarnings.push(widget.component + ' widget ' + label + ', invalid row configured: ' + param.row)
+                    }
+                    if (!param.column || isNaN(param.column) || param.column <= 0) {
+                      validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + param.column)
+                    }
+                    if (!this.validateMapping(widget.component, param.command)) {
+                      validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in button command: ' + param.command)
+                    }
                   }
-                  if (!this.validateMapping(widget.component, param.command)) {
-                    validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in button command: ' + param.command)
-                  }
-                }
+                })
               })
-            })
           }
         })
         if (validationWarnings.length > 0) {
-          f7.dialog.create({
-            cssClass: 'sitemap-validation-dialog',
-            title: 'Validation errors',
-            text: 'Sitemap definition has validation errors:',
-            content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
-            buttons: [
-              { text: 'Cancel', color: 'gray', close: true },
-              { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
-            ],
-            destroyOnClose: true
-          }).open()
+          f7.dialog
+            .create({
+              cssClass: 'sitemap-validation-dialog',
+              title: 'Validation errors',
+              text: 'Sitemap definition has validation errors:',
+              content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
+              buttons: [
+                { text: 'Cancel', color: 'gray', close: true },
+                { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
+              ],
+              destroyOnClose: true
+            })
+            .open()
           return false
         }
       }
       return true
     },
-    widgetErrorLabel (config) {
+    widgetErrorLabel(config) {
       return config?.label ?? (config?.item ? 'for item ' + config.item : 'without label')
     },
-    validateMapping (component, mapping) {
+    validateMapping(component, mapping) {
       if (component === 'Switch') {
         // for Switch widget, also check for releaseCommand
         return this.REGEX_MAPPING_SWITCH.test(mapping)
       }
       return this.REGEX_MAPPING.test(mapping)
     },
-    validateRule (attr, rule) {
+    validateRule(attr, rule) {
       if (attr === 'visibility') {
         return this.REGEX_RULE_VISIBILITY.test(rule)
       }
       return this.REGEX_RULE.test(rule)
     },
-    cleanConfig (widget) {
+    cleanConfig(widget) {
       if (widget.config) {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             widget.config[key] = widget.config[key].filter(Boolean)
             if (key === 'buttons') {
-              widget.config[key].sort((value1, value2) => (value1.row - value2.row) || (value1.column - value2.column))
+              widget.config[key].sort((value1, value2) => value1.row - value2.row || value1.column - value2.column)
             }
           }
           if (!widget.config[key] && widget.config[key] !== 0) {
@@ -764,21 +806,20 @@ export default {
       if (widget.component === 'Buttongrid') {
         widget.slots?.widgets?.sort(
           (button1, button2) =>
-            (button1.config?.row ?? 0) - (button2.config?.row ?? 0) ||
-            (button1.config?.column ?? 0) - (button2.config?.column ?? 0)
+            (button1.config?.row ?? 0) - (button2.config?.row ?? 0) || (button1.config?.column ?? 0) - (button2.config?.column ?? 0)
         )
       }
       this.addEmptySlot(widget)
       widget.slots?.widgets?.forEach(this.cleanConfig)
     },
-    preProcessSitemapLoad (sitemap) {
+    preProcessSitemapLoad(sitemap) {
       const processed = JSON.parse(JSON.stringify(sitemap))
       if (processed.slots && processed.slots.widgets) {
         processed.slots.widgets.forEach(this.preProcessWidgetLoad)
       }
       return processed
     },
-    preProcessWidgetLoad (widget) {
+    preProcessWidgetLoad(widget) {
       if (widget.config) {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
@@ -797,7 +838,7 @@ export default {
       this.addEmptySlot(widget)
       widget.slots?.widgets?.forEach(this.preProcessWidgetLoad)
     },
-    addEmptySlot (widget) {
+    addEmptySlot(widget) {
       // Needed for drag and drop to work into empty slot
       if (this.LINKABLE_WIDGET_TYPES.includes(widget.component)) {
         if (!widget.slots) {
@@ -808,23 +849,25 @@ export default {
         }
       }
     },
-    preProcessSitemapSave (sitemap) {
+    preProcessSitemapSave(sitemap) {
       const processed = cloneDeep(sitemap)
       processed.slots?.widgets?.forEach(this.preProcessWidgetSave)
       return processed
     },
-    preProcessWidgetSave (widget) {
+    preProcessWidgetSave(widget) {
       delete widget.parent // remove parent from widget, as this would cause a circular reference error when converting to JSON
       if (widget.config) {
         for (let key in widget.config) {
           if (widget.config[key] && Array.isArray(widget.config[key])) {
             if (key === 'buttons') {
-              widget.config[key].forEach((value, index) => { widget.config[key][index] = value.row + ':' + value.column + ':' + value.command })
+              widget.config[key].forEach((value, index) => {
+                widget.config[key][index] = value.row + ':' + value.column + ':' + value.command
+              })
             }
           }
         }
       }
-      if ((widget.component === 'Buttongrid') && widget.config?.item) {
+      if (widget.component === 'Buttongrid' && widget.config?.item) {
         if (!widget.config.buttons && widget.slots?.widgets) {
           widget.slots.widgets.forEach((w) => {
             if (!w.config) w.config = {}
@@ -835,21 +878,21 @@ export default {
       }
       widget.slots?.widgets?.forEach(this.preProcessWidgetSave)
     },
-    update (value) {
+    update(value) {
       this.selectedWidget = null
       this.selectedWidgetParent = null
       this.sitemap = value
       this.cleanConfig(this.sitemap)
     },
-    startEventSource () {},
-    stopEventSource () {},
-    duplicateWidget () {
+    startEventSource() {},
+    stopEventSource() {},
+    duplicateWidget() {
       const duplicate = cloneDeep(this.selectedWidget)
       const index = this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget) + 1
       this.selectedWidgetParent.slots.widgets.splice(index, 0, duplicate)
       this.selectedWidget = this.selectedWidgetParent.slots.widgets[index]
     },
-    removeWidget () {
+    removeWidget() {
       this.selectedWidgetParent.slots.widgets.splice(this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget), 1)
       if (!this.selectedWidgetParent.slots.widgets.length) {
         delete this.selectedWidgetParent.slots
@@ -857,21 +900,21 @@ export default {
       this.selectedWidget = null
       this.selectedWidgetParent = null
     },
-    moveWidgetDown () {
+    moveWidgetDown() {
       let widgets = this.selectedWidgetParent.slots.widgets
       let pos = widgets.indexOf(this.selectedWidget)
       if (pos >= widgets.length - 1) return
       widgets.splice(pos, 1)
       widgets.splice(pos + 1, 0, this.selectedWidget)
     },
-    moveWidgetUp () {
+    moveWidgetUp() {
       let widgets = this.selectedWidgetParent.slots.widgets
       let pos = widgets.indexOf(this.selectedWidget)
       if (pos <= 0) return
       widgets.splice(pos, 1)
       widgets.splice(pos - 1, 0, this.selectedWidget)
     },
-    selectWidget (widgets) {
+    selectWidget(widgets) {
       const widget = widgets[0]
       const parentWidget = widgets[1]
       this.selectedWidget = null
@@ -882,7 +925,7 @@ export default {
         this.detailsTab = 'widget'
         nextTick(() => {
           const detailsLink = this.$refs.detailsLink
-          if(!detailsLink) {
+          if (!detailsLink) {
             console.warn('detailsLink ref not found - should not occur')
             return
           }
@@ -893,13 +936,13 @@ export default {
         })
       })
     },
-    clearSelection (ev) {
+    clearSelection(ev) {
       if (ev.target && ev.currentTarget && ev.target === ev.currentTarget) {
         this.selectedWidget = null
         this.selectedWidgetParent = null
       }
     },
-    addWidget (widgetType) {
+    addWidget(widgetType) {
       if (!this.selectedWidget.slots) {
         this.selectedWidget.slots = { widgets: [] }
       }

@@ -8,7 +8,7 @@
           placeholder="A unique identifier for the Item."
           :value="item.name"
           :disabled="!createMode ? true : null"
-          :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
+          :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
           required
           :error-message="nameErrorMessage"
           :error-message-force="createMode && !!nameErrorMessage"
@@ -41,7 +41,7 @@
           :disabled="!editable ? true : null"
           :key="'type-' + itemType"
           smart-select
-          :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+          :smart-select-params="{ searchbar: true, openIn: 'popup', closeOnSelect: true }">
           <select name="select-type" @change="itemType = $event.target.value">
             <option v-for="t in types.ItemTypes" :key="t" :value="t" :selected="t === itemType ? true : null">
               {{ t }}
@@ -56,7 +56,7 @@
           :disabled="!editable ? true : null"
           :key="'dimension-' + itemDimension"
           smart-select
-          :smart-select-params="{searchbar: true, openIn: 'popup', closeOnSelect: true}">
+          :smart-select-params="{ searchbar: true, openIn: 'popup', closeOnSelect: true }">
           <select name="select-dimension" @change="itemDimension = $event.target.value">
             <option key="" value="" :selected="itemDimension === '' ? true : null" />
             <option v-for="d in dimensions" :key="d.name" :value="d.name" :selected="d.name === itemDimension ? true : null">
@@ -71,7 +71,11 @@
           ref="unit"
           label="Unit"
           type="text"
-          :info="(createMode) ? 'Type a valid unit for the dimension or select from the proposed units. Used internally, for persistence and external systems. Is independent from state visualization in the UI, which is defined through the state description pattern.' : ''"
+          :info="
+            createMode
+              ? 'Type a valid unit for the dimension or select from the proposed units. Used internally, for persistence and external systems. Is independent from state visualization in the UI, which is defined through the state description pattern.'
+              : ''
+          "
           :disabled="!editable ? true : null"
           :value="itemDimension ? itemUnit : ''"
           @change="itemUnit = $event.target.value" />
@@ -79,7 +83,11 @@
           v-show="itemDimension"
           label="State Description Pattern"
           type="text"
-          :info="(createMode) ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.' : 'Pattern can only be changed from the state description metadata page after Item creation!'"
+          :info="
+            createMode
+              ? 'Pattern or transformation applied to the state for display purposes. Only saved if you change the pre-filled default value.'
+              : 'Pattern can only be changed from the state description metadata page after Item creation!'
+          "
           :disabled="!createMode ? true : null"
           :value="stateDescriptionPattern"
           @input="stateDescriptionPattern = $event.target.value"
@@ -148,7 +156,7 @@
           label="Select"
           :value="item.groupNames"
           :items="items"
-          @input="(value) => this.item.groupNames = value"
+          @input="(value) => (this.item.groupNames = value)"
           :multiple="true"
           filterType="Group"
           :filterGroupType="compatibleGroupTypes"
@@ -198,107 +206,111 @@ export default {
     GroupForm,
     TagInput
   },
-  data () {
+  data() {
     return {
       types,
       unitAutocomplete: null,
       categoryAutocomplete: null,
       oldItemType: !this.createMode ? this.item.type.split(':')[0] : '',
-      oldItemDimension: (!this.createMode && this.item.type.split(':').length > 1) ? this.item.type.split(':')[1] : '',
-      oldItemUnit: !this.createMode ? (this.item.unitSymbol || '') : ''
+      oldItemDimension: !this.createMode && this.item.type.split(':').length > 1 ? this.item.type.split(':')[1] : '',
+      oldItemUnit: !this.createMode ? this.item.unitSymbol || '' : ''
     }
   },
   watch: {
-    dimensionsReady (newValue, oldValue) {
+    dimensionsReady(newValue, oldValue) {
       if (oldValue === false && newValue === true) this.initializeAutocompleteUnit()
     }
   },
   computed: {
-    editable () {
+    editable() {
       return this.createMode || (this.item && this.item.editable)
     },
-    numberOfGroups () {
+    numberOfGroups() {
       return this.item.groupNames?.length.toString() || '0'
     },
     itemType: {
-      get () {
+      get() {
         return this.item.type.split(':')[0]
       },
-      set (newType) {
+      set(newType) {
         this.item.type = newType
       }
     },
     itemDimension: {
-      get () {
+      get() {
         const parts = this.item.type.split(':')
         return parts.length > 1 ? parts[1] : ''
       },
-      set (newDimension) {
+      set(newDimension) {
         if (!newDimension) {
           this.item.type = 'Number'
           return
         }
         const dimension = this.dimensions.find((d) => d.name === newDimension)
         this.item.type = 'Number:' + dimension.name
-        this.itemUnit = (this.unitHint ? this.unitHint : this.getUnitHint(dimension.name))
+        this.itemUnit = this.unitHint ? this.unitHint : this.getUnitHint(dimension.name)
       }
     },
     itemUnit: {
-      get () {
+      get() {
         return this.unit
       },
-      set (newUnit) {
+      set(newUnit) {
         this.item.unit = newUnit
       }
     },
     itemCategory: {
-      get () {
+      get() {
         return this.item.category || ''
       },
-      set (newCategory) {
+      set(newCategory) {
         this.item.category = newCategory
       }
     },
-    nameErrorMessage () {
+    nameErrorMessage() {
       return this.validateItemName(this.item.name)
     },
     stateDescriptionPattern: {
-      get () {
+      get() {
         if (this.item.stateDescriptionPattern) return this.item.stateDescriptionPattern
         return this.item.metadata?.stateDescription?.config.pattern || this.stateDescription || (this.createMode ? '%.0f %unit%' : '')
       },
-      set (newPattern) {
+      set(newPattern) {
         this.item.stateDescriptionPattern = newPattern
       }
     },
-    compatibleGroupTypes () {
+    compatibleGroupTypes() {
       if (!this.itemType) return
       let compatibleGroupTypes = []
       compatibleGroupTypes.push(this.item.type)
       if (this.itemType === 'Number') {
         compatibleGroupTypes.push('Switch')
       }
-      if (this.itemType === 'Color') { compatibleGroupTypes.push('Switch', 'Dimmer') }
-      if (this.itemType === 'Dimmer') { compatibleGroupTypes.push('Switch') }
+      if (this.itemType === 'Color') {
+        compatibleGroupTypes.push('Switch', 'Dimmer')
+      }
+      if (this.itemType === 'Dimmer') {
+        compatibleGroupTypes.push('Switch')
+      }
       return compatibleGroupTypes
     }
   },
   methods: {
-    typeChanged () {
+    typeChanged() {
       if (this.$refs.groupForm && this.$refs.groupForm.typeChanged()) return true
       if (!this.oldItemType) return false
       return this.oldItemType !== this.itemType
     },
-    dimensionChanged () {
+    dimensionChanged() {
       if (this.$refs.groupForm && this.$refs.groupForm.dimensionChanged()) return true
       if (!this.oldItemDimension) return false
       return this.oldItemDimension !== this.dimension
     },
-    unitChanged () {
+    unitChanged() {
       if (this.$refs.groupForm && this.$refs.groupForm.unitChanged()) return true
       return this.oldItemUnit && this.item.unit && this.oldItemUnit !== this.item.unit
     },
-    revertChange () {
+    revertChange() {
       if (this.itemType === 'Group') {
         this.$refs.groupForm.revertChange()
         return
@@ -311,7 +323,7 @@ export default {
         this.item.unit = this.oldItemUnit
       }
     },
-    initializeAutocompleteUnit () {
+    initializeAutocompleteUnit() {
       if (this.hideType) return
       const self = this
       const unitControl = this.$refs.unit
@@ -321,7 +333,7 @@ export default {
         inputEl: inputElement,
         openIn: 'dropdown',
         dropdownPlaceholderText: self.itemDimension ? self.getUnitHint(self.itemDimension) : '',
-        source (query, render) {
+        source(query, render) {
           if (!self.itemDimension) {
             render([])
           }
@@ -347,7 +359,7 @@ export default {
         }
       })
     },
-    initializeAutocompleteCategory () {
+    initializeAutocompleteCategory() {
       if (this.hideCategory) return
       const categoryControl = this.$refs.category
       if (!categoryControl || !categoryControl.$el) return
@@ -355,7 +367,7 @@ export default {
       this.categoryAutocomplete = f7.autocomplete.create({
         inputEl: inputElement,
         openIn: 'dropdown',
-        source (query, render) {
+        source(query, render) {
           if (!query || !query.length) {
             render([])
           } else {
@@ -364,14 +376,14 @@ export default {
         }
       })
     },
-    deleteGroup (event) {
+    deleteGroup(event) {
       const group = event.target.previousSibling.innerText
       const groupIndex = this.item.groupNames.indexOf(group)
       if (groupIndex >= 0) {
         this.item.groupNames.splice(groupIndex, 1)
       }
     },
-    updateLabel (event) {
+    updateLabel(event) {
       if (this.createMode && (!this.item.name || this.item.name === this.$oh.utils.normalizeLabel(this.item.label))) {
         const inputElement = document.getElementById('input')
         inputElement.value = this.$oh.utils.normalizeLabel(event.target.value)
@@ -380,17 +392,17 @@ export default {
       this.item.label = event.target.value
     }
   },
-  mounted () {
+  mounted() {
     if (!this.item) return
     this.initializeAutocompleteCategory()
     if (this.dimensionsReady) this.initializeAutocompleteUnit()
-    if (this.createMode && this.stateDescription && (this.stateDescription !== this.item.stateDescriptionPattern)) {
+    if (this.createMode && this.stateDescription && this.stateDescription !== this.item.stateDescriptionPattern) {
       // If there is a state description from the channel type that is different from the default,
       // set it as the item state description
       this.item.stateDescriptionPattern = this.stateDescription
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.unitAutocomplete) {
       f7.autocomplete.destroy(this.unitAutocomplete)
       this.unitAutocomplete = null

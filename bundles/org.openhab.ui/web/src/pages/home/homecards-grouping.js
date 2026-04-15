@@ -5,13 +5,14 @@ export default (model, type, page) => {
       ? page.slots[type][0].config.cardOrder
       : []
   const elements = [...model[type]].map((e) => {
-    if (e.separator) return e
+    const item = { ...e }
+    if (item.separator) return item
     const card =
-      page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].slots && page.slots[type][0].slots[e.key]
-        ? page.slots[type][0].slots[e.key][0]
+      page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].slots && page.slots[type][0].slots[item.key]
+        ? page.slots[type][0].slots[item.key][0]
         : null
-    if (card) e.card = card
-    return e
+    if (card) item.card = card
+    return item
   })
   let groups = []
   let currentGroup = []

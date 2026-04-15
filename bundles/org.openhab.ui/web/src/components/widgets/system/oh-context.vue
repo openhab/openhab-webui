@@ -1,6 +1,6 @@
 <template>
   <generic-widget-component
-    v-for="(slotComponent, idx) in children"
+    v-for="(slotComponent, idx) in defaultSlots"
     v-bind="$attrs"
     :key="'default-' + idx"
     :context="childrenContext(slotComponent)" />
@@ -9,24 +9,27 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
 
 export default {
   inheritAttrs: false,
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhContextDefinition,
-  data () {
+  setup(props) {
+    const { childContext, evaluateExpression, defaultSlots } = useWidgetContext(computed(() => props.context))
+    return { childContext, evaluateExpression, defaultSlots }
+  },
+  data() {
     return {
       varScope: (this.context.varScope || 'varScope') + '-' + f7.utils.id()
     }
   },
   computed: {
-    children () {
-      if (!this.context?.component?.slots?.default) return []
-      return this.context.component.slots.default
-    },
-    fn () {
+    fn() {
       if (!this.context?.component?.config) return {}
       let evalFunc = {}
       const sourceFunc = this.context.component.config.functions || {}
@@ -42,7 +45,7 @@ export default {
     }
   },
   methods: {
-    childrenContext (childComp) {
+    childrenContext(childComp) {
       const ctx = this.childContext(childComp)
       const ctxFunctions = this.fn
       if (this.context.fn) {
@@ -66,7 +69,7 @@ export default {
       return ctx
     }
   },
-  beforeMount () {
+  beforeMount() {
     const evaluateDefaults = () => {
       if (!this.context?.component?.config) return
 

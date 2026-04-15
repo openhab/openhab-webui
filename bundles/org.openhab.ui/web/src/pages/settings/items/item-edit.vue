@@ -16,7 +16,7 @@
 
     <f7-tabs v-if="ready">
       <f7-tab id="design" :tab-active="currentTab === 'design'">
-        <f7-block class="block-narrow" v-if="item.name || item.created === false">
+        <f7-block v-if="item.name || item.created === false" class="block-narrow">
           <f7-col v-if="!editable">
             <div class="padding-left">Note: {{ notEditableMsg }}</div>
           </f7-col>
@@ -90,6 +90,7 @@ import ItemForm from '@/components/item/item-form.vue'
 
 import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin, ItemMixin],
@@ -103,10 +104,10 @@ export default {
     ItemForm,
     CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -124,10 +125,10 @@ export default {
     }
   },
   computed: {
-    editable () {
+    editable() {
       return this.createMode || (this.item && this.item.editable)
     },
-    pageTitle () {
+    pageTitle() {
       if (this.createMode) {
         return 'Create New Item'
       }
@@ -138,11 +139,16 @@ export default {
     }
   },
   watch: {
-    itemDirty: function () { this.dirty = this.itemDirty || this.codeDirty },
-    codeDirty: function () { this.dirty = this.itemDirty || this.codeDirty },
+    itemDirty: function () {
+      this.dirty = this.itemDirty || this.codeDirty
+    },
+    codeDirty: function () {
+      this.dirty = this.itemDirty || this.codeDirty
+    },
     item: {
       handler: function () {
-        if (!this.loading) { // ignore changes during loading
+        if (!this.loading) {
+          // ignore changes during loading
           const itemClone = cloneDeep(this.item)
           delete itemClone.functionKey
           this.itemDirty = !fastDeepEqual(itemClone, this.savedItem)
@@ -152,25 +158,25 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         this.save()
         ev.stopPropagation()
         ev.preventDefault()
       }
     },
-    switchTab (newTab) {
+    switchTab(newTab) {
       if (this.currentTab === newTab) return
 
       // We can't prevent the tab switch here. Instead, we'll switch back if parsing fails
@@ -198,10 +204,10 @@ export default {
         )
       }
     },
-    onCodeChanged (codeDirty) {
+    onCodeChanged(codeDirty) {
       this.codeDirty = codeDirty
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
       if (this.createMode) {
@@ -232,7 +238,7 @@ export default {
         })
       }
     },
-    save () {
+    save() {
       if (!this.editable) return
 
       if (this.currentTab === 'code' && this.codeDirty) {
@@ -253,60 +259,51 @@ export default {
       const dimensionChange = this.$refs.itemForm.dimensionChanged()
       const unitChange = this.$refs.itemForm.unitChanged()
       if (typeChange || dimensionChange || unitChange) {
-        const title = 'WARNING: ' + (typeChange ? 'Type' : (dimensionChange ? 'Dimension' : 'Unit')) + ' Changed'
-        const text = (typeChange || dimensionChange)
-          ? `Existing links to channels ${dimensionChange ? 'with dimensions ' : ''}may no longer be valid!`
-          : 'Changing the internal unit can corrupt your persisted data and affect rules!'
-        return f7.dialog.create({
-          title,
-          text,
-          buttons: [
-            { text: 'Cancel', color: 'gray', close: true, onClick: () => this.$refs.itemForm.revertChange() },
-            { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.doSave() }
-          ],
-          destroyOnClose: true
-        }).open()
+        const title = 'WARNING: ' + (typeChange ? 'Type' : dimensionChange ? 'Dimension' : 'Unit') + ' Changed'
+        const text =
+          typeChange || dimensionChange
+            ? `Existing links to channels ${dimensionChange ? 'with dimensions ' : ''}may no longer be valid!`
+            : 'Changing the internal unit can corrupt your persisted data and affect rules!'
+        return f7.dialog
+          .create({
+            title,
+            text,
+            buttons: [
+              { text: 'Cancel', color: 'gray', close: true, onClick: () => this.$refs.itemForm.revertChange() },
+              { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.doSave() }
+            ],
+            destroyOnClose: true
+          })
+          .open()
       } else {
         this.doSave()
       }
     },
-    doSave () {
-      this.saveItem(this.item).then(() => {
-        if (this.createMode) {
-          f7.toast.create({
-            text: 'Item created',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-          this.item.created = true
-          this.item.editable = true
-        } else {
-          f7.toast.create({
-            text: 'Item updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
-        }
+    doSave() {
+      this.saveItem(this.item)
+        .then(() => {
+          if (this.createMode) {
+            showToast('Item created')
+            this.item.created = true
+            this.item.editable = true
+          } else {
+            showToast('Item updated')
+          }
 
-        this.doSaveMetadata()
+          this.doSaveMetadata()
 
-        this.dirty = this.itemDirty = this.codeDirty = false
-        if (this.createMode) {
-          this.f7router.navigate('/settings/items/' + this.item.name, {
-            reloadCurrent: true
-          })
-        } else {
-          this.f7router.back()
-        }
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Item not saved: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+          this.dirty = this.itemDirty = this.codeDirty = false
+          if (this.createMode) {
+            this.f7router.navigate('/settings/items/' + this.item.name)
+          } else {
+            this.f7router.back()
+          }
+        })
+        .catch((err) => {
+          showToast('Error while saving item: ' + err)
+        })
     },
-    doSaveMetadata () {
+    doSaveMetadata() {
       const newNamespaces = new Set(Object.keys(this.item.metadata || {}))
 
       // remove deleted metadata
@@ -334,21 +331,15 @@ export default {
           return this.saveMetadata(this.item, namespace, metadata)
         })
 
-      Promise.all([...deletionPromises, ...updatePromises]).then(() => {
-        f7.toast.create({
-          text: 'Metadata updated successfully',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while saving metadata: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      Promise.all([...deletionPromises, ...updatePromises])
+        .then(() => {
+          showToast('Metadata updated successfully')
+        })
+        .catch((err) => {
+          showToast('Error while saving metadata: ' + err)
+        })
     },
-    updateItem (updatedItem) {
+    updateItem(updatedItem) {
       if (!this.editable) return false
       try {
         if (updatedItem === null) return false

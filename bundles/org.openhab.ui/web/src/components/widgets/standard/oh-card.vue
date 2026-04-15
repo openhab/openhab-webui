@@ -42,12 +42,12 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
-import { actionsMixin } from '@/components/widgets/widget-actions'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhCardDefinition } from '@/assets/definitions/widgets/standard/cards'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [mixin, actionsMixin],
   widget: OhCardDefinition,
   props: {
     context: Object,
@@ -59,8 +59,13 @@ export default {
     'content-root': Object,
     footer: Object
   },
+  setup(props) {
+    const { config, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, hasAction, performAction, onTaphold, onContextMenu }
+  },
   computed: {
-    computedContentClass () {
+    computedContentClass() {
       return [
         ...(this.hasAction ? ['card-link'] : []),
         ...(Array.isArray(this.contentClass) ? this.contentClass : ['padding']),

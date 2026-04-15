@@ -1,8 +1,8 @@
 <template>
   <f7-button v-bind="config" @click.stop="clicked" @taphold="onTaphold($event)" @contextmenu="onContextMenu($event)">
-    <template v-if="context.component.slots && context.component.slots.default">
+    <template v-if="defaultSlots.length > 0">
       <generic-widget-component
-        v-for="(slotComponent, idx) in context.component.slots.default"
+        v-for="(slotComponent, idx) in defaultSlots"
         :context="childContext(slotComponent)"
         :key="'default-' + idx" />
     </template>
@@ -10,16 +10,25 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 import { OhButtonDefinition } from '@/assets/definitions/widgets/system'
-import { actionsMixin } from '../widget-actions'
+
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  props: {
+    context: Object
+  },
   widget: OhButtonDefinition,
+  setup(props) {
+    const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(computed(() => props.context))
+    const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, childContext, hasAction, defaultSlots, performAction, onTaphold, onContextMenu }
+  },
   methods: {
-    clicked () {
+    clicked() {
       if (this.hasAction) {
         this.performAction()
       }
@@ -27,12 +36,12 @@ export default {
         if (Array.isArray(this.config.clearVariable)) {
           this.config.clearVariable.forEach((v) => {
             const clearVariableScope = getVariableScope(this.context.ctxVars, this.context.varScope, v)
-            const clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
+            const clearVariableLocation = clearVariableScope ? this.context.ctxVars[clearVariableScope] : this.context.vars
             clearVariableLocation[v] = undefined
           })
         } else if (typeof this.config.clearVariable === 'string') {
           const clearVariableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.clearVariable)
-          const clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
+          const clearVariableLocation = clearVariableScope ? this.context.ctxVars[clearVariableScope] : this.context.vars
           clearVariableLocation[this.config.clearVariable] = undefined
         }
       }
@@ -41,12 +50,12 @@ export default {
         if (Array.isArray(this.config.clearVariableKey)) {
           this.config.clearVariableKey.forEach((key) => {
             const clearVariableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.clearVariable)
-            const clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
+            const clearVariableLocation = clearVariableScope ? this.context.ctxVars[clearVariableScope] : this.context.vars
             value = setVariableKeyValues(clearVariableLocation, key, undefined)
           })
         } else if (typeof this.config.clearVariableKey === 'string') {
           const clearVariableScope = getVariableScope(this.context.ctxVars, this.context.varScope, this.config.clearVariable)
-          const clearVariableLocation = (clearVariableScope) ? this.context.ctxVars[clearVariableScope] : this.context.vars
+          const clearVariableLocation = clearVariableScope ? this.context.ctxVars[clearVariableScope] : this.context.vars
           value = setVariableKeyValues(clearVariableLocation, this.config.clearVariableKey, undefined)
         }
         this.context.vars[this.config.clearVariable] = value

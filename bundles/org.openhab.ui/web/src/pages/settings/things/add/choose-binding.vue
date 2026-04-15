@@ -2,7 +2,7 @@
   <f7-page @page:afterin="onPageAfterIn">
     <f7-navbar>
       <oh-nav-content title="Choose Binding" back-link="Things" back-link-url="/settings/things/" :f7router />
-      <f7-subnavbar :inner="false" v-show="initSearchbar">
+      <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
@@ -44,12 +44,13 @@
             :header="binding.uid"
             :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id).length || undefined"
             badge-color="red"
-            :footer="(binding.description && binding.description.indexOf('<br>') >= 0) ?
-              binding.description.split('<br>')[0] : binding.description" />
+            :footer="
+              binding.description && binding.description.indexOf('<br>') >= 0 ? binding.description.split('<br>')[0] : binding.description
+            " />
         </f7-list>
       </f7-col>
     </f7-block>
-    <f7-block class="block-narrow" v-if="runtimeStore.apiEndpoint('addons')">
+    <f7-block v-if="runtimeStore.apiEndpoint('addons')" class="block-narrow">
       <f7-col v-if="bindings.length">
         <f7-list>
           <f7-list-button color="blue" title="Install More Bindings" href="/addons/binding/" />
@@ -78,10 +79,10 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -94,7 +95,7 @@ export default {
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.loading = true
       this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
         let installedBindings = data.filter((addon) => addon.type === 'binding' && addon.installed === true)

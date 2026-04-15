@@ -3,7 +3,7 @@
     ref="chart"
     class="oh-chart-page-chart"
     :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
-    :style="(uiOptionsStore.getDarkMode() === 'dark') ? 'background-color: black;' : 'background-color: white;'"
+    :style="uiOptionsStore.darkMode === 'dark' ? 'background-color: black;' : 'background-color: white;'"
     :context="this.context" />
 </template>
 
@@ -36,27 +36,34 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
-import OhChart from '../system/oh-chart.vue'
 import { OhChartPageDefinition } from '@/assets/definitions/widgets/chart/page'
+import { mapStores } from 'pinia'
+
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { defineAsyncComponent } from 'vue'
 
 export default {
-  mixins: [mixin],
   components: {
-    OhChart
+    'oh-chart': defineAsyncComponent(() => import('@/components/widgets/system/oh-chart.vue'))
+  },
+  props: {
+    context: Object
   },
   widget: OhChartPageDefinition,
+  computed: {
+    ...mapStores(useUIOptionsStore)
+  },
   methods: {
-    onOrientationChange () {
+    onOrientationChange() {
       this.$refs.chart.forceRerender()
     }
   },
-  mounted () {
+  mounted() {
     if (this.$device.ios) {
       window.addEventListener('orientationchange', this.onOrientationChange)
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.$device.ios) {
       window.removeEventListener('orientationchange', this.onOrientationChange)
     }

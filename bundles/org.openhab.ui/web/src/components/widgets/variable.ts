@@ -1,13 +1,12 @@
 import { reactive, isReactive } from 'vue'
-
-type VariableScopeId = string
-type VariableScopeName = `varScope-${VariableScopeId}`
-type VariableName = string
-type VariableValue = number | string | boolean | VariableArray | VariableObject | null
-interface VariableArray extends Array<VariableValue> {}
-interface VariableObject extends Record<VariableName, VariableValue> {}
-
-type ContextVarObj = Record<VariableScopeName, VariableObject>
+import type {
+  ContextVarObj,
+  VariableArray,
+  VariableName,
+  VariableObject,
+  VariableScopeName,
+  VariableValue
+} from '@/components/widgets/types'
 
 export function getLastVariableKeyValue(variableValue: VariableValue, variableKey: VariableName): VariableValue | undefined {
   const result = getVariableKeyValues(variableValue, variableKey)
@@ -24,14 +23,16 @@ function getVariableKeyValues(
 ): { keyArray: VariableName[]; valueArray: (VariableValue | undefined)[] } | undefined {
   let setValue: VariableValue | undefined = variableValue
   let valueArray: (VariableValue | undefined)[] = [setValue]
-  let keyArray = variableKey.split('.').filter((key) => key.trim() !== '') as VariableName[]
+  let keyArray = variableKey.split('.').filter((key) => key.trim() !== '')
 
   if (keyArray.length === 0) {
     throw new Error('Variable key must be a non-empty string')
   }
 
   for (let i = 0; i <= keyArray.length - 1; i++) {
-    setValue = getVariableKeyValue(setValue, keyArray[i])
+    const key = keyArray[i]
+    if (key === undefined) break
+    setValue = getVariableKeyValue(setValue, key)
     valueArray.push(setValue)
   }
   return { keyArray, valueArray }
@@ -64,7 +65,7 @@ function getVariableKeyValue(obj: VariableValue | undefined, key: string): Varia
       // Property array access propName[0]
       if (typeof obj !== 'object' || Array.isArray(obj)) return undefined
 
-      const objAsObject = obj as VariableObject
+      const objAsObject = obj
       const targetArray = objAsObject[propertyName]
       if (!Array.isArray(targetArray)) return undefined
       return targetArray[index]
@@ -74,7 +75,7 @@ function getVariableKeyValue(obj: VariableValue | undefined, key: string): Varia
   } else {
     // simple property access
     if (typeof obj !== 'object' || Array.isArray(obj)) return undefined
-    const objAsObject = obj as VariableObject
+    const objAsObject = obj
     return objAsObject[key]
   }
 }
@@ -103,7 +104,7 @@ export function setVariableKeyValues(
       lastObject = newValue
     }
     valueArray[currentIdx] = setVariableKeyValue(
-      valueArray[currentIdx] as VariableArray | VariableObject | undefined | null,
+      valueArray[currentIdx] as VariableObject | VariableArray | undefined | null,
       keyArray[valueArray.length - 2],
       lastObject
     )
@@ -149,12 +150,11 @@ export function setVariableKeyValue(
         throw new Error(`Expected object for key ${key}, but got ${typeof obj}`)
       }
 
-      const objAsObject = obj as VariableObject
-      if (!objAsObject[propertyName]) {
-        objAsObject[propertyName] = []
+      if (!obj[propertyName]) {
+        obj[propertyName] = []
       }
 
-      const targetArray = objAsObject[propertyName]
+      const targetArray = obj[propertyName]
       if (!Array.isArray(targetArray)) {
         throw new Error(`Property ${propertyName} is not an array`)
       }
@@ -177,11 +177,10 @@ export function setVariableKeyValue(
       obj = {}
     }
 
-    const objAsObject = obj as VariableObject
     if (value === undefined || value === 'undefined' || value === null) {
-      delete objAsObject[key]
+      delete obj[key]
     } else {
-      objAsObject[key] = value
+      obj[key] = value
     }
   }
 

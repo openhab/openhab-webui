@@ -23,6 +23,7 @@
             :parameterGroups="widget.props.parameterGroups || []"
             :parameters="widget.props.parameters || []"
             :configuration="config"
+            :set-empty-array-as-array="true"
             @updated="updated" />
         </f7-col>
       </f7-block>
@@ -55,7 +56,7 @@ export default {
     ConfigSheet
   },
   emits: ['closed', 'update'],
-  data () {
+  data() {
     return {
       originalConfig: null,
       updateTimer: null,
@@ -64,24 +65,24 @@ export default {
     }
   },
   methods: {
-    widgetConfigOpened () {
+    widgetConfigOpened() {
       this.config = cloneDeep(this.component.config)
       this.originalConfig = cloneDeep(this.component.config)
       this.initializeMovablePopup(this.$refs.widgetConfig, this.$refs.navbar)
       window.addEventListener('keydown', this.onKeydown)
     },
-    widgetConfigClosed () {
+    widgetConfigClosed() {
       this.cleanupMovablePopup()
       window.removeEventListener('keydown', this.onKeydown)
       f7.emit('widgetConfigClosed')
       this.$emit('closed')
     },
-    onKeydown (evt) {
+    onKeydown(evt) {
       if (evt.key === 'Escape' && !this.leaveCancelled) {
         this.closeWithDirtyCheck()
       }
     },
-    closeWithDirtyCheck () {
+    closeWithDirtyCheck() {
       if (this.dirty) {
         const dialog = this.confirmLeaveWithoutSaving(
           () => {
@@ -91,30 +92,32 @@ export default {
           () => {
             // prevent re-triggering the confirm dialog when ESC is pressed to close the dialog
             this.leaveCancelled = true
-            setTimeout(() => { this.leaveCancelled = false }, 100)
+            setTimeout(() => {
+              this.leaveCancelled = false
+            }, 100)
           }
         )
       } else {
         this.$refs.widgetConfig.$el.f7Modal.close()
       }
     },
-    reset () {
+    reset() {
       f7.dialog.confirm('Do you want to revert your changes?', 'Revert Changes', () => {
         this.config = cloneDeep(this.originalConfig)
         this.updateWidgetConfig(this.originalConfig)
         this.dirty = false
       })
     },
-    save () {
+    save() {
       this.updateWidgetConfig(this.config)
       this.$refs.widgetConfig.$el.f7Modal.close()
     },
-    updateWidgetConfig (config) {
+    updateWidgetConfig(config) {
       const newConfig = cloneDeep(config)
       f7.emit('widgetConfigUpdate', newConfig)
       this.$emit('update', newConfig)
     },
-    updated () {
+    updated() {
       this.dirty = !fastDeepEqual(this.config, this.originalConfig)
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {

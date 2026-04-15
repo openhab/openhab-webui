@@ -32,15 +32,20 @@
       <f7-list-button title="Show All" color="blue" @click="$emit('show-advanced')" />
     </f7-list>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'item'">
+  <f7-block v-else-if="category === 'item'" class="no-margin no-padding">
     <f7-list>
       <f7-list-group>
         <item-picker
           :required="true"
           :value="currentItem.name"
           label="Item"
-          @input="(val) => currentModule.configuration.itemName = val"
-          @item-selected="(value) => { currentItem = value; updateItemEventType('command') }" />
+          @input="(val) => (currentModule.configuration.itemName = val)"
+          @item-selected="
+            (value) => {
+              currentItem = value
+              updateItemEventType('command')
+            }
+          " />
       </f7-list-group>
     </f7-list>
     <f7-list>
@@ -92,7 +97,7 @@
         type="text"
         placeholder="Any"
         :value="currentModule.configuration.command"
-        @blur="(evt) => currentModule.configuration.command = evt.target.value" />
+        @blur="(evt) => (currentModule.configuration.command = evt.target.value)" />
       <f7-list-input
         v-if="itemEventType === 'updated' || itemEventType === 'memberUpdated'"
         label="to state"
@@ -100,7 +105,7 @@
         type="text"
         placeholder="Any"
         :value="currentModule.configuration.state"
-        @blur="(evt) => currentModule.configuration.state = evt.target.value" />
+        @blur="(evt) => (currentModule.configuration.state = evt.target.value)" />
       <f7-list-input
         v-if="itemEventType === 'changed' || itemEventType === 'memberChanged'"
         label="from state"
@@ -108,7 +113,7 @@
         type="text"
         placeholder="Any"
         :value="currentModule.configuration.previousState"
-        @blur="(evt) => currentModule.configuration.previousState = evt.target.value" />
+        @blur="(evt) => (currentModule.configuration.previousState = evt.target.value)" />
       <f7-list-input
         v-if="itemEventType === 'changed' || itemEventType === 'memberChanged'"
         label="to state"
@@ -116,7 +121,7 @@
         type="text"
         placeholder="Any"
         :value="currentModule.configuration.state"
-        @blur="(evt) => currentModule.configuration.state = evt.target.value" />
+        @blur="(evt) => (currentModule.configuration.state = evt.target.value)" />
     </f7-list>
     <f7-list v-if="(itemEventType === 'command' || itemEventType === 'memberCommand') && commandSuggestions.length">
       <f7-list-item
@@ -137,14 +142,14 @@
         @click="currentModule.configuration.state = suggestion.value" />
     </f7-list>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'thing'">
+  <f7-block v-else-if="category === 'thing'" class="no-margin no-padding">
     <f7-list>
       <f7-list-group>
         <thing-picker
           ref="thingPicker"
           :value="currentModule.configuration.thingUID"
           title="Thing"
-          @input="(val) => currentModule.configuration.thingUID = val"
+          @input="(val) => (currentModule.configuration.thingUID = val)"
           :open-on-ready="true" />
       </f7-list-group>
     </f7-list>
@@ -177,7 +182,7 @@
         title="to"
         smart-select
         :smart-select-params="{ view: f7.view.main, openIn: 'popover' }">
-        <select name="thingStatus" required @change="(evt) => currentModule.configuration.status = evt.target.value">
+        <select name="thingStatus" required @change="(evt) => (currentModule.configuration.status = evt.target.value)">
           <option
             v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
             :value="status.value"
@@ -192,9 +197,12 @@
         title="from"
         smart-select
         :smart-select-params="{ view: f7.view.main, openIn: 'popover' }">
-        <select name="thingStatus" required @change="(evt) => currentModule.configuration.previousStatus = evt.target.value">
+        <select name="thingStatus" required @change="(evt) => (currentModule.configuration.previousStatus = evt.target.value)">
           <option
-            v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'previousStatus').options]"
+            v-for="status in [
+              { value: '', label: '' },
+              ...currentModuleType.configDescriptions.find((p) => p.name === 'previousStatus').options
+            ]"
             :value="status.value"
             :key="status.value"
             :selected="currentModule.configuration.previousStatus === status.value ? true : null">
@@ -207,7 +215,7 @@
         title="to"
         smart-select
         :smart-select-params="{ view: f7.view.main, openIn: 'popover' }">
-        <select name="thingStatus" required @change="(evt) => currentModule.configuration.status = evt.target.value">
+        <select name="thingStatus" required @change="(evt) => (currentModule.configuration.status = evt.target.value)">
           <option
             v-for="status in [{ value: '', label: '' }, ...currentModuleType.configDescriptions.find((p) => p.name === 'status').options]"
             :value="status.value"
@@ -224,7 +232,7 @@
           v-if="thingEventType === 'triggerChannelFired'"
           :value="currentModule.configuration.channelUID"
           title="Channel"
-          @input="(val) => currentModule.configuration.channelUID = val"
+          @input="(val) => (currentModule.configuration.channelUID = val)"
           :filter-thing="currentModule.configuration.thingUID" />
       </f7-list-group>
     </f7-list>
@@ -236,10 +244,10 @@
         type="text"
         placeholder="Any"
         :value="currentModule.configuration.event"
-        @blur="(evt) => currentModule.configuration.event = evt.target.value" />
+        @blur="(evt) => (currentModule.configuration.event = evt.target.value)" />
     </f7-list>
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'time'">
+  <f7-block v-else-if="category === 'time'" class="no-margin no-padding">
     <f7-list>
       <f7-list-item
         radio
@@ -268,7 +276,7 @@
       :configuration="currentModule.configuration"
       @updated="dirty = true" />
   </f7-block>
-  <f7-block class="no-margin no-padding" v-else-if="category === 'system'">
+  <f7-block v-else-if="category === 'system'" class="no-margin no-padding">
     <f7-list>
       <f7-list-item
         radio
@@ -319,12 +327,12 @@ export default {
     ConfigSheet
   },
   emits: ['show-advanced', 'type-select'],
-  setup () {
+  setup() {
     return {
       f7
     }
   },
-  data () {
+  data() {
     return {
       category: '',
       itemEventType: 'command',
@@ -334,22 +342,22 @@ export default {
     }
   },
   methods: {
-    chooseItemCategory () {
+    chooseItemCategory() {
       this.openModelPicker()
     },
-    chooseThingCategory () {
+    chooseThingCategory() {
       this.category = 'thing'
       this.updateThingEventType('triggerChannelFired')
     },
-    chooseTimeCategory () {
+    chooseTimeCategory() {
       this.category = 'time'
       this.updateTimeEventType('cron')
     },
-    chooseSystemCategory () {
+    chooseSystemCategory() {
       this.category = 'system'
       this.updateSystemEventType('start')
     },
-    updateItemEventType (type) {
+    updateItemEventType(type) {
       this.itemEventType = type
       switch (type) {
         case 'command':
@@ -378,7 +386,7 @@ export default {
           break
       }
     },
-    updateThingEventType (type) {
+    updateThingEventType(type) {
       this.thingEventType = type
       const currentThingUID = this.currentModule.configuration.thingUID
       switch (type) {
@@ -396,7 +404,7 @@ export default {
           break
       }
     },
-    updateTimeEventType (type) {
+    updateTimeEventType(type) {
       this.timeEventType = type
       switch (type) {
         case 'cron':
@@ -410,7 +418,7 @@ export default {
           break
       }
     },
-    updateSystemEventType (type) {
+    updateSystemEventType(type) {
       this.systemEventType = type
       switch (type) {
         case 'start':
@@ -419,7 +427,7 @@ export default {
           break
       }
     },
-    itemPicked (value) {
+    itemPicked(value) {
       this.category = 'item'
       this.currentItem = value
       this.currentModule.configuration.itemName = value.name

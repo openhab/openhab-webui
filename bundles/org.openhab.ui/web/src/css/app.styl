@@ -63,6 +63,8 @@ html
   --f7-table-card-header-height 48px
   --f7-table-head-cell-height 48px
   --f7-table-body-cell-height 40px
+  // toast
+  --f7-toast-font-size 16px
 
 /* Fixes for desktop devices */
 .device-desktop
@@ -71,7 +73,8 @@ html
     display none
 
 /* Fixes for dropdown menus */
-.menu-dropdown-content
+.menu-dropdown
+  cursor pointer
   z-index 7000 !important
 
 /* Fixes and adjustments for list input */
@@ -423,10 +426,6 @@ html
       margin-left 8px
       color var(--f7-input-text-color)
 
-// Increase width of Thing Inbox Approve Dialog
-.thing-inbox-approve-dialog
-  --f7-dialog-width 320px
-
 // Fix safe area issues inside f7-card components, where safe areas are already respected by the f7-card itself
 .card
   .block
@@ -443,8 +442,7 @@ html
 
 // Fix for grouped list indentation, e.g. Pages list
 .list:not(.accordion-list) ul .list-group ul
-  --f7-list-in-list-padding-left 0px
-  --f7-list-item-padding-horizontal 0px
+  padding-left 0
 
 .advanced-label
   font-size var(--f7-toolbar-font-size)
@@ -456,3 +454,7 @@ html
 
 .advanced-label + .advanced-label
   margin-left 5px
+
+.toast .toast-content
+  justify-content:  center
+

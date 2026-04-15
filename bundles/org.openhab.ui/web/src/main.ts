@@ -1,15 +1,19 @@
+performance.mark('main-start')
+
 import '@/js/compatibility'
 import '@/js/logging'
 import '@/js/monkeypatch'
 
 // Import Vue
-import { createApp, reactive } from 'vue'
+import { createApp, reactive, type Component } from 'vue'
 
 // Import globally registered components
 import OhNavContent from '@/components/navigation/oh-nav-content.vue'
-import OHIconComponent from './components/widgets/system/oh-icon.vue'
-import GenericWidgetComponent from './components/widgets/generic-widget-component.vue'
 import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
+import OhIconComponent from './components/widgets/system/oh-icon.vue'
+import GenericWidgetComponent from './components/widgets/generic-widget-component.vue'
+
+import { registerWidgets } from '@/components/oh-component-registry'
 
 // Import Framework7
 import Framework7 from 'framework7/lite-bundle'
@@ -24,6 +28,7 @@ import '@/css/app.styl'
 
 // Import openHAB API helpers
 import openhab from '@/js/openhab/index'
+import '@/js/hey-api'
 
 import AsyncComputed from 'vue-async-computed'
 
@@ -57,15 +62,22 @@ app.use(pinia)
 app.use(i18n)
 app.use(AsyncComputed)
 app.use(fullscreen)
+// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 app.use(VueClipboard, {
   autoSetContainer: true, // add this line to enable auto setting container
   appendToBody: true // add this line to append the popup to body
 })
 
-// Register global components
+// Register key components prior to mounting the app to ensure they are available to eliminate warnings
 app.component('OhNavContent', OhNavContent)
-app.component('OhIcon', OHIconComponent)
-app.component('GenericWidgetComponent', GenericWidgetComponent)
 app.component('DeveloperDockIcon', DeveloperDockIcon)
+app.component('OhIcon', OhIconComponent)
+app.component('GenericWidgetComponent', GenericWidgetComponent)
+
+registerWidgets(app)
 
 app.mount('#app')
+performance.mark('app-mounted')
+
+const measure = performance.measure('main', 'main-start', 'app-mounted')
+console.info(`App initialization: ${measure.duration.toFixed(2)} ms`)

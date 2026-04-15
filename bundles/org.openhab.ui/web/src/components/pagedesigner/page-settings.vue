@@ -9,7 +9,7 @@
         :value="page.uid"
         @input="page.uid = $event.target.value"
         :clear-button="createMode"
-        :info="(createMode) ? 'Required. Note: cannot be changed after the creation' : ''"
+        :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
         input-id="input"
         required
         validate
@@ -18,10 +18,10 @@
         :disabled="!createMode ? true : null">
         <template #inner>
           <f7-link
+            v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()"
             icon-f7="hammer_fill"
             style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
             tooltip="Fix ID"
-            v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()"
             @click="$oh.utils.normalizeInput('#input')" />
         </template>
       </f7-list-input>
@@ -29,13 +29,13 @@
         label="Label"
         type="text"
         placeholder="Page label used for display purposes"
-        :info="(createMode) ? 'Required' : ''"
+        :info="createMode ? 'Required' : ''"
         :value="page.config.label"
         @input="page.config.label = $event.target.value"
         required
         validate
         clear-button />
-      <f7-list-item accordion-item title="Sidebar &amp; Visibility" v-if="page.uid !== 'overview'">
+      <f7-list-item v-if="page.uid !== 'overview'" accordion-item title="Sidebar &amp; Visibility">
         <f7-accordion-content>
           <f7-list-item ref="pageVisibility" title="Visible only to" smart-select :smart-select-params="{ openIn: 'popover' }">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
@@ -95,6 +95,7 @@ import { f7 } from 'framework7-vue'
 
 import TagInput from '@/components/tags/tag-input.vue'
 import cloneDeep from 'lodash/cloneDeep'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   components: {
@@ -105,50 +106,41 @@ export default {
     createMode: Boolean,
     f7router: Object
   },
-  data () {
+  data() {
     return {}
   },
   methods: {
-    isVisibleTo (userrole) {
+    isVisibleTo(userrole) {
       return Array.isArray(this.page.config.visibleTo) && this.page.config.visibleTo.indexOf(userrole) >= 0
     },
-    updatePageVisibility (userrole) {
+    updatePageVisibility(userrole) {
       let value = this.$refs.pageVisibility.$el.children[0].f7SmartSelect.getValue()
       if (value && value.length === 0) {
         delete this.page.config.visibleTo
       } else {
         this.page.config.visibleTo = value
-        f7.toast.create({
-          text: 'Please be advised: the visibility restriction is not a security feature - items can be controlled by other means!',
-          closeButton: true,
-          destroyOnClose: true
-        }).open()
+        showToast('Please be advised: the visibility restriction is not a security feature - pages can be accessed by other means!')
       }
     },
-    duplicatePage () {
+    duplicatePage() {
       const pageClone = cloneDeep(this.page)
       const pageType = pageClone.component.replace(/^oh-|-page$/g, '')
       pageClone.uid = pageClone.uid + '_copy'
-      this.f7router.navigate(`/settings/pages/${pageType}/add`, { props: { createMode: true, pageCopy: pageClone } })
+      this.f7router.navigate(`/settings/pages/${pageType}/duplicate`, { props: { pageCopy: pageClone } })
     },
-    deletePage () {
-      f7.dialog.confirm(
-        `Are you sure you want to delete ${this.page.uid}?`,
-        'Delete Page',
-        () => {
-          this.$oh.api.delete('/rest/ui/components/ui:page/' + this.page.uid).then((data) => {
-            f7.toast.create({
-              text: `Page '${this.page.uid}' deleted`,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
+    deletePage() {
+      f7.dialog.confirm(`Are you sure you want to delete ${this.page.uid}?`, 'Delete Page', () => {
+        this.$oh.api
+          .delete('/rest/ui/components/ui:page/' + this.page.uid)
+          .then((data) => {
+            showToast(`Page '${this.page.uid}' deleted`)
             this.f7router.back('/settings/pages/', { force: true })
-          }).catch((err) => {
+          })
+          .catch((err) => {
             console.error(err)
             f7.dialog.alert('An error occurred while deleting: ' + err)
           })
-        }
-      )
+      })
     }
   }
 }

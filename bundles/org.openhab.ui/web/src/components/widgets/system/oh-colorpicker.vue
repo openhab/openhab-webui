@@ -1,35 +1,42 @@
 <template>
   <div
     :style="{
-    width: '100%',
-    ...config.style
-  }">
+      width: '100%',
+      ...config.style
+    }">
     <div v-if="!config.openIn" ref="container" style="width: 100%" />
     <div
       v-else
       ref="swatch"
       :class="config.swatchClasses || ['elevation-4', 'elevation-hover-8', 'elevation-pressed-1', 'elevation-transition']"
       :style="{
-           width: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
-           height: (config.swatchSize) ? config.swatchSize + 'px' : '32px',
-           borderRadius: (config.swatchBorderRadius) ? config.swatchBorderRadius + 'px' : '6px',
-           cursor: 'pointer'
-         }" />
+        width: config.swatchSize ? config.swatchSize + 'px' : '32px',
+        height: config.swatchSize ? config.swatchSize + 'px' : '32px',
+        borderRadius: config.swatchBorderRadius ? config.swatchBorderRadius + 'px' : '6px',
+        cursor: 'pointer'
+      }" />
   </div>
 </template>
 
 <script>
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhColorpickerDefinition } from '@/assets/definitions/widgets/system'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhColorpickerDefinition,
-  data () {
+  setup(props) {
+    const { config } = useWidgetContext(computed(() => props.context))
+    return { config }
+  },
+  data() {
     return {
       colorPicker: null,
       ignoreInput: false,
@@ -39,18 +46,18 @@ export default {
       init: false
     }
   },
-  mounted () {
+  mounted() {
     if (this.color) {
       this.initColorPicker()
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.colorPicker) {
       this.colorPicker.destroy()
     }
   },
   computed: {
-    color () {
+    color() {
       const state = this.context.store[this.config.item].state
       if (state && state.split(',').length === 3) {
         let color = this.context.store[this.config.item].state.split(',')
@@ -63,7 +70,7 @@ export default {
     }
   },
   watch: {
-    color (val) {
+    color(val) {
       if (this.colorPicker) {
         this.updateValue(val)
       } else {
@@ -72,31 +79,33 @@ export default {
     }
   },
   methods: {
-    initColorPicker () {
+    initColorPicker() {
       const vm = this
-      this.colorPicker = f7.colorPicker.create(Object.assign({}, this.config, {
-        containerEl: (!this.config.openIn) ? this.$refs.container : undefined,
-        targetEl: (this.config.openIn) ? this.$refs.swatch : undefined,
-        targetElSetBackgroundColor: true,
-        openIn: this.config.openIn,
-        modules: this.config.modules || ((this.config.openIn) ? ['wheel'] : ['hsb-sliders']),
-        value: {
-          hsb: this.color
-        },
-        on: {
-          change (colorPicker, value) {
-            // skip the first update
-            if (!vm.init || vm.context.store[vm.config.item].state === '-') {
-              vm.init = true
-              return
+      this.colorPicker = f7.colorPicker.create(
+        Object.assign({}, this.config, {
+          containerEl: !this.config.openIn ? this.$refs.container : undefined,
+          targetEl: this.config.openIn ? this.$refs.swatch : undefined,
+          targetElSetBackgroundColor: true,
+          openIn: this.config.openIn,
+          modules: this.config.modules || (this.config.openIn ? ['wheel'] : ['hsb-sliders']),
+          value: {
+            hsb: this.color
+          },
+          on: {
+            change(colorPicker, value) {
+              // skip the first update
+              if (!vm.init || vm.context.store[vm.config.item].state === '-') {
+                vm.init = true
+                return
+              }
+              if (!value.hsb) return
+              // Ignore input for a few millis after a new state has been received to prevent sending a command on external state change
+              if (vm.ignoreInput) return
+              vm.sendCommand(value.hsb)
             }
-            if (!value.hsb) return
-            // Ignore input for a few millis after a new state has been received to prevent sending a command on external state change
-            if (vm.ignoreInput) return
-            vm.sendCommand(value.hsb)
           }
-        }
-      }))
+        })
+      )
       // fixes color picker sliders at 0% because display width not available on component mount in widgets
       setTimeout(() => {
         this.colorPicker.hueRangeSlider?.calcSize()
@@ -104,7 +113,7 @@ export default {
         this.colorPicker.brightnessRangeSlider?.calcSize()
       })
     },
-    sendCommand (hsb) {
+    sendCommand(hsb) {
       console.debug('oh-colorpicker: Received command ' + hsb)
       const cmd = this.commandFromHSB(hsb)
       const state = this.commandFromHSB(this.color)
@@ -126,7 +135,7 @@ export default {
         }
       }
     },
-    commandFromHSB (hsb) {
+    commandFromHSB(hsb) {
       let state = [...hsb]
       state[0] = Math.round(state[0]) % 360
       state[1] = Math.round(state[1] * 100)
@@ -134,7 +143,7 @@ export default {
       state = state.join(',')
       return state
     },
-    updateValue (val) {
+    updateValue(val) {
       console.debug('oh-colorpicker: Updating value to ' + val)
       this.ignoreInput = true
       this.colorPicker.setValue({ hsb: val })

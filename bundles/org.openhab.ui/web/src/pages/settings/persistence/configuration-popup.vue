@@ -113,7 +113,7 @@ export default {
     suggestedStrategies: Array
   },
   emits: ['configurationUpdate'],
-  data () {
+  data() {
     return {
       currentConfiguration: this.configuration || {
         items: [],
@@ -124,61 +124,103 @@ export default {
   },
   computed: {
     groupItems: {
-      get () {
-        return this.currentConfiguration.items.filter((i) => i.length > 1 && !i.startsWith('!') && i.endsWith('*')).map((i) => i.slice(0, -1))
+      get() {
+        return this.currentConfiguration.items
+          .filter((i) => i.length > 1 && !i.startsWith('!') && i.endsWith('*'))
+          .map((i) => i.slice(0, -1))
       },
-      set (newGroupItems) {
-        this.currentConfiguration.items = this.itemConfig(this.allItemsSelected, newGroupItems.sort((a, b) => a.localeCompare(b)), this.items, this.excludeGroupItems, this.excludeItems)
+      set(newGroupItems) {
+        this.currentConfiguration.items = this.itemConfig(
+          this.allItemsSelected,
+          newGroupItems.sort((a, b) => a.localeCompare(b)),
+          this.items,
+          this.excludeGroupItems,
+          this.excludeItems
+        )
       }
     },
     items: {
-      get () {
+      get() {
         return this.currentConfiguration.items.filter((i) => !i.startsWith('!') && !i.endsWith('*'))
       },
-      set (newItems) {
-        this.currentConfiguration.items = this.itemConfig(this.allItemsSelected, this.groupItems, newItems.sort((a, b) => a.localeCompare(b)), this.excludeGroupItems, this.excludeItems)
+      set(newItems) {
+        this.currentConfiguration.items = this.itemConfig(
+          this.allItemsSelected,
+          this.groupItems,
+          newItems.sort((a, b) => a.localeCompare(b)),
+          this.excludeGroupItems,
+          this.excludeItems
+        )
       }
     },
     excludeGroupItems: {
-      get () {
+      get() {
         return this.currentConfiguration.items.filter((i) => i.startsWith('!') && i.endsWith('*')).map((i) => i.slice(1, -1))
       },
-      set (newExcludeGroupItems) {
-        this.currentConfiguration.items = this.itemConfig(this.allItemsSelected, this.groupItems, this.items, newExcludeGroupItems.sort((a, b) => a.localeCompare(b)), this.excludeItems)
+      set(newExcludeGroupItems) {
+        this.currentConfiguration.items = this.itemConfig(
+          this.allItemsSelected,
+          this.groupItems,
+          this.items,
+          newExcludeGroupItems.sort((a, b) => a.localeCompare(b)),
+          this.excludeItems
+        )
       }
     },
     excludeItems: {
-      get () {
+      get() {
         return this.currentConfiguration.items.filter((i) => i.startsWith('!') && !i.endsWith('*')).map((i) => i.slice(1))
       },
-      set (newExcludeItems) {
-        this.currentConfiguration.items = this.itemConfig(this.allItemsSelected, this.groupItems, this.items, this.excludeGroupItems, newExcludeItems.sort((a, b) => a.localeCompare(b)))
+      set(newExcludeItems) {
+        this.currentConfiguration.items = this.itemConfig(
+          this.allItemsSelected,
+          this.groupItems,
+          this.items,
+          this.excludeGroupItems,
+          newExcludeItems.sort((a, b) => a.localeCompare(b))
+        )
       }
     },
     allItemsSelected: {
-      get () {
+      get() {
         return this.currentConfiguration.items.filter((i) => i === '*').length > 0
       },
-      set (newAllItemsSelected) {
-        this.currentConfiguration.items = this.itemConfig(newAllItemsSelected, this.groupItems, this.items, this.excludeGroupItems, this.excludeItems)
+      set(newAllItemsSelected) {
+        this.currentConfiguration.items = this.itemConfig(
+          newAllItemsSelected,
+          this.groupItems,
+          this.items,
+          this.excludeGroupItems,
+          this.excludeItems
+        )
       }
     },
     anySelected: {
-      get () {
-        return this.allItemsSelected || (this.groupItems.length > 0) || (this.items.length > 0)
+      get() {
+        return this.allItemsSelected || this.groupItems.length > 0 || this.items.length > 0
       }
     }
   },
   methods: {
-    itemConfig (allItemsSelected, groupItems, items, excludeGroupItems, excludeItems) {
-      return (allItemsSelected ? ['*'] : []).concat(groupItems.map((i) => i + '*')).concat(items).concat(excludeGroupItems.map((i) => '!' + i + '*')).concat(excludeItems.map((i) => '!' + i))
+    itemConfig(allItemsSelected, groupItems, items, excludeGroupItems, excludeItems) {
+      return (allItemsSelected ? ['*'] : [])
+        .concat(groupItems.map((i) => i + '*'))
+        .concat(items)
+        .concat(excludeGroupItems.map((i) => '!' + i + '*'))
+        .concat(excludeItems.map((i) => '!' + i))
     },
-    updateModuleConfig () {
+    updateModuleConfig() {
       if (!this.anySelected) {
         f7.dialog.alert('Please select Items')
         return
       }
-      this.currentConfiguration.items = this.itemConfig(this.allItemsSelected, this.allItemsSelected ? [] : this.groupItems, this.allItemsSelected ? [] : this.items, this.excludeGroupItems, this.excludeItems)
+      this.currentConfiguration.items = this.itemConfig(
+        this.allItemsSelected,
+        this.allItemsSelected ? [] : this.groupItems,
+        this.allItemsSelected ? [] : this.items,
+        this.excludeGroupItems,
+        this.excludeItems
+      )
       f7.emit('configurationUpdate', this.currentConfiguration)
       this.$refs.modulePopup.$el.f7Modal.close()
     }

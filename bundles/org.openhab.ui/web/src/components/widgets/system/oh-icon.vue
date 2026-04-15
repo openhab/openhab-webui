@@ -5,10 +5,11 @@
     v-bind="config"
     @click="performAction()"
     :style="{
-         width: (resolvedConfig.width !== null) ? resolvedConfig.width + 'px' : 'auto',
-         height: (resolvedConfig.height !== null) ? resolvedConfig.height + 'px' : 'auto',
-         cursor: (hasAction) ? 'pointer' : 'auto',
-         ...resolvedStyle }"
+      width: resolvedConfig.width !== null ? resolvedConfig.width + 'px' : 'auto',
+      height: resolvedConfig.height !== null ? resolvedConfig.height + 'px' : 'auto',
+      cursor: hasAction ? 'pointer' : 'auto',
+      ...resolvedStyle
+    }"
     :class="{ 'no-icon': !iconLoaded }"
     @load="iconLoaded = true" />
   <f7-link v-else-if="hasAction" @click="performAction()">
@@ -33,17 +34,18 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
 import { OhIconDefinition } from '@/assets/definitions/widgets/system'
-import { actionsMixin } from '../widget-actions'
 import { Icon } from '@iconify/vue'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [mixin, actionsMixin],
   components: {
     'iconify-icon': Icon
   },
   props: {
+    context: Object,
     icon: String,
     width: [String, Number],
     height: [String, Number],
@@ -54,7 +56,12 @@ export default {
     verticalFlip: Boolean
   },
   widget: OhIconDefinition,
-  data () {
+  setup(props) {
+    const { config, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, hasAction, performAction }
+  },
+  data() {
     return {
       currentState: this.state,
       currentIcon: null,
@@ -63,26 +70,30 @@ export default {
     }
   },
   computed: {
-    resolvedStyle () {
+    resolvedStyle() {
       return {
-        ...(this.config && this.config.style) ? this.config.style : {}
+        ...(this.config && this.config.style ? this.config.style : {})
       }
     },
-    resolvedConfig () {
+    resolvedConfig() {
       return {
-        width: (this.width) ? this.width : (this.config && this.config.width) ? this.config.width : null,
-        height: (this.height) ? this.height : (this.config && this.config.height) ? this.config.height : null,
-        color: (this.color) ? this.color : (this.config && this.config.color) ? this.config.color : null,
-        rotate: (this.rotate) ? this.rotate : (this.config && this.config.rotate) ? this.config.rotate : null,
-        horizontalFlip: (this.horizontalFlip) ? this.horizontalFlip : (this.config && this.config.horizontalFlip) ? this.config.horizontalFlip : null,
-        verticalFlip: (this.verticalFlip) ? this.verticalFlip : (this.config && this.config.verticalFlip) ? this.config.verticalFlip : null,
-        ios: (this.icon) ? this.icon : (this.config && this.config.icon) ? this.config.icon : null,
-        md: (this.icon) ? this.icon : (this.config && this.config.icon) ? this.config.icon : null,
-        aurora: (this.icon) ? this.icon : (this.config && this.config.icon) ? this.config.icon : null
+        width: this.width ? this.width : this.config && this.config.width ? this.config.width : null,
+        height: this.height ? this.height : this.config && this.config.height ? this.config.height : null,
+        color: this.color ? this.color : this.config && this.config.color ? this.config.color : null,
+        rotate: this.rotate ? this.rotate : this.config && this.config.rotate ? this.config.rotate : null,
+        horizontalFlip: this.horizontalFlip
+          ? this.horizontalFlip
+          : this.config && this.config.horizontalFlip
+            ? this.config.horizontalFlip
+            : null,
+        verticalFlip: this.verticalFlip ? this.verticalFlip : this.config && this.config.verticalFlip ? this.config.verticalFlip : null,
+        ios: this.icon ? this.icon : this.config && this.config.icon ? this.config.icon : null,
+        md: this.icon ? this.icon : this.config && this.config.icon ? this.config.icon : null,
+        aurora: this.icon ? this.icon : this.config && this.config.icon ? this.config.icon : null
       }
     },
-    resolvedIcon () {
-      let iconName = (this.context) ? this.config.icon : this.icon
+    resolvedIcon() {
+      let iconName = this.context ? this.config.icon : this.icon
       if (!(typeof iconName === 'string' || iconName instanceof String)) {
         iconName = ''
       } else if (iconName.indexOf('oh:') === 0 && iconName.split(':').length === 3) {
@@ -91,14 +102,14 @@ export default {
         iconName = iconName.substring(iconName.indexOf(':') + 1)
       }
       // for OH icons only
-      const actualState = (this.context) ? this.config.state : this.state
+      const actualState = this.context ? this.config.state : this.state
       return {
         iconName,
         actualState
       }
     },
-    iconType () {
-      const icon = (this.context) ? this.config.icon : this.icon
+    iconType() {
+      const icon = this.context ? this.config.icon : this.icon
       if (!icon) return 'oh'
       if (!(typeof icon === 'string' || icon instanceof String)) return 'oh'
       if (icon.indexOf('f7') === 0 || icon.indexOf('material') === 0) return 'f7'
@@ -110,18 +121,18 @@ export default {
      * Defaults to 'classic'.
      * @returns {*|string}
      */
-    iconSet () {
-      const icon = (this.context) ? this.config.icon : this.icon
+    iconSet() {
+      const icon = this.context ? this.config.icon : this.icon
       if (icon.indexOf('oh:') === 0 && icon.split(':').length === 3) return icon.split(':')[1]
       return 'classic'
     },
     // for OH icons only
-    iconFormat () {
-      return (this.context) ? (this.config.iconFormat || 'svg') : 'svg'
+    iconFormat() {
+      return this.context ? this.config.iconFormat || 'svg' : 'svg'
     }
   },
   watch: {
-    resolvedIcon (val) {
+    resolvedIcon(val) {
       let updated = false
       if (val.actualState !== this.currentState) {
         this.currentState = val.actualState
@@ -134,13 +145,13 @@ export default {
       if (updated && this.iconType === 'oh') this.updateIcon()
     }
   },
-  mounted () {
+  mounted() {
     this.currentIcon = this.resolvedIcon.iconName
     this.currentState = this.resolvedIcon.actualState
     if (this.iconType === 'oh') this.updateIcon()
   },
   methods: {
-    updateIcon () {
+    updateIcon() {
       if (!this.currentIcon) {
         this.iconUrl = null
         return

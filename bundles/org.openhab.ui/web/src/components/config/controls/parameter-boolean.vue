@@ -16,15 +16,15 @@ export default {
   },
   emits: ['input'],
   computed: {
-    actualValue () {
-      if (typeof (this.value) === 'string') {
+    actualValue() {
+      if (typeof this.value === 'string') {
         return this.value === 'true'
       }
       return this.value
     }
   },
   methods: {
-    updateValue (value) {
+    updateValue(value) {
       this.$emit('input', value)
     }
   }

@@ -10,7 +10,7 @@
         :f7router />
     </f7-navbar>
 
-    <f7-block form v-if="ready && persistenceList.length" class="block-narrow">
+    <f7-block v-if="ready && persistenceList.length" form class="block-narrow">
       <f7-col>
         <f7-block-title medium> General Settings </f7-block-title>
         <config-sheet
@@ -72,7 +72,7 @@
 
 <script>
 import { nextTick } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import DirtyMixin from '../dirty-mixin'
@@ -80,6 +80,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [DirtyMixin],
@@ -90,10 +91,10 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       loading: false,
       ready: false,
@@ -117,18 +118,18 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -150,17 +151,13 @@ export default {
         }
       })
     },
-    save () {
+    save() {
       this.$oh.api.put('/rest/services/' + this.serviceId + '/config', this.config).then(() => {
-        f7.toast.create({
-          text: 'Default persistence setting saved',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast('Default persistence configuration saved')
       })
       this.dirty = false
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 83:

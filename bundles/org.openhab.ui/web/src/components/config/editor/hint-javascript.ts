@@ -1,17 +1,21 @@
 import { javascriptLanguage } from '@codemirror/lang-javascript'
-import { autocompletion, CompletionContext } from '@codemirror/autocomplete'
+import { autocompletion, CompletionContext, type CompletionResult } from '@codemirror/autocomplete'
 import { syntaxTree } from '@codemirror/language'
-// @ts-expect-error - hint-utils is not typed
 import * as hintUtils from './hint-utils'
 
 // Vite generate named exports for JSON keys by creating JS identifiers for each property
 // This caused a security violation when parsing `eval` inside ecmascript.json!
 // So we import the raw data and parse it manually to avoid it
-// @ts-expect-error - raw import has no type declaration
 import EcmascriptRaw from '@/assets/ecmascript.json?raw'
-const EcmascriptDefs: any = JSON.parse(EcmascriptRaw)
+const EcmascriptDefs = JSON.parse(String(EcmascriptRaw)) as Definitions
+
 import NashornDefs from '@/assets/nashorn-tern-defs.json'
 import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
+
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 
 type Definitions = Record<string, any>
 
@@ -36,8 +40,9 @@ function getPath(read: (n: any) => string, callNode: any, name: string | null) {
     callExpression = false
 
     // '', 12.5 or [] -> String, Number, or ArrayExprression
-    if (Literals[obj.name]) {
-      path.push(Literals[obj.name]) // resolve the literal to its prototype
+    const literal = Literals[obj.name]
+    if (literal) {
+      path.push(literal) // resolve the literal to its prototype
       if (obj.name === 'ArrayExpression') {
       }
       if (!obj.firstChild || obj.name === 'ArrayExpression') {
@@ -82,6 +87,53 @@ function completionPathWithCallExpression(context: CompletionContext, from: numb
     return getPath(read, inner.parent, '')
   }
   return null
+}
+
+function getSyntaxNodeNames(context: CompletionContext) {
+  const names: string[] = []
+  let node: any = syntaxTree(context.state).resolveInner(context.pos, -1)
+  while (node) {
+    names.push(node.name)
+    node = node.parent
+  }
+  return names
+}
+
+function isInCommentOrLiteral(context: CompletionContext) {
+  const nodeNames = getSyntaxNodeNames(context)
+  if (nodeNames.includes('LineComment') || nodeNames.includes('BlockComment') || nodeNames.includes('String')) {
+    return true
+  }
+
+  return nodeNames.includes('TemplateString') && !nodeNames.includes('Interpolation')
+}
+
+function hasImplicitAutocompleteTrigger(context: CompletionContext) {
+  if (context.matchBefore(/\w+/)) {
+    return true
+  }
+
+  const line = context.state.doc.lineAt(context.pos)
+  const textBeforeCursor = line.text.slice(0, context.pos - line.from).trimEnd()
+  if (textBeforeCursor.endsWith('.') || textBeforeCursor.endsWith('?.')) {
+    return true
+  }
+
+  return !!context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)
+}
+
+export function shouldSkipImplicitAutocomplete(context: CompletionContext) {
+  if (context.explicit) return false
+
+  if (isInCommentOrLiteral(context)) {
+    return true
+  }
+
+  if (!hasImplicitAutocompleteTrigger(context)) {
+    return true
+  }
+
+  return false
 }
 
 // Deal with definition that returns a reference (string instead of an object) to another definition.
@@ -135,7 +187,7 @@ function resolveDefinition(identifier: string, scopedDef: Definitions): Definiti
 function resolveDefinitionFromPath(path: readonly string[]) {
   let def: Definitions | undefined = GlobalIdentifiers
   for (let segment of path) {
-    def = resolveDefinition(segment, def!)
+    def = resolveDefinition(segment, def)
     if (!def) return
   }
   return def
@@ -172,7 +224,7 @@ function completionType(properties: Record<string, any>) {
 function getReturnType(type: string | null) {
   if (!isFunction(type)) return
   const ret = String(type).split(' -> ')
-  const returnType = extractType(ret.length > 1 ? ret[ret.length - 1] : null)
+  const returnType = extractType(ret[ret.length - 1] ?? null)
   if (!returnType) return
   return returnType.charAt(0).toUpperCase() + returnType.slice(1)
 }
@@ -200,6 +252,8 @@ function setObjectDefs(...defs: Definitions[]) {
 }
 
 function hintOpenhabJs(context: CompletionContext) {
+  if (shouldSkipImplicitAutocomplete(context)) return null
+
   const from = hintUtils.completionStart(context)
   const path = completionPathWithCallExpression(context, from)
   const defs = resolveDefinitionFromPath(path?.path || [])
@@ -213,10 +267,13 @@ function hintOpenhabJs(context: CompletionContext) {
   }
 }
 
-function hintJsItems(context: any) {
+async function hintJsItems(context: any): Promise<CompletionResult | null> {
+  if (shouldSkipImplicitAutocomplete(context)) return null
+
   if (context.matchBefore(/(\s|^)items\.(getItem\(['"])?[\w]*/)) {
     return hintUtils.hintItems(context)
   }
+  return null
 }
 
 export default function javascriptAutocompletions(mode: string) {

@@ -1,0 +1,392 @@
+import { computed, type ComputedRef, readonly, ref } from 'vue'
+import { computedAsync } from '@vueuse/core'
+import dayjs, { type Dayjs } from 'dayjs'
+import IsoWeek from 'dayjs/plugin/isoWeek'
+import DayDuration from 'dayjs/plugin/duration'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import ComponentId from '../component-id'
+import * as api from '@/api'
+import { addOrSubtractPeriod as addOrSubtractPeriodUtil, startOf } from './util/time.ts'
+
+// Axis components
+import OhTimeAxis from './axis/oh-time-axis'
+import OhValueAxis from './axis/oh-value-axis'
+import OhCalendarAxis from './axis/oh-calendar-axis'
+import OhCategoryAxis from './axis/oh-category-axis'
+
+// Series components
+import OhDataSeries from './series/oh-data-series'
+import OhTimeSeries from './series/oh-time-series'
+import OhAggregateSeries from './series/oh-aggregate-series'
+import OhCalendarSeries from './series/oh-calendar-series'
+import OhStateSeries from './series/oh-state-series'
+
+// Other components
+import OhChartTooltip from './misc/oh-chart-tooltip'
+import OhChartVisualMap from './misc/oh-chart-visualmap'
+import OhChartDataZoom from './misc/oh-chart-datazoom'
+import OhChartLegend from './misc/oh-chart-legend'
+import OhChartTitle from './misc/oh-chart-title'
+import OhChartToolbox from './misc/oh-chart-toolbox'
+
+// Types
+import type { EChartsOption } from 'echarts'
+import { ChartType, type OhChart, type Period } from '@/types/components/widgets'
+import { OhChartDefinition } from '@/assets/definitions/widgets/system'
+import type { WidgetContext } from '../types'
+import type {
+  AxisComponent,
+  ChartComponentEvaluateExpressionFn,
+  ChartContext,
+  OhSeriesConfig,
+  OhSeriesOption,
+  SeriesComponent
+} from './types'
+import type { ComponentOption } from 'echarts/types/dist/shared'
+import {
+  transformCustomXAxisOptions,
+  transformCustomSeriesOptions,
+  transformCustomYAxisOptions
+} from '@/components/widgets/chart/util/customOptions.ts'
+import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
+import cloneDeep from 'lodash/cloneDeep'
+import type { EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
+import type { WidgetDefinition } from '@/assets/definitions/widgets/helpers.ts'
+
+dayjs.extend(IsoWeek)
+dayjs.extend(DayDuration)
+
+const DEFAULT_PERIOD: Period = OhChartDefinition().props.parameters.find((p) => p.name === 'period')!.default as Period
+
+const axisComponents: Record<string, AxisComponent> = {
+  'oh-time-axis': OhTimeAxis,
+  'oh-value-axis': OhValueAxis,
+  'oh-calendar-axis': OhCalendarAxis,
+  'oh-category-axis': OhCategoryAxis
+}
+
+const seriesComponents: Record<string, SeriesComponent> = {
+  'oh-data-series': OhDataSeries,
+  'oh-time-series': OhTimeSeries,
+  'oh-aggregate-series': OhAggregateSeries,
+  'oh-calendar-series': OhCalendarSeries,
+  'oh-state-series': OhStateSeries
+}
+
+export function useChart(
+  context: WidgetContext,
+  rawConfig: ComputedRef<OhChart.Config>,
+  slots: ComputedRef<Record<string, api.UiComponent[]>>,
+  evaluateExpression: EvaluateExpressionFn
+) {
+  const uiOptionsStore = useUIOptionsStore()
+  const runtimeStore = useRuntimeStore()
+
+  const config = computed(() => {
+    const c = cloneDeep(rawConfig.value)
+    // @ts-expect-error c is an object => Record<string, unknown>, but TS doesn't recognise that
+    applyParameterDefaults(OhChartDefinition().props.parameters, c)
+    return c
+  })
+  const period = ref<Period>(config.value.period || DEFAULT_PERIOD)
+  // future as boolean allows for backwards compatibility
+  const future = computed<number>(() => ((config.value.future as unknown as boolean) === true ? 1 : (config.value.future ?? 0)))
+  const orient = ref<string | null>(null)
+
+  const addOrSubtractPeriod = (day: Dayjs, direction: number): Dayjs => {
+    if (!config.value) return day
+    return addOrSubtractPeriodUtil(config.value.chartType ?? ChartType.dynamic, period.value, day, direction)
+  }
+
+  const initialEndTime = (): Dayjs => {
+    const chartType = config.value.chartType
+    if (chartType) {
+      let day = dayjs()
+      switch (chartType) {
+        case ChartType.day:
+          break
+        case ChartType.isoWeek:
+          if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek)
+          break
+        case ChartType.week:
+          if (config.value.initialWeek !== undefined) day = dayjs().isoWeek(config.value.initialWeek).isoWeekday(1)
+          break
+        case ChartType.month:
+          if (config.value.initialMonth !== undefined) day = dayjs().month(parseInt(config.value.initialMonth) - 1)
+          break
+        case ChartType.year:
+          if (config.value.initialYear !== undefined) day = dayjs().year(config.value.initialYear)
+          break
+        default:
+          const exhaustiveCheck: never = chartType
+      }
+      return addOrSubtractPeriod(startOf(chartType, day), 1 + future.value)
+    } else {
+      return addOrSubtractPeriod(dayjs(), future.value)
+    }
+  }
+
+  const endTime = ref<Dayjs>(initialEndTime())
+
+  // computed
+  const numberFormatter = computed(
+    () =>
+      new Intl.NumberFormat(runtimeStore.locale, {
+        maximumFractionDigits: config.value.formatterMaxDecimalPlaces ?? 3
+      })
+  )
+
+  const startTime = computed(() => addOrSubtractPeriod(endTime.value, -1))
+
+  const chartComponentEvaluateExpression: ChartComponentEvaluateExpressionFn = <T = unknown>(
+    key: string,
+    value: T,
+    componentDefinition: WidgetDefinition | null
+  ): T => {
+    const v = cloneDeep(value)
+    if (componentDefinition && v !== null && typeof v === 'object')
+      applyParameterDefaults(componentDefinition.props.parameters, v as Record<string, unknown>)
+    return evaluateExpression(key, v) as T
+  }
+
+  const chartContext = computed<ChartContext>(() => ({
+    chart: {
+      ...(context.component as api.UiComponent),
+      config: config.value
+    },
+    evaluateExpression: chartComponentEvaluateExpression,
+    numberFormatter: numberFormatter.value
+  }))
+
+  const grid = computed(() => {
+    if (!slots.value?.grid) return []
+    return slots.value.grid.map((g) => g.config)
+  })
+
+  const xAxis = computed(() => {
+    if (!slots.value?.xAxis) return []
+    return slots.value.xAxis.map((a) =>
+      transformCustomXAxisOptions(axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value))
+    )
+  })
+
+  const yAxis = computed(() => {
+    if (!slots.value || !slots.value.yAxis) return []
+    return slots.value.yAxis.map((a) =>
+      transformCustomYAxisOptions(axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value, true))
+    )
+  })
+
+  const calendar = computed(() => {
+    if (!slots.value?.calendar) return []
+    return slots.value.calendar.map((a) =>
+      axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value, orient.value === 'vertical')
+    )
+  })
+
+  const singleAxis = computed(() => {
+    if (!slots.value?.singleAxis) return []
+    return slots.value.singleAxis.map((a) => axisComponents[a.component].get(chartContext.value, a, startTime.value, endTime.value))
+  })
+
+  const tooltip = computed<ComponentOption[]>(() => {
+    if (!slots.value?.tooltip) return []
+    const tooltipContext = {
+      ...chartContext.value,
+      items: _items
+    }
+    return slots.value.tooltip.map((c) => OhChartTooltip.get(tooltipContext, c, startTime.value, endTime.value))
+  })
+
+  const visualMap = computed<ComponentOption[]>(() => {
+    if (!slots.value) return []
+    const visualMapContext = {
+      ...chartContext.value,
+      series: series.value
+    }
+    if (slots.value.visualMap) {
+      return slots.value.visualMap.map((c) => OhChartVisualMap.get(visualMapContext, c, startTime.value, endTime.value))
+    } else if (JSON.stringify(slots.value.series)?.includes('heatmap')) {
+      const heatmapConfig = {
+        calculable: true,
+        presetPalette: 'bluered',
+        show: false,
+        type: 'continuous'
+      }
+      return [
+        OhChartVisualMap.get(
+          visualMapContext,
+          { component: 'oh-chart-visualmap', config: heatmapConfig } satisfies api.UiComponent,
+          startTime.value,
+          endTime.value
+        )
+      ]
+    }
+    return []
+  })
+
+  const dataZoom = computed(() => {
+    if (!slots.value?.dataZoom) return []
+    return slots.value.dataZoom.map((c) => OhChartDataZoom.get(chartContext.value, c, startTime.value, endTime.value))
+  })
+
+  const legend = computed(() => {
+    if (!slots.value?.legend) return []
+    return slots.value.legend.map((c) => OhChartLegend.get(chartContext.value, c, startTime.value, endTime.value))
+  })
+
+  const title = computed(() => {
+    if (!slots.value?.title) return []
+    return slots.value.title.map((c) => OhChartTitle.get(chartContext.value, c, startTime.value, endTime.value))
+  })
+
+  const toolbox = computed(() => {
+    if (!slots.value?.toolbox) return []
+    return slots.value.toolbox.map((c) => OhChartToolbox.get(chartContext.value, c, startTime.value, endTime.value))
+  })
+
+  const _items: Record<string, api.EnrichedItem> = {}
+  const _itemPromises: Record<string, Promise<api.EnrichedItem>> = {}
+  const _persistencePromises: Record<string, Promise<api.ItemHistory>> = {}
+
+  const getSeriesPromises = async (component: api.UiComponent): Promise<OhSeriesOption> => {
+    const config = evaluateExpression<OhSeriesConfig>(ComponentId.get(component)!, component.config)
+
+    const getter = (data: [api.EnrichedItem, api.ItemHistory][]): OhSeriesOption =>
+      transformCustomSeriesOptions(
+        seriesComponents[component.component].get(
+          chartContext.value,
+          component,
+          data.map((d) => d[1]),
+          startTime.value,
+          endTime.value
+        )
+      )
+
+    const neededItems = seriesComponents[component.component].neededItems(chartContext.value, component).filter((i) => !!i)
+    if (neededItems.length === 0) {
+      return getter([])
+    }
+
+    const now = dayjs()
+    const isBetweenStartAndEnd =
+      dayjs(startTime.value).subtract(5, 'minutes').isBefore(now) && dayjs(endTime.value).add(5, 'minutes').isAfter(now)
+    const isNotFuture = !(future.value > 0)
+
+    let boundary =
+      seriesComponents[component.component].includeBoundary?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
+    if ('noBoundary' in config && config.noBoundary === true) boundary = false
+
+    let itemState =
+      seriesComponents[component.component].includeItemState?.(chartContext.value, component) ?? (isBetweenStartAndEnd && isNotFuture)
+    if ('noItemState' in config && config.noItemState === true) itemState = false
+
+    neededItems.forEach((neededItem) => {
+      if (_itemPromises[neededItem] !== undefined) {
+        // do nothing
+      } else if (_items[neededItem]) {
+        _itemPromises[neededItem] = Promise.resolve(_items[neededItem])
+      } else {
+        _itemPromises[neededItem] = api.getItemByName({ itemName: neededItem }).then((item) => {
+          _items[neededItem] = item!
+          delete _itemPromises[neededItem]
+          return item!
+        })
+      }
+    })
+
+    const combinedPromises = neededItems.map(async (neededItem) => {
+      let seriesStartTime = startTime.value
+      let seriesEndTime = endTime.value
+      if ('offsetAmount' in config && config.offsetAmount && config.offsetUnit) {
+        seriesStartTime = seriesStartTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
+        seriesEndTime = seriesEndTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
+      }
+      const query = {
+        itemName: neededItem,
+        serviceId: 'service' in config ? config.service : undefined,
+        starttime: seriesStartTime.toISOString(),
+        endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
+        boundary,
+        itemState
+      }
+      const key = `${neededItem}-${query.serviceId ?? 'default'}-${query.starttime}-${query.endtime}-${boundary.toString()}-${itemState.toString()}`
+      if (_persistencePromises[key] === undefined) {
+        _persistencePromises[key] = api.getItemDataFromPersistenceService(query).then((result) => {
+          delete _persistencePromises[key]
+          return result!
+        })
+      }
+
+      return await Promise.all([_itemPromises[neededItem], _persistencePromises[key]])
+    })
+
+    return Promise.all(combinedPromises).then(getter)
+  }
+
+  const series = computedAsync<OhSeriesOption[]>(async () => {
+    if (!slots.value || !slots.value.series) {
+      return []
+    }
+    return await Promise.all(slots.value.series.map(async (s) => await getSeriesPromises(s)))
+  })
+
+  const options = computed<EChartsOption>(() => {
+    if (!config.value) return {}
+    const chartConfig = ((config.value as { options?: EChartsOption }).options as EChartsOption) || {}
+    if (!chartConfig.backgroundColor && uiOptionsStore.darkMode === 'dark') {
+      chartConfig.backgroundColor = '#121212'
+    }
+
+    const cast = <T>(val: unknown): T => val as T
+
+    return {
+      ...chartConfig,
+      grid: cast(grid.value),
+      xAxis: cast(xAxis.value),
+      yAxis: cast(yAxis.value),
+      calendar: cast(calendar.value),
+      singleAxis: cast(singleAxis.value),
+      tooltip: cast(tooltip.value),
+      visualMap: cast(visualMap.value),
+      dataZoom: cast(dataZoom.value),
+      legend: cast(legend.value),
+      title: cast(title.value),
+      toolbox: cast(toolbox.value),
+      series: cast(series.value)
+    }
+  })
+
+  // methods
+  const setPeriod = (periodValue: Period) => {
+    period.value = periodValue
+    endTime.value = addOrSubtractPeriod(dayjs(), future.value)
+  }
+
+  const setDate = (date: Date | string | number | Dayjs) => {
+    const chartType = config.value.chartType
+    const day = dayjs(date)
+    endTime.value = addOrSubtractPeriod(chartType ? startOf(chartType, day) : day, 1)
+  }
+
+  const earlierPeriod = () => {
+    endTime.value = addOrSubtractPeriod(endTime.value, -1)
+  }
+
+  const laterPeriod = () => {
+    endTime.value = addOrSubtractPeriod(endTime.value, 1)
+  }
+
+  return {
+    endTime: readonly(endTime),
+    startTime,
+    period: readonly(period),
+    options,
+
+    setPeriod,
+    setDate,
+    earlierPeriod,
+    laterPeriod
+  }
+}

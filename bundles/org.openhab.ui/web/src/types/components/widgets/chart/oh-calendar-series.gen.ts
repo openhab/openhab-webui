@@ -25,6 +25,7 @@ export interface Config {
   offsetAmount?: number
   offsetUnit?: OffsetUnit
   type?: Type
+  color?: string
   aggregationFunction?: AggregationFunction
   calendarIndex?: number
   action?: Action
@@ -39,6 +40,7 @@ export interface Config {
   actionRule?: string
   actionRuleContext?: string
   actionPage?: string
+  actionPageDefineVars?: Record<string, unknown>[]
   actionPageTransition?: ActionPageTransition
   actionModal?: string
   actionModalConfig?: string

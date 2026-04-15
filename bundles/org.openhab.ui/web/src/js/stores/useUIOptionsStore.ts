@@ -1,35 +1,31 @@
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { computed, reactive, ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
-import { f7 } from 'framework7-vue'
+import { f7, f7ready } from 'framework7-vue'
+import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
 
-declare global {
-  interface Window {
-    OHApp?: {
-      preferDarkMode: () => boolean
-    }
-  }
-}
+type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
-  // shared with basicUI
-  const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark')
-  const storedDarkMode = ref<'auto' | 'dark' | 'light'>(
-    _storedDarkMode === 'auto' || _storedDarkMode === 'dark' || _storedDarkMode === 'light' ? _storedDarkMode : 'auto'
+  // shared with Basic UI
+  const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark') || 'auto'
+  const storedDarkMode = ref<StoredDarkModeType>(
+    ['auto', 'dark', 'light'].includes(_storedDarkMode) ? (_storedDarkMode as StoredDarkModeType) : 'auto'
   )
+  const darkModeChange = ref<number>(0) // Used to trigger recomputation of darkMode
 
   const _storedBars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
-  const bars = ref<'light' | 'filled'>(['light', 'filled'].includes(_storedBars as any) ? (_storedBars as 'light' | 'filled') : 'light')
+  const bars = ref<'light' | 'filled'>(['light', 'filled'].includes(_storedBars) ? (_storedBars as 'light' | 'filled') : 'light')
 
   const _storedNavBar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
   const homeNavBar = ref<'default' | 'simple' | 'large'>(
-    ['default', 'simple', 'large'].includes(_storedNavBar as any) ? (_storedNavBar as 'default' | 'simple' | 'large') : 'default'
+    ['default', 'simple', 'large'].includes(_storedNavBar) ? (_storedNavBar as 'default' | 'simple' | 'large') : 'default'
   )
 
   const _storedHomeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
   const homeBackground = ref<'default' | 'standard' | 'white'>(
-    ['default', 'standard', 'white'].includes(_storedHomeBackground as any)
+    ['default', 'standard', 'white'].includes(_storedHomeBackground)
       ? (_storedHomeBackground as 'default' | 'standard' | 'white')
       : 'default'
   )
@@ -42,14 +38,14 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
 
-  // shared with basicUI
+  // shared with Basic UI
   const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
 
   const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
 
   const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
-  const codeEditorType = ref<'DSL' | 'YAML'>(
-    ['DSL', 'YAML'].includes(_storedCodeEditorType as any) ? (_storedCodeEditorType as 'DSL' | 'YAML') : 'YAML'
+  const codeEditorType = ref<CodeEditorType>(
+    ['DSL', 'YAML'].includes(_storedCodeEditorType) ? (_storedCodeEditorType as CodeEditorType) : 'YAML'
   )
 
   const modelPickerShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemName') === 'true')
@@ -58,33 +54,68 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   const sitemapShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true')
 
-  // Getters
-  function getDarkMode() {
-    if (storedDarkMode.value === 'auto') {
-      return typeof window.OHApp?.preferDarkMode === 'function' ? window.OHApp.preferDarkMode() : f7.darkMode ? 'dark' : 'light'
+  const dialogEnabled = ref<boolean>(localStorage.getItem('openhab.ui:dialog.enabled') === 'true')
+  const dialogIdentifier = ref<string>(localStorage.getItem('openhab.ui:dialog.id') || '')
+  const dialogListeningItem = ref<string>(localStorage.getItem('openhab.ui:dialog.listeningItem') || '')
+  const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
+  const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
+  const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
+
+  const codeMirrorSettings = reactive({
+    vimMode: localStorage.getItem('openhab.ui:codeMirror.vimMode') === 'true'
+  })
+  const setupWizardShort = ref<boolean>(localStorage.getItem('openhab.ui:setupWizard.short') === 'true')
+  const _storedWizardStepsDone = localStorage.getItem('openhab.ui:setupWizard.stepsDone')
+  const parseSetupWizardStepsDone = (): Record<string, boolean> => {
+    if (!_storedWizardStepsDone) return {}
+    try {
+      return JSON.parse(_storedWizardStepsDone) as Record<string, boolean>
+    } catch {
+      // ignore malformed data
+      return {}
     }
-
-    return storedDarkMode.value
   }
+  const setupWizardStepsDone = ref<Record<string, boolean>>(parseSetupWizardStepsDone())
 
+  const darkMode = computed({
+    get: (): 'dark' | 'light' => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      darkModeChange.value // darkModeChange to force re-computation
+      if (storedDarkMode.value === 'auto') {
+        if (typeof window.OHApp?.preferDarkMode === 'function') {
+          return window.OHApp.preferDarkMode() == 'dark' ? 'dark' : 'light'
+        }
+        return f7.darkMode ? 'dark' : 'light'
+      }
+      return storedDarkMode.value
+    },
+    set: (value: StoredDarkModeType) => {
+      storedDarkMode.value = value
+      if (value === 'auto') {
+        f7.enableAutoDarkMode()
+        localStorage.removeItem('openhab.ui:theme.dark')
+      } else {
+        f7.disableAutoDarkMode()
+        localStorage.setItem('openhab.ui:theme.dark', value)
+      }
+
+      bars.value = 'light' // Reset bars to light when dark mode changes
+      updateClasses()
+    }
+  })
+
+  f7ready(() => {
+    darkModeChange.value++ // trigger computed darkMode now f7 is ready
+    updateClasses()
+    f7.on('darkModeChange', () => {
+      darkModeChange.value++
+      updateClasses()
+    })
+  })
+
+  // Getters
   function isAutoDarkMode() {
     return storedDarkMode.value === 'auto'
-  }
-
-  // Actions
-  function setDarkMode(value: 'auto' | 'dark' | 'light') {
-    storedDarkMode.value = value
-
-    if (value === 'auto') {
-      f7.enableAutoDarkMode()
-      localStorage.removeItem('openhab.ui:theme.dark')
-    } else {
-      f7.disableAutoDarkMode()
-      localStorage.setItem('openhab.ui:theme.dark', value)
-    }
-
-    bars.value = 'light' // Reset bars to light when dark mode changes
-    updateClasses()
   }
 
   watch(bars, (newValue) => {
@@ -147,8 +178,52 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
   })
 
+  watch(dialogEnabled, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.enabled', newValue ? 'true' : 'false')
+    setTimeout(() => {
+      location.reload()
+    }, 50)
+  })
+
+  watch(dialogIdentifier, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.id', newValue)
+  })
+  if (!dialogIdentifier.value.length) {
+    dialogIdentifier.value = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
+  }
+
+  watch(dialogListeningItem, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.listeningItem', newValue)
+  })
+
+  watch(dialogLocationItem, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.locationItem', newValue)
+  })
+
+  watch(dialogConnectOnWindowEvent, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.connectOnWindowEvent', newValue ? 'true' : 'false')
+  })
+
+  watch(dialogTriggerOnConnect, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
+  })
+
+  watch(codeMirrorSettings, (newValue) => {
+    localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
+  })
+  watch(setupWizardShort, (newValue) => {
+    localStorage.setItem('openhab.ui:setupWizard.short', newValue?.toString())
+  })
+  watch(
+    setupWizardStepsDone,
+    (newValue) => {
+      localStorage.setItem('openhab.ui:setupWizard.stepsDone', JSON.stringify(newValue || {}))
+    },
+    { deep: true }
+  )
+
   function updateClasses() {
-    if (getDarkMode() === 'dark') {
+    if (darkMode.value === 'dark') {
       Dom7('html').addClass('dark')
     } else {
       Dom7('html').removeClass('dark')
@@ -167,7 +242,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   function themeOptions() {
     return {
-      dark: getDarkMode(),
+      dark: darkMode.value,
       autoDarkMode: isAutoDarkMode(),
       bars: bars.value,
       homeNavBar: homeNavBar.value,
@@ -183,8 +258,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   return {
     storedDarkMode,
-    getDarkMode,
-    setDarkMode,
+    darkMode,
     isAutoDarkMode,
     bars,
     homeNavBar,
@@ -200,6 +274,16 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     modelPickerShowItemTags,
     modelPickerShowNonSemantic,
     sitemapShowItemName,
+    dialogEnabled,
+    dialogIdentifier,
+    dialogListeningItem,
+    dialogLocationItem,
+    dialogConnectOnWindowEvent,
+    dialogTriggerOnConnect,
+
+    codeMirrorSettings,
+    setupWizardShort,
+    setupWizardStepsDone,
 
     updateClasses,
     themeOptions

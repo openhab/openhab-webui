@@ -86,10 +86,10 @@ jobs:
         run: npm ci
 
       - name: Build and generate report
-        run: npm run webpack-analyzer-report-stats
+        run: npm run bundle-analyzer
 
       - name: Upload report artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: webpack-stats
           path: /home/runner/work/openhab-webui/openhab-webui/bundles/org.openhab.ui/web/www/webpack-stats.json

@@ -3,18 +3,18 @@
     <f7-row>
       <f7-col width="100" style="height: 400px" class="cell-knob display-flex flex-direction-column align-items-center">
         <slot name="beforeKnob">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'beforeKnob' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.beforeKnob"
+              v-for="(slotComponent, idx) in slots.beforeKnob"
               :context="childContext(slotComponent)"
               :key="'beforeKnob-' + idx" />
           </div>
         </slot>
         <oh-knob :context="knobContext" />
         <slot name="afterKnob">
-          <div v-if="context.component.slots" class="margin-top display-flex flex-direction-column justify-content-center">
+          <div v-if="'afterKnob' in slots" class="margin-top display-flex flex-direction-column justify-content-center">
             <generic-widget-component
-              v-for="(slotComponent, idx) in context.component.slots.afterKnob"
+              v-for="(slotComponent, idx) in slots.afterKnob"
               :context="childContext(slotComponent)"
               :key="'afterKnob-' + idx" />
           </div>
@@ -25,20 +25,27 @@
 </template>
 
 <script>
-import mixin from '../../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhKnobCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
 import OhKnob from '../../system/oh-knob.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCell,
     OhKnob
   },
   widget: OhKnobCellDefinition,
+  setup(props) {
+    const { childContext, slots } = useWidgetContext(computed(() => props.context))
+    return { childContext, slots }
+  },
   computed: {
-    knobContext () {
+    knobContext() {
       return Object.assign({}, this.context, {
         component: {
           component: 'oh-knob',

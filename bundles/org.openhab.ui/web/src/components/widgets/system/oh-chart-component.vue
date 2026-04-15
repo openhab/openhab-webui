@@ -1,6 +1,6 @@
 <template>
   <div class="oh-chart-container" :style="{ height: activeHeight }">
-    <chart
+    <VChart
       v-if="ready"
       ref="chart"
       :initOptions="initOptions"
@@ -8,9 +8,9 @@
       class="oh-chart"
       @click="handleClick"
       :class="{ 'with-tabbar': context.tab, 'with-toolbar': context.analyzer }"
-      :theme="uiOptionsStore.getDarkMode() === 'dark' ? 'dark' : undefined"
+      :theme="uiOptionsStore.darkMode === 'dark' ? 'dark' : undefined"
       autoresize />
-    <f7-menu class="padding float-right" v-if="periodVisible">
+    <f7-menu v-if="periodVisible" class="padding float-right">
       <f7-menu-item @click="earlierPeriod()" icon-f7="chevron_left" />
       <f7-menu-item v-if="context.component.config.chartType" :text="fixedPeriodLabel" type="text" @click="pickFixedStartDate">
         <input ref="calendarInput" type="text" style="width: 40px; height: 0; visibility: hidden" />
@@ -18,7 +18,26 @@
       <f7-menu-item v-else dropdown :text="period">
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item
-            v-for="p in ['h', '2h', '4h', '12h', 'D', '2D', '3D', 'W', '2W', 'M', '2M', '4M', '6M', 'Y', '3Y', '5Y', '10Y']"
+            v-for="p in [
+              'h',
+              '2h',
+              '4h',
+              '12h',
+              'D',
+              '2D',
+              '3D',
+              'W',
+              '2W',
+              'M',
+              '2M',
+              '4M',
+              '6M',
+              'Y',
+              '2Y',
+              '3Y',
+              '5Y',
+              '10Y'
+            ] as Period[]"
             :key="p"
             @click="setPeriod(p)"
             href="#"
@@ -39,148 +58,204 @@
     height 100%
 </style>
 
-<script>
+<script setup lang="ts">
 import { f7 } from 'framework7-vue'
-import { nextTick } from 'vue'
-import { mapStores } from 'pinia'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
-import mixin from '../widget-mixin'
-import chart from '../chart/chart-mixin'
-import { actionsMixin } from '../widget-actions'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction'
+import { useChart } from '../chart/useChart'
 
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
-
-dayjs.extend(LocalizedFormat)
-
-import { use, registerLocale } from 'echarts/core'
+import { type ECElementEvent, registerLocale, use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { ChartType, type Period } from '@/types/components/widgets'
 
-import { LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart } from 'echarts/charts'
+import { BarChart, CustomChart, GaugeChart, HeatmapChart, LineChart, PieChart, ScatterChart } from 'echarts/charts'
 import { LabelLayout } from 'echarts/features'
 import {
-  TitleComponent, LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent,
-  DataZoomComponent, MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent
+  CalendarComponent,
+  DataZoomComponent,
+  GridComponent,
+  LegendComponent,
+  LegendScrollComponent,
+  MarkAreaComponent,
+  MarkLineComponent,
+  MarkPointComponent,
+  SingleAxisComponent,
+  TitleComponent,
+  ToolboxComponent,
+  TooltipComponent,
+  VisualMapComponent
 } from 'echarts/components'
 
 import 'echarts/theme/dark.js'
 
 import VChart from 'vue-echarts'
 
-use([CanvasRenderer, LineChart, BarChart, GaugeChart, HeatmapChart, PieChart, ScatterChart, CustomChart, TitleComponent,
-  LegendComponent, LegendScrollComponent, GridComponent, SingleAxisComponent, ToolboxComponent, TooltipComponent, DataZoomComponent,
-  MarkLineComponent, MarkPointComponent, MarkAreaComponent, VisualMapComponent, CalendarComponent, LabelLayout])
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { type Calendar } from 'framework7'
+import type { WidgetContext } from '@/components/widgets/types'
 
-import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+dayjs.extend(LocalizedFormat)
 
-export default {
-  mixins: [mixin, chart, actionsMixin],
-  components: {
-    chart: VChart
-  },
-  setup () {
-    let echartsLocale = useRuntimeStore().locale.split('-')[0].toUpperCase()
-    let initOptions = echartsLocale ? {
+use([
+  CanvasRenderer,
+  LineChart,
+  BarChart,
+  GaugeChart,
+  HeatmapChart,
+  PieChart,
+  ScatterChart,
+  CustomChart,
+  TitleComponent,
+  LegendComponent,
+  LegendScrollComponent,
+  GridComponent,
+  SingleAxisComponent,
+  ToolboxComponent,
+  TooltipComponent,
+  DataZoomComponent,
+  MarkLineComponent,
+  MarkPointComponent,
+  MarkAreaComponent,
+  VisualMapComponent,
+  CalendarComponent,
+  LabelLayout
+])
+
+const props = defineProps<{
+  context: WidgetContext
+}>()
+
+const uiOptionsStore = useUIOptionsStore()
+const runtimeStore = useRuntimeStore()
+
+let echartsLocale = runtimeStore.locale.split('-')[0]!.toUpperCase()
+let initOptions = echartsLocale
+  ? {
       locale: echartsLocale
-    } : null
-    return { echartsLocale, initOptions }
-  },
-  computed: {
-    activeHeight () {
-      const config = this.config || {}
-      return config.height || '300px'
-    },
-    periodVisible () {
-      if (!this.config || this.config.periodVisible === undefined) {
-        if (this.context.component.slots && this.context.component.slots.series && Array.isArray(this.context.component.slots.series) && this.context.component.slots.series.length) {
-          return this.context.component.slots.series[0].component !== 'oh-data-series'
-        }
-        return true
-      }
-      return this.config.periodVisible
-    },
-    fixedPeriodLabel () {
-      const startTime = this.startTime
-      if (!this.startTime) return ''
-      try {
-        switch (this.context.component.config.chartType) {
-          case 'hour':
-            return startTime.format('lll')
-          case 'day':
-            return startTime.format('ll')
-          case 'week':
-          case 'isoWeek':
-            return startTime.format('ll')
-          case 'month':
-            return startTime.format('MMM YYYY')
-          case 'year':
-            return startTime.format('YYYY')
-          default:
-            return startTime.format('ll')
-        }
-      } catch (e) {
-        console.error('Error formatting fixed period label: ', e)
-        return startTime
-      }
-    },
-    ...mapStores(useUIOptionsStore, useRuntimeStore)
-  },
-  data () {
-    return {
-      ready: false,
-      calendarPicker: null
     }
-  },
-  mounted () {
-    // echarts localisation for EN and ZH are already included
-    if(['EN', 'ZH'].includes(this.echartsLocale)) {
-      this.ready = true
-    } else {
-      import(`../../../../node_modules/echarts/lib/i18n/lang${this.echartsLocale}.js`).then((lang) => {
-        registerLocale(this.echartsLocale, lang.default)
-        console.log('echart localisation loaded: ', this.echartsLocale)
-      }).catch(() => {
-        console.log('echart localisation loading failed: ', this.echartsLocale)
-      }).finally(() => {
-        this.ready = true
-      })
+  : {}
+
+// composables
+const { config, slots, evaluateExpression } = useWidgetContext(computed(() => props.context))
+const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+
+const chartComposable = useChart(props.context, config, slots, evaluateExpression)
+const { startTime, options, period, earlierPeriod, laterPeriod, setDate, setPeriod } = chartComposable
+
+// data (state)
+const ready = ref(false)
+const calendarPicker = ref<Calendar.Calendar | null>(null)
+const calendarInput = ref<HTMLElement | null>(null)
+
+// computed
+const activeHeight = computed(() => {
+  const cfg = config.value || {}
+  return cfg.height || '300px'
+})
+
+const periodVisible = computed(() => {
+  if (!config.value || config.value.periodVisible === undefined) {
+    if ('series' in slots.value && Array.isArray(slots.value.series) && slots.value.series.length) {
+      return slots.value.series[0].component !== 'oh-data-series'
     }
-  },
-  beforeUnmount () {
-    if (this.calendarPicker) this.calendarPicker.destroy()
-  },
-  methods: {
-    handleClick (evt) {
-      if (evt.seriesIndex !== undefined) {
-        if (this.context.component.slots && this.context.component.slots.series && Array.isArray(this.context.component.slots.series) && this.context.component.slots.series.length) {
-          let series = this.context.component.slots.series[evt.seriesIndex]
-          this.performAction(evt.event, null, series.config, null)
+    return true
+  }
+  return config.value.periodVisible
+})
+
+const fixedPeriodLabel = computed(() => {
+  if (!startTime.value) return ''
+  const chartType = props.context.component.config.chartType as ChartType
+  try {
+    switch (chartType) {
+      case ChartType.day:
+        return startTime.value.format('ll')
+      case ChartType.week:
+      case ChartType.isoWeek:
+        return startTime.value.format('ll')
+      case ChartType.month:
+        return startTime.value.format('MMM YYYY')
+      case ChartType.year:
+        return startTime.value.format('YYYY')
+      case ChartType.dynamic:
+        return ''
+      default:
+        const exhaustiveCheck: never = chartType
+        return exhaustiveCheck
+    }
+  } catch (e) {
+    console.error('Error formatting fixed period label: ', e)
+    return startTime.value
+  }
+})
+
+// lifecycle
+onMounted(() => {
+  // echarts localisation for EN and ZH are already included
+  if (['EN', 'ZH'].includes(echartsLocale)) {
+    ready.value = true
+  } else {
+    import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`)
+      .then((lang) => {
+        registerLocale(echartsLocale, lang.default)
+        console.log('echart localisation loaded: ', echartsLocale)
+      })
+      .catch(() => {
+        console.log('echart localisation loading failed: ', echartsLocale)
+      })
+      .finally(() => {
+        ready.value = true
+      })
+  }
+})
+
+onBeforeUnmount(() => {
+  if (calendarPicker.value) calendarPicker.value.destroy()
+})
+
+// methods
+const pickFixedStartDate = () => {
+  if (!calendarInput.value) return
+
+  const value = startTime.value.toDate()
+  if (!calendarPicker.value) {
+    calendarPicker.value = f7.calendar.create({
+      inputEl: calendarInput.value,
+      value: [value],
+      on: {
+        change(_calendar, value) {
+          if ((value as unknown[]).length < 1) return
+          if (dayjs((value as Date[])[0]).isSame(startTime.value)) return
+          setDate((value as Date[])[0]!)
         }
       }
-    },
-    pickFixedStartDate (evt) {
-      const self = this
-      const value = this.startTime.toDate()
-      this.calendarPicker = f7.calendar.create({
-        inputEl: this.$refs.calendarInput,
-        value: [value],
-        on: {
-          change (calendar, value) {
-            if (value.length < 1) return
-            if (dayjs(value[0]).isSame(self.startTime)) return
-            self.setDate(value[0])
-          }
-        }
-      })
-      this.calendarPicker.open()
-    },
-    forceRerender () {
-      this.ready = false
-      nextTick(() => {
-        this.ready = true
-      })
+    })
+  }
+  calendarPicker.value.open()
+}
+
+const handleClick = (evt: ECElementEvent) => {
+  if (evt.seriesIndex !== undefined) {
+    if ('series' in slots.value && Array.isArray(slots.value.series) && slots.value.series.length) {
+      let series = slots.value.series[evt.seriesIndex]
+      performAction(undefined, '', undefined, series.config)
     }
   }
 }
+
+const forceRerender = () => {
+  ready.value = false
+  nextTick(() => {
+    ready.value = true
+  })
+}
+
+defineExpose({
+  forceRerender
+})
 </script>

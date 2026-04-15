@@ -1,12 +1,12 @@
 <template>
   <f7-block v-if="parameters" class="config-sheet no-margin" ref="sheet">
-    <div style="text-align: right" class="padding-right padding-bottom" v-if="hasAdvanced">
+    <div v-if="hasAdvanced" style="text-align: right" class="padding-right padding-bottom">
       <label class="advanced-label">
         <f7-checkbox v-model:checked="showAdvanced" />
         Show advanced
         <f7-badge
           v-if="advancedNonDefaultCount"
-          style="margin-left:2px"
+          style="margin-left: 2px"
           color="blue"
           class="count-badge"
           tooltip="Non-default advanced parameter">
@@ -16,7 +16,7 @@
     </div>
     <f7-col>
       <f7-block width="100" class="parameter-group no-margin no-padding">
-        <f7-row v-if="displayedParameters.some(p => !p.groupName)">
+        <f7-row v-if="displayedParameters.some((p) => !p.groupName)">
           <f7-col>
             <config-parameter
               v-for="parameter in displayedParameters.filter((p) => !p.groupName)"
@@ -27,20 +27,20 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
-              :f7router
+              :f7router="f7router"
               @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
         </f7-row>
       </f7-block>
     </f7-col>
     <f7-col v-if="displayedParameterGroups.length">
-      <f7-block width="100" class="parameter-group" v-for="group in displayedParameterGroups" :key="group.name">
+      <f7-block v-for="group in displayedParameterGroups" width="100" class="parameter-group" :key="group.name">
         <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
           <f7-col>
             <f7-block-title class="parameter-group-title">
               {{ group.label }}
             </f7-block-title>
-            <f7-block-footer class="param-description" v-if="group.description">
+            <f7-block-footer v-if="group.description" class="param-description">
               <div v-html="group.description" />
             </f7-block-footer>
 
@@ -53,7 +53,7 @@
               :configuration="configurationWithDefaults"
               :read-only="readOnly"
               :status="parameterStatus(parameter)"
-              :f7router
+              :f7router="f7router"
               @update="(value) => updateParameter(parameter, value)" />
           </f7-col>
         </f7-row>
@@ -99,22 +99,23 @@ export default {
     status: Array,
     readOnly: Boolean,
     setEmptyConfigAsNull: Boolean,
+    setEmptyArrayAsArray: Boolean,
     f7router: Object
   },
   emits: ['updated'],
   components: {
     'config-parameter': defineAsyncComponent(() => import(/* webpackChunkName: "config-parameter" */ './config-parameter.vue'))
   },
-  data () {
+  data() {
     return {
       showAdvanced: false
     }
   },
   computed: {
-    configurationWithDefaults () {
+    configurationWithDefaults() {
       const conf = Object.assign({}, this.configuration)
       this.parameters.forEach((p) => {
-        if (conf[p.name] === undefined && p.default !== undefined) {
+        if (conf[p.name] === undefined && (p.default ?? p.defaultValues !== undefined)) {
           if (typeof p.default === 'function') {
             conf[p.name] = p.default(this.configuration)
           } else if (p.multiple) {
@@ -126,47 +127,57 @@ export default {
       })
       return conf
     },
-    hasAdvanced () {
+    hasAdvanced() {
       return this.parameters.length > 0 && this.parameters.some((p) => p.advanced)
     },
-    displayedParameterGroups () {
+    displayedParameterGroups() {
       if (!this.parameterGroups || !this.parameterGroups.length) return []
       if (this.showAdvanced) return this.parameterGroups
       return this.parameterGroups.filter((pg) => !pg.advanced)
     },
-    allParameters () {
+    allParameters() {
       if (!this.parameters.length) return []
       let finalParameters = [...this.parameters]
       if (this.parameterGroups && this.parameterGroups.some((g) => g.context === 'action')) {
-        this.parameterGroups.filter((g) => g.context === 'action').forEach((g) => {
-          const prefix = g.name.replace(/action/gi, '')
-          finalParameters = [...finalParameters, ...actionParams(g.name, prefix)]
-        })
+        this.parameterGroups
+          .filter((g) => g.context === 'action')
+          .forEach((g) => {
+            const prefix = g.name.replace(/action/gi, '')
+            finalParameters = [...finalParameters, ...actionParams(g.name, prefix)]
+          })
       }
       return finalParameters
     },
-    baseParameters () {
+    baseParameters() {
       return this.allParameters.filter((p) => !p.advanced)
     },
-    advancedParameters () {
+    advancedParameters() {
       return this.allParameters.filter((p) => p.advanced)
     },
-    advancedNonDefaultCount () {
+    advancedNonDefaultCount() {
       return this.advancedParameters.filter((p) => this.isNonDefault(p)).length
     },
-    displayedParameters () {
+    displayedParameters() {
       if (this.showAdvanced) return this.allParameters // show all parameters
       return this.baseParameters
     }
   },
   methods: {
-    isValid () {
+    isValid() {
       return f7.input.validateInputs(this.$refs.sheet.$el)
     },
-    updateParameter (parameter, value) {
-      if ((typeof value === 'number' && isNaN(value)) || value === '' || value === undefined || value === null || (parameter.multiple && Array.isArray(value) && !value.length)) {
-        if (this.setEmptyConfigAsNull) {
-          // deleting the parameter sometimes lead to saves not updating it, so set it explicitely to null
+    updateParameter(parameter, value) {
+      if (
+        (typeof value === 'number' && isNaN(value)) ||
+        value === '' ||
+        value === undefined ||
+        value === null ||
+        (parameter.multiple && Array.isArray(value) && !value.length)
+      ) {
+        if (Array.isArray(value) && this.setEmptyArrayAsArray) {
+          this.configuration[parameter.name] = []
+        } else if (this.setEmptyConfigAsNull) {
+          // deleting the parameter sometimes lead to saves not updating it, so set it explicitly to null
           this.configuration[parameter.name] = null
         } else {
           delete this.configuration[parameter.name]
@@ -177,15 +188,19 @@ export default {
       console.debug(JSON.stringify(this.configuration))
       this.$emit('updated')
     },
-    parameterStatus (parameter) {
+    parameterStatus(parameter) {
       if (!this.status || !this.status.length) return null
       return this.status.find((ps) => ps.parameterName === parameter.name)
     },
-    isNonDefault (parameter) {
-      function notNullNotUndefined (value) {
+    isNonDefault(parameter) {
+      function notNullNotUndefined(value) {
         return value !== null && value !== undefined
       }
-      return notNullNotUndefined(parameter.default) && notNullNotUndefined(this.configuration[parameter.name]) && this.configuration[parameter.name].toString() !== parameter.default
+      return (
+        notNullNotUndefined(parameter.default) &&
+        notNullNotUndefined(this.configuration[parameter.name]) &&
+        this.configuration[parameter.name].toString() !== parameter.default
+      )
     }
   }
 }

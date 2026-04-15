@@ -12,12 +12,14 @@
     </select>
   </f7-list-item>
   <!-- for placeholder purposes before items are loaded -->
-  <f7-list-item link v-show="!ready" :title="title" />
+  <f7-list-item v-show="!ready" link :title="title" />
 </template>
 
 <script>
 import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
+
+import * as api from '@/api'
 
 export default {
   props: {
@@ -31,7 +33,7 @@ export default {
     openOnReady: Boolean
   },
   emits: ['input'],
-  data () {
+  data() {
     return {
       ready: false,
       things: [],
@@ -43,9 +45,13 @@ export default {
         searchbar: true,
 
         renderItem: (item, index) => {
-          let after = (index > 0) ? this.things[index - 1].location
-            ? this.things[index - 1].location + '<i class="icon f7-icons color-gray" style="width: 16px; height: 16px; font-size: 16px;">placemark</i>'
-            : '' : ''
+          let after =
+            index > 0
+              ? this.things[index - 1].location
+                ? this.things[index - 1].location +
+                  '<i class="icon f7-icons color-gray" style="width: 16px; height: 16px; font-size: 16px;">placemark</i>'
+                : ''
+              : ''
           return `
                 <li class="media-item">
                   <label class="item-${item.radio ? 'radio' : 'checkbox'} item-content">
@@ -62,9 +68,9 @@ export default {
       }
     }
   },
-  created () {
-    this.smartSelectParams.closeOnSelect = !(this.multiple)
-    this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => {
+  created() {
+    this.smartSelectParams.closeOnSelect = !this.multiple
+    api.getThings({ staticDataOnly: true }).then((data) => {
       this.things = data.sort((a, b) => {
         const labelA = a.label || a.UID
         const labelB = b.label || b.UID
@@ -89,10 +95,10 @@ export default {
     })
   },
   methods: {
-    open () {
+    open() {
       this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
     },
-    select (e) {
+    select(e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
       f7.emit('thingPicked', e.target.value)

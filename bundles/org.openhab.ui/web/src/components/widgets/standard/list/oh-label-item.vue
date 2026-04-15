@@ -1,8 +1,7 @@
 <template>
   <oh-list-item :context="context">
     <template #after>
-      <div
-        v-if="(config.after === undefined) && (context.store[config.item].displayState || (context.store[config.item].state !== 'NULL'))">
+      <div v-if="config.after === undefined && (context.store[config.item].displayState || context.store[config.item].state !== 'NULL')">
         {{ context.store[config.item].displayState || context.store[config.item].state }}
       </div>
     </template>
@@ -10,16 +9,24 @@
 </template>
 
 <script>
-import mixin from '../../widget-mixin'
-import { actionsMixin } from '../../widget-actions'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhListItem from './oh-list-item.vue'
 import { OhLabelItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
   components: {
     OhListItem
   },
-  mixins: [mixin, actionsMixin],
-  widget: OhLabelItemDefinition
+  props: {
+    context: Object
+  },
+  widget: OhLabelItemDefinition,
+  setup(props) {
+    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, performAction }
+  }
 }
 </script>

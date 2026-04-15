@@ -1,5 +1,7 @@
-import { Units, MetricPrefixes, BinaryPrefixes } from '@/assets/units'
+import { Units, MetricPrefixes, BinaryPrefixes } from '@/assets/units.ts'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
+import * as api from '@/api'
 
 export default {
   data() {
@@ -10,8 +12,8 @@ export default {
     }
   },
   created() {
-    this.$oh.api
-      .get('/rest/systeminfo/uom')
+    api
+      .getUoMInformation()
       .then((data) => {
         data.uomInfo.dimensions.forEach((d) => {
           this.dimensions.push({

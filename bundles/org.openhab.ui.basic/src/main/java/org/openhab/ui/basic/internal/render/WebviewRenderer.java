@@ -12,13 +12,13 @@
  */
 package org.openhab.ui.basic.internal.render;
 
-import org.eclipse.emf.common.util.ECollections;
-import org.eclipse.emf.common.util.EList;
+import java.util.List;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.i18n.LocaleProvider;
 import org.openhab.core.i18n.TranslationProvider;
-import org.openhab.core.model.sitemap.sitemap.Webview;
-import org.openhab.core.model.sitemap.sitemap.Widget;
+import org.openhab.core.sitemap.Webview;
+import org.openhab.core.sitemap.Widget;
 import org.openhab.core.ui.items.ItemUIRegistry;
 import org.openhab.ui.basic.render.RenderException;
 import org.openhab.ui.basic.render.WidgetRenderer;
@@ -32,6 +32,7 @@ import org.osgi.service.component.annotations.Reference;
  * can produce HTML code for Webview widgets.
  *
  * @author Kai Kreuzer - Initial contribution
+ * @author Mark Herwege - Implement sitemap registry
  */
 @Component(service = WidgetRenderer.class)
 @NonNullByDefault
@@ -49,7 +50,7 @@ public class WebviewRenderer extends AbstractWidgetRenderer {
     }
 
     @Override
-    public EList<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
+    public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Webview webview = (Webview) w;
         boolean showHeaderRow = w.getLabel() != null;
         String snippet = (showHeaderRow ? getSnippet("header_row") : "") + getSnippet("webview");
@@ -71,6 +72,6 @@ public class WebviewRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replace("%height%", Integer.toString(height));
 
         sb.append(snippet);
-        return ECollections.emptyEList();
+        return List.of();
     }
 }

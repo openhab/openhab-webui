@@ -135,10 +135,10 @@
             <f7-list class="search-list">
               <f7-list-item
                 v-for="service in systemSettings"
+                v-show="!service.hidden"
                 :key="service.id"
                 :link="'services/' + service.id"
-                :title="service.label"
-                v-show="!service.hidden" />
+                :title="service.label" />
               <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
@@ -169,7 +169,7 @@
             </div>
           </div>
         </f7-col>
-        <f7-col width="33" class="add-on-col" v-show="$f7dim.width >= 1450">
+        <f7-col v-show="$f7dim.width >= 1450" width="33" class="add-on-col">
           <div v-show="addonsLoaded && addonsInstalled.length > 0">
             <addon-section
               :addonsInstalled="addonsInstalled"
@@ -208,13 +208,15 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
+import { theme } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
 
 import AddonSection from './addon-section.vue'
 
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
+import * as api from '@/api'
 
 export default {
   components: {
@@ -223,10 +225,10 @@ export default {
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       addonsLoaded: false,
       servicesLoaded: false,
@@ -278,17 +280,17 @@ export default {
     }
   },
   computed: {
-    apiEndpoints () {
+    apiEndpoints() {
       return useRuntimeStore().apiEndpoints
     },
-    systemSettings () {
+    systemSettings() {
       if (this.expandedTypes.systemSettingsExpanded) return this.systemServices
       return this.systemServices.map((service) => {
         const hide = this.advancedSystemServices.includes(service.id)
         return Object.assign({ hidden: hide }, service)
       })
     },
-    healthCount () {
+    healthCount() {
       const problemCount = this.orphanLinkCount + this.semanticsProblemCount + this.persistenceProblemCount
       return problemCount.toString()
     },
@@ -296,77 +298,158 @@ export default {
     ...mapWritableState(useRuntimeStore, {
       modelSelectedItem: 'modelSelectedItem'
     })
-
   },
   watch: {
-    apiEndpoints () {
+    apiEndpoints() {
       this.loadMenu()
       this.loadCounters()
     }
   },
   methods: {
-    loadMenu () {
+    loadMenu() {
       if (!this.apiEndpoints) return
 
       // can be done in parallel!
       if (useRuntimeStore().apiEndpoint('services')) {
-        this.$oh.api.get('/rest/services').then((data) => {
+        api.getServices().then((data) => {
           this.systemServices = data
-            .filter((s) => (s.category === 'system') && (s.id !== 'org.openhab.persistence'))
+            .filter((s) => s.category === 'system' && s.id !== 'org.openhab.persistence')
             .sort((s1, s2) => this.sortByLabel(s1, s2))
           this.addonsServices = data.filter((s) => s.category !== 'system').sort((s1, s2) => this.sortByLabel(s1, s2))
           this.servicesLoaded = true
         })
       }
       if (useRuntimeStore().apiEndpoint('addons')) {
-        this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
-          this.addonsInstalled = data
-            .filter((a) => a.installed && !['application/vnd.openhab.ruletemplate', 'application/vnd.openhab.uicomponent;type=widget', 'application/vnd.openhab.uicomponent;type=blocks'].includes(a.contentType))
-            .sort((s1, s2) => this.sortByLabel(s1, s2))
-          this.persistenceAddonsInstalled = this.addonsInstalled.filter((a) => a.installed && a.type === 'persistence')
-          this.addonsLoaded = true
-        })
+        api
+          .getAddons({ serviceId: 'all' })
+          .then((data) => {
+            this.addonsInstalled = data
+              .filter(
+                (a) =>
+                  a.installed &&
+                  ![
+                    'application/vnd.openhab.ruletemplate',
+                    'application/vnd.openhab.uicomponent;type=widget',
+                    'application/vnd.openhab.uicomponent;type=blocks'
+                  ].includes(a.contentType)
+              )
+              .sort((s1, s2) => this.sortByLabel(s1, s2))
+            this.persistenceAddonsInstalled = this.addonsInstalled.filter((a) => a.installed && a.type === 'persistence')
+            this.addonsLoaded = true
+          })
+          .catch((error) => {
+            console.error('Error loading addons:', error.message)
+            this.addonsLoaded = true
+          })
       }
     },
-    sortByLabel (s1, s2) {
+    sortByLabel(s1, s2) {
       return s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1
     },
-    loadCounters () {
+    loadCounters() {
       if (!this.apiEndpoints) return
       if (useRuntimeStore().apiEndpoint('links'))
-        this.$oh.api.get('/rest/links/orphans').then((data) => { this.orphanLinkCount = data.length })
+        api
+          .getOrphanLinks()
+          .then((data) => {
+            this.orphanLinkCount = data.length
+          })
+          .catch((error) => {
+            console.error('Error loading orphan links:', error.message)
+          })
+
       if (useRuntimeStore().apiEndpoint('items'))
-        this.$oh.api.get('/rest/items/semantics/health').then((data) => { this.semanticsProblemCount = data.length })
+        api
+          .getSemanticsHealth()
+          .then((data) => {
+            this.semanticsProblemCount = data.length
+          })
+          .catch((error) => {
+            console.error('Error loading semantics health:', error.message)
+          })
+
       if (useRuntimeStore().apiEndpoint('persistence'))
-        this.$oh.api.get('/rest/persistence/health').then((data) => { this.persistenceProblemCount = data.length })
+        api
+          .getPersistenceHealth()
+          .then((data) => {
+            this.persistenceProblemCount = data.length
+          })
+          .catch((error) => {
+            console.error('Error loading persistence health:', error.message)
+          })
+
       if (useRuntimeStore().apiEndpoint('inbox'))
-        this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => { this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString() })
+        api
+          .getDiscoveredInboxItems({ includeIgnored: false })
+          .then((data) => {
+            this.inboxCount = data.filter((e) => e.flag === 'NEW').length.toString()
+          })
+          .catch((error) => {
+            console.error('Error loading inbox items:', error.message)
+          })
+
       if (useRuntimeStore().apiEndpoint('things'))
-        this.$oh.api.get('/rest/things?staticDataOnly=true').then((data) => { this.thingsCount = data.length.toString() })
+        api
+          .getThings({ staticDataOnly: true })
+          .then((data) => {
+            this.thingsCount = data.length.toString()
+          })
+          .catch((error) => {
+            console.error('Error loading things:', error.message)
+          })
+
       if (useRuntimeStore().apiEndpoint('items'))
-        this.$oh.api.get('/rest/items?staticDataOnly=true').then((data) => { this.itemsCount = data.length.toString() })
+        api
+          .getItems({ staticDataOnly: true })
+          .then((data) => {
+            this.itemsCount = data.length.toString()
+          })
+          .catch((error) => {
+            console.error('Error loading items:', error.message)
+          })
+
       if (useRuntimeStore().apiEndpoint('ui'))
-        this.$oh.api.get('/rest/ui/components/system:sitemap').then((data) => { this.sitemapsCount = data.length })
+        api
+          .getRegisteredUiComponentsInNamespace({ namespace: 'system:sitemap' })
+          .then((data) => {
+            this.sitemapsCount = data.length
+          })
+          .catch((error) => {
+            console.error('Error loading sitemaps:', error.message)
+          })
+
       if (useRuntimeStore().apiEndpoint('transformations'))
-        this.$oh.api.get('/rest/transformations').then((data) => { this.transformationsCount = data.length.toString() })
-      if (useRuntimeStore().apiEndpoint('rules')) {
-        this.$oh.api.get('/rest/rules?staticDataOnly=true').then((data) => {
-          this.rulesCount = data.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0).length.toString()
-          this.scenesCount = data.filter((r) => r.tags.indexOf('Scene') >= 0).length.toString()
-          this.scriptsCount = data.filter((r) => r.tags.indexOf('Script') >= 0).length.toString()
-        })
-      }
+        api
+          .getTransformations()
+          .then((data) => {
+            this.transformationsCount = data.length.toString()
+          })
+          .catch((error) => {
+            console.error('Error loading transformations:', error.message)
+          })
+
+      if (useRuntimeStore().apiEndpoint('rules'))
+        api
+          .getRules({ staticDataOnly: true })
+          .then((data) => {
+            this.rulesCount = data.filter((r) => r.tags.indexOf('Scene') < 0 && r.tags.indexOf('Script') < 0).length.toString()
+            this.scenesCount = data.filter((r) => r.tags.indexOf('Scene') >= 0).length.toString()
+            this.scriptsCount = data.filter((r) => r.tags.indexOf('Script') >= 0).length.toString()
+          })
+          .catch((error) => {
+            console.error('Error loading rules:', error.message)
+          })
     },
-    expand (type) {
+    expand(type) {
       this.expandedTypes[type] = true
     },
-    expandAll () {
+    expandAll() {
       Object.keys(this.expandedTypes).forEach((type) => this.expand(type))
     },
-    onPageInit () {
+    onPageInit() {
       this.loadMenu()
     },
-    onPageAfterIn () {
+    onPageAfterIn() {
       // this.loadMenu()
       this.loadCounters()
     }

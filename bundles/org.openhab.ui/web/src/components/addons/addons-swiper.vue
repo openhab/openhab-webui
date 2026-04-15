@@ -1,12 +1,12 @@
 <template>
   <addon-card
-    class="addons-swiper addon-card-single"
     v-if="addonsList.length === 1"
-    :addon="addonsList[0]"
+    class="addons-swiper addon-card-single"
+    :addon="addonsList[0]!"
     :install-action-text="installActionText"
     :headline="headline"
     @addon-button-click="addonButtonClick" />
-  <f7-swiper class="addons-swiper" v-else pagination :space-between="10" :slides-per-view="slidesPerView" :key="slidesPerView">
+  <f7-swiper v-else class="addons-swiper" pagination :space-between="10" :slides-per-view="slidesPerView" :key="slidesPerView">
     <f7-swiper-slide v-for="addon in addonsList" :key="addon.uid">
       <addon-card
         :key="addon.uid"
@@ -27,29 +27,25 @@
     width 28.571%
 </style>
 
-<script>
+<script setup lang="ts">
+import { computed, getCurrentInstance } from 'vue'
 import AddonCard from '@/components/addons/addon-card.vue'
+import * as api from '@/api'
 
-export default {
-  props: {
-    addonsList: Array,
-    installActionText: String,
-    headline: String
-  },
-  emits: ['addon-button-click'],
-  components: {
-    AddonCard
-  },
-  computed: {
-    slidesPerView () {
-      if (this.$f7dim.width > this.$f7dim.height) return 3.5
-      return 1.5
-    }
-  },
-  methods: {
-    addonButtonClick (addon) {
-      this.$emit('addon-button-click', addon)
-    }
-  }
-}
+const instance = getCurrentInstance()
+const global = instance?.appContext.config.globalProperties
+
+// props
+defineProps<{ addonsList: api.Addon[]; installActionText?: string; headline?: string }>()
+
+// emits
+const emit = defineEmits(['addon-button-click'])
+
+// computed
+const appWidth = computed(() => (global?.$f7dim as { width: number }).width ?? 0)
+const appHeight = computed(() => (global?.$f7dim as { height: number }).height ?? 0)
+const slidesPerView = computed(() => (appWidth.value > appHeight.value ? 3.5 : 1.5))
+
+// methods
+const addonButtonClick = (addon: api.Addon) => emit('addon-button-click', addon)
 </script>

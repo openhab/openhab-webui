@@ -9,7 +9,7 @@
       icon-material="fast_rewind"
       icon-size="24"
       icon-color="gray" />
-    <f7-button color="blue" @click.stop="playPause()" large round fill :icon-f7="(isPlaying) ? 'pause_fill' : 'play_fill'" icon-size="24" />
+    <f7-button color="blue" @click.stop="playPause()" large round fill :icon-f7="isPlaying ? 'pause_fill' : 'play_fill'" icon-size="24" />
     <f7-button
       v-if="this.config.showRewindFFward"
       color="blue"
@@ -34,37 +34,44 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhPlayerDefinition } from '@/assets/definitions/widgets/system'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhPlayerDefinition,
-  mounted () {
+  setup(props) {
+    const { config } = useWidgetContext(computed(() => props.context))
+    return { config }
+  },
+  mounted() {
     delete this.config.value
   },
   computed: {
-    isPlaying () {
+    isPlaying() {
       const value = this.context.store[this.config.item].state
       return value === 'PLAY'
     }
   },
   methods: {
-    skipPrevious (value) {
+    skipPrevious(value) {
       useStatesStore().sendCommand(this.config.item, 'PREVIOUS')
     },
-    rewind (value) {
+    rewind(value) {
       useStatesStore().sendCommand(this.config.item, 'REWIND')
     },
-    playPause (value) {
+    playPause(value) {
       useStatesStore().sendCommand(this.config.item, this.isPlaying ? 'PAUSE' : 'PLAY')
     },
-    fastForward (value) {
+    fastForward(value) {
       useStatesStore().sendCommand(this.config.item, 'FASTFORWARD')
     },
-    skipNext (value) {
+    skipNext(value) {
       useStatesStore().sendCommand(this.config.item, 'NEXT')
     }
   }

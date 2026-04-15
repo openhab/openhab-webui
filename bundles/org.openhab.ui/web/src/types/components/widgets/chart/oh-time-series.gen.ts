@@ -3,6 +3,7 @@
 import {
   OffsetUnit,
   Type,
+  LabelPosition,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
@@ -28,6 +29,10 @@ export interface Config {
   offsetUnit?: OffsetUnit
   markers?: Markers[]
   type?: Type
+  labelPosition?: LabelPosition
+  color?: string
+  showSymbol?: boolean
+  barBorderRadius?: number
   xAxisIndex?: number
   yAxisIndex?: number
   action?: Action
@@ -42,6 +47,7 @@ export interface Config {
   actionRule?: string
   actionRuleContext?: string
   actionPage?: string
+  actionPageDefineVars?: Record<string, unknown>[]
   actionPageTransition?: ActionPageTransition
   actionModal?: string
   actionModalConfig?: string
@@ -62,6 +68,7 @@ export interface Config {
 export {
   OffsetUnit,
   Type,
+  LabelPosition,
   Action,
   ActionHttpMethod,
   ActionPageTransition,

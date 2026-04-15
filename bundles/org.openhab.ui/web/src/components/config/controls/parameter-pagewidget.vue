@@ -41,17 +41,17 @@ export default {
     value: [String, Array]
   },
   emits: ['input'],
-  data () {
+  data() {
     return {
       smartSelectParams: {
-        view: (f7) ? f7.view.main : null
+        view: f7 ? f7.view.main : null
       }
     }
   },
   computed: {
     ...mapStores(useComponentsStore)
   },
-  created () {
+  created() {
     this.smartSelectParams.openIn = 'popup'
     this.smartSelectParams.searchbar = true
     this.smartSelectParams.closeOnSelect = !this.configDescription.multiple
@@ -60,7 +60,7 @@ export default {
     }
   },
   methods: {
-    updateValue (event) {
+    updateValue(event) {
       f7.input.validateInputs(this.$refs.item.$el)
       let value = this.$refs.item.$el.children[0].f7SmartSelect.getValue()
       if (!this.configDescription.multiple && this.configDescription.type === 'INTEGER') {
@@ -68,7 +68,7 @@ export default {
       }
       this.$emit('input', value)
     },
-    isSelected (option, type) {
+    isSelected(option, type) {
       if (this.value === null || this.value === undefined) return
       if (!this.configDescription.multiple) {
         return this.value.toString() === type + ':' + option.uid

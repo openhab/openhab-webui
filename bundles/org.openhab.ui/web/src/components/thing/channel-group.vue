@@ -7,9 +7,9 @@
       :footer="group.description" />
     <f7-list-item
       v-for="c in group.channels"
+      v-show="!(pickerMode || multipleLinksMode) || c.channelType.kind !== 'TRIGGER'"
       :key="c.channel.id"
       :title="c.channel.label || c.channelType.label"
-      v-show="!(pickerMode || multipleLinksMode) || c.channelType.kind !== 'TRIGGER'"
       :accordion-item="!pickerMode && !multipleLinksMode"
       :radio="pickerMode"
       :checkbox="multipleLinksMode"
@@ -82,36 +82,36 @@ export default {
     selection: [String, Array]
   },
   emits: ['selected', 'channel-opened'],
-  data () {
+  data() {
     return {
       openedChannel: ''
     }
   },
   methods: {
-    getLinkedItems (channel) {
+    getLinkedItems(channel) {
       if (!channel || !channel.linkedItems.length) return []
       return channel.linkedItems
     },
-    getItemType (channel) {
+    getItemType(channel) {
       if (channel && channel.kind === 'TRIGGER') return 'Trigger'
       if (!channel || !channel.itemType) return '?'
       return channel.itemType
     },
-    getChannelKind (channel) {
+    getChannelKind(channel) {
       if (channel && channel.kind === 'TRIGGER') return 'Trigger'
       return ''
     },
-    opened (channel) {
+    opened(channel) {
       this.$emit('channel-opened', {
         channelId: channel.id,
         channel
       })
     },
-    isItemTypeCompatible (channelType) {
+    isItemTypeCompatible(channelType) {
       if (!this.pickerMode || !this.itemTypeFilter) return true
       return this.getItemType(channelType) === this.itemTypeFilter
     },
-    isSelected (channel) {
+    isSelected(channel) {
       if (Array.isArray(this.selection)) {
         return this.selection.indexOf(channel) >= 0
       } else {

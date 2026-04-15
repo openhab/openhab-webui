@@ -4,6 +4,12 @@ import {
   NameLocation
 } from '../common.gen.ts'
 
+export enum Split {
+  line = 'line',
+  area = 'area',
+  minor = 'minor'
+}
+
 export interface Config {
   name?: string
   nameLocation?: NameLocation
@@ -12,6 +18,7 @@ export interface Config {
   min?: string
   max?: string
   scale?: boolean
+  split?: Split[]
   gridIndex?: number
 }
 

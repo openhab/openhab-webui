@@ -89,12 +89,12 @@ export default {
     semanticProperty: String
   },
   emits: ['close', 'changed'],
-  setup () {
+  setup() {
     return {
       theme
     }
   },
-  data () {
+  data() {
     return {
       expanded: false,
       expandedTags: [],
@@ -107,7 +107,7 @@ export default {
     }
   },
   computed: {
-    semanticTags () {
+    semanticTags() {
       return useSemanticsStore().Tags.map((t) => {
         const tag = {
           uid: t.uid,
@@ -120,8 +120,11 @@ export default {
         return tag
       })
     },
-    selectedClass () {
-      const selectedTag = this.semanticTags.find((t) => t.name === (this.semanticClass || this.semanticProperty)) || { uid: 'None', label: 'None' }
+    selectedClass() {
+      const selectedTag = this.semanticTags.find((t) => t.name === (this.semanticClass || this.semanticProperty)) || {
+        uid: 'None',
+        label: 'None'
+      }
       const tagName = selectedTag?.name
       if (useSemanticsStore().Locations.indexOf(tagName) >= 0) return 'Location'
       if (useSemanticsStore().Equipment.indexOf(tagName) >= 0) return 'Equipment'
@@ -130,26 +133,29 @@ export default {
     }
   },
   methods: {
-    onOpen () {
-      this.selectedTag = this.semanticTags.find((t) => t.name === (this.semanticClass || this.semanticProperty)) || { uid: 'None', label: 'None' }
+    onOpen() {
+      this.selectedTag = this.semanticTags.find((t) => t.name === (this.semanticClass || this.semanticProperty)) || {
+        uid: 'None',
+        label: 'None'
+      }
       // expand tree down to current selection
       this.expandToSelection()
     },
-    toggleExpanded () {
+    toggleExpanded() {
       this.expanded = !this.expanded
       this.semanticTags.forEach((t) => {
         this.expandedTags[t.uid] = this.expanded
       })
       this.expandToSelection()
     },
-    expandToSelection () {
+    expandToSelection() {
       this.selectedTag?.parent?.split('_').reduce((prev, p) => {
-        const parent = (prev ? (prev + '_') : '') + p
+        const parent = (prev ? prev + '_' : '') + p
         this.expandedTags[parent] = true
         return parent
       }, '')
     },
-    showFiltered (filter) {
+    showFiltered(filter) {
       if (filter) {
         if (!this.filtering) {
           this.filtering = true
@@ -165,7 +171,7 @@ export default {
         }
       }
     },
-    tagSelected (tag) {
+    tagSelected(tag) {
       const previousTag = this.selectedTag
       if (previousTag?.name) {
         const prevIndex = this.item.tags.indexOf(previousTag.name)
@@ -192,7 +198,7 @@ export default {
       this.selectedTag = tag
       this.$emit('changed')
     },
-    onClose () {
+    onClose() {
       f7.popup.close()
       this.$emit('close')
     }

@@ -13,6 +13,7 @@ export const breakpointValue = <T>(breakpoint: Breakpoint<T>, windowWidth: numbe
   for (let k in breakpoint) {
     const bp = parseInt(k)
     const bpValRaw = breakpoint[k]
+    if (bpValRaw === undefined) continue
     const bpVal = parseInt(String(bpValRaw))
 
     if (isNaN(bp) || isNaN(bpVal)) continue
@@ -24,5 +25,5 @@ export const breakpointValue = <T>(breakpoint: Breakpoint<T>, windowWidth: numbe
     }
   }
 
-  return matchedValue as T
+  return matchedValue
 }

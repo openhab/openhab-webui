@@ -7,11 +7,12 @@
         @save="save()"
         :f7router />
     </f7-navbar>
-    <f7-toolbar tabbar position="top" v-if="!previewMode">
+    <f7-toolbar v-if="!previewMode" tabbar position="top">
       <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design'" tab-link="#design"> Design </f7-link>
       <f7-link @click="switchTab('code', toYaml)" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar v-else tabbar position="top">
+      <!-- prettier-ignore  -->
       <f7-link
         v-for="tab in modelTabs"
         :key="tab.value"
@@ -47,104 +48,110 @@
             </f7-col>
           </f7-block>
 
-          <f7-block class="no-margin-bottom">
-            <f7-segmented strong tag="p">
-              <f7-button
-                v-for="tab in modelTabs"
-                :key="tab.value"
-                @click="showCardControls = false; currentModelTab = tab.value"
-                :active="currentModelTab === tab.value"
-                :text="tab.label" />
-            </f7-segmented>
+          <f7-block class="block-narrow no-margin-bottom">
+            <f7-col>
+              <f7-segmented strong tag="p">
+                <!-- prettier-ignore -->
+                <f7-button
+                  v-for="tab in modelTabs"
+                  :key="tab.value"
+                  @click="showCardControls = false; currentModelTab = tab.value"
+                  :active="currentModelTab === tab.value"
+                  :text="tab.label" />
+              </f7-segmented>
 
-            <f7-block-title class="no-margin-bottom"> Cards </f7-block-title>
-            <div>
-              <div class="display-block padding">
-                <div class="no-padding float-right">
-                  <f7-button
-                    @click="showCardControls = !showCardControls"
-                    small
-                    outline
-                    :fill="showCardControls"
-                    sortable-toggle=".sortable"
-                    style="margin-top: -3px; margin-right: 5px"
-                    color="gray"
-                    icon-size="12"
-                    icon-ios="material:wrap_text"
-                    icon-md="material:wrap_text"
-                    icon-aurora="material:wrap_text">
-                    &nbsp;Reorder
-                  </f7-button>
-                </div>
+              <div class="cards-title-row">
+                <f7-block-title class="no-margin-bottom">Cards</f7-block-title>
+                <f7-button
+                  @click="showCardControls = !showCardControls"
+                  small
+                  outline
+                  :fill="showCardControls"
+                  sortable-toggle=".sortable"
+                  color="gray"
+                  icon-size="12"
+                  icon-ios="material:wrap_text"
+                  icon-md="material:wrap_text"
+                  icon-aurora="material:wrap_text"
+                  style="margin-left: 8px">
+                  &nbsp;Reorder
+                </f7-button>
               </div>
-
-              <f7-list
-                media-list
-                class="homecards-list"
-                sortable
-                :key="'cards-' + currentModelTab + cardListId"
-                @sortable:sort="reorderCard">
-                <f7-list-item
-                  v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
-                  media-item
-                  :link="(showCardControls) ? undefined : ''"
-                  @click="(ev) => cardClicked(ev, card, idx)"
-                  :key="idx"
-                  :title="card.separator || card.defaultTitle"
-                  :footer="(card.separator) ? '(separator)' : card.key">
-                  <template #content-start>
-                    <f7-menu class="configure-layout-menu">
-                      <f7-menu-item icon-f7="list_bullet" dropdown>
-                        <f7-menu-dropdown>
-                          <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
-                          <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
-                          <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
-                          <f7-menu-dropdown-item divider />
-                          <f7-menu-dropdown-item
-                            v-if="!card.separator"
-                            @click="addCardSeparator(idx)"
-                            href="#"
-                            text="Add Separator Before" />
-                          <f7-menu-dropdown-item v-if="card.separator" @click="removeCardSeparator(idx)" href="#" text="Remove Separator" />
-                        </f7-menu-dropdown>
-                      </f7-menu-item>
-                    </f7-menu>
-                    <f7-checkbox
-                      :checked="!isCardExcluded(card) ? true : null"
-                      :disabled="card.separator !== undefined ? true : null"
-                      class="margin-right" />
-                  </template>
-                </f7-list-item>
-              </f7-list>
-            </div>
+              <div>
+                <f7-list
+                  media-list
+                  class="homecards-list"
+                  sortable
+                  :key="'cards-' + currentModelTab + cardListId"
+                  @sortable:sort="reorderCard">
+                  <f7-list-item
+                    v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
+                    media-item
+                    :link="showCardControls ? undefined : ''"
+                    @click="(ev) => cardClicked(ev, card, idx)"
+                    :key="idx"
+                    :title="card.separator || card.defaultTitle"
+                    :footer="card.separator ? '(separator)' : card.key">
+                    <template #content-start>
+                      <f7-menu class="configure-layout-menu">
+                        <f7-menu-item icon-f7="list_bullet" dropdown>
+                          <f7-menu-dropdown>
+                            <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
+                            <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
+                            <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
+                            <f7-menu-dropdown-item divider />
+                            <f7-menu-dropdown-item
+                              v-if="!card.separator"
+                              @click="addCardSeparator(idx)"
+                              href="#"
+                              text="Add Separator Before" />
+                            <f7-menu-dropdown-item
+                              v-if="card.separator"
+                              @click="removeCardSeparator(idx)"
+                              href="#"
+                              text="Remove Separator" />
+                          </f7-menu-dropdown>
+                        </f7-menu-item>
+                      </f7-menu>
+                      <f7-checkbox
+                        :checked="!isCardExcluded(card) ? true : null"
+                        :disabled="card.separator !== undefined ? true : null"
+                        class="margin-right" />
+                    </template>
+                  </f7-list-item>
+                </f7-list>
+              </div>
+            </f7-col>
           </f7-block>
 
-          <f7-block class="homecards-settings">
-            <div v-if="currentModelTab === 'locations'">
-              <config-sheet
-                :parameterGroups="locationsTabParameters.props.parameterGroups || []"
-                :parameters="locationsTabParameters.props.parameters || []"
-                :configuration="page.slots.locations[0].config"
-                :f7router
-                @updated="dirty = true" />
-            </div>
+          <f7-block class="block-narrow homecards-settings">
+            <f7-col>
+              <div v-if="currentModelTab === 'locations'">
+                <config-sheet
+                  :parameterGroups="locationsTabParameters.props.parameterGroups || []"
+                  :parameters="locationsTabParameters.props.parameters || []"
+                  :configuration="page.slots.locations[0].config"
+                  :f7router
+                  @updated="dirty = true" />
+              </div>
 
-            <div v-if="currentModelTab === 'equipment'">
-              <config-sheet
-                :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
-                :parameters="equipmentTabParameters.props.parameters || []"
-                :configuration="page.slots.equipment[0].config"
-                :f7router
-                @updated="dirty = true" />
-            </div>
+              <div v-if="currentModelTab === 'equipment'">
+                <config-sheet
+                  :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
+                  :parameters="equipmentTabParameters.props.parameters || []"
+                  :configuration="page.slots.equipment[0].config"
+                  :f7router
+                  @updated="dirty = true" />
+              </div>
 
-            <div v-if="currentModelTab === 'properties'">
-              <config-sheet
-                :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
-                :parameters="propertiesTabParameters.props.parameters || []"
-                :configuration="page.slots.properties[0].config"
-                @updated="dirty = true" />
-            </div>
+              <div v-if="currentModelTab === 'properties'">
+                <config-sheet
+                  :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
+                  :parameters="propertiesTabParameters.props.parameters || []"
+                  :configuration="page.slots.properties[0].config"
+                  @updated="dirty = true" />
+              </div>
+            </f7-col>
           </f7-block>
         </div>
 
@@ -160,7 +167,8 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=home"
           :value="pageYaml"
-          @input="onEditorInput" />
+          @input="onEditorInput"
+          @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
         <div v-if="ready && previewMode" :context="context" :key="pageKey">
           <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :page="page" />
@@ -172,6 +180,11 @@
 
 <style lang="stylus">
 .home-editor
+  .cards-title-row
+    display: flex
+    align-items: center
+    justify-content: space-between
+    margin-bottom: 0.5rem
   .page-code-editor.v-codemirror
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
@@ -182,10 +195,12 @@
     white-space pre-wrap
   .homecards-list
     margin-bottom 0
-    padding-bottom calc(5rem + var(--f7-block-margin-vertical))
+    padding-bottom calc(10px + var(--f7-block-margin-vertical))
     .item-link
       overflow inherit
       z-index inherit !important
+    .icon-checkbox
+      margin-right 10px
   .homecards-settings
     margin-top 0
     .parameter-group
@@ -203,11 +218,19 @@ import HomeCards from '../../../home/homecards-mixin'
 
 import YAML from 'yaml'
 
-import { OhHomePageDefinition, OhLocationsTabParameters, OhEquipmentTabParameters, OhPropertiesTabParameters, OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '@/assets/definitions/widgets/home'
+import {
+  OhHomePageDefinition,
+  OhLocationsTabParameters,
+  OhEquipmentTabParameters,
+  OhPropertiesTabParameters,
+  OhLocationCardParameters,
+  OhEquipmentCardParameters,
+  OhPropertyCardParameters
+} from '@/assets/definitions/widgets/home'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 const ConfigurableWidgets = {
   'oh-location-card': OhLocationCardParameters,
@@ -224,16 +247,17 @@ export default {
   },
   props: {
     createMode: Boolean,
+    pageCopy: Object,
     uid: String,
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     useViewArea()
 
     return { theme }
   },
-  data () {
+  data() {
     return {
       pageWidgetDefinition: OhHomePageDefinition(),
       locationsTabParameters: OhLocationsTabParameters(),
@@ -258,7 +282,7 @@ export default {
     }
   },
   watch: {
-    pageReady (val) {
+    pageReady(val) {
       if (val) {
         this.modelTabs = [
           { value: 'locations', label: this.$t('home.locations.tab') },
@@ -269,7 +293,7 @@ export default {
     }
   },
   methods: {
-    addWidget (component, widgetType, parentContext, slot) {
+    addWidget(component, widgetType, parentContext, slot) {
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -285,55 +309,79 @@ export default {
         this.forceUpdate()
       }
     },
-    getWidgetDefinition (componentType) {
+    getWidgetDefinition(componentType) {
       return ConfigurableWidgets[componentType] ? ConfigurableWidgets[componentType]() : null
     },
-    ensureCardComponentExists (card) {
+    ensureCardComponentExists(card) {
       if (!this.page.slots[this.currentModelTab][0].slots[card.key]) {
         this.page.slots[this.currentModelTab][0].slots[card.key] = [
           {
-            component: (this.currentModelTab) === 'locations' ? 'oh-location-card' : (this.currentModelTab === 'equipment') ? 'oh-equipment-card' : 'oh-property-card',
+            component:
+              this.currentModelTab === 'locations'
+                ? 'oh-location-card'
+                : this.currentModelTab === 'equipment'
+                  ? 'oh-equipment-card'
+                  : 'oh-property-card',
             config: {}
           }
         ]
       }
     },
-    configureCard (card) {
+    configureCard(card) {
       if (!card.key) return
-      if (!this.page.slots[this.currentModelTab] || !this.page.slots[this.currentModelTab][0] || !this.page.slots[this.currentModelTab][0].slots) return
+      if (
+        !this.page.slots[this.currentModelTab] ||
+        !this.page.slots[this.currentModelTab][0] ||
+        !this.page.slots[this.currentModelTab][0].slots
+      )
+        return
       this.ensureCardComponentExists(card)
       return this.configureWidget(this.page.slots[this.currentModelTab][0].slots[card.key][0])
     },
-    editCardCode (card) {
+    editCardCode(card) {
       if (!card.key) return
-      if (!this.page.slots[this.currentModelTab] || !this.page.slots[this.currentModelTab][0] || !this.page.slots[this.currentModelTab][0].slots) return
+      if (
+        !this.page.slots[this.currentModelTab] ||
+        !this.page.slots[this.currentModelTab][0] ||
+        !this.page.slots[this.currentModelTab][0].slots
+      )
+        return
       this.ensureCardComponentExists(card)
       return this.editWidgetCode(this.page.slots[this.currentModelTab][0].slots[card.key][0])
     },
-    addCardSeparator (idx) {
-      const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
+    addCardSeparator(idx) {
+      const orderedCards = this.cardGroups(this.currentModelTab, this.page)
+        .flat()
+        .map((e) => (e.separator ? e : e.key))
       orderedCards.splice(idx, 0, { separator: 'New Section' })
       this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
       this.renameCardSeparator(idx)
     },
-    renameCardSeparator (idx) {
-      const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
+    renameCardSeparator(idx) {
+      const orderedCards = this.cardGroups(this.currentModelTab, this.page)
+        .flat()
+        .map((e) => (e.separator ? e : e.key))
       if (orderedCards[idx].separator) {
-        f7.dialog.prompt('Enter the title of the separator:', null,
+        f7.dialog.prompt(
+          'Enter the title of the separator:',
+          null,
           (title) => {
             orderedCards[idx].separator = title
             this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
           },
           null,
-          orderedCards[idx].separator)
+          orderedCards[idx].separator
+        )
       }
     },
-    removeCardSeparator (idx) {
-      const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
+    removeCardSeparator(idx) {
+      const orderedCards = this.cardGroups(this.currentModelTab, this.page)
+        .flat()
+        .map((e) => (e.separator ? e : e.key))
       orderedCards.splice(idx, 1)
       this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
     },
-    cardClicked (ev, card, idx) {
+    cardClicked(ev, card, idx) {
       ev.cancelBubble = true
       let el = ev.target
       if (el.classList.contains('icon-checkbox')) {
@@ -349,8 +397,10 @@ export default {
       }
       this.configureCard(card)
     },
-    reorderCard (ev) {
-      const orderedCards = this.cardGroups(this.currentModelTab, this.page).flat().map((e) => (e.separator) ? e : e.key)
+    reorderCard(ev) {
+      const orderedCards = this.cardGroups(this.currentModelTab, this.page)
+        .flat()
+        .map((e) => (e.separator ? e : e.key))
       const newOrder = [...orderedCards]
       newOrder.splice(ev.to, 0, newOrder.splice(ev.from, 1)[0])
       this.page.slots[this.currentModelTab][0].config.cardOrder = newOrder
@@ -360,19 +410,35 @@ export default {
         this.cardListId = f7.utils.id()
       })
     },
-    isCardExcluded (card) {
+    isCardExcluded(card) {
       if (!card.key) return
       const page = this.page
       const type = this.currentModelTab
-      const excludedCards = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.excludedCards) ? page.slots[type][0].config.excludedCards : []
+      const excludedCards =
+        page &&
+        page.slots &&
+        page.slots[type] &&
+        page.slots[type][0] &&
+        page.slots[type][0].config &&
+        page.slots[type][0].config.excludedCards
+          ? page.slots[type][0].config.excludedCards
+          : []
       const excludedIdx = excludedCards.indexOf(card.key)
       return excludedIdx >= 0
     },
-    toggleCardDisplay (card) {
+    toggleCardDisplay(card) {
       if (!card.key) return
       const page = this.page
       const type = this.currentModelTab
-      const excludedCards = (page && page.slots && page.slots[type] && page.slots[type][0] && page.slots[type][0].config && page.slots[type][0].config.excludedCards) ? page.slots[type][0].config.excludedCards : []
+      const excludedCards =
+        page &&
+        page.slots &&
+        page.slots[type] &&
+        page.slots[type][0] &&
+        page.slots[type][0].config &&
+        page.slots[type][0].config.excludedCards
+          ? page.slots[type][0].config.excludedCards
+          : []
       const excludedIdx = excludedCards.indexOf(card.key)
       if (excludedIdx < 0) {
         this.page.slots[type][0].config.excludedCards = [...excludedCards, card.key]
@@ -380,10 +446,10 @@ export default {
         this.page.slots[type][0].config.excludedCards.splice(excludedIdx, 1)
       }
     },
-    toYaml () {
+    toYaml() {
       this.pageYaml = YAML.stringify(Object.assign({ config: this.page.config }, this.page.slots))
     },
-    fromYaml () {
+    fromYaml() {
       try {
         const updatedTabs = YAML.parse(this.pageYaml)
         this.page.slots = updatedTabs

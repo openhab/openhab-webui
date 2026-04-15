@@ -10,7 +10,7 @@ import {
   OhChartTooltip,
   OhChartLegend,
   OhChartVisualmap
-} from '@/types/components/widgets/index.gen.ts'
+} from '@/types/components/widgets'
 
 import {
   Marker,
@@ -22,7 +22,7 @@ import {
   type VisualMap,
   type CoordSettingsBase
 } from './types.js'
-import type { Item, Page, UIComponent } from '@/types/openhab'
+import * as api from '@/api'
 
 const DIMENSION_MAP: Partial<Record<ChartType, [OhAggregateSeries.Dimension, OhCategoryAxis.CategoryType, OhAggregateSeries.Dimension]>> = {
   // dimension1, category2, dimension2
@@ -70,7 +70,11 @@ const aggregateCoordSystem: CoordSystem = {
   initAxes(coordSettings: Partial<AggregateCoordSettings>): void {
     coordSettings.valueAxesOptions = []
   },
-  initSeries(item: Item, coordSettings: CoordSettings, seriesOptions: Partial<AggregateSeriesOptions>): AggregateSeriesOptions {
+  initSeries(
+    item: api.EnrichedItem | api.EnrichedGroupItem,
+    coordSettings: CoordSettings,
+    seriesOptions: Partial<AggregateSeriesOptions>
+  ): AggregateSeriesOptions {
     const aggregateCoordSettings = coordSettings as AggregateCoordSettings
 
     const options: AggregateSeriesOptions = {
@@ -80,7 +84,11 @@ const aggregateCoordSystem: CoordSystem = {
       valueAxisIndex: 0
     }
 
-    if (item.type.startsWith('Number') || item.type === 'Dimmer' || item.groupType?.startsWith('Number') || item.groupType === 'Dimmer') {
+    if (
+      item.type.startsWith('Number') ||
+      item.type === 'Dimmer' ||
+      ('groupType' in item && (item.groupType?.startsWith('Number') || item.groupType === 'Dimmer'))
+    ) {
       options.aggregation = seriesOptions.aggregation || OhAggregateSeries.AggregationFunction.average
 
       if (aggregateCoordSettings.dimensions === 2) {
@@ -97,16 +105,14 @@ const aggregateCoordSystem: CoordSystem = {
 
     return options
   },
-  getChartPage(coordSettings: CoordSettings, allSeriesOptions: Record<string, SeriesOptions>, items: Item[]): Page {
+  getChartPage(
+    coordSettings: CoordSettings,
+    allSeriesOptions: Record<string, SeriesOptions>,
+    items: (api.EnrichedItem | api.EnrichedGroupItem)[]
+  ): api.RootUiComponent {
     const aggregateCoordSettings = coordSettings as AggregateCoordSettings
 
-    let page: Page = {
-      component: 'oh-chart-page',
-      config: {
-        chartType: coordSettings.chartType
-      } satisfies OhChartPage.Config
-    }
-    page.slots = {
+    const slots: Record<string, Array<api.UiComponent>> = {
       xAxis: [],
       yAxis: [],
       series: [],
@@ -116,7 +122,15 @@ const aggregateCoordSystem: CoordSystem = {
       visualMap: []
     }
 
-    page.slots.grid = [{ component: 'oh-chart-grid', config: {} }]
+    let page: Partial<api.RootUiComponent> = {
+      component: 'oh-chart-page',
+      config: {
+        chartType: coordSettings.chartType
+      } satisfies OhChartPage.Config,
+      slots
+    }
+
+    slots.grid = [{ component: 'oh-chart-grid', config: {} }]
 
     const categoryType =
       aggregateCoordSettings.chartType === ChartType.isoWeek
@@ -143,7 +157,7 @@ const aggregateCoordSystem: CoordSystem = {
     ]
     const dimension1 = dims[0]
 
-    let axis2: UIComponent[]
+    let axis2: api.UiComponent[]
     let dimension2: OhAggregateSeries.Dimension | undefined
     if (aggregateCoordSettings.dimensions === 2) {
       const category2 = dims[1]
@@ -175,16 +189,16 @@ const aggregateCoordSystem: CoordSystem = {
     }
 
     if (aggregateCoordSettings.orientation === Orient.vertical) {
-      page.slots.xAxis = axis2
-      page.slots.yAxis = axis1
+      slots.xAxis = axis2
+      slots.yAxis = axis1
     } else {
-      page.slots.xAxis = axis1
-      page.slots.yAxis = axis2
+      slots.xAxis = axis1
+      slots.yAxis = axis2
     }
 
-    page.slots.series = items
+    slots.series = items
       .filter((item) => item.type.startsWith('Number') || item.type === 'Dimmer' || item.type === 'Rollershutter')
-      .map((item: Item) => {
+      .map((item) => {
         const seriesOptions = allSeriesOptions[item.name] as AggregateSeriesOptions
 
         return {
@@ -210,10 +224,10 @@ const aggregateCoordSystem: CoordSystem = {
       })
 
     if (dimension2) {
-      page.slots.visualMap = renderVisualMap(aggregateCoordSettings.visualMap)
+      slots.visualMap = renderVisualMap(aggregateCoordSettings.visualMap)
     }
 
-    page.slots.tooltip = [
+    slots.tooltip = [
       {
         component: 'oh-chart-tooltip',
         config: {
@@ -224,18 +238,18 @@ const aggregateCoordSystem: CoordSystem = {
     ]
 
     if (!dimension2) {
-      page.slots.legend = [
+      slots.legend = [
         {
           component: 'oh-chart-legend',
           config: {
             bottom: '3',
             type: 'scroll'
-          } as OhChartLegend.Config
+          } satisfies OhChartLegend.Config & Record<string, unknown>
         }
       ]
     }
 
-    return page
+    return page as api.RootUiComponent
   }
 }
 

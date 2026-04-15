@@ -6,7 +6,12 @@
           <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context)" href="#" text="Configure Masonry" />
           <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context)" href="#" text="Edit YAML" />
           <f7-menu-dropdown-item
-            v-if="context.clipboardtype && context.clipboardtype !== 'oh-block' && context.clipboardtype !== 'oh-grid-row' && context.clipboardtype !== 'oh-grid-col'"
+            v-if="
+              context.clipboardtype &&
+              context.clipboardtype !== 'oh-block' &&
+              context.clipboardtype !== 'oh-grid-row' &&
+              context.clipboardtype !== 'oh-grid-col'
+            "
             @click="context.editmode.pasteWidget(context.component, context.parent)"
             href="#"
             text="Paste" />
@@ -20,16 +25,19 @@
     </f7-menu>
     <div v-if="config.flavor === 'css-grid'" class="oh-masonry">
       <div
-        v-for="(slotComponent, idx) in context.component.slots.default"
+        v-for="(slotComponent, idx) in defaultSlots"
         :key="idx"
         class="oh-masonry-item"
-        :style="{ 'min-height': dropdownMenuOpened === idx ? 'calc(10 * var(--f7-menu-dropdown-item-height))' : undefined, 'z-index': 100 - context.component.slots.default.indexOf(slotComponent) }">
+        :style="{
+          'min-height': dropdownMenuOpened === idx ? 'calc(10 * var(--f7-menu-dropdown-item-height))' : undefined,
+          'z-index': 100 - defaultSlots.indexOf(slotComponent)
+        }">
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <f7-menu-item
             style="margin-left: auto"
             icon-f7="slider_horizontal_below_rectangle"
             dropdown
-            @menu:opened="dropdownMenuOpened = idx"
+            @menu:opened="dropdownMenuOpened = idx as number"
             @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Widget" />
@@ -52,14 +60,14 @@
         class="oh-column-item placeholder"
         @click="context.editmode.addWidget(context.component, null, context.parent)" />
     </div>
-    <MasonryGrid v-else :columns="config.cols || { default: 5, 1400: 4, 1280: 3, 1023: 4, 768: 3, 576: 2, 480: 1 } ">
-      <MasonryGridItem v-for="(slotComponent, idx) in context.component.slots.default" :key="idx">
+    <MasonryGrid v-else :columns="(config.cols as number) || { default: 5, 1400: 4, 1280: 3, 1023: 4, 768: 3, 576: 2, 480: 1 }">
+      <MasonryGridItem v-for="(slotComponent, idx) in defaultSlots" :key="idx">
         <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <f7-menu-item
             style="margin-left: auto"
             icon-f7="slider_horizontal_below_rectangle"
             dropdown
-            @menu:opened="dropdownMenuOpened = idx"
+            @menu:opened="dropdownMenuOpened = idx as number"
             @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Widget" />
@@ -86,28 +94,6 @@
   </div>
 </template>
 
-<script>
-import mixin from '../widget-mixin'
-import OhPlaceholderWidget from './oh-placeholder-widget.vue'
-import { OhMasonryDefinition } from '@/assets/definitions/widgets/layout'
-import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
-
-export default {
-  mixins: [mixin],
-  components: {
-    OhPlaceholderWidget,
-    MasonryGrid,
-    MasonryGridItem
-  },
-  data () {
-    return {
-      dropdownMenuOpened: null
-    }
-  },
-  widget: OhMasonryDefinition
-}
-</script>
-
 <style lang="stylus">
 .oh-magic-grid
   // columns 6
@@ -131,7 +117,28 @@ export default {
       z-index inherit
     &.placeholder
       width calc(100% - 16px)
-
-.menu
-  z-index 6000 !important
+  .menu
+    z-index 6000 !important
 </style>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+import { OhMasonryDefinition } from '@/assets/definitions/widgets/layout'
+import { MasonryGrid, MasonryGridItem } from '../../../components/vue3-masonry-css'
+import type { WidgetContext } from '@/components/widgets/types'
+import OhPlaceholderWidget from './oh-placeholder-widget.vue'
+
+const props = defineProps<{
+  context: WidgetContext
+}>()
+
+defineOptions({
+  widget: OhMasonryDefinition
+})
+
+const { config, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
+
+// reactive state
+const dropdownMenuOpened = ref<number | null>(null)
+</script>

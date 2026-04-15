@@ -26,8 +26,8 @@
         <f7-list contacts-list class="col">
           <f7-list-group>
             <f7-list-item
-              media-item
               v-for="n in 10"
+              media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
               title="Type of problem"
@@ -62,13 +62,14 @@
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
       persistenceProblems: [],
 
       persistenceProblemExplanation: {
+        PERSISTENCE_DUPLICATE_CONFIG: 'Both managed and file based configuration exists for persistence service',
         PERSISTENCE_NO_DEFAULT: 'No default persistence service defined',
         PERSISTENCE_SERVICE_NO_CONFIG: 'No configuration for persistence service',
         PERSISTENCE_SERVICE_NO_ITEMS: 'No persistence items defined for persistence service',
@@ -78,10 +79,10 @@ export default {
     }
   },
   methods: {
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.load()
     },
-    load () {
+    load() {
       this.loading = true
       this.$oh.api.get('/rest/persistence/health').then((data) => {
         this.persistenceProblems = data
@@ -89,21 +90,21 @@ export default {
         this.ready = true
       })
     },
-    problemKey (persistenceProblem) {
+    problemKey(persistenceProblem) {
       let key = persistenceProblem.reason
       if (persistenceProblem.serviceId) key = key + '_' + persistenceProblem.serviceId
       if (persistenceProblem.items) key = key + '_' + persistenceProblem.items.join('_')
     },
-    getLinkForProblem (persistenceProblem) {
+    getLinkForProblem(persistenceProblem) {
       if (persistenceProblem.serviceId) {
         return '/settings/persistence/' + persistenceProblem.serviceId
       }
       return '/settings/persistence/'
     },
-    explanation (reason) {
+    explanation(reason) {
       return this.persistenceProblemExplanation[reason] || reason
     },
-    plural (count) {
+    plural(count) {
       return count === 1 ? '' : 's'
     }
   }

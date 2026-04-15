@@ -30,18 +30,25 @@
 </style>
 
 <script>
-import mixin from '../../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhLabelCellDefinition } from '@/assets/definitions/widgets/standard/cells'
 import OhCell from './oh-cell.vue'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCell
   },
   widget: OhLabelCellDefinition,
+  setup(props) {
+    const { config } = useWidgetContext(computed(() => props.context))
+    return { config }
+  },
   computed: {
-    label () {
+    label() {
       return this.config.label || this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
     }
   }

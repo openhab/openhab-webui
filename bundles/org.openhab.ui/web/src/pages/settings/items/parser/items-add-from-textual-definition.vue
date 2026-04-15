@@ -3,22 +3,23 @@
     <f7-navbar>
       <oh-nav-content title="Add Items from Textual Definition" save-link="Add" @save="add()" :f7router />
     </f7-navbar>
+
     <f7-block class="items-add-from-textual-definition">
-      <div class="row items-parser resizable" v-if="ready">
+      <div v-if="ready" class="row items-parser resizable">
         <div class="col">
-          <editor class="editor" :value="itemsDsl" @input="(value) => itemsDsl = value" mode="application/vnd.openhab.items+dsl" />
+          <editor class="editor" :value="code" @input="(value: string) => (code = value)" :mode="mediaType" @save="add()" />
         </div>
         <span class="resize-handler" />
       </div>
-      <div class="row items-results resizable" v-if="ready">
+      <div v-if="ready" class="row items-results resizable">
         <div class="col">
-          <div v-if="parsedItems.error" class="error">
-            <div v-if="!itemsDsl">
+          <div v-if="!code || parseError" class="error">
+            <div v-if="!code">
               <empty-state-placeholder icon="text_badge_plus" title="items.add.title" text="items.add.text" />
             </div>
-            <pre v-else><code>{{ parsedItems.error }}</code></pre>
+            <pre v-else><code>{{ parseError }}</code></pre>
           </div>
-          <div v-if="!parsedItems.error" class="items-table">
+          <div v-else class="items-table">
             <div class="card data-table data-table-init">
               <table>
                 <thead>
@@ -60,40 +61,51 @@
                       <oh-icon v-if="item.category" :icon="item.category" :width="20" :height="20" />
                     </td>
                     <td class="label-cell">
-                      {{ (item.groupNames) ? item.groupNames.join(', ') : '' }}
+                      {{ item.groupNames ? item.groupNames.join(', ') : '' }}
                     </td>
-                    <td class="label-cell" v-if="item.tags">
+                    <td v-if="item.tags" class="label-cell">
                       <f7-chip v-for="tag in item.tags" class="margin-right" :key="tag" :text="tag" media-bg-color="blue">
                         <template #media>
                           <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                         </template>
                       </f7-chip>
                     </td>
-                    <td class="label-cell" v-else />
+                    <td v-else class="label-cell" />
                     <!-- links -->
-                    <td class="label-cell" v-if="item.links">
-                      <div class="margin-right" v-for="(link, lidx) in item.links" :key="lidx">
-                        <div v-if="link.value">
-                          <div>
-                            <em>{{ link.value }}</em>
-                          </div>
-                          <small>{{ link.config.map((c) => c.key + '=' + c.value).join(', ') }}</small>
+                    <td v-if="item.channelLinks" class="label-cell">
+                      <div v-for="link in item.channelLinks" class="margin-right" :key="item.name + link.channelUID">
+                        <div v-if="link.configuration">
+                          <em>{{ link.channelUID }}</em
+                          ><br />
+                          <small>{{
+                            Object.keys(link.configuration)
+                              .map((key) => key + '=' + link.configuration![key])
+                              .join(', ')
+                          }}</small>
                         </div>
-                        <em v-else>{{ link }}</em>
+                        <em v-else>{{ link.channelUID }}</em>
                       </div>
                     </td>
-                    <td class="label-cell" v-else />
+                    <td v-else class="label-cell" />
                     <!-- metadata -->
-                    <td class="label-cell" v-if="item.metadata">
-                      <div v-for="(metadata, lidx) in item.metadata" class="margin-right" :key="lidx">
-                        <div v-if="metadata.value.value">
-                          <div>{{ metadata.key }}="{{ metadata.value.value }}"</div>
-                          <small>{{ metadata.value.config.map((c) => c.key + '=' + c.value).join(', ') }}</small>
+                    <td v-if="item.metadata" class="label-cell">
+                      <div
+                        v-for="[namespace, value] in Object.entries(item.metadata)"
+                        class="margin-right"
+                        :key="item.name + '_' + namespace">
+                        <div v-if="value.config">
+                          {{ namespace }}="{{ value.value }}" [
+                          <small>{{
+                            Object.keys(value.config)
+                              .map((key) => key + '=' + value.config![key])
+                              .join(', ')
+                          }}</small>
+                          ]
                         </div>
-                        <div v-else>{{ metadata.key }}="{{ metadata.value }}"</div>
+                        <div v-else>{{ namespace }}="{{ value.value }}"</div>
                       </div>
                     </td>
-                    <td class="label-cell" v-else />
+                    <td v-else class="label-cell" />
                   </tr>
                 </tbody>
               </table>
@@ -103,6 +115,20 @@
         <span class="resize-handler" />
       </div>
     </f7-block>
+
+    <f7-toolbar bottom>
+      <f7-segmented>
+        <f7-button
+          v-for="type in Object.keys(SupportedMediaTypes.items)"
+          outline
+          small
+          :key="type"
+          :active="codeEditorType === type"
+          @click="codeEditorType = type as CodeEditorType">
+          {{ type }}
+        </f7-button>
+      </f7-segmented>
+    </f7-toolbar>
   </f7-page>
 </template>
 
@@ -131,168 +157,194 @@
         overflow auto
 </style>
 
-<script>
-import { defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+<script setup lang="ts">
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
+import { f7 } from 'framework7-vue'
+import { type Router } from 'framework7'
+import debounce from 'debounce'
 
-import { Parser, Grammar } from 'nearley'
-import * as grammar from '@/assets/items-lexer.nearley.js'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import * as api from '@/api'
+import { type CodeEditorType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
+import { storeToRefs } from 'pinia'
+import { ApiError } from '@/js/hey-api.ts'
+import { showToast } from '@/js/dialog-promises'
 
-export default {
-  components: {
-    EmptyStatePlaceholder,
-    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
-  },
-  props: {
-    textualDefinition: String,
-    f7router: Object
-  },
-  setup () {
-    return { theme }
-  },
-  data () {
-    return {
-      itemsDsl: this.textualDefinition || '',
-      items: [],
-      things: [],
-      links: [],
-      ready: false
-    }
-  },
-  methods: {
-    onPageAfterIn () {
-      const promises = [
-        this.$oh.api.get('/rest/items'),
-        this.$oh.api.get('/rest/things'),
-        this.$oh.api.get('/rest/links')
-      ]
-      Promise.all(promises).then((data) => {
-        this.items = data[0]
-        this.things = data[1]
-        this.links = data[2]
-        this.ready = true
+const uiOptionsStore = useUIOptionsStore()
+
+const editor = defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
+
+// props
+const props = defineProps<{
+  f7router: Router.Router
+  textualDefinition?: string
+}>()
+
+// data
+interface ExtendedFileFormatItem extends api.FileFormatItem {
+  existing?: api.EnrichedItem
+  existingLinks?: api.ItemChannelLink[]
+}
+
+const items = ref<api.EnrichedItem[]>([])
+const things = ref<api.EnrichedThing[]>([])
+const links = ref<api.ItemChannelLink[]>([])
+const ready = ref(false)
+const code = ref(props.textualDefinition || '')
+const parsedItems = ref<ExtendedFileFormatItem[]>([])
+const parseError = ref<string | null>(null)
+
+const { codeEditorType } = storeToRefs(uiOptionsStore)
+
+if (props.textualDefinition) {
+  codeEditorType.value = 'DSL'
+}
+
+// computed
+const mediaType = computed(() => SupportedMediaTypes.items[codeEditorType.value])
+
+// watchers
+watch(
+  code,
+  debounce(() => {
+    parseItems()
+  }, 300)
+)
+
+watch(codeEditorType, () => {
+  parseItems()
+})
+
+// methods
+const onPageAfterIn = () => {
+  load()
+  if (props.textualDefinition) parseItems()
+}
+
+const load = async () => {
+  const data = await Promise.all([api.getItems(), api.getThings(), api.getItemLinks()])
+  items.value = data[0]!
+  things.value = data[1]!
+  links.value = data[2]!
+  ready.value = true
+}
+
+const parseItems = () => {
+  const serverMediaType = mediaType.value.split('+')[0]
+
+  api
+    .parse(
+      {
+        body: code.value
+      },
+      {
+        headers: {
+          'Content-Type': serverMediaType,
+          accept: 'application/json'
+        }
+      }
+    )
+    .then((data) => {
+      parseError.value = null
+      parsedItems.value = data!.items.map((item) => {
+        const extendedItem: ExtendedFileFormatItem = { ...item }
+
+        extendedItem.existing = items.value.find((i) => i.name === item.name)
+        if (extendedItem.existing) {
+          extendedItem.existingLinks = links.value.filter((l) => l.itemName === item.name)
+        }
+
+        return extendedItem
       })
-    },
-    add () {
-      if (this.parsedItems.error) return
-      if (!this.parsedItems.length) return
-
-      if (this.parsedItems.some((i) => i.existing && i.existing.editable === false)) {
-        f7.dialog.alert('Some items are already existing are not editable. Look for red icons besides the names of affected items, remove them from your input and try again.')
+    })
+    .catch(async (err) => {
+      if (err instanceof ApiError) {
+        parseError.value = await err.response.text()
         return
       }
+      console.error('Unexpected error while parsing input', err)
+    })
+}
 
-      const itemsPayload = this.parsedItems.map((i) => {
-        return {
-          type: i.type,
-          name: i.name,
-          label: i.label,
-          category: i.category,
-          tags: i.tags,
-          groupNames: i.groupNames,
-          groupType: i.groupType,
-          function: i.function
+const add = () => {
+  if (parseError.value) return
+  if (!parsedItems.value.length) return
+
+  if (parsedItems.value.some((i) => i.existing && i.existing.editable === false)) {
+    f7.dialog.alert(
+      'Some items are already existing are not editable. Look for red icons besides the names of affected items, remove them from your input and try again.'
+    )
+    return
+  }
+
+  const itemsPayload = parsedItems.value.map((i) => {
+    return {
+      type: i.type,
+      name: i.name,
+      label: i.label,
+      category: i.category,
+      tags: i.tags,
+      groupNames: i.groupNames,
+      groupType: i.groupType,
+      function: i.function
+    }
+  })
+
+  let dialog = f7.dialog.progress('Creating/updating Items...')
+  api
+    .addOrUpdateItemsInRegistry({ body: itemsPayload })
+    .then(() => {
+      dialog.setText('Updating links and metadata...')
+      dialog.setProgress(50)
+
+      const linksAndMetadataPromises: Promise<any>[] = []
+      parsedItems.value.forEach((item) => {
+        if (item.existingLinks) {
+          // Remove existing links unless they're about to be modified
+          item.existingLinks.forEach((el) => {
+            if (item.channelLinks && item.channelLinks.some((l) => l.channelUID === el.channelUID)) return
+            linksAndMetadataPromises.push(api.unlinkItemFromChannel({ itemName: item.name, channelUID: el.channelUID }))
+          })
+        }
+
+        if (item.channelLinks) {
+          item.channelLinks.forEach((l) => {
+            linksAndMetadataPromises.push(
+              api.linkItemToChannel({
+                itemName: item.name,
+                channelUID: l.channelUID,
+                itemChannelLink: { ...l, itemName: item.name } as api.ItemChannelLink
+              })
+            )
+          })
+        }
+
+        if (item.metadata) {
+          Object.keys(item.metadata).forEach((namespace) => {
+            const m = item.metadata![namespace]!
+            linksAndMetadataPromises.push(api.addMetadataToItem({ itemName: item.name, namespace: namespace, metadata: m }))
+          })
         }
       })
 
-      let dialog = f7.dialog.progress('Creating/updating Items...')
-      this.$oh.api.put('/rest/items/', itemsPayload).then((data) => {
-        dialog.setText('Updating links and metadata...')
-        dialog.setProgress(50)
-
-        let linksAndMetadataPromises = []
-        this.parsedItems.forEach((item) => {
-          if (item.existingLinks) {
-            // remove existing links unless they're about to be recreated
-            item.existingLinks.forEach((el) => {
-              if (item.links && item.links.some((l) => l === el.channelUID || (l.value === el.channelUID))) return
-              console.debug(`DELETE /rest/links/${item.name}/${encodeURIComponent(el.channelUID)}`)
-              linksAndMetadataPromises.push(this.$oh.api.delete(`/rest/links/${item.name}/${encodeURIComponent(el.channelUID)}`))
-            })
-          }
-
-          if (item.links) {
-            item.links.forEach((l) => {
-              const channelUID = l.value || l
-              let config = {}
-              if (l.config) {
-                l.config.forEach((c) => { config[c.key] = c.value })
-              }
-              const url = `/rest/links/${item.name}/${encodeURIComponent(channelUID)}`
-              const linkPayload = {
-                itemName: item.name,
-                channelUID,
-                configuration: config
-              }
-              console.debug(`PUT ${url}: ` + JSON.stringify(linkPayload))
-              linksAndMetadataPromises.push(this.$oh.api.put(url, linkPayload))
-            })
-          }
-
-          if (item.metadata) {
-            item.metadata.forEach((m) => {
-              const value = m.value.value || m.value
-              let config = {}
-              if (m.value.config) {
-                m.value.config.forEach((c) => { config[c.key] = c.value })
-              }
-              const url = `/rest/items/${item.name}/metadata/${m.key}`
-              const metadataPayload = {
-                value,
-                config
-              }
-              console.debug(`PUT ${url}` + JSON.stringify(metadataPayload))
-              linksAndMetadataPromises.push(this.$oh.api.put(url, metadataPayload))
-            })
-          }
-        })
-
-        Promise.all(linksAndMetadataPromises).then((data) => {
+      Promise.all(linksAndMetadataPromises)
+        .then(() => {
           dialog.setProgress(100)
-          f7.toast.create({
-            text: 'Items created and linked',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+          showToast('Items created and linked')
           dialog.close()
-          this.f7router.back()
-        }).catch((err) => {
+          props.f7router.back()
+        })
+        .catch((err) => {
           dialog.close()
           console.error(err)
-          f7.dialog.alert('An error occurred while creating the links and metadata: ' + err)
+          f7.dialog.alert('An error occurred while creating the links and metadata: ' + err.message)
         })
-      }).catch((err) => {
-        dialog.close()
-        console.error(err)
-        f7.dialog.alert('An error occurred while creating the items: ' + err)
-      })
-    }
-  },
-  computed: {
-    parsedItems () {
-      try {
-        const parser = new Parser(Grammar.fromCompiled(grammar.default))
-        parser.feed(this.itemsDsl.trim().replace(/\t/g, ' '))
-        if (!parser.results.length) return { error: 'Unable to parse, check your input' }
-        // return parser.results[0].map((i) => i.name).join('\n')
-        return parser.results[0]
-          .filter((i) => i !== null)
-          .map((item) => {
-            if (item.metadata) {
-              item.links = item.metadata.filter((m) => m.key === 'channel').map((l) => l.value)
-              item.metadata = item.metadata.filter((m) => m.key !== 'channel')
-            }
-            item.existing = this.items.find((i) => i.name === item.name)
-            if (item.existing) {
-              item.existingLinks = this.links.filter((l) => l.itemName === item.name)
-            }
-            return item
-          })
-      } catch (e) {
-        return { error: e }
-      }
-    }
-  }
+    })
+    .catch((err) => {
+      dialog.close()
+      console.error(err)
+      f7.dialog.alert('An error occurred while creating the items: ' + err.message)
+    })
 }
 </script>

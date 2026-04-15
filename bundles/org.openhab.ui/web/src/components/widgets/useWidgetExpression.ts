@@ -21,14 +21,15 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { i18n } from '@/js/i18n.ts'
 
-import type { WidgetContext } from './types'
-import type { UIComponentProps } from '@/types/openhab'
+import type { VariableScopeName, WidgetContext } from './types'
+import * as api from '@/api'
 
 expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 
 addUnaryOp('@', (itemName: string | undefined): string => {
   if (itemName === undefined) return '-'
   const item = useStatesStore().trackedItems[itemName]
+  if (item === undefined) return '-'
   return (item.displayState !== undefined ? item.displayState : item.state) ?? '-'
 })
 addUnaryOp('@@', (itemName: string | undefined): string => {
@@ -49,7 +50,7 @@ dayjs.extend(isYesterday)
 dayjs.extend(isTomorrow)
 
 interface ExpressionAstCache {
-  [key: string]: any
+  [key: string]: parse.Expression
 }
 
 interface ScreenInfo {
@@ -65,6 +66,13 @@ interface ScreenInfo {
   appHeight: number
 }
 
+export type EvaluateExpressionFn = <T = unknown>(
+  key: string,
+  value: T,
+  context?: WidgetContext,
+  props?: Record<string, unknown>
+) => T | Error
+
 /**
  * Composable providing the functionality to evaluate widget expressions.
  *
@@ -77,7 +85,7 @@ interface ScreenInfo {
  *
  * @param properties
  */
-export function useWidgetExpression(properties: { context?: WidgetContext; props?: UIComponentProps } = {}) {
+export function useWidgetExpression(properties: { context?: WidgetContext; props?: api.ConfigDescription } = {}) {
   // imports
   const userStore = useUserStore()
   const uiOptionsStore = useUIOptionsStore()
@@ -91,8 +99,8 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
   const viewAreaHeight = inject('viewAreaHeight', null) as Ref<number> | null
 
   // computed
-  const appWidth = computed(() => global?.$f7dim.width ?? 0)
-  const appHeight = computed(() => global?.$f7dim.height ?? 0)
+  const appWidth = computed(() => (global?.$f7dim as { width: number }).width ?? 0)
+  const appHeight = computed(() => (global?.$f7dim as { height: number }).height ?? 0)
 
   const screenInfo = computed<ScreenInfo>(() => {
     return {
@@ -111,7 +119,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
 
   // methods
   function getAllVars(context: WidgetContext): Record<string, any> {
-    const vars: Record<string, any> = {}
+    const vars: Record<string, unknown> = {}
     if (context.vars) {
       for (const varKey in context.vars) {
         vars[varKey] = context.vars[varKey]
@@ -120,7 +128,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
     if (context.varScope) {
       const scopeIDs = context.varScope.split('-')
       for (let scope_idx = 1; scope_idx < scopeIDs.length; scope_idx++) {
-        const scopeKey = scopeIDs.slice(0, scope_idx + 1).join('-')
+        const scopeKey = scopeIDs.slice(0, scope_idx + 1).join('-') as VariableScopeName
         if (context.ctxVars?.[scopeKey]) {
           for (const varKey in context.ctxVars[scopeKey]) {
             vars[varKey] = context.ctxVars[scopeKey][varKey]
@@ -132,19 +140,25 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
   }
 
   /**
-   * Evaluates a widget expression.
+   * Evaluates widget expression(s).
    * If widget context and props were not passed to the composable at instantiation, they have to be passed to the function.
    *
+   * @typeParam `T` the type of the input value
    * @param key the key of the expression (used for abstract syntax tree caching)
    * @param value the expression to evaluate
    * @param context the context to evaluate the expression in (not required if already provided as composable property)
    * @param props the props to make available to the expression (not required if already provided as composable property)
-   * @returns the result of the expression evaluation
+   * @returns `T` with evaluation result(s) in place of widget expression(s)
    */
-  function evaluateExpression(key: string, value: any, context?: WidgetContext, props?: UIComponentProps): any {
-    if (value === null) return null
+  const evaluateExpression: EvaluateExpressionFn = <T = unknown>(
+    key: string,
+    value: T,
+    context?: WidgetContext,
+    props?: Record<string, unknown>
+  ): T | Error => {
+    if (value === null) return null as T
     const ctx = context || properties.context
-    if (!ctx) return null
+    if (!ctx) return new Error('Widget context not provided')
     if (typeof value === 'string' && value.startsWith('=')) {
       try {
         // we cache the parsed abstract tree to prevent it from being parsed again at runtime
@@ -171,22 +185,23 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
           user: userStore.user,
           translation: i18n.global.t,
           t: i18n.global.t
-        })
+        }) as T
       } catch (e) {
-        return e
+        return e as Error
       }
     } else if (typeof value === 'object' && !Array.isArray(value)) {
       const evalObj: Record<string, any> = {}
-      for (const objKey in value) {
-        evalObj[objKey] = evaluateExpression(key + '.' + objKey, value[objKey], ctx, props || properties?.props)
+      const valueObj = value as Record<string, unknown>
+      for (const objKey in valueObj) {
+        evalObj[objKey] = evaluateExpression(key + '.' + objKey, valueObj[objKey], ctx, props || properties?.props)
       }
-      return evalObj
+      return evalObj as T
     } else if (typeof value === 'object' && Array.isArray(value)) {
-      const evalArr: any[] = []
+      const evalArr: unknown[] = []
       for (let i = 0; i < value.length; i++) {
         evalArr[i] = evaluateExpression(key + '.' + i, value[i], ctx, props || properties?.props)
       }
-      return evalArr
+      return evalArr as T
     } else {
       return value
     }

@@ -3,7 +3,7 @@
     <f7-navbar>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
-        :subtitle="(!createMode) ? mode : undefined"
+        :subtitle="!createMode ? mode : undefined"
         :editable
         :save-link="createMode ? 'Create' : `Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="createMode ? createScript() : save()"
@@ -13,8 +13,8 @@
     <f7-toolbar v-if="ready && !createMode" bottom>
       <span class="display-flex flex-direction-row align-items-center">
         <f7-link
-          :icon-color="(rule.status.statusDetail === 'DISABLED') ? 'orange' : 'gray'"
-          :tooltip="((rule.status.statusDetail === 'DISABLED') ? 'Enable' : 'Disable') + (($device.desktop) ? ' (Ctrl-D)' : '')"
+          :icon-color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+          :tooltip="(rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable') + ($device.desktop ? ' (Ctrl-D)' : '')"
           icon-ios="f7:pause_circle"
           icon-md="f7:pause_circle"
           icon-aurora="f7:pause_circle"
@@ -22,25 +22,39 @@
           @click="toggleDisabled" />
         <f7-link
           v-if="!theme.aurora"
-          :tooltip="isMimeTypeAvailable(mode) ? ('Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')) : (isScriptRule ? 'Script' : 'Rule') + ' cannot be run, scripting addon for ' + mimeTypeDescription(mode) + ' is not installed'"
+          :tooltip="
+            isMimeTypeAvailable(mode)
+              ? 'Run Now' + ($device.desktop ? ' (Ctrl-R)' : '')
+              : (isScriptRule ? 'Script' : 'Rule') +
+                ' cannot be run, scripting addon for ' +
+                mimeTypeDescription(mode) +
+                ' is not installed'
+          "
           icon-ios="f7:play_round"
           icon-md="f7:play_round"
           icon-aurora="f7:play_round"
-          :color="((rule.status.status === 'IDLE') && isMimeTypeAvailable(mode)) ? 'blue' : 'gray'"
+          :color="rule.status.status === 'IDLE' && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
           @click="runNow" />
         <f7-link
           v-else
           class="margin-left"
-          :text="'Run Now' + (($device.desktop) ? ' (Ctrl-R)' : '')"
-          :tooltip="!isMimeTypeAvailable(mode) ? (isScriptRule ? 'Script' : 'Rule') + ' cannot be run, scripting addon for ' + mimeTypeDescription(mode) + ' is not installed' : undefined"
+          :text="'Run Now' + ($device.desktop ? ' (Ctrl-R)' : '')"
+          :tooltip="
+            !isMimeTypeAvailable(mode)
+              ? (isScriptRule ? 'Script' : 'Rule') +
+                ' cannot be run, scripting addon for ' +
+                mimeTypeDescription(mode) +
+                ' is not installed'
+              : undefined
+          "
           icon-ios="f7:play_round"
           icon-md="f7:play_round"
           icon-aurora="f7:play_round"
-          :color="(rule.status.status === 'IDLE') && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
+          :color="rule.status.status === 'IDLE' && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
           @click="runNow" />
         <f7-chip
-          class="margin-left"
           v-if="currentModule && currentModule.configuration.script"
+          class="margin-left"
           :text="ruleStatusBadgeText(rule.status)"
           :color="ruleStatusBadgeColor(rule.status)"
           :tooltip="rule.status.description" />
@@ -54,7 +68,7 @@
                 v-for="renderer in blocklyRenderers"
                 :key="renderer"
                 :title="renderer"
-                style="text-transform:capitalize"
+                style="text-transform: capitalize"
                 color="blue"
                 radio
                 :checked="renderer === blocklyRenderer"
@@ -82,7 +96,7 @@
               outline
               small
               icon-f7="paintbrush"
-              :icon-size="(theme.aurora) ? 20 : 22"
+              :icon-size="theme.aurora ? 20 : 22"
               class="no-ripple"
               style="margin-right: 5px"
               tooltip="Block Style"
@@ -93,7 +107,7 @@
               small
               :active="blocklyShowLabels"
               icon-f7="square_on_circle"
-              :icon-size="(theme.aurora) ? 20 : 22"
+              :icon-size="theme.aurora ? 20 : 22"
               class="no-ripple"
               style="margin-right: 5px"
               @click="setBlocklyShowLabels(!blocklyShowLabels)"
@@ -104,7 +118,7 @@
             outline
             small
             icon-f7="ellipsis_vertical"
-            :icon-size="(theme.aurora) ? 20 : 22"
+            :icon-size="theme.aurora ? 20 : 22"
             class="no-ripple"
             style="margin-right: 5px"
             tooltip="Blockly Settings"
@@ -115,7 +129,7 @@
               small
               :active="!blocklyCodePreview"
               icon-f7="ticket"
-              :icon-size="(theme.aurora) ? 20 : 22"
+              :icon-size="theme.aurora ? 20 : 22"
               class="no-ripple"
               @click="blocklyCodePreview = false"
               tooltip="Show blocks" />
@@ -124,7 +138,7 @@
               small
               :active="blocklyCodePreview"
               icon-f7="doc_text"
-              :icon-size="(theme.aurora) ? 20 : 22"
+              :icon-size="theme.aurora ? 20 : 22"
               class="no-ripple"
               @click="showBlocklyCode"
               tooltip="Show generated code" />
@@ -152,13 +166,13 @@
 
     <template v-if="ready">
       <f7-icon
-        v-if="!createMode && (!isBlockly && !editable) || (blocklyCodePreview && isBlockly)"
+        v-if="(!createMode && !isBlockly && !editable) || (blocklyCodePreview && isBlockly)"
         f7="lock"
         class="float-right margin"
-        style="opacity:0.5; z-index: 4000; user-select: none;"
+        style="opacity: 0.5; z-index: 4000; user-select: none"
         size="50"
         color="gray"
-        :tooltip="(isBlockly) ? 'Cannot edit the code generated by Blockly' : 'This code is not editable'" />
+        :tooltip="isBlockly ? 'Cannot edit the code generated by Blockly' : 'This code is not editable'" />
       <editor
         v-if="!createMode && (!isBlockly || blocklyCodePreview)"
         class="rule-script-editor"
@@ -166,16 +180,17 @@
         :value="script"
         @input="onEditorInput"
         :read-only="isBlockly || !editable"
-        :tern-autocompletion-hook="true" />
+        :tern-autocompletion-hook="true"
+        @save="createMode ? createScript() : save()" />
       <blockly-editor
-        ref="blocklyEditor"
         v-else-if="!createMode && isBlockly"
+        ref="blocklyEditor"
         :blocks="currentModule.configuration.blockSource"
         @change="scriptDirty = true"
         @mounted="onBlocklyMounted"
         @ready="onBlocklyReady" />
       <script-general-settings v-else-if="createMode" :createMode="true" :rule="rule" />
-      <f7-block class="block-narrow" v-if="createMode && !ruleCopy">
+      <f7-block v-if="createMode && !ruleCopy" class="block-narrow">
         <f7-col>
           <f7-block-title medium class="margin-left margin-bottom"> Scripting Method </f7-block-title>
           <f7-list media-list>
@@ -197,13 +212,13 @@
           <f7-block-footer class="margin-vertical margin-left"> or choose the scripting language: </f7-block-footer>
           <f7-list media-list>
             <f7-list-item
+              v-for="language in languages"
               media-item
               radio
               radio-icon="start"
               :value="mode"
               :checked="mode === language.contentType ? true : null"
               @change="mode = language.contentType"
-              v-for="language in languages"
               :key="language.contentType"
               :title="language.name"
               :after="language.version"
@@ -254,7 +269,7 @@
             :mode="mode"
             :languages="languages"
             @new-language="changeLanguage" />
-          <f7-block class="block-narrow" v-if="editable && isScriptRule">
+          <f7-block v-if="editable && isScriptRule" class="block-narrow">
             <f7-col>
               <f7-list>
                 <f7-list-button color="blue" @click="duplicateRule"> Duplicate Script </f7-list-button>
@@ -289,13 +304,16 @@ import DirtyMixin from '../../dirty-mixin'
 import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
   components: {
     ScriptGeneralSettings,
-    'editor': defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
-    'blockly-editor': defineAsyncComponent(() => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue'))
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
+    'blockly-editor': defineAsyncComponent(
+      () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue')
+    )
   },
   props: {
     ruleId: String,
@@ -305,10 +323,10 @@ export default {
     f7router: Object,
     f7route: Object
   },
-  setup () {
+  setup() {
     return { theme }
   },
-  data () {
+  data() {
     return {
       ready: false,
       loading: false,
@@ -342,7 +360,7 @@ export default {
     }
   },
   computed: {
-    pageTitle () {
+    pageTitle() {
       if (this.createMode) return 'Create Script'
       if (this.isScriptRule) return this.rule.name
       if (this.currentModule) {
@@ -361,13 +379,13 @@ export default {
       }
       return this.editable ? 'Edit Script' : 'View Script'
     },
-    editable () {
+    editable() {
       return this.rule && this.rule.editable !== false
     },
-    isBlockly () {
+    isBlockly() {
       return this.currentModule?.configuration?.blockSource?.length > 0
     },
-    isJsAvailable () {
+    isJsAvailable() {
       return this.isMimeTypeAvailable(this.GRAALJS_MIME_TYPE)
     },
     ...mapStores(useRuntimeStore)
@@ -376,23 +394,26 @@ export default {
     // handle the script if not in Blockly
     script: {
       handler: function () {
-        if (!this.isBlockly && !this.loading) { // ignore changes during loading
-          this.scriptDirty = (this.script !== this.savedScript)
+        if (!this.isBlockly && !this.loading) {
+          // ignore changes during loading
+          this.scriptDirty = this.script !== this.savedScript
         }
       }
     },
     // handle mode change
     mode: {
       handler: function () {
-        if (!this.loading) { // ignore changes during loading
-          this.modeDirty = (this.mode !== this.savedMode)
+        if (!this.loading) {
+          // ignore changes during loading
+          this.modeDirty = this.mode !== this.savedMode
         }
       }
     },
     // handle script rule title, description etc.
     rule: {
       handler: function () {
-        if (this.isScriptRule && !this.loading) { // ignore changes during loading
+        if (this.isScriptRule && !this.loading) {
+          // ignore changes during loading
           // create rule object clone in order to be able to delete status part
           // which can change from eventsource but doesn't mean a rule modification
           let ruleClone = cloneDeep(this.rule)
@@ -407,23 +428,24 @@ export default {
     // handle script action module type, label, description ect.
     currentModule: {
       handler: function () {
-        if (this.savedCurrentModule && !this.loading) { // ignore changes during loading
+        if (this.savedCurrentModule && !this.loading) {
+          // ignore changes during loading
           this.currentModuleDirty = !fastDeepEqual(this.currentModule, this.savedCurrentModule)
         }
       },
       deep: true
     },
     // watch dirty vars
-    scriptDirty () {
+    scriptDirty() {
       this.calculateDirty()
     },
-    modeDirty () {
+    modeDirty() {
       this.calculateDirty()
     },
-    ruleDirty () {
+    ruleDirty() {
       this.calculateDirty()
     },
-    currentModuleDirty () {
+    currentModuleDirty() {
       this.calculateDirty()
     }
   },
@@ -431,19 +453,19 @@ export default {
     /**
      * Calculates the value of `this.dirty` from the individual dirty states.
      */
-    calculateDirty () {
+    calculateDirty() {
       this.dirty = this.scriptDirty || this.modeDirty || this.ruleDirty || this.currentModuleDirty
     },
     /**
      * Resets `this.dirty` and all individual dirty states to `false`.
      */
-    resetDirty () {
+    resetDirty() {
       this.dirty = this.scriptDirty = this.modeDirty = this.ruleDirty = this.currentModuleDirty = false
     },
     /**
      * Stores the current state of tracked objects as the saved state of those, e.g. `this.rule` is cloned to `this.savedRule`.
      */
-    initDirty () {
+    initDirty() {
       this.savedRule = cloneDeep(this.rule)
       if (this.currentModule) {
         this.savedCurrentModule = cloneDeep(this.currentModule)
@@ -451,7 +473,7 @@ export default {
         this.savedScript = this.script = this.currentModule.configuration.script || ''
       }
     },
-    onPageAfterIn () {
+    onPageAfterIn() {
       if (this.ready) return
       if (this.createMode) {
         this.initializeNewScript()
@@ -462,14 +484,14 @@ export default {
       }
       this.load()
     },
-    onPageBeforeOut () {
+    onPageBeforeOut() {
       this.$refs.detailsSheet.$el.f7Modal.close()
       this.stopEventSource()
       if (window) {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    initializeNewScript () {
+    initializeNewScript() {
       this.rule = this.ruleCopy || {
         uid: f7.utils.id(),
         name: '',
@@ -486,7 +508,7 @@ export default {
         this.ready = true
       })
     },
-    createScript () {
+    createScript() {
       if (!this.rule.uid) {
         f7.dialog.alert('Please give an ID to the script')
         return
@@ -514,46 +536,44 @@ export default {
 
       this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json').then(() => {
         this.resetDirty()
-        f7.toast.create({
-          text: 'Script created',
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast('Script created')
         this.f7router.navigate(this.f7route.url.replace(/(\/add)|(\/duplicate)/, '/' + this.rule.uid), { reloadCurrent: true })
       })
     },
-    isMimeTypeAvailable (mimeType) {
+    isMimeTypeAvailable(mimeType) {
       return this.languages.map((l) => l.contentType).includes(mimeType)
     },
-    mimeTypeDescription (mode) {
+    mimeTypeDescription(mode) {
       return mode ? AUTOMATION_LANGUAGES[mode]?.name || mode : mode
     },
-    documentationLink (mode) {
+    documentationLink(mode) {
       return mode ? AUTOMATION_LANGUAGES[mode]?.documentationLink : mode
     },
     /**
      * Load the script module type, i.e. the available script languages
      * @returns {Promise}
      */
-    async loadScriptModuleType () {
-      return this.$oh.api.get('/rest/module-types/' + (this.currentModule?.type ? this.currentModule.type : 'script.ScriptAction')).then((data) => {
-        this.scriptModuleType = data
-        let languages = this.scriptModuleType.configDescriptions
-          .find((c) => c.name === 'type').options
-          .map((l) => {
-            return {
-              contentType: l.value,
-              name: l.label.split(' (')[0],
-              version: l.label.split(' (')[1].replace(')', '')
-            }
-          })
-        if (this.isBlockly) languages = languages.filter((l) => l.contentType === this.GRAALJS_MIME_TYPE)
-        this.languages = languages
+    async loadScriptModuleType() {
+      return this.$oh.api
+        .get('/rest/module-types/' + (this.currentModule?.type ? this.currentModule.type : 'script.ScriptAction'))
+        .then((data) => {
+          this.scriptModuleType = data
+          let languages = this.scriptModuleType.configDescriptions
+            .find((c) => c.name === 'type')
+            .options.map((l) => {
+              return {
+                contentType: l.value,
+                name: l.label.split(' (')[0],
+                version: l.label.split(' (')[1].replace(')', '')
+              }
+            })
+          if (this.isBlockly) languages = languages.filter((l) => l.contentType === this.GRAALJS_MIME_TYPE)
+          this.languages = languages
 
-        return Promise.resolve()
-      })
+          return Promise.resolve()
+        })
     },
-    load () {
+    load() {
       if (this.loading) return
       this.loading = true
 
@@ -585,14 +605,10 @@ export default {
         })
       })
     },
-    save (noToast) {
+    save(noToast) {
       if (!this.editable) return
       if (this.rule.status.status === 'RUNNING') {
-        f7.toast.create({
-          text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be updated while running, please wait!`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast(`${this.isScriptRule ? 'Script' : 'Rule'} cannot be updated while running, please wait!`)
         return Promise.reject('saveWhileRunningRejected')
       }
       if (this.isBlockly) {
@@ -601,13 +617,15 @@ export default {
             this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
             this.script = this.$refs.blocklyEditor.getCode()
           } else {
-            f7.toast.create({
-              text: 'Running / saving is only supported in block mode!<br>Please switch back from code preview to block editor.',
-              position: 'center',
-              icon: '<i class="f7-icons">exclamationmark_bubble</i>',
-              destroyOnClose: true,
-              closeTimeout: 3000
-            }).open()
+            f7.toast
+              .create({
+                text: 'Running / saving is only supported in block mode!<br>Please switch back from code preview to block editor.',
+                position: 'center',
+                icon: '<i class="f7-icons">exclamationmark_bubble</i>',
+                destroyOnClose: true,
+                closeTimeout: 3000
+              })
+              .open()
             return Promise.reject('saveOnCodePreviewRejected')
           }
         } catch (e) {
@@ -617,82 +635,72 @@ export default {
       }
       this.currentModule.configuration.script = this.script
       this.currentModule.configuration.type = this.mode
-      return this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule).then((data) => {
-        this.initDirty()
-        this.resetDirty()
-        if (!noToast) {
-          f7.toast.create({
-            text: (this.isScriptRule ? 'Script' : 'Rule') + ' updated',
-            destroyOnClose: true,
-            closeTimeout: 2000
-          }).open()
+      return this.$oh.api
+        .put('/rest/rules/' + this.rule.uid, this.rule)
+        .then((data) => {
+          this.initDirty()
+          this.resetDirty()
+          if (!noToast) {
+            showToast((this.isScriptRule ? 'Script' : 'Rule') + ' updated')
+          }
+        })
+        .catch((err) => {
+          showToast('Error while saving: ' + err)
+        })
+    },
+    onSave() {
+      this.save().catch((e) => {
+        if (!['saveWhileRunningRejected', 'saveOnCodePreviewRejected'].includes(e)) {
+          throw e
         }
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while saving: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
       })
     },
-    onSave () {
-      this.save().catch((e) => { if (!['saveWhileRunningRejected', 'saveOnCodePreviewRejected'].includes(e)) { throw e } })
-    },
-    changeLanguage (contentType) {
+    changeLanguage(contentType) {
       if (this.createMode) return
       this.mode = contentType
     },
-    toggleDisabled () {
+    toggleDisabled() {
       if (this.createMode) return
-      const enable = (this.rule.status.statusDetail === 'DISABLED')
-      this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString()).then((data) => {
-        f7.toast.create({
-          text: (this.isScriptRule ? 'Script' : 'Rule') + (enable ? ' enabled' : ' disabled'),
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      }).catch((err) => {
-        f7.toast.create({
-          text: 'Error while disabling or enabling: ' + err,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
-      })
+      const enable = this.rule.status.statusDetail === 'DISABLED'
+      this.$oh.api
+        .postPlain('/rest/rules/' + this.rule.uid + '/enable', enable.toString())
+        .then((data) => {
+          showToast((this.isScriptRule ? 'Script' : 'Rule') + (enable ? ' enabled' : ' disabled'))
+        })
+        .catch((err) => {
+          showToast('Error while disabling or enabling: ' + err)
+        })
     },
-    runNow () {
+    runNow() {
       if (this.createMode) return
       if (!this.isMimeTypeAvailable(this.mode)) {
-        return f7.toast.create({
-          text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run, scripting addon for ${this.mimeTypeDescription(this.mode)} is not installed`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast(
+          `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run, scripting add-on for ${this.mimeTypeDescription(this.mode)} is not installed`
+        )
       }
       if (this.rule.status.status === 'RUNNING' || this.rule.status.status === 'UNINITIALIZED') {
-        return f7.toast.create({
-          text: `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run ${(this.rule.status.status === 'RUNNING') ? 'while already running, please wait' : 'if it is uninitialized'}!`,
-          destroyOnClose: true,
-          closeTimeout: 2000
-        }).open()
+        showToast(
+          `${this.isScriptRule ? 'Script' : 'Rule'} cannot be run ${this.rule.status.status === 'RUNNING' ? 'while already running, please wait' : 'if it is uninitialized'}!`
+        )
+        return
       }
 
       const run = (saveBefore) => {
         const savePromise = saveBefore ? this.save(true) : Promise.resolve()
-        savePromise.then(() => {
-          this.$oh.api.postPlain('/rest/rules/' + this.rule.uid + '/runnow', '').then(
-            f7.toast.create({
-              text: 'Running ' + (this.isScriptRule ? 'script' : 'rule'),
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
-          ).catch((err) => {
-            f7.toast.create({
-              text: 'Error while running: ' + err,
-              destroyOnClose: true,
-              closeTimeout: 2000
-            }).open()
+        savePromise
+          .then(() => {
+            this.$oh.api
+              .postPlain('/rest/rules/' + this.rule.uid + '/runnow', '')
+              .then(showToast('Running ' + (this.isScriptRule ? 'script' : 'rule')))
+              .catch((err) => {
+                showToast('Error while running script: ' + err)
+              })
           })
-        }).catch((e) => { if (e !== 'saveOnCodePreviewRejected') { throw (e) } })
+          .catch((e) => {
+            if (e !== 'saveOnCodePreviewRejected') {
+              throw e
+            }
+          })
       }
 
       if (this.editable && this.dirty) {
@@ -706,29 +714,28 @@ export default {
         run(false)
       }
     },
-    duplicateRule () {
+    duplicateRule() {
       let ruleClone = cloneDeep(this.rule)
-      this.f7router.navigate({
-        url: '/settings/scripts/duplicate'
-      }, {
-        props: {
-          ruleCopy: ruleClone
-        }
-      })
-    },
-    deleteRule () {
-      f7.dialog.confirm(
-        `Are you sure you want to delete ${this.rule.name}?`,
-        'Delete ' + (this.isScriptRule ? 'Script' : 'Rule'),
-        () => {
-          this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
-            this.dirty = false
-            this.f7router.back('/settings/scripts/', { force: true })
-          })
+      this.f7router.navigate(
+        {
+          url: '/settings/scripts/duplicate'
+        },
+        {
+          props: {
+            ruleCopy: ruleClone
+          }
         }
       )
     },
-    onBlocklyMounted () {
+    deleteRule() {
+      f7.dialog.confirm(`Are you sure you want to delete ${this.rule.name}?`, 'Delete ' + (this.isScriptRule ? 'Script' : 'Rule'), () => {
+        this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
+          this.dirty = false
+          this.f7router.back('/settings/scripts/', { force: true })
+        })
+      })
+    },
+    onBlocklyMounted() {
       this.blocklyRenderer = this.$refs.blocklyEditor.getCurrentRenderer()
       this.blocklyRenderers = this.$refs.blocklyEditor.getRenderers()
       if (useRuntimeStore().pagePath.indexOf('?blockly') < 0) {
@@ -736,7 +743,7 @@ export default {
         useRuntimeStore().pagePath = useRuntimeStore().pagePath + '?blockly'
       }
     },
-    onBlocklyReady () {
+    onBlocklyReady() {
       if (!this.isBlockly) return
       let message = ''
 
@@ -750,7 +757,7 @@ export default {
           // Get the new code, and if it is different from stored code, it was created with an older version
           try {
             const newScript = this.$refs.blocklyEditor.getCode()
-            if (newScript && (this.script !== newScript)) {
+            if (newScript && this.script !== newScript) {
               this.scriptDirty = true
               oldRule = true
             }
@@ -762,38 +769,39 @@ export default {
       }
 
       // Check if JS Scripting is installed
-      if (!this.isJsAvailable) message += (message ? ' and' : 'You do not have JS Scripting installed. Please') + ' install the JS Scripting addon'
+      if (!this.isJsAvailable)
+        message += (message ? ' and' : 'You do not have JS Scripting installed. Please') + ' install the JS Scripting addon'
 
       if (message) f7.dialog.alert(message + '.')
     },
-    setBlocklyRenderer (newRenderer) {
+    setBlocklyRenderer(newRenderer) {
       this.blocklyRenderer = newRenderer
       this.$refs.blocklyEditor.changeRenderer(this.blocklyRenderer)
     },
-    setBlocklyShowLabels (showLabels) {
+    setBlocklyShowLabels(showLabels) {
       this.blocklyShowLabels = showLabels
       this.$refs.blocklyEditor.showHideLabels(this.blocklyShowLabels)
     },
-    showBlocklyCode () {
+    showBlocklyCode() {
       if (this.blocklyCodePreview) return
 
       try {
         this.currentModule.configuration.blockSource = this.$refs.blocklyEditor.getBlocks()
         this.script = this.$refs.blocklyEditor.getCode()
-        this.currentModule.configuration.blockSource = (this.script) ? this.$refs.blocklyEditor.getBlocks() : undefined
+        this.currentModule.configuration.blockSource = this.script ? this.$refs.blocklyEditor.getBlocks() : undefined
         if (this.isBlockly) this.blocklyCodePreview = true
       } catch (e) {
         f7.dialog.alert(e)
       }
     },
-    convertToBlockly () {
+    convertToBlockly() {
       if (this.script || this.isBlockly || this.mode !== this.GRAALJS_MIME_TYPE) return
       this.currentModule.configuration.blockSource = '<xml xmlns="https://developers.google.com/blockly/xml"></xml>'
     },
-    onEditorInput (value) {
+    onEditorInput(value) {
       this.script = value
     },
-    startEventSource () {
+    startEventSource() {
       this.eventSource = this.$oh.sse.connect('/rest/events?topics=openhab/rules/' + this.ruleId + '/*', null, (event) => {
         const topicParts = event.topic.split('/')
         switch (topicParts[3]) {
@@ -809,11 +817,11 @@ export default {
         }
       })
     },
-    stopEventSource () {
+    stopEventSource() {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    keyDown (ev) {
+    keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
           case 66:
@@ -848,7 +856,7 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.GRAALJS_MIME_TYPE = 'application/javascript'
   }
 }

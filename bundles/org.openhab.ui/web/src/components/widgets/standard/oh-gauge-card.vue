@@ -4,11 +4,11 @@
       <f7-card-content
         :style="config.contentStyle"
         :class="[
-                         ...(Array.isArray(config.contentClass) ? config.contentClass : []),
-                         'oh-gauge-card',
-                         'display-flex',
-                         'justify-content-center',
-                       ]">
+          ...(Array.isArray(config.contentClass) ? config.contentClass : []),
+          'oh-gauge-card',
+          'display-flex',
+          'justify-content-center'
+        ]">
         <f7-link v-if="hasAction" class="oh-gauge-link" @click="performAction">
           <oh-gauge :context="cardChildContext(context.component)" />
         </f7-link>
@@ -20,26 +20,31 @@
 
 <style lang="stylus">
 .oh-gauge-link
-  position absolute
-  top 0
-  left 0
   width 100%
   height 100%
 </style>
 
 <script>
-import mixin from '../widget-mixin'
-import { actionsMixin } from '@/components/widgets/widget-actions'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhGauge from '../system/oh-gauge.vue'
 import { OhGaugeCardDefinition } from '@/assets/definitions/widgets/standard/cards'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  mixins: [mixin, actionsMixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhGauge
   },
-  widget: OhGaugeCardDefinition
+  widget: OhGaugeCardDefinition,
+  setup(props) {
+    const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
+    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    return { config, cardChildContext, hasAction, performAction }
+  }
 }
 </script>

@@ -9,7 +9,8 @@
 </template>
 
 <script>
-import mixin from '../../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhListItem from './oh-list-item.vue'
 import { OhRollershutterItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
 
@@ -17,10 +18,16 @@ export default {
   components: {
     OhListItem
   },
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhRollershutterItemDefinition,
+  setup(props) {
+    const { config, childContext } = useWidgetContext(computed(() => props.context))
+    return { config, childContext }
+  },
   computed: {
-    afterComponent () {
+    afterComponent() {
       return {
         component: 'oh-rollershutter',
         config: this.config

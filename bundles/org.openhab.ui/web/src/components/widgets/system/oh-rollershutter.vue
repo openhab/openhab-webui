@@ -40,44 +40,51 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhRollershutterDefinition } from '@/assets/definitions/widgets/system'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhRollershutterDefinition,
-  mounted () {
+  setup(props) {
+    const { config } = useWidgetContext(computed(() => props.context))
+    return { config }
+  },
+  mounted() {
     delete this.config.value
   },
   computed: {
-    state () {
+    state() {
       return this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
     },
-    upIcon (theme) {
-      const dir = (this.config.vertical) ? 'left' : 'up'
+    upIcon(theme) {
+      const dir = this.config.vertical ? 'left' : 'up'
       const style = this.config.dirIconsStyle || 'arrowtriangle_{dir}'
       return 'f7:' + style.replace('{dir}', dir)
     },
-    downIcon (theme) {
-      const dir = (this.config.vertical) ? 'right' : 'down'
+    downIcon(theme) {
+      const dir = this.config.vertical ? 'right' : 'down'
       const style = this.config.dirIconsStyle || 'arrowtriangle_{dir}'
       return 'f7:' + style.replace('{dir}', dir)
     },
-    stopIcon (theme) {
+    stopIcon(theme) {
       const style = this.config.stopIconStyle || 'stop'
       return 'f7:' + style
     }
   },
   methods: {
-    up (value) {
+    up(value) {
       useStatesStore().sendCommand(this.config.item, 'UP')
     },
-    down (value) {
+    down(value) {
       useStatesStore().sendCommand(this.config.item, 'DOWN')
     },
-    stop (value) {
+    stop(value) {
       useStatesStore().sendCommand(this.config.item, 'STOP')
     }
   }

@@ -22,7 +22,8 @@
 </style>
 
 <script>
-import mixin from '../../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhListItem from './oh-list-item.vue'
 import { OhSliderItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
 
@@ -30,13 +31,21 @@ export default {
   components: {
     OhListItem
   },
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   widget: OhSliderItemDefinition,
+  setup(props) {
+    const { config, childContext } = useWidgetContext(computed(() => props.context))
+    return { config, childContext }
+  },
   computed: {
-    value () {
-      return (this.config?.ignoreDisplayState === true) ? this.context.store[this.config.item].state : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
+    value() {
+      return this.config?.ignoreDisplayState === true
+        ? this.context.store[this.config.item].state
+        : this.context.store[this.config.item].displayState || this.context.store[this.config.item].state
     },
-    sliderComponent () {
+    sliderComponent() {
       return {
         component: 'oh-slider',
         config: this.config

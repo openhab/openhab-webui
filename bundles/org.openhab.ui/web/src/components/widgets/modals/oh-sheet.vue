@@ -2,14 +2,14 @@
   <f7-sheet :style="modalStyle">
     <f7-toolbar>
       <div class="left padding-left">
-        {{ (context.component.config && context.component.config.label) ? context.component.config.label : '' }}
+        {{ context.component.config && context.component.config.label ? context.component.config.label : '' }}
       </div>
       <div class="right">
         <f7-link sheet-close> Close </f7-link>
       </div>
     </f7-toolbar>
 
-    <component v-if="visibleToCurrentUser" :is="componentType" :context="context" :class="{ notready: !ready }" />
+    <component :is="componentType" v-if="visibleToCurrentUser" :context="context" :class="{ notready: !ready }" />
     <empty-state-placeholder
       v-if="page && !visibleToCurrentUser"
       icon="multiply_circle_fill"
@@ -26,7 +26,7 @@
 <script>
 import modal from './modal-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import { useViewArea } from '@/composables/useViewArea.ts'
+import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 export default {
   mixins: [modal],
@@ -38,7 +38,7 @@ export default {
     el: Object,
     modalConfig: Object
   },
-  setup () {
+  setup() {
     useViewArea()
   }
 }

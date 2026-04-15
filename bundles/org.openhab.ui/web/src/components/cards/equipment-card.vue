@@ -1,11 +1,9 @@
 <template>
   <model-card type="equipment" :context="context" :element="element" header-height="150px">
     <template #glance>
-      <div
-        v-if="context && context.component.slots && context.component.slots.glance"
-        class="display-flex flex-direction-column align-items-flex-start">
+      <div v-if="'glance' in slots" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component
-          v-for="(slotComponent, idx) in context.component.slots.glance"
+          v-for="(slotComponent, idx) in slots.glance"
           :context="childContext(slotComponent)"
           :key="'glance-' + idx" />
       </div>
@@ -28,7 +26,8 @@
 </style>
 
 <script>
-import mixin from '@/components/widgets/widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
@@ -36,15 +35,26 @@ import ModelCard from './model-card.vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin, CardMixin],
+  mixins: [CardMixin],
   props: {
-    tabContext: Object
+    context: Object,
+    tabContext: Object,
+    element: Object
   },
   components: {
     ModelCard
   },
+  data() {
+    return {
+      type: 'equipment'
+    }
+  },
+  setup(props) {
+    const { config, childContext, slots } = useWidgetContext(computed(() => props.context))
+    return { config, childContext, slots }
+  },
   computed: {
-    listContext () {
+    listContext() {
       const contextLabelDefaults = { contextLabelSource: 'path' }
       return {
         store: useStatesStore().trackedItems,

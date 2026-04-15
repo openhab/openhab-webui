@@ -4,15 +4,13 @@
       <div v-if="!subtitle && parentLocation" class="subtitle">
         <small>{{ parentLocation }}</small>
       </div>
-      <div
-        v-if="context && context.component.slots && context.component.slots.glance"
-        class="display-flex flex-direction-column align-items-flex-start">
+      <div v-if="'glance' in slots" class="display-flex flex-direction-column align-items-flex-start">
         <generic-widget-component
-          v-for="(slotComponent, idx) in context.component.slots.glance"
+          v-for="(slotComponent, idx) in slots.glance"
           :context="childContext(slotComponent)"
           :key="'glance-' + idx" />
       </div>
-      <div class="location-stats margin-top-half" v-if="!config.disableBadges">
+      <div v-if="!config.disableBadges" class="location-stats margin-top-half">
         <span v-for="badgeType in ['temperature', 'humidity', 'co2', 'luminance']" :key="badgeType">
           <measurement-badge
             v-if="!config.badges || !config.badges.length || config.badges.indexOf(badgeType) >= 0"
@@ -23,9 +21,23 @@
             :badgeOverrides="badgeOverrides" />
         </span>
       </div>
-      <div class="location-stats margin-top" :class="config.invertText ? 'invert-text' : ''" v-if="!config.disableBadges">
+      <div v-if="!config.disableBadges" class="location-stats margin-top" :class="config.invertText ? 'invert-text' : ''">
         <span
-          v-for="badgeType in ['alarms', 'battery', 'lights', 'windows', 'doors', 'garagedoors', 'blinds', 'presence', 'lock', 'climate', 'screens', 'projectors', 'speakers']"
+          v-for="badgeType in [
+            'alarms',
+            'battery',
+            'lights',
+            'windows',
+            'doors',
+            'garagedoors',
+            'blinds',
+            'presence',
+            'lock',
+            'climate',
+            'screens',
+            'projectors',
+            'speakers'
+          ]"
           :key="badgeType">
           <status-badge
             v-if="!config.badges || !config.badges.length || config.badges.indexOf(badgeType) >= 0"
@@ -38,7 +50,7 @@
       </div>
     </template>
     <div class="card-content-padding">
-      <f7-segmented round tag="p" v-if="element.equipment.length > 0 && element.properties.length > 0">
+      <f7-segmented v-if="element.equipment.length > 0 && element.properties.length > 0" round tag="p">
         <f7-button
           round
           outline
@@ -83,7 +95,8 @@
 </style>
 
 <script>
-import mixin from '@/components/widgets/widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import itemDefaultListComponent, { equipmentListComponent } from '@/components/widgets/standard/list/default-list-item'
 import CardMixin from './card-mixin'
 import ModelCard from './model-card.vue'
@@ -93,26 +106,33 @@ import MeasurementBadge from './glance/location/measurement-badge.vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
-  mixins: [mixin, CardMixin],
+  mixins: [CardMixin],
   props: {
+    context: Object,
     parentLocation: String,
-    tabContext: Object
+    tabContext: Object,
+    element: Object
   },
   components: {
     ModelCard,
     StatusBadge,
     MeasurementBadge
   },
-  data () {
+  setup(props) {
+    const { config, childContext, slots } = useWidgetContext(computed(() => props.context))
+    return { config, childContext, slots }
+  },
+  data() {
     return {
-      activeTab: (this.element.equipment.length === 0 && this.element.properties.length > 0) ? 'properties' : 'equipment'
+      activeTab: this.element.equipment.length === 0 && this.element.properties.length > 0 ? 'properties' : 'equipment',
+      type: 'location'
     }
   },
   computed: {
-    badgeOverrides () {
+    badgeOverrides() {
       return this.config.badges || this.context.badgeOverrides
     },
-    propertiesListContext () {
+    propertiesListContext() {
       return {
         store: useStatesStore().trackedItems,
         component: {
@@ -126,7 +146,7 @@ export default {
         }
       }
     },
-    equipmentListContext () {
+    equipmentListContext() {
       return {
         store: useStatesStore().trackedItems,
         component: equipmentListComponent(this.element.item.equipment, this.tabContext, true)

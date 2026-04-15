@@ -18,6 +18,7 @@
       <f7-col>
         <f7-list media-list>
           <f7-list-item
+            v-if="orphanLinksCount"
             media-item
             link="orphanlinks/"
             title="Orphan Links"
@@ -30,6 +31,7 @@
             </template>
           </f7-list-item>
           <f7-list-item
+            v-if="semanticsProblemCount"
             media-item
             link="semantics/"
             title="Semantic Model Conflicts"
@@ -72,7 +74,7 @@ export default {
   props: {
     f7router: Object
   },
-  data () {
+  data() {
     return {
       objectsSubtitles: {
         orphanLinks: 'Items pointing to non-existent thing channels or vica versa',
@@ -89,17 +91,17 @@ export default {
     }
   },
   computed: {
-    apiEndpoints () {
+    apiEndpoints() {
       return useRuntimeStore().apiEndpoints
     }
   },
   watch: {
-    apiEndpoints () {
+    apiEndpoints() {
       this.loadCounters()
     }
   },
   methods: {
-    loadCounters () {
+    loadCounters() {
       if (!this.apiEndpoints) return
       if (useRuntimeStore().apiEndpoint('links')) {
         this.$oh.api.get('/rest/links/orphans').then((data) => {
@@ -117,7 +119,7 @@ export default {
         })
       }
     },
-    onPageAfterIn () {
+    onPageAfterIn() {
       this.loadCounters()
     }
   }

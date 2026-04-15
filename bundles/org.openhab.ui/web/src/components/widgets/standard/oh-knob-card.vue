@@ -7,17 +7,24 @@
 </template>
 
 <script>
-import mixin from '../widget-mixin'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhKnob from '../system/oh-knob.vue'
 import { OhKnobCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 
 export default {
-  mixins: [mixin],
+  props: {
+    context: Object
+  },
   components: {
     OhCard,
     OhKnob
   },
-  widget: OhKnobCardDefinition
+  widget: OhKnobCardDefinition,
+  setup(props) {
+    const { cardChildContext } = useWidgetContext(computed(() => props.context))
+    return { cardChildContext }
+  }
 }
 </script>

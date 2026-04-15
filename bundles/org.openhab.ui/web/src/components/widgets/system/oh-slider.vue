@@ -18,33 +18,41 @@
 </style>
 
 <script>
-import mixin from '../widget-mixin'
 import slideMixin from './slide-mixin'
 import { OhSliderDefinition } from '@/assets/definitions/widgets/system'
+import { computed } from 'vue'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 
 export default {
-  mixins: [mixin, slideMixin],
+  mixins: [slideMixin],
   widget: OhSliderDefinition,
-  data () {
+  props: {
+    context: Object
+  },
+  setup(props) {
+    const { config } = useWidgetContext(computed(() => props.context))
+    return { config }
+  },
+  data() {
     return {
       sliderValue: null
     }
   },
   watch: {
-    value (newValue) {
+    value(newValue) {
       if (!isNaN(newValue)) {
         this.sliderValue = newValue
       }
     }
   },
-  created () {
+  created() {
     if (!isNaN(this.value)) {
       this.sliderValue = this.value
     } else {
       this.sliderValue = this.config.min || this.config.max || 0
     }
   },
-  mounted () {
+  mounted() {
     // f7-range inside of masonry can get rendered faulty, as the masonry changes its breakpoint layout after being rendered
     // re-calculate the range slider after masonry is updated
     setTimeout(() => {
@@ -55,18 +63,18 @@ export default {
     }, 0)
   },
   methods: {
-    formatLabel (value) {
+    formatLabel(value) {
       return this.toStepFixed(value) + (this.unit ? ' ' + this.unit : '')
     },
-    formatScaleLabel (value) {
+    formatScaleLabel(value) {
       return this.toStepFixed(value)
     },
-    toStepFixed (value) {
+    toStepFixed(value) {
       // uses the number of decimals in the step config to round the provided number
       const nbDecimals = this.config.step ? Number(this.config.step).toString().replace(',', '.').split('.')[1]?.length : 0
       return parseFloat(Number(value).toFixed(nbDecimals ?? 0))
     },
-    onChange (newValue) {
+    onChange(newValue) {
       if (isNaN(this.value) || isNaN(newValue)) return
       const tsf = this.toStepFixed(newValue)
       // Do NOT send command if sliderValue is smaller than real value +-step

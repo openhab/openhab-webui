@@ -23,23 +23,30 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { computed } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import mixin from '../widget-mixin'
 import { OhVideoDefinition } from '@/assets/definitions/widgets/system'
+import { useWidgetContext } from '@/components/widgets/useWidgetContext'
+
+import OhVideoVideojs from './oh-video-videojs.vue'
+import OhVideoWebrtc from './oh-video-webrtc.vue'
 
 export default {
-  mixins: [mixin],
   widget: OhVideoDefinition,
   components: {
-    'oh-video-videojs': defineAsyncComponent(() => import(/* webpackChunkName: "oh-video-videojs" */ './oh-video-videojs.vue')),
-    'oh-video-webrtc': defineAsyncComponent(() => import(/* webpackChunkName: "oh-video-webrtc" */ './oh-video-webrtc.vue'))
+    OhVideoVideojs,
+    OhVideoWebrtc
   },
   props: {
+    context: Object,
     sendAudio: { type: Boolean }
   },
-  data () {
+  setup(props) {
+    const { config } = useWidgetContext(computed(() => props.context))
+    return { config }
+  },
+  data() {
     return {
       t: f7.utils.id(),
       src: null,
@@ -47,21 +54,21 @@ export default {
     }
   },
   watch: {
-    itemState (value) {
+    itemState(value) {
       if (value) {
         this.loadItemURL()
       }
     }
   },
   computed: {
-    itemState () {
+    itemState() {
       if (this.config.item) {
         return f7.utils.id() + '|' + this.context.store[this.config.item].state
       }
       return null
     }
   },
-  mounted () {
+  mounted() {
     if (this.config.item) {
       this.loadItemURL()
     } else {
@@ -74,19 +81,15 @@ export default {
     }
   },
   methods: {
-    loadItemURL () {
-      this.$oh.api
-        .getPlain(`/rest/items/${this.config.item}/state`, 'text/plain')
-        .then((data) => {
-          this.src = data
-        })
+    loadItemURL() {
+      this.$oh.api.getPlain(`/rest/items/${this.config.item}/state`, 'text/plain').then((data) => {
+        this.src = data
+      })
     },
-    loadPosterItemURL () {
-      this.$oh.api
-        .getPlain(`/rest/items/${this.config.posterItem}/state`, 'text/plain')
-        .then((data) => {
-          this.posterSrc = data
-        })
+    loadPosterItemURL() {
+      this.$oh.api.getPlain(`/rest/items/${this.config.posterItem}/state`, 'text/plain').then((data) => {
+        this.posterSrc = data
+      })
     }
   }
 }

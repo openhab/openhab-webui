@@ -14,7 +14,7 @@
           <f7-row>
             <f7-col width="100" medium="50">
               <f7-block-title>Advanced Object Management</f7-block-title>
-              <f7-list media-item>
+              <f7-list>
                 <f7-list-item media-item title="Widgets" footer="Develop custom widgets to use on pages" link="widgets/">
                   <template #media>
                     <f7-icon f7="rectangle_on_rectangle_angled" color="gray" />
@@ -52,7 +52,7 @@
                 </f7-list-item>
                 <f7-list-item
                   media-item
-                  title="Add Items from DSL Definition"
+                  title="Add Items from Textual Definition"
                   footer="Create or update items &amp; links in bulk"
                   link="add-items-dsl/">
                   <template #media>
@@ -63,7 +63,7 @@
             </f7-col>
             <f7-col width="100" medium="50">
               <f7-block-title>Maintenance Tools</f7-block-title>
-              <f7-list media-item>
+              <f7-list>
                 <f7-list-item
                   media-item
                   title="Developer Sidebar"
@@ -91,6 +91,9 @@
                     <f7-icon f7="square_list" color="gray" />
                   </template>
                 </f7-list-item>
+              </f7-list>
+              <f7-block-title>Local Developer Settings</f7-block-title>
+              <f7-list>
                 <f7-list-item
                   smart-select
                   :smartSelectParams="{ openIn: 'popup', closeOnSelect: true }"
@@ -109,6 +112,16 @@
                     <option value="OFF">Off</option>
                   </select>
                 </f7-list-item>
+                <f7-list-item media-item title="Code Editor: Vim Mode" footer="Enable Vim keybindings in code editors">
+                  <template #media>
+                    <f7-icon f7="keyboard" color="gray" />
+                  </template>
+                  <template #header>
+                    <div style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
+                      <f7-toggle color="blue" v-model:checked="uiOptionsStore.codeMirrorSettings.vimMode" />
+                    </div>
+                  </template>
+                </f7-list-item>
               </f7-list>
             </f7-col>
           </f7-row>
@@ -124,8 +137,8 @@
             <f7-col>
               <f7-block>
                 <f7-block-title class="after-big-title"> Test SSE connection </f7-block-title>
-                <f7-button text="Stream Events" @click="startSSE()" v-if="!sseClient" />
-                <f7-button text="Stop Streaming" @click="stopSSE()" v-if="sseClient" />
+                <f7-button v-if="!sseClient" text="Stream Events" @click="startSSE()" />
+                <f7-button v-if="sseClient" text="Stop Streaming" @click="stopSSE()" />
                 <f7-list media-list>
                   <f7-list-item
                     v-for="event in sseEvents"
@@ -144,8 +157,8 @@
             <f7-col>
               <f7-block>
                 <f7-block-title class="after-big-title"> Test WebSocket connection </f7-block-title>
-                <f7-button text="Stream Events" @click="startWS()" v-if="!wsClient" />
-                <f7-button text="Stop Streaming" @click="stopWS()" v-if="wsClient" />
+                <f7-button v-if="!wsClient" text="Stream Events" @click="startWS()" />
+                <f7-button v-if="wsClient" text="Stop Streaming" @click="stopWS()" />
                 <f7-list media-list>
                   <f7-list-item
                     v-for="event in wsEvents"
@@ -200,18 +213,19 @@ import { mapStores } from 'pinia'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 
 export default {
   mixins: [FileDefinition],
   props: {
     f7router: Object
   },
-  setup () {
+  setup() {
     return {
       f7
     }
   },
-  data () {
+  data() {
     return {
       currentTab: 'menu',
       sseClient: null,
@@ -224,42 +238,42 @@ export default {
     }
   },
   computed: {
-    ...mapStores(useRuntimeStore)
+    ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
-    onPageBeforeRemove () {
+    onPageBeforeRemove() {
       if (this.sseClient) this.$oh.sse.close(this.sseClient)
     },
-    startSSE () {
+    startSSE() {
       this.sseClient = this.$oh.sse.connect('/rest/events', '', (event) => {
         event.time = new Date()
         this.sseEvents.unshift(...[event])
         this.sseEvents.splice(5)
       })
     },
-    stopSSE () {
+    stopSSE() {
       this.$oh.sse.close(this.sseClient)
       this.sseClient = null
       this.sseEvents = []
     },
-    startWS () {
+    startWS() {
       this.wsClient = this.$oh.ws.events([], (event) => {
         event.time = new Date()
         this.wsEvents.unshift(...[event])
         this.wsEvents.splice(5)
       })
     },
-    stopWS () {
+    stopWS() {
       this.$oh.ws.close(this.wsClient)
       this.wsClient = null
       this.wsEvents = []
     },
-    onLogLevelChange () {
+    onLogLevelChange() {
       window.setLogLevel(this.logLevel)
     }
   },
   asyncComputed: {
-    iconUrl () {
+    iconUrl() {
       return this.$oh.media.getIcon(this.icon)
     }
   }

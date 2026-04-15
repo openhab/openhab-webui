@@ -17,5 +17,6 @@
   "about.reload.purgeExplanation2": "Wähle Zwischenspeicher löschen und aktualisieren um alle Zwischenspeicher zu löschen, Service Worker abzumelden und alle Informationen erneut vom Server zu laden.",
   "about.reload.purgeCachesAndRefresh": "Zwischenspeicher löschen und aktualisieren",
   "about.reload.confirmPurge": "Dies wird den Zwischenspeicher löschen und die Service Worker abmelden. Es führt zum Neuladen der Seite und dauert einige Sekunden.",
-  "about.reload.reloadApp": "Anwendung neu laden"
+  "about.reload.reloadApp": "Anwendung neu laden",
+  "about.reload.setupWizard": "Setup-Assistent"
 }

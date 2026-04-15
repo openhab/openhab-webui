@@ -6,7 +6,8 @@
 
 <script>
 import { markRaw } from 'vue'
-import videojs from 'video.js'
+// dynamic import for better chunking
+const videojs = (await import('video.js')).default
 import 'video.js/dist/video-js.css'
 
 export default {
@@ -20,13 +21,13 @@ export default {
     hideControls: { type: Boolean },
     posterURL: { type: String }
   },
-  data () {
+  data() {
     return {
       player: null
     }
   },
   watch: {
-    src (newSrc, oldSrc) {
+    src(newSrc, oldSrc) {
       if (this.player && newSrc !== oldSrc) {
         this.player.ready(() => {
           this.player.src({ type: this.type, src: newSrc })
@@ -38,35 +39,43 @@ export default {
     }
   },
   computed: {
-    computedPosterUrl () {
+    computedPosterUrl() {
       if (this.posterURL && this.posterURL.startsWith('data:')) {
         return this.posterURL
       }
-      const ts = (new Date()).toISOString()
-      return this.posterURL ? this.posterURL.indexOf('?') === -1 ? `${this.posterURL}?_ts=${ts}` : `${this.posterURL}&_ts=${ts}` : this.posterURL
+      const ts = new Date().toISOString()
+      return this.posterURL
+        ? this.posterURL.indexOf('?') === -1
+          ? `${this.posterURL}?_ts=${ts}`
+          : `${this.posterURL}&_ts=${ts}`
+        : this.posterURL
     }
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
       this.createPlayer()
     })
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.player) {
       this.player.dispose()
     }
   },
   methods: {
-    createPlayer () {
+    createPlayer() {
       if (this.player) {
         this.player.dispose()
       }
-      const playerOpts = Object.assign({}, {
-        liveui: true,
-        autoplay: this.startManually ? false : (this.startMuted ? 'muted' : 'play'),
-        muted: this.startMuted,
-        controls: !this.hideControls
-      }, this.config || {})
+      const playerOpts = Object.assign(
+        {},
+        {
+          liveui: true,
+          autoplay: this.startManually ? false : this.startMuted ? 'muted' : 'play',
+          muted: this.startMuted,
+          controls: !this.hideControls
+        },
+        this.config || {}
+      )
       this.player = markRaw(videojs(this.$refs.videoPlayer, playerOpts))
       this.player.ready(() => {
         if (this.src) {

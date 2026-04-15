@@ -22,31 +22,34 @@ export default {
   },
   emits: ['input'],
   methods: {
-    updateCode (code) {
+    updateCode(code) {
       this.$emit('input', code)
     },
-    openPopup (fullscreen) {
+    openPopup(fullscreen) {
       this.fullscreen = fullscreen
 
       const popup = {
         component: ScriptEditorPopup
       }
 
-      this.f7router.navigate({
-        url: 'script-edit',
-        route: {
-          path: 'script-edit',
-          popup
+      this.f7router.navigate(
+        {
+          url: 'script-edit',
+          route: {
+            path: 'script-edit',
+            popup
+          }
+        },
+        {
+          props: {
+            title: this.configDescription.label,
+            // use the "type" parameter as the mode if found (for rule modules)
+            mode: this.configuration && this.configuration.type ? this.configuration.type : '',
+            fullscreen,
+            value: this.value
+          }
         }
-      }, {
-        props: {
-          title: this.configDescription.label,
-          // use the "type" parameter as the mode if found (for rule modules)
-          mode: (this.configuration && this.configuration.type) ? this.configuration.type : '',
-          fullscreen,
-          value: this.value
-        }
-      })
+      )
 
       f7.once('scriptEditorUpdate', this.updateCode)
       f7.once('scriptEditorClosed', () => {
