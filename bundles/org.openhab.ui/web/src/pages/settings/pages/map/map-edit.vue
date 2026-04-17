@@ -3,6 +3,7 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create map page' : page.config.label) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -24,8 +25,9 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
+        <not-editable-notice v-if="ready && !isEditable" />
         <f7-block v-if="ready && !previewMode" class="block-narrow">
-          <page-settings :page="page" :createMode="createMode" :f7router />
+          <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
         </f7-block>
 
         <f7-block v-if="ready && !previewMode" class="block-narrow" style="padding-bottom: 8rem">
@@ -35,6 +37,7 @@
               :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
               :parameters="pageWidgetDefinition.props.parameters || []"
               :configuration="page.config"
+              :readOnly="!isEditable"
               :f7router
               @updated="dirty = true" />
 
@@ -65,7 +68,7 @@
                   <f7-icon v-else :f7="markerDefaultIcon(marker)" :size="32" />
                 </template>
                 <template #content-start>
-                  <f7-menu class="configure-layout-menu">
+                  <f7-menu v-if="isEditable" class="configure-layout-menu">
                     <f7-menu-item icon-f7="list_bullet" dropdown>
                       <f7-menu-dropdown>
                         <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker" />
@@ -83,8 +86,8 @@
                   </f7-menu>
                 </template>
               </f7-list-item>
-              <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-map-marker')" />
-              <f7-list-button color="blue" title="Add circle marker" @click="addWidget(page, 'oh-map-circle-marker')" />
+              <f7-list-button v-if="isEditable" color="blue" title="Add marker" @click="addWidget(page, 'oh-map-marker')" />
+              <f7-list-button v-if="isEditable" color="blue" title="Add circle marker" @click="addWidget(page, 'oh-map-circle-marker')" />
             </f7-list>
           </f7-col>
         </f7-block>
@@ -97,6 +100,7 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=map"
           :value="pageYaml"
+          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -108,7 +112,7 @@
 
 <style lang="stylus">
 .map-editor
-  .page-code-editor.v-codemirror
+  .code-editor-fit.page-code-editor
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message
@@ -149,6 +153,7 @@ const ConfigurableWidgets = {
 }
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
@@ -159,6 +164,7 @@ export default {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhMapPage,
     PageSettings,
+    NotEditableNotice,
     ConfigSheet
   },
   props: {

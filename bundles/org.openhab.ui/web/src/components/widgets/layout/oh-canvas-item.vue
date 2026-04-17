@@ -1,7 +1,7 @@
 <template>
   <template v-if="visible">
     <vue-draggable-resizable
-      v-if="context.editmode"
+      v-if="context.editmode && context.isEditable"
       v-model:active="active"
       :id="'oh-canvas-item-vdr-' + id"
       :key="reloadKey"

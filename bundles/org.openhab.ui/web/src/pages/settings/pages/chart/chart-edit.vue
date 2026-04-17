@@ -3,6 +3,7 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="(createMode ? 'Create chart page' : page.config.label) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -24,13 +25,15 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
+        <not-editable-notice v-if="ready && !isEditable" />
         <f7-block v-if="ready && !previewMode" class="block-narrow">
-          <page-settings :page="page" :createMode="createMode" :f7router />
+          <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
           <f7-block-title>Chart Configuration</f7-block-title>
           <config-sheet
             :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
             :parameters="pageWidgetDefinition.props.parameters || []"
             :configuration="page.config"
+            :readOnly="!isEditable"
             :f7router />
         </f7-block>
 
@@ -46,6 +49,7 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=chart"
           :value="pageYaml"
+          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -61,7 +65,7 @@
   .oh-chart-page-chart
     top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
     height calc(100% - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
-  .page-code-editor.v-codemirror
+  .code-editor-fit.page-code-editor
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message
@@ -86,6 +90,7 @@ import YAML from 'yaml'
 import OhChartPage from '@/components/widgets/chart/oh-chart-page.vue'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
 import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
@@ -103,6 +108,7 @@ export default {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhChartPage,
     PageSettings,
+    NotEditableNotice,
     ChartDesigner,
     ConfigSheet
   },

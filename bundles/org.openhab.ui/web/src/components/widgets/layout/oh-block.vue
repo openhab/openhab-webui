@@ -11,7 +11,7 @@
     <f7-block-title v-if="config.title">
       {{ config.title }}
     </f7-block-title>
-    <f7-menu v-if="context.editmode" class="configure-layout-menu padding-bottom">
+    <f7-menu v-if="context.editmode && context.isEditable" class="configure-layout-menu padding-bottom">
       <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-row')" icon-f7="plus" text="Add Row" />
       <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-cells')" icon-f7="plus" text="Add Cells" />
       <f7-menu-item style="margin-left: auto" icon-f7="rectangle_grid_1x2" dropdown>

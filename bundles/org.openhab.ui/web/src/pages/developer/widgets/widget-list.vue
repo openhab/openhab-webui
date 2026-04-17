@@ -86,6 +86,9 @@
             <template #media>
               <span class="item-initial">{{ widget.uid[0].toUpperCase() }}</span>
             </template>
+            <template #after-title>
+              <f7-icon v-if="widget.editable === false" f7="lock_fill" size="1rem" color="gray" />
+            </template>
           </f7-list-item>
         </f7-list>
       </f7-col>
@@ -173,6 +176,11 @@ export default {
     },
     removeSelected() {
       const vm = this
+
+      if (this.selectedItems.some((i) => this.widgets.find((w) => w.uid === i)?.editable === false)) {
+        f7.dialog.alert('Some of the selected widgets are not modifiable because they have been provisioned by files')
+        return
+      }
 
       f7.dialog.confirm(`Remove ${this.selectedItems.length} selected widgets?`, 'Remove widgets', () => {
         vm.doRemoveSelected()

@@ -2,7 +2,7 @@
   <div ref="page" :class="scopedCssUid">
     <template v-if="!config.layoutType || config.layoutType === 'responsive'">
       <oh-block v-for="(component, idx) in defaultSlots" v-bind="$attrs" :key="idx" :context="childContext(component)" />
-      <f7-block v-if="context.editmode">
+      <f7-block v-if="context.editmode && context.isEditable">
         <f7-list>
           <f7-list-button color="blue" @click="$emit('add-block', context.component)"> Add Block </f7-list-button>
         </f7-list>
@@ -12,7 +12,7 @@
       <f7-block v-if="masonrySlots && masonrySlots.length" style="z-index: auto !important">
         <oh-masonry v-bind="$attrs" :context="childContext(masonrySlots[0])" />
       </f7-block>
-      <template v-else-if="context.editmode">
+      <template v-else-if="context.editmode && context.isEditable">
         <f7-block>
           <f7-list>
             <f7-list-button color="blue" @click="$emit('add-masonry', context.component)"> Add Masonry </f7-list-button>

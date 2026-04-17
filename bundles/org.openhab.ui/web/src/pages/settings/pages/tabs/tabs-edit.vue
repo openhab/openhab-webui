@@ -3,6 +3,7 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create tabbed page' : page.config.label) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -17,14 +18,15 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
+        <not-editable-notice v-if="ready && !isEditable" />
         <f7-block v-if="ready && !previewMode" class="block-narrow no-margin-bottom">
-          <page-settings :page="page" :createMode="createMode" :f7router />
+          <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
         </f7-block>
 
         <f7-block v-if="ready" class="block-narrow no-margin-top" style="padding-bottom: 10rem">
           <f7-col>
             <f7-block-title>Tabs</f7-block-title>
-            <f7-menu v-if="clipboardType === 'oh-tab'">
+            <f7-menu v-if="isEditable && clipboardType === 'oh-tab'">
               <f7-menu-item style="margin-left: auto" icon-f7="squares_below_rectangle" dropdown>
                 <f7-menu-dropdown right>
                   <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste" />
@@ -45,7 +47,7 @@
                   <oh-icon :icon="tabEvaluateExpression(tab, idx, 'icon')" :color="'gray'" :width="32" :height="32" />
                 </template>
                 <template #content-start>
-                  <f7-menu class="configure-tabs-menu">
+                  <f7-menu v-if="isEditable" class="configure-tabs-menu">
                     <f7-menu-item icon-f7="list_bullet" dropdown>
                       <f7-menu-dropdown>
                         <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Configure Tab" />
@@ -63,7 +65,7 @@
                   </f7-menu>
                 </template>
               </f7-list-item>
-              <f7-list-button color="blue" title="Add tab" @click="addWidget(page, 'oh-tab')" />
+              <f7-list-button v-if="isEditable" color="blue" title="Add tab" @click="addWidget(page, 'oh-tab')" />
             </f7-list>
           </f7-col>
         </f7-block>
@@ -75,6 +77,7 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=tabs"
           :value="pageYaml"
+          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -85,7 +88,7 @@
 
 <style lang="stylus">
 .tabs-editor
-  .page-code-editor.v-codemirror
+  .code-editor-fit.page-code-editor
     position absolute
     height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
   .tabs-list
@@ -113,6 +116,7 @@ import YAML from 'yaml'
 import { OhTabDefinition } from '@/assets/definitions/widgets/tabs'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 const ConfigurableWidgets = { OhTabDefinition }
 
@@ -120,7 +124,8 @@ export default {
   mixins: [PageDesignerMixin],
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
-    PageSettings
+    PageSettings,
+    NotEditableNotice
   },
   props: {
     createMode: Boolean,

@@ -2,7 +2,7 @@
   <f7-block class="sitemap-code">
     <div class="row sitemap-parser resizable">
       <div class="col">
-        <editor :value="sitemapDsl" @input="updateSitemap" mode="application/vnd.openhab.sitemap+dsl" />
+        <editor :value="sitemapDsl" @input="updateSitemap" mode="application/vnd.openhab.sitemap+dsl" :readOnly="readOnly" />
       </div>
       <span class="resize-handler" />
     </div>
@@ -58,7 +58,8 @@ export default {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
-    sitemap: Object
+    sitemap: Object,
+    readOnly: Boolean
   },
   emits: ['updated'],
   data() {

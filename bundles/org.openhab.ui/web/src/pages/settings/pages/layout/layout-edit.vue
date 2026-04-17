@@ -3,6 +3,7 @@
     <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create layout page' : page.config.label) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -33,6 +34,7 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
+        <not-editable-notice v-if="ready && !isEditable" />
         <f7-block v-if="ready && createMode && !(previewMode || fullscreen)" id="page-settings" class="block-narrow">
           <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-col>
@@ -123,7 +125,7 @@
               </div>
             </f7-toolbar>
             <f7-block class="block-narrow">
-              <page-settings :page="page" :createMode="createMode" :f7router />
+              <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
             </f7-block>
           </f7-page>
         </f7-sheet>
@@ -135,6 +137,7 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml?type=layout"
           :value="pageYaml"
+          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -168,7 +171,7 @@
         margin-bottom calc(var(--f7-toolbar-height) + 1rem)
         .oh-masonry
           z-index inherit
-  .page-code-editor.v-codemirror
+  .code-editor-fit.page-code-editor
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message
@@ -194,6 +197,7 @@ import * as StandardCellWidgets from '@/components/widgets/standard/cell'
 import * as LayoutWidgets from '@/components/widgets/layout'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
@@ -213,7 +217,8 @@ export default {
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhLayoutPage,
-    PageSettings
+    PageSettings,
+    NotEditableNotice
   },
   props: {
     createMode: Boolean,
