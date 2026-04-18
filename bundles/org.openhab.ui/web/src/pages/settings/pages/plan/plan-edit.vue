@@ -85,7 +85,7 @@
               </f7-list-item>
               <f7-list-button v-if="isEditable" color="blue" title="Add marker" @click="addWidget(page, 'oh-plan-marker')" />
             </f7-list>
-            <f7-block-footer class="param-description">
+            <f7-block-footer v-if="isEditable" class="param-description">
               You can also
               <f7-link style="z-index: inherit" href="#" @click="previewMode = true"> switch to Run mode </f7-link>
               to add markers and position them on the plan.
