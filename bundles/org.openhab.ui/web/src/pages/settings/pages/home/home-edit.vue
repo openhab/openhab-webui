@@ -3,7 +3,6 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="'Edit Home Page' + dirtyIndicator"
-        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -35,8 +34,8 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
+
         <div v-else-if="!previewMode">
-          <not-editable-notice if="!isEditable" />
           <f7-block class="block-narrow no-padding">
             <f7-col>
               <f7-block-title>Page Configuration</f7-block-title>
@@ -44,7 +43,6 @@
                 :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
                 :parameters="pageWidgetDefinition.props.parameters || []"
                 :configuration="page.config"
-                :readOnly="!isEditable"
                 :f7router
                 @updated="dirty = true" />
             </f7-col>
@@ -95,7 +93,7 @@
                     :title="card.separator || card.defaultTitle"
                     :footer="card.separator ? '(separator)' : card.key">
                     <template #content-start>
-                      <f7-menu v-if="isEditable" class="configure-layout-menu">
+                      <f7-menu class="configure-layout-menu">
                         <f7-menu-item icon-f7="list_bullet" dropdown>
                           <f7-menu-dropdown>
                             <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
@@ -133,7 +131,6 @@
                   :parameterGroups="locationsTabParameters.props.parameterGroups || []"
                   :parameters="locationsTabParameters.props.parameters || []"
                   :configuration="page.slots.locations[0].config"
-                  :readOnly="!isEditable"
                   :f7router
                   @updated="dirty = true" />
               </div>
@@ -143,7 +140,6 @@
                   :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
                   :parameters="equipmentTabParameters.props.parameters || []"
                   :configuration="page.slots.equipment[0].config"
-                  :readOnly="!isEditable"
                   :f7router
                   @updated="dirty = true" />
               </div>
@@ -153,7 +149,6 @@
                   :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
                   :parameters="propertiesTabParameters.props.parameters || []"
                   :configuration="page.slots.properties[0].config"
-                  :readOnly="!isEditable"
                   @updated="dirty = true" />
               </div>
             </f7-col>
@@ -172,7 +167,6 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=home"
           :value="pageYaml"
-          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -191,7 +185,7 @@
     align-items: center
     justify-content: space-between
     margin-bottom: 0.5rem
-  .code-editor-fit.page-code-editor
+  .page-code-editor.v-codemirror
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message
@@ -239,7 +233,6 @@ import {
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
-import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 const ConfigurableWidgets = {
@@ -253,8 +246,7 @@ export default {
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     ConfigSheet,
-    ModelTab,
-    NotEditableNotice
+    ModelTab
   },
   props: {
     createMode: Boolean,
