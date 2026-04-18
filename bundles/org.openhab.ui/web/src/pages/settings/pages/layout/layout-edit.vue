@@ -442,12 +442,9 @@ export default {
     },
     toYaml() {
       this.pageYaml = YAML.stringify({
+        component: this.page.component,
         config: this.page.config,
-        // make sure array is available for existing pages, where the prop might be undefined, by falling back to empty array
-        blocks: this.page.slots.default || [],
-        masonry: this.page.slots.masonry || [],
-        grid: this.page.slots.grid || [],
-        canvas: this.page.slots.canvas || []
+        slots: this.page.slots
       })
     },
     fromYaml() {
@@ -457,16 +454,13 @@ export default {
           updatedPage.config &&
           updatedPage.config.layoutType &&
           updatedPage.config.layoutType === 'fixed' &&
-          ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))
+          ((updatedPage.slots && updatedPage.slots.default && updatedPage.slots.default.length) || (updatedPage.slots && updatedPage.slots.masonry && updatedPage.slots.masonry.length))
         ) {
           throw new Error('Using blocks and masonry in fixed layouts is not possible')
         }
 
         this.page.config = updatedPage.config
-        this.page.slots.default = updatedPage.blocks
-        this.page.slots.masonry = updatedPage.masonry
-        this.page.slots.grid = updatedPage.grid
-        this.page.slots.canvas = updatedPage.canvas
+        this.page.slots = updatedPage.slots
         this.forceUpdate()
         return true
       } catch (e) {

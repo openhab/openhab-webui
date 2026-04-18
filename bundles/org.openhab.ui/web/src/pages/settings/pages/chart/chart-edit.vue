@@ -235,6 +235,7 @@ export default {
     },
     toYaml() {
       this.pageYaml = YAML.stringify({
+        component: this.page.component,
         config: this.page.config,
         slots: this.page.slots
       })

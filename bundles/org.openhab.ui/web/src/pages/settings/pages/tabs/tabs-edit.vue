@@ -188,15 +188,16 @@ export default {
     },
     toYaml() {
       this.pageYaml = YAML.stringify({
+        component: this.page.component,
         config: this.page.config,
-        tabs: this.page.slots.default
+        slots: this.page.slots
       })
     },
     fromYaml() {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
         this.page.config = updatedPage.config
-        this.page.slots.default = updatedPage.tabs
+        this.page.slots = updatedPage.slots
         this.forceUpdate()
         return true
       } catch (e) {
