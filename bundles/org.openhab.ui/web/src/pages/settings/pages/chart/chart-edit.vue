@@ -25,8 +25,8 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <not-editable-notice v-if="ready && !isEditable && !previewMode" subject="chart" />
         <f7-block v-if="ready && !previewMode" class="block-narrow">
+          <not-editable-notice v-if="!isEditable" subject="chart" />
           <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
           <f7-block-title>Chart Configuration</f7-block-title>
           <config-sheet
