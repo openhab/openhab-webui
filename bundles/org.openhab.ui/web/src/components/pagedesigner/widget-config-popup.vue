@@ -10,10 +10,11 @@
         <f7-nav-left>
           <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" @click="closeWithDirtyCheck" />
         </f7-nav-left>
-        <f7-nav-title>Edit {{ widget.label || widget.uid }}{{ dirtyIndicator }}</f7-nav-title>
+        <f7-nav-title v-if="!readOnly">Edit {{ widget.label || widget.uid }}{{ dirtyIndicator }}</f7-nav-title>
+        <f7-nav-title v-else>View {{ widget.label || widget.uid }} <f7-icon f7="lock_fill" size="12" color="gray" /></f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="dirty" @click="reset"> Reset </f7-link>
-          <f7-link v-if="dirty" @click="save"> Save </f7-link>
+          <f7-link v-if="!readOnly && dirty" @click="reset"> Reset </f7-link>
+          <f7-link v-if="!readOnly && dirty" @click="save"> Save </f7-link>
           <f7-link v-else popup-close> Close </f7-link>
         </f7-nav-right>
       </f7-navbar>
@@ -23,6 +24,7 @@
             :parameterGroups="widget.props.parameterGroups || []"
             :parameters="widget.props.parameters || []"
             :configuration="config"
+            :read-only="readOnly"
             :set-empty-array-as-array="true"
             @updated="updated" />
         </f7-col>
@@ -51,7 +53,8 @@ export default {
   props: {
     opened: Boolean,
     component: Object,
-    widget: Object
+    widget: Object,
+    readOnly: Boolean
   },
   components: {
     ConfigSheet
@@ -107,6 +110,7 @@ export default {
       }
     },
     reset() {
+      if (this.readOnly) return
       f7.dialog.confirm('Do you want to revert your changes?', 'Revert Changes', () => {
         this.config = cloneDeep(this.originalConfig)
         this.updateWidgetConfig(this.originalConfig)
@@ -114,6 +118,7 @@ export default {
       })
     },
     save() {
+      if (this.readOnly) return
       this.updateWidgetConfig(this.config)
       this.$refs.widgetConfig.$el.f7Modal.close()
     },
@@ -123,6 +128,7 @@ export default {
       this.$emit('update', newConfig)
     },
     updated() {
+      if (this.readOnly) return
       this.dirty = !fastDeepEqual(this.config, this.originalConfig)
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {

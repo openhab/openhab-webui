@@ -256,7 +256,8 @@ export default {
         {
           props: {
             component: this.currentComponent,
-            widget: this.currentWidget
+            widget: this.currentWidget,
+            readOnly: !(parentContext && parentContext.isEditable !== undefined ? parentContext.isEditable : this.isEditable)
           }
         }
       )
