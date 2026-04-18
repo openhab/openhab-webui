@@ -454,7 +454,8 @@ export default {
           updatedPage.config &&
           updatedPage.config.layoutType &&
           updatedPage.config.layoutType === 'fixed' &&
-          ((updatedPage.slots && updatedPage.slots.default && updatedPage.slots.default.length) || (updatedPage.slots && updatedPage.slots.masonry && updatedPage.slots.masonry.length))
+          ((updatedPage.slots && updatedPage.slots.default && updatedPage.slots.default.length) ||
+            (updatedPage.slots && updatedPage.slots.masonry && updatedPage.slots.masonry.length))
         ) {
           throw new Error('Using blocks and masonry in fixed layouts is not possible')
         }
