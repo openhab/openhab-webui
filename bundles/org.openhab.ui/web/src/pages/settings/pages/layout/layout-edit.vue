@@ -34,7 +34,7 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <not-editable-notice v-if="ready && !isEditable" />
+        <not-editable-notice v-if="ready && !isEditable && !previewMode" />
         <f7-block v-if="ready && createMode && !(previewMode || fullscreen)" id="page-settings" class="block-narrow">
           <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-col>

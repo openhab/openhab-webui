@@ -27,8 +27,8 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <not-editable-notice v-if="ready && !isEditable" />
         <f7-block v-if="ready && !previewMode" class="block-narrow">
+          <not-editable-notice v-if="!isEditable" />
           <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
         </f7-block>
 

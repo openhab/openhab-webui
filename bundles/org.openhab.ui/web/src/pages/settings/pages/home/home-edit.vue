@@ -35,8 +35,8 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <not-editable-notice v-else-if="!isEditable" />
         <div v-else-if="!previewMode">
+          <not-editable-notice if="!isEditable" />
           <f7-block class="block-narrow no-padding">
             <f7-col>
               <f7-block-title>Page Configuration</f7-block-title>
