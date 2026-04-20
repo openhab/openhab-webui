@@ -636,7 +636,7 @@ import SearchResults from './search-results.vue'
 import ExpressionTester from './expression-tester.vue'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
-import PageType from '@/pages/page-type-mixin'
+import { getPageType } from '@/pages/page-type'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import cloneDeep from 'lodash/cloneDeep'
@@ -646,7 +646,7 @@ import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [RuleStatus, ThingStatus, PageType],
+  mixins: [RuleStatus, ThingStatus],
   components: {
     ClipboardIcon,
     Item,
@@ -1015,6 +1015,7 @@ export default {
         load()
       }
     },
+    getPageType,
     showItem(evt, item) {
       evt.cancelBubble = true
       if (this.$$(evt.target).closest('.itemlist-actions').length) return

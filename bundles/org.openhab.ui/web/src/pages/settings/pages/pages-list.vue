@@ -171,10 +171,9 @@ import { f7, theme } from 'framework7-vue'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { showToast } from '@/js/dialog-promises'
-import PageType from '@/pages/page-type-mixin'
+import { getPageType, getPageIcon } from '@/pages/page-type'
 
 export default {
-  mixins: [PageType],
   props: {
     f7router: Object
   },
@@ -207,7 +206,7 @@ export default {
         }, {})
       } else {
         const typeGroups = this.pages.reduce((prev, page, i, things) => {
-          const type = this.getPageType(page).label
+          const type = getPageType(page).label
           if (!prev[type]) {
             prev[type] = []
           }
@@ -285,7 +284,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
-        this.f7router.navigate(this.getPageType(item).type + '/' + item.uid)
+        this.f7router.navigate(getPageType(item).type + '/' + item.uid)
       }
     },
     ctrlClick(event, item) {
@@ -301,6 +300,8 @@ export default {
         this.selectedItems.push(itemName)
       }
     },
+    getPageType,
+    getPageIcon,
     removeSelected() {
       const vm = this
 

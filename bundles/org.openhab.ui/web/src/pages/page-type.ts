@@ -48,16 +48,3 @@ export function getPageIcon(page?: api.RootUiComponent | DeepReadonly<api.RootUi
   if (page.config && page.config.icon) return page.config.icon as string
   return getPageType(page).icon
 }
-
-const PageType = {
-  methods: {
-    getPageType(page: api.RootUiComponent | DeepReadonly<api.RootUiComponent> | null) {
-      return getPageType(page)
-    },
-    getPageIcon(page: api.RootUiComponent | DeepReadonly<api.RootUiComponent> | null) {
-      return getPageIcon(page)
-    }
-  }
-}
-
-export default PageType

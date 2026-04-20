@@ -388,10 +388,9 @@
 
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
-import PageType from '@/pages/page-type-mixin'
+import { getPageType } from '@/pages/page-type'
 
 export default {
-  mixins: [PageType],
   components: {
     ClipboardIcon
   },
@@ -475,6 +474,7 @@ export default {
     showingAll(type) {
       return this.expandedTypes[type] || this.searchResults[type].length <= 5
     },
+    getPageType,
     togglePin(evt, type, obj, keyName) {
       evt.cancelBubble = true
       if (evt.target.tagName.toLowerCase() === 'i') return

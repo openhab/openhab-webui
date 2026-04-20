@@ -98,7 +98,7 @@ import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts
 import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 import * as api from '@/api'
-import { getPageType } from '@/pages/page-type-mixin'
+import { getPageType } from '@/pages/page-type'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
