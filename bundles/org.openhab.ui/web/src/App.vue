@@ -957,13 +957,26 @@ export default {
         const delta = startY - moveEv.clientY
         this.logDockHeight = Math.round(Math.min(maxHeight, Math.max(minHeight, startHeight + delta)))
       }
-      const onUp = () => {
-        window.removeEventListener('pointermove', onMove)
-        window.removeEventListener('pointerup', onUp)
+
+      const finish = () => {
+        if (this._logDockResizeHandlers) {
+          const { onMove: m, onUp: u, onCancel: c } = this._logDockResizeHandlers
+          window.removeEventListener('pointermove', m)
+          window.removeEventListener('pointerup', u)
+          window.removeEventListener('pointercancel', c)
+          this._logDockResizeHandlers = null
+        }
         localStorage.setItem('openhab.ui:logDock.height', String(this.logDockHeight))
       }
+
+      const onUp = () => finish()
+      const onCancel = () => finish()
+
+      this._logDockResizeHandlers = { onMove, onUp, onCancel }
+
       window.addEventListener('pointermove', onMove)
-      window.addEventListener('pointerup', onUp)
+      window.addEventListener('pointerup', onUp, { once: true })
+      window.addEventListener('pointercancel', onCancel, { once: true })
     },
     keyDown(ev) {
       if (!(ev.shiftKey && ev.altKey)) return
@@ -1201,6 +1214,13 @@ export default {
   beforeUnmount() {
     if (window) {
       window.removeEventListener('keydown', this.keyDown)
+      if (this._logDockResizeHandlers) {
+        const { onMove, onUp, onCancel } = this._logDockResizeHandlers
+        window.removeEventListener('pointermove', onMove)
+        window.removeEventListener('pointerup', onUp)
+        window.removeEventListener('pointercancel', onCancel)
+        this._logDockResizeHandlers = null
+      }
     }
   }
 }
