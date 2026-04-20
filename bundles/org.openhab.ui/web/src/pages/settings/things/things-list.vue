@@ -220,21 +220,19 @@
 <style lang="stylus">
 .things-list
   margin-bottom calc(var(--f7-fab-size) + 2 * calc(var(--f7-fab-margin) + var(--f7-safe-area-bottom)))
-
-.badge-with-marker
-  position relative
-  display inline-block
-
-.badge-marker-dot
-  position absolute
-  top -2px
-  right -2px
-  width 10px
-  height 10px
-  background-color var(--f7-color-blue)
-  border 1px solid var(--f7-list-bg-color)
-  border-radius 50%
-  pointer-events none
+  .badge-with-marker
+    position relative
+    display inline-block
+  .badge-marker-dot
+    position absolute
+    top -2px
+    right -2px
+    width 10px
+    height 10px
+    background-color var(--f7-color-blue)
+    border 1px solid var(--f7-list-bg-color)
+    border-radius 50%
+    pointer-events none
 </style>
 
 <script>
