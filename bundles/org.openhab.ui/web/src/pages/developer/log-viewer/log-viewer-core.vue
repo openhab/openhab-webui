@@ -851,8 +851,7 @@ function highlightText(text: string) {
 
   // Apply each filter with its respective color
   activeHighlightFilters.value.forEach((filter) => {
-    const escapedFilterText = RegExp.escape(filter.text)
-    const regex = new RegExp(`(${escapedFilterText})`, 'gi')
+    const regex = new RegExp(`(${filter.text})`, 'gi')
     text = text.replace(regex, `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`)
   })
   return text
