@@ -26,7 +26,7 @@
           <div>Loading...</div>
         </f7-block>
         <f7-block v-if="ready && !previewMode" class="block-narrow">
-          <not-editable-notice v-if="!isEditable" />
+          <not-editable-notice v-if="!isEditable" subject="map" />
           <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
         </f7-block>
 
