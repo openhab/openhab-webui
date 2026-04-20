@@ -565,7 +565,7 @@ function socketConnect() {
   }
 
   const messageCallback: MessageCallback = (event) => {
-    console.log('.')
+    // console.log('.')
     if (Array.isArray(event)) {
       event.forEach((ev) => {
         addLogEntry(ev as unknown as LogEntry)
@@ -769,7 +769,7 @@ function redrawPartOfTable() {
   // make sure to redraw only 50 elements below around visible area
   const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
   const lastIndexToRedraw = Math.min(currentIndexAtTop + nbVisibleLines + 50, filteredItemsCount - 1)
-  console.debug(`Should redraw ${firstIndexToRedraw}/${lastIndexToRedraw}`)
+  // console.debug(`Should redraw ${firstIndexToRedraw}/${lastIndexToRedraw}`)
 
   if (!tableBody) return
 
