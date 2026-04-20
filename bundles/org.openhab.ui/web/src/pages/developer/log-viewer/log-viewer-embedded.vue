@@ -200,7 +200,7 @@ import LogViewerCore from './log-viewer-core.vue'
 const device = getDevice()
 
 // Defines
-const emits = defineEmits<{
+defineEmits<{
   'toggle-fullscreen': []
   hide: []
 }>()
