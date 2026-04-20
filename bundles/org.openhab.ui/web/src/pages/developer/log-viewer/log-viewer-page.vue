@@ -126,7 +126,6 @@ const logViewerCore = useTemplateRef('logViewerCore')
 
 // Lifecycle Hooks
 function onPageAfterIn() {
-  console.log('onPageAfterIn')
   logViewerCore.value?.load()
 }
 
