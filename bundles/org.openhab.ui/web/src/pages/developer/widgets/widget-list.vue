@@ -86,6 +86,10 @@
             <template #media>
               <span class="item-initial">{{ widget.uid[0].toUpperCase() }}</span>
             </template>
+            <template #after>
+              <!-- This is here to push the after-title icon so it would appear immediately after the title
+                    for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
+            </template>
             <template #after-title>
               <f7-icon v-if="widget.editable === false" f7="lock_fill" size="1rem" color="gray" />
             </template>
