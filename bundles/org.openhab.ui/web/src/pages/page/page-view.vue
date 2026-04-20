@@ -98,6 +98,7 @@ import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts
 import { useViewArea } from '@/js/composables/useViewArea.ts'
 
 import * as api from '@/api'
+import { getPageType } from '@/pages/page-type'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -170,7 +171,7 @@ const context = computed(() => ({
   vars: Object.assign(vars.value, page.value?.config?.defineVars ?? {}, props.defineVars ?? {}),
   store: statesStore.trackedItems
 }))
-const pageType = computed(() => (page.value ? getPageType(page.value) : null))
+const pageType = computed(() => getPageType(page.value).type)
 const pageLabel = computed(() => page.value?.config?.label)
 const editable = computed(() => page.value && userStore.isAdmin())
 const fullscreenIcon = computed(() => {
@@ -198,24 +199,6 @@ const onTabChange = (idx: number) => {
   props.f7router.updateCurrentUrl(url)
   // @ts-expect-error - url is not typed as part of the router
   props.f7router.url = url
-}
-const getPageType = (page: api.RootUiComponent | DeepReadonly<api.RootUiComponent>) => {
-  if (!page) return null
-  switch (page.component) {
-    case 'oh-layout-page':
-      return 'layout'
-    case 'oh-map-page':
-      return 'map'
-    case 'oh-tabs-page':
-      return 'tabs'
-    case 'oh-plan-page':
-      return 'plan'
-    case 'oh-chart-page':
-      return 'chart'
-    default:
-      console.warn('Unknown page type!')
-      return 'unknown'
-  }
 }
 const tabContext = (tab: api.UiComponent) => {
   const tabPage: DeepReadonly<api.RootUiComponent> | string = tab.config.page
@@ -291,7 +274,7 @@ const editPage = () => {
           onClick: () => {
             const tabPageUid = (page.value!.slots.default![currentTab.value]!.config.page as string).replace('page:', '')
             const tabPage = componentStore.page(tabPageUid)!
-            const tabPageType = getPageType(tabPage)
+            const tabPageType = getPageType(tabPage).type
             props.f7router.navigate('/settings/pages/' + tabPageType + '/' + tabPageUid)
           }
         }

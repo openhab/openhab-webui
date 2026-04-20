@@ -636,6 +636,7 @@ import SearchResults from './search-results.vue'
 import ExpressionTester from './expression-tester.vue'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
+import { getPageType } from '@/pages/page-type'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import cloneDeep from 'lodash/cloneDeep'
@@ -687,15 +688,6 @@ export default {
       newCollectionName: '',
       sseEvents: [],
       openedItem: null,
-      pageTypes: [
-        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'menu' },
-        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'rectangle_grid_2x2' },
-        { type: 'home', label: 'Home', componentType: 'oh-home-page', icon: 'house' },
-        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'squares_below_rectangle' },
-        { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'map' },
-        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' },
-        { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'graph_square' }
-      ],
       testExpression: '',
       addThingAutocomplete: null,
       theme
@@ -1023,9 +1015,7 @@ export default {
         load()
       }
     },
-    getPageType(page) {
-      return this.pageTypes.find((t) => t.componentType === page.component)
-    },
+    getPageType,
     showItem(evt, item) {
       evt.cancelBubble = true
       if (this.$$(evt.target).closest('.itemlist-actions').length) return

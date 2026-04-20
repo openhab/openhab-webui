@@ -171,6 +171,7 @@ import { f7, theme } from 'framework7-vue'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { showToast } from '@/js/dialog-promises'
+import { getPageType, getPageIcon } from '@/pages/page-type'
 
 export default {
   props: {
@@ -187,16 +188,7 @@ export default {
       pages: [],
       selectedItems: [],
       groupBy: 'alphabetical',
-      showCheckboxes: false,
-      pageTypes: [
-        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'f7:menu' },
-        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'f7:rectangle_grid_2x2' },
-        { type: 'home', label: 'Home', componentType: 'oh-home-page', icon: 'f7:house' },
-        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'f7:squares_below_rectangle' },
-        { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'f7:map' },
-        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'f7:square_stack_3d_up' },
-        { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'f7:graph_square' }
-      ]
+      showCheckboxes: false
     }
   },
   computed: {
@@ -214,7 +206,7 @@ export default {
         }, {})
       } else {
         const typeGroups = this.pages.reduce((prev, page, i, things) => {
-          const type = this.getPageType(page).label
+          const type = getPageType(page).label
           if (!prev[type]) {
             prev[type] = []
           }
@@ -292,7 +284,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
       } else {
-        this.f7router.navigate(this.getPageType(item).type + '/' + item.uid)
+        this.f7router.navigate(getPageType(item).type + '/' + item.uid)
       }
     },
     ctrlClick(event, item) {
@@ -308,15 +300,8 @@ export default {
         this.selectedItems.push(itemName)
       }
     },
-    getPageType(page) {
-      return this.pageTypes.find((t) => t.componentType === page.component)
-    },
-    getPageIcon(page) {
-      if (page.uid === 'overview') return 'f7:house'
-      if (page.config && page.config.icon) return page.config.icon
-      const pageType = this.pageTypes.find((t) => t.componentType === page.component)
-      return pageType ? pageType.icon : 'f7:tv'
-    },
+    getPageType,
+    getPageIcon,
     removeSelected() {
       const vm = this
 
