@@ -650,7 +650,7 @@ export default {
       developerSearch: null,
       currentUrl: '',
 
-      logDockVisible: localStorage.getItem('openhab.ui:logDock.visible') === 'true',
+      logDockVisible: localStorage.getItem('openhab.ui:logDock.visible') === 'true' && useUserStore().isAdmin(),
       logDockFullscreen: false,
       logDockHeight: parseInt(localStorage.getItem('openhab.ui:logDock.height')) || null
     }
@@ -935,6 +935,7 @@ export default {
       useUIOptionsStore().visibleBreakpointDisabled = f7.panel.get('left').visibleBreakpointDisabled
     },
     setLogDockVisible(visible) {
+      if (visible && !useUserStore().isAdmin()) return
       this.logDockVisible = visible
       if (!visible) this.logDockFullscreen = false
       localStorage.setItem('openhab.ui:logDock.visible', String(this.logDockVisible))
