@@ -636,6 +636,7 @@ import SearchResults from './search-results.vue'
 import ExpressionTester from './expression-tester.vue'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
+import PageType from '@/pages/page-type-mixin'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import cloneDeep from 'lodash/cloneDeep'
@@ -645,7 +646,7 @@ import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [RuleStatus, ThingStatus],
+  mixins: [RuleStatus, ThingStatus, PageType],
   components: {
     ClipboardIcon,
     Item,
@@ -687,15 +688,6 @@ export default {
       newCollectionName: '',
       sseEvents: [],
       openedItem: null,
-      pageTypes: [
-        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'menu' },
-        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'rectangle_grid_2x2' },
-        { type: 'home', label: 'Home', componentType: 'oh-home-page', icon: 'house' },
-        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'squares_below_rectangle' },
-        { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'map' },
-        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' },
-        { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'graph_square' }
-      ],
       testExpression: '',
       addThingAutocomplete: null,
       theme
@@ -1022,9 +1014,6 @@ export default {
       } else {
         load()
       }
-    },
-    getPageType(page) {
-      return this.pageTypes.find((t) => t.componentType === page.component)
     },
     showItem(evt, item) {
       evt.cancelBubble = true

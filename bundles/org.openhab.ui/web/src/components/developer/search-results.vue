@@ -388,8 +388,10 @@
 
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import PageType from '@/pages/page-type-mixin'
 
 export default {
+  mixins: [PageType],
   components: {
     ClipboardIcon
   },
@@ -408,16 +410,7 @@ export default {
         rules: 'wand_stars',
         pages: 'tv'
       },
-      expandedTypes: {},
-      pageTypes: [
-        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'menu' },
-        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'rectangle_grid_2x2' },
-        { type: 'home', label: 'Home', componentType: 'oh-home-page', icon: 'house' },
-        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'squares_below_rectangle' },
-        { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'map' },
-        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'square_stack_3d_up' },
-        { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'graph_square' }
-      ]
+      expandedTypes: {}
     }
   },
   computed: {
@@ -481,9 +474,6 @@ export default {
     },
     showingAll(type) {
       return this.expandedTypes[type] || this.searchResults[type].length <= 5
-    },
-    getPageType(page) {
-      return this.pageTypes.find((t) => t.componentType === page.component)
     },
     togglePin(evt, type, obj, keyName) {
       evt.cancelBubble = true
