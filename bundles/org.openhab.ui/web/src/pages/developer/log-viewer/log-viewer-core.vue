@@ -79,7 +79,7 @@
           <f7-list class="col wide">
             <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
               <template #media>
-                <input type="checkbox" v-model="highlightFilter.active" checked />
+                <input type="checkbox" v-model="highlightFilter.active" />
               </template>
               <template #title>
                 <f7-input
@@ -851,7 +851,8 @@ function highlightText(text: string) {
 
   // Apply each filter with its respective color
   activeHighlightFilters.value.forEach((filter) => {
-    const regex = new RegExp(`(${filter.text})`, 'gi')
+    const escapedFilterText = RegExp.escape(filter.text)
+    const regex = new RegExp(`(${escapedFilterText})`, 'gi')
     text = text.replace(regex, `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`)
   })
   return text
