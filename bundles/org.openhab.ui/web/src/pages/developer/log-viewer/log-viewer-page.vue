@@ -32,10 +32,10 @@
       <f7-subnavbar :inner="false" style="padding-right: var(--f7-safe-area-right)">
         <f7-searchbar
           ref="searchbar"
-          value=""
           custom-search
           placeholder="Filter"
           :disable-button="false"
+          :value="logViewerCore?.filterText"
           @searchbar:search="logViewerCore?.handleFilter"
           @searchbar:clear="logViewerCore?.clearFilter" />
         <div style="display: flex; flex-wrap: nowrap">
