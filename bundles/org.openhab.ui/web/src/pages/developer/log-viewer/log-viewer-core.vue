@@ -530,11 +530,9 @@ async function load() {
   }
 
   highlightFilters.value = JSON.parse(localStorage.getItem('openhab.ui:logviewer.logHighlightFilters') ?? '[]')
-
   filterText.value = localStorage.getItem('openhab.ui:logviewer.logFilterText') ?? ''
-  //TODO this.$refs.searchbar.$el.f7Searchbar.query = filterText.value
-
   showErrors.value = localStorage.getItem('openhab.ui:logviewer.logShowErrors') === 'true'
+  updateFilter()
 }
 
 function cleanup() {

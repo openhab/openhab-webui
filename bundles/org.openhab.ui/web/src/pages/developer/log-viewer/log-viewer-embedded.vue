@@ -191,7 +191,7 @@
 </style>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue'
+import { onBeforeUnmount, onMounted, useTemplateRef, nextTick } from 'vue'
 import { getDevice } from 'framework7'
 import { theme } from 'framework7-vue'
 import LogViewerCore from './log-viewer-core.vue'
@@ -211,10 +211,19 @@ defineProps<{
 
 // State/Data
 const logViewerCore = useTemplateRef('logViewerCore')
+const searchbar = useTemplateRef('searchbar')
 
 // Lifecycle Hooks
 onMounted(() => {
   logViewerCore.value?.load()
+  // Ensure the F7 searchbar shows the persisted query (Framework7 may not
+  // update its internal query from the prop binding in some cases).
+  nextTick(() => {
+    const sb = searchbar.value as any
+    if (sb?.$el?.f7Searchbar && logViewerCore.value?.filterText) {
+      sb.$el.f7Searchbar.query = logViewerCore.value.filterText
+    }
+  })
 })
 
 onBeforeUnmount(() => {

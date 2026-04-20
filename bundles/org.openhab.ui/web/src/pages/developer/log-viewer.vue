@@ -624,8 +624,8 @@ export default {
         this.$refs.searchbar.$el.f7Searchbar.query = this.filterText
       }
       this.filterTextLowerCase = this.filterText.trim().toLocaleLowerCase()
-
       this.showErrors = localStorage.getItem('openhab.ui:logviewer.logShowErrors')
+      this.updateFilter()
     },
     onPageBeforeOut() {
       this.loggingStop()
