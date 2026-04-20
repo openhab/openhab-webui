@@ -34,7 +34,7 @@
             view=".view-main"
             panel-close>
             <template #media>
-              <oh-icon :icon="pageIcon(page)" height="18" width="18" />
+              <oh-icon :icon="getPageIcon(page)" height="18" width="18" />
             </template>
           </f7-list-item>
         </f7-list>
@@ -484,6 +484,7 @@ import buildInfo from '@/assets/build-info'
 
 import routes from '@/js/routes.js'
 import PanelRight from '@/pages/panel-right.vue'
+import { getPageIcon } from '@/pages/page-type'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
@@ -820,23 +821,7 @@ export default {
       if (page.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
       return false
     },
-    pageIcon(page) {
-      if (page.config && page.config.icon) return page.config.icon
-      switch (page.component) {
-        case 'oh-layout-page':
-          return 'f7:rectangle_grid_2x2'
-        case 'oh-tabs-page':
-          return 'f7:squares_below_rectangle'
-        case 'oh-map-page':
-          return 'f7:map'
-        case 'oh-plan-page':
-          return 'f7:square_stack_3d_up'
-        case 'oh-chart-page':
-          return 'f7:graph_square'
-        default:
-          return 'f7:tv'
-      }
-    },
+    getPageIcon,
     updateThemeOptions() {
       if (useUIOptionsStore().visibleBreakpointDisabled) {
         nextTick(() => {
