@@ -17,7 +17,7 @@ const pageTypes: Record<string, PageType> = {
   'oh-chart-page': { type: 'chart', label: 'Chart', icon: 'f7:graph_square' }
 }
 
-const unknownPageType: PageType = { type: 'unknown', label: 'Unknown Page Type!', icon: 'f7:question_circle' }
+const unknownPageType: PageType = { type: 'unknown', label: 'Unknown Page Type!', icon: 'f7:tv' }
 
 /**
  * Returns the PageType for the given page, or a default "unknown" PageType if the page type is unknown.
