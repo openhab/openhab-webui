@@ -224,12 +224,14 @@ const WebSocketService = {
    * @param topics array of event topics to filter by, if empty all events are received
    * @param messageCallback message callback to handle incoming messages
    * @param readyCallback ready callback
+   * @param closeCallback close callback
    * @param errorCallback error callback
    */
   events(
     topics: string[],
     messageCallback: MessageCallback,
     readyCallback?: ReadyCallback,
+    closeCallback?: CloseCallback,
     errorCallback?: ErrorCallback
   ): KeepaliveWebSocket {
     let socket: KeepaliveWebSocket
@@ -257,7 +259,7 @@ const WebSocketService = {
       socket.send(heartbeatMessage(socket.id))
     }
 
-    socket = this.connect('/ws/events', extendedMessageCallback, heartbeatCallback, extendedReadyCallback, undefined, errorCallback)
+    socket = this.connect('/ws/events', extendedMessageCallback, heartbeatCallback, extendedReadyCallback, closeCallback, errorCallback)
 
     return socket
   },
