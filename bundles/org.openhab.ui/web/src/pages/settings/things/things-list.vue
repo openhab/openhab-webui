@@ -225,8 +225,8 @@
     display inline-block
   .badge-marker-dot
     position absolute
-    top -2px
-    right -2px
+    top -4px
+    right -4px
     width 10px
     height 10px
     background-color var(--f7-color-blue)
