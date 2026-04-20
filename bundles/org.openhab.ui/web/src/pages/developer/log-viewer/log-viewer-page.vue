@@ -108,7 +108,7 @@
 </style>
 
 <script setup lang="ts">
-import { useTemplateRef, ref } from 'vue'
+import { useTemplateRef } from 'vue'
 import { type Router, getDevice } from 'framework7'
 import { theme } from 'framework7-vue'
 import LogViewerCore from './log-viewer-core.vue'
