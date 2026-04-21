@@ -573,19 +573,25 @@ export default {
   },
   methods: {
     onPageAfterIn() {
-      this.$oh.api.get('/rest/logging/').then((data) => {
-        data.loggers.forEach((logger) => this.loggerPackages.push(logger))
-        nextTick(() => {
-          const rootPackageIndex = this.loggerPackages.findIndex((item) => item.loggerName === 'ROOT')
-          if (rootPackageIndex !== -1) {
-            this.defaultLogLevel = this.loggerPackages[rootPackageIndex].level
-          }
-          this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
-          this.loggerPackages = this.loggerPackages.filter((item) => item.loggerName !== 'ROOT')
+      this.$oh.api
+        .get('/rest/logging/')
+        .then((data) => {
+          data.loggers.forEach((logger) => this.loggerPackages.push(logger))
+          nextTick(() => {
+            const rootPackageIndex = this.loggerPackages.findIndex((item) => item.loggerName === 'ROOT')
+            if (rootPackageIndex !== -1) {
+              this.defaultLogLevel = this.loggerPackages[rootPackageIndex].level
+            }
+            this.loggerPackages.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
+            this.loggerPackages = this.loggerPackages.filter((item) => item.loggerName !== 'ROOT')
 
+            this.loadingLoggers = false
+          })
+        })
+        .catch((error) => {
+          console.warn('Failed to load logger packages:', error)
           this.loadingLoggers = false
         })
-      })
 
       this.socketConnect()
 
@@ -615,10 +621,14 @@ export default {
     },
     updateLogLevel(logger, value) {
       logger.level = value
-      this.$oh.api.put('/rest/logging/' + logger.loggerName, logger)
+      this.$oh.api.put('/rest/logging/' + logger.loggerName, logger).catch((error) => {
+        console.warn('Failed to update log level for ' + logger.loggerName + ':', error)
+      })
     },
     removeLogLevel(logger) {
-      this.$oh.api.delete('/rest/logging/' + logger.loggerName)
+      this.$oh.api.delete('/rest/logging/' + logger.loggerName).catch((error) => {
+        console.warn('Failed to remove log level for ' + logger.loggerName + ':', error)
+      })
       this.loggerPackages = this.loggerPackages.filter((loggerPackage) => loggerPackage.loggerName !== logger.loggerName)
     },
     socketConnect() {
