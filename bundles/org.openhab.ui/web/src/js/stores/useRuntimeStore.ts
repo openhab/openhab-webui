@@ -23,6 +23,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const websiteUrl = ref<string | null>(null)
   const docSrcUrl = ref<string | null>(null)
   const showDeveloperDock = ref<boolean>(false)
+  const showLogDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
   const voiceIcon = ref<string | null>(null)
   const modelExpanded = ref<boolean>(false)
@@ -64,6 +65,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     websiteUrl,
     docSrcUrl,
     showDeveloperDock,
+    showLogDock,
     pagePath,
     voiceIcon,
     modelExpanded,

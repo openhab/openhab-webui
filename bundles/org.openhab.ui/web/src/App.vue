@@ -650,7 +650,6 @@ export default {
       developerSearch: null,
       currentUrl: '',
 
-      logDockVisible: localStorage.getItem('openhab.ui:logDock.visible') === 'true' && useUserStore().isAdmin(),
       logDockFullscreen: false,
       logDockHeight: parseInt(localStorage.getItem('openhab.ui:logDock.height')) || null
     }
@@ -683,7 +682,7 @@ export default {
       return window.location.origin
     },
     showDockedLogViewer() {
-      return this.logDockVisible && !this.currentPath.developer?.['log-viewer']
+      return this.runtimeStore.showLogDock && !this.currentPath.developer?.['log-viewer']
     },
     logDockStyle() {
       const viewportWidth = this.$f7dim?.width || window.innerWidth
@@ -936,15 +935,14 @@ export default {
     },
     setLogDockVisible(visible) {
       if (visible && !useUserStore().isAdmin()) return
-      this.logDockVisible = visible
+      useRuntimeStore().showLogDock = visible
       if (!visible) this.logDockFullscreen = false
-      localStorage.setItem('openhab.ui:logDock.visible', String(this.logDockVisible))
     },
     toggleLogDock() {
-      this.setLogDockVisible(!this.logDockVisible)
+      this.setLogDockVisible(!useRuntimeStore().showLogDock)
     },
     toggleLogDockFullscreen() {
-      if (!this.logDockVisible) this.setLogDockVisible(true)
+      if (!useRuntimeStore().showLogDock) this.setLogDockVisible(true)
       this.logDockFullscreen = !this.logDockFullscreen
     },
     startDockResize(ev) {
@@ -994,7 +992,7 @@ export default {
           this.toggleDeveloperDock()
           break
         case 'KeyF':
-          if (this.logDockVisible) this.toggleLogDockFullscreen()
+          if (useRuntimeStore().showLogDock) this.toggleLogDockFullscreen()
           break
         case 'KeyL':
           this.toggleLogDock()
