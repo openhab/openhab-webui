@@ -840,7 +840,10 @@ export default {
       const LINE_HEIGHT = 31
 
       const tableContainer = this.$refs.tableContainer
-      const tableBody = this.$refs.dataTable.firstChild
+      const tableBody = this.$refs.dataTable?.firstChild
+      if (!tableBody) {
+        return
+      }
       const filteredItemsCount = this.filteredTableData.length
       const currentIndexAtTop = Math.floor(tableContainer.scrollTop / LINE_HEIGHT)
       const nbVisibleLines = Math.floor(tableContainer.offsetHeight / LINE_HEIGHT)
