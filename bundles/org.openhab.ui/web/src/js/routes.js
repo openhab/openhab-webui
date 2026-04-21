@@ -1,4 +1,5 @@
 import { authorize, isLoggedIn, enforceAdminForRoute } from '@/js/openhab/auth'
+import { beforeLeave } from '@/pages/useDirty'
 
 import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
@@ -73,9 +74,17 @@ const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/p
 
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '@/pages/wizards/setup-wizard.vue')
 
-const checkDirtyBeforeLeave = function ({ router, to, from, resolve, reject }) {
-  if (this.currentPageEl?.beforeLeave && !to.path.startsWith(from.path)) {
-    this.currentPageEl.beforeLeave({ router, to, from, resolve, reject })
+const checkDirtyBeforeLeave = async function ({ router, to, from, resolve, reject }) {
+  // Check if not navigating to a sub-path of current path
+  if (to.path.startsWith(from.path)) {
+    resolve()
+    return
+  }
+
+  // Check if there's unsaved changes in the component
+  const dirtyRef = this.currentPageEl?.__dirty
+  if (dirtyRef?.value) {
+    await beforeLeave({ resolve, reject, router, from, dirty: dirtyRef })
   } else {
     resolve()
   }

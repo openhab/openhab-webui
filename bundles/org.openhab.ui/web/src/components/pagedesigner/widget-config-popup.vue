@@ -40,13 +40,14 @@
 import { f7 } from 'framework7-vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
 
+import { useDirty, confirmLeaveWithoutSaving } from '@/pages/useDirty'
+
 export default {
-  mixins: [DirtyMixin, MovablePopupMixin],
+  mixins: [MovablePopupMixin],
   props: {
     opened: Boolean,
     component: Object,
@@ -56,6 +57,13 @@ export default {
     ConfigSheet
   },
   emits: ['closed', 'update'],
+  setup() {
+    const { dirty, dirtyIndicator } = useDirty(null)
+    return {
+      dirty,
+      dirtyIndicator
+    }
+  },
   data() {
     return {
       originalConfig: null,
@@ -82,21 +90,18 @@ export default {
         this.closeWithDirtyCheck()
       }
     },
-    closeWithDirtyCheck() {
+    async closeWithDirtyCheck() {
       if (this.dirty) {
-        const dialog = this.confirmLeaveWithoutSaving(
-          () => {
-            this.updateWidgetConfig(this.originalConfig)
-            this.$refs.widgetConfig.$el.f7Modal.close()
-          },
-          () => {
-            // prevent re-triggering the confirm dialog when ESC is pressed to close the dialog
-            this.leaveCancelled = true
-            setTimeout(() => {
-              this.leaveCancelled = false
-            }, 100)
-          }
-        )
+        if (await confirmLeaveWithoutSaving()) {
+          this.updateWidgetConfig(this.originalConfig)
+          this.$refs.widgetConfig.$el.f7Modal.close()
+        } else {
+          // prevent re-triggering the confirm dialog when ESC is pressed to close the dialog
+          this.leaveCancelled = true
+          setTimeout(() => {
+            this.leaveCancelled = false
+          }, 100)
+        }
       } else {
         this.$refs.widgetConfig.$el.f7Modal.close()
       }

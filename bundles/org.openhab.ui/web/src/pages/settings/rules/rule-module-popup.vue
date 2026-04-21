@@ -145,15 +145,16 @@ import { f7 } from 'framework7-vue'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
-import DirtyMixin from '../dirty-mixin'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import TriggerModuleWizard from '@/components/rule/trigger-module-wizard.vue'
 import ConditionModuleWizard from '@/components/rule/condition-module-wizard.vue'
 import ActionModuleWizard from '@/components/rule/action-module-wizard.vue'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 
+import { useDirty, confirmLeaveWithoutSaving } from '@/pages/useDirty'
+
 export default {
-  mixins: [ModuleDescriptionSuggestions, DirtyMixin],
+  mixins: [ModuleDescriptionSuggestions],
   components: {
     TriggerModuleWizard,
     ConditionModuleWizard,
@@ -171,8 +172,11 @@ export default {
   },
   emits: ['module-update', 'editNewScript'],
   setup() {
+    const { dirty, dirtyIndicator } = useDirty(null)
     return {
-      f7
+      f7,
+      dirty,
+      dirtyIndicator
     }
   },
   data() {
@@ -257,9 +261,11 @@ export default {
           return prev
         }, {})
     },
-    onBackClicked() {
+    async onBackClicked() {
       if (this.dirty) {
-        this.confirmLeaveWithoutSaving(this.close)
+        if (await confirmLeaveWithoutSaving()) {
+          this.close()
+        }
       } else {
         this.close()
       }

@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="sitemap-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label) + dirtyIndicator"
@@ -365,7 +365,7 @@
 
 <script>
 import { nextTick } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { mapWritableState } from 'pinia'
 
 import cloneDeep from 'lodash/cloneDeep'
@@ -377,12 +377,12 @@ import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
 import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [DirtyMixin, SitemapMixin],
+  mixins: [SitemapMixin],
   components: {
     SitemapCode,
     WidgetDetails,
@@ -397,7 +397,8 @@ export default {
     f7route: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('sitemap-edit-page')
+    return { dirty, dirtyIndicator }
   },
   data() {
     return {

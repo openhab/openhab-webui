@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="chart-editor">
+  <f7-page ref="chart-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="chart-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="(createMode ? 'Create chart page' : page.config.label) + dirtyIndicator"
@@ -76,8 +76,8 @@
 </style>
 
 <script>
-import { defineAsyncComponent, provide } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { defineAsyncComponent } from 'vue'
+import { f7 } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
 
@@ -94,6 +94,8 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import WidgetSlotConfigPopup from '@/components/pagedesigner/widget-slot-config-popup.vue'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
   mixins: [PageDesigner],
@@ -113,8 +115,10 @@ export default {
   },
   setup() {
     useViewArea()
+    const { dirty, dirtyIndicator } = useDirty('chart-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
 
-    return { theme }
+    return { dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {

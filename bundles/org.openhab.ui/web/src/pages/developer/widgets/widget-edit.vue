@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="widget-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator"
@@ -108,11 +108,10 @@
 
 <script>
 import { defineAsyncComponent, nextTick } from 'vue'
-import { theme, f7 } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 
 import YAML from 'yaml'
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
 
 import * as StandardListWidgets from '@/components/widgets/standard/list'
 import * as api from '@/api'
@@ -121,11 +120,11 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useViewArea } from '@/js/composables/useViewArea'
 import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
 export default {
-  mixins: [DirtyMixin],
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     ConfigSheet
@@ -138,7 +137,8 @@ export default {
   },
   setup() {
     useViewArea()
-    return { f7, theme }
+    const { dirty, dirtyIndicator } = useDirty('widget-edit-page')
+    return { f7, dirty, dirtyIndicator }
   },
   data() {
     return {

@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
+  <f7-page ref="rule-edit-page" @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
@@ -250,7 +250,7 @@
                   link
                   no-chevron
                   media-item
-                  :color="theme.dark ? 'black' : 'white'"
+                  :color="uiOptionsStore.darkMode === 'dark' ? 'black' : 'white'"
                   :subtitle="SECTION_LABELS[section][2]"
                   @click="addModule(section)">
                   <template #media>
@@ -349,7 +349,6 @@ import RuleModulePopup from './rule-module-popup.vue'
 import RuleMixin from './rule-edit-mixin'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
-import DirtyMixin from '../dirty-mixin'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
@@ -357,9 +356,10 @@ import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
+  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus],
   components: {
     RuleGeneralSettings,
     ConfigSheet,
@@ -375,7 +375,8 @@ export default {
     f7route: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('rule-edit-page')
+    return { dirty, dirtyIndicator, theme }
   },
   data() {
     return {

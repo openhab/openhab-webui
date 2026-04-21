@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="tabs-editor">
+  <f7-page ref="tabs-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="tabs-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create tabbed page' : page.config.label) + dirtyIndicator"
@@ -101,10 +101,12 @@
 
 <script>
 import { defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 
 import PageDesignerMixin from '@/pages/settings/pages/pagedesigner-mixin'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 import YAML from 'yaml'
 
@@ -129,7 +131,10 @@ export default {
   },
   setup() {
     const { evaluateExpression } = useWidgetExpression()
-    return { theme, evaluateExpression }
+    const { dirty, dirtyIndicator } = useDirty('layout-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
+
+    return { evaluateExpression, dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {

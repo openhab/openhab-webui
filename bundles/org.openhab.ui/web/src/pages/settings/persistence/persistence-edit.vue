@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="persistence-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content :title="pageTitle + dirtyIndicator" :editable save-link="Save" @save="save()" :f7router />
     </f7-navbar>
@@ -338,7 +338,6 @@ import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
-import DirtyMixin from '../dirty-mixin'
 import { FilterTypes, PredefinedStrategies, CommonCronStrategies } from '@/assets/definitions/persistence'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
@@ -348,9 +347,9 @@ import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [DirtyMixin],
   components: {
     ItemPicker,
     StrategyPicker,
@@ -361,7 +360,8 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('persistence-edit-page')
+    return { theme, dirty, dirtyIndicator }
   },
   data() {
     return {
