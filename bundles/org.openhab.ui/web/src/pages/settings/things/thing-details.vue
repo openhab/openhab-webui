@@ -313,6 +313,7 @@
           :read-only="!editable"
           :read-only-msg="notEditableMsg"
           :hint-context="{ thingType: thingType, channelTypes: channelTypes }"
+          @save="save()"
           @parsed="updateThing"
           @changed="onCodeChanged" />
       </f7-tab>

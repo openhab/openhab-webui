@@ -9,7 +9,14 @@
     :tooltip="readOnlyMsg" />
 
   <div class="code-editor">
-    <editor ref="editor" :mode="editorMode" :value="code" :hint-context="hintContext" :read-only="readOnly" @input="onEditorInput" />
+    <editor
+      ref="editor"
+      :mode="editorMode"
+      :value="code"
+      :hint-context="hintContext"
+      :read-only="readOnly"
+      @input="onEditorInput"
+      @save="$emit('save')" />
   </div>
 
   <f7-toolbar bottom class="code-editor-toolbar">
@@ -116,7 +123,7 @@ export default {
   //          The parsed object is passed as the argument.
   // @changed event is emitted when the code is changed in the editor
   //          The code editor's dirty status is passed as a boolean argument.
-  emits: ['changed', 'parsed'],
+  emits: ['changed', 'parsed', 'save'],
   data() {
     return {
       code: null,
