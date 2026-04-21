@@ -179,7 +179,7 @@
             icon-md="material:play_arrow"
             :icon-color="stateConnected && stateProcessing ? 'gray' : ''"
             :tooltip="!$device.ios ? 'Continue receiving logs' : ''"
-            :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios }"
+            :class="{ 'disabled-link': stateConnected && stateProcessing, 'no-margin-left': $device.ios, 'connecting-flash': isConnecting }"
             @click="loggingContinue" />
           <f7-link
             icon-ios="f7:pause_fill"
@@ -193,9 +193,9 @@
             icon-ios="f7:stop_fill"
             icon-aurora="f7:stop_fill"
             icon-md="material:stop_fill"
-            :icon-color="!stateConnected ? 'gray' : ''"
+            :icon-color="!stateConnected && !stateConnecting ? 'gray' : ''"
             :tooltip="!$device.ios ? 'Stop receiving logs' : ''"
-            :class="{ 'disabled-link': !stateConnected, 'no-margin-left': $device.ios }"
+            :class="{ 'disabled-link': !stateConnected && !stateConnecting, 'no-margin-left': $device.ios }"
             @click="loggingStop" />
         </template>
       </oh-nav-content>
@@ -288,19 +288,22 @@
 </template>
 
 <style lang="stylus">
-.theme-filled
-  .log-viewer
-    .subnavbar
-      .badge.color-red
-        background-color #c81d00
-      .badge.color-orange
-        background-color #f59b00
-      .badge.color-green
-        background-color #12cc00
 .log-viewer
 
   .subnavbar
     height: unset
+
+    .badge.color-red
+      background-color #c81d00
+    .badge.color-orange
+      background-color #f59b00
+    .badge.color-green
+      background-color #12cc00
+
+  .navbar
+    .connecting-flash:not(.disabled-link)
+      .icon
+        animation opacity-pulse 0.5s cubic-bezier(1, 0, 0.4, 1) infinite alternate
 
   /* Ensure the card takes full width and removes padding */
   .custom-card
@@ -426,6 +429,12 @@
     outline none
     border-color #007aff
 
+  @keyframes opacity-pulse
+    0%
+      opacity 1
+    100%
+      opacity 0
+
   .input-with-buttons-container
     display flex
     justify-content center
@@ -505,9 +514,12 @@ export default {
     return {
       stateConnected: false,
       stateProcessing: true,
+      stateConnecting: false,
       scrollTime: 0,
       autoScroll: true,
       socket: null,
+      reconnectDelay: 1000,
+      reconnectTimer: null,
       defaultLogLevel: 'WARN',
       logPackageInputText: '',
       highlightFilters: [],
@@ -559,6 +571,7 @@ export default {
       return this.stateProcessing ? 'green' : 'orange'
     },
     periodRangeTooltip() {
+      if (this.stateConnecting) return 'Log period - Connecting'
       if (!this.stateConnected) return 'Log period - Disconnected'
       return this.stateProcessing ? 'Log period - Receiving logs' : 'Log period - Paused'
     },
@@ -569,6 +582,9 @@ export default {
     },
     selectedLog() {
       return this.tableData.find((entry) => entry.id === this.selectedId) || {}
+    },
+    isConnecting() {
+      return this.stateConnecting
     }
   },
   methods: {
@@ -593,7 +609,7 @@ export default {
           this.loadingLoggers = false
         })
 
-      this.socketConnect()
+      this.startConnecting()
 
       this.highlightFilters = JSON.parse(localStorage.getItem('openhab.ui:logviewer.logHighlightFilters'))
       if (this.highlightFilters == null) {
@@ -631,15 +647,39 @@ export default {
       })
       this.loggerPackages = this.loggerPackages.filter((loggerPackage) => loggerPackage.loggerName !== logger.loggerName)
     },
+    startConnecting() {
+      this.stateConnecting = true
+      this.reconnectDelay = 1000
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer)
+        this.reconnectTimer = null
+      }
+      this.socketConnect()
+    },
+    stopConnecting() {
+      if (this.reconnectTimer) {
+        clearTimeout(this.reconnectTimer)
+        this.reconnectTimer = null
+      }
+      this.stateConnecting = false
+    },
     socketConnect() {
       const readyCallback = () => {
+        if (this.stateConnecting) {
+          this.stopConnecting()
+        }
         this.stateConnected = true
         this.stateProcessing = true
+        console.info('WebSocket connection established.')
         this.socket.send('{"sequenceStart": ' + this.lastSequence + '}')
         nextTick(() => this.scrollToBottom())
       }
 
       const closeCallback = () => {
+        if (this.stateConnected) {
+          console.warn('WebSocket connection closed by peer. Attempting to reconnect...')
+          this.startConnecting()
+        }
         this.stateConnected = false
       }
 
@@ -662,7 +702,21 @@ export default {
       }
 
       const errorCallback = (event) => {
-        console.error('WebSocket error:', event)
+        if (this.stateConnecting) {
+          if (this.reconnectDelay < 300000) {
+            this.reconnectDelay *= 1.2
+            if (this.reconnectDelay > 300000) {
+              this.reconnectDelay = 300000
+            }
+          }
+          console.info('Failed to connect, retrying in ' + (this.reconnectDelay / 1000).toFixed(1) + ' s...')
+          this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = null
+            this.socketConnect()
+          }, this.reconnectDelay)
+        } else {
+          console.error('WebSocket error:', event)
+        }
       }
 
       this.socket = this.$oh.ws.connect('/ws/logs', messageCallback, heartbeatCallback, readyCallback, closeCallback, errorCallback, 9)
@@ -678,9 +732,8 @@ export default {
       // }
     },
     socketClose() {
-      this.$oh.ws.close(this.socket, () => {
-        this.stateConnected = false
-      })
+      this.stateConnected = false
+      this.$oh.ws.close(this.socket)
     },
     renderEntry(entity) {
       let tr = document.createElement('tr')
@@ -804,15 +857,23 @@ export default {
       this.stateProcessing = false
     },
     loggingContinue() {
+      if (this.stateConnecting) {
+        return
+      }
       if (!this.stateConnected) {
-        this.socketConnect()
+        this.startConnecting()
       }
       this.updateFilter()
       this.stateProcessing = true
     },
     loggingStop() {
-      this.stateConnected = false
-      this.socketClose()
+      if (this.stateConnecting) {
+        this.stopConnecting()
+      }
+      if (this.stateConnected) {
+        this.stateConnected = false
+        this.socketClose()
+      }
     },
     clearLog() {
       this.tableData.length = 0
