@@ -41,22 +41,23 @@
           <f7-link icon-f7="xmark" tooltip="Hide log pane (Shift+Alt+L)" @click="$emit('hide')" />
         </div>
       </div>
-      <div v-if="!collapsed" class="dock-filter-row">
-        <f7-searchbar
-          ref="searchbar"
-          class="dock-searchbar"
-          :value="logViewerCore?.filterText"
-          custom-search
-          placeholder="Filter"
-          :disable-button="false"
-          @searchbar:search="logViewerCore?.handleFilter"
-          @searchbar:clear="logViewerCore?.clearFilter" />
-        <div class="dock-stats">
-          <f7-badge class="log-period margin-left-half"> {{ logViewerCore?.logStart }}&nbsp;>&nbsp;{{ logViewerCore?.logEnd }} </f7-badge>
-          <f7-badge class="margin-horizontal" :color="logViewerCore?.countersBadgeColor" tooltip="Log entries filtered/total">
-            {{ logViewerCore?.filterCount ?? 0 }}/{{ logViewerCore?.tableData?.length ?? 0 }}
-          </f7-badge>
-        </div>
+    </div>
+
+    <div v-if="!collapsed" class="dock-filter-row searchbar">
+      <f7-searchbar
+        ref="searchbar"
+        :value="logViewerCore?.filterText"
+        custom-search
+        placeholder="Filter"
+        clear-button
+        :disable-button="false"
+        @searchbar:search="logViewerCore?.handleFilter"
+        @searchbar:clear="logViewerCore?.clearFilter" />
+      <div class="dock-stats">
+        <f7-badge class="log-period margin-left-half"> {{ logViewerCore?.logStart }}&nbsp;>&nbsp;{{ logViewerCore?.logEnd }} </f7-badge>
+        <f7-badge class="margin-horizontal" :color="logViewerCore?.countersBadgeColor" tooltip="Log entries filtered/total">
+          {{ logViewerCore?.filterCount ?? 0 }}/{{ logViewerCore?.tableData?.length ?? 0 }}
+        </f7-badge>
       </div>
     </div>
 
@@ -132,9 +133,8 @@
 
   .dock-header
     flex none
-    padding 10px 12px 8px
+    padding 10px 18px 8px
     border-bottom 1px solid var(--f7-bars-border-color)
-    background var(--f7-page-bg-color)
 
   .dock-header-row
     display flex
@@ -163,12 +163,6 @@
     display flex
     align-items center
     gap 12px
-    margin-top 8px
-
-  .dock-searchbar
-    flex 1
-    min-width 0
-    margin 0
 
   .dock-stats
     display flex
@@ -180,7 +174,7 @@
     display flex
     align-items center
     gap 6px
-    padding 8px 12px
+    padding 8px 18px
     border-bottom 1px solid var(--f7-bars-border-color)
     background var(--f7-page-bg-color)
 

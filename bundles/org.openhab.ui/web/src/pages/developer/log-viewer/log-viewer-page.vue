@@ -34,6 +34,7 @@
           ref="searchbar"
           custom-search
           placeholder="Filter"
+          clear-button
           :disable-button="false"
           :value="logViewerCore?.filterText"
           @searchbar:search="logViewerCore?.handleFilter"
