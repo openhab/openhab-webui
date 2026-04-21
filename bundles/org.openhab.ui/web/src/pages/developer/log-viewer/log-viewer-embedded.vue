@@ -134,7 +134,11 @@
   .dock-header
     flex none
     padding 10px 18px 8px
+    background var(--f7-bars-bg-color)
+    color var(--f7-bars-text-color)
     border-bottom 1px solid var(--f7-bars-border-color)
+    .link
+      color var(--f7-bars-link-color)
 
   .dock-header-row
     display flex
