@@ -28,15 +28,20 @@
             :tooltip="!device.ios ? 'Stop receiving logs' : ''"
             :class="{ 'disabled-link': !logViewerCore?.stateConnected, 'no-margin-left': device.ios }"
             @click="logViewerCore?.loggingStop()" />
+          <span class="dock-action-sep" />
           <f7-link
             :icon-f7="fullscreen ? 'arrow_down_to_line' : 'arrow_up_left_arrow_down_right'"
             :tooltip="fullscreen ? 'Restore docked size (Shift+Alt+F)' : 'Fill main pane (Shift+Alt+F)'"
             @click="$emit('toggle-fullscreen')" />
+          <f7-link
+            :icon-f7="collapsed ? 'chevron_up' : 'chevron_down'"
+            :tooltip="collapsed ? 'Show filter and toolbar' : 'Hide filter and toolbar'"
+            @click="toggleCollapsed" />
           <span class="dock-action-sep" />
           <f7-link icon-f7="xmark" tooltip="Hide log pane (Shift+Alt+L)" @click="$emit('hide')" />
         </div>
       </div>
-      <div class="dock-filter-row">
+      <div v-if="!collapsed" class="dock-filter-row">
         <f7-searchbar
           ref="searchbar"
           class="dock-searchbar"
@@ -55,7 +60,7 @@
       </div>
     </div>
 
-    <div class="dock-toolbar">
+    <div v-if="!collapsed" class="dock-toolbar">
       <f7-link
         icon-f7="cloud_download"
         tooltip="Download filtered log as CSV"
@@ -191,7 +196,7 @@
 </style>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useTemplateRef, nextTick } from 'vue'
+import { onBeforeUnmount, onMounted, useTemplateRef, nextTick, ref } from 'vue'
 import { getDevice } from 'framework7'
 import { theme } from 'framework7-vue'
 import LogViewerCore from './log-viewer-core.vue'
@@ -212,6 +217,11 @@ defineProps<{
 // State/Data
 const logViewerCore = useTemplateRef('logViewerCore')
 const searchbar = useTemplateRef('searchbar')
+const collapsed = ref(false)
+
+function toggleCollapsed() {
+  collapsed.value = !collapsed.value
+}
 
 // Lifecycle Hooks
 onMounted(() => {
