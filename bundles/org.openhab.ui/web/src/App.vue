@@ -6,7 +6,7 @@
       visibility: userStore.user || componentsStore.page('overview') || communicationFailureMsg ? '' : 'hidden'
     }">
     <!-- Left Panel -->
-    <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="1024">
+    <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="960">
       <f7-page>
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
           <div class="logo-inner">
