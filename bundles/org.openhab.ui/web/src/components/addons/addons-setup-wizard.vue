@@ -53,9 +53,6 @@
         <f7-searchbar
           v-model:value="addonSearchQuery"
           :placeholder="t('setupwizard.' + type + '.selectAddons.placeholder')"
-          search-container=".addon-selection-list"
-          search-item=".addon-selection-item"
-          search-in=".addon-selection-label"
           :disable-button-text="t('dialogs.cancel')" />
         <f7-list media-list class="addon-selection-list">
           <f7-list-item
@@ -174,7 +171,12 @@ export default {
         return available
       }
       const query = this.addonSearchQuery.toLowerCase()
-      return available.filter((a) => a.label.toLowerCase().includes(query) || a.uid.toLowerCase().includes(query))
+      return available.filter((a) => {
+        if (a.label.toLowerCase().includes(query) || a.uid.toLowerCase().includes(query)) return true
+        const descrHtml = this.addonDescription(a)
+        const descrText = descrHtml.replace(/<[^>]+>/g, ' ').toLowerCase()
+        return descrText.includes(query)
+      })
     }
   },
   methods: {
