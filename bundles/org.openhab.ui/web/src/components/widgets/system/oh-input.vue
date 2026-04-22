@@ -113,7 +113,7 @@ export default {
       if (this.config.useDisplayState) {
         const pattern = this.item.stateDescription?.pattern
         const unit = this.extractUnit(pattern)
-        if (unit === '$unit%') return this.item.unitSymbol
+        if (unit === '%unit%') return this.item.unitSymbol
         return unit ?? this.item.unitSymbol
       }
       return this.item.unitSymbol
