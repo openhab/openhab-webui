@@ -174,7 +174,7 @@ export default {
   setup() {
     useViewArea()
     const { evaluateExpression } = useWidgetExpression()
-    const { dirty, dirtyIndicator } = useDirty('layout-edit-page')
+    const { dirty, dirtyIndicator } = useDirty('plan-edit-page')
     const { currentTab, switchTab } = useTabs('design')
 
     return { evaluateExpression, dirty, dirtyIndicator, currentTab, switchTab }

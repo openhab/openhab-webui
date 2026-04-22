@@ -176,7 +176,7 @@ export default {
   },
   setup() {
     useViewArea()
-    const { dirty, dirtyIndicator } = useDirty('layout-edit-page')
+    const { dirty, dirtyIndicator } = useDirty('map-edit-page')
     const { currentTab, switchTab } = useTabs('design')
 
     return { dirty, dirtyIndicator, currentTab, switchTab }
