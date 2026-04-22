@@ -357,6 +357,7 @@ import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
   mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus],
@@ -376,7 +377,8 @@ export default {
   },
   setup() {
     const { dirty, dirtyIndicator } = useDirty('rule-edit-page')
-    return { dirty, dirtyIndicator, theme }
+    const { currentTab, switchTab } = useTabs('design')
+    return { theme, dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {
@@ -402,7 +404,6 @@ export default {
       currentModule: null,
       currentModuleConfig: {},
 
-      currentTab: 'design',
       codeEditorOpened: false,
       cronPopupOpened: false,
       scriptCode: '',

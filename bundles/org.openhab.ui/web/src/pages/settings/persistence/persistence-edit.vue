@@ -348,6 +348,7 @@ import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
   components: {
@@ -361,7 +362,8 @@ export default {
   },
   setup() {
     const { dirty, dirtyIndicator } = useDirty('persistence-edit-page')
-    return { theme, dirty, dirtyIndicator }
+    const { currentTab, switchTab } = useTabs('design')
+    return { theme, dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {
@@ -372,7 +374,6 @@ export default {
       persistenceYaml: '',
       ready: false,
       loading: false,
-      currentTab: 'design',
       currentConfiguration: null,
       currentCronStrategy: null,
       currentFilter: null,

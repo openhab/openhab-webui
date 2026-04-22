@@ -131,7 +131,7 @@ export default {
   },
   setup() {
     const { evaluateExpression } = useWidgetExpression()
-    const { dirty, dirtyIndicator } = useDirty('layout-edit-page')
+    const { dirty, dirtyIndicator } = useDirty('tabs-edit-page')
     const { currentTab, switchTab } = useTabs('design')
 
     return { evaluateExpression, dirty, dirtyIndicator, currentTab, switchTab }

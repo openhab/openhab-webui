@@ -124,7 +124,7 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { nextTick } from 'vue'
 import { showToast } from '@/js/dialog-promises'
-import { confirmLeaveWithoutSaving, useDirty } from '@/pages/useDirty'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
   mixins: [ThingStatus, LinkMixin],

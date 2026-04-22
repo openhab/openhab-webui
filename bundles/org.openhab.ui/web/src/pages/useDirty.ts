@@ -1,7 +1,7 @@
 import { ref, computed, type Ref, watch, onMounted, useTemplateRef } from 'vue'
 import type { Router } from 'framework7'
 import { showConfirmDialog } from '@/js/dialog-promises'
-import fastDeepEqual from 'fast-deep-equal'
+import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
 export async function confirmLeaveWithoutSaving(): Promise<boolean> {
@@ -25,10 +25,9 @@ export async function beforeLeave({
   if (dirty.value) {
     const shouldLeave = await confirmLeaveWithoutSaving()
     if (shouldLeave) {
-      router.allowPageChange = true
       resolve()
     } else {
-      router.allowPageChange = false
+      router.allowPageChange = true
       reject()
     }
   } else {
@@ -113,7 +112,7 @@ export function useDirty(pageRefOrName: string | Ref<PageRef> | null) {
     watch(
       value,
       (newValue, oldValue) => {
-        if (!oldValue) {
+        if (oldValue === undefined) {
           // First time real data is loaded, capture it as pristine baseline
           pristineValue = cloneDeep(newValue)
           dirty.value = false

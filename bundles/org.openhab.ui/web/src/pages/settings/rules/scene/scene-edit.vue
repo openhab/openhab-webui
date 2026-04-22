@@ -254,6 +254,7 @@ import ItemPicker from '@/components/config/controls/item-picker.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
   mixins: [RuleMixin, RuleStatus],
@@ -271,7 +272,8 @@ export default {
   },
   setup() {
     const { dirty, dirtyIndicator } = useDirty('scene-edit-page')
-    return { dirty, dirtyIndicator }
+    const { currentTab, switchTab } = useTabs('design')
+    return { dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {
@@ -284,7 +286,6 @@ export default {
         conditions: [],
         triggers: []
       },
-      currentTab: 'design',
       currentModuleType: null,
       currentModule: null,
       currentModuleConfig: {},

@@ -128,7 +128,7 @@
 </style>
 
 <script>
-import { defineAsyncComponent, provide } from 'vue'
+import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
@@ -168,7 +168,7 @@ export default {
   setup() {
     useViewArea()
     const { evaluateExpression } = useWidgetExpression()
-    const { dirty, dirtyIndicator } = useDirty('layout-edit-page')
+    const { dirty, dirtyIndicator } = useDirty('plan-edit-page')
     const { currentTab, switchTab } = useTabs('design')
 
     return { evaluateExpression, dirty, dirtyIndicator, currentTab, switchTab }
