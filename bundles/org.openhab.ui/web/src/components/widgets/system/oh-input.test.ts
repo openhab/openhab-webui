@@ -23,7 +23,7 @@ describe('oh-input.vue', () => {
       type: 'number',
       config: { useDisplayState: true, item: 'Timer' },
       item: { unitSymbol: 's', stateDescription: { pattern: `%1$tM %1$tS'%1$tL"` } },
-      context: { store: { Timer: { displayState: `60 30'00"` } } },
+      context: { store: { Timer: { state: '60 s' } } },
       extractUnit: (ohInput as any).methods.extractUnit
     }
 

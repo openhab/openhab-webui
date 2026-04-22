@@ -231,6 +231,7 @@ export default {
     extractUnit(pattern) {
       if (!pattern) return null
       const parts = pattern.trim().split(/\s+/)
+      // Ignore %unit% and %% placeholders while detecting actual value tokens.
       const valueIndex = parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
 
       if (valueIndex === -1 || valueIndex === parts.length - 1) return null
