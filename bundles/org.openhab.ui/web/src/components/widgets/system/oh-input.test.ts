@@ -28,7 +28,7 @@ describe('oh-input.vue', () => {
     }
 
     const unit = (ohInput as any).computed.unit.call(context)
-    expect(unit).toBeNull()
+    expect(unit).toBe('s')
   })
 
   it('sends the pending value unchanged when no unit is available', () => {

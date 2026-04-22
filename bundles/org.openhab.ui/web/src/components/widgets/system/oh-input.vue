@@ -102,7 +102,10 @@ export default {
     type() {
       return this.config.type || getDefaultInputType(this.item?.type) || 'text'
     },
-    // Returns the unit from the state's description pattern or the item's unit symbol
+    /**
+     * The unit from the stateDescription pattern (if `useDisplayState` is enabled) or the item's unit symbol.
+     * @return {string|null}
+     */
     unit() {
       if (this.type !== 'number') return null
       if (!this.item?.unitSymbol) return null
@@ -110,7 +113,8 @@ export default {
       if (this.config.useDisplayState) {
         const pattern = this.item.stateDescription?.pattern
         const unit = this.extractUnit(pattern)
-        return unit === '%unit%' ? this.item.unitSymbol : unit
+        if (unit === '$unit%') return this.item.unitSymbol
+        return unit ?? this.item.unitSymbol
       }
       return this.item.unitSymbol
     },
