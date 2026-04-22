@@ -42,7 +42,7 @@ describe('oh-input.vue', () => {
     expect(value).toBe('20')
   })
 
-  it('does not infer a unit from formatted Number:Time display states', () => {
+  it('does not infer a unit from Number:Time state description with value tokens', () => {
     const context = {
       type: 'number',
       config: { useDisplayState: true, item: 'Timer' },
@@ -55,7 +55,7 @@ describe('oh-input.vue', () => {
     expect(unit).toBe('s')
   })
 
-  it('does infer a unit from formatted Number:Power display states', () => {
+  it("does use the item's display unit if available", () => {
     const context = {
       type: 'number',
       config: { useDisplayState: true, item: 'Power' },
@@ -73,7 +73,7 @@ describe('oh-input.vue', () => {
       type: 'number',
       systemUnit: 'W',
       config: { useDisplayState: true, item: 'Power' },
-      item: { unitSymbol: 'W', stateDescription: { pattern: '%unit% kW' } },
+      item: { unitSymbol: 'W', stateDescription: { pattern: '%.3f %unit%' } },
       context: { store: { Power: { state: '6000 W' } } },
       extractUnit: (ohInput as any).methods.extractUnit
     }
