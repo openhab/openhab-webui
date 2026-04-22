@@ -102,16 +102,14 @@ export default {
     type() {
       return this.config.type || getDefaultInputType(this.item?.type) || 'text'
     },
-    // Returns the unit from the item's displayState, state description pattern or the item's unit symbol
+    // Returns the unit from the state's description pattern or the item's unit symbol
     unit() {
       if (this.type !== 'number') return null
       if (!this.item?.unitSymbol) return null
 
-      const storeItem = this.context.store[this.config.item]
-      // When the state of a dimensioned item is UNDEF/NULL, item.displayState is undefined
-      // so we need to pull it out of the item's state description pattern
       if (this.config.useDisplayState) {
-        const unit = this.extractUnit(storeItem.displayState || this.item.stateDescription?.pattern)
+        const pattern = this.item.stateDescription?.pattern
+        const unit = this.extractUnit(pattern)
         return unit === '%unit%' ? this.item.unitSymbol : unit
       }
       return this.item.unitSymbol
@@ -232,7 +230,11 @@ export default {
     },
     extractUnit(pattern) {
       if (!pattern) return null
-      return pattern.trim().split(/\s+/).pop()
+      const parts = pattern.trim().split(/\s+/)
+      const valueIndex = parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
+
+      if (valueIndex === -1 || valueIndex === parts.length - 1) return null
+      return parts.at(-1)
     },
     extractValue(pattern) {
       if (!pattern) return null
