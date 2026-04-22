@@ -108,7 +108,7 @@
   </div>
 
   <!-- Color Picker Popover -->
-  <f7-popover id="color-picker-popover" class="color-picker-popup">
+  <f7-popover id="color-picker-popover" class="color-picker-popover">
     <f7-block>
       <div class="color-palette">
         <button
@@ -421,6 +421,7 @@ const dataTableRef = useTemplateRef('dataTable')
 const dataTableContainerRef = useTemplateRef('tableContainer')
 const logDetailsPopupRef = useTemplateRef('logDetailsPopup')
 const logDetailsNavbarRef = useTemplateRef('logDetailsNavbar')
+let tableClickHandler: ((e: Event) => void) | null = null
 
 // Componsables
 useDraggable(() => logDetailsNavbarRef.value?.$el, {
@@ -533,10 +534,41 @@ async function load() {
   filterText.value = localStorage.getItem('openhab.ui:logviewer.logFilterText') ?? ''
   showErrors.value = localStorage.getItem('openhab.ui:logviewer.logShowErrors') === 'true'
   updateFilter()
+
+  nextTick(() => {
+    const tbody = getTableBody()
+    if (!tbody) return
+
+    if (tableClickHandler) {
+      tbody.removeEventListener('click', tableClickHandler)
+      tableClickHandler = null
+    }
+
+    tableClickHandler = (e: Event) => {
+      const target = e.target as HTMLElement
+      const tr = target.closest('tr') as HTMLTableRowElement | null
+      if (!tr) return
+      if (tr.classList.contains('padder')) return
+      const idAttr = tr.dataset.id
+      if (!idAttr) return
+      const id = Number(idAttr)
+      if (Number.isNaN(id)) return
+      onRowClick(id)
+    }
+
+    tbody.addEventListener('click', tableClickHandler)
+  })
 }
 
 function cleanup() {
   loggingStop()
+  if (tableClickHandler) {
+    const tbody = getTableBody()
+    if (tbody) {
+      tbody.removeEventListener('click', tableClickHandler)
+    }
+    tableClickHandler = null
+  }
 }
 
 function getTableBody(): HTMLTableSectionElement | null {
@@ -608,11 +640,9 @@ function renderEntry(entry: EnrichedLogEntry) {
       `<td class="logger"><span class="logger" title="${entry.loggerName}">${entry.loggerName}</span></td>` +
       `<td class="nowrap">${highlightText(entry.message)}</td>`
   }
-  /*
-  tr.addEventListener('click', () => {
-    onRowClick(entry.id)
-  })
-  */
+  // mark row for delegated click handling
+  tr.dataset.id = String(entry.id)
+  tr.style.cursor = 'pointer'
   return tr
 }
 
