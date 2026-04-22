@@ -18,6 +18,11 @@ describe('oh-input.vue', () => {
     expect(unit).toBeNull()
   })
 
+  it('does extract a unit when the pattern ends with a unit token', () => {
+    const unit = (ohInput as any).methods.extractUnit(`%.1f °C`)
+    expect(unit).toBe('°C')
+  })
+
   it('does not infer a unit from formatted Number:Time display states', () => {
     const context = {
       type: 'number',
@@ -29,6 +34,19 @@ describe('oh-input.vue', () => {
 
     const unit = (ohInput as any).computed.unit.call(context)
     expect(unit).toBe('s')
+  })
+
+  it('does infer a unit from formatted Number:Power display states', () => {
+    const context = {
+      type: 'number',
+      config: { useDisplayState: true, item: 'Power' },
+      item: { unitSymbol: 'W', stateDescription: { pattern: '%.3f kW' } },
+      context: { store: { Power: { state: '6000 W' } } },
+      extractUnit: (ohInput as any).methods.extractUnit
+    }
+
+    const unit = (ohInput as any).computed.unit.call(context)
+    expect(unit).toBe('kW')
   })
 
   it('sends the pending value unchanged when no unit is available', () => {
