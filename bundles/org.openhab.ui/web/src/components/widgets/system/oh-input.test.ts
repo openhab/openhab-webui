@@ -23,6 +23,20 @@ describe('oh-input.vue', () => {
     expect(unit).toBe('°C')
   })
 
+  it('does strip of the unit from the value', () => {
+    let context = {
+      unit: '°C'
+    }
+    let value = (ohInput as any).methods.extractValue.call(context, '20 °C')
+    expect(value).toBe('20')
+
+    context = {
+      unit: 'complicated unit'
+    }
+    value = (ohInput as any).methods.extractValue.call(context, '20 complicated unit')
+    expect(value).toBe('20')
+  })
+
   it('does not infer a unit from formatted Number:Time display states', () => {
     const context = {
       type: 'number',

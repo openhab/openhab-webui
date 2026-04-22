@@ -118,13 +118,6 @@ export default {
       }
       return this.item.unitSymbol
     },
-    // Returns the index of the last pattern in the stateDescription
-    // Example: displayState = "Some label %0.1f footext °C", returns 2
-    // Returns -1 if no pattern is found
-    valueIndexInDisplayState() {
-      const parts = this.item?.stateDescription?.pattern?.trim()?.split(/\s+/) || []
-      return parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
-    },
     calendarParams() {
       if (this.type !== 'datepicker') return null
       let params = { dateFormat: { year: 'numeric', month: 'numeric', day: 'numeric' } }
@@ -242,19 +235,9 @@ export default {
       return parts.at(-1)
     },
     extractValue(pattern) {
-      if (!pattern) return null
-
-      const parts = pattern.trim().split(/\s+/)
-      switch (parts.length) {
-        case 0:
-          return null
-        case 1:
-          return pattern
-        case 2:
-          return parts[0]
-        default:
-          return parts[this.valueIndexInDisplayState]
-      }
+      const endIndex = pattern.lastIndexOf(this.unit)
+      if (endIndex < 0) return pattern
+      return pattern.substring(0, endIndex).trim()
     }
   }
 }
