@@ -57,6 +57,7 @@
           :object-id="item.name"
           :read-only="!editable"
           :read-only-msg="notEditableMsg"
+          @save="save()"
           @parsed="updateItem"
           @changed="onCodeChanged" />
       </f7-tab>
