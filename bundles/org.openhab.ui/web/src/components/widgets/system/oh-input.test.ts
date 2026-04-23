@@ -82,6 +82,29 @@ describe('oh-input.vue', () => {
     expect(unit).toBe('W')
   })
 
+  it('does extract the unit when trailing text follows it', () => {
+    const unit = (ohInput as any).methods.extractUnit(`%.0f kW is the power`)
+    expect(unit).toBe('kW')
+  })
+
+  it('does extract %unit% when trailing text follows it', () => {
+    const unit = (ohInput as any).methods.extractUnit(`%.0f %unit% is the power`)
+    expect(unit).toBe('%unit%')
+  })
+
+  it("does use the item's unit symbol when %unit% is followed by trailing text", () => {
+    const context = {
+      type: 'number',
+      config: { useDisplayState: true, item: 'Power' },
+      item: { unitSymbol: 'kW', stateDescription: { pattern: '%.0f %unit% is the power' } },
+      context: { store: { Power: { state: '6 kW' } } },
+      extractUnit: (ohInput as any).methods.extractUnit
+    }
+
+    const unit = (ohInput as any).computed.unit.call(context)
+    expect(unit).toBe('kW')
+  })
+
   it('sends the pending value unchanged when no unit is available', () => {
     const context = {
       config: { item: 'Timer' },

@@ -232,7 +232,7 @@ export default {
       const valueIndex = parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
 
       if (valueIndex === -1 || valueIndex === parts.length - 1) return null
-      return parts.at(-1)
+      return parts[valueIndex + 1] ?? null
     },
     extractValue(pattern) {
       const endIndex = pattern.lastIndexOf(this.unit)
