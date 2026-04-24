@@ -120,7 +120,7 @@
               @click.ctrl="ctrlClick($event, page)"
               @click.meta="ctrlClick($event, page)"
               @click.exact="click($event, page)"
-              :link="`${encodeURIComponent(getPageType(page).type)}/${encodeURIComponent(page.uid)}`"
+              :link="getPageLink(page)"
               :no-chevron="!page.editable"
               :title="page.config.label"
               :subtitle="!showSitemaps ? getPageType(page).label : ''"
@@ -245,7 +245,8 @@ export default {
       sitemaps: [],
       sitemapPages: [],
       selectedItems: [],
-      showCheckboxes: false
+      showCheckboxes: false,
+      searchQuery: ''
     }
   },
   computed: {
@@ -267,6 +268,10 @@ export default {
     },
     pages() {
       return this.showSitemaps ? this.sitemapPages : this.uiPages
+    },
+    filteredPagesCount() {
+      if (!this.searchQuery) return this.pages.length
+      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery)).length
     },
     indexedPages() {
       if (this.showSitemaps || this.groupBy === 'alphabetical') {
@@ -306,11 +311,8 @@ export default {
       return this.selectedItems.length >= visibleUids.length && visibleUids.length > 0
     },
     listTitle() {
-      const hasSearch = !!this.searchQuery
-      const visibleCount = hasSearch ? this.filteredPagesCount : this.pages.length
-
-      let title = visibleCount
-      if (hasSearch) {
+      let title = this.filteredPagesCount
+      if (!!this.searchQuery) {
         title += ` of ${this.pages.length} `
         title += this.showSitemaps ? `sitemaps` : `pages`
         title += ' found'
@@ -324,23 +326,11 @@ export default {
     }
   },
   methods: {
-    updateFilteredPagesCount() {
-      if (!this.searchQuery) {
-        this.filteredPagesCount = this.pages.length
-        return
-      }
-      this.$nextTick(() => {
-        const pageItems = this.$refs.pagesList?.$el?.querySelectorAll?.('.pagelist-item') || []
-        this.filteredPagesCount = Array.from(pageItems).filter((el) => el.offsetParent !== null).length
-      })
-    },
     searchbarSearch(event) {
       this.searchQuery = event?.query || ''
-      this.updateFilteredPagesCount()
     },
     searchbarClear() {
       this.searchQuery = ''
-      this.filteredPagesCount = this.pages.length
     },
     onPageAfterIn() {
       this.load()
@@ -355,48 +345,55 @@ export default {
       if (this.initSearchbar) this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
+      this.sitemaps = []
+      this.uiPages = []
       this.selectedItems = []
       this.showCheckboxes = false
       let promises = [this.$oh.api.get('/rest/sitemaps/*/definition'), this.$oh.api.get('/rest/ui/components/ui:page')]
-      Promise.all(promises).then((data) => {
-        this.sitemaps = data[0]
-        this.sitemapPages = this.sitemaps
-          .map((sitemap) => {
-            return {
-              uid: sitemap.name,
-              component: 'Sitemap',
-              editable: sitemap.editable,
-              config: {
-                label: sitemap.label || sitemap.name,
-                icon: sitemap.icon
+      Promise.all(promises)
+        .then((data) => {
+          this.sitemaps = data[0]
+          this.sitemapPages = this.sitemaps
+            .map((sitemap) => {
+              return {
+                uid: sitemap.name,
+                component: 'Sitemap',
+                editable: sitemap.editable,
+                config: {
+                  label: sitemap.label || sitemap.name,
+                  icon: sitemap.icon
+                }
               }
+            })
+            .sort((a, b) => {
+              return a.config.label.localeCompare(b.config.label)
+            })
+          this.uiPages = data[1]
+            .map((page) => {
+              page.editable = true
+              return page
+            })
+            .sort((a, b) => {
+              return a.config.label.localeCompare(b.config.label)
+            })
+          this.initSearchbar = true
+          this.ready = true
+
+          nextTick(() => {
+            if (this.$refs.listIndex) this.$refs.listIndex.update()
+            if (this.$device.desktop && this.$refs.searchbar) {
+              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
             }
+            this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastPagesSearchQuery || '')
           })
-          .sort((a, b) => {
-            return a.config.label.localeCompare(b.config.label)
-          })
-        this.uiPages = data[1]
-          .map((page) => {
-            page.editable = true
-            return page
-          })
-          .sort((a, b) => {
-            return a.config.label.localeCompare(b.config.label)
-          })
-        this.initSearchbar = true
-
-        this.loading = false
-        this.ready = true
-
-        nextTick(() => {
-          if (this.$refs.listIndex) this.$refs.listIndex.update()
-          if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
-          }
-          this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastPagesSearchQuery || '')
-          this.updateFilteredPagesCount()
         })
-      })
+        .catch((err) => {
+          console.error(err)
+          showToast('An error occurred while loading pages: ' + err)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     switchShowSitemaps(showSitemaps) {
       if (this.showSitemaps === showSitemaps) return
@@ -407,7 +404,6 @@ export default {
         if (filterQuery) {
           searchbar.clear()
           searchbar.search(filterQuery)
-          this.updateFilteredPagesCount()
         }
         if (this.showSitemaps || this.groupBy === 'alphabetical') this.$refs.listIndex.update()
         this.selectedItems = []
@@ -422,7 +418,6 @@ export default {
         if (filterQuery) {
           searchbar.clear()
           searchbar.search(filterQuery)
-          this.updateFilteredPagesCount()
         }
         if (this.groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
@@ -433,17 +428,35 @@ export default {
     isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
     },
-    getVisiblePageUids() {
-      // Extract UIDs from visible pagelist-item DOM elements
-      const pageListEl = this.$refs.pagesList?.$el
-      if (!pageListEl) return []
-      const visibleItems = Array.from(pageListEl.querySelectorAll('.pagelist-item')).filter((el) => el.offsetParent !== null)
-      return visibleItems
-        .map((el) => {
-          const footer = el.querySelector('.item-footer')
-          return footer?.textContent?.trim()
-        })
+    getNormalizedSearchTerms(query) {
+      return (query || '')
+        .toLowerCase()
+        .trim()
+        .split(/\s+/)
         .filter(Boolean)
+    },
+    getPageSearchText(page) {
+      const searchFields = [
+        page.config?.label,
+        page.uid,
+        this.showSitemaps ? null : this.getPageType(page)?.label,
+        ...(page.tags || []),
+        ...((page.config?.visibleTo || []).map((role) => role))
+      ]
+      return searchFields
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
+    },
+    pageMatchesSearch(page, query) {
+      const terms = this.getNormalizedSearchTerms(query)
+      if (!terms.length) return true
+      const pageSearchText = this.getPageSearchText(page)
+      return terms.every((term) => pageSearchText.includes(term))
+    },
+    getVisiblePageUids() {
+      if (!this.searchQuery) return this.pages.map((p) => p.uid)
+      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery)).map((page) => page.uid)
     },
     selectDeselectAll() {
       if (this.allSelected) {
@@ -454,8 +467,11 @@ export default {
       }
     },
     copySelected() {
-      const selectedSitemaps = this.sitemapPages.filter((s) => this.selectedItems.includes(s.uid))
-      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, selectedSitemaps)
+      if (this.selectedItems.length === 0) {
+        showToast('No sitemaps selected to copy')
+        return
+      }
+      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, this.selectedItems)
     },
     click(event, item) {
       if (this.showCheckboxes) {
@@ -482,13 +498,13 @@ export default {
     getPageLink(page) {
       if (!page.editable) return null
       const type = this.getPageType(page)
-      return type ? `/settings/pages/${type.type}/${page.uid}` : null
+      return type ? `${encodeURIComponent(type.type)}/${encodeURIComponent(page.uid)}` : null
     },
     removeSelected() {
       const vm = this
 
       if (!this.showSitemaps && this.selectedItems.indexOf('overview') >= 0) {
-        f7.dialog.alert('The overview page cannot be deleted!')
+        showToast('The overview page cannot be deleted!')
         return
       }
 
@@ -501,7 +517,7 @@ export default {
       )
     },
     doRemoveSelected() {
-      if (this.selectedItems.some((i) => !this.sitemapPages.find((s) => s.uid === i)?.editable)) {
+      if (this.showSitemaps && this.selectedItems.some((i) => !this.sitemapPages.find((s) => s.uid === i)?.editable)) {
         f7.dialog.alert('Some of the selected sitemaps are not modifiable because they have been created by textual configuration')
         return
       }
@@ -527,7 +543,7 @@ export default {
           dialog.close()
           this.load()
           console.error(err)
-          f7.dialog.alert('An error occurred while deleting: ' + err)
+          showToast('An error occurred while deleting: ' + err)
           f7.emit('sidebarRefresh', null)
         })
     }
@@ -535,11 +551,6 @@ export default {
   asyncComputed: {
     iconUrl() {
       return (icon) => this.$oh.media.getIcon(icon)
-    }
-  },
-  watch: {
-    pages() {
-      this.updateFilteredPagesCount()
     }
   }
 }

@@ -30,7 +30,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const modelSelectedItem = ref<object | null>(null)
   const modelExpandedTreeviewItems = ref<string[]>([])
   const pagesShowSitemaps = ref<boolean>(false)
-  const pagesGroupOrder = ref<'alphabetical' | 'default'>('default')
+  const pagesGroupOrder = ref<'alphabetical' | 'type'>('alphabetical')
   const ready = ref<boolean>(false)
 
   // Getters
