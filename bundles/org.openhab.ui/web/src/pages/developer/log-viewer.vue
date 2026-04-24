@@ -703,10 +703,10 @@ export default {
 
       const errorCallback = (event) => {
         if (this.stateConnecting) {
-          if (this.reconnectDelay < 300000) {
+          if (this.reconnectDelay < 10000) {
             this.reconnectDelay *= 1.2
-            if (this.reconnectDelay > 300000) {
-              this.reconnectDelay = 300000
+            if (this.reconnectDelay > 10000) {
+              this.reconnectDelay = 10000
             }
           }
           console.info('Failed to connect, retrying in ' + (this.reconnectDelay / 1000).toFixed(1) + ' s...')
