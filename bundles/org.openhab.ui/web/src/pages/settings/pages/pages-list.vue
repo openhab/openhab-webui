@@ -105,7 +105,7 @@
         <f7-list v-if="pages.length > 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-show="pages.length > 0" class="col pages-list" ref="pagesList" :contacts-list="groupBy === 'alphabetical'" media-list>
+        <f7-list v-show="pages.length > 0" class="col pages-list" ref="pagesList" :contacts-list="showSitemaps || groupBy === 'alphabetical'" media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
             <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -270,7 +270,7 @@ export default {
       return this.showSitemaps ? this.sitemapPages : this.uiPages
     },
     filteredPagesCount() {
-      if (!this.searchQuery) return this.pages.length
+      if (!this.searchQuery.length) return this.pages.length
       return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery)).length
     },
     indexedPages() {
@@ -307,12 +307,12 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      const visibleUids = this.searchQuery ? this.getVisiblePageUids() : this.pages.map((p) => p.uid)
+      const visibleUids = this.searchQuery.length ? this.getVisiblePageUids() : this.pages.map((p) => p.uid)
       return this.selectedItems.length >= visibleUids.length && visibleUids.length > 0
     },
     listTitle() {
       let title = this.filteredPagesCount
-      if (!!this.searchQuery) {
+      if (this.searchQuery.length) {
         title += ` of ${this.pages.length} `
         title += this.showSitemaps ? `sitemaps` : `pages`
         title += ' found'
@@ -448,14 +448,14 @@ export default {
       return terms.every((term) => pageSearchText.includes(term))
     },
     getVisiblePageUids() {
-      if (!this.searchQuery) return this.pages.map((p) => p.uid)
+      if (!this.searchQuery.length) return this.pages.map((p) => p.uid)
       return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery)).map((page) => page.uid)
     },
     selectDeselectAll() {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        const uidsToSelect = this.searchQuery ? this.getVisiblePageUids() : this.pages.map((p) => p.uid)
+        const uidsToSelect = this.searchQuery.length ? this.getVisiblePageUids() : this.pages.map((p) => p.uid)
         this.selectedItems = uidsToSelect
       }
     },
