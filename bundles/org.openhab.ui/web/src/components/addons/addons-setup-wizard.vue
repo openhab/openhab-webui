@@ -173,6 +173,7 @@ export default {
       const query = this.addonSearchQuery.toLowerCase()
       return available.filter((a) => {
         if (a.label.toLowerCase().includes(query) || a.uid.toLowerCase().includes(query)) return true
+        if (a.keywords.toLowerCase().includes(query)) return true
         const descrHtml = this.addonDescription(a)
         const descrText = descrHtml.replace(/<[^>]+>/g, ' ').toLowerCase()
         return descrText.includes(query)
