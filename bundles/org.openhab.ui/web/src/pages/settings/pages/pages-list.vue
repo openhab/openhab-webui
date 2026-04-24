@@ -363,7 +363,7 @@ export default {
         this.sitemapPages = this.sitemaps
           .map((sitemap) => {
             return {
-              uid: sitemap.name.startsWith('uicomponents_') ? sitemap.name.replace('uicomponents_', '') : sitemap.name,
+              uid: sitemap.name,
               component: 'Sitemap',
               editable: sitemap.editable,
               config: {
@@ -456,7 +456,6 @@ export default {
     copySelected() {
       const selectedSitemaps = this.sitemapPages
         .filter((s) => this.selectedItems.includes(s.uid))
-        .map((s) => (s.editable ? 'uicomponents_' + s.uid : s.uid))
       this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, selectedSitemaps)
     },
     click(event, item) {
@@ -512,7 +511,7 @@ export default {
 
       const promises = this.selectedItems.map((p) => {
         if (this.showSitemaps) {
-          return this.$oh.api.delete('/rest/sitemaps/uicomponents_' + p)
+          return this.$oh.api.delete('/rest/sitemaps/' + p)
         } else {
           return this.$oh.api.delete('/rest/ui/components/ui:page/' + p)
         }
