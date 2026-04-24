@@ -454,8 +454,7 @@ export default {
       }
     },
     copySelected() {
-      const selectedSitemaps = this.sitemapPages
-        .filter((s) => this.selectedItems.includes(s.uid))
+      const selectedSitemaps = this.sitemapPages.filter((s) => this.selectedItems.includes(s.uid))
       this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, selectedSitemaps)
     },
     click(event, item) {
