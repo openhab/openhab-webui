@@ -105,7 +105,12 @@
         <f7-list v-if="pages.length > 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-show="pages.length > 0" class="col pages-list" ref="pagesList" :contacts-list="showSitemaps || groupBy === 'alphabetical'" media-list>
+        <f7-list
+          v-show="pages.length > 0"
+          class="col pages-list"
+          ref="pagesList"
+          :contacts-list="showSitemaps || groupBy === 'alphabetical'"
+          media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
             <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -424,6 +429,9 @@ export default {
     },
     toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
+      if (!this.showCheckboxes) {
+        this.selectedItems = []
+      }
     },
     isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
@@ -479,6 +487,7 @@ export default {
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, itemName, item) {
+      if (itemName === 'overview') return
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(itemName)) {
         this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
