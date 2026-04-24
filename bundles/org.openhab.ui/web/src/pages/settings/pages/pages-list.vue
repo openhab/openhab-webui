@@ -429,11 +429,7 @@ export default {
       return this.selectedItems.indexOf(item) >= 0
     },
     getNormalizedSearchTerms(query) {
-      return (query || '')
-        .toLowerCase()
-        .trim()
-        .split(/\s+/)
-        .filter(Boolean)
+      return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
     },
     getPageSearchText(page) {
       const searchFields = [
@@ -441,12 +437,9 @@ export default {
         page.uid,
         this.showSitemaps ? null : this.getPageType(page)?.label,
         ...(page.tags || []),
-        ...((page.config?.visibleTo || []).map((role) => role))
+        ...(page.config?.visibleTo || []).map((role) => role)
       ]
-      return searchFields
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase()
+      return searchFields.filter(Boolean).join(' ').toLowerCase()
     },
     pageMatchesSearch(page, query) {
       const terms = this.getNormalizedSearchTerms(query)
