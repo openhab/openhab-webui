@@ -54,7 +54,7 @@
 
     <f7-list-index
       v-if="ready"
-      v-show="groupBy === 'alphabetical' && !$device.desktop"
+      v-show="(showSitemaps || groupBy === 'alphabetical') && !$device.desktop"
       ref="listIndex"
       :key="'pages-index'"
       list-el=".pages-list"
@@ -312,7 +312,9 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      const visibleUids = this.searchQuery.length ? this.getVisiblePageUids() : this.pages.map((p) => p.uid)
+      const visibleUids = this.searchQuery.length
+        ? this.getVisiblePageUids()
+        : this.pages.map((p) => p.uid).filter((uid) => this.showSitemaps || uid !== 'overview')
       return this.selectedItems.length >= visibleUids.length && visibleUids.length > 0
     },
     listTitle() {
@@ -457,13 +459,18 @@ export default {
     },
     getVisiblePageUids() {
       if (!this.searchQuery.length) return this.pages.map((p) => p.uid)
-      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery)).map((page) => page.uid)
+      return this.pages
+        .filter((page) => this.pageMatchesSearch(page, this.searchQuery))
+        .map((page) => page.uid)
+        .filter((uid) => this.showSitemaps || uid !== 'overview')
     },
     selectDeselectAll() {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        const uidsToSelect = this.searchQuery.length ? this.getVisiblePageUids() : this.pages.map((p) => p.uid)
+        const uidsToSelect = this.searchQuery.length
+          ? this.getVisiblePageUids()
+          : this.pages.map((p) => p.uid).filter((uid) => this.showSitemaps || uid !== 'overview')
         this.selectedItems = uidsToSelect
       }
     },
