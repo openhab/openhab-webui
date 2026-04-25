@@ -120,7 +120,7 @@
               class="pagelist-item"
               :checkbox="showCheckboxes && (showSitemaps || page.uid !== 'overview')"
               :checked="isChecked(page.uid) ? true : null"
-              :disabled="showCheckboxes && page.uid === 'overview' ? true : null"
+              :disabled="showCheckboxes && !showSitemaps && page.uid === 'overview' ? true : null"
               prevent-router
               @click.ctrl="ctrlClick($event, page)"
               @click.meta="ctrlClick($event, page)"
@@ -153,7 +153,7 @@
               <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
               <template #media>
                 <oh-icon
-                  :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
+                  :color="page.config.sidebar || (!showSitemaps && page.uid === 'overview') ? '' : 'gray'"
                   :icon="getPageIcon(page)"
                   :height="32"
                   :width="32" />
