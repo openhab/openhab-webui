@@ -11,9 +11,7 @@
           v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-pages"
-          search-container=".pages-list"
-          search-item=".pagelist-item"
-          search-in=".item-title, .item-subtitle, .item-header, .item-footer"
+          :custom-search="true"
           @searchbar:search="searchbarSearch"
           @searchbar:clear="searchbarClear"
           :placeholder="searchPlaceholder"
@@ -102,11 +100,11 @@
           </f7-segmented>
         </div>
 
-        <f7-list v-if="pages.length > 0" class="searchbar-not-found">
+        <f7-list v-if="pages.length > 0 && filteredPages.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
         <f7-list
-          v-show="pages.length > 0"
+          v-show="filteredPages.length > 0"
           class="col pages-list"
           ref="pagesList"
           :contacts-list="showSitemaps || groupBy === 'alphabetical'"
@@ -274,13 +272,16 @@ export default {
     pages() {
       return this.showSitemaps ? this.sitemapPages : this.uiPages
     },
+    filteredPages() {
+      if (!this.searchQuery.length) return this.pages
+      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery))
+    },
     filteredPagesCount() {
-      if (!this.searchQuery.length) return this.pages.length
-      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery)).length
+      return this.filteredPages.length
     },
     indexedPages() {
       if (this.showSitemaps || this.groupBy === 'alphabetical') {
-        return this.pages.reduce((prev, page, i, pages) => {
+        return this.filteredPages.reduce((prev, page, i, pages) => {
           const label = page.config.label || page.uid
           const initial = label.substring(0, 1).toUpperCase()
           if (!prev[initial]) {
@@ -291,7 +292,7 @@ export default {
           return prev
         }, {})
       } else {
-        const typeGroups = this.pages.reduce((prev, page, i, things) => {
+        const typeGroups = this.filteredPages.reduce((prev, page, i, things) => {
           const type = getPageType(page).label
           if (!prev[type]) {
             prev[type] = []
@@ -332,8 +333,7 @@ export default {
       return title
     },
     visiblePageUids() {
-      if (!this.searchQuery.length) return this.pages.map((p) => p.uid)
-      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery)).map((page) => page.uid)
+      return this.filteredPages.map((page) => page.uid)
     },
     selection() {
       return this.pages
@@ -406,7 +406,7 @@ export default {
         })
         .catch((err) => {
           console.error(err)
-          showToast('An error occurred while loading pages: ' + err)
+          showToast('An error occurred while loading pages: ' + err.message)
         })
         .finally(() => {
           this.loading = false
