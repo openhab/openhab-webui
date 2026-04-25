@@ -22,10 +22,10 @@
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
+      <div v-if="!theme.md && selection.length > 0" class="display-flex justify-content-center" style="width: 100%">
         <f7-link
           v-if="!theme.md"
-          v-show="selectedItems.length"
+          v-show="selection.length"
           color="red"
           class="delete display-flex flex-direction-row margin-right"
           icon-ios="f7:trash"
@@ -35,7 +35,7 @@
         </f7-link>
         <f7-link
           v-if="showSitemaps"
-          v-show="selectedItems.length"
+          v-show="selection.length"
           color="blue"
           class="copy display-flex flex-direction-row"
           icon-ios="f7:square_on_square"
@@ -44,9 +44,9 @@
           &nbsp;Copy
         </f7-link>
       </div>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
-      <div v-if="theme.md && selectedItems.length" class="right">
+      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="toggleCheck()" />
+      <div v-if="theme.md" class="title">{{ selection.length }} selected</div>
+      <div v-if="theme.md && selection.length" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
         <f7-link v-if="showSitemaps" icon-md="material:content_copy" icon-color="white" @click="copySelected" />
       </div>
@@ -118,7 +118,7 @@
               :key="page.uid"
               media-item
               class="pagelist-item"
-              :checkbox="showCheckboxes && (showSitemaps || (!showSitemaps && page.uid !== 'overview'))"
+              :checkbox="showCheckboxes && (showSitemaps || page.uid !== 'overview')"
               :checked="isChecked(page.uid) ? true : null"
               :disabled="showCheckboxes && page.uid === 'overview' ? true : null"
               prevent-router
@@ -312,10 +312,10 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      const visibleUids = this.searchQuery.length
-        ? this.getVisiblePageUids()
-        : this.pages.map((p) => p.uid).filter((uid) => this.showSitemaps || uid !== 'overview')
-      return this.selectedItems.length >= visibleUids.length && visibleUids.length > 0
+      return (
+        this.visiblePageUids.length > 0 &&
+        this.visiblePageUids.every((uid) => (this.showSitemaps || uid !== 'overview') && this.selection.includes(uid))
+      )
     },
     listTitle() {
       let title = this.filteredPagesCount
@@ -326,10 +326,19 @@ export default {
       } else {
         title += this.showSitemaps ? ' sitemaps' : ' pages'
       }
-      if (this.selectedItems.length > 0) {
-        title += `, ${this.selectedItems.length} selected`
+      if (this.selection.length > 0) {
+        title += `, ${this.selection.length} selected`
       }
       return title
+    },
+    visiblePageUids() {
+      if (!this.searchQuery.length) return this.pages.map((p) => p.uid)
+      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery)).map((page) => page.uid)
+    },
+    selection() {
+      return this.pages
+        .filter((page) => (this.showSitemaps || page.uid !== 'overview') && this.selectedItems.includes(page.uid))
+        .map((page) => page.uid)
     }
   },
   methods: {
@@ -413,7 +422,6 @@ export default {
           searchbar.search(filterQuery)
         }
         if (this.showSitemaps || this.groupBy === 'alphabetical') this.$refs.listIndex.update()
-        this.selectedItems = []
       })
     },
     switchGroupOrder(groupBy) {
@@ -436,7 +444,7 @@ export default {
       }
     },
     isChecked(item) {
-      return this.selectedItems.indexOf(item) >= 0
+      return this.selection.indexOf(item) >= 0
     },
     getNormalizedSearchTerms(query) {
       return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
@@ -457,29 +465,19 @@ export default {
       const pageSearchText = this.getPageSearchText(page)
       return terms.every((term) => pageSearchText.includes(term))
     },
-    getVisiblePageUids() {
-      if (!this.searchQuery.length) return this.pages.map((p) => p.uid)
-      return this.pages
-        .filter((page) => this.pageMatchesSearch(page, this.searchQuery))
-        .map((page) => page.uid)
-        .filter((uid) => this.showSitemaps || uid !== 'overview')
-    },
     selectDeselectAll() {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        const uidsToSelect = this.searchQuery.length
-          ? this.getVisiblePageUids()
-          : this.pages.map((p) => p.uid).filter((uid) => this.showSitemaps || uid !== 'overview')
-        this.selectedItems = uidsToSelect
+        this.selectedItems = this.visiblePageUids
       }
     },
     copySelected() {
-      if (this.selectedItems.length === 0) {
+      if (this.selection.length === 0) {
         showToast('No sitemaps selected to copy')
         return
       }
-      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, this.selectedItems)
+      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, this.selection)
     },
     click(event, item) {
       if (this.showCheckboxes) {
@@ -491,10 +489,10 @@ export default {
     },
     ctrlClick(event, item) {
       this.toggleItemCheck(event, item.uid, item)
-      if (!this.selectedItems.length) this.showCheckboxes = false
+      if (!this.selection.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, itemName, item) {
-      if (itemName === 'overview') return
+      if (!this.showSitemaps && itemName === 'overview') return
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(itemName)) {
         this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
@@ -512,13 +510,8 @@ export default {
     removeSelected() {
       const vm = this
 
-      if (!this.showSitemaps && this.selectedItems.indexOf('overview') >= 0) {
-        showToast('The overview page cannot be deleted!')
-        return
-      }
-
       f7.dialog.confirm(
-        `Remove ${this.selectedItems.length} selected ${this.showSitemaps ? 'sitemaps' : 'pages'}?`,
+        `Remove ${this.selection.length} selected ${this.showSitemaps ? 'sitemaps' : 'pages'}?`,
         `Remove ${this.showSitemaps ? 'Sitemaps' : 'Pages'}`,
         () => {
           vm.doRemoveSelected()
@@ -526,14 +519,14 @@ export default {
       )
     },
     doRemoveSelected() {
-      if (this.showSitemaps && this.selectedItems.some((i) => !this.sitemapPages.find((s) => s.uid === i)?.editable)) {
+      if (this.showSitemaps && this.selection.some((i) => !this.sitemapPages.find((s) => s.uid === i)?.editable)) {
         f7.dialog.alert('Some of the selected sitemaps are not modifiable because they have been created by textual configuration')
         return
       }
 
       let dialog = f7.dialog.progress(`Deleting ${this.showSitemaps ? 'Sitemaps' : 'Pages'}...`)
 
-      const promises = this.selectedItems.map((p) => {
+      const promises = this.selection.map((p) => {
         if (this.showSitemaps) {
           return this.$oh.api.delete('/rest/sitemaps/' + p)
         } else {

@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     /**
-     * Copies the file definitions of the given list of thingUIDs or item names to the clipboard.
+     * Copies the file definitions of the given list of thingUIDs, item names, or sitemap names to the clipboard.
      *
      * @param {string} objectType - The type of the objects (`thing`, `item`, or `sitemap`). Use {ObjectType} enum for clarity.
      * @param {Array} objectIds - The list of object ids to copy. For Things, this should be an array of Thing UIDs.
