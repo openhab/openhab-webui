@@ -164,7 +164,7 @@
         </f7-list>
 
         <!-- empty-state-placeholder only needed for sitemaps because the overview page cannot be deleted, so there is at least 1 page -->
-        <f7-block v-if="!pages.length" class="block-narrow">
+        <f7-block v-if="showSitemaps && !pages.length" class="block-narrow">
           <empty-state-placeholder icon="square_on_circle" title="sitemaps.title" text="sitemaps.text" />
           <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
             <f7-button
@@ -313,10 +313,7 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      return (
-        this.selectablePageUids.length > 0 &&
-        this.selectablePageUids.every((uid) => this.selectedItems.includes(uid))
-      )
+      return this.selectablePageUids.length > 0 && this.selectablePageUids.every((uid) => this.selectedItems.includes(uid))
     },
     listTitle() {
       let title = this.filteredPagesCount
@@ -333,7 +330,7 @@ export default {
       return title
     },
     selectablePageUids() {
-      return this.filteredPages.filter((page) => (this.showSitemaps || page.uid !== 'overview')).map((page) => page.uid)
+      return this.filteredPages.filter((page) => this.showSitemaps || page.uid !== 'overview').map((page) => page.uid)
     },
     selection() {
       return this.selectablePageUids.filter((uid) => this.selectedItems.includes(uid))
@@ -429,8 +426,8 @@ export default {
     switchGroupOrder(groupBy) {
       this.switchShowSitemaps(false)
       this.groupBy = groupBy
-      const searchbar = this.$refs.searchbar.$el.f7Searchbar
-      const filterQuery = searchbar.query
+      const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
+      const filterQuery = searchbar?.query
       nextTick(() => {
         if (filterQuery) {
           searchbar.clear()
@@ -547,7 +544,8 @@ export default {
           dialog.close()
           this.load()
           console.error(err)
-          showToast('An error occurred while deleting: ' + err)
+          const errorMessage = err && err.message ? err.message : String(err)
+          showToast('An error occurred while deleting: ' + errorMessage)
           f7.emit('sidebarRefresh', null)
         })
     }
