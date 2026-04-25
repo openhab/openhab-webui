@@ -74,8 +74,6 @@
 import { onMounted, ref } from 'vue'
 import type { Router } from 'framework7'
 
-import { useDirty } from '@/pages/useDirty'
-
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
