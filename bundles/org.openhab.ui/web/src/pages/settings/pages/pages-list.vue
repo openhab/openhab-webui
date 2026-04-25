@@ -20,7 +20,7 @@
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selection.length > 0" class="display-flex justify-content-center" style="width: 100%">
+      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
         <f7-link
           v-if="!theme.md"
           v-show="selection.length"
@@ -85,7 +85,7 @@
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && pages.length">
+          <template v-if="showCheckboxes && selectablePageUids.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
@@ -314,8 +314,8 @@ export default {
     },
     allSelected() {
       return (
-        this.visiblePageUids.length > 0 &&
-        this.visiblePageUids.every((uid) => (!this.showSitemaps && uid === 'overview') || this.selection.includes(uid))
+        this.selectablePageUids.length > 0 &&
+        this.selectablePageUids.every((uid) => this.selectedItems.includes(uid))
       )
     },
     listTitle() {
@@ -332,13 +332,11 @@ export default {
       }
       return title
     },
-    visiblePageUids() {
-      return this.filteredPages.map((page) => page.uid)
+    selectablePageUids() {
+      return this.filteredPages.filter((page) => (this.showSitemaps || page.uid !== 'overview')).map((page) => page.uid)
     },
     selection() {
-      return this.pages
-        .filter((page) => (this.showSitemaps || page.uid !== 'overview') && this.selectedItems.includes(page.uid))
-        .map((page) => page.uid)
+      return this.selectablePageUids.filter((uid) => this.selectedItems.includes(uid))
     }
   },
   methods: {
@@ -448,7 +446,7 @@ export default {
       }
     },
     isChecked(item) {
-      return this.selection.indexOf(item) >= 0
+      return this.selectedItems.indexOf(item) >= 0
     },
     getNormalizedSearchTerms(query) {
       return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
@@ -473,7 +471,7 @@ export default {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        this.selectedItems = this.visiblePageUids
+        this.selectedItems = this.selectablePageUids
       }
     },
     copySelected() {
@@ -493,7 +491,7 @@ export default {
     },
     ctrlClick(event, item) {
       this.toggleItemCheck(event, item.uid, item)
-      if (!this.selection.length) this.showCheckboxes = false
+      if (!this.selectedItems.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, itemName, item) {
       if (!this.showSitemaps && itemName === 'overview') return
