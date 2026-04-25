@@ -401,7 +401,7 @@ export default {
         })
         .catch((err) => {
           console.error(err)
-          showToast('An error occurred while loading pages: ' + err.message)
+          showToast('An error occurred while loading pages: ' + (err?.message || String(err)))
         })
         .finally(() => {
           this.loading = false
@@ -544,8 +544,7 @@ export default {
           dialog.close()
           this.load()
           console.error(err)
-          const errorMessage = err && err.message ? err.message : String(err)
-          showToast('An error occurred while deleting: ' + errorMessage)
+          showToast('An error occurred while deleting: ' + (err?.message || String(err)))
           f7.emit('sidebarRefresh', null)
         })
     }
