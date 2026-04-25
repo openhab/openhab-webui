@@ -314,7 +314,7 @@ export default {
     allSelected() {
       return (
         this.visiblePageUids.length > 0 &&
-        this.visiblePageUids.every((uid) => (this.showSitemaps || uid !== 'overview') && this.selection.includes(uid))
+        this.visiblePageUids.every((uid) => (!this.showSitemaps && uid === 'overview') || this.selection.includes(uid))
       )
     },
     listTitle() {
@@ -362,6 +362,7 @@ export default {
       this.initSearchbar = false
 
       this.sitemaps = []
+      this.sitemapPages = []
       this.uiPages = []
       this.selectedItems = []
       this.showCheckboxes = false
@@ -414,6 +415,9 @@ export default {
     switchShowSitemaps(showSitemaps) {
       if (this.showSitemaps === showSitemaps) return
       this.showSitemaps = showSitemaps
+      if (this.showCheckboxes) {
+        this.toggleCheck()
+      }
       const searchbar = this.$refs.searchbar.$el.f7Searchbar
       const filterQuery = searchbar.query
       nextTick(() => {

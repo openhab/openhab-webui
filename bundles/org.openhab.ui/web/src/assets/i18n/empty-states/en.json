@@ -51,5 +51,5 @@
   "persistence.text": "With persistence you can store Item states over time, no matter they are historic or future values. To configure persistence, you need at least one persistence add-on to be installed.",
 
   "sitemaps.title": "No sitemaps yet",
-  "sitemaps.text": "Sitemaps are a declarative way to define the structure of a user interface for UIs that support them (BasicUI, mobile apps...). They are made of widgets to display item states or send commands to items.<br><br>Click the button below to create your first sitemap."
+  "sitemaps.text": "Sitemaps are a declarative way to define the structure of a user interface for UIs that support them (BasicUI, mobile apps...). They are made of widgets to display item states or send commands to items.<br><br>Use the + button to create your first sitemap."
 }
