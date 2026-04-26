@@ -121,8 +121,7 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useViewArea } from '@/js/composables/useViewArea'
 import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 import { showToast } from '@/js/dialog-promises'
-
-import debounce from 'debounce'
+import { useThrottleFn } from '@vueuse/core'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -194,9 +193,6 @@ export default {
     }
   },
   methods: {
-    updateWidgetDefinition: debounce(function (value) {
-      this.widgetDefinition = value
-    }, 200),
     onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
@@ -210,12 +206,12 @@ export default {
       }
       useStatesStore().stopTrackingStates()
     },
-    onEditorInput(value) {
-      this.updateWidgetDefinition(value)
+    onEditorInput: useThrottleFn(function (value) {
+      this.widgetDefinition = value
       if (!this.loading) {
         this.dirty = true
       }
-    },
+    }, 300),
     keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
