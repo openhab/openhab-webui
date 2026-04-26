@@ -122,6 +122,8 @@ import { useViewArea } from '@/js/composables/useViewArea'
 import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 import { showToast } from '@/js/dialog-promises'
 
+import debounce from 'debounce'
+
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
 export default {
@@ -178,7 +180,8 @@ export default {
         store: useStatesStore().trackedItems,
         props: this.props,
         vars: this.vars,
-        ctxVars: this.ctxVars
+        ctxVars: this.ctxVars,
+        editmode: true
       }
     },
     widget() {
@@ -191,6 +194,9 @@ export default {
     }
   },
   methods: {
+    updateWidgetDefinition: debounce(function (value) {
+      this.widgetDefinition = value
+    }, 200),
     onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
@@ -205,7 +211,7 @@ export default {
       useStatesStore().stopTrackingStates()
     },
     onEditorInput(value) {
-      this.widgetDefinition = value
+      this.updateWidgetDefinition(value)
       if (!this.loading) {
         this.dirty = true
       }
