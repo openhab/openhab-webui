@@ -851,7 +851,7 @@ export default {
     reorderModule (ev, section) {
       const newSection = [...this.rule[section]]
       newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
-      this.rule.section = newSection
+      this.rule[section] = newSection
     },
     saveModule (updatedModule) {
       if (!updatedModule.type) return
