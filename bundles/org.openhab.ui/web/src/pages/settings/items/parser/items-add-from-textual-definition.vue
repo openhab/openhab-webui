@@ -161,7 +161,7 @@
 import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import { f7 } from 'framework7-vue'
 import { type Router } from 'framework7'
-import debounce from 'debounce'
+import { useThrottleFn } from '@vueuse/core'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -207,7 +207,7 @@ const mediaType = computed(() => SupportedMediaTypes.items[codeEditorType.value]
 // watchers
 watch(
   code,
-  debounce(() => {
+  useThrottleFn(() => {
     parseItems()
   }, 300)
 )
