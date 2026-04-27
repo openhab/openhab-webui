@@ -34,7 +34,7 @@
             :tooltip="fullscreen ? 'Restore docked size (Shift+Alt+F)' : 'Fill main pane (Shift+Alt+F)'"
             @click="$emit('toggle-fullscreen')" />
           <f7-link
-            :icon-f7="collapsed ? 'chevron_up' : 'chevron_down'"
+            :icon-f7="collapsed ? 'chevron_down' : 'chevron_up'"
             :tooltip="collapsed ? 'Show filter and toolbar' : 'Hide filter and toolbar'"
             @click="toggleCollapsed" />
           <span class="dock-action-sep" />
