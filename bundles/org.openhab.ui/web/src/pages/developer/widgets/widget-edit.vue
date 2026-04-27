@@ -109,6 +109,7 @@
 <script>
 import { defineAsyncComponent, nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
+import { useThrottleFn } from '@vueuse/core'
 
 import YAML from 'yaml'
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -178,7 +179,8 @@ export default {
         store: useStatesStore().trackedItems,
         props: this.props,
         vars: this.vars,
-        ctxVars: this.ctxVars
+        ctxVars: this.ctxVars,
+        editmode: true
       }
     },
     widget() {
@@ -204,12 +206,12 @@ export default {
       }
       useStatesStore().stopTrackingStates()
     },
-    onEditorInput(value) {
+    onEditorInput: useThrottleFn(function (value) {
       this.widgetDefinition = value
       if (!this.loading) {
         this.dirty = true
       }
-    },
+    }, 300),
     keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
