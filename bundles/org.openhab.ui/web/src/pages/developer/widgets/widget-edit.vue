@@ -121,6 +121,7 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useViewArea } from '@/js/composables/useViewArea'
 import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 import { showToast } from '@/js/dialog-promises'
+import { useThrottleFn } from '@vueuse/core'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -178,7 +179,8 @@ export default {
         store: useStatesStore().trackedItems,
         props: this.props,
         vars: this.vars,
-        ctxVars: this.ctxVars
+        ctxVars: this.ctxVars,
+        editmode: true
       }
     },
     widget() {
@@ -204,12 +206,12 @@ export default {
       }
       useStatesStore().stopTrackingStates()
     },
-    onEditorInput(value) {
+    onEditorInput: useThrottleFn(function (value) {
       this.widgetDefinition = value
       if (!this.loading) {
         this.dirty = true
       }
-    },
+    }, 300),
     keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
