@@ -651,7 +651,12 @@ export default {
       currentUrl: '',
 
       logDockFullscreen: false,
-      logDockHeight: parseInt(localStorage.getItem('openhab.ui:logDock.height')) || null
+      logDockHeight: parseInt(localStorage.getItem('openhab.ui:logDock.height')) || null,
+
+      // Tracks whether the log-viewer page is active. Updated at pageBeforeIn (entering
+      // log-viewer) and pageAfterIn (leaving log-viewer) so the dock is only shown after
+      // the page transition completes, avoiding interference with F7's router.
+      logViewerPageActive: false
     }
   },
   computed: {
@@ -682,7 +687,7 @@ export default {
       return window.location.origin
     },
     showDockedLogViewer() {
-      return this.runtimeStore.showLogDock && !this.currentPath.developer?.['log-viewer']
+      return this.runtimeStore.showLogDock && !this.logViewerPageActive
     },
     logDockStyle() {
       const viewportWidth = this.$f7dim?.width || window.innerWidth
@@ -1126,14 +1131,24 @@ export default {
         })
 
       f7.on('routeChange', (route) => {
-        // console.log('Route changed:', route.url)
-        // console.log('Browser history state:', history.state) // Native browser history state
+        // Keep App.vue's reactive currentUrl in sync with Framework7's router
+        // in case some router updates don't trigger the 'routeUrlUpdate' event.
+        if (route && route.url) {
+          this.updateUrl(route.url)
+          nextTick(this.updateTitle)
+        }
       })
 
       f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
           // console.log('pageBeforeIn: current URL:', page.route.url)
           this.updateUrl(page.route.url)
+          // Hide the dock immediately when entering the log-viewer page so it doesn't
+          // overlap the full-page viewer. (Re-showing on exit is handled in pageAfterIn
+          // to avoid mounting the dock mid-transition and breaking F7's router.)
+          if (page.route.url.includes('/log-viewer/')) {
+            this.logViewerPageActive = true
+          }
         }
       })
 
@@ -1146,6 +1161,13 @@ export default {
         const router = f7.views.main?.router
         if (router && router.history.length === 0 && page.route?.url) {
           router.history.push(page.route.url)
+        }
+
+        // Update logViewerPageActive after the transition so the dock is only shown/hidden
+        // once the page is fully in view. This prevents the dock from mounting mid-transition
+        // when navigating back from log-viewer, which would interfere with F7's router.
+        if (page.route?.url !== undefined) {
+          this.logViewerPageActive = page.route.url.includes('/log-viewer/')
         }
 
         nextTick(this.updateTitle)
