@@ -368,6 +368,12 @@
   .color-palette button.selected
     transform scale(1.2)
     border 2px solid black
+
+@keyframes opacity-pulse
+  0%
+    opacity 1
+  100%
+    opacity 0
 </style>
 
 <script setup lang="ts">
@@ -379,7 +385,7 @@ import { useDraggable } from '@vueuse/core'
 import copyToClipboard from '@/js/clipboard'
 
 import * as api from '@/api'
-import ws, { type MessageCallback, type ReadyCallback } from '@/js/openhab/ws'
+import ws, { type MessageCallback, type ReadyCallback, type CloseCallback, type ErrorCallback } from '@/js/openhab/ws'
 import { showToast } from '@/js/dialog-promises'
 
 interface LogEntry {
@@ -449,6 +455,8 @@ useDraggable(() => logDetailsNavbarRef.value?.$el, {
 // State/Data
 let defaultLogLevel = 'WARN'
 let socket: WebSocket | null = null
+let reconnectDelay = 1000
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 let batchUpdatePending = false
 let nextId = 0
 const batchLogs: EnrichedLogEntry[] = []
@@ -475,6 +483,7 @@ const colors: string[] = [
 const loggerPackages = ref<api.LoggerInfo[]>([])
 const stateConnected = ref(false)
 const stateProcessing = ref(true)
+const stateConnecting = ref(false)
 const loadingLoggers = ref(true)
 const scrollTime = ref(0)
 const autoScroll = ref(true)
@@ -506,6 +515,19 @@ const selectedLog = computed<EnrichedLogEntry | null>(() => {
   return tableData.value.find((entry) => entry.id === selectedId.value) || null
 })
 
+const periodRangeColor = computed(() => {
+  if (!stateConnected.value) return 'red'
+  return stateProcessing.value ? 'green' : 'orange'
+})
+
+const periodRangeTooltip = computed(() => {
+  if (stateConnecting.value) return 'Log period - Connecting'
+  if (!stateConnected.value) return 'Log period - Disconnected'
+  return stateProcessing.value ? 'Log period - Receiving logs' : 'Log period - Paused'
+})
+
+const isConnecting = computed(() => stateConnecting.value)
+
 const filterTextLowerCase = computed(() => filterText.value.toLowerCase())
 const activeHighlightFilters = computed(() => highlightFilters.value.filter((filter) => filter.active && filter.text.trim() !== ''))
 
@@ -514,21 +536,24 @@ async function load() {
   loggerPackages.value = []
   loadingLoggers.value = true
 
-  loggerPackages.value = (await api.getLogger1())?.loggers || []
-  nextTick(() => {
-    const rootPackageIndex = loggerPackages.value.findIndex((item) => item.loggerName === 'ROOT')
-    if (rootPackageIndex !== -1) {
-      defaultLogLevel = loggerPackages.value[rootPackageIndex].level
-    }
-    loggerPackages.value.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
-    loggerPackages.value = loggerPackages.value.filter((item) => item.loggerName !== 'ROOT')
+  try {
+    loggerPackages.value = (await api.getLogger1())?.loggers || []
+    nextTick(() => {
+      const rootPackageIndex = loggerPackages.value.findIndex((item) => item.loggerName === 'ROOT')
+      if (rootPackageIndex !== -1) {
+        defaultLogLevel = loggerPackages.value[rootPackageIndex].level
+      }
+      loggerPackages.value.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
+      loggerPackages.value = loggerPackages.value.filter((item) => item.loggerName !== 'ROOT')
 
+      loadingLoggers.value = false
+    })
+  } catch (error) {
+    console.warn('Failed to load logger packages:', error)
     loadingLoggers.value = false
-  })
-
-  if (!stateConnected.value) {
-    socketConnect()
   }
+
+  startConnecting()
 
   highlightFilters.value = JSON.parse(localStorage.getItem('openhab.ui:logviewer.logHighlightFilters') ?? '[]')
   filterText.value = localStorage.getItem('openhab.ui:logviewer.logFilterText') ?? ''
@@ -577,21 +602,54 @@ function getTableBody(): HTMLTableSectionElement | null {
 
 function updateLogLevel(logger: api.LoggerInfo, value: string) {
   logger.level = value
-  api.putLogger({ loggerName: logger.loggerName, loggerInfo: logger })
+  api.putLogger({ loggerName: logger.loggerName, loggerInfo: logger }).catch((error) => {
+    console.warn('Failed to update log level for ' + logger.loggerName + ':', error)
+  })
 }
 
 async function removeLogLevel(logger: api.LoggerInfo) {
-  await api.removeLogger({ loggerName: logger.loggerName })
+  await api.removeLogger({ loggerName: logger.loggerName }).catch((error) => {
+    console.warn('Failed to remove log level for ' + logger.loggerName + ':', error)
+  })
   loggerPackages.value = loggerPackages.value.filter((loggerPackage) => loggerPackage.loggerName !== logger.loggerName)
 }
 
+function startConnecting() {
+  stateConnecting.value = true
+  reconnectDelay = 1000
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer)
+    reconnectTimer = null
+  }
+  socketConnect()
+}
+
+function stopConnecting() {
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer)
+    reconnectTimer = null
+  }
+  stateConnecting.value = false
+}
+
 function socketConnect() {
-  const readyCallback: ReadyCallback = (event) => {
+  const readyCallback: ReadyCallback = (_event) => {
+    if (stateConnecting.value) {
+      stopConnecting()
+    }
     stateConnected.value = true
     stateProcessing.value = true
-
+    console.info('WebSocket connection established.')
     socket!.send('{"sequenceStart": ' + lastSequence.value + '}')
     nextTick(() => scrollToBottom())
+  }
+
+  const closeCallback: CloseCallback = () => {
+    if (stateConnected.value) {
+      console.warn('WebSocket connection closed by peer. Attempting to reconnect...')
+      startConnecting()
+    }
+    stateConnected.value = false
   }
 
   const messageCallback: MessageCallback = (event) => {
@@ -606,18 +664,39 @@ function socketConnect() {
   }
 
   const heartbeatCallback = () => {
-    socket!.send('{}')
+    try {
+      socket!.send('{}')
+    } catch (e) {
+      console.warn('WebSocket heartbeat failed:', e)
+    }
   }
 
-  socket = ws.connect('/ws/logs', messageCallback, heartbeatCallback, readyCallback, undefined, 9)
+  const errorCallback: ErrorCallback = (event) => {
+    if (stateConnecting.value) {
+      if (reconnectDelay < 10000) {
+        reconnectDelay *= 1.2
+        if (reconnectDelay > 10000) {
+          reconnectDelay = 10000
+        }
+      }
+      console.info('Failed to connect, retrying in ' + (reconnectDelay / 1000).toFixed(1) + ' s...')
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null
+        socketConnect()
+      }, reconnectDelay)
+    } else {
+      console.error('WebSocket error:', event)
+    }
+  }
+
+  socket = ws.connect('/ws/logs', messageCallback, heartbeatCallback, readyCallback, closeCallback, errorCallback, 9)
 }
 
 function socketClose() {
   if (!socket) return
-  ws.close(socket, () => {
-    stateConnected.value = false
-    socket = null
-  })
+  stateConnected.value = false
+  ws.close(socket)
+  socket = null
 }
 
 function renderEntry(entry: EnrichedLogEntry) {
@@ -735,16 +814,24 @@ function loggingPause() {
 }
 
 function loggingContinue() {
+  if (stateConnecting.value) {
+    return
+  }
   if (!stateConnected.value) {
-    socketConnect()
+    startConnecting()
   }
   updateFilter()
   stateProcessing.value = true
 }
 
 function loggingStop() {
-  stateConnected.value = false
-  socketClose()
+  if (stateConnecting.value) {
+    stopConnecting()
+  }
+  if (stateConnected.value) {
+    stateConnected.value = false
+    socketClose()
+  }
 }
 
 function clearLog() {
@@ -1024,10 +1111,14 @@ defineExpose({
   logStart,
   logEnd,
   countersBadgeColor,
+  periodRangeColor,
+  periodRangeTooltip,
+  isConnecting,
   selectedLog,
   filterCount,
   stateConnected,
   stateProcessing,
+  stateConnecting,
   filterText,
   tableData,
   textMode,
@@ -1039,6 +1130,8 @@ defineExpose({
   loggingContinue,
   loggingPause,
   loggingStop,
+  startConnecting,
+  stopConnecting,
   toggleErrorDisplay,
   downloadCSV,
   copyTableToClipboard,

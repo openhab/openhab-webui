@@ -10,7 +10,11 @@
             icon-md="material:play_arrow"
             :icon-color="logViewerCore?.stateConnected && logViewerCore?.stateProcessing ? 'gray' : ''"
             :tooltip="!device.ios ? 'Continue receiving logs' : ''"
-            :class="{ 'disabled-link': logViewerCore?.stateConnected && logViewerCore?.stateProcessing, 'no-margin-left': device.ios }"
+            :class="{
+              'disabled-link': logViewerCore?.stateConnected && logViewerCore?.stateProcessing,
+              'no-margin-left': device.ios,
+              'connecting-flash': logViewerCore?.isConnecting
+            }"
             @click="logViewerCore?.loggingContinue()" />
           <f7-link
             icon-ios="f7:pause_fill"
@@ -24,9 +28,9 @@
             icon-ios="f7:stop_fill"
             icon-aurora="f7:stop_fill"
             icon-md="material:stop_fill"
-            :icon-color="!logViewerCore?.stateConnected ? 'gray' : ''"
+            :icon-color="!logViewerCore?.stateConnected && !logViewerCore?.stateConnecting ? 'gray' : ''"
             :tooltip="!device.ios ? 'Stop receiving logs' : ''"
-            :class="{ 'disabled-link': !logViewerCore?.stateConnected, 'no-margin-left': device.ios }"
+            :class="{ 'disabled-link': !logViewerCore?.stateConnected && !logViewerCore?.stateConnecting, 'no-margin-left': device.ios }"
             @click="logViewerCore?.loggingStop()" />
           <span class="dock-action-sep" />
           <f7-link
@@ -54,7 +58,9 @@
         @searchbar:search="logViewerCore?.handleFilter"
         @searchbar:clear="logViewerCore?.clearFilter" />
       <div class="dock-stats">
-        <f7-badge class="log-period margin-left-half"> {{ logViewerCore?.logStart }}&nbsp;>&nbsp;{{ logViewerCore?.logEnd }} </f7-badge>
+        <f7-badge class="log-period margin-left-half" :color="logViewerCore?.periodRangeColor" :tooltip="logViewerCore?.periodRangeTooltip">
+          {{ logViewerCore?.logStart }}&nbsp;>&nbsp;{{ logViewerCore?.logEnd }}
+        </f7-badge>
         <f7-badge class="margin-horizontal" :color="logViewerCore?.countersBadgeColor" tooltip="Log entries filtered/total">
           {{ logViewerCore?.filterCount ?? 0 }}/{{ logViewerCore?.tableData?.length ?? 0 }}
         </f7-badge>
@@ -119,6 +125,18 @@
   flex-direction column
   overflow hidden
   --log-viewer-height 100%
+
+  .badge.color-red
+    background-color #c81d00
+  .badge.color-orange
+    background-color #f59b00
+  .badge.color-green
+    background-color #12cc00
+
+  .dock-header
+    .connecting-flash:not(.disabled-link)
+      .icon
+        animation opacity-pulse 0.5s cubic-bezier(1, 0, 0.4, 1) infinite alternate
 
   .table-block
     flex 1
