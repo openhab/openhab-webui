@@ -138,7 +138,7 @@
     color var(--f7-bars-text-color)
     border-bottom 1px solid var(--f7-bars-border-color)
     .link
-      color var(--f7-bars-link-color)
+      color var(--f7-navbar-link-color, var(--f7-bars-link-color, var(--f7-theme-color)))
 
   .dock-header-row
     display flex
