@@ -461,7 +461,19 @@ export default {
         }
 
         this.page.config = updatedPage.config
-        this.page.slots = updatedPage.slots
+        if (!updatedPage.slots) {
+          // maintain compatibility with older versions of the page schema
+          // where blocks, masonry, grid, and canvas were directly on the page object instead of in a slots property
+          // so that users can paste older YAML code without having to adjust the structure
+          this.page.slots = {
+            default: updatedPage.blocks || [],
+            masonry: updatedPage.masonry || [],
+            grid: updatedPage.grid || [],
+            canvas: updatedPage.canvas || []
+          }
+        } else {
+          this.page.slots = updatedPage.slots
+        }
         this.forceUpdate()
         return true
       } catch (e) {

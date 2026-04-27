@@ -289,7 +289,16 @@ export default {
       try {
         const updatedPage = YAML.parse(this.pageYaml)
         this.page.config = updatedPage.config
-        this.page.slots = updatedPage.slots
+        if (!updatedPage.slots) {
+          // maintain compatibility with older versions of the page schema
+          // where markers were directly on the page object instead of in a slots default property
+          // so that users can paste older YAML code without having to adjust the structure
+          this.page.slots = {
+            default: updatedPage.markers || []
+          }
+        } else {
+          this.page.slots = updatedPage.slots
+        }
         this.forceUpdate()
         return true
       } catch (e) {
