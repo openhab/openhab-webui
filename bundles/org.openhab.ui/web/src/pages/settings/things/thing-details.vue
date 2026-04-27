@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
+  <f7-page ref="thing-details-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
@@ -431,17 +431,18 @@ import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
-import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 import { useThingEditStore } from '@/js/stores/useThingEditStore.ts'
 import { mapState } from 'pinia'
 
+import { useDirty } from '@/pages/useDirty'
+
 import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingStatus, DirtyMixin, FileDefinition],
+  mixins: [ThingStatus, FileDefinition],
   components: {
     ConfigSheet,
     ChannelList,
@@ -451,6 +452,14 @@ export default {
   props: {
     thingId: String,
     f7router: Object
+  },
+  setup(props) {
+    const { dirty, dirtyIndicator } = useDirty('thing-details-page')
+
+    return {
+      dirty,
+      dirtyIndicator
+    }
   },
   data() {
     return {

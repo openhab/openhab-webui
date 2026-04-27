@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="home-editor">
+  <f7-page ref="home-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="home-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="'Edit Home Page' + dirtyIndicator"
@@ -210,13 +210,16 @@
 </style>
 
 <script>
-import { nextTick, defineAsyncComponent, provide } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { nextTick, defineAsyncComponent } from 'vue'
+import { f7 } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
 import HomeCards from '../../../home/homecards-mixin'
 
 import YAML from 'yaml'
+
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 import {
   OhHomePageDefinition,
@@ -254,8 +257,10 @@ export default {
   },
   setup() {
     useViewArea()
+    const { dirty, dirtyIndicator } = useDirty('home-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
 
-    return { theme }
+    return { dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {

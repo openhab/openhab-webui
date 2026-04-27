@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="item-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
@@ -80,7 +80,7 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -89,12 +89,13 @@ import * as Types from '@/assets/item-types.js'
 
 import ItemForm from '@/components/item/item-form.vue'
 
-import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
 import { showToast } from '@/js/dialog-promises'
 
+import { useDirty } from '@/pages/useDirty'
+
 export default {
-  mixins: [DirtyMixin, ItemMixin],
+  mixins: [ItemMixin],
   props: {
     itemName: String,
     createMode: Boolean,
@@ -106,7 +107,9 @@ export default {
     CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('item-edit-page')
+
+    return { dirty, dirtyIndicator }
   },
   data() {
     return {

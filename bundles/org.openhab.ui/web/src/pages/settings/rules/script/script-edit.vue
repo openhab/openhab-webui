@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="script-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
@@ -300,14 +300,14 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import RuleStatus from '@/components/rule/rule-status-mixin'
 import ScriptGeneralSettings from './script-general-settings.vue'
 import ModuleDescriptionSuggestions from '../module-description-suggestions'
-import DirtyMixin from '../../dirty-mixin'
 import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [RuleStatus, ModuleDescriptionSuggestions, DirtyMixin],
+  mixins: [RuleStatus, ModuleDescriptionSuggestions],
   components: {
     ScriptGeneralSettings,
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
@@ -324,7 +324,8 @@ export default {
     f7route: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('script-edit-page')
+    return { theme, dirty, dirtyIndicator }
   },
   data() {
     return {

@@ -1,14 +1,12 @@
 <template>
-  <f7-page @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="link-edit-page" @page:beforein="onPageBeforeIn" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="(item.label || item.name || '') + dirtyIndicator"
         :subtitle="thing.label"
         back-link="Back"
-        :back-link-url="null"
         :editable="link.editable"
         save-link="Save"
-        @back="goBackWithDirtyCheck()"
         @save="save()"
         :f7router />
     </f7-navbar>
@@ -111,7 +109,7 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -119,7 +117,6 @@ import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
 import ThingStatus from '@/components/thing/thing-status-mixin'
 import LinkMixin from '@/pages/settings/things/link/link-mixin'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
@@ -127,9 +124,10 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { nextTick } from 'vue'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [ThingStatus, LinkMixin, DirtyMixin],
+  mixins: [ThingStatus, LinkMixin],
   components: {
     ConfigSheet,
     Item,
@@ -143,7 +141,9 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('link-edit-page')
+
+    return { dirty, dirtyIndicator }
   },
   data() {
     return {
@@ -230,15 +230,6 @@ export default {
     },
     updated() {
       this.dirty = this.currentProfileType !== this.originalProfileType || !fastDeepEqual(this.link, this.originalLink)
-    },
-    goBackWithDirtyCheck() {
-      if (this.dirty) {
-        this.confirmLeaveWithoutSaving(() => {
-          this.f7router.back()
-        })
-      } else {
-        this.f7router.back()
-      }
     },
     onProfileTypeChange(profileTypeUid) {
       this.profileTypeConfiguration = null

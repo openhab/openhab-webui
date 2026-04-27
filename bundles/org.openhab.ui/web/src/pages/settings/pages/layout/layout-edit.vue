@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onLayoutEditPageBeforeOut" class="layout-editor">
+  <f7-page ref="layout-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onLayoutEditPageBeforeOut" class="layout-editor">
     <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create layout page' : page.config.label) + dirtyIndicator"
@@ -180,7 +180,7 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 
 import YAML from 'yaml'
 
@@ -205,6 +205,8 @@ import { compareItems } from '@/components/widgets/widget-order'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
   mixins: [PageDesigner],
@@ -222,8 +224,10 @@ export default {
   },
   setup() {
     useViewArea()
+    const { dirty, dirtyIndicator } = useDirty('layout-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
 
-    return { theme }
+    return { dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {

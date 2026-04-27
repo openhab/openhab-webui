@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="plan-editor">
+  <f7-page ref="plan-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="plan-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create plan page' : page.config.label) + dirtyIndicator"
@@ -128,8 +128,8 @@
 </style>
 
 <script>
-import { defineAsyncComponent, provide } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { defineAsyncComponent } from 'vue'
+import { f7 } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
 
@@ -147,6 +147,8 @@ import PageSettings from '@/components/pagedesigner/page-settings.vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
   mixins: [PageDesigner],
@@ -166,8 +168,10 @@ export default {
   setup() {
     useViewArea()
     const { evaluateExpression } = useWidgetExpression()
+    const { dirty, dirtyIndicator } = useDirty('plan-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
 
-    return { theme, evaluateExpression }
+    return { evaluateExpression, dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {

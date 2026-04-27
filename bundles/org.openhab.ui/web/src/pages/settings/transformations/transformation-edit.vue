@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="transformation-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="(createMode ? 'Create' : 'Edit') + ' Transformation' + dirtyIndicator"
@@ -149,7 +149,6 @@ import { mapStores } from 'pinia'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
-import DirtyMixin from '../dirty-mixin'
 import TransformationGeneralSettings from '@/pages/settings/transformations/transformation-general-settings.vue'
 import { CodeSnippets, DocumentationLinks } from '@/assets/transformations.js'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
@@ -157,8 +156,9 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
 
+import { useDirty } from '@/pages/useDirty'
+
 export default {
-  mixins: [DirtyMixin],
   components: {
     ClipboardIcon,
     TransformationGeneralSettings,
@@ -174,7 +174,9 @@ export default {
     f7route: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('transformation-edit-page')
+
+    return { theme, dirty, dirtyIndicator }
   },
   data() {
     return {

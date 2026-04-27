@@ -1,3 +1,5 @@
+// Note: useDirty() and useTabs() must be initialized in the page component using this mixin.
+// This mixin expects reactive dirty state (dirty/dirtyIndicator) and currentTab/switchTab to be provided at page level.
 import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
@@ -7,14 +9,12 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import WidgetCodePopup from '@/components/pagedesigner/widget-code-popup.vue'
-import DirtyMixin from '../dirty-mixin'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [DirtyMixin],
   props: {
     f7router: Object,
     f7route: Object
@@ -28,7 +28,6 @@ export default {
       pageYaml: null,
       props: {},
       previewMode: false,
-      currentTab: 'design',
       clipboard: null,
       clipboardType: null,
       currentComponent: null,

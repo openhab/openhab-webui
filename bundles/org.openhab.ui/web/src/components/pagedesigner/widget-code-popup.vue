@@ -44,19 +44,27 @@ import { f7 } from 'framework7-vue'
 import { nextTick, defineAsyncComponent } from 'vue'
 
 import YAML from 'yaml'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
 import MovablePopupMixin from '@/pages/settings/movable-popup-mixin'
+
+import { confirmLeaveWithoutSaving, useDirty } from '@/pages/useDirty'
 
 export default {
   props: {
     component: Object,
     componentType: String
   },
-  mixins: [DirtyMixin, MovablePopupMixin],
+  mixins: [MovablePopupMixin],
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   emits: ['update', 'closed'],
+  setup() {
+    const { dirty, dirtyIndicator } = useDirty(null)
+    return {
+      dirty,
+      dirtyIndicator
+    }
+  },
   data() {
     return {
       leaveCancelled: false,
@@ -96,21 +104,18 @@ export default {
         this.closeWithDirtyCheck()
       }
     },
-    closeWithDirtyCheck() {
+    async closeWithDirtyCheck() {
       if (this.dirty) {
-        const dialog = this.confirmLeaveWithoutSaving(
-          () => {
-            this.updateWidgetCode(this.originalCode)
-            this.$refs.widgetCode.$el.f7Modal.close()
-          },
-          () => {
-            // prevent re-triggering the confirm dialog when ESC is pressed to close the dialog
-            this.leaveCancelled = true
-            setTimeout(() => {
-              this.leaveCancelled = false
-            }, 100)
-          }
-        )
+        if (await confirmLeaveWithoutSaving()) {
+          this.updateWidgetCode(this.originalCode)
+          this.$refs.widgetCode.$el.f7Modal.close()
+        } else {
+          // prevent re-triggering the confirm dialog when ESC is pressed to close the dialog
+          this.leaveCancelled = true
+          setTimeout(() => {
+            this.leaveCancelled = false
+          }, 100)
+        }
       } else {
         this.$refs.widgetCode.$el.f7Modal.close()
       }
