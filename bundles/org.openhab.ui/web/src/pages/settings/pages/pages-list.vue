@@ -263,7 +263,7 @@ export default {
     },
     groupBy: {
       get() {
-        return this.runtimeStore.pagesGroupOrder || 'alphabetical'
+        return this.runtimeStore.pagesGroupOrder
       },
       set(value) {
         this.runtimeStore.pagesGroupOrder = value
