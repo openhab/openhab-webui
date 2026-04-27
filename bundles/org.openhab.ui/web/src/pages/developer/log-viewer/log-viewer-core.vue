@@ -14,7 +14,7 @@
   </button>
 
   <!-- Logger Settings Popup -->
-  <div class="popup logsettings-popup">
+  <div class="popup log-settings-popup">
     <div class="view">
       <div class="page">
         <div class="navbar">
@@ -167,7 +167,7 @@
             <div class="item-title">
               <div class="item-header">Stack Trace</div>
               <div class="stack-trace">
-                {{ selectedLog ? selectedLog.stackTrace : '' }}
+                {{ selectedLog.stackTrace }}
               </div>
             </div>
           </template>
@@ -316,7 +316,7 @@
   .milliseconds
     font-size 0.8em
 
-.logsettings-popup
+.log-settings-popup
   .input-with-buttons-container
     display flex
     justify-content center
@@ -338,7 +338,7 @@
     padding 10px
     outline none
 
-.logdetails-popup
+.log-details-popup
   .log-message
     white-space normal
     word-break break-word
