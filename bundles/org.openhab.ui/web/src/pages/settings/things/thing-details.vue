@@ -811,7 +811,8 @@ export default {
         },
         {
           props: {
-            searchFor: this.thing.UID.split(':')[0]
+            searchFor: this.thing.UID.split(':')[0],
+            backLinkUrl: this.f7router.currentRoute.url
           }
         }
       )
