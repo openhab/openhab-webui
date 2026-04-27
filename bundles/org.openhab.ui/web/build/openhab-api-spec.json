@@ -957,7 +957,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Template"
+                    "$ref": "#/components/schemas/RuleTemplateDTO"
                   }
                 }
               }
@@ -996,7 +996,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Template"
+                  "$ref": "#/components/schemas/RuleTemplateDTO"
                 }
               }
             }
@@ -2449,6 +2449,133 @@
         ]
       }
     },
+    "/file-format/rules/check": {
+      "post": {
+        "tags": ["file-format"],
+        "summary": "Checks if the specified rule(s) can be serialized to the target format.",
+        "operationId": "canSerializeRules",
+        "parameters": [
+          {
+            "name": "targetFormat",
+            "in": "query",
+            "description": "Target format",
+            "schema": {
+              "type": "string",
+              "enum": ["application/vnd.openhab.dsl.rule", "application/yaml"],
+              "default": "application/yaml"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "JSON rule data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/StringList"
+                  },
+                  {
+                    "$ref": "#/components/schemas/FileFormat"
+                  }
+                ]
+              },
+              "examples": {
+                "Rule UID example": {
+                  "description": "Rule UID example",
+                  "value": ["ruleUid1", "ruleUid2"]
+                },
+                "Rule example": {
+                  "description": "Rule example",
+                  "value": {
+                    "rules": [
+                      {
+                        "uid": "string",
+                        "name": "string",
+                        "description": "string",
+                        "tags": ["string"],
+                        "triggers": [
+                          {
+                            "id": "string",
+                            "label": "string",
+                            "description": "string",
+                            "configuration": {
+                              "additionalProp1": {},
+                              "additionalProp2": {},
+                              "additionalProp3": {}
+                            },
+                            "type": "string"
+                          }
+                        ],
+                        "conditions": [
+                          {
+                            "id": "string",
+                            "label": "string",
+                            "description": "string",
+                            "configuration": {
+                              "additionalProp1": {},
+                              "additionalProp2": {},
+                              "additionalProp3": {}
+                            },
+                            "type": "string",
+                            "inputs": {
+                              "additionalProp1": "string",
+                              "additionalProp2": "string",
+                              "additionalProp3": "string"
+                            }
+                          }
+                        ],
+                        "actions": [
+                          {
+                            "id": "string",
+                            "label": "string",
+                            "description": "string",
+                            "configuration": {
+                              "additionalProp1": {},
+                              "additionalProp2": {},
+                              "additionalProp3": {}
+                            },
+                            "type": "string",
+                            "inputs": {
+                              "additionalProp1": "string",
+                              "additionalProp2": "string",
+                              "additionalProp3": "string"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SerializabilityResults"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No rule specified."
+          },
+          "404": {
+            "description": "One or more rules not found in the registry."
+          }
+        },
+        "security": [
+          {
+            "oauth2": ["admin"]
+          }
+        ]
+      }
+    },
     "/file-format/create": {
       "post": {
         "tags": ["file-format"],
@@ -2481,6 +2608,16 @@
               "type": "boolean",
               "default": false
             }
+          },
+          {
+            "name": "ruleSerializationOption",
+            "in": "query",
+            "description": "Decides what to include in serialized rules and rule templates",
+            "schema": {
+              "type": "string",
+              "enum": ["Normal", "Include all", "Stub only", "Strip template"],
+              "default": "Normal"
+            }
           }
         ],
         "requestBody": {
@@ -2510,6 +2647,12 @@
                   "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" <icon> (Group1, Group2) [Tag1, Tag2] { channel=\"binding:type:id:channelid\", namespace=\"my value\" [param=\"my param value\"] }"
                 }
               },
+              "application/vnd.openhab.dsl.rule": {
+                "schema": {
+                  "type": "string",
+                  "example": "rule \"My Rule\"\nwhen\n    Time is noon\nthen\n    logInfo(\"Test\", \"MyRule is running\")\nend"
+                }
+              },
               "text/vnd.openhab.dsl.sitemap": {
                 "schema": {
                   "type": "string",
@@ -2519,7 +2662,7 @@
               "application/yaml": {
                 "schema": {
                   "type": "string",
-                  "example": "version: 1\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
+                  "example": "version: 1\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nrules:\n  MyRule:\n    label: Label\n    actions:\n      - config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script\n    triggers:\n      - config:\n          itemName: MyItem\n        type: ItemReceivedCommand\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
                 }
               }
             }
@@ -2529,6 +2672,9 @@
           },
           "415": {
             "description": "Unsupported media type."
+          },
+          "422": {
+            "description": "Unable to serialize entity."
           }
         },
         "security": [
@@ -2590,6 +2736,130 @@
           },
           "415": {
             "description": "Unsupported media type."
+          }
+        },
+        "security": [
+          {
+            "oauth2": ["admin"]
+          }
+        ]
+      }
+    },
+    "/file-format/ruletemplates": {
+      "post": {
+        "tags": ["file-format"],
+        "summary": "Create file format for a list of rule templates in the registry.",
+        "operationId": "createFileFormatForRuleTemplates",
+        "parameters": [
+          {
+            "name": "serializationOption",
+            "in": "query",
+            "description": "Decides what to include in serialized rule templates",
+            "schema": {
+              "type": "string",
+              "enum": ["Normal", "Include all"],
+              "default": "Normal"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Array of rule template UIDs. If empty or omitted, return all rule templates.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/yaml": {
+                "schema": {
+                  "type": "string",
+                  "example": "version: 1\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "One or more rule templates not found in the registry."
+          },
+          "415": {
+            "description": "Unsupported media type."
+          },
+          "422": {
+            "description": "Unable to serialize rule template."
+          }
+        },
+        "security": [
+          {
+            "oauth2": ["admin"]
+          }
+        ]
+      }
+    },
+    "/file-format/rules": {
+      "post": {
+        "tags": ["file-format"],
+        "summary": "Create file format for a list of rules in the registry.",
+        "operationId": "createFileFormatForRules",
+        "parameters": [
+          {
+            "name": "serializationOption",
+            "in": "query",
+            "description": "Decides what to include in serialized rules",
+            "schema": {
+              "type": "string",
+              "enum": ["Normal", "Include all", "Stub only", "Strip template"],
+              "default": "Normal"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Array of rule UIDs. If empty or omitted, return all rules.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/vnd.openhab.dsl.rule": {
+                "schema": {
+                  "type": "string",
+                  "example": "rule \"My Rule\"\nwhen\n    Time is noon\nthen\n    logInfo(\"Test\", \"MyRule is running\")\nend"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "type": "string",
+                  "example": "version: 1\nrules:\n  MyRule:\n    label: My Rule\n    description: My rule description\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script\n    triggers:\n      - id: \"1\"\n        config:\n          time: 12:00\n        type: TimeOfDay"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "One or more rules not found in the registry."
+          },
+          "415": {
+            "description": "Unsupported media type."
+          },
+          "422": {
+            "description": "Unable to serialize rule."
           }
         },
         "security": [
@@ -2730,6 +3000,12 @@
                 "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" <icon> (Group1, Group2) [Tag1, Tag2] { channel=\"binding:type:id:channelid\", namespace=\"my value\" [param=\"my param value\"] }"
               }
             },
+            "application/vnd.openhab.dsl.rule": {
+              "schema": {
+                "type": "string",
+                "example": "rule \"My Rule\"\nwhen\n    Time is noon\nthen\n    logInfo(\"Test\", \"MyRule is running\")\nend"
+              }
+            },
             "text/vnd.openhab.dsl.sitemap": {
               "schema": {
                 "type": "string",
@@ -2739,7 +3015,7 @@
             "application/yaml": {
               "schema": {
                 "type": "string",
-                "example": "version: 1\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
+                "example": "version: 1\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nrules:\n  MyRule:\n    label: Label\n    actions:\n      - config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script\n    triggers:\n      - config:\n          itemName: MyItem\n        type: ItemReceivedCommand\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
               }
             }
           },
@@ -5806,6 +6082,69 @@
         ]
       }
     },
+    "/log": {
+      "get": {
+        "tags": ["log"],
+        "summary": "Returns the last logged frontend messages. The amount is limited to the 500 last entries.",
+        "operationId": "getLastLogMessagesForFrontend",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32",
+              "default": 500
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "default response",
+            "content": {
+              "application/json": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["log"],
+        "summary": "Log a frontend log message to the backend.",
+        "operationId": "logMessageToBackend",
+        "requestBody": {
+          "description": "Severity is required and can be one of error, warn, info or debug, depending on activated severities which you can GET at /logLevels.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogMessage"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "403": {
+            "description": "Your log severity is not supported."
+          }
+        }
+      }
+    },
+    "/log/levels": {
+      "get": {
+        "tags": ["log"],
+        "summary": "Get log severities, which are logged by the current logger settings.",
+        "operationId": "getLogLevels",
+        "responses": {
+          "200": {
+            "description": "This depends on the current log settings at the backend."
+          }
+        }
+      }
+    },
     "/sitemaps/events/subscribe": {
       "post": {
         "tags": ["sitemaps"],
@@ -7783,19 +8122,19 @@
       "Module": {
         "type": "object",
         "properties": {
-          "typeUID": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
           "label": {
+            "type": "string"
+          },
+          "id": {
             "type": "string"
           },
           "configuration": {
             "$ref": "#/components/schemas/Configuration"
           },
-          "id": {
+          "description": {
+            "type": "string"
+          },
+          "typeUID": {
             "type": "string"
           }
         }
@@ -7823,9 +8162,15 @@
           }
         }
       },
-      "Template": {
+      "RuleTemplateDTO": {
         "type": "object",
         "properties": {
+          "label": {
+            "type": "string"
+          },
+          "uid": {
+            "type": "string"
+          },
           "tags": {
             "uniqueItems": true,
             "type": "array",
@@ -7833,18 +8178,36 @@
               "type": "string"
             }
           },
-          "uid": {
+          "description": {
             "type": "string"
           },
           "visibility": {
             "type": "string",
             "enum": ["VISIBLE", "HIDDEN", "EXPERT"]
           },
-          "description": {
-            "type": "string"
+          "configDescriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConfigDescriptionParameter"
+            }
           },
-          "label": {
-            "type": "string"
+          "triggers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Trigger"
+            }
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Condition"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Action"
+            }
           }
         }
       },
@@ -8430,6 +8793,418 @@
           }
         }
       },
+      "SerializabilityResultString": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "failureReason": {
+            "type": "string"
+          }
+        }
+      },
+      "SerializabilityResults": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SerializabilityResultString"
+            }
+          }
+        }
+      },
+      "JsonArray": {
+        "type": "object",
+        "properties": {
+          "asString": {
+            "type": "string"
+          },
+          "empty": {
+            "type": "boolean"
+          },
+          "asDouble": {
+            "type": "number",
+            "format": "double"
+          },
+          "asInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asLong": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
+          "asByte": {
+            "type": "string",
+            "format": "byte"
+          },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
+          "asShort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asCharacter": {
+            "type": "string"
+          },
+          "asNumber": {
+            "type": "number"
+          },
+          "asBigDecimal": {
+            "type": "number"
+          },
+          "asBigInteger": {
+            "type": "integer"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "asJsonPrimitive": {
+            "$ref": "#/components/schemas/JsonPrimitive"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "jsonPrimitive": {
+            "type": "boolean"
+          },
+          "jsonObject": {
+            "type": "boolean"
+          },
+          "asJsonObject": {
+            "$ref": "#/components/schemas/JsonObject"
+          }
+        }
+      },
+      "JsonElement": {
+        "type": "object",
+        "properties": {
+          "asString": {
+            "type": "string"
+          },
+          "asDouble": {
+            "type": "number",
+            "format": "double"
+          },
+          "asInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asLong": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "asByte": {
+            "type": "string",
+            "format": "byte"
+          },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
+          "asShort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asCharacter": {
+            "type": "string"
+          },
+          "asNumber": {
+            "type": "number"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "asJsonPrimitive": {
+            "$ref": "#/components/schemas/JsonPrimitive"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "jsonPrimitive": {
+            "type": "boolean"
+          },
+          "asBigDecimal": {
+            "type": "number"
+          },
+          "jsonObject": {
+            "type": "boolean"
+          },
+          "asJsonObject": {
+            "$ref": "#/components/schemas/JsonObject"
+          },
+          "asBigInteger": {
+            "type": "integer"
+          }
+        }
+      },
+      "JsonNull": {
+        "type": "object",
+        "properties": {
+          "asString": {
+            "type": "string"
+          },
+          "asDouble": {
+            "type": "number",
+            "format": "double"
+          },
+          "asInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asLong": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "asByte": {
+            "type": "string",
+            "format": "byte"
+          },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
+          "asShort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asCharacter": {
+            "type": "string"
+          },
+          "asNumber": {
+            "type": "number"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "asJsonPrimitive": {
+            "$ref": "#/components/schemas/JsonPrimitive"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "jsonPrimitive": {
+            "type": "boolean"
+          },
+          "asBigDecimal": {
+            "type": "number"
+          },
+          "jsonObject": {
+            "type": "boolean"
+          },
+          "asJsonObject": {
+            "$ref": "#/components/schemas/JsonObject"
+          },
+          "asBigInteger": {
+            "type": "integer"
+          }
+        }
+      },
+      "JsonObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "asString": {
+            "type": "string"
+          },
+          "asDouble": {
+            "type": "number",
+            "format": "double"
+          },
+          "asInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asLong": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "asByte": {
+            "type": "string",
+            "format": "byte"
+          },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
+          "asShort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asCharacter": {
+            "type": "string"
+          },
+          "asNumber": {
+            "type": "number"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "asJsonPrimitive": {
+            "$ref": "#/components/schemas/JsonPrimitive"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "jsonPrimitive": {
+            "type": "boolean"
+          },
+          "asBigDecimal": {
+            "type": "number"
+          },
+          "jsonObject": {
+            "type": "boolean"
+          },
+          "asJsonObject": {
+            "$ref": "#/components/schemas/JsonObject"
+          },
+          "asBigInteger": {
+            "type": "integer"
+          }
+        }
+      },
+      "JsonPrimitive": {
+        "type": "object",
+        "properties": {
+          "asString": {
+            "type": "string"
+          },
+          "asDouble": {
+            "type": "number",
+            "format": "double"
+          },
+          "asInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asLong": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
+          "asByte": {
+            "type": "string",
+            "format": "byte"
+          },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
+          "asShort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "number": {
+            "type": "boolean"
+          },
+          "string": {
+            "type": "boolean"
+          },
+          "boolean": {
+            "type": "boolean"
+          },
+          "asCharacter": {
+            "type": "string"
+          },
+          "asNumber": {
+            "type": "number"
+          },
+          "asBigDecimal": {
+            "type": "number"
+          },
+          "asBigInteger": {
+            "type": "integer"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "asJsonPrimitive": {
+            "$ref": "#/components/schemas/JsonPrimitive"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "jsonPrimitive": {
+            "type": "boolean"
+          },
+          "jsonObject": {
+            "type": "boolean"
+          },
+          "asJsonObject": {
+            "$ref": "#/components/schemas/JsonObject"
+          }
+        }
+      },
+      "StringList": {
+        "type": "array",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "first": {
+            "type": "string"
+          },
+          "last": {
+            "type": "string"
+          }
+        },
+        "items": {
+          "type": "string"
+        }
+      },
       "Channel": {
         "required": ["configuration", "defaultTags", "id", "kind", "properties", "uid"],
         "type": "object",
@@ -8498,6 +9273,18 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SitemapDefinition"
+            }
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Rule"
+            }
+          },
+          "ruleTemplates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleTemplateDTO"
             }
           }
         }
@@ -8859,6 +9646,18 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SitemapDefinition"
+            }
+          },
+          "rules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Rule"
+            }
+          },
+          "ruleTemplates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RuleTemplateDTO"
             }
           },
           "warnings": {
@@ -9935,6 +10734,25 @@
         "properties": {
           "uomInfo": {
             "$ref": "#/components/schemas/UoMInfo"
+          }
+        }
+      },
+      "LogMessage": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "url"
+          },
+          "message": {
+            "type": "string"
           }
         }
       },

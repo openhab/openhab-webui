@@ -137,11 +137,11 @@ export type RuleStatusInfo = {
 };
 
 export type Module = {
-    typeUID: string;
-    description: string;
     label: string;
-    configuration: Configuration;
     id: string;
+    configuration: Configuration;
+    description: string;
+    typeUID: string;
 };
 
 export type Configuration = {
@@ -157,12 +157,16 @@ export type RuleExecution = {
     rule: Rule;
 };
 
-export type Template = {
-    tags: Array<string>;
-    uid: string;
-    visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-    description: string;
+export type RuleTemplateDto = {
     label: string;
+    uid: string;
+    tags: Array<string>;
+    description: string;
+    visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
+    configDescriptions: Array<ConfigDescriptionParameter>;
+    triggers: Array<Trigger>;
+    conditions: Array<Condition>;
+    actions: Array<Action>;
 };
 
 export type Input = {
@@ -368,6 +372,138 @@ export type DiscoveryResult = {
     thingTypeUID?: string;
 };
 
+export type SerializabilityResultString = {
+    uid: string;
+    ok: boolean;
+    failureReason: string;
+};
+
+export type SerializabilityResults = {
+    results: Array<SerializabilityResultString>;
+};
+
+export type JsonArray = {
+    asString: string;
+    empty: boolean;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asBoolean: boolean;
+    asByte: string;
+    asFloat: number;
+    asShort: number;
+    asCharacter: string;
+    asNumber: number;
+    asBigDecimal: number;
+    asBigInteger: number;
+    jsonNull: boolean;
+    asJsonArray: JsonArray;
+    asJsonPrimitive: JsonPrimitive;
+    jsonArray: boolean;
+    asJsonNull: JsonNull;
+    jsonPrimitive: boolean;
+    jsonObject: boolean;
+    asJsonObject: JsonObject;
+};
+
+export type JsonElement = {
+    asString: string;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asBoolean: boolean;
+    jsonNull: boolean;
+    asByte: string;
+    asFloat: number;
+    asShort: number;
+    asCharacter: string;
+    asNumber: number;
+    asJsonArray: JsonArray;
+    asJsonPrimitive: JsonPrimitive;
+    jsonArray: boolean;
+    asJsonNull: JsonNull;
+    jsonPrimitive: boolean;
+    asBigDecimal: number;
+    jsonObject: boolean;
+    asJsonObject: JsonObject;
+    asBigInteger: number;
+};
+
+export type JsonNull = {
+    asString: string;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asBoolean: boolean;
+    jsonNull: boolean;
+    asByte: string;
+    asFloat: number;
+    asShort: number;
+    asCharacter: string;
+    asNumber: number;
+    asJsonArray: JsonArray;
+    asJsonPrimitive: JsonPrimitive;
+    jsonArray: boolean;
+    asJsonNull: JsonNull;
+    jsonPrimitive: boolean;
+    asBigDecimal: number;
+    jsonObject: boolean;
+    asJsonObject: JsonObject;
+    asBigInteger: number;
+};
+
+export type JsonObject = {
+    empty: boolean;
+    asString: string;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asBoolean: boolean;
+    jsonNull: boolean;
+    asByte: string;
+    asFloat: number;
+    asShort: number;
+    asCharacter: string;
+    asNumber: number;
+    asJsonArray: JsonArray;
+    asJsonPrimitive: JsonPrimitive;
+    jsonArray: boolean;
+    asJsonNull: JsonNull;
+    jsonPrimitive: boolean;
+    asBigDecimal: number;
+    jsonObject: boolean;
+    asJsonObject: JsonObject;
+    asBigInteger: number;
+};
+
+export type JsonPrimitive = {
+    asString: string;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asBoolean: boolean;
+    asByte: string;
+    asFloat: number;
+    asShort: number;
+    number: boolean;
+    string: boolean;
+    boolean: boolean;
+    asCharacter: string;
+    asNumber: number;
+    asBigDecimal: number;
+    asBigInteger: number;
+    jsonNull: boolean;
+    asJsonArray: JsonArray;
+    asJsonPrimitive: JsonPrimitive;
+    jsonArray: boolean;
+    asJsonNull: JsonNull;
+    jsonPrimitive: boolean;
+    jsonObject: boolean;
+    asJsonObject: JsonObject;
+};
+
+export type StringList = Array<string>;
+
 export type Channel = {
     uid: string;
     id: string;
@@ -392,6 +528,8 @@ export type FileFormat = {
     items: Array<FileFormatItem>;
     things: Array<Thing>;
     sitemaps: Array<SitemapDefinition>;
+    rules: Array<Rule>;
+    ruleTemplates: Array<RuleTemplateDto>;
 };
 
 export type FileFormatChannelLink = {
@@ -518,6 +656,8 @@ export type ExtendedFileFormat = {
     items: Array<FileFormatItem>;
     things: Array<Thing>;
     sitemaps: Array<SitemapDefinition>;
+    rules: Array<Rule>;
+    ruleTemplates: Array<RuleTemplateDto>;
     warnings: Array<string>;
 };
 
@@ -897,6 +1037,13 @@ export type UoMInfo = {
 
 export type UoMInfoBean = {
     uomInfo: UoMInfo;
+};
+
+export type LogMessage = {
+    timestamp: number;
+    severity: string;
+    url: string;
+    message: string;
 };
 
 export type SitemapPage = {
@@ -1695,7 +1842,7 @@ export type GetTemplatesResponses = {
     /**
      * OK
      */
-    200: Array<Template>;
+    200: Array<RuleTemplateDto>;
 };
 
 export type GetTemplatesResponse = GetTemplatesResponses[keyof GetTemplatesResponses];
@@ -1729,7 +1876,7 @@ export type GetTemplateByIdResponses = {
     /**
      * OK
      */
-    200: Template;
+    200: RuleTemplateDto;
 };
 
 export type GetTemplateByIdResponse = GetTemplateByIdResponses[keyof GetTemplateByIdResponses];
@@ -2788,6 +2935,41 @@ export type RemoveIgnoreFlagOnInboxItemResponses = {
     200: unknown;
 };
 
+export type CanSerializeRulesData = {
+    /**
+     * JSON rule data
+     */
+    body?: StringList | FileFormat;
+    path?: never;
+    query?: {
+        /**
+         * Target format
+         */
+        targetFormat?: 'application/vnd.openhab.dsl.rule' | 'application/yaml';
+    };
+    url: '/file-format/rules/check';
+};
+
+export type CanSerializeRulesErrors = {
+    /**
+     * No rule specified.
+     */
+    400: unknown;
+    /**
+     * One or more rules not found in the registry.
+     */
+    404: unknown;
+};
+
+export type CanSerializeRulesResponses = {
+    /**
+     * OK
+     */
+    200: SerializabilityResults;
+};
+
+export type CanSerializeRulesResponse = CanSerializeRulesResponses[keyof CanSerializeRulesResponses];
+
 export type CreateData = {
     /**
      * JSON data
@@ -2807,6 +2989,10 @@ export type CreateData = {
          * hide the channel links and metadata for items
          */
         hideChannelLinksAndMetadata?: boolean;
+        /**
+         * Decides what to include in serialized rules and rule templates
+         */
+        ruleSerializationOption?: 'Normal' | 'Include all' | 'Stub only' | 'Strip template';
     };
     url: '/file-format/create';
 };
@@ -2820,6 +3006,10 @@ export type CreateErrors = {
      * Unsupported media type.
      */
     415: unknown;
+    /**
+     * Unable to serialize entity.
+     */
+    422: unknown;
 };
 
 export type CreateResponses = {
@@ -2865,6 +3055,84 @@ export type CreateFileFormatForItemsResponses = {
 };
 
 export type CreateFileFormatForItemsResponse = CreateFileFormatForItemsResponses[keyof CreateFileFormatForItemsResponses];
+
+export type CreateFileFormatForRuleTemplatesData = {
+    /**
+     * Array of rule template UIDs. If empty or omitted, return all rule templates.
+     */
+    body?: Array<string>;
+    path?: never;
+    query?: {
+        /**
+         * Decides what to include in serialized rule templates
+         */
+        serializationOption?: 'Normal' | 'Include all';
+    };
+    url: '/file-format/ruletemplates';
+};
+
+export type CreateFileFormatForRuleTemplatesErrors = {
+    /**
+     * One or more rule templates not found in the registry.
+     */
+    404: unknown;
+    /**
+     * Unsupported media type.
+     */
+    415: unknown;
+    /**
+     * Unable to serialize rule template.
+     */
+    422: unknown;
+};
+
+export type CreateFileFormatForRuleTemplatesResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type CreateFileFormatForRuleTemplatesResponse = CreateFileFormatForRuleTemplatesResponses[keyof CreateFileFormatForRuleTemplatesResponses];
+
+export type CreateFileFormatForRulesData = {
+    /**
+     * Array of rule UIDs. If empty or omitted, return all rules.
+     */
+    body?: Array<string>;
+    path?: never;
+    query?: {
+        /**
+         * Decides what to include in serialized rules
+         */
+        serializationOption?: 'Normal' | 'Include all' | 'Stub only' | 'Strip template';
+    };
+    url: '/file-format/rules';
+};
+
+export type CreateFileFormatForRulesErrors = {
+    /**
+     * One or more rules not found in the registry.
+     */
+    404: unknown;
+    /**
+     * Unsupported media type.
+     */
+    415: unknown;
+    /**
+     * Unable to serialize rule.
+     */
+    422: unknown;
+};
+
+export type CreateFileFormatForRulesResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type CreateFileFormatForRulesResponse = CreateFileFormatForRulesResponses[keyof CreateFileFormatForRulesResponses];
 
 export type CreateFileFormatForSitemapsData = {
     /**
@@ -5113,6 +5381,60 @@ export type GetUoMInformationResponses = {
 };
 
 export type GetUoMInformationResponse = GetUoMInformationResponses[keyof GetUoMInformationResponses];
+
+export type GetLastLogMessagesForFrontendData = {
+    body?: never;
+    path?: never;
+    query?: {
+        limit?: number;
+    };
+    url: '/log';
+};
+
+export type GetLastLogMessagesForFrontendResponses = {
+    /**
+     * default response
+     */
+    default: unknown;
+};
+
+export type LogMessageToBackendData = {
+    /**
+     * Severity is required and can be one of error, warn, info or debug, depending on activated severities which you can GET at /logLevels.
+     */
+    body?: LogMessage;
+    path?: never;
+    query?: never;
+    url: '/log';
+};
+
+export type LogMessageToBackendErrors = {
+    /**
+     * Your log severity is not supported.
+     */
+    403: unknown;
+};
+
+export type LogMessageToBackendResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetLogLevelsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/log/levels';
+};
+
+export type GetLogLevelsResponses = {
+    /**
+     * This depends on the current log settings at the backend.
+     */
+    200: unknown;
+};
 
 export type CreateSitemapEventSubscriptionData = {
     body?: never;
