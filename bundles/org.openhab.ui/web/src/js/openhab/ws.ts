@@ -160,8 +160,11 @@ function newWSConnection(
   // Handle WebSocket connection closed
   socket.onclose = (event: CloseEvent) => {
     socket.clearKeepalive()
-    if (closeCallback) closeCallback(event)
-    else console.debug('WebSocket connection closed', event)
+    if (closeCallback) {
+      closeCallback(event)
+    } else {
+      console.debug('WebSocket connection closed', event)
+    }
   }
 
   // Handle WebSocket message received
