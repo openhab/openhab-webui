@@ -2708,6 +2708,12 @@
                   "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" \u003cicon\u003e (Group1, Group2) [Tag1, Tag2] { channel\u003d\"binding:type:id:channelid\", namespace\u003d\"my value\" [param\u003d\"my param value\"] }"
                 }
               },
+              "text/vnd.openhab.dsl.sitemap": {
+                "schema": {
+                  "type": "string",
+                  "example": "sitemap MySitemap label\u003d\"My Sitemap\" {\n    Frame {\n        Input item\u003dMyItem label\u003d\"My Input\"\n    }\n}"
+                }
+              },
               "application/yaml": {
                 "schema": {
                   "type": "string",
@@ -2783,6 +2789,57 @@
           },
           "404": {
             "description": "One or more items not found in registry."
+          },
+          "415": {
+            "description": "Unsupported media type."
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/file-format/sitemaps": {
+      "post": {
+        "tags": [
+          "file-format"
+        ],
+        "summary": "Create file format for a list of sitemaps in registry.",
+        "operationId": "createFileFormatForSitemaps",
+        "requestBody": {
+          "description": "Array of Sitemap names. If empty or omitted, return all Sitemaps from the Registry.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/vnd.openhab.dsl.sitemap": {
+                "schema": {
+                  "type": "string",
+                  "example": "sitemap MySitemap label\u003d\"My Sitemap\" {\n    Frame {\n        Input item\u003dMyItem label\u003d\"My Input\"\n    }\n}"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Payload invalid."
+          },
+          "404": {
+            "description": "One or more sitemaps not found in registry."
           },
           "415": {
             "description": "Unsupported media type."
@@ -2882,6 +2939,12 @@
               "schema": {
                 "type": "string",
                 "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" \u003cicon\u003e (Group1, Group2) [Tag1, Tag2] { channel\u003d\"binding:type:id:channelid\", namespace\u003d\"my value\" [param\u003d\"my param value\"] }"
+              }
+            },
+            "text/vnd.openhab.dsl.sitemap": {
+              "schema": {
+                "type": "string",
+                "example": "sitemap MySitemap label\u003d\"My Sitemap\" {\n    Frame {\n        Input item\u003dMyItem label\u003d\"My Input\"\n    }\n}"
               }
             },
             "application/yaml": {
@@ -6191,6 +6254,157 @@
         }
       }
     },
+    "/sitemaps/{sitemapname}": {
+      "get": {
+        "tags": [
+          "sitemaps"
+        ],
+        "summary": "Get sitemap by name.",
+        "operationId": "getSitemapByName",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "language",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sitemapname",
+            "in": "path",
+            "description": "sitemap name",
+            "required": true,
+            "schema": {
+              "pattern": "[a-zA-Z_0-9]+",
+              "type": "string"
+            }
+          },
+          {
+            "name": "includeHidden",
+            "in": "query",
+            "description": "include hidden widgets",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sitemap"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "sitemaps"
+        ],
+        "summary": "Adds a new sitemap to the registry or updates the existing sitemap.",
+        "operationId": "addOrUpdateSitemapInRegistry",
+        "parameters": [
+          {
+            "name": "sitemapname",
+            "in": "path",
+            "description": "sitemap name",
+            "required": true,
+            "schema": {
+              "pattern": "[a-zA-Z_0-9]+",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "sitemap data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SitemapDefinition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Sitemap updated.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SitemapDefinition"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Sitemap created.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SitemapDefinition"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Payload invalid."
+          },
+          "405": {
+            "description": "Sitemap not editable."
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "admin"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "sitemaps"
+        ],
+        "summary": "Removes a sitemap from the registry.",
+        "operationId": "removeSitemapFromRegistry",
+        "parameters": [
+          {
+            "name": "sitemapname",
+            "in": "path",
+            "description": "sitemap name",
+            "required": true,
+            "schema": {
+              "pattern": "[a-zA-Z_0-9]+",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Sitemap not found."
+          },
+          "405": {
+            "description": "Sitemap not editable."
+          }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
     "/sitemaps/{sitemapname}/{pageid}": {
       "get": {
         "tags": [
@@ -6250,7 +6464,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Page"
+                  "$ref": "#/components/schemas/SitemapPage"
                 }
               }
             }
@@ -6327,22 +6541,14 @@
         }
       }
     },
-    "/sitemaps/{sitemapname}": {
+    "/sitemaps/{sitemapname}/definition": {
       "get": {
         "tags": [
           "sitemaps"
         ],
-        "summary": "Get sitemap by name.",
-        "operationId": "getSitemapByName",
+        "summary": "Get sitemap definition by name.",
+        "operationId": "getSitemapDefinitionByName",
         "parameters": [
-          {
-            "name": "Accept-Language",
-            "in": "header",
-            "description": "language",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "sitemapname",
             "in": "path",
@@ -6352,29 +6558,6 @@
               "pattern": "[a-zA-Z_0-9]+",
               "type": "string"
             }
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "jsoncallback",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "callback"
-            }
-          },
-          {
-            "name": "includeHidden",
-            "in": "query",
-            "description": "include hidden widgets",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
         "responses": {
@@ -6383,10 +6566,13 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Sitemap"
+                  "$ref": "#/components/schemas/EnrichedSitemapDefinition"
                 }
               }
             }
+          },
+          "404": {
+            "description": "Sitemap not found"
           }
         }
       }
@@ -6495,6 +6681,30 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Sitemap"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sitemaps/*/definition": {
+      "get": {
+        "tags": [
+          "sitemaps"
+        ],
+        "summary": "Get all available sitemap definitions.",
+        "operationId": "getSitemapDefinitions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnrichedSitemapDefinition"
                   }
                 }
               }
@@ -8196,6 +8406,13 @@
           "uid": {
             "type": "string"
           },
+          "tags": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "visibility": {
             "type": "string",
             "enum": [
@@ -8203,13 +8420,6 @@
               "HIDDEN",
               "EXPERT"
             ]
-          },
-          "tags": {
-            "uniqueItems": true,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
           },
           "description": {
             "type": "string"
@@ -8917,6 +9127,12 @@
             "items": {
               "$ref": "#/components/schemas/Thing"
             }
+          },
+          "sitemaps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapDefinition"
+            }
           }
         }
       },
@@ -9030,6 +9246,230 @@
           }
         }
       },
+      "SitemapButtonDefinition": {
+        "type": "object",
+        "properties": {
+          "row": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "column": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "command": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          }
+        }
+      },
+      "SitemapCondition": {
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "SitemapDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "widgets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapWidgetDefinition"
+            }
+          }
+        }
+      },
+      "SitemapMapping": {
+        "type": "object",
+        "properties": {
+          "row": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "column": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "command": {
+            "type": "string"
+          },
+          "releaseCommand": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          }
+        }
+      },
+      "SitemapRule": {
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapCondition"
+            }
+          },
+          "argument": {
+            "type": "string"
+          }
+        }
+      },
+      "SitemapWidgetDefinition": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "staticIcon": {
+            "type": "boolean"
+          },
+          "mappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapMapping"
+            }
+          },
+          "switchSupport": {
+            "type": "boolean"
+          },
+          "releaseOnly": {
+            "type": "boolean"
+          },
+          "refresh": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minValue": {
+            "type": "number"
+          },
+          "maxValue": {
+            "type": "number"
+          },
+          "step": {
+            "type": "number"
+          },
+          "inputHint": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "encoding": {
+            "type": "string"
+          },
+          "service": {
+            "type": "string"
+          },
+          "period": {
+            "type": "string"
+          },
+          "yAxisDecimalPattern": {
+            "type": "string"
+          },
+          "interpolation": {
+            "type": "string"
+          },
+          "legend": {
+            "type": "boolean"
+          },
+          "forceAsItem": {
+            "type": "boolean"
+          },
+          "row": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "column": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "command": {
+            "type": "string"
+          },
+          "releaseCommand": {
+            "type": "string"
+          },
+          "stateless": {
+            "type": "boolean"
+          },
+          "item": {
+            "type": "string"
+          },
+          "visibilityRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapRule"
+            }
+          },
+          "iconRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapRule"
+            }
+          },
+          "labelColorRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapRule"
+            }
+          },
+          "valueColorRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapRule"
+            }
+          },
+          "iconColorRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapRule"
+            }
+          },
+          "buttons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapButtonDefinition"
+            }
+          }
+        }
+      },
       "Thing": {
         "required": [
           "UID",
@@ -9091,6 +9531,12 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Thing"
+            }
+          },
+          "sitemaps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapDefinition"
             }
           },
           "warnings": {
@@ -10251,32 +10697,7 @@
           }
         }
       },
-      "Mapping": {
-        "type": "object",
-        "properties": {
-          "row": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "column": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "command": {
-            "type": "string"
-          },
-          "releaseCommand": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
-          },
-          "icon": {
-            "type": "string"
-          }
-        }
-      },
-      "Page": {
+      "SitemapPage": {
         "type": "object",
         "properties": {
           "id": {
@@ -10292,7 +10713,7 @@
             "type": "string"
           },
           "parent": {
-            "$ref": "#/components/schemas/Page"
+            "$ref": "#/components/schemas/SitemapPage"
           },
           "leaf": {
             "type": "boolean"
@@ -10303,30 +10724,18 @@
           "widgets": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Widget"
+              "$ref": "#/components/schemas/SitemapWidget"
             }
           }
         }
       },
-      "Widget": {
+      "SitemapWidget": {
         "type": "object",
         "properties": {
-          "widgetId": {
-            "type": "string"
-          },
           "type": {
             "type": "string"
           },
-          "name": {
-            "type": "string"
-          },
-          "visibility": {
-            "type": "boolean"
-          },
           "label": {
-            "type": "string"
-          },
-          "labelSource": {
             "type": "string"
           },
           "icon": {
@@ -10335,25 +10744,10 @@
           "staticIcon": {
             "type": "boolean"
           },
-          "labelcolor": {
-            "type": "string"
-          },
-          "valuecolor": {
-            "type": "string"
-          },
-          "iconcolor": {
-            "type": "string"
-          },
-          "pattern": {
-            "type": "string"
-          },
-          "unit": {
-            "type": "string"
-          },
           "mappings": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Mapping"
+              "$ref": "#/components/schemas/SitemapMapping"
             }
           },
           "switchSupport": {
@@ -10423,6 +10817,30 @@
           "stateless": {
             "type": "boolean"
           },
+          "widgetId": {
+            "type": "string"
+          },
+          "visibility": {
+            "type": "boolean"
+          },
+          "labelSource": {
+            "type": "string"
+          },
+          "labelcolor": {
+            "type": "string"
+          },
+          "valuecolor": {
+            "type": "string"
+          },
+          "iconcolor": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
           "state": {
             "type": "string"
           },
@@ -10430,7 +10848,7 @@
             "$ref": "#/components/schemas/EnrichedItem"
           },
           "linkedPage": {
-            "$ref": "#/components/schemas/Page"
+            "$ref": "#/components/schemas/SitemapPage"
           }
         }
       },
@@ -10450,7 +10868,30 @@
             "type": "string"
           },
           "homepage": {
-            "$ref": "#/components/schemas/Page"
+            "$ref": "#/components/schemas/SitemapPage"
+          }
+        }
+      },
+      "EnrichedSitemapDefinition": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "widgets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapWidgetDefinition"
+            }
+          },
+          "editable": {
+            "type": "boolean"
           }
         }
       },
