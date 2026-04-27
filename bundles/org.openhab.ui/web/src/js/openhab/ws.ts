@@ -110,6 +110,7 @@ type CloseCallback = (event: CloseEvent) => void
  * @param path the path to connect to, e.g. `/ws`
  * @param messageCallback the callback to handle incoming messages
  * @param readyCallback the callback to handle the connection being ready
+ * @param closeCallback the callback to handle the connection being closed
  * @param errorCallback the callback to handle errors
  * @param heartbeatCallback the callback to handle heartbeats
  * @param heartbeatInterval the interval in seconds for sending heartbeats
@@ -118,6 +119,7 @@ function newWSConnection(
   path: string,
   messageCallback: MessageCallback,
   readyCallback: ReadyCallback | undefined,
+  closeCallback: CloseCallback | undefined,
   errorCallback: ErrorCallback | undefined,
   heartbeatCallback: HeartbeatCallback | undefined,
   heartbeatInterval: number
@@ -153,6 +155,16 @@ function newWSConnection(
   socket.onopen = (event: Event) => {
     socket.setKeepalive(heartbeatInterval)
     if (readyCallback) readyCallback(event)
+  }
+
+  // Handle WebSocket connection closed
+  socket.onclose = (event: CloseEvent) => {
+    socket.clearKeepalive()
+    if (closeCallback) {
+      closeCallback(event)
+    } else {
+      console.debug('WebSocket connection closed', event)
+    }
   }
 
   // Handle WebSocket message received
@@ -193,6 +205,7 @@ const WebSocketService = {
    * @param messageCallback message callback to handle incoming messages
    * @param heartbeatCallback heartbeat callback
    * @param readyCallback ready callback
+   * @param closeCallback close callback
    * @param errorCallback error callback
    * @param heartbeatInterval heartbeat interval in seconds (defaults to 5)
    */
@@ -201,10 +214,11 @@ const WebSocketService = {
     messageCallback: MessageCallback,
     heartbeatCallback: HeartbeatCallback,
     readyCallback?: ReadyCallback,
+    closeCallback?: CloseCallback,
     errorCallback?: ErrorCallback,
     heartbeatInterval: number = 5
   ): KeepaliveWebSocket {
-    return newWSConnection(path, messageCallback, readyCallback, errorCallback, heartbeatCallback, heartbeatInterval)
+    return newWSConnection(path, messageCallback, readyCallback, closeCallback, errorCallback, heartbeatCallback, heartbeatInterval)
   },
   /**
    * Connect to the event WebSocket, which provides direct access to the EventBus.
@@ -213,12 +227,14 @@ const WebSocketService = {
    * @param topics array of event topics to filter by, if empty all events are received
    * @param messageCallback message callback to handle incoming messages
    * @param readyCallback ready callback
+   * @param closeCallback close callback
    * @param errorCallback error callback
    */
   events(
     topics: string[],
     messageCallback: MessageCallback,
     readyCallback?: ReadyCallback,
+    closeCallback?: CloseCallback,
     errorCallback?: ErrorCallback
   ): KeepaliveWebSocket {
     let socket: KeepaliveWebSocket
@@ -246,7 +262,7 @@ const WebSocketService = {
       socket.send(heartbeatMessage(socket.id))
     }
 
-    socket = this.connect('/ws/events', extendedMessageCallback, heartbeatCallback, extendedReadyCallback, errorCallback)
+    socket = this.connect('/ws/events', extendedMessageCallback, heartbeatCallback, extendedReadyCallback, closeCallback, errorCallback)
 
     return socket
   },
