@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="addon-config-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="'Configure ' + addon.label + dirtyIndicator"
@@ -56,17 +56,14 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
-
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import debounce from 'debounce'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [DirtyMixin],
   components: {
     ConfigSheet
   },
@@ -75,7 +72,8 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('addon-config-page')
+    return { dirty, dirtyIndicator }
   },
   data() {
     return {

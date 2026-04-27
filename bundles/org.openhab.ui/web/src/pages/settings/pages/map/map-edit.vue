@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="map-editor">
+  <f7-page ref="map-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="map-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create map page' : page.config.label) + dirtyIndicator"
@@ -126,8 +126,8 @@
 </style>
 
 <script>
-import { defineAsyncComponent, provide } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { defineAsyncComponent } from 'vue'
+import { f7 } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
 
@@ -139,6 +139,9 @@ import 'leaflet-providers'
 import OhMapPage from '@/components/widgets/map/oh-map-page.vue'
 import OhMapMarker from '@/components/widgets/map/oh-map-marker.vue'
 import OhMapCircleMarker from '@/components/widgets/map/oh-map-circle-marker.vue'
+
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 const ConfigurableWidgets = {
   OhMapMarker,
@@ -167,8 +170,10 @@ export default {
   },
   setup() {
     useViewArea()
+    const { dirty, dirtyIndicator } = useDirty('map-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
 
-    return { theme }
+    return { dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     // populate the list of tile providers with variants

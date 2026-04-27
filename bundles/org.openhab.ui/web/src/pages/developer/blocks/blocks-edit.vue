@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="blocks-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="(createMode ? 'Create Block Library' : 'Block Library: ' + blocks.uid) + dirtyIndicator"
@@ -119,20 +119,19 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { nextTick, defineAsyncComponent } from 'vue'
 
 import YAML from 'yaml'
 
 import BlocklyEditor from '@/components/config/controls/blockly-editor.vue'
 import BlockPreview from './block-preview.vue'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
 export default {
-  mixins: [DirtyMixin],
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     BlocklyEditor, // 'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue'),
@@ -145,7 +144,8 @@ export default {
     f7route: Object
   },
   setup() {
-    return { theme, f7 }
+    const { dirty, dirtyIndicator } = useDirty('blocks-edit-page')
+    return { f7, dirty, dirtyIndicator }
   },
   data() {
     return {
