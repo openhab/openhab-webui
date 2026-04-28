@@ -7,12 +7,10 @@
         </table>
       </div>
     </f7-card>
+    <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-blue" @click="showLatestLogs()">
+      <f7-icon f7="arrow_down_to_line" />
+    </button>
   </div>
-
-  <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-blue" @click="showLatestLogs()">
-    <f7-icon f7="arrow_down_to_line" />
-  </button>
-
   <!-- Logger Settings Popup -->
   <div class="popup log-settings-popup">
     <div class="view">

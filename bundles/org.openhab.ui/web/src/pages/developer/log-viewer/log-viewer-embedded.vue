@@ -67,6 +67,8 @@
       </div>
     </div>
 
+    <log-viewer-core ref="logViewerCore" />
+
     <div v-if="!collapsed" class="dock-toolbar">
       <f7-link
         icon-f7="cloud_download"
@@ -110,8 +112,6 @@
       </f7-segmented>
       <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
     </div>
-
-    <log-viewer-core ref="logViewerCore" />
   </div>
 </template>
 
@@ -195,10 +195,10 @@
     flex none
     display flex
     align-items center
-    gap 6px
-    padding 8px 18px
-    border-bottom 1px solid var(--f7-bars-border-color)
-    background var(--f7-page-bg-color)
+    padding 8px calc(16px + var(--f7-safe-area-right)) 8px calc(16px + var(--f7-safe-area-left))
+    border-top 1px solid var(--f7-bars-border-color)
+    background var(--f7-bars-bg-color)
+    justify-content space-between
 
   .table-block
     flex 1
