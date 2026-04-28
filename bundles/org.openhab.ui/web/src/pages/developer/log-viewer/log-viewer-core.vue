@@ -2,7 +2,24 @@
   <div class="table-block">
     <f7-card class="log-viewer-card">
       <div class="table-container" ref="tableContainer" @scroll="handleScroll">
-        <table ref="dataTable">
+        <table
+          ref="dataTable"
+          :style="!textMode ? { tableLayout: 'fixed', width: totalTableWidth + 'px' } : { width: '100%' }">
+          <colgroup v-if="!textMode">
+            <col v-for="(width, i) in columnWidths" :key="i" :style="{ width: width + 'px' }" />
+          </colgroup>
+          <thead v-if="!textMode">
+            <tr @mousemove="handleHeaderMouseMove" @mouseleave="handleHeaderMouseLeave">
+              <th v-for="(col, i) in TABLE_COLUMN_DEFS" :key="i" :class="{ 'th-sticky': i === 0 }">
+                <span>{{ col.label }}</span>
+                <div
+                  class="resize-handle"
+                  :class="{ 'resize-handle-active': activeResizeHandle === i }"
+                  @mousedown.prevent="startResize($event, i)"
+                  @dblclick.prevent="autoSizeColumn(i)" />
+              </th>
+            </tr>
+          </thead>
           <tbody />
         </table>
       </div>
@@ -202,11 +219,57 @@
     display block
 
   table
-    width 100%
     overflow-x auto
     position relative
     border-collapse collapse
     table-layout auto
+
+  thead th
+    position sticky
+    top 0
+    background var(--f7-bars-bg-color)
+    color var(--f7-bars-text-color)
+    z-index 2
+    padding 5px
+    padding-right 14px
+    text-align left
+    font-weight bold
+    border-bottom 2px solid var(--f7-bars-border-color)
+    user-select none
+    white-space nowrap
+    overflow hidden
+
+  thead th.th-sticky
+    left 0
+    z-index 3
+
+  .resize-handle
+    position absolute
+    right 0
+    top 0
+    bottom 0
+    width 8px
+    cursor col-resize
+    background transparent
+    &::after
+      content ''
+      position absolute
+      top 15%
+      bottom 15%
+      right 2px
+      width 2px
+      border-radius 1px
+      background currentColor
+      opacity 0
+      transition opacity 0.15s ease
+
+  .resize-handle.resize-handle-active::after
+    opacity 0.55
+
+  body.col-resizing &
+    *
+      user-select none
+      cursor col-resize !important
 
   td.nowrap
     padding 5px
@@ -220,20 +283,22 @@
     position sticky
     left 0
     width 105px
-    color black
-    background #f1f1f1
+    color var(--f7-bars-text-color)
+    background var(--f7-bars-bg-color)
     z-index 1
     white-space nowrap
     overflow hidden
 
   td.level
     width 50px
+    overflow hidden
 
   td.logger
     width 280px
+    overflow hidden
 
   span.logger
-    width 280px
+    width 100%
     display block
     direction rtl
     text-align left
@@ -486,10 +551,129 @@ const currentHighlightColor = ref('#FF5252')
 const lastSequence = ref(0)
 const selectedId = ref<number>(0)
 
+// Column definitions (table mode only)
+const COLUMN_WIDTHS_KEY = 'openhab.ui:logviewer.columnWidths'
+const DEFAULT_COLUMN_WIDTHS = [110, 60, 280, 2000]
+const TABLE_COLUMN_DEFS = [{ label: 'Time' }, { label: 'Level' }, { label: 'Logger' }, { label: 'Message' }]
+
+function loadColumnWidths(): number[] {
+  try {
+    const stored = localStorage.getItem(COLUMN_WIDTHS_KEY)
+    if (stored) {
+      const parsed = JSON.parse(stored) as unknown
+      if (
+        Array.isArray(parsed) &&
+        parsed.length === DEFAULT_COLUMN_WIDTHS.length &&
+        parsed.every((n) => typeof n === 'number' && n > 0)
+      ) {
+        return parsed as number[]
+      }
+    }
+  } catch {}
+  return [...DEFAULT_COLUMN_WIDTHS]
+}
+
+const columnWidths = ref<number[]>(loadColumnWidths())
+
+// Column resize state
+let resizingIndex = -1
+let resizeStartX = 0
+let resizeStartWidth = 0
+const activeResizeHandle = ref(-1)
+let measureCanvasCtx: CanvasRenderingContext2D | null = null
+
+function getMeasureCtx(): CanvasRenderingContext2D | null {
+  if (!measureCanvasCtx) {
+    measureCanvasCtx = document.createElement('canvas').getContext('2d')
+  }
+  return measureCanvasCtx
+}
+
+function measureTextWidth(text: string, font: string): number {
+  const ctx = getMeasureCtx()
+  if (!ctx) return 0
+  ctx.font = font
+  return ctx.measureText(text).width
+}
+
+function startResize(event: MouseEvent, colIndex: number) {
+  resizingIndex = colIndex
+  resizeStartX = event.clientX
+  resizeStartWidth = columnWidths.value[colIndex]
+  activeResizeHandle.value = colIndex
+  document.body.classList.add('col-resizing')
+  document.body.style.cursor = 'col-resize'
+  document.addEventListener('mousemove', handleResize)
+  document.addEventListener('mouseup', stopResize)
+}
+
+function handleResize(event: MouseEvent) {
+  if (resizingIndex < 0) return
+  columnWidths.value[resizingIndex] = Math.max(40, resizeStartWidth + (event.clientX - resizeStartX))
+}
+
+function stopResize() {
+  if (resizingIndex < 0) return
+  resizingIndex = -1
+  activeResizeHandle.value = -1
+  document.body.classList.remove('col-resizing')
+  document.body.style.cursor = ''
+  localStorage.setItem(COLUMN_WIDTHS_KEY, JSON.stringify(columnWidths.value))
+  document.removeEventListener('mousemove', handleResize)
+  document.removeEventListener('mouseup', stopResize)
+}
+
+function resetColumnWidths() {
+  columnWidths.value = [...DEFAULT_COLUMN_WIDTHS]
+  localStorage.removeItem(COLUMN_WIDTHS_KEY)
+}
+
+function handleHeaderMouseMove(event: MouseEvent) {
+  if (resizingIndex >= 0) return // don't override during active drag
+  const tr = event.currentTarget as HTMLElement
+  const ths = Array.from(tr.children) as HTMLElement[]
+  const cursorX = event.clientX
+  let closestCol = -1
+  let closestDist = Infinity
+  for (let i = 0; i < ths.length; i++) {
+    const dist = Math.abs(cursorX - ths[i].getBoundingClientRect().right)
+    if (dist < closestDist) {
+      closestDist = dist
+      closestCol = i
+    }
+  }
+  activeResizeHandle.value = closestCol
+}
+
+function handleHeaderMouseLeave() {
+  if (resizingIndex >= 0) return // don't clear during active drag
+  activeResizeHandle.value = -1
+}
+
+function autoSizeColumn(colIndex: number) {
+  const tbody = getTableBody()
+  const firstTd = tbody?.querySelector('td')
+  const font = firstTd ? getComputedStyle(firstTd).font : '13px sans-serif'
+  const fields: (keyof EnrichedLogEntry)[] = ['time', 'level', 'loggerName', 'message']
+  const field = fields[colIndex]
+  let maxWidth = measureTextWidth(TABLE_COLUMN_DEFS[colIndex].label, font)
+  for (const entry of filteredTableData.value) {
+    const text = colIndex === 0 ? entry.time + entry.milliseconds : String(entry[field])
+    const w = measureTextWidth(text, font)
+    if (w > maxWidth) maxWidth = w
+  }
+  // add cell padding; col 0 also needs room for the icon (~26px)
+  const padding = colIndex === 0 ? 52 : 16
+  columnWidths.value[colIndex] = Math.min(Math.ceil(maxWidth) + padding, 6000)
+  localStorage.setItem(COLUMN_WIDTHS_KEY, JSON.stringify(columnWidths.value))
+}
+
 // Computed
 const filteredTableData = computed(() => {
   return tableData.value.filter((item) => item.visible)
 })
+
+const totalTableWidth = computed(() => columnWidths.value.reduce((sum, w) => sum + w, 0))
 
 const countersBadgeColor = computed(() => {
   if (tableData.value.length >= maxEntries) return 'red'
@@ -577,6 +761,11 @@ function cleanup() {
     }
     tableClickHandler = null
   }
+  // Clean up any active column resize listeners
+  document.body.classList.remove('col-resizing')
+  document.body.style.cursor = ''
+  document.removeEventListener('mousemove', handleResize)
+  document.removeEventListener('mouseup', stopResize)
 }
 
 function getTableBody(): HTMLTableSectionElement | null {
@@ -1121,6 +1310,7 @@ defineExpose({
   downloadCSV,
   copyTableToClipboard,
   clearLog,
-  setTextMode
+  setTextMode,
+  resetColumnWidths
 })
 </script>
