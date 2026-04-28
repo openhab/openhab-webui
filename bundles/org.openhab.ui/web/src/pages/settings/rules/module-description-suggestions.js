@@ -108,6 +108,11 @@ export default {
         case 'media.PlayAction':
           if (!config.sound) return moduleType.label
           return 'play "' + config.sound + '"'
+        case 'script.ScriptAction':
+          if (config && config.type === 'application/vnd.openhab.dsl.rule' && config.sharedContext === true) {
+            return moduleType.label + ' with shared context'
+          }
+          return moduleType.label
         // conditions
         case 'timer.DayOfWeekCondition':
           if (!config.days || !config.days.join || !config.days.length) return moduleType.label

@@ -11,18 +11,27 @@
       @save="$emit('save')" />
   </div>
 
-  <f7-toolbar bottom class="code-editor-toolbar">
-    <f7-segmented>
-      <f7-button
-        v-for="type in Object.keys(mediaTypes)"
-        outline
-        small
-        :key="type"
-        :active="uiOptionsStore.codeEditorType === type"
-        @click="switchCodeType(type)">
-        {{ type }}
-      </f7-button>
-    </f7-segmented>
+  <f7-toolbar bottom :class="{ 'code-editor-toolbar': true, 'toolbar-narrow': $f7dim.width < 450 }">
+    <div class="toolbar-options display-flex flex-direction-row">
+      <f7-segmented>
+        <f7-button
+          v-for="type in Object.keys(mediaTypes)"
+          outline
+          small
+          :key="type"
+          :active="uiOptionsStore.codeEditorType === type"
+          @click="switchCodeType(type)">
+          {{ type }}
+        </f7-button>
+      </f7-segmented>
+      <f7-checkbox
+        v-if="showShowAllCheckbox"
+        class="opt-show-all display-flex text-color-blue"
+        v-model:checked="isShowAll"
+        @update:checked="switchShowAll">
+        <span>Show all</span>
+      </f7-checkbox>
+    </div>
     <slot name="additional-panel-controls" />
     <f7-button
       @click="copy"
@@ -96,22 +105,25 @@
   .button-label
     margin-left 4px
 
-@media (max-width: 475px)
-  .code-editor-toolbar
-    --f7-toolbar-height var(--f7-tabbar-labels-height)
-    font-size var(--f7-tabbar-label-font-size)
-    .button-label
-      display none
-    .toolbar-inner
+.code-editor-toolbar.toolbar-narrow
+  --f7-toolbar-height var(--f7-tabbar-labels-height);
+  font-size var(--f7-tabbar-label-font-size)
+  .button-label
+    display none
+  .toolbar-inner
+    padding-left 5px
+    .toolbar-options
+      gap 6px
+      .opt-show-all
+        flex-wrap nowrap
+        align-items center
+        flex-direction column
+        span
+          padding-left 0
+  .segmented
+    .button
       padding-left 5px
-      .toolbar-options
-        gap 6px
-        .opt-show-all
-          flex-wrap nowrap
-          align-items center
-          flex-direction column
-          span
-            padding-left 0
+      padding-right 5px
 
 .code-editor-errors
   .item-title
@@ -137,11 +149,16 @@ export default {
   },
   props: {
     object: [Object, Array],
-    objectType: String, // the type of the object, e.g. 'items', 'things' which corresponds to the yaml element name.
+    objectType: String, // the type of the object, e.g. 'items', 'things', 'rules' which corresponds to the yaml element name.
     objectId: String,
     hintContext: Object,
     readOnly: Boolean,
-    readOnlyMsg: String
+    readOnlyMsg: String,
+    validMediaTypes: Array, // Optional list of media types to show. If not provided, all media types for the object type will be shown
+    optShowAllMediaTypes: Array, // Optional list of media types that will show the "Show all" checkbox. If not provided, the checkbox will not be shown
+    isObjectEmpty: Boolean, // Optional flag to indicate if the object is empty and can't be serialized.
+    emptyMediaTypeTemplates: Object, // Optional map of media types to template objects that can be used for empty objects that can't be serialized
+    postParseCallback: Function // Optional callback function that is called after parsing the code back into an object, which allow various states to be updated
   },
   // @parsed  event is emitted when the code has been parsed back into an object
   //          as a result of calling the parseCode() method
@@ -155,15 +172,33 @@ export default {
       code: null,
       originalCode: null,
       dirty: false,
-      errors: null
+      errors: null,
+      isShowAll: false
     }
   },
   computed: {
     editorMode() {
-      return this.mediaTypes[this.uiOptionsStore.codeEditorType] || this.mediaTypes[Object.keys(this.mediaTypes)[0]]
+      const mode = this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      if (mode) return mode
+      const keys = Object.keys(this.mediaTypes || {})
+      if (keys.length > 0) return this.mediaTypes[keys[0]]
+      return undefined
     },
     mediaTypes() {
-      return SupportedMediaTypes[this.objectType] || DefaultMediaTypes
+      let result = SupportedMediaTypes[this.objectType] || DefaultMediaTypes
+      if (!this.validMediaTypes || this.validMediaTypes.length === 0) {
+        return result
+      }
+      result = Object.fromEntries(
+        Object.entries(result).filter(([key, value]) => {
+          return this.validMediaTypes.includes(value)
+        })
+      )
+      return result
+    },
+    showShowAllCheckbox() {
+      if (!this.optShowAllMediaTypes || this.optShowAllMediaTypes.length === 0) return false
+      return this.optShowAllMediaTypes.includes(this.mediaTypes[this.uiOptionsStore.codeEditorType])
     },
     ...mapStores(useUIOptionsStore)
   },
@@ -188,7 +223,27 @@ export default {
       }
       const sourceMediaType = MediaType.JSON
       let targetMediaType = this.mediaTypes[codeType]
-      targetMediaType = targetMediaType.split('+')[0] // remove the +tag, +thing or +item suffix, if present
+      if (this.isObjectEmpty && this.emptyMediaTypeTemplates) {
+        const emptyTemplate = this.emptyMediaTypeTemplates[targetMediaType]
+        if (emptyTemplate) {
+          let emptyCode = typeof emptyTemplate === 'function' ? emptyTemplate() : emptyTemplate
+          this.code = emptyCode
+          this.originalCode = emptyCode
+          this.dirty = false
+
+          this.uiOptionsStore.codeEditorType = codeType
+          if (onSuccessCallback) {
+            onSuccessCallback()
+          }
+          return
+        }
+      }
+      const ruleShowAll = targetMediaType === 'application/yaml+rule' && this.isShowAll
+      targetMediaType = targetMediaType.split('+')[0] // remove the +tag, +thing, +item or +rule suffix, if present
+      const params = new URLSearchParams()
+      if (ruleShowAll) {
+        params.set('ruleSerializationOption', 'INCLUDE_ALL')
+      }
       const payload = {}
       if (Array.isArray(this.object)) {
         payload[this.objectType] = this.object
@@ -196,7 +251,13 @@ export default {
         payload[this.objectType] = [this.object]
       }
       this.$oh.api
-        .postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
+        .postPlain(
+          `/rest/file-format/create${params.size ? '?' : ''}${params.toString()}`,
+          JSON.stringify(payload),
+          null,
+          sourceMediaType,
+          { accept: targetMediaType }
+        )
         .then((code) => {
           // DSL returns different line endings on different platforms and CodeMirror normalizes everything to \n, leading to dirty flag set on load for Windows,
           // therefore normalize before loading in editor.
@@ -221,12 +282,14 @@ export default {
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed. Receives the parsed object.
      * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
      * @param {boolean} parseAll - Optional. If true, all parsed objects will be returned as an array. By default, only the first object is returned for backward compatibility with existing code that expects a single object.
+     * @param {Object} params - Optional. Additional parameters for the parsing request
+     * @returns A Promise
      */
-    parseCode(onSuccessCallback, onFailureCallback, parseAll = false) {
+    parseCode(onSuccessCallback, onFailureCallback, parseAll = false, params = {}) {
       let sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
-      sourceMediaType = sourceMediaType.split('+')[0] // remove the +tag, +thing or +item suffix, if present
+      sourceMediaType = sourceMediaType.split('+')[0] // remove the +tag, +thing, +item or +rule suffix, if present
       const targetMediaType = MediaType.JSON
-      this.$oh.api
+      return this.$oh.api
         .request({
           method: 'POST',
           url: '/rest/file-format/parse',
@@ -244,21 +307,23 @@ export default {
           object = object[this.objectType]
           if (object?.length > 0) {
             if (parseAll) {
-              this.$emit('parsed', object)
+              this.$emit('parsed', object, params)
               if (onSuccessCallback) {
                 onSuccessCallback(object)
               }
             } else {
-              this.$emit('parsed', object[0])
+              this.$emit('parsed', object[0], params)
               if (onSuccessCallback) {
                 onSuccessCallback(object[0])
               }
             }
+            return Promise.resolve()
           } else {
             if (onFailureCallback) {
               onFailureCallback()
             }
             showAlertDialog(`Error parsing ${this.uiOptionsStore.codeEditorType}: no ${this.objectType} found`)
+            return Promise.reject()
           }
         })
         .catch((err) => {
@@ -291,6 +356,7 @@ export default {
           } else {
             showAlertDialog(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`)
           }
+          return Promise.reject()
         })
     },
     onEditorInput(value) {
@@ -304,11 +370,53 @@ export default {
       if (!this.dirty) {
         this.generateCode(type)
       } else {
-        this.parseCode(() => {
-          this.$nextTick(() => {
-            this.generateCode(type)
-          })
-        })
+        //this.parseCode(() => {
+        //  this.$nextTick(() => {
+        //    this.generateCode(type)
+        //  })
+        //})
+        this.parseCode(
+          (parsedObject) => {
+            if (this.postParseCallback) {
+              const result = this.postParseCallback()
+              if (result instanceof Promise) {
+                result.then(() => {
+                  if (!this.mediaTypes[type]) {
+                    f7.dialog.alert(`The current object isn't compatible with ${type} format.`).open()
+                    return
+                  }
+                  this.generateCode(type, null, parsedObject)
+                })
+              } else {
+                if (!this.mediaTypes[type]) {
+                  console.warn(`The current object isn't compatible with ${type} format. Aborting switch.`)
+                  return
+                }
+                this.generateCode(type, null, parsedObject)
+              }
+            } else {
+              this.generateCode(type, null, parsedObject)
+            }
+          },
+          undefined,
+          { editorType: this.uiOptionsStore.codeEditorType, showAll: this.isShowAll }
+        )
+      }
+    },
+    switchShowAll(checked) {
+      if (this.readOnly || !this.dirty) {
+        this.generateCode(this.uiOptionsStore.codeEditorType)
+      } else {
+        this.parseCode(
+          (parsedObject) => {
+            if (this.postParseCallback) {
+              this.postParseCallback()
+            }
+            this.generateCode(this.uiOptionsStore.codeEditorType, null, parsedObject)
+          },
+          undefined,
+          { editorType: this.uiOptionsStore.codeEditorType, showAll: !checked }
+        )
       }
     },
     copy() {
