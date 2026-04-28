@@ -284,7 +284,7 @@
       height auto
       min-height 31px
     td.nowrap
-      white-space normal
+      white-space pre-wrap
       overflow visible
       text-overflow unset
       word-break break-word
