@@ -73,12 +73,12 @@
   .parameter__name
     font-weight bold
     white-space nowrap
-  .parameter__name, .parameter__type, .response-col_status, .response-col_description
+  .parameter__name, .parameter__type
     color var(--f7-text-color) !important
     padding 0
     font-size var(--f7-list-font-size) !important
-  tbody .response-col_status
-    padding-top 0.9rem !important
+  .response-col_description h5
+    margin 0
   .parameters input
     background-color #fff
     color #000
