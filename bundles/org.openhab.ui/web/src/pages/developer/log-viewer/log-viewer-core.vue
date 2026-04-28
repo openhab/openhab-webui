@@ -4,6 +4,7 @@
       <div class="table-container" ref="tableContainer" @scroll="handleScroll">
         <table
           ref="dataTable"
+          :class="{ 'wrap-messages': wrapMessages && !textMode }"
           :style="!textMode ? { tableLayout: 'fixed', width: totalTableWidth + 'px' } : { width: '100%' }">
           <colgroup v-if="!textMode">
             <col v-for="(width, i) in columnWidths" :key="i" :style="{ width: width + 'px' }" />
@@ -16,6 +17,7 @@
                   class="resize-handle"
                   :class="{ 'resize-handle-active': activeResizeHandle === i }"
                   @mousedown.prevent="startResize($event, i)"
+                  @touchstart="startResizeTouch($event, i)"
                   @dblclick.prevent="autoSizeColumn(i)" />
               </th>
             </tr>
@@ -234,7 +236,8 @@
     padding-right 14px
     text-align left
     font-weight bold
-    border-bottom 2px solid var(--f7-bars-border-color)
+    // box-shadow avoids border-collapse clipping on sticky cells
+    box-shadow 0 1px 0 rgba(128, 128, 128, 0.3)
     user-select none
     white-space nowrap
     overflow hidden
@@ -250,6 +253,7 @@
     bottom 0
     width 8px
     cursor col-resize
+    touch-action none
     background transparent
     &::after
       content ''
@@ -260,16 +264,30 @@
       width 2px
       border-radius 1px
       background currentColor
-      opacity 0
+      opacity 0.2
       transition opacity 0.15s ease
 
   .resize-handle.resize-handle-active::after
-    opacity 0.55
+    opacity 0.75
 
   body.col-resizing &
     *
       user-select none
       cursor col-resize !important
+
+  @media (pointer coarse)
+    .resize-handle::after
+      opacity 0.45
+
+  table.wrap-messages
+    tr.table-rows
+      height auto
+      min-height 31px
+    td.nowrap
+      white-space normal
+      overflow visible
+      text-overflow unset
+      word-break break-word
 
   td.nowrap
     padding 5px
@@ -543,6 +561,7 @@ const stateConnecting = ref(false)
 const loadingLoggers = ref(true)
 const autoScroll = ref(true)
 const filterCount = ref(0)
+const wrapMessages = ref(localStorage.getItem('openhab.ui:logviewer.wrapMessages') === 'true')
 const tableData = shallowRef<EnrichedLogEntry[]>([])
 const logStart = ref('--:--:--')
 const logEnd = ref('--:--:--')
@@ -626,6 +645,35 @@ function stopResize() {
 function resetColumnWidths() {
   columnWidths.value = [...DEFAULT_COLUMN_WIDTHS]
   localStorage.removeItem(COLUMN_WIDTHS_KEY)
+}
+
+function startResizeTouch(event: TouchEvent, colIndex: number) {
+  if (event.touches.length !== 1) return
+  const touch = event.touches[0]
+  resizingIndex = colIndex
+  resizeStartX = touch.clientX
+  resizeStartWidth = columnWidths.value[colIndex]
+  activeResizeHandle.value = colIndex
+  document.addEventListener('touchmove', handleResizeTouch, { passive: false })
+  document.addEventListener('touchend', stopResizeTouch)
+  document.addEventListener('touchcancel', stopResizeTouch)
+}
+
+function handleResizeTouch(event: TouchEvent) {
+  if (resizingIndex < 0 || event.touches.length !== 1) return
+  event.preventDefault()
+  const touch = event.touches[0]
+  columnWidths.value[resizingIndex] = Math.max(40, resizeStartWidth + (touch.clientX - resizeStartX))
+}
+
+function stopResizeTouch() {
+  if (resizingIndex < 0) return
+  resizingIndex = -1
+  activeResizeHandle.value = -1
+  localStorage.setItem(COLUMN_WIDTHS_KEY, JSON.stringify(columnWidths.value))
+  document.removeEventListener('touchmove', handleResizeTouch)
+  document.removeEventListener('touchend', stopResizeTouch)
+  document.removeEventListener('touchcancel', stopResizeTouch)
 }
 
 function handleHeaderMouseMove(event: MouseEvent) {
@@ -766,6 +814,9 @@ function cleanup() {
   document.body.style.cursor = ''
   document.removeEventListener('mousemove', handleResize)
   document.removeEventListener('mouseup', stopResize)
+  document.removeEventListener('touchmove', handleResizeTouch)
+  document.removeEventListener('touchend', stopResizeTouch)
+  document.removeEventListener('touchcancel', stopResizeTouch)
 }
 
 function getTableBody(): HTMLTableSectionElement | null {
@@ -1052,7 +1103,19 @@ function redrawPartOfTable() {
   if (!tableContainer) return
 
   const tableBody = getTableBody()
+  if (!tableBody) return
+
   const filteredItemsCount = filteredTableData.value.length
+
+  // When messages wrap, row heights vary — skip fixed-height virtual windowing
+  if (!textMode.value && wrapMessages.value) {
+    tableBody.innerHTML = ''
+    for (let i = 0; i < filteredItemsCount; i++) {
+      tableBody.appendChild(renderEntry(filteredTableData.value[i]))
+    }
+    return
+  }
+
   const currentIndexAtTop = Math.floor(tableContainer.scrollTop / lineHeight)
   const nbVisibleLines = Math.floor(tableContainer.offsetHeight / lineHeight)
 
@@ -1060,8 +1123,6 @@ function redrawPartOfTable() {
   const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
   const lastIndexToRedraw = Math.min(currentIndexAtTop + nbVisibleLines + 50, filteredItemsCount - 1)
   // console.debug(`Should redraw ${firstIndexToRedraw}/${lastIndexToRedraw}`)
-
-  if (!tableBody) return
 
   tableBody.innerHTML = ''
   if (firstIndexToRedraw > 0) {
@@ -1281,6 +1342,12 @@ function toggleErrorDisplay() {
   updateFilter()
 }
 
+function toggleWrapMessages() {
+  wrapMessages.value = !wrapMessages.value
+  localStorage.setItem('openhab.ui:logviewer.wrapMessages', wrapMessages.value.toString())
+  updateFilter()
+}
+
 defineExpose({
   logStart,
   logEnd,
@@ -1311,6 +1378,8 @@ defineExpose({
   copyTableToClipboard,
   clearLog,
   setTextMode,
-  resetColumnWidths
+  resetColumnWidths,
+  wrapMessages,
+  toggleWrapMessages
 })
 </script>

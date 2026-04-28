@@ -103,6 +103,12 @@
         icon-f7="arrow_counterclockwise"
         tooltip="Reset column widths to default"
         @click="logViewerCore?.resetColumnWidths()" />
+      <f7-link
+        v-if="!logViewerCore?.textMode"
+        icon-f7="arrow_turn_down_left"
+        :icon-color="logViewerCore?.wrapMessages ? '' : 'gray'"
+        tooltip="Toggle message wrapping"
+        @click="logViewerCore?.toggleWrapMessages()" />
       <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".log-settings-popup" class="popup-open" />
     </f7-toolbar>
 
