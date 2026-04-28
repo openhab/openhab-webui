@@ -39,6 +39,6 @@ exec(`npm run generate-build-info ${process.argv[2]}`)
         process.exit(1)
       })
   })
-  .catch(e => {
+  .catch((e) => {
     throw e
   })

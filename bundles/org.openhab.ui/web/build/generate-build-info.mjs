@@ -12,10 +12,10 @@ let version = process.argv[2] || (env === 'production' ? timestamp : 'developmen
 if (version.endsWith('SNAPSHOT')) version += '-' + timestamp
 
 promisifiedExec('git rev-parse --short HEAD')
-  .then(result => {
+  .then((result) => {
     return Promise.resolve(result.stdout.trim())
   })
-  .then(commit => {
+  .then((commit) => {
     if (env === 'development') commit = 'development'
     const content = `export default {
   version: '${version} ', // App version
