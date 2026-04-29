@@ -593,22 +593,27 @@ export default {
     switchTab(newTab) {
       if (this.currentTab === newTab) return
 
-      // We can't prevent the tab switch here. Instead, we'll switch back if parsing fails
-      this.currentTab = newTab
-
       if (newTab === 'code') {
+        // Switching to code tab: set immediately, then generate
+        this.currentTab = newTab
         this.$refs.codeEditor.generateCode()
       } else if (this.codeDirty) {
+        // Switching from code tab with dirty code: parse first, then switch on success
         this.$refs.codeEditor.parseCode(
           () => {
+            this.currentTab = newTab
             this.codeDirty = false
             this.dirty = this.sitemapDirty
           },
           () => {
+            // Parse failed: stay in code tab
             this.currentTab = 'code'
             f7.tab.show('#code')
           }
         )
+      } else {
+        // Switching from code tab with clean code: switch immediately
+        this.currentTab = newTab
       }
     },
     onCodeChanged(codeDirty) {
