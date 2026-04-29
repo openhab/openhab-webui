@@ -135,7 +135,7 @@ export default {
   },
   computed: {
     editorMode() {
-      return this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      return this.mediaTypes[this.uiOptionsStore.codeEditorType] || this.mediaTypes[Object.keys(this.mediaTypes)[0]]
     },
     mediaTypes() {
       return SupportedMediaTypes[this.objectType] || DefaultMediaTypes
@@ -158,6 +158,9 @@ export default {
      */
     generateCode(codeType, onSuccessCallback) {
       codeType ||= this.uiOptionsStore.codeEditorType
+      if (!this.mediaTypes[codeType]) {
+        codeType = Object.keys(this.mediaTypes)[0]
+      }
       const sourceMediaType = MediaType.JSON
       let targetMediaType = this.mediaTypes[codeType]
       targetMediaType = targetMediaType.split('+')[0] // remove the +thing or +item suffix, if present
