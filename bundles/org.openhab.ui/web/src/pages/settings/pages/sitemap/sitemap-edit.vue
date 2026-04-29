@@ -12,8 +12,8 @@
       </oh-nav-content>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
-      <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'"> Code </f7-link>
+      <f7-link @click="switchTab('tree')" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
+      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedWidget == null }" @click="selectedWidget = null"> Clear </f7-link>
@@ -75,10 +75,6 @@
                   attribute="visibilityRules"
                   :fields="visibilityRulesFields"
                   :disabled="!editable" />
-              </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.type === 'Buttongrid'">
-                <div><f7-block-title>Buttons</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="buttons" :fields="buttonFields" :disabled="!editable" />
               </f7-block>
               <f7-block
                 v-if="
@@ -149,8 +145,19 @@
           </f7-actions-group>
         </f7-actions>
       </f7-tab>
-      <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <sitemap-code v-if="currentTab === 'code'" :sitemap="sitemap" @updated="(value) => update(value)" />
+      <f7-tab v-if="sitemap" id="code" :tab-active="currentTab === 'code' ? true : null">
+        <!-- v-if="ready" ensures that thingType and channelTypes are populated -->
+        <code-editor
+          v-if="ready"
+          ref="codeEditor"
+          object-type="sitemaps"
+          :object="preProcessSitemapSave(sitemap)"
+          :object-id="sitemap.name"
+          :read-only="!editable"
+          :read-only-msg="notEditableMsg"
+          :hint-context="{ widgetTypes: WIDGET_TYPES.map((widgetType) => widgetType.type) }"
+          @parsed="update"
+          @changed="onCodeChanged" />
       </f7-tab>
     </f7-tabs>
 
@@ -201,13 +208,6 @@
             Visibility
           </f7-link>
           <f7-link
-            v-if="selectedWidget && selectedWidget.type === 'Buttongrid' && (editable || selectedWidget.buttons?.length)"
-            class="padding-left padding-right"
-            :tab-link-active="detailsTab === 'buttons'"
-            @click="detailsTab = 'buttons'">
-            Buttons
-          </f7-link>
-          <f7-link
             v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (editable || selectedWidget.mappings?.length)"
             class="padding-left padding-right"
             :tab-link-active="detailsTab === 'mappings'"
@@ -248,9 +248,6 @@
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'visibilityRules'" style="margin-bottom: 6rem">
           <attribute-details :widget="selectedWidget" attribute="visibilityRules" :fields="visibilityRulesFields" :disabled="!editable" />
-        </f7-block>
-        <f7-block v-if="selectedWidget && detailsTab === 'buttons'" style="margin-bottom: 6rem">
-          <attribute-details :widget="selectedWidget" attribute="buttons" :fields="buttonFields" :disabled="!editable" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'mappings'" style="margin-bottom: 6rem">
           <attribute-details
@@ -379,30 +376,32 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
-import { f7 } from 'framework7-vue'
+import { nextTick, defineAsyncComponent } from 'vue'
+import { f7, theme } from 'framework7-vue'
 import { mapWritableState } from 'pinia'
 
 import cloneDeep from 'lodash/cloneDeep'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
 import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
+import DirtyMixin from '@/pages/settings/dirty-mixin'
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [SitemapMixin],
+  mixins: [DirtyMixin, SitemapMixin, FileDefinition],
   components: {
-    SitemapCode,
+//    SitemapCode,
     WidgetDetails,
     AttributeDetails,
-    SitemapTreeviewItem
+    SitemapTreeviewItem,
+    CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   props: {
     createMode: Boolean,
@@ -419,6 +418,8 @@ export default {
     return {
       ready: false,
       loading: false,
+      codeDirty: false,
+      sitemapDirty: false,
       sitemap: {
         name: 'page_' + f7.utils.id(),
         type: 'Sitemap',
@@ -434,6 +435,7 @@ export default {
       detailsTab: 'widget',
       currentTab: 'tree',
       eventSource: null,
+      notEditableMsg: 'This Sitemap is not editable because it has been provisioned from a file.',
       switchMappingFields: [
         { command: { width: '15%', placeholder: 'cmd', required: true } },
         ':',
@@ -519,12 +521,18 @@ export default {
       handler(newVal) {
         if (this.loading) return
         if (!fastDeepEqual(this.stripClosed(newVal), this.lastCleanSitemap)) {
-          this.dirty = true
+          this.sitemapDirty = true
         } else {
-          this.dirty = false
+          this.sitemapDirty = false
         }
       },
       deep: true
+    },
+    codeDirty() {
+      this.dirty = this.sitemapDirty || this.codeDirty
+    },
+    sitemapDirty() {
+      this.dirty = this.sitemapDirty || this.codeDirty
     },
     currentTab(newTab, oldTab) {
       if (oldTab === 'tree' && this.$refs.detailsSheet) {
@@ -556,6 +564,29 @@ export default {
         window.removeEventListener('keydown', this.keyDown)
       }
       this.detailsOpened = false
+    },
+    switchTab(newTab) {
+      if (this.currentTab === newTab) return
+
+      // We can't prevent the tab switch here. Instead, we'll switch back if parsing fails
+      this.currentTab = newTab
+
+      if (newTab === 'code') {
+        this.$refs.codeEditor.generateCode()
+      } else if (this.codeDirty) {
+        this.$refs.codeEditor.parseCode(
+          () => {
+            this.codeDirty = false
+          },
+          () => {
+            this.currentTab = 'code'
+            f7.tab.show('#code')
+          }
+        )
+      }
+    },
+    onCodeChanged(codeDirty) {
+      this.codeDirty = codeDirty
     },
     keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
@@ -603,9 +634,8 @@ export default {
         this.$oh.api.get('/rest/sitemaps/' + this.uid + '/definition').then((data) => {
           const sitemap = this.preProcessSitemapLoad(data)
           this.sitemap = sitemap
+          this.lastCleanSitemap = this.stripClosed(sitemap)
           nextTick(() => {
-            this.lastCleanSitemap = this.stripClosed(this.sitemap)
-            this.setParents(this.sitemap)
             this.ready = true
             this.loading = false
           })
@@ -613,7 +643,6 @@ export default {
       }
     },
     save(stay, force) {
-      this.cleanConfig(this.sitemap)
       if (!this.sitemap.name) {
         f7.dialog.alert('Please give an name to the sitemap')
         return
@@ -634,15 +663,13 @@ export default {
       const promise = this.$oh.api.put('/rest/sitemaps/' + sitemap.name, sitemap)
       promise
         .then((data) => {
-          this.dirty = false
+          this.sitemapDirty = this.codeDirty = false
           if (this.createMode) {
             showToast('Sitemap created')
-            this.load()
             this.f7router.navigate(this.f7route.url.replace('/add', '/' + sitemap.name), { reloadCurrent: true })
           } else {
             showToast('Sitemap updated')
             this.lastCleanSitemap = this.stripClosed(this.sitemap)
-            this.setParents(sitemap)
           }
           f7.emit('sidebarRefresh', null)
           // if (!stay) this.f7router.back()
@@ -654,7 +681,8 @@ export default {
     validateWidgets(stay) {
       let scope = this
       if (Array.isArray(this.sitemap.widgets) && this.sitemap.widgets.length) {
-        let validationWarnings = []
+        const validationWarnings = []
+        const registeredItemNames = this.itemsReady ? new Set(this.items.map((item) => item.name)) : null
         const widgetList = this.sitemap.widgets.reduce(function iter(widgets, widget) {
           widgets.push(widget)
           if (Array.isArray(widget.widgets)) {
@@ -663,10 +691,10 @@ export default {
           return widgets
         }, [])
         // Check frame widget is not in frame and linkable widget does not contain mix of frames and non-frames
-        let isFrame = [false]
-        let siblingIsFrame = [undefined]
+        const isFrame = [false]
+        const siblingIsFrame = [undefined]
         this.sitemap.widgets.forEach(function iter(widget) {
-          let label = scope.widgetErrorLabel(widget)
+          const label = scope.widgetErrorLabel(widget)
           if (isFrame[isFrame.length - 1] && widget.type === 'Frame') {
             validationWarnings.push('Frame widget ' + label + ', frame not allowed in frame')
           }
@@ -692,17 +720,26 @@ export default {
           .filter((widget) => widget.type === 'Frame')
           .forEach((widget) => {
             if (!widget.widgets?.length) {
-              let label = scope.widgetErrorLabel(widget)
+              const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(widget.type + ' widget ' + label + ' should not be empty')
             }
           })
-        // Check widget has item configured if required, except for Buttongrid and Button widgets which can have item on button level or grid level
+        // Check widget has item configured if required
         widgetList
           .filter((widget) => !this.WIDGET_TYPES_NOT_REQUIRING_ITEM.includes(widget.type))
           .forEach((widget) => {
             if (!widget.item) {
-              let label = scope.widgetErrorLabel(widget)
+              const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(widget.type + ' widget ' + label + ', no item configured')
+            }
+          })
+        // Check configured widget item exists in item registry
+        widgetList
+          .filter((widget) => widget.item)
+          .forEach((widget) => {
+            if (registeredItemNames && !registeredItemNames.has(widget.item)) {
+              const label = scope.widgetErrorLabel(widget)
+              validationWarnings.push(widget.type + ' widget ' + label + ', invalid item configured: ' + widget.item)
             }
           })
         // Check Video and Webview widgets have url configured
@@ -710,7 +747,7 @@ export default {
           .filter((widget) => widget.type === 'Video' || widget.type === 'Webview')
           .forEach((widget) => {
             if (!widget.url) {
-              let label = scope.widgetErrorLabel(widget)
+              const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(widget.type + ' widget ' + label + ', no url configured')
             }
           })
@@ -719,11 +756,11 @@ export default {
           .filter((widget) => widget.type === 'Chart')
           .forEach((widget) => {
             if (!(widget.period && this.REGEX_PERIOD.test(widget.period))) {
-              let label = scope.widgetErrorLabel(widget)
+              const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(widget.type + ' widget ' + label + ', invalid period configured: ' + widget.period)
             }
             if (widget.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.yAxisDecimalPattern)) {
-              let label = scope.widgetErrorLabel(widget)
+              const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(
                 widget.type + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.yAxisDecimalPattern
               )
@@ -734,7 +771,7 @@ export default {
           .filter((widget) => widget.type === 'Input')
           .forEach((widget) => {
             if (widget.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.inputHint)) {
-              let label = scope.widgetErrorLabel(widget)
+              const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(widget.type + ' widget ' + label + ', invalid inputHint configured: ' + widget.inputHint)
             }
           })
@@ -742,7 +779,7 @@ export default {
         widgetList
           .filter((widget) => ['Slider', 'Setpoint', 'Colortemperaturepicker'].includes(widget.type))
           .forEach((widget) => {
-            let label = scope.widgetErrorLabel(widget)
+            const label = scope.widgetErrorLabel(widget)
             if (widget.step !== undefined && widget.step !== null && widget.step !== '' && Number(widget.step) <= 0) {
               validationWarnings.push(widget.type + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.step)
             }
@@ -754,40 +791,17 @@ export default {
               )
             }
           })
-        // Check Buttongrid widget has buttons or widgets defined, and if buttons have valid row and column configured.
+        // Check Buttongrid widget has widgets defined.
         // Duplicate row and column are only allowed if there are visibility rules to differentiate them.
         widgetList
           .filter((widget) => widget.type === 'Buttongrid')
           .forEach((widget) => {
-            let label = scope.widgetErrorLabel(widget)
-            if (!(widget.buttons?.length || widget.widgets?.length)) {
+            const label = scope.widgetErrorLabel(widget)
+            if (!widget.widgets?.length) {
               validationWarnings.push(widget.type + ' widget ' + label + ', no buttons defined')
             }
             const noVisibilityRulePositions = new Set()
             const visibilityRulePositions = new Set()
-            if (widget.buttons?.length && !widget.item) {
-              validationWarnings.push(
-                widget.type + ' widget ' + label + ', To use the buttons parameter in a Buttongrid, the item parameter is required'
-              )
-              return
-            }
-            widget.buttons?.forEach((param) => {
-              const row = Number(param.row)
-              const column = Number(param.column)
-              if (!(row > 0)) {
-                validationWarnings.push(widget.type + ' widget ' + label + ', Buttongrid button must have positive row index')
-              }
-              if (!(column > 0)) {
-                validationWarnings.push(widget.type + ' widget ' + label + ', Buttongrid button must have positive column index')
-              }
-              const key = row + ':' + column
-              if (row > 0 && column > 0 && noVisibilityRulePositions.has(key)) {
-                validationWarnings.push(
-                  widget.type + ' widget ' + label + ', Buttongrid button already exists for position (' + row + ',' + column + ')'
-                )
-              }
-              noVisibilityRulePositions.add(key)
-            })
             let invalidChildFound = false
             widget.widgets?.forEach((child) => {
               if (invalidChildFound) {
@@ -853,8 +867,8 @@ export default {
         widgetList
           .filter((widget) => widget.type === 'Button')
           .forEach((widget) => {
-            let label = scope.widgetErrorLabel(widget)
-            let parentWidget = widgetList.find((w) => {
+            const label = scope.widgetErrorLabel(widget)
+            const parentWidget = widgetList.find((w) => {
               if (w.widgets?.includes(widget)) return w
               return undefined
             })
@@ -876,10 +890,10 @@ export default {
             }
           })
         widgetList.forEach((widget) => {
-          let label = scope.widgetErrorLabel(widget)
+          const label = scope.widgetErrorLabel(widget)
           Object.keys(widget)
             .filter((attr) =>
-              ['buttons', 'mappings', 'visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr)
+              ['mappings', 'visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr)
             )
             .forEach((attr) => {
               widget[attr].forEach((param) => {
@@ -887,17 +901,6 @@ export default {
                   validationWarnings.push(
                     widget.type + ' widget ' + label + ', syntax error in ' + attr + ': ' + param.command + '=' + param.label
                   )
-                }
-                if (attr === 'buttons') {
-                  const column = Number(param.column)
-                  if (column > this.MAX_BUTTONGRID_COLUMNS) {
-                    validationWarnings.push(widget.type + ' widget ' + label + ', invalid column configured: ' + param.column)
-                  }
-                  if (!this.validateMapping(param)) {
-                    validationWarnings.push(
-                      widget.type + ' widget ' + label + ', syntax error in button command: ' + param.command + '=' + param.label
-                    )
-                  }
                 }
                 if (
                   ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr) &&
@@ -946,9 +949,6 @@ export default {
       for (let key in widget) {
         if (widget[key] && Array.isArray(widget[key])) {
           widget[key] = widget[key].filter(Boolean)
-          if (key === 'buttons') {
-            widget[key].sort((value1, value2) => value1.row - value2.row || value1.column - value2.column)
-          }
         }
         if (!widget[key] && widget[key] !== 0) {
           delete widget[key]
@@ -966,9 +966,36 @@ export default {
       if (processed.widgets) {
         processed.widgets.forEach(this.preProcessWidgetLoad)
       }
+      this.setParents(processed)
+      this.cleanConfig(processed)
       return processed
     },
     preProcessWidgetLoad(widget) {
+      if (widget.label) {
+        const label = widget.label.split('[')
+        widget.label = label[0].trim()
+        widget.format = label[1]?.replace(']', '').trim()
+      }
+      if (widget.type === 'Buttongrid' && widget.buttons?.length) {
+        // migrate old configurations with buttons to Button widgets
+        widget.buttons.forEach((button) => {
+          const buttonWidget = {
+            type: 'Button',
+            item: widget.item,
+            row: button.row,
+            column: button.column,
+            command: button.command,
+            label: button.label,
+            icon: button.icon
+          }
+          if (!widget.widgets) {
+            widget.widgets = []
+          }
+          widget.widgets.push(buttonWidget)
+        })
+        delete widget.buttons
+        delete widget.item
+      }
       this.addEmptySlot(widget)
       widget.widgets?.forEach(this.preProcessWidgetLoad)
     },
@@ -983,17 +1010,21 @@ export default {
     preProcessSitemapSave(sitemap) {
       const processed = cloneDeep(sitemap)
       processed.widgets?.forEach(this.preProcessWidgetSave)
+      this.cleanConfig(processed)
       return processed
     },
     preProcessWidgetSave(widget) {
+      if (widget.format) {
+        widget.label = (widget.label || '') + ' [' + widget.format + ']'
+      }
+      delete widget.format
       delete widget.parent // remove parent from widget, as this would cause a circular reference error when converting to JSON
       widget.widgets?.forEach(this.preProcessWidgetSave)
     },
     update(value) {
       this.selectedWidget = null
       this.selectedWidgetParent = null
-      this.sitemap = value
-      this.cleanConfig(this.sitemap)
+      this.sitemap = this.preProcessSitemapLoad(value)
     },
     startEventSource() {},
     stopEventSource() {},
@@ -1012,15 +1043,15 @@ export default {
       this.selectedWidgetParent = null
     },
     moveWidgetDown() {
-      let widgets = this.selectedWidgetParent.widgets
-      let pos = widgets.indexOf(this.selectedWidget)
+      const widgets = this.selectedWidgetParent.widgets
+      const pos = widgets.indexOf(this.selectedWidget)
       if (pos >= widgets.length - 1) return
       widgets.splice(pos, 1)
       widgets.splice(pos + 1, 0, this.selectedWidget)
     },
     moveWidgetUp() {
-      let widgets = this.selectedWidgetParent.widgets
-      let pos = widgets.indexOf(this.selectedWidget)
+      const widgets = this.selectedWidgetParent.widgets
+      const pos = widgets.indexOf(this.selectedWidget)
       if (pos <= 0) return
       widgets.splice(pos, 1)
       widgets.splice(pos - 1, 0, this.selectedWidget)

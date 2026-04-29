@@ -22,6 +22,14 @@
           @input="updateParameter('label', $event)"
           :clear-button="editable"
           :disabled="!editable" />
+        <f7-list-input
+          label="Format"
+          type="text"
+          placeholder="Format"
+          :value="widget.format"
+          @input="updateParameter('format', $event)"
+          :clear-button="editable"
+          :disabled="!editable" />
         <f7-list-group v-if="widget.type !== 'Sitemap' && widget.type !== 'Frame'">
           <item-picker label="Item" :value="widget.item" @input="(value) => (widget.item = value)" :disabled="!editable" />
         </f7-list-group>

@@ -51,6 +51,7 @@ function languageExtension(mode: string): StreamLanguage<unknown> | LanguageSupp
 
     case mode === (MediaType.THING_DSL as string):
     case mode === (MediaType.ITEM_DSL as string):
+    case mode === (MediaType.SITEMAP_DSL as string):
       return javascript()
 
     case mode === 'js':
