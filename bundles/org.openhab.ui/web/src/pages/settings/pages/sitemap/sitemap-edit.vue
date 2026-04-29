@@ -54,7 +54,7 @@
                 </f7-treeview>
               </f7-block>
             </f7-col>
-            <f7-col class="details-pane">
+            <f7-col class="details-pane sitemap-details-no-spinners">
               <f7-block v-if="selectedWidget" no-gap>
                 <widget-details
                   :widget="selectedWidget"
@@ -146,7 +146,6 @@
         </f7-actions>
       </f7-tab>
       <f7-tab v-if="sitemap" id="code" :tab-active="currentTab === 'code' ? true : null">
-        <!-- v-if="ready" ensures that thingType and channelTypes are populated -->
         <code-editor
           v-if="ready"
           ref="codeEditor"
@@ -185,7 +184,7 @@
     <f7-sheet
       v-if="currentTab === 'tree'"
       ref="detailsSheet"
-      class="sitemap-details-sheet"
+      class="sitemap-details-sheet sitemap-details-no-spinners"
       :backdrop="false"
       :close-on-escape="true"
       :opened="detailsOpened"
@@ -338,6 +337,14 @@
     white-space normal
     max-height 2lh
     line-height 1lh
+/* Spinners overlap with clear button, so hide them */
+.sitemap-details-no-spinners input::-webkit-outer-spin-button,
+.sitemap-details-no-spinners input::-webkit-inner-spin-button
+  -webkit-appearance none !important
+  margin 0 !important
+.sitemap-details-no-spinners input[type=number]
+  -moz-appearance textfield !important
+
 
 @media (min-width: 768px)
   .sitemap-tree-wrapper
@@ -515,6 +522,9 @@ export default {
     }),
     editable() {
       return this.sitemap.editable ?? true
+    },
+    preProcessedSitemap() {
+      return this.currentTab === 'code' ? this.preProcessSitemapSave(this.sitemap) : undefined
     }
   },
   watch: {
@@ -637,11 +647,11 @@ export default {
       } else {
         this.$oh.api.get('/rest/sitemaps/' + this.uid + '/definition').then((data) => {
           const sitemap = this.preProcessSitemapLoad(data)
-          this.sitemap = sitemap
           this.lastCleanSitemap = this.stripClosed(sitemap)
+          this.sitemap = sitemap
           nextTick(() => {
-            this.ready = true
             this.loading = false
+            this.ready = true
           })
         })
       }

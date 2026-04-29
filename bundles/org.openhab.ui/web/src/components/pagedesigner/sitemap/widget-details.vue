@@ -22,33 +22,30 @@
           @input="updateParameter('label', $event)"
           :clear-button="editable"
           :disabled="!editable" />
-        <f7-list-input
-          label="Format"
-          type="text"
-          placeholder="Format"
-          :value="widget.format"
-          @input="updateParameter('format', $event)"
-          :clear-button="editable"
-          :disabled="!editable" />
-        <f7-list-group v-if="widget.type !== 'Sitemap' && widget.type !== 'Frame'">
+        <ul v-if="widget.type !== 'Sitemap'" class="format-editor-wrapper">
+          <format-editor title="Format" :editable="editable" :value="widget.format" @input="(value) => (widget.format = value)" />
+        </ul>
+        <ul v-if="widget.type !== 'Sitemap' && !['Frame', 'Buttongrid'].includes(widget.type)">
           <item-picker label="Item" :value="widget.item" @input="(value) => (widget.item = value)" :disabled="!editable" />
-        </f7-list-group>
-        <f7-list-input
-          ref="icon"
-          label="Icon"
-          autocomplete="off"
-          type="text"
-          placeholder="temperature, firstfloor..."
-          :value="widget.icon"
-          @input="updateParameter('icon', $event)"
-          :clear-button="editable"
-          :disabled="!editable">
-          <template #root-end>
-            <div style="margin-left: calc(35% + 8px)">
-              <oh-icon :icon="widget.icon || ''" height="32" width="32" />
-            </div>
-          </template>
-        </f7-list-input>
+        </ul>
+        <ul>
+          <f7-list-input
+            ref="icon"
+            label="Icon"
+            autocomplete="off"
+            type="text"
+            placeholder="temperature, firstfloor..."
+            :value="widget.icon"
+            @input="updateParameter('icon', $event)"
+            :clear-button="editable"
+            :disabled="!editable">
+            <template #root-end>
+              <div v-if="widget.icon"style="margin-left: calc(25% + 8px)">
+                <oh-icon :icon="widget.icon || ''" height="32" width="32" />
+              </div>
+            </template>
+          </f7-list-input>
+        </ul>
         <ul v-if="widget.type !== 'Sitemap'">
           <f7-list-item title="Static icon" :disabled="!editable || widget.visibility?.length > 0">
             <template #after>
@@ -258,17 +255,25 @@
 
 <style lang="stylus">
 .widget-detail
+  .item-title
+    width 25%
   .item-inner:after
     height 0 !important /* remove all lines between params */
   .additional-controls:before
     display block !important
 #additional:before
   display block !important /* need two selectors to override the important Vue card css */
+
+.format-editor-wrapper
+  margin 0
+  padding 0
+
 </style>
 
 <script>
 import { f7 } from 'framework7-vue'
 import { Categories } from '@/assets/categories.js'
+import FormatEditor from '@/components/config/controls/format-editor.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import PersistencePicker from '@/components/config/controls/persistence-picker.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
@@ -276,6 +281,7 @@ import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 export default {
   mixins: [SitemapMixin],
   components: {
+    FormatEditor,
     ItemPicker,
     PersistencePicker
   },
