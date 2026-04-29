@@ -24,9 +24,9 @@ function writeWidget(widget, indent) {
       } else if (key !== 'staticIcon') {
         if (key === 'iconrules') {
           dsl += ' icon='
-        } else if (key === 'cmd') {
+        } else if (key === 'cmd' || key === 'command') {
           dsl += ' click='
-        } else if (key === 'releaseCmd') {
+        } else if (key === 'releaseCmd' || key === 'releaseCommand') {
           dsl += ' release='
         } else {
           dsl += ` ${key}=`

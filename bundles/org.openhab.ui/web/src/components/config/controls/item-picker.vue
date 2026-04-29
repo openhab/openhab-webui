@@ -1,14 +1,16 @@
 <template>
   <div class="item-picker-container">
     <f7-list-item
-      :title="label || 'Item'"
+      :title="showTitle ? label || 'Item' : undefined"
       :after="displayValue"
       link
       :disabled="disabled ? true : null"
       :textColor="textColor"
-      class="item-picker"
-      :no-chevron="false"
-      @click="openPopup">
+      :class="{ 'item-picker': true, 'item-picker-empty': showTitle && isEmptySelection }"
+      :no-chevron="disabled"
+      @click="openPopup"
+      @keydown.enter.prevent="openPopup"
+      @keydown.space.prevent="openPopup">
       <template #media>
         <f7-button
           v-if="!noModelPicker"
@@ -78,6 +80,13 @@
     padding 0
   .item-inner:after
     display none
+  .item-picker-empty
+    .item-title
+      color var(--f7-input-placeholder-color, var(--f7-list-item-footer-text-color))
+  .item-picker:focus-within .item-content
+    outline 2px solid var(--f7-theme-color)
+    outline-offset -2px
+    border-radius var(--f7-list-inset-border-radius)
 </style>
 
 <script>
@@ -113,7 +122,11 @@ export default {
     iosIcon: String,
     mdIcon: String,
     textColor: String,
-    hideIcon: Boolean
+    hideIcon: Boolean,
+    showTitle: {
+      type: Boolean,
+      default: true
+    }
   },
   emits: ['input', 'item-selected'],
   data() {
@@ -130,6 +143,12 @@ export default {
     }
   },
   computed: {
+    isEmptySelection() {
+      if (this.multiple) {
+        return !Array.isArray(this.value) || this.value.length === 0
+      }
+      return this.value === null || this.value === undefined || this.value === ''
+    },
     displayValue() {
       if (!this.setValueText) return ''
       if (this.multiple) {
@@ -238,9 +257,9 @@ export default {
         this.$emit('input', this.selectedValue)
       } else {
         this.selectedValue = item ? item.name : null
+        this.closePopup()
         this.$emit('input', this.selectedValue)
         this.$emit('item-selected', item)
-        this.closePopup()
       }
     },
     updateFromModelPicker(value) {

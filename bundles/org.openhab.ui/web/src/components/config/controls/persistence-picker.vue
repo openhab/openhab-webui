@@ -1,6 +1,12 @@
 <template>
   <ul class="persistence-picker-container">
-    <f7-list-item v-if="ready" :title="title || 'Persistence'" smart-select :smart-select-params="smartSelectParams" ref="smartSelect">
+    <f7-list-item
+      v-if="ready"
+      :title="title || 'Persistence'"
+      smart-select
+      :smart-select-params="smartSelectParams"
+      ref="smartSelect"
+      :disabled="disabled">
       <select :name="name" @change="select" :required="required">
         <option value="" />
         <option v-for="service in services" :value="service.id" :key="service.id" :selected="value === service.id ? true : null">
@@ -30,7 +36,8 @@ export default {
     value: String,
     required: Boolean,
     filterType: Array,
-    openOnReady: Boolean
+    openOnReady: Boolean,
+    disabled: Boolean
   },
   emits: ['persistencePicked', 'input'],
   data() {

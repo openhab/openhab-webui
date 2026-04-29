@@ -3,46 +3,50 @@
     <f7-card-content>
       <f7-list class="widget-detail" inline-labels>
         <f7-list-input
-          v-if="widget.component === 'Sitemap'"
-          label="Widget ID"
+          v-if="widget.type === 'Sitemap'"
+          label="Name"
           type="text"
-          placeholder="Widget ID"
-          :value="widget.uid"
-          @input="widget.uid = $event.target.value"
+          placeholder="Sitemap name"
+          :value="widget.name"
+          @input="widget.name = $event.target.value"
           required
           validate
           pattern="[A-Za-z0-9_]+"
           error-message="Required. Alphanumeric &amp; underscores only"
-          :disabled="!createMode ? true : null" />
+          :disabled="!createMode || !editable" />
         <f7-list-input
           label="Label"
           type="text"
           placeholder="Label"
-          :value="widget.config.label"
+          :value="widget.label"
           @input="updateParameter('label', $event)"
-          clear-button />
-        <f7-list-group v-if="widget.component !== 'Sitemap' && widget.component !== 'Frame'">
-          <item-picker label="Item" :value="widget.config.item" @input="(value) => (widget.config.item = value)" />
+          :clear-button="editable"
+          :disabled="!editable" />
+        <f7-list-group v-if="widget.type !== 'Sitemap' && widget.type !== 'Frame'">
+          <item-picker label="Item" :value="widget.item" @input="(value) => (widget.item = value)" :disabled="!editable" />
         </f7-list-group>
-        <ul v-if="widget.component !== 'Sitemap'">
-          <f7-list-input
-            ref="icon"
-            label="Icon"
-            autocomplete="off"
-            type="text"
-            placeholder="temperature, firstfloor..."
-            :value="widget.config.icon"
-            @input="updateParameter('icon', $event)"
-            clear-button>
-            <template #root-end>
-              <div style="margin-left: calc(35% + 8px)">
-                <oh-icon :icon="widget.config.icon || ''" height="32" width="32" />
-              </div>
-            </template>
-          </f7-list-input>
-          <f7-list-item title="Static icon">
+        <f7-list-input
+          ref="icon"
+          label="Icon"
+          autocomplete="off"
+          type="text"
+          placeholder="temperature, firstfloor..."
+          :value="widget.icon"
+          @input="updateParameter('icon', $event)"
+          :clear-button="editable"
+          :disabled="!editable">
+          <template #root-end>
+            <div style="margin-left: calc(35% + 8px)">
+              <oh-icon :icon="widget.icon || ''" height="32" width="32" />
+            </div>
+          </template>
+        </f7-list-input>
+        <ul v-if="widget.type !== 'Sitemap'">
+          <f7-list-item title="Static icon" :disabled="!editable || widget.visibility?.length > 0">
             <template #after>
-              <f7-toggle :checked="widget.config.staticIcon ? true : null" @toggle:change="widget.config.staticIcon = $event" />
+              <f7-toggle
+                :checked="widget.staticIcon && !widget.visibility?.length ? true : null"
+                @toggle:change="widget.staticIcon = $event" />
             </template>
           </f7-list-item>
         </ul>
@@ -52,23 +56,26 @@
             v-if="supports('url')"
             label="URL"
             type="url"
-            :value="widget.config.url"
+            :value="widget.url"
             @input="updateParameter('url', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
             v-if="supports('refresh')"
             label="Refresh interval (ms)"
             type="number"
             min="1"
-            :value="widget.config.refresh"
+            :value="widget.refresh"
             @input="updateParameter('refresh', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-item
             v-if="supports('encoding')"
             title="Encoding"
             smart-select
-            :smart-select-params="{ openIn: 'popover', closeOnSelect: true }">
-            <select name="encodings" :value="widget.config.encoding" @change="updateParameter('encoding', $event)">
+            :smart-select-params="{ openIn: 'popover', closeOnSelect: true }"
+            :disabled="!editable">
+            <select name="encodings" :value="widget.encoding?.toLowerCase()" @change="updateParameter('encoding', $event)">
               <option v-for="def in ENCODING_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
               </option>
@@ -78,8 +85,8 @@
             v-if="supports('service')"
             style="padding-left: 0"
             title="Persistence service"
-            :value="widget.config.service"
-            @input="(value) => (widget.config.service = value)" />
+            :value="widget.service"
+            @input="(value) => (widget.service = value)" />
           <f7-list-input
             v-if="supports('period')"
             label="Period"
@@ -87,39 +94,44 @@
             placeholder="PnYnMnDTnHnMnS-PnYnMnDTnHnMnS"
             validate
             pattern="^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$"
-            :value="widget.config.period"
+            :value="widget.period"
             @input="updateParameter('period', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
             v-if="supports('height')"
             label="Height"
             type="number"
             min="1"
-            :value="widget.config.height"
+            :value="widget.height"
             @input="updateParameter('height', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
             v-if="supports('minValue')"
             label="Minimum"
             type="number"
-            :value="widget.config.minValue"
+            :value="widget.minValue"
             @input="updateParameter('minValue', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
             v-if="supports('maxValue')"
             label="Maximum"
             type="number"
-            :value="widget.config.maxValue"
+            :value="widget.maxValue"
             @input="updateParameter('maxValue', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
             v-if="supports('step')"
             label="Step"
             type="number"
             min="0"
-            :value="widget.config.step"
+            :value="widget.step"
             @input="updateParameter('step', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
             v-if="supports('yAxisDecimalPattern')"
             label="Y-axis decimal pattern"
@@ -127,15 +139,17 @@
             placeholder="##0.0"
             validate
             pattern="^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$"
-            :value="widget.config.yAxisDecimalPattern"
+            :value="widget.yAxisDecimalPattern"
             @input="updateParameter('yAxisDecimalPattern', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-item
             v-if="supports('interpolation')"
             title="Interpolation"
             smart-select
-            :smart-select-params="{ openIn: 'popover', closeOnSelect: true }">
-            <select name="interpolations" :value="widget.config.encoding" @change="updateParameter('interpolation', $event)">
+            :smart-select-params="{ openIn: 'popover', closeOnSelect: true }"
+            :disabled="!editable">
+            <select name="interpolations" :value="widget.interpolation?.toLowerCase()" @change="updateParameter('interpolation', $event)">
               <option v-for="def in INTERPOLATION_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
               </option>
@@ -148,9 +162,10 @@
             required
             validate
             min="1"
-            :value="widget.config.row"
+            :value="widget.row"
             @input="updateParameter('row', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
             v-if="supports('column')"
             label="Column"
@@ -159,56 +174,60 @@
             validate
             min="1"
             max="12"
-            :value="widget.config.column"
+            :value="widget.column"
             @input="updateParameter('column', $event)"
-            clear-button />
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
-            v-if="supports('cmd')"
+            v-if="supports('command')"
             label="Click command"
             type="text"
             required
             validate
-            :value="widget.config.cmd"
-            @input="updateParameter('cmd', $event)"
-            clear-button />
+            :value="widget.command"
+            @input="updateParameter('command', $event)"
+            :clear-button="editable"
+            :disabled="!editable" />
           <f7-list-input
-            v-if="supports('releaseCmd')"
+            v-if="supports('releaseCommand')"
             label="Release command"
             type="text"
-            :value="widget.config.releaseCmd"
-            @input="updateParameter('releaseCmd', $event)"
-            clear-button />
-          <f7-list-item v-if="supports('stateless')" title="Stateless">
+            :value="widget.releaseCommand"
+            @input="updateParameter('releaseCommand', $event)"
+            :clear-button="editable"
+            :disabled="!editable" />
+          <f7-list-item v-if="supports('stateless')" title="Stateless" :disabled="!editable">
             <template #after>
-              <f7-toggle :checked="widget.config.stateless ? true : null" @toggle:change="widget.config.stateless = $event" />
+              <f7-toggle :checked="widget.stateless ? true : null" @toggle:change="widget.stateless = $event" />
             </template>
           </f7-list-item>
-          <f7-list-item v-if="supports('switchEnabled')" title="Switch enabled">
+          <f7-list-item v-if="supports('switchSupport')" title="Switch enabled" :disabled="!editable">
             <template #after>
-              <f7-toggle :checked="widget.config.switchEnabled ? true : null" @toggle:change="widget.config.switchEnabled = $event" />
+              <f7-toggle :checked="widget.switchSupport ? true : null" @toggle:change="widget.switchSupport = $event" />
             </template>
           </f7-list-item>
-          <f7-list-item v-if="supports('releaseOnly')" title="Release only">
+          <f7-list-item v-if="supports('releaseOnly')" title="Release only" :disabled="!editable">
             <template #after>
-              <f7-toggle :checked="widget.config.releaseOnly ? true : null" @toggle:change="widget.config.releaseOnly = $event" />
+              <f7-toggle :checked="widget.releaseOnly ? true : null" @toggle:change="widget.releaseOnly = $event" />
             </template>
           </f7-list-item>
-          <f7-list-item v-if="supports('legend')" title="Legend">
+          <f7-list-item v-if="supports('legend')" title="Legend" :disabled="!editable">
             <template #after>
-              <f7-toggle :checked="widget.config.legend ? true : null" @toggle:change="widget.config.legend = $event" />
+              <f7-toggle :checked="widget.legend ? true : null" @toggle:change="widget.legend = $event" />
             </template>
           </f7-list-item>
-          <f7-list-item v-if="supports('forceAsItem')" title="Force as item">
+          <f7-list-item v-if="supports('forceAsItem')" title="Force as item" :disabled="!editable">
             <template #after>
-              <f7-toggle :checked="widget.config.forceAsItem ? true : null" @toggle:change="widget.config.forceAsItem = $event" />
+              <f7-toggle :checked="widget.forceAsItem ? true : null" @toggle:change="widget.forceAsItem = $event" />
             </template>
           </f7-list-item>
           <f7-list-item
             v-if="supports('inputHint')"
             title="Hint"
             smart-select
-            :smart-select-params="{ openIn: 'popover', closeOnSelect: true }">
-            <select name="inputHints" required :value="widget.config.inputHint" @change="updateParameter('inputHint', $event)">
+            :smart-select-params="{ openIn: 'popover', closeOnSelect: true }"
+            :disabled="!editable">
+            <select name="inputHints" required :value="widget.inputHint?.toLowerCase()" @change="updateParameter('inputHint', $event)">
               <option v-for="def in INPUT_HINT_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
               </option>
@@ -217,14 +236,14 @@
         </ul>
       </f7-list>
     </f7-card-content>
-    <f7-card-footer v-if="widget.component !== 'Sitemap'" key="sitemap-widget-buttons-edit-mode">
+    <f7-card-footer v-if="widget.type !== 'Sitemap' && editable" key="sitemap-widget-buttons-edit-mode">
       <!-- <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button> -->
       <f7-segmented>
         <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" />
         <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down" />
       </f7-segmented>
-      <f7-button v-if="widget.component !== 'Sitemap'" color="blue" @click="$emit('duplicate', widget)"> Duplicate </f7-button>
-      <f7-button v-if="widget.component !== 'Sitemap'" color="red" @click="$emit('remove', widget)"> Remove </f7-button>
+      <f7-button v-if="widget.type !== 'Sitemap'" color="blue" @click="$emit('duplicate', widget)"> Duplicate </f7-button>
+      <f7-button v-if="widget.type !== 'Sitemap'" color="red" @click="$emit('remove', widget)"> Remove </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>
@@ -254,6 +273,7 @@ export default {
   },
   props: {
     widget: Object,
+    editable: Boolean,
     createMode: Boolean
   },
   emits: ['moveup', 'movedown', 'duplicate', 'remove'],
@@ -278,15 +298,15 @@ export default {
       })
     },
     supports(parameter) {
-      if (!this.ADDITIONAL_CONTROLS[this.widget.component]) return false
-      return this.ADDITIONAL_CONTROLS[this.widget.component].indexOf(parameter) >= 0
+      if (!this.ADDITIONAL_CONTROLS[this.widget.type]) return false
+      return this.ADDITIONAL_CONTROLS[this.widget.type].indexOf(parameter) >= 0
     },
     updateParameter(parameter, $event) {
       let value = $event.target.value
       if (value && $event.target.type === 'number' && !isNaN(value)) {
         value = parseFloat(value)
       }
-      this.widget.config[parameter] = value
+      this.widget[parameter] = value
     },
     remove() {
       this.$emit('remove')
