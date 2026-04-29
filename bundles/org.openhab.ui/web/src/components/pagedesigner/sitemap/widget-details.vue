@@ -86,7 +86,8 @@
             :smart-select-params="{ openIn: 'popover', closeOnSelect: true }"
             :no-chevron="!editable"
             :disabled="!editable">
-            <select name="encodings" :value="widget.encoding?.toLowerCase()" @change="updateParameter('encoding', $event)">
+            <select name="encodings" :value="widget.encoding?.toLowerCase() || ''" @change="updateParameter('encoding', $event)">
+              <option key="" />
               <option v-for="def in ENCODING_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
               </option>
