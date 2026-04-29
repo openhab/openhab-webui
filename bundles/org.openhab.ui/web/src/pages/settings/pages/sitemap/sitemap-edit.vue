@@ -421,12 +421,13 @@ export default {
       codeDirty: false,
       sitemapDirty: false,
       sitemap: {
-        name: 'page_' + f7.utils.id(),
+        name: 'sitemap_' + f7.utils.id(),
         type: 'Sitemap',
         icon: '',
         label: 'New Sitemap',
         widgets: []
       },
+      sitemaps: [],
       lastCleanSitemap: null,
       selectedWidget: null,
       selectedWidgetParent: null,
@@ -627,9 +628,12 @@ export default {
       if (this.ready && this.dirty) this.save(true, true)
 
       if (this.createMode) {
+        this.$oh.api.get('/rest/sitemaps/*/definition').then((sitemaps) => {
+          this.sitemaps = sitemaps.map((sitemap) => sitemap.name)
+          this.loading = false
+          this.ready = true
+        })
         this.lastCleanSitemap = this.stripClosed(this.sitemap)
-        this.loading = false
-        this.ready = true
       } else {
         this.$oh.api.get('/rest/sitemaps/' + this.uid + '/definition').then((data) => {
           const sitemap = this.preProcessSitemapLoad(data)
@@ -645,6 +649,10 @@ export default {
     save(stay, force) {
       if (!this.sitemap.name) {
         f7.dialog.alert('Please give an name to the sitemap')
+        return
+      }
+      if (this.createMode && this.isExistingSitemap(this.sitemap.name)) {
+        f7.dialog.alert('A sitemap with the name ' + this.sitemap.name + ' already exists. Please choose another name.')
         return
       }
       if (!this.sitemap.label) {
@@ -677,6 +685,9 @@ export default {
         .catch((err) => {
           showToast('Error while saving sitemap: ' + err)
         })
+    },
+    isExistingSitemap(name) {
+      return this.sitemaps.includes(name)
     },
     validateWidgets(stay) {
       let scope = this
