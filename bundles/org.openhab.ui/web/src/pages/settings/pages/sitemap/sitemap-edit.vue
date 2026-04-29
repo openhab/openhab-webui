@@ -154,7 +154,6 @@
           :object-id="sitemap.name"
           :read-only="!editable"
           :read-only-msg="notEditableMsg"
-          :hint-context="{ widgetTypes: WIDGET_TYPES.map((widgetType) => widgetType.type) }"
           @parsed="update"
           @changed="onCodeChanged" />
       </f7-tab>
