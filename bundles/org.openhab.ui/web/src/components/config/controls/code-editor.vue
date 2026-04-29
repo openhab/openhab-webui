@@ -206,6 +206,10 @@ export default {
         })
         .then((data) => {
           let object = JSON.parse(data.data)
+          const warnings = object.warnings
+          if (warnings && warnings.length > 0) {
+            f7.dialog.alert(`Code parsed with warnings:\n${warnings.join('\n')}`).open()
+          }
           object = object[this.objectType]
           if (object?.length > 0) {
             this.$emit('parsed', object[0])
