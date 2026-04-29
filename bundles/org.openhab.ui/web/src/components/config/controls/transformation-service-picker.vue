@@ -68,7 +68,7 @@ export default {
     this.$oh.api.get('/rest/transformations/services').then((data) => {
       this.services = data.sort()
       if (this.filterType) {
-        this.services = this.services.filter((i) => this.filterType.indexOf(i.type) >= 0)
+        this.services = this.services.filter((s) => this.filterType.indexOf(s) >= 0)
         if (this.services.length < 5) {
           this.smartSelectParams.openIn = 'sheet'
           this.smartSelectParams.searchbar = false
