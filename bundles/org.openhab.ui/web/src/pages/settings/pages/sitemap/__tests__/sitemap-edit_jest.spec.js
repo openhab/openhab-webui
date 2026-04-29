@@ -181,11 +181,13 @@ describe('SitemapEdit', () => {
         url: '/settings/pages/sitemap/duplicate'
       }
     })
+
     wrapper.vm.dirty = true
     wrapper.vm.sitemap.name = 'copied_sitemap'
     wrapper.vm.sitemap.label = 'Copied Sitemap'
 
-    wrapper.vm.save()
+    // Force the save as there will be a validation warning for missing widgets, which is not relevant for this test
+    wrapper.vm.save(null, true)
     await flushPromises()
 
     expect(apiPutMock).toHaveBeenCalledWith('/rest/sitemaps/copied_sitemap', expect.any(Object))
