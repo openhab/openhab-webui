@@ -740,8 +740,11 @@ export default {
     },
     validateWidgets(stay) {
       let scope = this
-      if (Array.isArray(this.sitemap.widgets) && this.sitemap.widgets.length) {
-        const validationWarnings = []
+      const validationWarnings = []
+      if (!Array.isArray(this.sitemap.widgets) || !this.sitemap.widgets.length) {
+        const label = scope.widgetErrorLabel(this.sitemap)
+        validationWarnings.push('Sitemap ' + label + ' should have at least one widget')
+      } else {
         const registeredItemNames = this.itemsReady ? new Set(this.items.map((item) => item.name)) : null
         const widgetList = this.sitemap.widgets.reduce(function iter(widgets, widget) {
           widgets.push(widget)
@@ -968,22 +971,22 @@ export default {
               })
             })
         })
-        if (validationWarnings.length > 0) {
-          f7.dialog
-            .create({
-              cssClass: 'sitemap-validation-dialog',
-              title: 'Validation errors',
-              text: 'Sitemap definition has validation errors:',
-              content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
-              buttons: [
-                { text: 'Cancel', color: 'gray', close: true },
-                { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
-              ],
-              destroyOnClose: true
-            })
-            .open()
-          return false
-        }
+      }
+      if (validationWarnings.length > 0) {
+        f7.dialog
+          .create({
+            cssClass: 'sitemap-validation-dialog',
+            title: 'Validation errors',
+            text: 'Sitemap definition has validation errors:',
+            content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
+            buttons: [
+              { text: 'Cancel', color: 'gray', close: true },
+              { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
+            ],
+            destroyOnClose: true
+          })
+          .open()
+        return false
       }
       return true
     },
