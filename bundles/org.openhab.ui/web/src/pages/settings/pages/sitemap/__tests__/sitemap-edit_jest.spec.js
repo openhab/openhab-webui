@@ -122,7 +122,7 @@ describe('SitemapEdit', () => {
     expect(wrapper.vm.sitemap.name).toBe('sitemap_generated')
     expect(wrapper.vm.sitemap.label).toBe('Original Sitemap')
     expect(wrapper.vm.sitemap.type).toBe('Sitemap')
-    expect(wrapper.vm.stripClosed(wrapper.vm.sitemap).widgets).toEqual([{ type: 'Text', label: 'Copied widget', widgets: [] }])
+    expect(wrapper.vm.stripClosed(wrapper.vm.sitemap).widgets).toEqual([{ type: 'Text', label: 'Copied widget' }])
     expect(wrapper.vm.selectedWidget).toBe(wrapper.vm.sitemap)
     expect(wrapper.vm.selectedWidgetParent).toBe(null)
     expect(wrapper.vm.lastCleanSitemap).toBe(null)
