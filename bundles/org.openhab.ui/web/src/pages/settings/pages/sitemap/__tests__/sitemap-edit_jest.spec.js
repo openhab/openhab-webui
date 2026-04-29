@@ -1,11 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import SitemapEdit from '../sitemap-edit.vue'
-import { shallowMount } from '@vue/test-utils'
+import { shallowMount, flushPromises } from '@vue/test-utils'
 
 let lastDialogConfig = null
 
 describe('SitemapEdit', () => {
   let wrapper = null
+  let navigateMock = null
+  let apiGetMock = null
+  let apiPutMock = null
 
   // Mock the f7 objects (either real or mocks/stubs) used in the component
   vi.mock('framework7-vue', async () => {
@@ -29,17 +32,29 @@ describe('SitemapEdit', () => {
   })
 
   beforeEach(() => {
+    navigateMock = vi.fn()
+    apiGetMock = vi.fn().mockResolvedValue([])
+    apiPutMock = vi.fn()
     wrapper = shallowMount(SitemapEdit, {
       props: {
         createMode: true,
         uid: 'test',
-        itemsList: []
+        itemsList: [],
+        f7router: {
+          navigate: navigateMock
+        }
       },
       global: {
         config: {
           globalProperties: {
             // Mock $device
-            $device: { desktop: false }
+            $device: { desktop: false },
+            $oh: {
+              api: {
+                get: apiGetMock,
+                put: apiPutMock
+              }
+            }
           }
         }
       }
@@ -51,6 +66,97 @@ describe('SitemapEdit', () => {
   it('has initialized with an empty sitemap', () => {
     expect(wrapper.vm.sitemap).toBeDefined()
     expect(wrapper.vm.sitemap.type).toEqual('Sitemap')
+  })
+
+  it('opens the duplicate route for sitemap copies', () => {
+    wrapper.vm.sitemap.label = 'Original Sitemap'
+    wrapper.vm.sitemap.widgets = [{ type: 'Text', label: 'Copied widget' }]
+    wrapper.vm.selectedWidget = wrapper.vm.sitemap
+
+    wrapper.vm.duplicateWidget()
+
+    expect(navigateMock).toHaveBeenCalledTimes(1)
+    expect(navigateMock).toHaveBeenCalledWith('/settings/pages/sitemap/duplicate', {
+      props: {
+        sitemapCopy: expect.objectContaining({
+          type: 'Sitemap',
+          name: wrapper.vm.sitemap.name,
+          label: 'Original Sitemap'
+        })
+      }
+    })
+    expect(navigateMock.mock.calls[0][1].props.sitemapCopy).not.toBe(wrapper.vm.sitemap)
+    expect(navigateMock.mock.calls[0][1].props.sitemapCopy.widgets).toEqual([{ type: 'Text', label: 'Copied widget', widgets: [] }])
+  })
+
+  it('loads a duplicated sitemap in create mode with a fresh generated name', async () => {
+    await wrapper.setProps({
+      sitemapCopy: {
+        name: 'existing_sitemap',
+        label: 'Original Sitemap',
+        widgets: [{ type: 'Text', label: 'Copied widget' }]
+      }
+    })
+    wrapper.vm.createDefaultSitemapName = () => 'sitemap_generated'
+
+    wrapper.vm.load()
+    await flushPromises()
+
+    expect(apiGetMock).toHaveBeenCalledWith('/rest/sitemaps/*/definition')
+    expect(wrapper.vm.ready).toBe(true)
+    expect(wrapper.vm.sitemap.name).toBe('sitemap_generated')
+    expect(wrapper.vm.sitemap.label).toBe('Original Sitemap')
+    expect(wrapper.vm.sitemap.type).toBe('Sitemap')
+    expect(wrapper.vm.stripClosed(wrapper.vm.sitemap).widgets).toEqual([{ type: 'Text', label: 'Copied widget', widgets: [] }])
+    expect(wrapper.vm.selectedWidget).toBe(wrapper.vm.sitemap)
+    expect(wrapper.vm.selectedWidgetParent).toBe(null)
+    expect(wrapper.vm.lastCleanSitemap).toBe(null)
+    expect(wrapper.vm.sitemapDirty).toBe(true)
+    expect(wrapper.vm.dirty).toBe(true)
+  })
+
+  it('loads an existing sitemap with the root sitemap selected', async () => {
+    const existingSitemap = {
+      name: 'existing_sitemap',
+      label: 'Existing Sitemap',
+      widgets: [{ type: 'Text', label: 'Existing widget' }]
+    }
+    apiGetMock.mockResolvedValueOnce(existingSitemap)
+
+    wrapper.unmount()
+    wrapper = shallowMount(SitemapEdit, {
+      props: {
+        createMode: false,
+        uid: 'existing_sitemap',
+        itemsList: [],
+        f7router: {
+          navigate: navigateMock
+        }
+      },
+      global: {
+        config: {
+          globalProperties: {
+            $device: { desktop: false },
+            $oh: {
+              api: {
+                get: apiGetMock,
+                put: apiPutMock
+              }
+            }
+          }
+        }
+      }
+    })
+
+    wrapper.vm.load()
+    await flushPromises()
+
+    expect(apiGetMock).toHaveBeenCalledWith('/rest/sitemaps/existing_sitemap/definition')
+    expect(wrapper.vm.ready).toBe(true)
+    expect(wrapper.vm.sitemap.name).toBe('existing_sitemap')
+    expect(wrapper.vm.selectedWidget).toBe(wrapper.vm.sitemap)
+    expect(wrapper.vm.selectedWidgetParent).toBe(null)
+    expect(wrapper.vm.lastCleanSitemap).toEqual(wrapper.vm.stripClosed(wrapper.vm.sitemap))
   })
 
   it('validates frame does not contain frames', async () => {

@@ -414,6 +414,7 @@ export default {
     createMode: Boolean,
     uid: String,
     itemsList: Array,
+    sitemapCopy: Object,
     f7router: Object,
     f7route: Object
   },
@@ -552,6 +553,21 @@ export default {
     }
   },
   methods: {
+    createDefaultSitemapName() {
+      return 'sitemap_' + f7.utils.id()
+    },
+    selectRootSitemapWidget() {
+      this.selectedWidget = this.sitemap
+      this.selectedWidgetParent = null
+    },
+    initializeCreateModeSitemap() {
+      if (this.sitemapCopy) {
+        const sitemapCopy = this.preProcessSitemapLoad(this.sitemapCopy)
+        sitemapCopy.name = this.createDefaultSitemapName()
+        this.sitemap = sitemapCopy
+      }
+      this.selectRootSitemapWidget()
+    },
     onDetailsToolbarWheel(ev) {
       const toolbarInner = ev.currentTarget?.querySelector('.toolbar-inner')
       if (!toolbarInner || toolbarInner.scrollWidth <= toolbarInner.clientWidth) {
@@ -638,17 +654,21 @@ export default {
       if (this.ready && this.dirty) this.save(true, true)
 
       if (this.createMode) {
+        this.initializeCreateModeSitemap()
         this.$oh.api.get('/rest/sitemaps/*/definition').then((sitemaps) => {
           this.sitemaps = sitemaps.map((sitemap) => sitemap.name)
           this.loading = false
           this.ready = true
         })
-        this.lastCleanSitemap = this.stripClosed(this.sitemap)
+        this.lastCleanSitemap = this.sitemapCopy ? null : this.stripClosed(this.sitemap)
+        this.sitemapDirty = !!this.sitemapCopy
+        this.dirty = this.sitemapDirty || this.codeDirty
       } else {
         this.$oh.api.get('/rest/sitemaps/' + this.uid + '/definition').then((data) => {
           const sitemap = this.preProcessSitemapLoad(data)
           this.lastCleanSitemap = this.stripClosed(sitemap)
           this.sitemap = sitemap
+          this.selectRootSitemapWidget()
           nextTick(() => {
             this.loading = false
             this.ready = true
@@ -1050,6 +1070,11 @@ export default {
     startEventSource() {},
     stopEventSource() {},
     duplicateWidget() {
+      if (this.selectedWidget.type === 'Sitemap') {
+        const sitemapCopy = this.preProcessSitemapSave(this.selectedWidget)
+        this.f7router.navigate('/settings/pages/sitemap/duplicate', { props: { sitemapCopy } })
+        return
+      }
       const duplicate = cloneDeep(this.selectedWidget)
       const index = this.selectedWidgetParent.widgets.indexOf(this.selectedWidget) + 1
       this.selectedWidgetParent.widgets.splice(index, 0, duplicate)
