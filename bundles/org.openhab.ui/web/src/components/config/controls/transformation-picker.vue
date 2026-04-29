@@ -2,7 +2,7 @@
   <ul class="transformation-picker-container">
     <f7-list-item
       v-if="ready"
-      :title="showPlaceholder ? (title || 'Transformation') : undefined"
+      :title="showPlaceholder ? title || 'Transformation' : undefined"
       smart-select
       :smart-select-params="smartSelectParams"
       ref="smartSelect"
@@ -12,11 +12,18 @@
       :disabled="disabled">
       <select :name="name" @change="select" :required="required">
         <option value="" />
-        <option v-if="allowInline && showInlineDefinitionOption" :value="inlineDefinition" :selected="selectedTransformationValue === inlineDefinition ? true : null">
+        <option
+          v-if="allowInline && showInlineDefinitionOption"
+          :value="inlineDefinition"
+          :selected="selectedTransformationValue === inlineDefinition ? true : null">
           {{ inlineDefinition }}
         </option>
-        <option v-for="transformation in transformations" :value="transformation.uid" :key="transformation.uid" :selected="selectedTransformationValue === transformation.uid ? true : null">
-          {{ transformation.label ? transformation.label + ' (' + transformation.uid + ')' : transformation.uid }}
+        <option
+          v-for="transformation in transformations"
+          :value="transformation.uid"
+          :key="transformation.uid"
+          :selected="selectedTransformationValue === transformation.uid ? true : null">
+          {{ transformation.label ? transformation.label : transformation.uid }}
         </option>
       </select>
     </f7-list-item>
@@ -161,7 +168,7 @@ export default {
     },
     filterTransformations(data) {
       return data
-        .filter((t) => this.service ? (t.type.toUpperCase() === this.service.toUpperCase()) : true)
+        .filter((t) => (this.service ? t.type.toUpperCase() === this.service.toUpperCase() : true))
         .filter((t) => !this.filterType || this.filterType.indexOf(t.type) >= 0)
         .sort((a, b) => {
           const labelA = a.label || a.uid

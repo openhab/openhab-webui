@@ -26,6 +26,11 @@ describe('SitemapEdit', () => {
             }
           }
         },
+        toast: {
+          create: (config) => ({
+            open: () => config.on?.closed?.()
+          })
+        },
         data: { sitemap: {} }
       }
     }
@@ -40,6 +45,9 @@ describe('SitemapEdit', () => {
         createMode: true,
         uid: 'test',
         itemsList: [],
+        f7route: {
+          url: '/settings/pages/sitemap/add'
+        },
         f7router: {
           navigate: navigateMock
         }
@@ -59,6 +67,13 @@ describe('SitemapEdit', () => {
         }
       }
     })
+
+    // Keep validation independent from item-registry loading by providing a stable mocked registry.
+    wrapper.vm.items = [
+      { name: 'Item1', label: 'Item 1' },
+      { name: 'Item2', label: 'Item 2' }
+    ]
+    wrapper.vm.itemsReady = true
   })
 
   afterEach(() => wrapper.unmount())
@@ -157,6 +172,25 @@ describe('SitemapEdit', () => {
     expect(wrapper.vm.selectedWidget).toBe(wrapper.vm.sitemap)
     expect(wrapper.vm.selectedWidgetParent).toBe(null)
     expect(wrapper.vm.lastCleanSitemap).toEqual(wrapper.vm.stripClosed(wrapper.vm.sitemap))
+  })
+
+  it('navigates to the new sitemap path after saving a duplicate', async () => {
+    apiPutMock.mockResolvedValueOnce({})
+    await wrapper.setProps({
+      f7route: {
+        url: '/settings/pages/sitemap/duplicate'
+      }
+    })
+    wrapper.vm.dirty = true
+    wrapper.vm.sitemap.name = 'copied_sitemap'
+    wrapper.vm.sitemap.label = 'Copied Sitemap'
+
+    wrapper.vm.save()
+    await flushPromises()
+
+    expect(apiPutMock).toHaveBeenCalledWith('/rest/sitemaps/copied_sitemap', expect.any(Object))
+    expect(wrapper.vm.dirty).toBe(false)
+    expect(navigateMock).toHaveBeenCalledWith('/settings/pages/sitemap/copied_sitemap', { reloadCurrent: true })
   })
 
   it('validates frame does not contain frames', async () => {
@@ -268,6 +302,15 @@ describe('SitemapEdit', () => {
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
     expect(lastDialogConfig.content).toMatch(/Switch widget without label, no item configured/)
+
+    // should not validate as the Switch has an item configured that does not exist in the item registry
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0].widgets[0], wrapper.vm.sitemap.widgets[0]])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.item = 'NonExistingItem'
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Switch widget for item NonExistingItem, invalid item configured: NonExistingItem/)
 
     // configure an item for the Switch and check that there are no validation errors anymore
     lastDialogConfig = null
@@ -526,68 +569,6 @@ describe('SitemapEdit', () => {
     expect(lastDialogConfig).toBeFalsy()
   })
 
-  it('validates a buttongrid with buttons argument', async () => {
-    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
-    await wrapper.vm.$nextTick()
-    wrapper.vm.addWidget('Buttongrid')
-    await wrapper.vm.$nextTick()
-    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
-    await wrapper.vm.$nextTick()
-    wrapper.vm.selectedWidget.item = 'Item1'
-    wrapper.vm.selectedWidget.label = 'Buttongrid Test'
-
-    // should not validate as no buttons defined
-    lastDialogConfig = null
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, no buttons defined/)
-
-    // add button, should not validate as the button has no row defined
-    lastDialogConfig = null
-    await wrapper.vm.$nextTick()
-    wrapper.vm.selectedWidget.buttons = [{ column: 1, command: '1', label: 'Morning' }]
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, Buttongrid button must have positive row index/)
-
-    // configure a correct row, should not validate as wrong column set
-    lastDialogConfig = null
-    wrapper.vm.selectedWidget.buttons = [{ row: 1, column: 'column', command: '1', label: 'Morning' }]
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, Buttongrid button must have positive column index/)
-
-    // configure a correct column, should not validate as wrong command set
-    lastDialogConfig = null
-    wrapper.vm.selectedWidget.buttons = [{ row: 1, column: 2, command: 'Morning' }]
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, syntax error in button command: Morning/)
-
-    // configure correct commands, should not validate as duplicate positions
-    lastDialogConfig = null
-    wrapper.vm.selectedWidget.buttons = [
-      { row: 1, column: 1, command: '1', label: 'Morning' },
-      { row: 1, column: 1, command: '2', label: 'Evening' }
-    ]
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, Buttongrid button already exists for position \(1,1\)/)
-
-    // configure a correct command and check that there are no validation errors anymore
-    lastDialogConfig = null
-    wrapper.vm.selectedWidget.buttons = [
-      { row: 1, column: 1, command: '1', label: 'Morning' },
-      { row: 1, column: 3, command: '2', label: 'Evening' },
-      { row: 2, column: 1, command: '10', label: 'Cinéma' },
-      { row: 2, column: 2, command: '11', label: 'TV' },
-      { row: 2, column: 3, command: '3', label: 'Bed time' },
-      { row: 3, column: 2, command: '4', label: 'night', icon: 'moon' }
-    ]
-    wrapper.vm.validateWidgets()
-    expect(lastDialogConfig).toBeFalsy()
-  })
-
   it('validates a buttongrid with button components', async () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
     await wrapper.vm.$nextTick()
@@ -747,5 +728,113 @@ describe('SitemapEdit', () => {
     ]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
+  })
+
+  it('sanitizes rule condition empty fields when saving (DSL code tab)', async () => {
+    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Text')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.item = 'Item1'
+    wrapper.vm.selectedWidget.label = 'Sanitize Test'
+
+    // Simulate legacy data with empty-string condition fields written by old code
+    wrapper.vm.selectedWidget.valueColorRules = [
+      // All condition fields empty — should become argument-only rule
+      { conditions: [{ item: '', condition: '', value: '' }], argument: 'red' },
+      // Only item set — item should remain, empty fields should be dropped
+      { conditions: [{ item: 'MyItem', condition: '', value: '' }], argument: 'blue' },
+      // Fully populated condition — should be preserved as-is
+      { conditions: [{ item: 'MyItem', condition: '==', value: 'ON' }], argument: 'green' },
+      // Multiple conditions, some with empty fields — only non-empty fields kept
+      {
+        conditions: [
+          { item: 'MyItem', condition: '>=', value: 10 },
+          { item: '', condition: '', value: '' }
+        ],
+        argument: 'orange'
+      }
+    ]
+    wrapper.vm.selectedWidget.iconRules = [
+      // Argument-only rule (no conditions at all) — should survive
+      { argument: 'lightbulb' },
+      // Empty conditions array — should survive as argument-only
+      { conditions: [], argument: 'switch' },
+      // Whitespace-only strings are not considered empty
+      { conditions: [{ item: '   ', condition: ' ', value: '  ' }], argument: ' ' }
+    ]
+    wrapper.vm.selectedWidget.labelColorRules = [
+      // Rule with no argument and only empty conditions — should be removed entirely
+      { conditions: [{ item: '', condition: '', value: '' }] }
+    ]
+
+    const saved = wrapper.vm.preProcessSitemapSave(wrapper.vm.sitemap)
+    const widget = saved.widgets[0]
+
+    // All-empty condition → becomes argument-only rule (conditions omitted)
+    expect(widget.valueColorRules[0]).toEqual({ argument: 'red' })
+    expect(widget.valueColorRules[0]).not.toHaveProperty('conditions')
+
+    // Partial condition: item survives, empty fields are dropped
+    expect(widget.valueColorRules[1]).toEqual({ conditions: [{ item: 'MyItem' }], argument: 'blue' })
+    expect(widget.valueColorRules[1].conditions[0]).not.toHaveProperty('condition')
+    expect(widget.valueColorRules[1].conditions[0]).not.toHaveProperty('value')
+
+    // Fully populated condition: preserved unchanged
+    expect(widget.valueColorRules[2]).toEqual({ conditions: [{ item: 'MyItem', condition: '==', value: 'ON' }], argument: 'green' })
+
+    // Mixed conditions: empty condition object is removed, valid one survives
+    expect(widget.valueColorRules[3]).toEqual({
+      conditions: [{ item: 'MyItem', condition: '>=', value: 10 }],
+      argument: 'orange'
+    })
+
+    // Argument-only iconRule (no conditions key) preserved
+    expect(widget.iconRules[0]).toEqual({ argument: 'lightbulb' })
+    // Empty conditions array → argument-only rule
+    expect(widget.iconRules[1]).toEqual({ argument: 'switch' })
+    expect(widget.iconRules[1]).not.toHaveProperty('conditions')
+
+    // Whitespace-only strings are preserved
+    expect(widget.iconRules[2]).toEqual({ conditions: [{ item: '   ', condition: ' ', value: '  ' }], argument: ' ' })
+
+    // Rule with empty conditions and no argument is stripped entirely
+    expect(widget.labelColorRules).toBeUndefined()
+  })
+
+  it('sanitizes mappings when saving (DSL code tab)', async () => {
+    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('Selection')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.item = 'Item1'
+    wrapper.vm.selectedWidget.label = 'Mapping Sanitize Test'
+    wrapper.vm.selectedWidget.mappings = [
+      { command: 'ON', label: 'On', icon: 'sun' },
+      { command: 'OFF', label: 'Off', releaseCommand: 'ON' },
+      { command: 'MAYBE' },
+      { label: 'No command' },
+      { command: '   ', label: '  ', icon: ' ' },
+      null,
+      { command: '', label: 'Empty command' },
+      { command: 'EMPTY_LABEL', label: '' }
+    ]
+
+    const saved = wrapper.vm.preProcessSitemapSave(wrapper.vm.sitemap)
+    const widget = saved.widgets[0]
+
+    expect(widget.mappings).toEqual([
+      { command: 'ON', label: 'On', icon: 'sun' },
+      { command: 'OFF', label: 'Off', releaseCommand: 'ON' },
+      { command: 'MAYBE' },
+      { label: 'No command' },
+      { command: '   ', label: '  ', icon: ' ' },
+      { label: 'Empty command' },
+      { command: 'EMPTY_LABEL' }
+    ])
   })
 })

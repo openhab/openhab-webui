@@ -26,7 +26,12 @@
           <format-editor title="Format" :editable="editable" :value="widget.format" @input="(value) => (widget.format = value)" />
         </ul>
         <ul v-if="widget.type !== 'Sitemap' && !['Frame', 'Buttongrid'].includes(widget.type)">
-          <item-picker label="Item" :value="widget.item" @input="(value) => (widget.item = value)" :disabled="!editable" />
+          <item-picker
+            label="Item"
+            :value="widget.item"
+            @input="(value) => (widget.item = value)"
+            class="widget-item"
+            :disabled="!editable" />
         </ul>
         <ul>
           <f7-list-input
@@ -40,7 +45,7 @@
             :clear-button="editable"
             :disabled="!editable">
             <template #root-end>
-              <div v-if="widget.icon"style="margin-left: calc(25% + 8px)">
+              <div v-if="widget.icon" style="margin-left: calc(25% + 8px)">
                 <oh-icon :icon="widget.icon || ''" height="32" width="32" />
               </div>
             </template>
@@ -79,6 +84,7 @@
             title="Encoding"
             smart-select
             :smart-select-params="{ openIn: 'popover', closeOnSelect: true }"
+            :no-chevron="!editable"
             :disabled="!editable">
             <select name="encodings" :value="widget.encoding?.toLowerCase()" @change="updateParameter('encoding', $event)">
               <option v-for="def in ENCODING_DEFS" :key="def.key" :value="def.key">
@@ -153,6 +159,7 @@
             title="Interpolation"
             smart-select
             :smart-select-params="{ openIn: 'popover', closeOnSelect: true }"
+            :no-chevron="!editable"
             :disabled="!editable">
             <select name="interpolations" :value="widget.interpolation?.toLowerCase()" @change="updateParameter('interpolation', $event)">
               <option v-for="def in INTERPOLATION_DEFS" :key="def.key" :value="def.key">
@@ -231,6 +238,7 @@
             title="Hint"
             smart-select
             :smart-select-params="{ openIn: 'popover', closeOnSelect: true }"
+            :no-chevron="!editable"
             :disabled="!editable">
             <select name="inputHints" required :value="widget.inputHint?.toLowerCase()" @change="updateParameter('inputHint', $event)">
               <option v-for="def in INPUT_HINT_DEFS" :key="def.key" :value="def.key">
@@ -241,14 +249,14 @@
         </ul>
       </f7-list>
     </f7-card-content>
-    <f7-card-footer v-if="editable" key="sitemap-widget-buttons-edit-mode" class="widget-details-footer">
+    <f7-card-footer v-if="editable || widget.type === 'Sitemap'" key="sitemap-widget-buttons-edit-mode" class="widget-details-footer">
       <!-- <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button> -->
-        <f7-segmented v-if="widget.type !== 'Sitemap'">
+      <f7-segmented v-if="editable && widget.type !== 'Sitemap'">
         <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" />
         <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down" />
       </f7-segmented>
-      <f7-button color="blue" @click="$emit('duplicate', widget)"> Duplicate </f7-button>
-      <f7-button v-if="widget.type !== 'Sitemap'" color="red" @click="$emit('remove', widget)"> Remove </f7-button>
+      <f7-button v-if="editable || widget.type === 'Sitemap'" color="blue" @click="$emit('duplicate', widget)"> Duplicate </f7-button>
+      <f7-button v-if="editable && widget.type !== 'Sitemap'" color="red" @click="$emit('remove', widget)"> Remove </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>
@@ -261,6 +269,8 @@
     height 0 !important /* remove all lines between params */
   .additional-controls:before
     display block !important
+  .widget-item .item-after
+    color var(--f7-block-text-color)
 #additional:before
   display block !important /* need two selectors to override the important Vue card css */
 
@@ -268,7 +278,7 @@
   margin 0
   padding 0
 
-.widget-details-footer > :only-child 
+.widget-details-footer > :only-child
   margin-left auto
   margin-right auto
 </style>

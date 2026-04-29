@@ -1,11 +1,5 @@
 <template>
-  <input
-    ref="input"
-    v-bind="$attrs"
-    type="text"
-    :placeholder="placeholder"
-    :value="value"
-    @input="onInput" />
+  <input ref="input" v-bind="$attrs" type="text" :placeholder="placeholder" :value="value" @input="onInput" />
 </template>
 
 <script>
@@ -50,8 +44,64 @@ export default {
         return { valid: true, message: '' }
       }
 
-      const dateTimeConversions = new Set(['H', 'I', 'k', 'l', 'M', 'S', 'L', 'N', 'p', 'z', 'Z', 's', 'Q', 'B', 'b', 'h', 'A', 'a', 'C', 'Y', 'y', 'j', 'm', 'd', 'e', 'R', 'T', 'r', 'D', 'F', 'c'])
-      const generalConversions = new Set(['b', 'B', 'h', 'H', 's', 'S', 'c', 'C', 'd', 'o', 'x', 'X', 'e', 'E', 'f', 'g', 'G', 'a', 'A', 't', 'T', '%', 'n'])
+      const dateTimeConversions = new Set([
+        'H',
+        'I',
+        'k',
+        'l',
+        'M',
+        'S',
+        'L',
+        'N',
+        'p',
+        'z',
+        'Z',
+        's',
+        'Q',
+        'B',
+        'b',
+        'h',
+        'A',
+        'a',
+        'C',
+        'Y',
+        'y',
+        'j',
+        'm',
+        'd',
+        'e',
+        'R',
+        'T',
+        'r',
+        'D',
+        'F',
+        'c'
+      ])
+      const generalConversions = new Set([
+        'b',
+        'B',
+        'h',
+        'H',
+        's',
+        'S',
+        'c',
+        'C',
+        'd',
+        'o',
+        'x',
+        'X',
+        'e',
+        'E',
+        'f',
+        'g',
+        'G',
+        'a',
+        'A',
+        't',
+        'T',
+        '%',
+        'n'
+      ])
       const allowedFlagChars = new Set(['-', '#', '+', ' ', '0', ',', '(', '<'])
 
       const parseNumber = (source, start) => {

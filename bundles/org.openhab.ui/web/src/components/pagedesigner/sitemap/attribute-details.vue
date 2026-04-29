@@ -23,6 +23,8 @@
             <div
               v-if="disabled || !isArrayEditing(idx)"
               style="display: flex; align-items: center; width: 100%; min-height: 32px; cursor: pointer"
+              :tabindex="disabled ? -1 : 0"
+              @focus="!disabled && startArrayEditing(idx)"
               @click="!disabled && startArrayEditing(idx)">
               <div :style="collapsedArrayValueStyle(attr.value)">
                 {{ arrayFieldDisplayValue(attr.value) }}
@@ -48,7 +50,7 @@
                   v-bind="getFieldInputProps(field, fieldidx, nestedValue, isItemField(field), isOperatorField(field))"
                   @input="updateNestedAttributeValue($event, idx, attr, arrayField, nestedIdx, fieldKey(field))"
                   @change="updateNestedAttribute($event, idx, attr, arrayField, nestedIdx, fieldKey(field))" />
-                <div v-if="nestedIdx < arrayFieldValues(attr.value, arrayField).length - 1" style="padding-left: 5px; flex-shrink: 0">
+                <div v-if="nestedIdx < arrayFieldValues(attr.value, arrayField).length - 1" style="padding-left: 0px; flex-shrink: 0">
                   AND
                 </div>
                 <template v-if="nestedIdx === arrayFieldValues(attr.value, arrayField).length - 1">
@@ -58,17 +60,10 @@
                     v-bind="getFieldInputProps(field, fieldidx, attr.value, isItemField(field), isOperatorField(field))"
                     @input="updateAttributeValue($event, idx, attr, fieldKey(field))"
                     @change="updateAttribute($event, idx, attr, fieldKey(field))" />
-                  <f7-button
-                    v-if="!disabled"
-                    style="padding-left: 5px; padding-right: 0; flex-shrink: 0"
-                    :tabindex="-1"
-                    text="+"
-                    small
-                    @click="addArrayFieldEntry(idx, attr, arrayField)" />
+                  <f7-button v-if="!disabled" :tabindex="-1" text="+" small @click="addArrayFieldEntry(idx, attr, arrayField)" />
                 </template>
                 <f7-button
                   v-if="!disabled && canRemoveArrayFieldEntry(attr.value, arrayField)"
-                  style="padding-left: 5px; padding-right: 0; flex-shrink: 0"
                   :tabindex="-1"
                   text="-"
                   small
@@ -92,14 +87,7 @@
                 @change="updateAttribute($event, idx, attr, fieldKey(field))" />
             </div>
           </div>
-          <f7-button
-            v-if="!disabled"
-            style="padding-left: 5px; padding-right: 0; flex-shrink: 0"
-            :tabindex="-1"
-            text=""
-            icon-material="clear"
-            small
-            @click="removeAttribute(idx)" />
+          <f7-button v-if="!disabled" :tabindex="-1" text="" icon-material="clear" small @click="removeAttribute(idx)" />
         </f7-list-item>
       </f7-list>
     </f7-card-content>
@@ -115,8 +103,17 @@
     padding-left 0 !important
   .item-media
     display none
+  .item-inner
+    margin-left 0 !important
   .sortable-handler
     display none
+
+.attribute-details-list
+  .button.button-small
+    padding-left 0
+    padding-right 0
+    flex-shrink 0
+    min-width calc(var(--f7-button-min-width) * 0.6)
 
 .attribute-details-collapsed-empty
   color var(--f7-list-item-footer-text-color)
@@ -190,6 +187,12 @@ export default {
       if (this.editingArrayIndex === null) {
         return
       }
+      // Item picker popups are rendered outside this component subtree.
+      // Treat interactions in that popup as "inside" to avoid collapsing edit mode
+      // before the selected value event can propagate back.
+      if (event.target?.closest?.('.item-picker-popup')) {
+        return
+      }
       if (this.$el?.contains(event.target)) {
         return
       }
@@ -206,6 +209,16 @@ export default {
     },
     isArrayField(field) {
       return Array.isArray(this.fieldDefinition(field))
+    },
+    isOptionalArrayField(field, fields = this.fields) {
+      if (!Array.isArray(fields) || !this.isArrayField(field)) {
+        return false
+      }
+      const fieldIndex = fields.indexOf(field)
+      if (fieldIndex < 0) {
+        return false
+      }
+      return fields.some((candidateField, candidateFieldIdx) => candidateFieldIdx !== fieldIndex && this.isFieldObject(candidateField))
     },
     isOperatorField(field) {
       return this.isFieldObject(field) && this.fieldProp(field, 'type') === 'operator'
@@ -239,35 +252,21 @@ export default {
       }
       return this.fieldDefaults[prop]
     },
-    fieldStyle(field, fieldidx) {
-      let style = {}
-      if (this.fieldProp(field, 'width') !== undefined) {
-        style.flexGrow = '0'
+    fieldStyle(field) {
+      const style = {}
+      if (!this.fieldDefinition(field)) {
+        style.flex = 0
+      } else if (this.fieldProp(field, 'width') !== undefined) {
+        style.flexGrow = '1'
         style.flexShrink = '0'
         style.flexBasis = this.fieldProp(field, 'width')
       } else {
         style.flex = 1
       }
-      if (fieldidx > 0) {
-        style.paddingLeft = '5px'
-      }
       return style
     },
-    literalStyle(fieldidx) {
-      let style = {
-        flexShrink: '0',
-        whiteSpace: 'nowrap'
-      }
-      if (fieldidx > 0) {
-        style.paddingLeft = '5px'
-      }
-      if (fieldidx < this.fields.length - 1) {
-        style.paddingRight = '5px'
-      }
-      return style
-    },
-    inputFieldStyle(field, fieldidx) {
-      let style = {}
+    inputFieldStyle(field) {
+      const style = {}
       style.width = '100%'
       if (this.fieldProp(field, 'type') === 'number') {
         style.textAlign = 'end'
@@ -351,10 +350,35 @@ export default {
       const direction = event.shiftKey ? -1 : 1
       const nextElement = focusableElements[currentIndex + direction]
       if (!nextElement) {
+        if (this.focusAdjacentAttributeAfterTabOut(idx, direction)) {
+          event.preventDefault()
+          return
+        }
+        this.stopEditingAfterTabOut(listItem)
         return
       }
       event.preventDefault()
       nextElement.focus()
+    },
+    focusAdjacentAttributeAfterTabOut(idx, direction) {
+      if (!this.hasFields || direction < 0 || !this.isArrayEditing(idx)) {
+        return false
+      }
+      const nextIdx = idx + 1
+      if (nextIdx >= this.attributes.length) {
+        return false
+      }
+      this.startArrayEditing(nextIdx)
+      return true
+    },
+    stopEditingAfterTabOut(listItem) {
+      // Wait for the browser to move focus before deciding whether to collapse.
+      setTimeout(() => {
+        const activeElement = document.activeElement
+        if (!listItem?.contains(activeElement)) {
+          this.stopArrayEditing()
+        }
+      }, 0)
     },
     hasDisplayValue(value) {
       if (typeof value === 'string') {
@@ -643,19 +667,23 @@ export default {
     },
     canRemoveArrayFieldEntry(value, arrayField) {
       const arrayKey = this.fieldKey(arrayField)
-      return Array.isArray(value?.[arrayKey]) ? value[arrayKey].length > 1 : false
+      if (!Array.isArray(value?.[arrayKey])) {
+        return false
+      }
+      return this.isOptionalArrayField(arrayField) ? value[arrayKey].length > 0 : value[arrayKey].length > 1
     },
     removeArrayFieldEntry(idx, arrayField, nestedIdx) {
       const value = this.ensureAttributeValue(idx)
       const arrayKey = this.fieldKey(arrayField)
+      const optionalArrayField = this.isOptionalArrayField(arrayField)
       if (!Array.isArray(value[arrayKey])) {
         value[arrayKey] = [this.createFieldValue(this.arrayFieldDefinition(arrayField))]
       }
-      if (value[arrayKey].length <= 1) {
+      if ((!optionalArrayField && value[arrayKey].length <= 1) || nestedIdx < 0 || nestedIdx >= value[arrayKey].length) {
         return
       }
       value[arrayKey].splice(nestedIdx, 1)
-      if (!value[arrayKey].length) {
+      if (!optionalArrayField && !value[arrayKey].length) {
         value[arrayKey].push(this.createFieldValue(this.arrayFieldDefinition(arrayField)))
       }
       this.widget[this.attribute][idx] = value
@@ -670,8 +698,8 @@ export default {
       return {
         field,
         value: this.fieldValue(value, field),
-        style: this.fieldStyle(field, fieldidx),
-        inputStyle: this.inputFieldStyle(field, fieldidx),
+        style: this.fieldStyle(field),
+        inputStyle: this.inputFieldStyle(field),
         disabled: this.disabled,
         type: this.fieldProp(field, 'type'),
         min: this.fieldProp(field, 'min'),

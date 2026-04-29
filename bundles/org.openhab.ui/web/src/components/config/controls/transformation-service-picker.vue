@@ -2,7 +2,7 @@
   <ul class="transformation-service-picker-container">
     <f7-list-item
       v-if="ready"
-      :title="showPlaceholder ? (title || 'Transformation Service') : undefined"
+      :title="showPlaceholder ? title || 'Transformation Service' : undefined"
       smart-select
       :smart-select-params="smartSelectParams"
       ref="smartSelect"

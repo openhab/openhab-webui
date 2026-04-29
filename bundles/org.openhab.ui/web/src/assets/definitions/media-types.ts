@@ -9,6 +9,7 @@ export enum MediaType {
   ITEM_YAML = 'application/yaml+item',
   THING_DSL = 'text/vnd.openhab.dsl.thing',
   ITEM_DSL = 'text/vnd.openhab.dsl.item',
+  SITEMAP_YAML = 'application/yaml+sitemap',
   SITEMAP_DSL = 'text/vnd.openhab.dsl.sitemap',
   RULE_YAML = 'application/vnd.openhab.rule+yaml',
   RULE_DSL = 'application/vnd.openhab.dsl.rule',
@@ -35,6 +36,7 @@ export const SupportedMediaTypes = {
     DSL: MediaType.THING_DSL
   },
   sitemaps: {
+    YAML: MediaType.SITEMAP_YAML,
     DSL: MediaType.SITEMAP_DSL
   }
 }

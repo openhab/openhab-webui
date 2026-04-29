@@ -5,23 +5,29 @@
     :disabled="!editable"
     @pointerdown="editable && !isFormatEditing && startFormatEditing()"
     @click="editable && !isFormatEditing && startFormatEditing()">
-    <template v-if="!editable || !isFormatEditing" #after>
-      <div class="format-editor-collapsed">
+    <template #after>
+      <div
+        v-show="!editable || !isFormatEditing"
+        class="format-editor-collapsed"
+        :tabindex="editable && !isFormatEditing ? 0 : -1"
+        @focus="editable && startFormatEditing()">
         <div :style="formatCollapsedStyle">{{ formatDisplayValue }}</div>
         <button
           v-if="showCompactClearButton"
           type="button"
+          tabindex="-1"
           class="format-editor-clear-button"
           aria-label="Clear format"
           @pointerdown.stop.prevent
-          @click.stop.prevent="clearFormat">delete_round_ios</button>
+          @click.stop.prevent="clearFormat">
+          delete_round_ios
+        </button>
       </div>
-    </template>
-    <template v-else #after>
-      <div class="format-editor-inline" @click.stop>
+      <div v-show="editable && isFormatEditing" class="format-editor-inline" @click.stop>
         <div class="format-editor-pickers">
           <transformation-service-picker
             :class="['format-inline-picker', { 'format-inline-empty': !formatModel.service }]"
+            :tabindex="editable && isFormatEditing ? 0 : -1"
             title="SERVICE"
             :value="formatModel.service"
             :no-chevron="true"
@@ -29,6 +35,7 @@
           <span class="format-editor-token">(</span>
           <transformation-picker
             :class="['format-inline-picker', { 'format-inline-empty': !formatModel.transformation }]"
+            :tabindex="editable && formatModel.service && isFormatEditing ? 0 : -1"
             title="transformation"
             :service="formatModel.service"
             :disabled="!formatModel.service"
@@ -44,6 +51,7 @@
             class="format-editor-input format-editor-java"
             placeholder="%.1f %unit%"
             :value="formatModel.javaFormat"
+            :tabindex="editable && isFormatEditing ? 0 : -1"
             @input="updateFormatJava"
             @validation-message="javaFormatValidationMessage = $event" />
         </div>
@@ -97,6 +105,8 @@
   line-height 1.4
 
 .format-editor-pickers
+  select
+    tabindex -1
   display grid
   grid-template-columns 20% auto minmax(0, 1fr) auto
   gap 5px
@@ -165,6 +175,7 @@
 </style>
 
 <script>
+import { nextTick } from 'vue'
 import JavaFormatInput from '@/components/config/controls/java-format-input.vue'
 import TransformationPicker from '@/components/config/controls/transformation-picker.vue'
 import TransformationServicePicker from '@/components/config/controls/transformation-service-picker.vue'
@@ -211,7 +222,9 @@ export default {
   },
   methods: {
     isFormatPickerOverlayOpen() {
-      return !!document.querySelector('.smart-select-popup.modal-in, .sheet-modal.modal-in.smart-select-sheet, .popover.modal-in.smart-select-popover')
+      return !!document.querySelector(
+        '.smart-select-popup.modal-in, .sheet-modal.modal-in.smart-select-sheet, .popover.modal-in.smart-select-popover'
+      )
     },
     parseFormatString(format) {
       const text = (format || '').trim()
@@ -246,17 +259,39 @@ export default {
       this.isFormatEditing = true
       this.formatModel = this.parseFormatString(this.value)
       this.javaFormatValidationMessage = ''
-      this.$nextTick(() => {
-        const inputElement = this.$refs.javaFormat
-        if (inputElement && typeof inputElement.focus === 'function') {
-          inputElement.focus()
-        }
-      })
+
+      // Find the first interactive element inside the expanded section
+      const firstField = document.querySelector('.format-editor-input, .format-inline-picker')
+
+      if (firstField) {
+        // Use a tiny timeout to ensure the DOM has updated/expanded
+        // before attempting to move the focus
+        nextTick(() => firstField.focus())
+      }
     },
     stopFormatEditing() {
       this.isFormatEditing = false
       this.formatModel = this.parseFormatString(this.value)
       this.javaFormatValidationMessage = ''
+    },
+    onFocusOut(event) {
+      if (!this.isFormatEditing) {
+        return
+      }
+      // relatedTarget is null when focus is lost due to a DOM mutation (e.g.
+      // the collapsed div being removed when startFormatEditing runs). Ignore
+      // these synthetic blur events to avoid collapsing mid open-transition.
+      const relatedTarget = event.relatedTarget
+      if (!relatedTarget) {
+        return
+      }
+      if (this.isFormatPickerOverlayOpen()) {
+        return
+      }
+      if (this.$el.contains(relatedTarget)) {
+        return
+      }
+      this.stopFormatEditing()
     },
     applyFormatModel() {
       this.$emit('input', this.buildFormatString(this.formatModel))
@@ -324,9 +359,11 @@ export default {
   },
   mounted() {
     document.addEventListener('pointerdown', this.onDocumentPointerDown, true)
+    this.$el.addEventListener('focusout', this.onFocusOut)
   },
   beforeUnmount() {
     document.removeEventListener('pointerdown', this.onDocumentPointerDown, true)
+    this.$el.removeEventListener('focusout', this.onFocusOut)
   }
 }
 </script>

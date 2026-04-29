@@ -253,7 +253,6 @@ export default {
       sitemapPages: [],
       selectedItems: [],
       searchQuery: '',
-      filteredPagesCount: 0,
       showCheckboxes: false
     }
   },
@@ -367,17 +366,19 @@ export default {
       this.selectedItems = []
       this.showCheckboxes = false
       let promises = [this.$oh.api.get('/rest/sitemaps/*/definition'), this.$oh.api.get('/rest/ui/components/ui:page')]
-      Promise.all(promises).then((data) => {
-        this.sitemaps = data[0]
-        this.sitemapPages = this.sitemaps
-          .map((sitemap) => {
-            return {
-              uid: sitemap.name,
-              component: 'Sitemap',
-              editable: sitemap.editable,
-              config: {
-                label: sitemap.label || sitemap.name,
-                icon: sitemap.icon
+      Promise.all(promises)
+        .then((data) => {
+          this.sitemaps = data[0]
+          this.sitemapPages = this.sitemaps
+            .map((sitemap) => {
+              return {
+                uid: sitemap.name,
+                component: 'Sitemap',
+                editable: sitemap.editable,
+                config: {
+                  label: sitemap.label || sitemap.name,
+                  icon: sitemap.icon
+                }
               }
             })
             .sort((a, b) => {

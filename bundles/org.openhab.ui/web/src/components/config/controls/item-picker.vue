@@ -14,6 +14,7 @@
       <template #media>
         <f7-button
           v-if="!noModelPicker"
+          tabindex="-1"
           :icon-color="color"
           :icon-aurora="aurora"
           :icon-ios="ios"
@@ -24,7 +25,7 @@
       </template>
     </f7-list-item>
 
-    <f7-popup v-model:opened="popupOpen" @popup:opened="onPopupOpened">
+    <f7-popup class="item-picker-popup" v-model:opened="popupOpen" @popup:opened="onPopupOpened">
       <f7-page>
         <f7-navbar :title="label || $t('dialogs.itemPicker.popup.title')">
           <f7-nav-right>

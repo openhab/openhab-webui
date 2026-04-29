@@ -3,7 +3,7 @@
     v-if="isItemField"
     class="attribute-details-item-picker"
     :style="style"
-    :label="label"
+    tabindex="0"
     :value="value"
     :disabled="disabled"
     :showTitle="!value"
@@ -16,8 +16,10 @@
     v-else-if="isOperatorField"
     :style="style"
     :inputStyle="inputStyle"
+    tabindex="0"
     type="select"
     :value="value"
+    :no-chevron="disabled"
     :disabled="disabled"
     @change="$emit('change', $event)">
     <option v-for="option in operatorOptions" :key="option" :value="option">{{ option }}</option>
@@ -26,6 +28,7 @@
     v-else-if="isFieldObject"
     :style="style"
     :inputStyle="inputStyle"
+    tabindex="0"
     :type="type"
     :min="min"
     :max="max"

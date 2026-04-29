@@ -384,7 +384,7 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { mapWritableState } from 'pinia'
 
 import cloneDeep from 'lodash/cloneDeep'
@@ -395,16 +395,15 @@ import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
 import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [DirtyMixin, SitemapMixin, FileDefinition],
+  mixins: [SitemapMixin, FileDefinition],
   components: {
-//    SitemapCode,
+    //    SitemapCode,
     WidgetDetails,
     AttributeDetails,
     SitemapTreeviewItem,
@@ -477,7 +476,7 @@ export default {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
             { condition: { width: '10%', type: 'operator' } },
-            { value: { placeholder: 'value', required: true } }
+            { value: { width: '20%', placeholder: 'value', required: true } }
           ]
         }
       ],
@@ -486,7 +485,7 @@ export default {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
             { condition: { width: '10%', type: 'operator' } },
-            { value: { placeholder: 'value', required: true } }
+            { value: { width: '20%', placeholder: 'value', required: true } }
           ]
         },
         '=',
@@ -497,7 +496,7 @@ export default {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
             { condition: { width: '10%', type: 'operator' } },
-            { value: { placeholder: 'value', required: true } }
+            { value: { width: '20%', placeholder: 'value', required: true } }
           ]
         },
         '=',
@@ -604,6 +603,7 @@ export default {
         this.$refs.codeEditor.parseCode(
           () => {
             this.codeDirty = false
+            this.dirty = this.sitemapDirty
           },
           () => {
             this.currentTab = 'code'
@@ -614,6 +614,7 @@ export default {
     },
     onCodeChanged(codeDirty) {
       this.codeDirty = codeDirty
+      this.dirty = this.sitemapDirty || this.codeDirty
     },
     keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
@@ -625,7 +626,7 @@ export default {
       }
     },
     stripClosed(obj) {
-      // Remove the closed field as it is only used for expanding the tree, and should not impact the dirty state
+      // Remove the closed and parents field as it is only used for expanding the tree, and should not impact the dirty state
       if (Array.isArray(obj)) {
         return obj.map(this.stripClosed)
       } else if (obj !== null && typeof obj === 'object') {
@@ -633,7 +634,9 @@ export default {
         const { parent, closed, ...rest } = obj
         const result = {}
         for (const key in rest) {
-          result[key] = this.stripClosed(rest[key])
+          if (rest[key]?.length) {
+            result[key] = this.stripClosed(rest[key])
+          }
         }
         return result
       } else {
@@ -677,6 +680,21 @@ export default {
       }
     },
     save(stay, force) {
+      if (this.currentTab === 'code' && this.codeDirty) {
+        this.$refs.codeEditor.parseCode(
+          () => {
+            this.codeDirty = false
+            this.dirty = this.sitemapDirty
+            this.save(stay, true)
+          },
+          () => {
+            this.currentTab = 'code'
+            f7.tab.show('#code')
+            showToast('Please fix errors in the code before saving.')
+          }
+        )
+        return
+      }
       if (!this.sitemap.name) {
         f7.dialog.alert('Please give an name to the sitemap')
         return
@@ -702,9 +720,11 @@ export default {
       promise
         .then((data) => {
           this.sitemapDirty = this.codeDirty = false
+          this.dirty = false
           if (this.createMode) {
             showToast('Sitemap created')
-            this.f7router.navigate(this.f7route.url.replace('/add', '/' + sitemap.name), { reloadCurrent: true })
+            const targetUrl = (this.f7route?.url || '').replace(/\/(add|duplicate)(?:\/)?$/, '/' + sitemap.name)
+            this.f7router.navigate(targetUrl || '/settings/pages/sitemap/' + sitemap.name, { reloadCurrent: true })
           } else {
             showToast('Sitemap updated')
             this.lastCleanSitemap = this.stripClosed(this.sitemap)
@@ -833,7 +853,7 @@ export default {
             }
           })
         // Check Buttongrid widget has widgets defined.
-        // Duplicate row and column are only allowed if there are visibility rules to differentiate them.
+        // Duplicate row and column are only allowed if there are visibility rules to differentiate them
         widgetList
           .filter((widget) => widget.type === 'Buttongrid')
           .forEach((widget) => {
@@ -892,9 +912,6 @@ export default {
                         column +
                         ')'
                     )
-                  }
-                  if (visibilityRulePositions.has(key)) {
-                    validationWarnings.push('Button widget ' + childLabel + ', already exists for position (' + row + ',' + column + ')')
                   }
                   visibilityRulePositions.add(key)
                 }
@@ -986,7 +1003,76 @@ export default {
       }
       return true
     },
+    isNonEmptyValue(value) {
+      if (typeof value === 'string') {
+        return value !== ''
+      }
+      return value !== null && value !== undefined
+    },
+    sanitizeRuleCondition(condition) {
+      if (!condition || typeof condition !== 'object' || Array.isArray(condition)) {
+        return null
+      }
+      const sanitizedCondition = {}
+      ;['item', 'condition', 'value'].forEach((key) => {
+        if (this.isNonEmptyValue(condition[key])) {
+          sanitizedCondition[key] = condition[key]
+        }
+      })
+      return Object.keys(sanitizedCondition).length ? sanitizedCondition : null
+    },
+    sanitizeRuleEntry(rule) {
+      if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
+        return null
+      }
+      const sanitizedRule = {}
+      if (Array.isArray(rule.conditions)) {
+        const sanitizedConditions = rule.conditions.map((condition) => this.sanitizeRuleCondition(condition)).filter(Boolean)
+        if (sanitizedConditions.length) {
+          sanitizedRule.conditions = sanitizedConditions
+        }
+      }
+      if (this.isNonEmptyValue(rule.argument)) {
+        sanitizedRule.argument = rule.argument
+      }
+      return Object.keys(sanitizedRule).length ? sanitizedRule : null
+    },
+    sanitizeRuleAttributes(widget) {
+      const ruleAttributes = ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules']
+      ruleAttributes.forEach((ruleAttribute) => {
+        if (!Array.isArray(widget[ruleAttribute])) {
+          return
+        }
+        widget[ruleAttribute] = widget[ruleAttribute].map((rule) => this.sanitizeRuleEntry(rule)).filter(Boolean)
+        if (!widget[ruleAttribute].length) {
+          delete widget[ruleAttribute]
+        }
+      })
+    },
+    sanitizeMappingEntry(mapping) {
+      if (!mapping || typeof mapping !== 'object' || Array.isArray(mapping)) {
+        return null
+      }
+      const sanitizedMapping = {}
+      Object.keys(mapping).forEach((key) => {
+        if (this.isNonEmptyValue(mapping[key])) {
+          sanitizedMapping[key] = mapping[key]
+        }
+      })
+      return Object.keys(sanitizedMapping).length ? sanitizedMapping : null
+    },
+    sanitizeMappings(widget) {
+      if (!Array.isArray(widget.mappings)) {
+        return
+      }
+      widget.mappings = widget.mappings.map((mapping) => this.sanitizeMappingEntry(mapping)).filter(Boolean)
+      if (!widget.mappings.length) {
+        delete widget.mappings
+      }
+    },
     cleanConfig(widget) {
+      this.sanitizeRuleAttributes(widget)
+      this.sanitizeMappings(widget)
       for (let key in widget) {
         if (widget[key] && Array.isArray(widget[key])) {
           widget[key] = widget[key].filter(Boolean)
@@ -1008,7 +1094,9 @@ export default {
         processed.widgets.forEach(this.preProcessWidgetLoad)
       }
       this.setParents(processed)
+      const editable = processed.editable ?? true
       this.cleanConfig(processed)
+      processed.editable = editable
       return processed
     },
     preProcessWidgetLoad(widget) {
@@ -1063,9 +1151,8 @@ export default {
       widget.widgets?.forEach(this.preProcessWidgetSave)
     },
     update(value) {
-      this.selectedWidget = null
-      this.selectedWidgetParent = null
       this.sitemap = this.preProcessSitemapLoad(value)
+      this.selectRootSitemapWidget()
     },
     startEventSource() {},
     stopEventSource() {},
