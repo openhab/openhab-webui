@@ -241,7 +241,11 @@
             :smart-select-params="{ openIn: 'popover', closeOnSelect: true }"
             :no-chevron="!editable"
             :disabled="!editable">
-            <select name="inputHints" required :value="widget.inputHint?.toLowerCase() || ''" @change="updateParameter('inputHint', $event)">
+            <select
+              name="inputHints"
+              required
+              :value="widget.inputHint?.toLowerCase() || ''"
+              @change="updateParameter('inputHint', $event)">
               <option key="" />
               <option v-for="def in INPUT_HINT_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
