@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content title="Pages" back-link="Settings" back-link-url="/settings/" :f7router>
+      <oh-nav-content title="Sitemaps" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
@@ -31,46 +31,34 @@
           @click="removeSelected">
           Remove
         </f7-link>
+        <f7-link
+          v-show="selection.length"
+          color="blue"
+          class="copy display-flex flex-direction-row"
+          icon-ios="f7:square_on_square"
+          icon-aurora="f7:square_on_square"
+          @click="copySelected">
+          &nbsp;Copy
+        </f7-link>
       </div>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="toggleCheck()" />
       <div v-if="theme.md" class="title">{{ selection.length }} selected</div>
       <div v-if="theme.md && selection.length" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
       </div>
     </f7-toolbar>
 
     <f7-list-index
       v-if="ready"
-      v-show="groupBy === 'alphabetical' && !$device.desktop"
+      v-show="!$device.desktop"
       ref="listIndex"
-      :key="'pages-index'"
-      list-el=".pages-list"
+      :key="'sitemaps-index'"
+      list-el=".sitemaps-list"
       :scroll-list="true"
       :label="true" />
 
     <f7-block class="block-narrow">
-      <!-- skeleton for not ready -->
-      <f7-col v-if="!ready">
-        <f7-block-title>&nbsp;Loading...</f7-block-title>
-        <f7-list v-if="!ready" contacts-list class="col wide pages-list">
-          <f7-list-group>
-            <f7-list-item
-              v-for="n in 20"
-              media-item
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Title of the page"
-              subtitle="Page type"
-              after="The item state"
-              footer="Page ID">
-              <template #media>
-                <f7-skeleton-block style="width: 32px; height: 32px; border-radius: 50%" />
-              </template>
-            </f7-list-item>
-          </f7-list-group>
-        </f7-list>
-      </f7-col>
-
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>
@@ -79,22 +67,12 @@
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <div v-show="ready && uiPages.length > 0" class="padding-left padding-right">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
-            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')"> By type </f7-button>
-          </f7-segmented>
-        </div>
 
         <f7-list v-if="pages.length > 0 && filteredPages.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list
-          v-show="filteredPages.length > 0"
-          class="col pages-list"
-          ref="pagesList"
-          :contacts-list="groupBy === 'alphabetical'"
-          media-list>
+
+        <f7-list v-show="filteredPages.length > 0" class="col sitemaps-list" ref="pagesList" :contacts-list="true" media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
             <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -102,9 +80,8 @@
               :key="page.uid"
               media-item
               class="pagelist-item"
-              :checkbox="showCheckboxes && page.uid !== 'overview'"
+              :checkbox="showCheckboxes"
               :checked="isChecked(page.uid) ? true : null"
-              :disabled="showCheckboxes && page.uid === 'overview' ? true : null"
               prevent-router
               @click.ctrl="ctrlClick($event, page)"
               @click.meta="ctrlClick($event, page)"
@@ -115,32 +92,8 @@
               :subtitle="getPageType(page).label"
               :footer="page.uid"
               :badge="page.config.order">
-              <template #subtitle>
-                <div>
-                  <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                    <template #media>
-                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
-                    </template>
-                  </f7-chip>
-                  <f7-chip
-                    v-for="userrole in page.config.visibleTo || []"
-                    :key="userrole"
-                    :text="userrole"
-                    media-bg-color="green"
-                    style="margin-right: 6px">
-                    <template #media>
-                      <f7-icon f7="person_crop_circle_fill_badge_checkmark" />
-                    </template>
-                  </f7-chip>
-                </div>
-              </template>
-              <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
               <template #media>
-                <oh-icon
-                  :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
-                  :icon="getPageIcon(page)"
-                  :height="32"
-                  :width="32" />
+                <oh-icon :color="page.config.sidebar ? '' : 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
               </template>
               <template #after-title>
                 <f7-icon v-if="!page.editable" f7="lock_fill" size="1rem" color="gray" />
@@ -150,32 +103,24 @@
         </f7-list>
 
         <f7-block v-if="!pages.length" class="block-narrow">
-          <empty-state-placeholder icon="square_on_circle" title="pages.title" text="pages.text" />
+          <empty-state-placeholder icon="square_on_circle" title="sitemaps.title" text="sitemaps.text" />
+          <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
+            <f7-button
+              large
+              fill
+              color="blue"
+              external
+              :href="`${runtimeStore.websiteUrl}/docs/ui/sitemaps`"
+              target="_blank"
+              :text="$t('home.overview.button.documentation')" />
+          </f7-row>
         </f7-block>
       </f7-col>
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue">
+      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
-        <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
-        <f7-fab-buttons position="top">
-          <f7-fab-button fab-close label="Create layout" href="layout/add">
-            <f7-icon f7="rectangle_grid_2x2" />
-          </f7-fab-button>
-          <f7-fab-button fab-close label="Create tabbed page" href="tabs/add">
-            <f7-icon f7="squares_below_rectangle" />
-          </f7-fab-button>
-          <f7-fab-button fab-close label="Create map view" href="map/add">
-            <f7-icon f7="map" />
-          </f7-fab-button>
-          <f7-fab-button fab-close label="Create floor plan" href="plan/add">
-            <f7-icon f7="square_stack_3d_up" />
-          </f7-fab-button>
-          <f7-fab-button fab-close label="Create chart" href="chart/add">
-            <f7-icon f7="graph_square" />
-          </f7-fab-button>
-        </f7-fab-buttons>
       </f7-fab>
     </template>
   </f7-page>
@@ -185,6 +130,8 @@
 import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
+import FileDefinition from '@/pages/settings/file-definition-mixin'
+
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -192,6 +139,7 @@ import { showToast } from '@/js/dialog-promises'
 import { getPageType, getPageIcon } from '@/pages/page-type'
 
 export default {
+  mixins: [FileDefinition],
   props: {
     f7router: Object
   },
@@ -213,23 +161,16 @@ export default {
       ready: false,
       initSearchbar: false,
       loading: false,
-      uiPages: [],
+      sitemaps: [],
+      sitemapPages: [],
       selectedItems: [],
       showCheckboxes: false,
       searchQuery: ''
     }
   },
   computed: {
-    groupBy: {
-      get() {
-        return this.runtimeStore.pagesGroupOrder
-      },
-      set(value) {
-        this.runtimeStore.pagesGroupOrder = value
-      }
-    },
     pages() {
-      return this.uiPages
+      return this.sitemapPages
     },
     filteredPages() {
       if (!this.searchQuery.length) return this.pages
@@ -239,30 +180,13 @@ export default {
       return this.filteredPages.length
     },
     indexedPages() {
-      if (this.groupBy === 'alphabetical') {
-        return this.filteredPages.reduce((prev, page) => {
-          const label = page.config.label || page.uid
-          const initial = label.substring(0, 1).toUpperCase()
-          if (!prev[initial]) prev[initial] = []
-          prev[initial].push(page)
-
-          return prev
-        }, {})
-      } else {
-        const typeGroups = this.filteredPages.reduce((prev, page) => {
-          const type = getPageType(page).label
-          if (!prev[type]) prev[type] = []
-          prev[type].push(page)
-
-          return prev
-        }, {})
-        return Object.keys(typeGroups)
-          .sort((a, b) => a.localeCompare(b))
-          .reduce((objEntries, key) => {
-            objEntries[key] = typeGroups[key]
-            return objEntries
-          }, {})
-      }
+      return this.filteredPages.reduce((prev, page) => {
+        const label = page.config.label || page.uid
+        const initial = label.substring(0, 1).toUpperCase()
+        if (!prev[initial]) prev[initial] = []
+        prev[initial].push(page)
+        return prev
+      }, {})
     },
     searchPlaceholder() {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
@@ -273,9 +197,9 @@ export default {
     listTitle() {
       let title = this.filteredPagesCount
       if (this.searchQuery.length) {
-        title += ` of ${this.pages.length} pages found`
+        title += ` of ${this.pages.length} sitemaps found`
       } else {
-        title += ' pages'
+        title += ' sitemaps'
       }
       if (this.selection.length > 0) {
         title += `, ${this.selection.length} selected`
@@ -283,7 +207,7 @@ export default {
       return title
     },
     selectablePageUids() {
-      return this.filteredPages.filter((page) => page.uid !== 'overview').map((page) => page.uid)
+      return this.filteredPages.map((page) => page.uid)
     },
     selection() {
       return this.selectablePageUids.filter((uid) => this.selectedItems.includes(uid))
@@ -309,20 +233,30 @@ export default {
       if (this.initSearchbar) this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.uiPages = []
+      this.sitemaps = []
+      this.sitemapPages = []
       this.selectedItems = []
       this.showCheckboxes = false
+
       this.$oh.api
-        .get('/rest/ui/components/ui:page')
+        .get('/rest/sitemaps/*/definition')
         .then((data) => {
-          this.uiPages = data
-            .map((page) => {
-              page.editable = true
-              return page
+          this.sitemaps = data
+          this.sitemapPages = this.sitemaps
+            .map((sitemap) => {
+              return {
+                uid: sitemap.name,
+                component: 'Sitemap',
+                editable: sitemap.editable,
+                config: {
+                  label: sitemap.label || sitemap.name,
+                  icon: sitemap.icon,
+                  sidebar: sitemap.sidebar
+                }
+              }
             })
-            .sort((a, b) => {
-              return a.config.label.localeCompare(b.config.label)
-            })
+            .sort((a, b) => a.config.label.localeCompare(b.config.label))
+
           this.initSearchbar = true
           this.ready = true
 
@@ -336,23 +270,11 @@ export default {
         })
         .catch((err) => {
           console.error(err)
-          showToast('An error occurred while loading pages: ' + (err?.message || String(err)))
+          showToast('An error occurred while loading sitemaps: ' + (err?.message || String(err)))
         })
         .finally(() => {
           this.loading = false
         })
-    },
-    switchGroupOrder(groupBy) {
-      this.groupBy = groupBy
-      const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
-      const filterQuery = searchbar?.query
-      nextTick(() => {
-        if (filterQuery) {
-          searchbar.clear()
-          searchbar.search(filterQuery)
-        }
-        if (this.groupBy === 'alphabetical') this.$refs.listIndex.update()
-      })
     },
     toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
@@ -367,13 +289,7 @@ export default {
       return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
     },
     getPageSearchText(page) {
-      const searchFields = [
-        page.config?.label,
-        page.uid,
-        this.getPageType(page)?.label,
-        ...(page.tags || []),
-        ...(page.config?.visibleTo || []).map((role) => role)
-      ]
+      const searchFields = [page.config?.label, page.uid, ...(page.tags || []), ...(page.config?.visibleTo || []).map((role) => role)]
       return searchFields.filter(Boolean).join(' ').toLowerCase()
     },
     pageMatchesSearch(page, query) {
@@ -389,6 +305,13 @@ export default {
         this.selectedItems = this.selectablePageUids
       }
     },
+    copySelected() {
+      if (this.selection.length === 0) {
+        showToast('No sitemaps selected to copy')
+        return
+      }
+      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, this.selection)
+    },
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
@@ -402,7 +325,6 @@ export default {
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, itemName, item) {
-      if (itemName === 'overview') return
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(itemName)) {
         this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
@@ -414,25 +336,29 @@ export default {
     getPageIcon,
     getPageLink(page) {
       if (!page.editable) return null
-      const type = this.getPageType(page)
-      return type ? `${encodeURIComponent(type.type)}/${encodeURIComponent(page.uid)}` : null
+      return encodeURIComponent(page.uid)
     },
     removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(`Remove ${this.selection.length} selected pages?`, `Remove Pages`, () => {
+      f7.dialog.confirm(`Remove ${this.selection.length} selected sitemaps?`, `Remove Sitemaps`, () => {
         vm.doRemoveSelected()
       })
     },
     doRemoveSelected() {
-      let dialog = f7.dialog.progress(`Deleting Pages...`)
+      if (this.selection.some((i) => !this.sitemapPages.find((s) => s.uid === i)?.editable)) {
+        f7.dialog.alert('Some of the selected sitemaps are not modifiable because they have been created by textual configuration')
+        return
+      }
+
+      let dialog = f7.dialog.progress(`Deleting Sitemaps...`)
 
       const promises = this.selection.map((p) => {
-        return this.$oh.api.delete('/rest/ui/components/ui:page/' + p)
+        return this.$oh.api.delete('/rest/sitemaps/' + p)
       })
       Promise.all(promises)
         .then((data) => {
-          showToast('Pages removed')
+          showToast('Sitemaps removed')
           this.selectedItems = []
           dialog.close()
           this.load()
