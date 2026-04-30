@@ -117,19 +117,6 @@
                 </template>
               </f7-list-item>
               <f7-list-item
-                v-if="runtimeStore.apiEndpoint('sitemaps')"
-                link="/settings/sitemaps/"
-                title="Sitemaps"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.settings?.sitemaps }">
-                <template #media>
-                  <f7-icon f7="menu" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
                 v-if="runtimeStore.apiEndpoint('rules')"
                 link="/settings/rules/"
                 title="Rules"

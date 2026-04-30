@@ -110,7 +110,6 @@
               @click.meta="ctrlClick($event, page)"
               @click.exact="click($event, page)"
               :link="getPageLink(page)"
-              :no-chevron="!page.editable"
               :title="page.config.label"
               :subtitle="getPageType(page).label"
               :footer="page.uid"
@@ -148,10 +147,6 @@
             </f7-list-item>
           </f7-list-group>
         </f7-list>
-
-        <f7-block v-if="!pages.length" class="block-narrow">
-          <empty-state-placeholder icon="square_on_circle" title="pages.title" text="pages.text" />
-        </f7-block>
       </f7-col>
     </f7-block>
 
@@ -187,16 +182,12 @@ import { f7, theme } from 'framework7-vue'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { showToast } from '@/js/dialog-promises'
 import { getPageType, getPageIcon } from '@/pages/page-type'
 
 export default {
   props: {
     f7router: Object
-  },
-  components: {
-    EmptyStatePlaceholder
   },
   setup() {
     const runtimeStore = useRuntimeStore()

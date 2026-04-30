@@ -89,7 +89,6 @@
               :link="getPageLink(page)"
               :no-chevron="!page.editable"
               :title="page.config.label"
-              :subtitle="getPageType(page).label"
               :footer="page.uid"
               :badge="page.config.order">
               <template #media>
@@ -136,7 +135,6 @@ import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { showToast } from '@/js/dialog-promises'
-import { getPageType, getPageIcon } from '@/pages/page-type'
 
 export default {
   mixins: [FileDefinition],
@@ -224,13 +222,13 @@ export default {
       this.load()
     },
     onPageBeforeOut() {
-      this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.lastSearchQueryStore.lastSitemapsSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      if (this.initSearchbar) this.lastSearchQueryStore.lastSitemapsSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
       this.sitemaps = []
@@ -265,7 +263,7 @@ export default {
             if (this.$device.desktop && this.$refs.searchbar) {
               this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
             }
-            this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastPagesSearchQuery || '')
+            this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastSitemapsSearchQuery || '')
           })
         })
         .catch((err) => {
@@ -332,8 +330,9 @@ export default {
         this.selectedItems.push(itemName)
       }
     },
-    getPageType,
-    getPageIcon,
+    getPageIcon(page) {
+      return page.config.icon || 'f7:menu'
+    },
     getPageLink(page) {
       if (!page.editable) return null
       return encodeURIComponent(page.uid)

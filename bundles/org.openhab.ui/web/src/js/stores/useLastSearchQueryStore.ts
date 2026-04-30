@@ -6,6 +6,7 @@ export const useLastSearchQueryStore = defineStore('lastSearchQuery', () => {
   const lastItemSearchQuery = ref<string>('')
   const lastThingsSearchQuery = ref<string>('')
   const lastPagesSearchQuery = ref<string>('')
+  const lastSitemapsSearchQuery = ref<string>('')
   const lastScheduleSearchQuery = ref<string>('')
   const lastModelSearchQuery = ref<string>('')
   const lastRulesSearchQuery = ref<object>({})
