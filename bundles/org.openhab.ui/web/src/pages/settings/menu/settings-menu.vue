@@ -424,9 +424,9 @@ export default {
             console.error('Error loading items:', error.message)
           })
 
-      if (useRuntimeStore().apiEndpoint('ui'))
+      if (useRuntimeStore().apiEndpoint('sitemaps'))
         api
-          .getRegisteredUiComponentsInNamespace({ namespace: 'system:sitemap' })
+          .getSitemaps()
           .then((data) => {
             this.sitemapsCount = data.length
           })
