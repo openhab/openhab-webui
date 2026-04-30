@@ -52,8 +52,9 @@ const props = defineProps<{
 
 defineEmits(['add-block', 'add-masonry'])
 
-const { config, childContext, scopedCssUid, defaultSlots, evaluateExpression } = useWidgetContext(computed(() => props.context))
-const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+const context = computed(() => props.context)
+const { config, childContext, scopedCssUid, defaultSlots, evaluateExpression } = useWidgetContext(context)
+const { performAction } = useWidgetAction(context, config, evaluateExpression)
 
 const masonrySlots = computed(() => ('slots' in props.context.component && props.context.component.slots.masonry) || [])
 </script>

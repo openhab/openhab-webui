@@ -26,9 +26,10 @@ export default {
   },
   widget: OhImageDefinition,
   setup(props) {
-    const { config, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
-    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
-    return { config, hasAction, performAction }
+    const context = computed(() => props.context)
+    const { config, hasAction, evaluateExpression } = useWidgetContext(context)
+    const { performAction } = useWidgetAction(context, config, evaluateExpression)
+    return { config, hasAction, performAction, context }
   },
   data() {
     return {

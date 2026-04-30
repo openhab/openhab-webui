@@ -23,9 +23,10 @@ export default {
   },
   widget: OhLinkDefinition,
   setup(props) {
-    const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(computed(() => props.context))
-    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
-    return { config, childContext, hasAction, defaultSlots, performAction }
+    const context = computed(() => props.context)
+    const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(context)
+    const { performAction } = useWidgetAction(context, config, evaluateExpression)
+    return { config, childContext, hasAction, defaultSlots, performAction, context }
   },
   methods: {
     clicked() {

@@ -1,0 +1,5 @@
+{
+  "worktree": {
+    "setup": "npm list --prefix bundles/org.openhab.ui/web"
+  }
+}

@@ -24,9 +24,10 @@ export default {
   },
   widget: OhLabelItemDefinition,
   setup(props) {
-    const { config, evaluateExpression } = useWidgetContext(computed(() => props.context))
-    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
-    return { config, performAction }
+    const context = computed(() => props.context)
+    const { config, evaluateExpression } = useWidgetContext(context)
+    const { performAction } = useWidgetAction(context, config, evaluateExpression)
+    return { config, performAction, context }
   }
 }
 </script>

@@ -184,9 +184,10 @@ export default {
     state: String
   },
   setup(props) {
-    const { config, childContext, evaluateExpression, hasAction, slots, defaultSlots } = useWidgetContext(computed(() => props.context))
-    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
-    return { config, childContext, hasAction, slots, defaultSlots, performAction }
+    const context = computed(() => props.context)
+    const { config, childContext, evaluateExpression, hasAction, slots, defaultSlots } = useWidgetContext(context)
+    const { performAction } = useWidgetAction(context, config, evaluateExpression)
+    return { config, childContext, hasAction, slots, defaultSlots, performAction, context }
   },
   data() {
     return {
