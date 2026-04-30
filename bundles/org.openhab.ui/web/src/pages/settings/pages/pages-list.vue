@@ -300,10 +300,9 @@ export default {
       this.$oh.api
         .get('/rest/ui/components/ui:page')
         .then((data) => {
-          this.pages = data
-            .sort((a, b) => {
-              return a.config.label.localeCompare(b.config.label)
-            })
+          this.pages = data.sort((a, b) => {
+            return a.config.label.localeCompare(b.config.label)
+          })
           this.initSearchbar = true
           this.ready = true
 

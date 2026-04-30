@@ -284,7 +284,12 @@ export default {
       return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
     },
     getSitemapSearchText(sitemap) {
-      const searchFields = [sitemap.config?.label, sitemap.uid, ...(sitemap.tags || []), ...(sitemap.config?.visibleTo || []).map((role) => role)]
+      const searchFields = [
+        sitemap.config?.label,
+        sitemap.uid,
+        ...(sitemap.tags || []),
+        ...(sitemap.config?.visibleTo || []).map((role) => role)
+      ]
       return searchFields.filter(Boolean).join(' ').toLowerCase()
     },
     sitemapMatchesSearch(sitemap, query) {
