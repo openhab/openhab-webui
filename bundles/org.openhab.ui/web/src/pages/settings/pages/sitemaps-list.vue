@@ -89,13 +89,13 @@
               @click.ctrl="ctrlClick($event, sitemap)"
               @click.meta="ctrlClick($event, sitemap)"
               @click.exact="click($event, sitemap)"
-              :link="getPageLink(sitemap)"
+              :link="getSitemapLink(sitemap)"
               :no-chevron="!sitemap.editable"
               :title="sitemap.config.label"
               :footer="sitemap.uid"
               :badge="sitemap.config.order">
               <template #media>
-                <oh-icon :color="sitemap.config.sidebar ? '' : 'gray'" :icon="getPageIcon(sitemap)" :height="32" :width="32" />
+                <oh-icon :color="sitemap.config.sidebar ? '' : 'gray'" :icon="getSitemapIcon(sitemap)" :height="32" :width="32" />
               </template>
               <template #after-title>
                 <f7-icon v-if="!sitemap.editable" f7="lock_fill" size="1rem" color="gray" />
@@ -336,14 +336,15 @@ export default {
       // which would cause it to go out of sync with Vue's state.
       // This is because f7-list-item renders a <label> that wraps the checkbox <input>.
       // without this, the browser's native label click would toggle el.checked independently of Vue's binding.
+      // This issue only occurs when the list item has no link (i.e. is not editable)
       event.preventDefault()
     },
-    getPageIcon(page) {
-      return page.config.icon || 'f7:menu'
+    getSitemapIcon(sitemap) {
+      return sitemap.config.icon || 'f7:menu'
     },
-    getPageLink(page) {
-      if (!page.editable) return null
-      return encodeURIComponent(page.uid)
+    getSitemapLink(sitemap) {
+      if (!sitemap.editable) return null
+      return encodeURIComponent(sitemap.uid)
     },
     removeSelected() {
       const vm = this

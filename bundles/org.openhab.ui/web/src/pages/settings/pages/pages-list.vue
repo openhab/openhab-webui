@@ -390,9 +390,6 @@ export default {
       } else {
         this.selectedItems.push(itemName)
       }
-      // f7-list-item renders a <label> wrapping the checkbox <input>; without this,
-      // the browser's native label click would toggle el.checked independently of Vue's binding.
-      event.preventDefault()
     },
     getPageType,
     getPageIcon,

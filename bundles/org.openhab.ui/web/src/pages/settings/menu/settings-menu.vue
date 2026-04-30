@@ -223,7 +223,7 @@
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
+import { theme } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
 
 import AddonSection from './addon-section.vue'
