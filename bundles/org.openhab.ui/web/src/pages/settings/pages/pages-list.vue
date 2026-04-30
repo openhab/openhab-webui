@@ -134,13 +134,13 @@
                 </div>
               </template>
               <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-              <template #after>
+              <!-- <template #after> -->
                 <!-- This is here to push the after-title icon so it would appear immediately after the title
                      for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
-              </template>
+              <!-- </template>
               <template #after-title>
                 <f7-icon v-if="page.editable === false" f7="lock_fill" size="1rem" color="gray" />
-              </template>
+              </template> -->
               <template #media>
                 <oh-icon
                   :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
