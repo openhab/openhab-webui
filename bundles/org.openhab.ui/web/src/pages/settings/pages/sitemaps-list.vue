@@ -10,7 +10,7 @@
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
-          class="searchbar-pages"
+          class="searchbar-sitemaps"
           :custom-search="true"
           @searchbar:search="searchbarSearch"
           @searchbar:clear="searchbarClear"
@@ -62,46 +62,49 @@
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && selectablePageUids.length">
+          <template v-if="showCheckboxes && selectableSitemapUids.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
 
-        <f7-list v-if="pages.length > 0 && filteredPages.length === 0" class="searchbar-not-found">
+        <f7-list v-if="sitemaps.length > 0 && filteredSitemaps.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
 
-        <f7-list v-show="filteredPages.length > 0" class="col sitemaps-list" ref="pagesList" :contacts-list="true" media-list>
-          <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
-            <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
+        <f7-list v-show="filteredSitemaps.length > 0" class="col sitemaps-list" ref="sitemapsList" :contacts-list="true" media-list>
+          <f7-list-group v-for="(sitemapsWithInitial, initial) in indexedSitemaps" :key="initial">
+            <f7-list-item v-if="sitemapsWithInitial.length" :title="initial" group-title />
+            <!-- We have to use :key with a dynamic value to ensure proper reactivity to selection changes
+              A root cause of selection reactivity issues was unclear.
+            -->
             <f7-list-item
-              v-for="page in pagesWithInitial"
-              :key="page.uid"
+              v-for="sitemap in sitemapsWithInitial"
+              :key="sitemap.uid"
               media-item
-              class="pagelist-item"
+              class="sitemapslist-item"
               :checkbox="showCheckboxes"
-              :checked="isChecked(page.uid) ? true : null"
+              :checked="isChecked(sitemap.uid) ? true : null"
               prevent-router
-              @click.ctrl="ctrlClick($event, page)"
-              @click.meta="ctrlClick($event, page)"
-              @click.exact="click($event, page)"
-              :link="getPageLink(page)"
-              :no-chevron="!page.editable"
-              :title="page.config.label"
-              :footer="page.uid"
-              :badge="page.config.order">
+              @click.ctrl="ctrlClick($event, sitemap)"
+              @click.meta="ctrlClick($event, sitemap)"
+              @click.exact="click($event, sitemap)"
+              :link="getPageLink(sitemap)"
+              :no-chevron="!sitemap.editable"
+              :title="sitemap.config.label"
+              :footer="sitemap.uid"
+              :badge="sitemap.config.order">
               <template #media>
-                <oh-icon :color="page.config.sidebar ? '' : 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
+                <oh-icon :color="sitemap.config.sidebar ? '' : 'gray'" :icon="getPageIcon(sitemap)" :height="32" :width="32" />
               </template>
               <template #after-title>
-                <f7-icon v-if="!page.editable" f7="lock_fill" size="1rem" color="gray" />
+                <f7-icon v-if="!sitemap.editable" f7="lock_fill" size="1rem" color="gray" />
               </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
 
-        <f7-block v-if="!pages.length" class="block-narrow">
+        <f7-block v-if="!sitemaps.length" class="block-narrow">
           <empty-state-placeholder icon="square_on_circle" title="sitemaps.title" text="sitemaps.text" />
           <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
             <f7-button
@@ -160,29 +163,25 @@ export default {
       initSearchbar: false,
       loading: false,
       sitemaps: [],
-      sitemapPages: [],
       selectedItems: [],
       showCheckboxes: false,
       searchQuery: ''
     }
   },
   computed: {
-    pages() {
-      return this.sitemapPages
+    filteredSitemaps() {
+      if (!this.searchQuery.length) return this.sitemaps
+      return this.sitemaps.filter((sitemap) => this.sitemapMatchesSearch(sitemap, this.searchQuery))
     },
-    filteredPages() {
-      if (!this.searchQuery.length) return this.pages
-      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery))
+    filteredSitemapsCount() {
+      return this.filteredSitemaps.length
     },
-    filteredPagesCount() {
-      return this.filteredPages.length
-    },
-    indexedPages() {
-      return this.filteredPages.reduce((prev, page) => {
-        const label = page.config.label || page.uid
+    indexedSitemaps() {
+      return this.filteredSitemaps.reduce((prev, sitemap) => {
+        const label = sitemap.config.label || sitemap.uid
         const initial = label.substring(0, 1).toUpperCase()
         if (!prev[initial]) prev[initial] = []
-        prev[initial].push(page)
+        prev[initial].push(sitemap)
         return prev
       }, {})
     },
@@ -190,12 +189,12 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      return this.selectablePageUids.length > 0 && this.selectablePageUids.every((uid) => this.selectedItems.includes(uid))
+      return this.selectedItems.length > 0 && this.selectedItems.length >= this.selectableSitemapUids.length
     },
     listTitle() {
-      let title = this.filteredPagesCount
+      let title = this.filteredSitemapsCount
       if (this.searchQuery.length) {
-        title += ` of ${this.pages.length} sitemaps found`
+        title += ` of ${this.sitemaps.length} sitemaps found`
       } else {
         title += ' sitemaps'
       }
@@ -204,11 +203,11 @@ export default {
       }
       return title
     },
-    selectablePageUids() {
-      return this.filteredPages.map((page) => page.uid)
+    selectableSitemapUids() {
+      return this.filteredSitemaps.map((sitemap) => sitemap.uid)
     },
     selection() {
-      return this.selectablePageUids.filter((uid) => this.selectedItems.includes(uid))
+      return this.selectableSitemapUids.filter((uid) => this.selectedItems.includes(uid))
     }
   },
   methods: {
@@ -232,7 +231,6 @@ export default {
       this.initSearchbar = false
 
       this.sitemaps = []
-      this.sitemapPages = []
       this.selectedItems = []
       this.showCheckboxes = false
 
@@ -240,7 +238,6 @@ export default {
         .get('/rest/sitemaps/*/definition')
         .then((data) => {
           this.sitemaps = data
-          this.sitemapPages = this.sitemaps
             .map((sitemap) => {
               return {
                 uid: sitemap.name,
@@ -286,21 +283,22 @@ export default {
     getNormalizedSearchTerms(query) {
       return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
     },
-    getPageSearchText(page) {
-      const searchFields = [page.config?.label, page.uid, ...(page.tags || []), ...(page.config?.visibleTo || []).map((role) => role)]
+    getSitemapSearchText(sitemap) {
+      const searchFields = [sitemap.config?.label, sitemap.uid, ...(sitemap.tags || []), ...(sitemap.config?.visibleTo || []).map((role) => role)]
       return searchFields.filter(Boolean).join(' ').toLowerCase()
     },
-    pageMatchesSearch(page, query) {
+    sitemapMatchesSearch(sitemap, query) {
       const terms = this.getNormalizedSearchTerms(query)
       if (!terms.length) return true
-      const pageSearchText = this.getPageSearchText(page)
-      return terms.every((term) => pageSearchText.includes(term))
+      const sitemapSearchText = this.getSitemapSearchText(sitemap)
+      return terms.every((term) => sitemapSearchText.includes(term))
     },
     selectDeselectAll() {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        this.selectedItems = this.selectablePageUids
+        // assign a copy so mutations to `selectedItems` don't modify the computed `selectableSitemapUids` array
+        this.selectedItems = Array.from(this.selectableSitemapUids)
       }
     },
     copySelected() {
@@ -329,6 +327,11 @@ export default {
       } else {
         this.selectedItems.push(itemName)
       }
+      // Calling preventDefault() is necessary to prevent the default label-click behavior of toggling the checkbox,
+      // which would cause it to go out of sync with Vue's state.
+      // This is because f7-list-item renders a <label> that wraps the checkbox <input>.
+      // without this, the browser's native label click would toggle el.checked independently of Vue's binding.
+      event.preventDefault()
     },
     getPageIcon(page) {
       return page.config.icon || 'f7:menu'
@@ -345,7 +348,7 @@ export default {
       })
     },
     doRemoveSelected() {
-      if (this.selection.some((i) => !this.sitemapPages.find((s) => s.uid === i)?.editable)) {
+      if (this.selection.some((i) => !this.sitemaps.find((s) => s.uid === i)?.editable)) {
         f7.dialog.alert('Some of the selected sitemaps are not modifiable because they have been created by textual configuration')
         return
       }

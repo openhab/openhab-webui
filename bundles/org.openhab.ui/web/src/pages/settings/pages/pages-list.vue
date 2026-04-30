@@ -79,7 +79,7 @@
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <div v-show="ready && uiPages.length > 0" class="padding-left padding-right">
+        <div v-show="ready && pages.length > 0" class="padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
             <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')"> By type </f7-button>
@@ -204,7 +204,7 @@ export default {
       ready: false,
       initSearchbar: false,
       loading: false,
-      uiPages: [],
+      pages: [],
       selectedItems: [],
       showCheckboxes: false,
       searchQuery: ''
@@ -218,9 +218,6 @@ export default {
       set(value) {
         this.runtimeStore.pagesGroupOrder = value
       }
-    },
-    pages() {
-      return this.uiPages
     },
     filteredPages() {
       if (!this.searchQuery.length) return this.pages
@@ -259,7 +256,7 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      return this.selectablePageUids.length > 0 && this.selectablePageUids.every((uid) => this.selectedItems.includes(uid))
+      return this.selectablePageUids.length > 0 && this.selectedItems.length >= this.selectablePageUids.length
     },
     listTitle() {
       let title = this.filteredPagesCount
@@ -300,13 +297,13 @@ export default {
       if (this.initSearchbar) this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.uiPages = []
+      this.pages = []
       this.selectedItems = []
       this.showCheckboxes = false
       this.$oh.api
         .get('/rest/ui/components/ui:page')
         .then((data) => {
-          this.uiPages = data
+          this.pages = data
             .map((page) => {
               page.editable = true
               return page
@@ -377,7 +374,8 @@ export default {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        this.selectedItems = this.selectablePageUids
+        // assign a copy so mutations to `selectedItems` don't modify the computed `selectablePageUids` array
+        this.selectedItems = Array.from(this.selectablePageUids)
       }
     },
     click(event, item) {
@@ -400,6 +398,9 @@ export default {
       } else {
         this.selectedItems.push(itemName)
       }
+      // f7-list-item renders a <label> wrapping the checkbox <input>; without this,
+      // the browser's native label click would toggle el.checked independently of Vue's binding.
+      event.preventDefault()
     },
     getPageType,
     getPageIcon,
