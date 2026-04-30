@@ -55,7 +55,8 @@
                 currentPath.settings?.services ||
                 currentPath.settings?.addons ||
                 currentPath.settings?.persistence ||
-                currentPath.settings?.transformations
+                currentPath.settings?.transformations ||
+                currentPath.settings?.sitemaps
             }">
             <template #media>
               <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
