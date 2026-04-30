@@ -141,9 +141,6 @@
                   :height="32"
                   :width="32" />
               </template>
-              <template #after-title>
-                <f7-icon v-if="!page.editable" f7="lock_fill" size="1rem" color="gray" />
-              </template>
             </f7-list-item>
           </f7-list-group>
         </f7-list>
@@ -304,10 +301,6 @@ export default {
         .get('/rest/ui/components/ui:page')
         .then((data) => {
           this.pages = data
-            .map((page) => {
-              page.editable = true
-              return page
-            })
             .sort((a, b) => {
               return a.config.label.localeCompare(b.config.label)
             })
@@ -405,7 +398,6 @@ export default {
     getPageType,
     getPageIcon,
     getPageLink(page) {
-      if (!page.editable) return null
       const type = this.getPageType(page)
       return type ? `${encodeURIComponent(type.type)}/${encodeURIComponent(page.uid)}` : null
     },
