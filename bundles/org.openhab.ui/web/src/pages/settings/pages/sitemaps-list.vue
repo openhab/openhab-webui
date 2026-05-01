@@ -80,22 +80,21 @@
             -->
             <f7-list-item
               v-for="sitemap in sitemapsWithInitial"
-              :key="sitemap.uid"
+              :key="sitemap.name"
               media-item
               class="sitemapslist-item"
               :checkbox="showCheckboxes"
-              :checked="isChecked(sitemap.uid) ? true : null"
+              :checked="isChecked(sitemap.name) ? true : null"
               prevent-router
               @click.ctrl="ctrlClick($event, sitemap)"
               @click.meta="ctrlClick($event, sitemap)"
               @click.exact="click($event, sitemap)"
-              :link="getSitemapLink(sitemap)"
+              :link="sitemap.editable ? encodeURIComponent(sitemap.name) : null"
               :no-chevron="!sitemap.editable"
-              :title="sitemap.config.label"
-              :footer="sitemap.uid"
-              :badge="sitemap.config.order">
+              :title="sitemap.label"
+              :footer="sitemap.name">
               <template #media>
-                <oh-icon :color="sitemap.config.sidebar ? '' : 'gray'" :icon="getSitemapIcon(sitemap)" :height="32" :width="32" />
+                <oh-icon :icon="sitemap.icon || 'f7:menu'" :height="32" :width="32" />
               </template>
               <template #after-title>
                 <f7-icon v-if="!sitemap.editable" f7="lock_fill" size="1rem" color="gray" />
@@ -178,7 +177,7 @@ export default {
     },
     indexedSitemaps() {
       return this.filteredSitemaps.reduce((prev, sitemap) => {
-        const label = sitemap.config.label || sitemap.uid
+        const label = sitemap.label || sitemap.name
         const initial = label.substring(0, 1).toUpperCase()
         if (!prev[initial]) prev[initial] = []
         prev[initial].push(sitemap)
@@ -237,21 +236,7 @@ export default {
       this.$oh.api
         .get('/rest/sitemaps/*/definition')
         .then((data) => {
-          this.sitemaps = data
-            .map((sitemap) => {
-              return {
-                uid: sitemap.name,
-                component: 'Sitemap',
-                editable: sitemap.editable,
-                config: {
-                  label: sitemap.label || sitemap.name,
-                  icon: sitemap.icon,
-                  sidebar: sitemap.sidebar
-                }
-              }
-            })
-            .sort((a, b) => a.config.label.localeCompare(b.config.label))
-
+          this.sitemaps = data.sort((a, b) => a.label.localeCompare(b.label))
           this.initSearchbar = true
           this.ready = true
 
@@ -284,13 +269,8 @@ export default {
       return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
     },
     getSitemapSearchText(sitemap) {
-      const searchFields = [
-        sitemap.config?.label,
-        sitemap.uid,
-        ...(sitemap.tags || []),
-        ...(sitemap.config?.visibleTo || []).map((role) => role)
-      ]
-      return searchFields.filter(Boolean).join(' ').toLowerCase()
+      const searchText = sitemap.label + ' ' + sitemap.name
+      return searchText.toLowerCase()
     },
     sitemapMatchesSearch(sitemap, query) {
       const terms = this.getNormalizedSearchTerms(query)
@@ -315,14 +295,14 @@ export default {
     },
     click(event, item) {
       if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.uid, item)
+        this.toggleItemCheck(event, item.name, item)
       } else {
         const pageLink = this.getPageLink(item)
         if (pageLink) this.f7router.navigate(pageLink)
       }
     },
     ctrlClick(event, item) {
-      this.toggleItemCheck(event, item.uid, item)
+      this.toggleItemCheck(event, item.name, item)
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, itemName, item) {
@@ -339,13 +319,6 @@ export default {
       // This issue only occurs when the list item has no link (i.e. is not editable)
       event.preventDefault()
     },
-    getSitemapIcon(sitemap) {
-      return sitemap.config.icon || 'f7:menu'
-    },
-    getSitemapLink(sitemap) {
-      if (!sitemap.editable) return null
-      return encodeURIComponent(sitemap.uid)
-    },
     removeSelected() {
       const vm = this
 
@@ -354,7 +327,7 @@ export default {
       })
     },
     doRemoveSelected() {
-      if (this.selection.some((i) => !this.sitemaps.find((s) => s.uid === i)?.editable)) {
+      if (this.selection.some((i) => !this.sitemaps.find((s) => s.name === i)?.editable)) {
         f7.dialog.alert('Some of the selected sitemaps are not modifiable because they have been created by textual configuration')
         return
       }
