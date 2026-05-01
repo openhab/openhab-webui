@@ -206,12 +206,16 @@ export default {
       }
       useStatesStore().stopTrackingStates()
     },
-    onEditorInput: useThrottleFn(function (value) {
-      this.widgetDefinition = value
-      if (!this.loading) {
-        this.dirty = true
-      }
-    }, 300),
+    onEditorInput: useThrottleFn(
+      function (value) {
+        this.widgetDefinition = value
+        if (!this.loading) {
+          this.dirty = true
+        }
+      },
+      300,
+      true
+    ),
     keyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         switch (ev.keyCode) {
