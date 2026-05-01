@@ -207,9 +207,13 @@ const mediaType = computed(() => SupportedMediaTypes.items[codeEditorType.value]
 // watchers
 watch(
   code,
-  useThrottleFn(() => {
-    parseItems()
-  }, 300)
+  useThrottleFn(
+    () => {
+      parseItems()
+    },
+    300,
+    true
+  )
 )
 
 watch(codeEditorType, () => {
