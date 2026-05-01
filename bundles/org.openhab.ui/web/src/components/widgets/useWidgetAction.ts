@@ -58,15 +58,11 @@ export type WidgetActionConfig = ActionConfig & { actionPropsParameterGroup?: st
 /**
  * useWidgetAction implements the execution of widget actions.
  *
- * @param context the reactive widget context
- * @param config the widget component's config
+ * @param context the reactive widget context (use `computed(() => props.context)` to convert the component prop to a reactive ref)
+ * @param config the widget component's config (usually `useWidgetContext::config`)
  * @param evaluateExpression useWidgetExpression's evaluateExpression function, usually `useWidgetContext::evaluateExpression`
  */
-export function useWidgetAction(
-  context: Ref<WidgetContext>,
-  config: Ref<WidgetActionConfig>,
-  evaluateExpression: EvaluateExpressionFn
-) {
+export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetActionConfig>, evaluateExpression: EvaluateExpressionFn) {
   const { t } = useI18n()
 
   const statesStore = useStatesStore()
