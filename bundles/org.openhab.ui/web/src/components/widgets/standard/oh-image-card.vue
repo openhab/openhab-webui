@@ -58,7 +58,7 @@ export default {
     const context = computed(() => props.context)
     const { config, cardChildContext, hasAction, evaluateExpression } = useWidgetContext(context)
     const { performAction } = useWidgetAction(context, config, evaluateExpression)
-    return { config, cardChildContext, hasAction, performAction, context }
+    return { config, cardChildContext, hasAction, performAction }
   }
 }
 </script>

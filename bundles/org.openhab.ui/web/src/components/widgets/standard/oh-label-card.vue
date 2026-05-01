@@ -79,7 +79,7 @@ export default {
     const context = computed(() => props.context)
     const { config, hasAction, evaluateExpression } = useWidgetContext(context)
     const { performAction, onTaphold, onContextMenu } = useWidgetAction(context, config, evaluateExpression)
-    return { config, hasAction, evaluateExpression, performAction, onTaphold, onContextMenu, context }
+    return { config, hasAction, evaluateExpression, performAction, onTaphold, onContextMenu }
   },
   data() {
     return {

@@ -88,7 +88,7 @@ export default {
     const context = computed(() => props.context)
     const { config, visible, evaluateExpression } = useWidgetContext(context)
     const { performAction } = useWidgetAction(context, config, evaluateExpression)
-    return { config, visible, performAction, context }
+    return { config, visible, performAction }
   },
   data() {
     return {

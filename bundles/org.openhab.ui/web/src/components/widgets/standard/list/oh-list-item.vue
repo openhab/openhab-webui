@@ -175,7 +175,7 @@ export default {
     const context = computed(() => props.context)
     const { config, childContext, evaluateExpression, hasAction, slots } = useWidgetContext(context)
     const { performAction } = useWidgetAction(context, config, evaluateExpression)
-    return { config, childContext, hasAction, slots, performAction, context }
+    return { config, childContext, hasAction, slots, performAction }
   },
   computed: {
     isEquipmentAccordion() {

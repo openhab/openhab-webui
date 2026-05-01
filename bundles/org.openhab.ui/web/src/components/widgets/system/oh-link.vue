@@ -26,7 +26,7 @@ export default {
     const context = computed(() => props.context)
     const { config, childContext, evaluateExpression, hasAction, defaultSlots } = useWidgetContext(context)
     const { performAction } = useWidgetAction(context, config, evaluateExpression)
-    return { config, childContext, hasAction, defaultSlots, performAction, context }
+    return { config, childContext, hasAction, defaultSlots, performAction }
   },
   methods: {
     clicked() {
