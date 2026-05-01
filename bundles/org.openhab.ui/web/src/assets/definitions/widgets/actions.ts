@@ -216,10 +216,10 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
         return ['command', 'toggle', 'options', 'rule', 'http'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
       }),
     pt(paramPrefix + 'actionVariable', 'Variable', 'The variable name to set').v((_value, configuration) => {
-      return ['variable'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return ['variable', 'http'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
     }),
     pt(paramPrefix + 'actionVariableValue', 'Variable Value', 'The value to set the variable to').v((_value, configuration) => {
-      return ['variable'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return ['variable', 'http'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
     }),
     pt(
       paramPrefix + 'actionVariableKey',
@@ -228,7 +228,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     )
       .a()
       .v((_value, configuration) => {
-        return ['variable'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return ['variable', 'http'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
       })
   ].map((p) => {
     p.groupName = groupName
