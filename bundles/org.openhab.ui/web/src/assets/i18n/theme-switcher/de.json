@@ -1,7 +1,7 @@
 {
   "about.theme": "Erscheinungsbild",
   "about.theme.auto": "Auto.",
-  "about.darkMode": "Dunkelmodus",
+  "about.darkMode": "Darstellung",
   "about.darkMode.auto": "Auto.",
   "about.darkMode.light": "Hell",
   "about.darkMode.dark": "Dunkel",
@@ -20,5 +20,12 @@
   "about.miscellaneous.theme.disablePageTransition": "Animation für Seitenübergänge abschalten",
   "about.miscellaneous.webaudio.enable": "Unterstützung für Audioausgang über Web Audio im Browser aktivieren",
   "about.miscellaneous.commandItem.title": "Empfange UI-Befehle an ",
-  "about.miscellaneous.commandItem.selectItem": "Item"
+  "about.miscellaneous.commandItem.selectItem": "Item",
+  "about.dialog": "Sprachunterstützung",
+  "about.dialog.enable": "Sprachdialog aktivieren",
+  "about.dialog.id": "Verbindungs-ID",
+  "about.dialog.listeningItem": "Aufnahme aktiv (Listening Item)",
+  "about.dialog.locationItem": "Standort (Location Item)",
+  "about.dialog.connectOnWindowEvent": "Beim ersten Laden des Fensters automatisch starten",
+  "about.dialog.triggerOnConnect": "Beim ersten Klick aktivieren"
 }
