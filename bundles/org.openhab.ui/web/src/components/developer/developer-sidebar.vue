@@ -560,7 +560,7 @@
             <f7-list-button href="/settings/pages/map/add" color="blue" :animate="false"> Create map view </f7-list-button>
             <f7-list-button href="/settings/pages/plan/add" color="blue" :animate="false"> Create floor plan </f7-list-button>
             <f7-list-button href="/settings/pages/chart/add" color="blue" :animate="false"> Create chart </f7-list-button>
-            <f7-list-button href="/settings/pages/sitemap/add" color="blue" :animate="false"> Create sitemap </f7-list-button>
+            <f7-list-button href="/settings/sitemaps/add" color="blue" :animate="false"> Create sitemap </f7-list-button>
             <f7-list-item divider title="Automation" />
             <f7-list-button href="/settings/rules/add" color="blue" :animate="false"> Create rule </f7-list-button>
             <f7-list-button href="/settings/scripts/add" color="blue" :animate="false"> Create script </f7-list-button>

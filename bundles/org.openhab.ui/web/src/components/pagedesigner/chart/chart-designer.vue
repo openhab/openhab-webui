@@ -3,13 +3,13 @@
     <f7-block class="block-narrow margin-bottom" inset>
       <f7-block-title>Coordinate Systems</f7-block-title>
       <f7-row class="margin-bottom">
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
+        <f7-col v-if="context.isEditable" class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addGrid">
             <img src="./gridSimple.svg" width="80px" />
             Add<br />Grid
           </f7-link>
         </f7-col>
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
+        <f7-col v-if="context.isEditable" class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
             <img src="./calendar.svg" width="80px" />
             Add<br />Calendar
@@ -22,7 +22,7 @@
     <f7-block v-for="(grid, gridIdx) in context.component.slots.grid" strong :style="{ zIndex: 100 - gridIdx }" :key="gridIdx">
       <f7-block-title>Grid {{ gridIdx }}</f7-block-title>
       <div>
-        <f7-menu v-if="context.editmode" class="configure-layout-menu">
+        <f7-menu v-if="context.editmode && context.isEditable" class="configure-layout-menu">
           <span v-for="(yAxis, yAxisIdx) in context.component.slots.yAxis" :key="yAxisIdx">
             <edit-context-menu
               v-if="yAxis.config.gridIndex === gridIdx"
@@ -85,16 +85,18 @@
                   </div>
                 </template>
               </f7-list-item>
-              <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)"> Add Time Series </f7-list-button>
-              <f7-list-button color="blue" @click="addSeries('oh-aggregate-series', gridIdx)"> Add Aggregate Series </f7-list-button>
-              <f7-list-button color="blue" @click="addSeries('oh-state-series', gridIdx)"> Add State Series </f7-list-button>
+              <template v-if="context.isEditable">
+                <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)"> Add Time Series </f7-list-button>
+                <f7-list-button color="blue" @click="addSeries('oh-aggregate-series', gridIdx)"> Add Aggregate Series </f7-list-button>
+                <f7-list-button color="blue" @click="addSeries('oh-state-series', gridIdx)"> Add State Series </f7-list-button>
+              </template>
             </f7-list>
           </f7-card>
         </div>
         <chart-skeleton class="skeleton-chart" :option="skeletonGridOptions(grid, gridIdx)" :autoresize="true" />
       </div>
       <div>
-        <f7-menu v-if="context.editmode" class="configure-layout-menu">
+        <f7-menu v-if="context.editmode && context.isEditable" class="configure-layout-menu">
           <span
             v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis"
             :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }"
@@ -130,7 +132,7 @@
       :key="calendarIdx">
       <f7-block-title>Calendar {{ calendarIdx }}</f7-block-title>
       <div>
-        <f7-menu v-if="context.editmode" class="configure-layout-menu">
+        <f7-menu v-if="context.editmode && context.isEditable" class="configure-layout-menu">
           <edit-context-menu
             :context="context"
             :component="calendar"
@@ -172,7 +174,7 @@
                   <img v-else src="./line.svg" width="32px" />
                 </template>
               </f7-list-item>
-              <f7-list-button color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">
+              <f7-list-button v-if="context.isEditable" color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">
                 Add Calendar Series
               </f7-list-button>
             </f7-list>

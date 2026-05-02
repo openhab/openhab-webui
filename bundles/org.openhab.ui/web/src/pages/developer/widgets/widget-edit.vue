@@ -3,6 +3,7 @@
     <f7-navbar>
       <oh-nav-content
         :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -16,12 +17,14 @@
       <f7-link @click="redrawWidget"> Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
     <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="widget-editor horizontal">
+      <not-editable-notice v-if="ready && !isEditable" subject="widget" />
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="widget-code">
           <editor
             class="widget-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=widget"
             :value="widgetDefinition"
+            :readOnly="!isEditable"
             @input="onEditorInput"
             @save="save()" />
         </f7-col>
@@ -33,12 +36,14 @@
       </f7-row>
     </f7-block>
     <f7-block v-else :key="blockKey + 'b'" class="widget-editor vertical">
+      <not-editable-notice v-if="ready && !isEditable" subject="widget" />
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="widget-code">
           <editor
             class="widget-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=widget"
             :value="widgetDefinition"
+            :readOnly="!isEditable"
             @input="onEditorInput"
             @save="save()" />
         </f7-col>
@@ -94,8 +99,11 @@
       overflow auto
     .widget-code
       height 100%
-  .v-codemirror
-    height 100%
+      position relative
+      .v-codemirror
+        position absolute
+        inset 0
+        height auto
   &.vertical
     .block
       z-index auto !important
@@ -113,6 +121,7 @@ import { useThrottleFn } from '@vueuse/core'
 
 import YAML from 'yaml'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import * as StandardListWidgets from '@/components/widgets/standard/list'
 import * as api from '@/api'
@@ -128,7 +137,8 @@ const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 export default {
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
-    ConfigSheet
+    ConfigSheet,
+    NotEditableNotice
   },
   props: {
     uid: String,
@@ -144,6 +154,7 @@ export default {
   data() {
     return {
       widgetDefinition: null,
+      widgetEditable: true,
       items: [],
       ready: false,
       split: 'vertical',
@@ -182,6 +193,9 @@ export default {
         ctxVars: this.ctxVars,
         editmode: true
       }
+    },
+    isEditable() {
+      return this.createMode || this.widgetEditable
     },
     widget() {
       try {
@@ -278,7 +292,11 @@ export default {
         })
       } else {
         api.getUiComponentInNamespace({ namespace: 'ui:widget', componentUID: this.uid }).then((data) => {
-          data.props.parameters = transformParameterDefaults(data.props.parameters)
+          if (data.props?.parameters) {
+            data.props.parameters = transformParameterDefaults(data.props.parameters)
+          }
+          this.widgetEditable = data.editable ?? true
+          delete data.editable
           this.widgetDefinition = YAML.stringify(data, { toStringOptions })
           nextTick(() => {
             this.loading = false
@@ -288,6 +306,7 @@ export default {
       }
     },
     save(stay) {
+      if (!this.isEditable) return
       if (!this.widget.uid) {
         f7.dialog.alert('Please give an UID to the widget')
         return

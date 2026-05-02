@@ -132,6 +132,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
       ctxVars: context.value.ctxVars,
       store: context.value.store,
       config: context.value.config,
+      isEditable: context.value.isEditable ?? true,
       editmode: context.value.editmode,
       clipboardtype: context.value.clipboardtype,
       parent: context.value.parent
@@ -155,6 +156,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
       loop: context.value.loop,
       store: context.value.store,
       config: context.value.config,
+      isEditable: context.value.isEditable ?? true,
       editmode: context.value.editmode,
       clipboardtype: context.value.clipboardtype,
       parent: context.value

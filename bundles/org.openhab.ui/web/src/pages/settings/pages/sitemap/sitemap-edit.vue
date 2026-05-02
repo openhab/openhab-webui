@@ -3,6 +3,7 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -34,6 +35,7 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
+        <not-editable-notice v-else-if="!isEditable" subject="sitemap" />
         <f7-block v-else class="sitemap-tree-wrapper" :class="{ 'sheet-opened': detailsOpened }">
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
@@ -147,7 +149,11 @@
         </f7-actions>
       </f7-tab>
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <sitemap-code v-if="currentTab === 'code'" :sitemap="sitemap" @updated="(value) => update(value)" />
+        <sitemap-code
+          v-if="currentTab === 'code'"
+          :sitemap="sitemap"
+          :readOnly="!isEditable"
+          @updated="isEditable ? update($event) : null" />
       </f7-tab>
     </f7-tabs>
 
@@ -373,6 +379,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
 import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
@@ -385,6 +392,7 @@ export default {
   mixins: [SitemapMixin],
   components: {
     SitemapCode,
+    NotEditableNotice,
     WidgetDetails,
     AttributeDetails,
     SitemapTreeviewItem
@@ -431,6 +439,9 @@ export default {
     canShowValue() {
       if (!this.selectedWidget) return false
       return this.WIDGET_TYPES_SHOWING_VALUE.includes(this.selectedWidget.component)
+    },
+    isEditable() {
+      return !this.sitemap || (this.sitemap.editable ?? true)
     },
     addableWidgetTypes() {
       if (!this.selectedWidget) return
@@ -525,6 +536,7 @@ export default {
       }
     },
     save(stay, force) {
+      if (!this.isEditable) return
       this.cleanConfig(this.sitemap)
       if (!this.sitemap.uid) {
         f7.dialog.alert('Please give an ID to the sitemap')

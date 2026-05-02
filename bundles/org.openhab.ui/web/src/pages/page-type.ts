@@ -8,7 +8,6 @@ type PageType = {
 }
 
 const pageTypes: Record<string, PageType> = {
-  Sitemap: { type: 'sitemap', label: 'Sitemap', icon: 'f7:menu' },
   'oh-layout-page': { type: 'layout', label: 'Layout', icon: 'f7:rectangle_grid_2x2' },
   'oh-home-page': { type: 'home', label: 'Home', icon: 'f7:house' },
   'oh-tabs-page': { type: 'tabs', label: 'Tabbed', icon: 'f7:squares_below_rectangle' },
@@ -28,6 +27,10 @@ const unknownPageType: PageType = { type: 'unknown', label: 'Unknown Page Type!'
 export function getPageType(page?: api.RootUiComponent | DeepReadonly<api.RootUiComponent> | null): PageType {
   if (!page) return unknownPageType
   return pageTypes[page.component] || unknownPageType
+}
+
+export function getPageComponentTypes(): string[] {
+  return Object.keys(pageTypes)
 }
 
 /**
