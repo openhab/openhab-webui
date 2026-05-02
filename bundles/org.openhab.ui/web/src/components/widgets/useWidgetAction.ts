@@ -16,7 +16,7 @@ import { Action, type ActionConfig } from '@/types/components/widgets'
 import type { VariableValue, WidgetContext } from '@/components/widgets/types'
 import openhab from '@/js/openhab'
 import * as api from '@/api'
-import type { ComputedRef } from 'vue'
+import type { Ref } from 'vue'
 import { showToast } from '@/js/dialog-promises'
 
 type ActionPrefix = '' | 'taphold_'
@@ -58,11 +58,11 @@ export type WidgetActionConfig = ActionConfig & { actionPropsParameterGroup?: st
 /**
  * useWidgetAction implements the execution of widget actions.
  *
- * @param context the widget component's context, usually `props.context`
- * @param config the widget component's config, usually `useWidgetContext::config`
+ * @param context the reactive widget context (use `computed(() => props.context)` to convert the component prop to a reactive ref)
+ * @param config the widget component's config (usually `useWidgetContext::config`)
  * @param evaluateExpression useWidgetExpression's evaluateExpression function, usually `useWidgetContext::evaluateExpression`
  */
-export function useWidgetAction(context: WidgetContext, config: ComputedRef<WidgetActionConfig>, evaluateExpression: EvaluateExpressionFn) {
+export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetActionConfig>, evaluateExpression: EvaluateExpressionFn) {
   const { t } = useI18n()
 
   const statesStore = useStatesStore()
@@ -132,7 +132,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
    * @returns true if the action was dispatched successfully (but possibly rejected by the user), otherwise false
    */
   function performAction(evt?: Event, prefix: string = '', ctx?: WidgetContext, cfg?: WidgetActionConfig): boolean {
-    if (!ctx) ctx = context
+    if (!ctx) ctx = context.value
     if (!cfg) cfg = config.value
     if (!cfg || !ctx) return false
 

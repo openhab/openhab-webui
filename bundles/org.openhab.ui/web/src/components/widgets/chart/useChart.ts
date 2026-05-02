@@ -1,4 +1,4 @@
-import { computed, type ComputedRef, readonly, ref } from 'vue'
+import { computed, type Ref, readonly, ref } from 'vue'
 import { computedAsync } from '@vueuse/core'
 import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
@@ -75,9 +75,9 @@ const seriesComponents: Record<string, SeriesComponent> = {
 }
 
 export function useChart(
-  context: WidgetContext,
-  rawConfig: ComputedRef<OhChart.Config>,
-  slots: ComputedRef<Record<string, api.UiComponent[]>>,
+  context: Ref<WidgetContext>,
+  rawConfig: Ref<OhChart.Config>,
+  slots: Ref<Record<string, api.UiComponent[]>>,
   evaluateExpression: EvaluateExpressionFn
 ) {
   const uiOptionsStore = useUIOptionsStore()
@@ -156,7 +156,7 @@ export function useChart(
 
   const chartContext = computed<ChartContext>(() => ({
     chart: {
-      ...(context.component as api.UiComponent),
+      ...(context.value.component as api.UiComponent),
       config: config.value
     },
     evaluateExpression: chartComponentEvaluateExpression,
