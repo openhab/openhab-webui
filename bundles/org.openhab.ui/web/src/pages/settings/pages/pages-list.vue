@@ -134,13 +134,13 @@
                 </div>
               </template>
               <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-              <!-- <template #after> -->
+              <template #after>
                 <!-- This is here to push the after-title icon so it would appear immediately after the title
                      for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
-              <!-- </template>
+              </template>
               <template #after-title>
                 <f7-icon v-if="page.editable === false" f7="lock_fill" size="1rem" color="gray" />
-              </template> -->
+              </template>
               <template #media>
                 <oh-icon
                   :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
@@ -412,22 +412,14 @@ export default {
       })
     },
     doRemoveSelected() {
-      // TODO
-      if (
-        this.selectedItems.some((p) => {
-          const uid = p.startsWith('system:sitemap:') ? p.replace('system:sitemap:', '') : p.replace('ui:page:', '')
-          return this.pages.find((page) => page.uid === uid)?.editable === false
-        })
-      ) {
+      if (this.selectedItems.some((p) => this.pages.find((page) => page.uid === p)?.editable === false)) {
         f7.dialog.alert('Some of the selected pages are not modifiable because they have been provisioned by files')
         return
       }
 
-      let dialog = f7.dialog.progress(`Deleting ${this.showSitemaps ? 'Sitemaps' : 'Pages'}...`)
+      let dialog = f7.dialog.progress('Deleting Pages...')
 
-      const promises = this.selection.map((p) => {
-        return this.$oh.api.delete('/rest/ui/components/ui:page/' + p)
-      })
+      const promises = this.selection.map((p) => this.$oh.api.delete('/rest/ui/components/ui:page/' + p))
       Promise.all(promises)
         .then((data) => {
           showToast('Pages removed')
