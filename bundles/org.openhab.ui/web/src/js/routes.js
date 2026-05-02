@@ -47,6 +47,7 @@ const PersistenceEditPage = () => import(/* webpackChunkName: "admin-config" */ 
 const SemanticModelPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/model/model.vue')
 
 const PagesListPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/pages-list.vue')
+const SitemapsListPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemaps-list.vue')
 const PageEditors = {
   home: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/home/home-edit.vue'),
   layout: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/layout/layout-edit.vue'),
@@ -290,6 +291,31 @@ export default [
         async: loadAsync(PagesListPage),
         beforeEnter: [enforceAdminForRoute],
         routes: PageRoutes
+      },
+      {
+        path: 'sitemaps/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(SitemapsListPage),
+        routes: [
+          {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(PageEditors.sitemap, { createMode: true })
+          },
+          {
+            path: 'duplicate',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(PageEditors.sitemap, { createMode: true })
+          },
+          {
+            path: ':uid',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(PageEditors.sitemap)
+          }
+        ]
       },
       {
         path: 'transformations/',
