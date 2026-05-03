@@ -115,8 +115,8 @@
               v-for="page in pagesWithInitial"
               :key="page.uid"
               media-item
-              class="pagelist-item"
-              :checkbox="showCheckboxes && (showSitemaps || page.uid !== 'overview')"
+              :class="'pagelist-item' + (showSitemaps ? ' sitemaplist-item' : '')"
+              :checkbox="showCheckboxes && (showSitemaps || (!showSitemaps && page.uid !== 'overview'))"
               :checked="isChecked(page.uid) ? true : null"
               :disabled="showCheckboxes && !showSitemaps && page.uid === 'overview' ? true : null"
               prevent-router
@@ -124,11 +124,13 @@
               @click.meta="ctrlClick($event, page)"
               @click.exact="click($event, page)"
               :link="getPageLink(page)"
-              :no-chevron="!page.editable"
               :title="page.config.label"
               :subtitle="!showSitemaps ? getPageType(page).label : ''"
               :footer="page.uid"
               :badge="page.config.order">
+              <template #after-title>
+                <f7-icon v-if="!page.editable" f7="lock_fill" size="1rem" color="gray" />
+              </template>
               <template #subtitle>
                 <div>
                   <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
@@ -155,9 +157,6 @@
                   :icon="getPageIcon(page)"
                   :height="32"
                   :width="32" />
-              </template>
-              <template #after-title>
-                <f7-icon v-if="!page.editable" f7="lock_fill" size="1rem" color="gray" />
               </template>
             </f7-list-item>
           </f7-list-group>
@@ -209,6 +208,11 @@
   </f7-page>
 </template>
 
+<style lang="stylus">
+.sitemaplist-item .item-title-row
+  justify-content flex-start
+</style>
+
 <script>
 import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
@@ -248,8 +252,8 @@ export default {
       sitemaps: [],
       sitemapPages: [],
       selectedItems: [],
-      showCheckboxes: false,
-      searchQuery: ''
+      searchQuery: '',
+      showCheckboxes: false
     }
   },
   computed: {
@@ -502,7 +506,6 @@ export default {
     getPageType,
     getPageIcon,
     getPageLink(page) {
-      if (!page.editable) return null
       const type = this.getPageType(page)
       return type ? `${encodeURIComponent(type.type)}/${encodeURIComponent(page.uid)}` : null
     },

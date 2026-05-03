@@ -13,7 +13,7 @@
     @treeview:close="setWidgetClosed(true)"
     @click="select">
     <draggable
-      :disabled="!dropAllowed(widget) ? true : null"
+      :disabled="!editable || !dropAllowed(widget) ? true : null"
       :list="children"
       group="sitemap-treeview"
       animation="150"
@@ -37,7 +37,8 @@
         @selected="(event) => $emit('selected', event)"
         :selected="selected"
         :sitemap="localSitemap"
-        :moveState="localMoveState" />
+        :moveState="localMoveState"
+        :editable="editable" />
     </draggable>
     <template #label>
       <div class="subtitle">
@@ -71,7 +72,8 @@ export default {
     itemsList: Array,
     selected: Object,
     sitemap: Object,
-    moveState: Object
+    moveState: Object,
+    editable: Boolean
   },
   components: {
     Draggable,
@@ -93,7 +95,7 @@ export default {
     onStart(event) {
       console.debug('Drag start event:', event)
       this.localMoveState.moving = true
-      this.localMoveState.widget = this.widget.slots.widgets[event.oldIndex]
+      this.localMoveState.widget = this.widget.widgets[event.oldIndex]
       this.localMoveState.newParent = this.parentWidget
     },
     onMove(event) {
@@ -120,7 +122,7 @@ export default {
         !this.localMoveState.widget ||
         this.allowedWidgetTypes(widget)
           .map((wt) => wt.type)
-          .includes(this.localMoveState.widget.component)
+          .includes(this.localMoveState.widget.type)
       ) {
         return true
       }
@@ -138,12 +140,10 @@ export default {
       return ''
     },
     children() {
-      return this.widget.slots?.widgets || []
+      return this.widget.widgets || []
     },
     canHaveChildren() {
-      return (
-        (this.LINKABLE_WIDGET_TYPES.includes(this.widget.component) && (this.children.length > 0 || this.localMoveState.moving)) === true
-      )
+      return (this.LINKABLE_WIDGET_TYPES.includes(this.widget.type) && (this.children.length > 0 || this.localMoveState.moving)) === true
     }
   }
 }
