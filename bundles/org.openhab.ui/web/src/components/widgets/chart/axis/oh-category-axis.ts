@@ -47,8 +47,10 @@ const categoryAxis: AxisComponent = {
         if (!config.name) axis.name = 'day'
         const axisWeekdays = weekdays[config.weekdayFormat] || weekdays.default
         axis.data = [...axisWeekdays]
-        if (!config.startOnSunday) {
-          axis.data.push(axis.data.shift()!)
+        // Determine first day-of-week: use startOnSunday config if set, otherwise use locale
+        const firstDay = config.startOnSunday === true ? 0 : config.startOnSunday === false ? 1 : dayjs.localeData().firstDayOfWeek()
+        if (firstDay !== 0) {
+          for (let i = 0; i < firstDay; i++) axis.data.push(axis.data.shift()!)
         }
         break
       case OhCategoryAxis.CategoryType.month:
