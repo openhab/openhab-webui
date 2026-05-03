@@ -99,11 +99,11 @@ function eventTopicFilterMessage(id: string, topics: string[]): string {
 
 const openWSConnections: KeepaliveWebSocket[] = []
 
-type MessageCallback = (data: WebSocketMessage) => void
-type ReadyCallback = (event: Event) => void
-type ErrorCallback = (event: Event) => void
-type HeartbeatCallback = () => void
-type CloseCallback = (event: CloseEvent) => void
+export type MessageCallback = (data: WebSocketMessage) => void
+export type ReadyCallback = (event: Event) => void
+export type ErrorCallback = (event: Event) => void
+export type HeartbeatCallback = () => void
+export type CloseCallback = (event: CloseEvent) => void
 
 /**
  * Creates a new {@link KeepaliveWebSocket} connection.

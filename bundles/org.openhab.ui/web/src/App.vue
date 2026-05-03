@@ -6,7 +6,7 @@
       visibility: userStore.user || componentsStore.page('overview') || communicationFailureMsg ? '' : 'hidden'
     }">
     <!-- Left Panel -->
-    <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="1024">
+    <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="960">
       <f7-page>
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
           <div class="logo-inner">
@@ -366,6 +366,7 @@
       url="/"
       :main="true"
       class="safe-areas"
+      :class="{ 'log-dock-offset': showDockedLogViewer && !logDockFullscreen }"
       :master-detail-breakpoint="960"
       :browser-history="true"
       :browser-history-root="origin"
@@ -373,6 +374,16 @@
       :preload-previous-page="false"
       :ios-swipe-back="false"
       :animate="!uiOptionsStore.disablePageTransitionAnimation" />
+
+    <Teleport to="body">
+      <div v-if="showDockedLogViewer" class="log-dock" :class="{ fullscreen: logDockFullscreen }" :style="logDockStyle">
+        <div class="log-dock-resize-handle" @pointerdown.prevent="startDockResize" />
+        <log-viewer-embedded
+          :fullscreen="logDockFullscreen"
+          @hide="setLogDockVisible(false)"
+          @toggle-fullscreen="toggleLogDockFullscreen" />
+      </div>
+    </Teleport>
   </f7-app>
 </template>
 
@@ -470,6 +481,47 @@
   // --f7-list-item-media-margin 24px
   // --f7-list-item-padding-horizontal 32px
   // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
+
+.safe-areas.log-dock-offset
+  height calc(100dvh - var(--log-dock-height)) !important
+  max-height calc(100dvh - var(--log-dock-height)) !important
+
+.log-dock
+  position fixed !important
+  bottom 0
+  z-index 10000
+  height var(--log-dock-height)
+  max-height var(--log-dock-height)
+  border-top 1px solid var(--f7-bars-border-color)
+  background var(--f7-page-bg-color)
+  box-shadow 0 -8px 24px rgba(0, 0, 0, 0.16)
+  overflow hidden
+  display flex
+  flex-direction column
+  --log-viewer-height 100%
+
+  > *:not(.log-dock-resize-handle)
+    flex 1
+    min-height 0
+
+.log-dock-resize-handle
+  position absolute
+  top 0
+  left 0
+  right 0
+  height 5px
+  cursor ns-resize
+  z-index 1
+  &:hover
+    background var(--f7-color-blue)
+    opacity 0.35
+
+.log-dock.fullscreen
+  height calc(100dvh - var(--f7-safe-area-top))
+  max-height none
+
+:root
+  --log-dock-height clamp(120px, 34vh, 460px)
 </style>
 
 <script>
@@ -484,6 +536,7 @@ import buildInfo from '@/assets/build-info'
 
 import routes from '@/js/routes.js'
 import PanelRight from '@/pages/panel-right.vue'
+import LogViewerEmbedded from '@/pages/developer/log-viewer/log-viewer-embedded.vue'
 import { getPageIcon } from '@/pages/page-type'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
@@ -515,6 +568,7 @@ export default {
   components: {
     EmptyStatePlaceholder,
     PanelRight,
+    LogViewerEmbedded,
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
   setup() {
@@ -594,7 +648,15 @@ export default {
       activeToolTab: 'pin',
       activeHelpTab: 'current',
       developerSearch: null,
-      currentUrl: ''
+      currentUrl: '',
+
+      logDockFullscreen: false,
+      logDockHeight: parseInt(localStorage.getItem('openhab.ui:logDock.height')) || null,
+
+      // Tracks whether the log-viewer page is active. Updated at pageBeforeIn (entering
+      // log-viewer) and pageAfterIn (leaving log-viewer) so the dock is only shown after
+      // the page transition completes, avoiding interference with F7's router.
+      logViewerPageActive: false
     }
   },
   computed: {
@@ -623,6 +685,17 @@ export default {
     },
     serverDisplayUrl() {
       return window.location.origin
+    },
+    showDockedLogViewer() {
+      return this.runtimeStore.showLogDock && !this.logViewerPageActive
+    },
+    logDockStyle() {
+      const viewportWidth = this.$f7dim?.width || window.innerWidth
+      const hasPermanentLeftPanel = viewportWidth >= this.f7params.panel.leftBreakpoint && !this.uiOptionsStore.visibleBreakpointDisabled
+      return {
+        left: hasPermanentLeftPanel ? 'calc(var(--f7-panel-width) + var(--f7-safe-area-left))' : 'var(--f7-safe-area-left)',
+        right: 'var(--f7-safe-area-right)'
+      }
     },
     ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore),
     ...mapWritableState(useRuntimeStore, {
@@ -664,6 +737,15 @@ export default {
 
         loadLocaleMessages('about', this.globalMergeLocaleMessage)
       }
+    },
+    logDockHeight: {
+      immediate: true,
+      handler(val) {
+        if (val) document.documentElement.style.setProperty('--log-dock-height', val + 'px')
+      }
+    },
+    currentUrl() {
+      if (this.logDockFullscreen) this.logDockFullscreen = false
     }
   },
   methods: {
@@ -856,25 +938,78 @@ export default {
       f7.panel.get('left').toggleVisibleBreakpoint()
       useUIOptionsStore().visibleBreakpointDisabled = f7.panel.get('left').visibleBreakpointDisabled
     },
-    keyDown(ev) {
-      if (ev.shiftKey && ev.altKey) {
-        switch (ev.keyCode) {
-          case 68: // D for developer dock
-            this.toggleDeveloperDock()
-            break
-          case 77: // M for menu
-            const leftPanel = f7.panel.get('left')
-            if (leftPanel.opened) {
-              leftPanel.close()
-            } else {
-              leftPanel.open()
-            }
-            break
-          default:
-            return
+    setLogDockVisible(visible) {
+      if (visible && !useUserStore().isAdmin()) return
+      useRuntimeStore().showLogDock = visible
+      if (!visible) this.logDockFullscreen = false
+    },
+    toggleLogDock() {
+      this.setLogDockVisible(!useRuntimeStore().showLogDock)
+    },
+    toggleLogDockFullscreen() {
+      if (!useRuntimeStore().showLogDock) this.setLogDockVisible(true)
+      this.logDockFullscreen = !this.logDockFullscreen
+    },
+    startDockResize(ev) {
+      const startY = ev.clientY
+      const startHeight =
+        this.logDockHeight || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--log-dock-height')) || 300
+      const minHeight = 120
+      const maxHeight = window.innerHeight * 0.85
+
+      const onMove = (moveEv) => {
+        const delta = startY - moveEv.clientY
+        this.logDockHeight = Math.round(Math.min(maxHeight, Math.max(minHeight, startHeight + delta)))
+      }
+
+      const finish = () => {
+        if (this._logDockResizeHandlers) {
+          const { onMove: m, onUp: u, onCancel: c } = this._logDockResizeHandlers
+          window.removeEventListener('pointermove', m)
+          window.removeEventListener('pointerup', u)
+          window.removeEventListener('pointercancel', c)
+          this._logDockResizeHandlers = null
         }
-        ev.stopPropagation()
-        ev.preventDefault()
+        localStorage.setItem('openhab.ui:logDock.height', String(this.logDockHeight))
+      }
+
+      const onUp = () => finish()
+      const onCancel = () => finish()
+
+      this._logDockResizeHandlers = { onMove, onUp, onCancel }
+
+      window.addEventListener('pointermove', onMove)
+      window.addEventListener('pointerup', onUp, { once: true })
+      window.addEventListener('pointercancel', onCancel, { once: true })
+    },
+    keyDown(ev) {
+      if (!(ev.shiftKey && ev.altKey)) return
+
+      // Claim our known shortcuts unconditionally so the OS/browser never
+      // inserts an extended character (e.g. ¬, Ð, ˝) even when an input is focused.
+      const ourKeys = ['KeyD', 'KeyF', 'KeyL', 'KeyM']
+      if (!ourKeys.includes(ev.code)) return
+      ev.preventDefault()
+      ev.stopPropagation()
+
+      switch (ev.code) {
+        case 'KeyD':
+          this.toggleDeveloperDock()
+          break
+        case 'KeyF':
+          if (useRuntimeStore().showLogDock) this.toggleLogDockFullscreen()
+          break
+        case 'KeyL':
+          this.toggleLogDock()
+          break
+        case 'KeyM':
+          const leftPanel = f7.panel.get('left')
+          if (leftPanel.opened) {
+            leftPanel.close()
+          } else {
+            leftPanel.open()
+          }
+          break
       }
     },
     updateUrl(newUrl) {
@@ -996,14 +1131,24 @@ export default {
         })
 
       f7.on('routeChange', (route) => {
-        // console.log('Route changed:', route.url)
-        // console.log('Browser history state:', history.state) // Native browser history state
+        // Keep App.vue's reactive currentUrl in sync with Framework7's router
+        // in case some router updates don't trigger the 'routeUrlUpdate' event.
+        if (route && route.url) {
+          this.updateUrl(route.url)
+          nextTick(this.updateTitle)
+        }
       })
 
       f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
           // console.log('pageBeforeIn: current URL:', page.route.url)
           this.updateUrl(page.route.url)
+          // Hide the dock immediately when entering the log-viewer page so it doesn't
+          // overlap the full-page viewer. (Re-showing on exit is handled in pageAfterIn
+          // to avoid mounting the dock mid-transition and breaking F7's router.)
+          if (page.route.url.includes('/log-viewer/')) {
+            this.logViewerPageActive = true
+          }
         }
       })
 
@@ -1016,6 +1161,13 @@ export default {
         const router = f7.views.main?.router
         if (router && router.history.length === 0 && page.route?.url) {
           router.history.push(page.route.url)
+        }
+
+        // Update logViewerPageActive after the transition so the dock is only shown/hidden
+        // once the page is fully in view. This prevents the dock from mounting mid-transition
+        // when navigating back from log-viewer, which would interfere with F7's router.
+        if (page.route?.url !== undefined) {
+          this.logViewerPageActive = page.route.url.includes('/log-viewer/')
         }
 
         nextTick(this.updateTitle)
@@ -1045,6 +1197,14 @@ export default {
         this.toggleDeveloperDock()
       })
 
+      f7.on('toggleLogDock', () => {
+        this.toggleLogDock()
+      })
+
+      f7.on('toggleLogDockFullscreen', () => {
+        this.toggleLogDockFullscreen()
+      })
+
       f7.on('selectDeveloperDock', (opts) => {
         this.selectDeveloperDock(opts)
       })
@@ -1071,6 +1231,18 @@ export default {
       this.startEventSource()
       this.startAudioWebSocket()
     })
+  },
+  beforeUnmount() {
+    if (window) {
+      window.removeEventListener('keydown', this.keyDown)
+      if (this._logDockResizeHandlers) {
+        const { onMove, onUp, onCancel } = this._logDockResizeHandlers
+        window.removeEventListener('pointermove', onMove)
+        window.removeEventListener('pointerup', onUp)
+        window.removeEventListener('pointercancel', onCancel)
+        this._logDockResizeHandlers = null
+      }
+    }
   }
 }
 </script>
