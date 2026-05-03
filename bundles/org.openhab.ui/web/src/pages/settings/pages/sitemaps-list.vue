@@ -62,7 +62,7 @@
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && selectableSitemapUids.length">
+          <template v-if="showCheckboxes && selectableSitemapNames.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
@@ -138,6 +138,8 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { showToast } from '@/js/dialog-promises'
 
+import * as api from '@/api'
+
 export default {
   mixins: [FileDefinition],
   props: {
@@ -188,7 +190,7 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      return this.selectedItems.length > 0 && this.selectedItems.length >= this.selectableSitemapUids.length
+      return this.selectableSitemapNames.length > 0 && this.selectableSitemapNames.every((name) => this.selectedItems.includes(name))
     },
     listTitle() {
       let title = this.filteredSitemapsCount
@@ -202,11 +204,11 @@ export default {
       }
       return title
     },
-    selectableSitemapUids() {
-      return this.filteredSitemaps.map((sitemap) => sitemap.uid)
+    selectableSitemapNames() {
+      return this.filteredSitemaps.map((sitemap) => sitemap.name)
     },
     selection() {
-      return this.selectableSitemapUids.filter((uid) => this.selectedItems.includes(uid))
+      return this.selectableSitemapNames.filter((name) => this.selectedItems.includes(name))
     }
   },
   methods: {
@@ -233,8 +235,8 @@ export default {
       this.selectedItems = []
       this.showCheckboxes = false
 
-      this.$oh.api
-        .get('/rest/sitemaps/*/definition')
+      api
+        .getSitemapDefinitions()
         .then((data) => {
           this.sitemaps = data.sort((a, b) => a.label.localeCompare(b.label))
           this.initSearchbar = true
@@ -282,8 +284,8 @@ export default {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        // assign a copy so mutations to `selectedItems` don't modify the computed `selectableSitemapUids` array
-        this.selectedItems = Array.from(this.selectableSitemapUids)
+        // assign a copy so mutations to `selectedItems` don't modify the computed `selectableSitemapNames` array
+        this.selectedItems = Array.from(this.selectableSitemapNames)
       }
     },
     copySelected() {
@@ -334,7 +336,7 @@ export default {
       let dialog = f7.dialog.progress(`Deleting Sitemaps...`)
 
       const promises = this.selection.map((p) => {
-        return this.$oh.api.delete('/rest/sitemaps/' + p)
+        return api.removeSitemapFromRegistry({ sitemapname: p })
       })
       Promise.all(promises)
         .then((data) => {

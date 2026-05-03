@@ -16,6 +16,7 @@ export const useLastSearchQueryStore = defineStore('lastSearchQuery', () => {
     lastItemSearchQuery,
     lastThingsSearchQuery,
     lastPagesSearchQuery,
+    lastSitemapsSearchQuery,
     lastScheduleSearchQuery,
     lastModelSearchQuery,
     lastRulesSearchQuery,

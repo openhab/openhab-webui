@@ -253,7 +253,7 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      return this.selectablePageUids.length > 0 && this.selectedItems.length >= this.selectablePageUids.length
+      return this.selectablePageUids.length > 0 && this.selectablePageUids.every((uid) => this.selectedItems.includes(uid))
     },
     listTitle() {
       let title = this.filteredPagesCount
