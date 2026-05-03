@@ -35,7 +35,6 @@ export interface Config {
   gridIndex?: number
   categoryType: CategoryType
   weekdayFormat: WeekdayFormat
-  startOnSunday?: boolean
   monthFormat: MonthFormat
   data?: string[]
 }
