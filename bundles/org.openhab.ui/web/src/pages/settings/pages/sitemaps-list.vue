@@ -297,7 +297,7 @@ export default {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.name, item)
       } else {
-        this.f7router.navigate(item.name)
+        this.f7router.navigate(encodeURIComponent(item.name))
       }
     },
     ctrlClick(event, item) {
