@@ -298,7 +298,7 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.name, item)
-      } else {
+      } else if (item.editable) {
         this.f7router.navigate(encodeURIComponent(item.name))
       }
     },
