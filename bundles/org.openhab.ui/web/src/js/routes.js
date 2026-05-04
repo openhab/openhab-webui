@@ -47,7 +47,6 @@ const PersistenceEditPage = () => import(/* webpackChunkName: "admin-config" */ 
 const SemanticModelPage = () => import(/* webpackChunkName: "admin-config" */ '@/pages/settings/model/model.vue')
 
 const PagesListPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/pages-list.vue')
-const SitemapsListPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemaps-list.vue')
 const PageEditors = {
   home: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/home/home-edit.vue'),
   layout: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/layout/layout-edit.vue'),
@@ -57,6 +56,9 @@ const PageEditors = {
   chart: () => import(/* webpackChunkName: "admin-pages-echarts" */ '@/pages/settings/pages/chart/chart-edit.vue'),
   sitemap: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemap/sitemap-edit.vue')
 }
+
+const SitemapsListPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemaps-list.vue')
+const SitemapEditPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemap/sitemap-edit.vue')
 
 const RulesListPage = () => import(/* webpackChunkName: "admin-rules" */ '@/pages/settings/rules/rules-list.vue')
 const RuleEditPage = () => import(/* webpackChunkName: "admin-rules" */ '@/pages/settings/rules/rule-edit.vue')
@@ -301,19 +303,19 @@ export default [
             path: 'add',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(PageEditors.sitemap, { createMode: true })
+            async: loadAsync(SitemapEditPage, { createMode: true })
           },
           {
             path: 'duplicate',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(PageEditors.sitemap, { createMode: true })
+            async: loadAsync(SitemapEditPage, { createMode: true })
           },
           {
             path: ':uid',
             beforeEnter: [enforceAdminForRoute],
             beforeLeave: [checkDirtyBeforeLeave],
-            async: loadAsync(PageEditors.sitemap)
+            async: loadAsync(SitemapEditPage)
           }
         ]
       },
