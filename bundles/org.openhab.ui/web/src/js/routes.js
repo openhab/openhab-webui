@@ -53,8 +53,7 @@ const PageEditors = {
   tabs: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/tabs/tabs-edit.vue'),
   map: () => import(/* webpackChunkName: "admin-pages-leaflet" */ '@/pages/settings/pages/map/map-edit.vue'),
   plan: () => import(/* webpackChunkName: "admin-pages-leaflet" */ '@/pages/settings/pages/plan/plan-edit.vue'),
-  chart: () => import(/* webpackChunkName: "admin-pages-echarts" */ '@/pages/settings/pages/chart/chart-edit.vue'),
-  sitemap: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemap/sitemap-edit.vue')
+  chart: () => import(/* webpackChunkName: "admin-pages-echarts" */ '@/pages/settings/pages/chart/chart-edit.vue')
 }
 
 const SitemapsListPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemaps-list.vue')
