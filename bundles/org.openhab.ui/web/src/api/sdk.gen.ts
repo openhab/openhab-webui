@@ -1764,6 +1764,7 @@ export const deleteItemFromPersistenceService = <ThrowOnError extends boolean = 
  * Gets Item persistence data from the persistence service.
  */
 export const getItemDataFromPersistenceService = <ThrowOnError extends boolean = false>(parameters: {
+    'Accept-Language'?: string;
     itemName: string;
     serviceId?: string;
     starttime?: string;
@@ -1772,8 +1773,10 @@ export const getItemDataFromPersistenceService = <ThrowOnError extends boolean =
     pagelength?: number;
     boundary?: boolean;
     itemState?: boolean;
+    displayState?: boolean;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
+                { in: 'headers', key: 'Accept-Language' },
                 { in: 'path', key: 'itemName' },
                 { in: 'query', key: 'serviceId' },
                 { in: 'query', key: 'starttime' },
@@ -1781,7 +1784,8 @@ export const getItemDataFromPersistenceService = <ThrowOnError extends boolean =
                 { in: 'query', key: 'page' },
                 { in: 'query', key: 'pagelength' },
                 { in: 'query', key: 'boundary' },
-                { in: 'query', key: 'itemState' }
+                { in: 'query', key: 'itemState' },
+                { in: 'query', key: 'displayState' }
             ] }]);
     return (options?.client ?? client).get<GetItemDataFromPersistenceServiceResponses, GetItemDataFromPersistenceServiceErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',

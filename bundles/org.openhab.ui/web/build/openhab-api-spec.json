@@ -201,11 +201,11 @@
               }
             }
           },
-          "409": {
-            "description": "Creation of the rule is refused. Rule with the same UID already exists."
-          },
           "400": {
             "description": "Creation of the rule is refused. Missing required parameter."
+          },
+          "409": {
+            "description": "Creation of the rule is refused. Rule with the same UID already exists."
           }
         },
         "security": [
@@ -529,7 +529,7 @@
     "/rules/{ruleUID}/{moduleCategory}/{id}": {
       "get": {
         "tags": ["rules"],
-        "summary": "Gets the rule\u0027s module corresponding to the given Category and ID.",
+        "summary": "Gets the rule's module corresponding to the given Category and ID.",
         "operationId": "getRuleModuleById",
         "parameters": [
           {
@@ -585,7 +585,7 @@
     "/rules/{ruleUID}/{moduleCategory}/{id}/config": {
       "get": {
         "tags": ["rules"],
-        "summary": "Gets the module\u0027s configuration.",
+        "summary": "Gets the module's configuration.",
         "operationId": "getRuleModuleConfig",
         "parameters": [
           {
@@ -641,7 +641,7 @@
     "/rules/{ruleUID}/{moduleCategory}/{id}/config/{param}": {
       "get": {
         "tags": ["rules"],
-        "summary": "Gets the module\u0027s configuration parameter.",
+        "summary": "Gets the module's configuration parameter.",
         "operationId": "getRuleModuleConfigParameter",
         "parameters": [
           {
@@ -704,7 +704,7 @@
       },
       "put": {
         "tags": ["rules"],
-        "summary": "Sets the module\u0027s configuration parameter value.",
+        "summary": "Sets the module's configuration parameter value.",
         "operationId": "setRuleModuleConfigParameter",
         "parameters": [
           {
@@ -889,13 +889,13 @@
     "/rules/schedule/simulations": {
       "get": {
         "tags": ["rules"],
-        "summary": "Simulates the executions of rules filtered by tag \u0027Schedule\u0027 within the given times.",
+        "summary": "Simulates the executions of rules filtered by tag 'Schedule' within the given times.",
         "operationId": "getScheduleRuleSimulations",
         "parameters": [
           {
             "name": "from",
             "in": "query",
-            "description": "Start time of the simulated rule executions. Will default to the current time. [yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSSZ]",
+            "description": "Start time of the simulated rule executions. Will default to the current time. [yyyy-MM-dd'T'HH:mm:ss.SSSZ]",
             "schema": {
               "type": "string"
             }
@@ -903,7 +903,7 @@
           {
             "name": "until",
             "in": "query",
-            "description": "End time of the simulated rule executions. Will default to 30 days after the start time. Must be less than 180 days after the given start time. [yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSSZ]",
+            "description": "End time of the simulated rule executions. Will default to 30 days after the start time. Must be less than 180 days after the given start time. [yyyy-MM-dd'T'HH:mm:ss.SSSZ]",
             "schema": {
               "type": "string"
             }
@@ -1025,7 +1025,7 @@
           {
             "name": "actionUid",
             "in": "path",
-            "description": "action type UID (including scope, separated by \u0027.\u0027)",
+            "description": "action type UID (including scope, separated by '.')",
             "required": true,
             "schema": {
               "pattern": "[a-zA-Z0-9]+(\\-[a-zA-Z0-9]+)?\\.[a-zA-Z0-9]+(%23[A-Fa-f0-9]+)?",
@@ -1923,7 +1923,7 @@
           {
             "name": "prefixes",
             "in": "query",
-            "description": "filter UIDs by prefix (multiple comma-separated prefixes allowed, for example: \u0027system,mqtt\u0027)",
+            "description": "filter UIDs by prefix (multiple comma-separated prefixes allowed, for example: 'system,mqtt')",
             "schema": {
               "type": "string"
             }
@@ -2501,25 +2501,25 @@
               "text/vnd.openhab.dsl.thing": {
                 "schema": {
                   "type": "string",
-                  "example": "Bridge binding:typeBridge:idBridge \"Label bridge\" @ \"Location bridge\" [stringParam\u003d\"my value\"] {\n    Thing type id \"Label thing\" @ \"Location thing\" [booleanParam\u003dtrue, decimalParam\u003d2.5]\n}"
+                  "example": "Bridge binding:typeBridge:idBridge \"Label bridge\" @ \"Location bridge\" [stringParam=\"my value\"] {\n    Thing type id \"Label thing\" @ \"Location thing\" [booleanParam=true, decimalParam=2.5]\n}"
                 }
               },
               "text/vnd.openhab.dsl.item": {
                 "schema": {
                   "type": "string",
-                  "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" \u003cicon\u003e (Group1, Group2) [Tag1, Tag2] { channel\u003d\"binding:type:id:channelid\", namespace\u003d\"my value\" [param\u003d\"my param value\"] }"
+                  "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" <icon> (Group1, Group2) [Tag1, Tag2] { channel=\"binding:type:id:channelid\", namespace=\"my value\" [param=\"my param value\"] }"
                 }
               },
               "text/vnd.openhab.dsl.sitemap": {
                 "schema": {
                   "type": "string",
-                  "example": "sitemap MySitemap label\u003d\"My Sitemap\" {\n    Frame {\n        Input item\u003dMyItem label\u003d\"My Input\"\n    }\n}"
+                  "example": "sitemap MySitemap label=\"My Sitemap\" {\n    Frame {\n        Input item=MyItem label=\"My Input\"\n    }\n}"
                 }
               },
               "application/yaml": {
                 "schema": {
                   "type": "string",
-                  "example": "version: 1\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value"
+                  "example": "version: 1\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
                 }
               }
             }
@@ -2574,7 +2574,7 @@
               "text/vnd.openhab.dsl.item": {
                 "schema": {
                   "type": "string",
-                  "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" \u003cicon\u003e (Group1, Group2) [Tag1, Tag2] { channel\u003d\"binding:type:id:channelid\", namespace\u003d\"my value\" [param\u003d\"my param value\"] }"
+                  "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" <icon> (Group1, Group2) [Tag1, Tag2] { channel=\"binding:type:id:channelid\", namespace=\"my value\" [param=\"my param value\"] }"
                 }
               },
               "application/yaml": {
@@ -2624,13 +2624,16 @@
               "text/vnd.openhab.dsl.sitemap": {
                 "schema": {
                   "type": "string",
-                  "example": "sitemap MySitemap label\u003d\"My Sitemap\" {\n    Frame {\n        Input item\u003dMyItem label\u003d\"My Input\"\n    }\n}"
+                  "example": "sitemap MySitemap label=\"My Sitemap\" {\n    Frame {\n        Input item=MyItem label=\"My Input\"\n    }\n}"
+                }
+              },
+              "application/yaml": {
+                "schema": {
+                  "type": "string",
+                  "example": "version: 1\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
                 }
               }
             }
-          },
-          "400": {
-            "description": "Payload invalid."
           },
           "404": {
             "description": "One or more sitemaps not found in registry."
@@ -2682,7 +2685,7 @@
               "text/vnd.openhab.dsl.thing": {
                 "schema": {
                   "type": "string",
-                  "example": "Bridge binding:typeBridge:idBridge \"Label bridge\" @ \"Location bridge\" [stringParam\u003d\"my value\"] {\n    Thing type id \"Label thing\" @ \"Location thing\" [booleanParam\u003dtrue, decimalParam\u003d2.5]\n}"
+                  "example": "Bridge binding:typeBridge:idBridge \"Label bridge\" @ \"Location bridge\" [stringParam=\"my value\"] {\n    Thing type id \"Label thing\" @ \"Location thing\" [booleanParam=true, decimalParam=2.5]\n}"
                 }
               },
               "application/yaml": {
@@ -2718,25 +2721,25 @@
             "text/vnd.openhab.dsl.thing": {
               "schema": {
                 "type": "string",
-                "example": "Bridge binding:typeBridge:idBridge \"Label bridge\" @ \"Location bridge\" [stringParam\u003d\"my value\"] {\n    Thing type id \"Label thing\" @ \"Location thing\" [booleanParam\u003dtrue, decimalParam\u003d2.5]\n}"
+                "example": "Bridge binding:typeBridge:idBridge \"Label bridge\" @ \"Location bridge\" [stringParam=\"my value\"] {\n    Thing type id \"Label thing\" @ \"Location thing\" [booleanParam=true, decimalParam=2.5]\n}"
               }
             },
             "text/vnd.openhab.dsl.item": {
               "schema": {
                 "type": "string",
-                "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" \u003cicon\u003e (Group1, Group2) [Tag1, Tag2] { channel\u003d\"binding:type:id:channelid\", namespace\u003d\"my value\" [param\u003d\"my param value\"] }"
+                "example": "Group Group1 \"Label\"\nGroup:Switch:OR(ON,OFF) Group2 \"Label\"\nSwitch MyItem \"Label\" <icon> (Group1, Group2) [Tag1, Tag2] { channel=\"binding:type:id:channelid\", namespace=\"my value\" [param=\"my param value\"] }"
               }
             },
             "text/vnd.openhab.dsl.sitemap": {
               "schema": {
                 "type": "string",
-                "example": "sitemap MySitemap label\u003d\"My Sitemap\" {\n    Frame {\n        Input item\u003dMyItem label\u003d\"My Input\"\n    }\n}"
+                "example": "sitemap MySitemap label=\"My Sitemap\" {\n    Frame {\n        Input item=MyItem label=\"My Input\"\n    }\n}"
               }
             },
             "application/yaml": {
               "schema": {
                 "type": "string",
-                "example": "version: 1\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value"
+                "example": "version: 1\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
               }
             }
           },
@@ -3244,11 +3247,11 @@
           "200": {
             "description": "OK"
           },
-          "404": {
-            "description": "Item not found"
-          },
           "400": {
             "description": "Command cannot be parsed"
+          },
+          "404": {
+            "description": "Item not found"
           }
         }
       },
@@ -3519,11 +3522,11 @@
           "202": {
             "description": "Accepted"
           },
-          "404": {
-            "description": "Item not found"
-          },
           "400": {
             "description": "State cannot be parsed"
+          },
+          "404": {
+            "description": "Item not found"
           }
         }
       }
@@ -4093,6 +4096,14 @@
         "operationId": "getItemDataFromPersistenceService",
         "parameters": [
           {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "language",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "serviceId",
             "in": "query",
             "description": "Id of the persistence service. If not provided the default service will be used",
@@ -4113,7 +4124,7 @@
           {
             "name": "starttime",
             "in": "query",
-            "description": "Start time of the data to return. Will default to 1 day before endtime. [yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSSZ]",
+            "description": "Start time of the data to return. Will default to 1 day before endtime. [yyyy-MM-dd'T'HH:mm:ss.SSSZ]",
             "schema": {
               "type": "string"
             }
@@ -4121,7 +4132,7 @@
           {
             "name": "endtime",
             "in": "query",
-            "description": "End time of the data to return. Will default to current time. [yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSSZ]",
+            "description": "End time of the data to return. Will default to current time. [yyyy-MM-dd'T'HH:mm:ss.SSSZ]",
             "schema": {
               "type": "string"
             }
@@ -4156,6 +4167,14 @@
             "name": "itemState",
             "in": "query",
             "description": "Adds the current Item state into the requested period (the Item state will be before or at the endtime)",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "displayState",
+            "in": "query",
+            "description": "If set to true, formatting from the state description is applied to the values. For QuantityType states, the value in the display unit as defined by the pattern, is returned.",
             "schema": {
               "type": "boolean"
             }
@@ -4206,7 +4225,7 @@
           {
             "name": "time",
             "in": "query",
-            "description": "Time of the data to be stored. Will default to current time. [yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSSZ]",
+            "description": "Time of the data to be stored. Will default to current time. [yyyy-MM-dd'T'HH:mm:ss.SSSZ]",
             "required": true,
             "schema": {
               "type": "string"
@@ -4266,7 +4285,7 @@
           {
             "name": "starttime",
             "in": "query",
-            "description": "Start of the time range to be deleted. [yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSSZ]",
+            "description": "Start of the time range to be deleted. [yyyy-MM-dd'T'HH:mm:ss.SSSZ]",
             "required": true,
             "schema": {
               "type": "string"
@@ -4275,7 +4294,7 @@
           {
             "name": "endtime",
             "in": "query",
-            "description": "End of the time range to be deleted. [yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSSZ]",
+            "description": "End of the time range to be deleted. [yyyy-MM-dd'T'HH:mm:ss.SSSZ]",
             "required": true,
             "schema": {
               "type": "string"
@@ -5224,7 +5243,7 @@
       },
       "delete": {
         "tags": ["things"],
-        "summary": "Removes a thing from the registry. Set \u0027force\u0027 to __true__ if you want the thing to be removed immediately.",
+        "summary": "Removes a thing from the registry. Set 'force' to __true__ if you want the thing to be removed immediately.",
         "operationId": "removeThingById",
         "parameters": [
           {
@@ -5265,7 +5284,7 @@
             "description": "Thing not found."
           },
           "409": {
-            "description": "Thing could not be deleted because it\u0027s not editable."
+            "description": "Thing could not be deleted because it's not editable."
           }
         },
         "security": [
@@ -5327,7 +5346,7 @@
     "/things/{thingUID}/firmware/status": {
       "get": {
         "tags": ["things"],
-        "summary": "Gets thing\u0027s firmware status.",
+        "summary": "Gets thing's firmware status.",
         "operationId": "getThingFirmwareStatus",
         "parameters": [
           {
@@ -5525,7 +5544,7 @@
     "/things/{thingUID}/config": {
       "put": {
         "tags": ["things"],
-        "summary": "Updates thing\u0027s configuration.",
+        "summary": "Updates thing's configuration.",
         "operationId": "updateThingConfig",
         "parameters": [
           {
@@ -6005,11 +6024,11 @@
               }
             }
           },
-          "404": {
-            "description": "Sitemap with requested name does not exist or page does not exist, or page refers to a non-linkable widget"
-          },
           "400": {
             "description": "Invalid subscription id has been provided."
+          },
+          "404": {
+            "description": "Sitemap with requested name does not exist or page does not exist, or page refers to a non-linkable widget"
           }
         }
       }
@@ -6066,11 +6085,11 @@
               }
             }
           },
-          "404": {
-            "description": "Sitemap with requested name does not exist"
-          },
           "400": {
             "description": "Invalid subscription id has been provided."
+          },
+          "404": {
+            "description": "Sitemap with requested name does not exist"
           }
         }
       }
@@ -6511,7 +6530,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RootUIComponent"
+                    "$ref": "#/components/schemas/EnrichedRootUIComponent"
                   }
                 }
               }
@@ -6548,7 +6567,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RootUIComponent"
+                  "$ref": "#/components/schemas/EnrichedRootUIComponent"
                 }
               }
             }
@@ -6590,7 +6609,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RootUIComponent"
+                  "$ref": "#/components/schemas/EnrichedRootUIComponent"
                 }
               }
             }
@@ -6637,13 +6656,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RootUIComponent"
+                  "$ref": "#/components/schemas/EnrichedRootUIComponent"
                 }
               }
             }
           },
           "404": {
             "description": "Component not found"
+          },
+          "405": {
+            "description": "Component is not editable."
           }
         },
         "security": [
@@ -6680,6 +6702,9 @@
           },
           "404": {
             "description": "Component not found"
+          },
+          "405": {
+            "description": "Component is not editable."
           }
         },
         "security": [
@@ -6845,11 +6870,11 @@
               }
             }
           },
-          "404": {
-            "description": "No human language interpreter was found."
-          },
           "400": {
             "description": "interpretation exception occurs"
+          },
+          "404": {
+            "description": "No human language interpreter was found."
           }
         }
       }
@@ -6925,11 +6950,11 @@
               }
             }
           },
-          "404": {
-            "description": "No human language interpreter was found."
-          },
           "400": {
             "description": "interpretation exception occurs"
+          },
+          "404": {
+            "description": "No human language interpreter was found."
           }
         }
       }
@@ -7012,11 +7037,11 @@
           "200": {
             "description": "OK"
           },
-          "404": {
-            "description": "One of the given ids is wrong."
-          },
           "400": {
             "description": "Services are missing or language is not supported by services or dialog processing is already started for the audio source."
+          },
+          "404": {
+            "description": "One of the given ids is wrong."
           }
         }
       }
@@ -7161,11 +7186,11 @@
           "200": {
             "description": "OK"
           },
-          "404": {
-            "description": "One of the given ids is wrong."
-          },
           "400": {
             "description": "Services are missing or language is not supported by services or dialog processing is already started for the audio source."
+          },
+          "404": {
+            "description": "One of the given ids is wrong."
           }
         }
       }
@@ -7189,11 +7214,11 @@
           "200": {
             "description": "OK"
           },
-          "404": {
-            "description": "No audio source was found."
-          },
           "400": {
             "description": "No dialog processing is started for the audio source."
+          },
+          "404": {
+            "description": "No audio source was found."
           }
         }
       }
@@ -7767,11 +7792,11 @@
           "label": {
             "type": "string"
           },
-          "id": {
-            "type": "string"
-          },
           "configuration": {
             "$ref": "#/components/schemas/Configuration"
+          },
+          "id": {
+            "type": "string"
           }
         }
       },
@@ -7801,15 +7826,15 @@
       "Template": {
         "type": "object",
         "properties": {
-          "uid": {
-            "type": "string"
-          },
           "tags": {
             "uniqueItems": true,
             "type": "array",
             "items": {
               "type": "string"
             }
+          },
+          "uid": {
+            "type": "string"
           },
           "visibility": {
             "type": "string",
@@ -8577,28 +8602,6 @@
           }
         }
       },
-      "SitemapButtonDefinition": {
-        "type": "object",
-        "properties": {
-          "row": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "column": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "command": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
-          },
-          "icon": {
-            "type": "string"
-          }
-        }
-      },
       "SitemapCondition": {
         "type": "object",
         "properties": {
@@ -8791,12 +8794,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SitemapRule"
-            }
-          },
-          "buttons": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SitemapButtonDefinition"
             }
           }
         }
@@ -9191,6 +9188,10 @@
           },
           "datapoints": {
             "type": "string"
+          },
+          "unit": {
+            "type": "string",
+            "description": "The unit for the returned values (if available)"
           },
           "data": {
             "type": "array",
@@ -10179,6 +10180,59 @@
           }
         }
       },
+      "EnrichedRootUIComponent": {
+        "type": "object",
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "slots": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/UIComponent"
+              }
+            }
+          },
+          "uid": {
+            "type": "string"
+          },
+          "tags": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "props": {
+            "$ref": "#/components/schemas/ConfigDescription"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "editable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UIComponent": {
+        "type": "object",
+        "properties": {
+          "component": {
+            "type": "string"
+          },
+          "config": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
       "RootUIComponent": {
         "type": "object",
         "properties": {
@@ -10214,18 +10268,6 @@
           "timestamp": {
             "type": "string",
             "format": "date-time"
-          }
-        }
-      },
-      "UIComponent": {
-        "type": "object",
-        "properties": {
-          "component": {
-            "type": "string"
-          },
-          "config": {
-            "type": "object",
-            "additionalProperties": true
           }
         }
       },
