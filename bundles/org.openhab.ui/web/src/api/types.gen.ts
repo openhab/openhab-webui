@@ -140,8 +140,8 @@ export type Module = {
     typeUID: string;
     description: string;
     label: string;
-    id: string;
     configuration: Configuration;
+    id: string;
 };
 
 export type Configuration = {
@@ -158,8 +158,8 @@ export type RuleExecution = {
 };
 
 export type Template = {
-    uid: string;
     tags: Array<string>;
+    uid: string;
     visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
     description: string;
     label: string;
@@ -434,14 +434,6 @@ export type Metadata = {
     editable: boolean;
 };
 
-export type SitemapButtonDefinition = {
-    row: number;
-    column: number;
-    command: string;
-    label: string;
-    icon: string;
-};
-
 export type SitemapCondition = {
     item: string;
     condition: string;
@@ -502,7 +494,6 @@ export type SitemapWidgetDefinition = {
     labelColorRules: Array<SitemapRule>;
     valueColorRules: Array<SitemapRule>;
     iconColorRules: Array<SitemapRule>;
-    buttons: Array<SitemapButtonDefinition>;
 };
 
 export type Thing = {
@@ -648,6 +639,10 @@ export type HistoryDataBean = {
 export type ItemHistory = {
     name: string;
     datapoints: string;
+    /**
+     * The unit for the returned values (if available)
+     */
+    unit: string;
     data: Array<HistoryDataBean>;
 };
 
@@ -987,6 +982,28 @@ export type ConfigDescription = {
     parameterGroups: Array<ConfigDescriptionParameterGroup>;
 };
 
+export type EnrichedRootUiComponent = {
+    component: string;
+    config: {
+        [key: string]: unknown;
+    };
+    slots: {
+        [key: string]: Array<UiComponent>;
+    };
+    uid: string;
+    tags: Array<string>;
+    props: ConfigDescription;
+    timestamp: string;
+    editable: boolean;
+};
+
+export type UiComponent = {
+    component: string;
+    config: {
+        [key: string]: unknown;
+    };
+};
+
 export type RootUiComponent = {
     component: string;
     config: {
@@ -999,13 +1016,6 @@ export type RootUiComponent = {
     tags: Array<string>;
     props: ConfigDescription;
     timestamp: string;
-};
-
-export type UiComponent = {
-    component: string;
-    config: {
-        [key: string]: unknown;
-    };
 };
 
 export type Tile = {
@@ -2868,10 +2878,6 @@ export type CreateFileFormatForSitemapsData = {
 
 export type CreateFileFormatForSitemapsErrors = {
     /**
-     * Payload invalid.
-     */
-    400: unknown;
-    /**
      * One or more sitemaps not found in registry.
      */
     404: unknown;
@@ -3953,6 +3959,12 @@ export type DeleteItemFromPersistenceServiceResponse = DeleteItemFromPersistence
 
 export type GetItemDataFromPersistenceServiceData = {
     body?: never;
+    headers?: {
+        /**
+         * language
+         */
+        'Accept-Language'?: string;
+    };
     path: {
         /**
          * The Item name
@@ -3988,6 +4000,10 @@ export type GetItemDataFromPersistenceServiceData = {
          * Adds the current Item state into the requested period (the Item state will be before or at the endtime)
          */
         itemState?: boolean;
+        /**
+         * If set to true, formatting from the state description is applied to the values. For QuantityType states, the value in the display unit as defined by the pattern, is returned.
+         */
+        displayState?: boolean;
     };
     url: '/persistence/items/{itemName}';
 };
@@ -5659,7 +5675,7 @@ export type GetRegisteredUiComponentsInNamespaceResponses = {
     /**
      * OK
      */
-    200: Array<RootUiComponent>;
+    200: Array<EnrichedRootUiComponent>;
 };
 
 export type GetRegisteredUiComponentsInNamespaceResponse = GetRegisteredUiComponentsInNamespaceResponses[keyof GetRegisteredUiComponentsInNamespaceResponses];
@@ -5677,7 +5693,7 @@ export type AddUiComponentToNamespaceResponses = {
     /**
      * OK
      */
-    200: RootUiComponent;
+    200: EnrichedRootUiComponent;
 };
 
 export type AddUiComponentToNamespaceResponse = AddUiComponentToNamespaceResponses[keyof AddUiComponentToNamespaceResponses];
@@ -5697,6 +5713,10 @@ export type RemoveUiComponentFromNamespaceErrors = {
      * Component not found
      */
     404: unknown;
+    /**
+     * Component is not editable.
+     */
+    405: unknown;
 };
 
 export type RemoveUiComponentFromNamespaceResponses = {
@@ -5727,7 +5747,7 @@ export type GetUiComponentInNamespaceResponses = {
     /**
      * OK
      */
-    200: RootUiComponent;
+    200: EnrichedRootUiComponent;
 };
 
 export type GetUiComponentInNamespaceResponse = GetUiComponentInNamespaceResponses[keyof GetUiComponentInNamespaceResponses];
@@ -5747,13 +5767,17 @@ export type UpdateUiComponentInNamespaceErrors = {
      * Component not found
      */
     404: unknown;
+    /**
+     * Component is not editable.
+     */
+    405: unknown;
 };
 
 export type UpdateUiComponentInNamespaceResponses = {
     /**
      * OK
      */
-    200: RootUiComponent;
+    200: EnrichedRootUiComponent;
 };
 
 export type UpdateUiComponentInNamespaceResponse = UpdateUiComponentInNamespaceResponses[keyof UpdateUiComponentInNamespaceResponses];
