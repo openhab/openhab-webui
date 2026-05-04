@@ -75,9 +75,6 @@
         <f7-list v-show="filteredSitemaps.length > 0" class="col sitemaps-list" ref="sitemapsList" :contacts-list="true" media-list>
           <f7-list-group v-for="(sitemapsWithInitial, initial) in indexedSitemaps" :key="initial">
             <f7-list-item v-if="sitemapsWithInitial.length" :title="initial" group-title />
-            <!-- We have to use :key with a dynamic value to ensure proper reactivity to selection changes
-              A root cause of selection reactivity issues was unclear.
-            -->
             <f7-list-item
               v-for="sitemap in sitemapsWithInitial"
               :key="sitemap.name"
@@ -91,7 +88,7 @@
               @click.exact="click($event, sitemap)"
               :link="sitemap.editable ? encodeURIComponent(sitemap.name) : null"
               :no-chevron="!sitemap.editable"
-              :title="sitemap.label"
+              :title="sitemap.label || sitemap.name"
               :footer="sitemap.name">
               <template #media>
                 <oh-icon :icon="sitemap.icon || 'f7:menu'" :height="32" :width="32" />
@@ -242,7 +239,7 @@ export default {
       api
         .getSitemapDefinitions()
         .then((data) => {
-          this.sitemaps = data.sort((a, b) => a.label.localeCompare(b.label))
+          this.sitemaps = data.sort((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
           this.initSearchbar = true
           this.ready = true
 
@@ -357,11 +354,6 @@ export default {
           showToast('An error occurred while deleting: ' + (err?.message || String(err)))
           f7.emit('sidebarRefresh', null)
         })
-    }
-  },
-  asyncComputed: {
-    iconUrl() {
-      return (icon) => this.$oh.media.getIcon(icon)
     }
   }
 }

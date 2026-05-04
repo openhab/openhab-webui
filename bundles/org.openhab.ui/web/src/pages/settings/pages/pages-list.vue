@@ -110,10 +110,10 @@
               @click.meta="ctrlClick($event, page)"
               @click.exact="click($event, page)"
               :link="getPageLink(page)"
-              :title="page.config.label"
+              :title="page.config?.label || page.uid"
               :subtitle="getPageType(page).label"
               :footer="page.uid"
-              :badge="page.config.order">
+              :badge="page.config?.order">
               <template #subtitle>
                 <div>
                   <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
@@ -122,7 +122,7 @@
                     </template>
                   </f7-chip>
                   <f7-chip
-                    v-for="userrole in page.config.visibleTo || []"
+                    v-for="userrole in page.config?.visibleTo || []"
                     :key="userrole"
                     :text="userrole"
                     media-bg-color="green"
@@ -136,7 +136,7 @@
               <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
               <template #media>
                 <oh-icon
-                  :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
+                  :color="page.config?.sidebar || page.uid === 'overview' ? '' : 'gray'"
                   :icon="getPageIcon(page)"
                   :height="32"
                   :width="32" />
@@ -226,7 +226,7 @@ export default {
     indexedPages() {
       if (this.groupBy === 'alphabetical') {
         return this.filteredPages.reduce((prev, page) => {
-          const label = page.config.label || page.uid
+          const label = page.config?.label || page.uid
           const initial = label.substring(0, 1).toUpperCase()
           if (!prev[initial]) prev[initial] = []
           prev[initial].push(page)
@@ -301,7 +301,9 @@ export default {
         .get('/rest/ui/components/ui:page')
         .then((data) => {
           this.pages = data.sort((a, b) => {
-            return a.config.label.localeCompare(b.config.label)
+            const aLabel = a.config?.label || a.uid
+            const bLabel = b.config?.label || b.uid
+            return aLabel.localeCompare(bLabel)
           })
           this.initSearchbar = true
           this.ready = true
