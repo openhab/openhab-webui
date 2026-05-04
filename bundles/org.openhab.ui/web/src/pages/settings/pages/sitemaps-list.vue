@@ -96,6 +96,10 @@
               <template #media>
                 <oh-icon :icon="sitemap.icon || 'f7:menu'" :height="32" :width="32" />
               </template>
+              <template #after>
+                <!-- push the lock icon so it appears immediately after the title,
+                 consistent with other list items (Things, Items, etc) -->
+              </template>
               <template #after-title>
                 <f7-icon v-if="!sitemap.editable" f7="lock_fill" size="1rem" color="gray" />
               </template>
