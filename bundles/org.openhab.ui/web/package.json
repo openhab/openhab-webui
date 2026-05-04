@@ -26,7 +26,6 @@
   "scripts": {
     "generate-build-info": "node build/generate-build-info.mjs",
     "generate-widget-component-ts": "node build/generate-widget-component-ts.mjs",
-    "pregenerate-rest-client": "oxfmt --write build/openhab-api-spec.json",
     "generate-rest-client": "node build/generate-rest-client.mjs",
     "compile-grammar": "node build/compile-grammar.mjs",
     "predev": "npm run generate-build-info",
