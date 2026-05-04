@@ -243,9 +243,6 @@ export const OhCategoryAxisDefinition = new WidgetDefinition('oh-category-axis',
       .r()
       .d('default')
       .v((_, cfg) => cfg.categoryType === 'week'),
-    pb('startOnSunday', 'Start Week on Sunday', 'Check to start the week on Sundays instead of Mondays').v(
-      (_, cfg) => cfg.categoryType === 'week'
-    ),
     po('monthFormat', 'Month Format', 'Format of months labels', [
       { value: 'default', label: 'Long (default)' },
       { value: 'short', label: 'Short' }

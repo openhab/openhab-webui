@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest'
 import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
+import Weekday from 'dayjs/plugin/weekday'
 import { dimensionFromDate } from './oh-aggregate-series'
 import { ChartType, OhAggregateSeries } from '@/types/components/widgets'
 
 dayjs.extend(IsoWeek)
+dayjs.extend(Weekday)
 
 describe('dimensionFromDate', () => {
   const startTime = dayjs('2023-01-01')
@@ -28,19 +30,26 @@ describe('dimensionFromDate', () => {
     const endTime = dayjs('2025-10-26') // Sunday
     const chartType = ChartType.month
 
-    describe('Dimension.weekday (0=Sun, 6=Sat)', () => {
-      it.each([
-        { day: 'Sunday', date: '2025-10-19', invert: false, expected: 0 },
-        { day: 'Sunday', date: '2025-10-19', invert: true, expected: 6 }, // 6 - 0
-        { day: 'Saturday', date: '2025-10-25', invert: false, expected: 6 },
-        { day: 'Saturday', date: '2025-10-25', invert: true, expected: 0 } // 6 - 6
-      ])('should handle $day (invert: $invert)', ({ date, invert, expected }) => {
-        const d = dayjs(date)
-        expect(dimensionFromDate(chartType, startTime, endTime, d, OhAggregateSeries.Dimension.weekday, invert)).toBe(expected)
+    describe('Dimension.weekday (locale-aware)', () => {
+      it('should return 0 for Sunday in default (en) locale', () => {
+        const d = dayjs('2025-10-19')
+        expect(dimensionFromDate(chartType, startTime, endTime, d, OhAggregateSeries.Dimension.weekday)).toBe(0)
+      })
+
+      it('should return 6 for Sunday in German (de) locale', async () => {
+        const originalLocale = dayjs.locale()
+        try {
+          await import('dayjs/locale/de')
+          dayjs.locale('de')
+          const d = dayjs('2025-10-19') // Sunday
+          expect(dimensionFromDate(chartType, startTime, endTime, d, OhAggregateSeries.Dimension.weekday)).toBe(6)
+        } finally {
+          dayjs.locale(originalLocale)
+        }
       })
     })
 
-    describe('Dimension.isoWeekday (0=Mon, 6=Sun)', () => {
+    describe('Dimension.isoWeekday (always 0=Mon, 6=Sun)', () => {
       it.each([
         { day: 'Monday', date: '2025-10-20', invert: false, expected: 0 }, // iso (1) - 1
         { day: 'Monday', date: '2025-10-20', invert: true, expected: 6 }, // 7 - iso (1)

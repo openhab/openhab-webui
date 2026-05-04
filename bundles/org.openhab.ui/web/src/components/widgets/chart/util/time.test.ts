@@ -13,12 +13,27 @@ describe('Time Utility Tests', () => {
       expect(result.format('YYYY-MM-DD HH:mm')).toBe('2026-02-09 00:00')
     })
 
-    it('should return Sunday 00:00 for ChartType.week', () => {
+    it('should return Sunday 00:00 for ChartType.week (default locale)', () => {
       // Saturday, Feb 14, 2026
       const date = dayjs('2026-02-14')
       const result = startOf(ChartType.week, date)
 
       expect(result.format('YYYY-MM-DD HH:mm')).toBe('2026-02-08 00:00')
+    })
+
+    it('should return Monday 00:00 for ChartType.week when locale is de', async () => {
+      const originalLocale = dayjs.locale()
+      try {
+        await import('dayjs/locale/de')
+        dayjs.locale('de')
+        // Saturday, Feb 14, 2026. German week starts on Monday, Feb 9.
+        const date = dayjs('2026-02-14')
+        const result = startOf(ChartType.week, date)
+
+        expect(result.format('YYYY-MM-DD HH:mm')).toBe('2026-02-09 00:00')
+      } finally {
+        dayjs.locale(originalLocale)
+      }
     })
 
     it('should avoid shifting back if date is already Sunday for ChartType.week', () => {

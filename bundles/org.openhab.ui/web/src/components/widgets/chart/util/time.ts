@@ -68,10 +68,7 @@ export function mapChartTypeToYears(chartType: ChartType): number {
 export function startOf(chartType: ChartType, date?: string | number | dayjs.Dayjs | Date): Dayjs {
   const d = dayjs(date)
   if (chartType === ChartType.week) {
-    // Week starting on Sunday & passed-in date is on Sunday: jump to start of day
-    if (d.day() === 0) return d.startOf('day')
-    // Week starting on Sunday
-    return d.startOf('isoWeek').subtract(1, 'day')
+    return d.startOf('week')
   } else if (chartTypeLongerThanAYear(chartType)) {
     return d.startOf('year').subtract(mapChartTypeToYears(chartType) - 1, 'year')
   }

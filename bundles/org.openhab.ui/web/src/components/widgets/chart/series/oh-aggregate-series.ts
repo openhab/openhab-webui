@@ -1,5 +1,6 @@
 import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
+import Weekday from 'dayjs/plugin/weekday'
 import ComponentId from '../../component-id'
 import aggregate from '../util/aggregators'
 import type { OhAggregateSeriesOption, SeriesComponent } from '../types.ts'
@@ -10,6 +11,7 @@ import { OhAggregateSeriesDefinition } from '@/assets/definitions/widgets/chart'
 import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widgets/chart/util/time.ts'
 
 dayjs.extend(IsoWeek)
+dayjs.extend(Weekday)
 
 export function dimensionFromDate(
   chartType: ChartType,
@@ -18,15 +20,16 @@ export function dimensionFromDate(
   d: Dayjs,
   dimension?: OhAggregateSeries.Dimension,
   invert?: boolean
-) {
+): number | Date {
   if (!dimension) return d.toDate()
+  const dWithWeekday = d as Dayjs & { weekday(): number }
   switch (dimension) {
     case OhAggregateSeries.Dimension.minute:
       return invert ? 59 - d.minute() : d.minute()
     case OhAggregateSeries.Dimension.hour:
       return invert ? 23 - d.hour() : d.hour()
     case OhAggregateSeries.Dimension.weekday:
-      return invert ? 6 - d.day() : d.day()
+      return invert ? 6 - dWithWeekday.weekday() : dWithWeekday.weekday()
     case OhAggregateSeries.Dimension.isoWeekday:
       return invert ? 7 - d.isoWeekday() : d.isoWeekday() - 1
     case OhAggregateSeries.Dimension.date:
@@ -76,10 +79,41 @@ const aggregateSeries: SeriesComponent = {
       component.config,
       OhAggregateSeriesDefinition
     )
-    const dimension1 = series.dimension1 ?? (context.chart.config.chartType as unknown as OhAggregateSeries.Dimension)
+
+    const chartType = context.chart.config.chartType
+    let dimension1 = series.dimension1
+    // if no dimension set: apply reasonable defaults based on chartType
+    if (!dimension1 && chartType) {
+      switch (chartType) {
+        case ChartType.day:
+          dimension1 = OhAggregateSeries.Dimension.hour
+          break
+        case ChartType.week:
+          dimension1 = OhAggregateSeries.Dimension.weekday
+          break
+        case ChartType.isoWeek:
+          dimension1 = OhAggregateSeries.Dimension.isoWeekday
+          break
+        case ChartType.month:
+          dimension1 = OhAggregateSeries.Dimension.date
+          break
+        case ChartType.year:
+          dimension1 = OhAggregateSeries.Dimension.month
+          break
+        case ChartType.twoYears:
+        case ChartType.threeYears:
+        case ChartType.fiveYears:
+          dimension1 = OhAggregateSeries.Dimension.year
+          break
+      }
+    }
+    if (!dimension1) {
+      console.warn('oh-aggregate-series: no dimension1 set, falling back to chartType', chartType)
+      dimension1 = chartType as unknown as OhAggregateSeries.Dimension
+    }
+
     const dimension2 = series.dimension2
     const boundary = includeBoundaryAndItemStateFor(component.config)
-    const chartType = context.chart.config.chartType
 
     const itemPoints = points.find((p) => p.name === series.item)?.data ?? []
 

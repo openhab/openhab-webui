@@ -8,8 +8,8 @@ export default () => [
     [
       { value: '', label: 'Dynamic period' },
       { value: 'day', label: 'Day' },
-      { value: 'isoWeek', label: 'Week (starting on Monday)' },
-      { value: 'week', label: 'Week (starting on Sunday)' },
+      { value: 'isoWeek', label: 'Week (always starting on Monday)' },
+      { value: 'week', label: 'Week (starts according to locale)' },
       { value: 'month', label: 'Month' },
       { value: 'year', label: 'Year' },
       { value: 'twoYears', label: '2 Years' },
