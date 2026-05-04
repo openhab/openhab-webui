@@ -1,19 +1,20 @@
 import { type CompletionContext } from '@codemirror/autocomplete'
 import { Line } from '@codemirror/state'
 
-export function lineIndent(line: Line) {
-  const match = line.text.match(/^ +/)
+export function lineIndent(line: Line, ignoreHyphen = false): number {
+  const match = line.text.match(ignoreHyphen ? /^ +(?:- )?/ : /^ +/)
   if (match && match.length === 1) return match[0].length
   return 0
 }
 
-export function findParent(context: CompletionContext, line: Line): Line | undefined {
+export function findParent(context: CompletionContext, line: Line | undefined, ignoreHyphen = false): Line | undefined {
+  if (!line) return undefined
   // If the line is all blank, assume the current indent is at the cursor
-  const currentIndent = line.text.match(/^\s*$/) ? context.pos - line.from : lineIndent(line)
+  const currentIndent = line.text.match(/^\s*$/) ? context.pos - line.from : lineIndent(line, ignoreHyphen)
   for (let l = line.number - 1; l >= 1; l--) {
     line = context.state.doc.line(l)
     if (line.text.match(/^\s*$/)) continue // skip empty lines
-    if (lineIndent(line) < currentIndent) return line
+    if (lineIndent(line, ignoreHyphen) < currentIndent) return line
   }
 }
 
@@ -51,7 +52,20 @@ export function isComponent(line: Line | undefined) {
   return line.text.match(/^ *-? ?component:/)
 }
 
-export function isRuleSection(line: Line | undefined) {
-  if (!line) return false
-  return line.text.match(/^(triggers|conditions|actions|items):/)
+export interface RootSection {
+  type: string
+  line: Line
+}
+
+export function findRootSection(context: CompletionContext, line: Line): RootSection | undefined {
+  // Traverse up to find the root-level section
+  let match: RegExpMatchArray | null = null
+  for (let l = line.number; l > 0; l--) {
+    const checkLine = context.state.doc.line(l)
+    match = checkLine.text.match(/^(\w+):\s*$/)
+    if (match && match.length === 2) {
+      return { type: match[1], line: checkLine }
+    }
+  }
+  return undefined
 }
