@@ -172,6 +172,8 @@
     display inherit !important
   .item-title
     font-weight inherit !important
+  .disabled
+    pointer-events unset !important
 </style>
 
 <script>
