@@ -925,10 +925,13 @@ export default {
         }
 
         let currentSection = this.$$('.currentsection .item-title')?.[0]?.textContent
+        // Add special cases where the page doesn't have a special entry in the left sidebar menu
         if (this.currentPath.settings?.transformations) {
           currentSection = 'Transformations'
         } else if (this.currentPath.settings?.persistence) {
           currentSection = 'Persistence'
+        } else if (this.currentPath.settings?.sitemaps) {
+          currentSection = 'Sitemaps'
         }
         title.unshift(currentSection)
       }
