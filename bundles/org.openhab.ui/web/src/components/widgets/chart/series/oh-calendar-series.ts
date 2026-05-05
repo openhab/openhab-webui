@@ -52,7 +52,8 @@ const calendarSeries: SeriesComponent = {
     if (series.type === OhCalendarSeries.Type.scatter) {
       const scatterSeries = series as ScatterSeriesOption & { scatterSymbolSizeFactor?: number }
       scatterSeries.symbolSize = (v: number[]) => {
-        return v.pop()! * (scatterSeries.scatterSymbolSizeFactor ?? 1)
+        const state = v[v.length - 2] // second-last element, last element is the unit
+        return state * (scatterSeries.scatterSymbolSizeFactor ?? 1)
       }
     }
 

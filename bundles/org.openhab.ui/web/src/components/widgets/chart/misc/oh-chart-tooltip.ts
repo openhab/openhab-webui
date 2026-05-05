@@ -77,7 +77,7 @@ const chartTooltip: MiscChartComponent = {
           params.forEach((p) => {
             if (p.seriesId) {
               const [seriesType, _itemName, _id, markArea] = p.seriesId.split('#')
-              const unit = Array.isArray(param.value) ? (param.value[param.value.length - 1] as string) : undefined
+              const unit = Array.isArray(p.value) ? (p.value[p.value.length - 1] as string) : undefined
               if ((seriesType === 'oh-time-series' && !markArea) || seriesType !== 'oh-time-series') {
                 let state = context.numberFormatter!.format((p.data as number[])[1])
                 if (unit) state += ' ' + unit
