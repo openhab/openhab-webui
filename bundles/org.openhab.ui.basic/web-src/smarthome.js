@@ -3816,6 +3816,17 @@
 			_t.closeConnection();
 			_t.paused = true;
 		};
+		// Resume from hidden state: re-establish subscription via POST so that
+		// connectionRestored -> startSubscriber flow is used (reload + SSE reopen)
+		_t.resume = function() {
+			_t.paused = false;
+			ajax({
+				url: _t.subscribeRequestURL,
+				type: "POST",
+				callback: _t.connectionRestored,
+				error: _t.subscriberError
+			});
+		};
 	}
 
 	function ChangeListenerLongpolling() {
@@ -4080,19 +4091,17 @@
 				clearInterval(_t.reconnectInterval);
 				_t.reconnectInterval = null;
 			}
+			// Call resume() which is implemented by both
+			// ChangeListenerLongpolling and ChangeListenerEventsource.
+			// Long-polling resume restarts the polling loop; SSE resume
+			// triggers the subscribe POST and the normal recovery flow.
+			if (typeof _t.resume === "function") {
+				_t.resume();
+				return;
+			}
 			if (typeof _t.paused !== "undefined") {
 				_t.paused = false;
 			}
-			// A new subscribe POST gives us a fresh subscription ID.  The
-			// connectionRestored callback then reloads the page HTML (full state
-			// re-sync) and opens the new SSE stream – exactly the same flow used
-			// after a normal connection-error recovery.
-			ajax({
-				url: _t.subscribeRequestURL,
-				type: "POST",
-				callback: _t.connectionRestored,
-				error: _t.subscriberError
-			});
 		};
 
 		ajax({
