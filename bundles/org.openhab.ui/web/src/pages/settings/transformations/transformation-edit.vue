@@ -125,9 +125,10 @@
 </template>
 
 <style lang="stylus">
-.transformation-editor.v-codemirror
+.transformation-editor
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
+  width 100%
 </style>
 
 <script>

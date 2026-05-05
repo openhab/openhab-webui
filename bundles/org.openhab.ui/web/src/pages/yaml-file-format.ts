@@ -50,7 +50,7 @@ export function toFileYAMLSyntax(yamlElement: string, obj: YamlObject | YamlObje
     )
   }
 
-  return YAML.stringify(fileObject)
+  return YAML.stringify(fileObject, { lineWidth: 0 })
 }
 
 /**
@@ -75,7 +75,7 @@ export function toFileYAMLSyntax(yamlElement: string, obj: YamlObject | YamlObje
  */
 
 export function fromFileYAMLSyntax(yamlElement: string, yamlString: string, uid: string | null): unknown {
-  const obj = YAML.parse(yamlString) as unknown
+  const obj = YAML.parse(yamlString, { prettyErrors: true }) as unknown
 
   if (!isRecord(obj)) {
     throw createYamlStructureError(yamlElement, uid)
