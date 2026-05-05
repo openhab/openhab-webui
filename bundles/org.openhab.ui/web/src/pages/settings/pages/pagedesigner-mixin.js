@@ -1,6 +1,6 @@
 // Note: useDirty() and useTabs() must be initialized in the page component using this mixin.
 // This mixin expects reactive dirty state (dirty/dirtyIndicator) and currentTab/switchTab to be provided at page level.
-import { nextTick } from 'vue'
+import { nextTick, toRaw } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import YAML from 'yaml'
@@ -39,12 +39,16 @@ export default {
     ready() {
       return this.pageReady && useComponentsStore().ready
     },
+    isEditable() {
+      return !this.page || (this.page.editable ?? true)
+    },
     context() {
       return {
         component: this.page,
         store: useStatesStore().trackedItems,
         props: this.props,
         vars: this.page && this.page.config && this.page.config.defineVars ? this.page.config.defineVars : {},
+        isEditable: this.isEditable,
         editmode:
           !this.previewMode || this.forceEditMode
             ? {
@@ -78,8 +82,8 @@ export default {
   watch: {
     page: {
       handler: function () {
-        if (!this.loading) {
-          // ignore changes during loading
+        if (!this.loading && this.isEditable) {
+          // ignore changes during loading or when page is not editable
           this.dirty = !fastDeepEqual(this.page, this.savedPage)
         }
       },
@@ -142,6 +146,7 @@ export default {
       }
     },
     save() {
+      if (!this.isEditable) return
       if (this.currentTab === 'code' && !this.fromYaml()) return
       if (!this.page.uid) {
         f7.dialog.alert('Please give an ID to the page')
@@ -251,7 +256,8 @@ export default {
         {
           props: {
             component: this.currentComponent,
-            widget: this.currentWidget
+            widget: this.currentWidget,
+            readOnly: !(parentContext && parentContext.isEditable !== undefined ? parentContext.isEditable : this.isEditable)
           }
         }
       )

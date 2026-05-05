@@ -22,8 +22,6 @@
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
       <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
         <f7-link
-          v-if="!theme.md"
-          v-show="selection.length"
           color="red"
           class="delete display-flex flex-direction-row margin-right"
           icon-ios="f7:trash"
@@ -31,11 +29,20 @@
           @click="removeSelected">
           Remove
         </f7-link>
+        <f7-link
+          color="blue"
+          class="copy display-flex flex-direction-row"
+          @click="copySelectedItemsToClipboard"
+          icon-ios="f7:square_on_square"
+          icon-aurora="f7:square_on_square">
+          &nbsp;Copy
+        </f7-link>
       </div>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="toggleCheck()" />
       <div v-if="theme.md" class="title">{{ selection.length }} selected</div>
-      <div v-if="theme.md && selection.length" class="right">
+      <div v-if="theme.md && selectedItems.length > 0" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link tooltip="Copy selected" icon-md="material:content_copy" icon-color="white" @click="copySelectedItemsToClipboard" />
       </div>
     </f7-toolbar>
 
@@ -134,6 +141,13 @@
                 </div>
               </template>
               <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
+              <template #after>
+                <!-- This is here to push the after-title icon so it would appear immediately after the title
+                     for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
+              </template>
+              <template #after-title>
+                <f7-icon v-if="page.editable === false" f7="lock_fill" size="1rem" color="gray" />
+              </template>
               <template #media>
                 <oh-icon
                   :color="page.config?.sidebar || page.uid === 'overview' ? '' : 'gray'"
@@ -181,6 +195,9 @@ import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
 import { getPageType, getPageIcon } from '@/pages/page-type'
+
+import copyToClipboard from '@/js/clipboard'
+import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 export default {
   props: {
@@ -407,11 +424,14 @@ export default {
       })
     },
     doRemoveSelected() {
-      let dialog = f7.dialog.progress(`Deleting Pages...`)
+      if (this.selectedItems.some((p) => this.pages.find((page) => page.uid === p)?.editable === false)) {
+        f7.dialog.alert('Some of the selected pages are not modifiable because they have been provisioned by files')
+        return
+      }
 
-      const promises = this.selection.map((p) => {
-        return this.$oh.api.delete('/rest/ui/components/ui:page/' + p)
-      })
+      let dialog = f7.dialog.progress('Deleting Pages...')
+
+      const promises = this.selection.map((p) => this.$oh.api.delete('/rest/ui/components/ui:page/' + p))
       Promise.all(promises)
         .then((data) => {
           showToast('Pages removed')
@@ -427,6 +447,14 @@ export default {
           showToast('An error occurred while deleting: ' + (err?.message || String(err)))
           f7.emit('sidebarRefresh', null)
         })
+    },
+    copySelectedItemsToClipboard() {
+      const itemsToCopy = this.pages.filter((page) => this.selection.includes(page.uid))
+      const yaml = toFileYAMLSyntax('pages', itemsToCopy)
+      copyToClipboard(yaml, {
+        onSuccess: () => showToast('Selected Page definitions copied to clipboard'),
+        onError: () => showToast('Failed to copy page definitions to clipboard')
+      })
     }
   },
   asyncComputed: {

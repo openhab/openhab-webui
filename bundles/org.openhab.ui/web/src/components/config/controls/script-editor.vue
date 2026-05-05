@@ -1,5 +1,13 @@
 <template>
-  <codemirror ref="cm" class="code-editor-fit" :model-value="value" :extensions="extensions" @ready="onCmReady" @change="onCmCodeChange" />
+  <div class="code-editor-fit">
+    <f7-icon
+      v-if="readOnly"
+      f7="lock"
+      size="50"
+      class="code-readonly-icon"
+      :tooltip="readOnlyMsg || 'Read-only: provisioned from a file'" />
+    <codemirror ref="cm" :model-value="value" :extensions="extensions" @ready="onCmReady" @change="onCmCodeChange" />
+  </div>
 </template>
 
 <style lang="stylus">
@@ -13,6 +21,20 @@
   width 100%
   height 100%
   display flex !important
+
+  .code-readonly-icon
+    position absolute
+    top 0
+    right 0
+    margin var(--f7-typography-margin) !important
+    color var(--f7-color-gray)
+    opacity 0.5
+    z-index 4000
+    user-select none
+
+  .v-codemirror
+    flex 1
+    min-width 0
 
   .cm-editor
     height 100%
@@ -131,6 +153,7 @@ const props = defineProps<{
   mode: string
   hintContext?: HintContext
   readOnly?: boolean
+  readOnlyMsg?: string
 }>()
 
 const emit = defineEmits<{

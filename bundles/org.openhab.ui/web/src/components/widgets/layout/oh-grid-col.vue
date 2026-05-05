@@ -1,6 +1,6 @@
 <template>
   <f7-col v-if="visible" v-bind="config" class="oh-col" :class="scopedCssUid">
-    <div v-if="context.editmode" width="100%">
+    <div v-if="context.editmode && context.isEditable" width="100%">
       <f7-menu class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_split_3x1" dropdown>
           <f7-menu-dropdown right>
@@ -34,7 +34,7 @@
       </f7-menu>
     </div>
     <oh-placeholder-widget
-      v-if="context.editmode && !defaultSlots.length"
+      v-if="context.editmode && context.isEditable && !defaultSlots.length"
       @click="context.editmode.addWidget(context.component, null, context.parent)" />
     <generic-widget-component v-else-if="defaultSlots.length" :context="childContext(defaultSlots[0])" />
   </f7-col>

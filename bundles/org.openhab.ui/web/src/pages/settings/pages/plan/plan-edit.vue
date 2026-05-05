@@ -3,6 +3,7 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create plan page' : page.config.label) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -27,7 +28,8 @@
           <div>Loading...</div>
         </f7-block>
         <f7-block v-if="ready && !previewMode" class="block-narrow">
-          <page-settings :page="page" :createMode="createMode" :f7router />
+          <not-editable-notice v-if="!isEditable" />
+          <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
         </f7-block>
 
         <f7-block v-if="ready && !previewMode" class="block-narrow" style="padding-bottom: 8rem">
@@ -37,6 +39,7 @@
               :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
               :parameters="pageWidgetDefinition.props.parameters || []"
               :configuration="page.config"
+              :readOnly="!isEditable"
               :f7router
               @updated="dirty = true" />
 
@@ -62,7 +65,7 @@
                   <oh-icon v-if="markerIcon(marker)" :icon="markerIcon(marker)" height="32" width="32" />
                 </template>
                 <template #content-start>
-                  <f7-menu class="configure-layout-menu">
+                  <f7-menu v-if="isEditable" class="configure-layout-menu">
                     <f7-menu-item icon-f7="list_bullet" dropdown>
                       <f7-menu-dropdown>
                         <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker" />
@@ -80,9 +83,9 @@
                   </f7-menu>
                 </template>
               </f7-list-item>
-              <f7-list-button color="blue" title="Add marker" @click="addWidget(page, 'oh-plan-marker')" />
+              <f7-list-button v-if="isEditable" color="blue" title="Add marker" @click="addWidget(page, 'oh-plan-marker')" />
             </f7-list>
-            <f7-block-footer class="param-description">
+            <f7-block-footer v-if="isEditable" class="param-description">
               You can also
               <f7-link style="z-index: inherit" href="#" @click="previewMode = true"> switch to Run mode </f7-link>
               to add markers and position them on the plan.
@@ -98,6 +101,7 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=plan"
           :value="pageYaml"
+          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -110,7 +114,7 @@
 
 <style lang="stylus">
 .plan-editor
-  .page-code-editor.v-codemirror
+  .code-editor-fit.page-code-editor
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message
@@ -132,8 +136,8 @@ import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
-
-import YAML from 'yaml'
+import { resolveDefaultProps } from '../defaultProps'
+import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 import OhPlanPage from '@/components/widgets/plan/oh-plan-page.vue'
 import OhPlanMarker from '@/components/widgets/plan/oh-plan-marker.vue'
@@ -143,6 +147,7 @@ const ConfigurableWidgets = {
 }
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
@@ -156,6 +161,7 @@ export default {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhPlanPage,
     PageSettings,
+    NotEditableNotice,
     ConfigSheet
   },
   props: {
@@ -224,16 +230,24 @@ export default {
       this.context.editmode.configureWidget(marker, context)
     },
     toYaml() {
-      this.pageYaml = YAML.stringify({
-        config: this.page.config,
-        markers: this.page.slots.default
-      })
+      this.pageYaml = toFileYAMLSyntax('pages', this.page)
     },
     fromYaml() {
       try {
-        const updatedPage = YAML.parse(this.pageYaml)
+        const updatedPage = fromFileYAMLSyntax('pages', this.pageYaml, this.page.uid)
         this.page.config = updatedPage.config
-        this.page.slots.default = updatedPage.markers
+        this.page.tags = updatedPage.tags || []
+        this.page.props = resolveDefaultProps(updatedPage.props)
+        if (!updatedPage.slots) {
+          // maintain compatibility with older versions of the page schema
+          // where markers were directly on the page object instead of in a slots default property
+          // so that users can paste older YAML code without having to adjust the structure
+          this.page.slots = {
+            default: updatedPage.markers || []
+          }
+        } else {
+          this.page.slots = updatedPage.slots
+        }
         this.forceUpdate()
         return true
       } catch (e) {

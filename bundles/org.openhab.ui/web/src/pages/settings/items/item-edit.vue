@@ -18,7 +18,7 @@
       <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block v-if="item.name || item.created === false" class="block-narrow">
           <f7-col v-if="!editable">
-            <div class="padding-left">Note: {{ notEditableMsg }}</div>
+            <not-editable-notice subject="Item" />
           </f7-col>
           <f7-col>
             <item-form ref="itemForm" :item="item" :items="items" :createMode="createMode" />
@@ -56,7 +56,6 @@
           :object="item"
           :object-id="item.name"
           :read-only="!editable"
-          :read-only-msg="notEditableMsg"
           @save="save()"
           @parsed="updateItem"
           @changed="onCodeChanged" />
@@ -88,6 +87,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import * as Types from '@/assets/item-types.js'
 
 import ItemForm from '@/components/item/item-form.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import ItemMixin from '@/components/item/item-mixin'
 import { showToast } from '@/js/dialog-promises'
@@ -104,6 +104,7 @@ export default {
   },
   components: {
     ItemForm,
+    NotEditableNotice,
     CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   setup() {
@@ -124,8 +125,7 @@ export default {
       semanticClass: '',
       semanticProperty: '',
       pendingTag: '',
-      currentTab: 'design',
-      notEditableMsg: 'This Item is not editable because it has been provisioned from a file.'
+      currentTab: 'design'
     }
   },
   computed: {

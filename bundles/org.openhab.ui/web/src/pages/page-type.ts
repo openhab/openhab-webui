@@ -29,6 +29,10 @@ export function getPageType(page?: api.RootUiComponent | DeepReadonly<api.RootUi
   return pageTypes[page.component] || unknownPageType
 }
 
+export function getPageComponentTypes(): string[] {
+  return Object.keys(pageTypes)
+}
+
 /**
  * Returns the icon for the given page, or a default icon if the page type is unknown.
  * The page type is determined by matching the page's component type against the known page types.

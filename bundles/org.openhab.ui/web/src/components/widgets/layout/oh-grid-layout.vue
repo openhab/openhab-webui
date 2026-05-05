@@ -1,6 +1,6 @@
 <template>
   <div ref="ohGridLayout" class="oh-grid-layout">
-    <template v-if="context.editmode">
+    <template v-if="context.editmode && context.isEditable">
       <!-- normal menu -->
       <f7-block v-if="!fullscreen">
         <f7-menu class="configure-layout-menu">
@@ -20,7 +20,7 @@
       <!-- fullscreen fab menu -->
       <template v-if="fullscreen">
         <f7-fab-backdrop />
-        <f7-fab v-if="context.editmode" position="right-bottom" color="blue">
+        <f7-fab v-if="context.editmode && context.isEditable" position="right-bottom" color="blue">
           <f7-icon f7="menu" />
           <f7-icon ios="f7:xmark" aurora="f7:xmark" md="material:close" />
           <f7-fab-buttons position="top">
@@ -43,8 +43,8 @@
 
     <grid-layout
       ref="vueGridLayout"
-      :is-draggable="!!context.editmode"
-      :is-resizable="!!context.editmode"
+      :is-draggable="!!context.editmode && context.isEditable"
+      :is-resizable="!!context.editmode && context.isEditable"
       v-model:layout="layout"
       :auto-size="config.layoutType !== 'fixed'"
       :col-num="colNum"

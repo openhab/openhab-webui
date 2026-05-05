@@ -39,6 +39,10 @@ export interface WidgetContext {
   ctxVars?: ContextVarObj
   editmode?: EditMode
   /**
+   * Whether the page/widget is editable. When false, edit controls are hidden.
+   */
+  isEditable?: boolean
+  /**
    * oh-context functions
    */
   fn?: Record<string, () => unknown>

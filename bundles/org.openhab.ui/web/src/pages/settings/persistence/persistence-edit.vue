@@ -62,9 +62,7 @@
         </f7-block>
 
         <f7-block v-if="ready" class="block-narrow">
-          <f7-col v-if="!editable">
-            <div class="padding-left">Note: {{ notEditableMgs }}</div>
-          </f7-col>
+          <not-editable-notice v-if="!editable" subject="persistence configuration" />
           <f7-col class="modules">
             <!-- Configuration -->
             <div>
@@ -270,14 +268,6 @@
 
       <!-- Code Tab -->
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon
-          v-if="!editable"
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          :tooltip="notEditableMgs" />
         <editor
           v-if="currentTab === 'code'"
           class="persistence-code-editor"
@@ -344,6 +334,7 @@ import ItemPicker from '@/components/config/controls/item-picker.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
@@ -354,6 +345,7 @@ export default {
   components: {
     ItemPicker,
     StrategyPicker,
+    NotEditableNotice,
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
@@ -376,9 +368,7 @@ export default {
       loading: false,
       currentConfiguration: null,
       currentCronStrategy: null,
-      currentFilter: null,
-
-      notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
+      currentFilter: null
     }
   },
   computed: {

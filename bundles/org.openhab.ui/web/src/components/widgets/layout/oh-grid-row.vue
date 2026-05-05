@@ -1,7 +1,7 @@
 <template>
   <div class="oh-row" :class="scopedCssUid">
     <hr v-if="context.editmode" style="opacity: 0.5; border-top: 1px #777 dashed" />
-    <div v-if="context.editmode" width="100%">
+    <div v-if="context.editmode && context.isEditable" width="100%">
       <f7-menu class="configure-layout-menu margin-bottom padding-horizontal">
         <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-col')" icon-f7="plus" text="Add Column" />
         <f7-menu-item style="margin-left: auto" icon-f7="square_split_1x2" dropdown>
