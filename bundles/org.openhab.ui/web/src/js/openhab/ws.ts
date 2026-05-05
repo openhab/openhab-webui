@@ -160,11 +160,11 @@ function newWSConnection(
   // Handle WebSocket connection closed
   socket.onclose = (event: CloseEvent) => {
     socket.clearKeepalive()
-    if (closeCallback) {
-      closeCallback(event)
-    } else {
-      console.debug('WebSocket connection closed', event)
+    const index = openWSConnections.indexOf(socket)
+    if (index >= 0) {
+      openWSConnections.splice(index, 1)
     }
+    if (closeCallback) closeCallback(event)
   }
 
   // Handle WebSocket message received
@@ -276,23 +276,10 @@ const WebSocketService = {
     if (!socket) return
 
     const keepaliveWebSocket = socket as KeepaliveWebSocket
-
-    const index = openWSConnections.indexOf(keepaliveWebSocket)
-    if (index >= 0) {
-      openWSConnections.splice(index, 1)
-    }
+    keepaliveWebSocket.close()
 
     console.debug(`WS connection closed: ${keepaliveWebSocket.url}, ${openWSConnections.length} open connections`)
     console.debug(openWSConnections)
-
-    keepaliveWebSocket.onclose = (event: CloseEvent) => {
-      if (callback) {
-        callback(event)
-      }
-    }
-
-    keepaliveWebSocket.clearKeepalive()
-    keepaliveWebSocket.close()
   }
 }
 
