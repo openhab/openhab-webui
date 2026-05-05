@@ -149,6 +149,7 @@
     "@tsconfig/node24": "^24.0.3",
     "@types/audioworklet": "^0.0.97",
     "@types/css-modules": "^1.0.5",
+    "@types/diacritic": "^0.0.0",
     "@types/event-source-polyfill": "^1.0.5",
     "@types/lodash": "^4.17.24",
     "@types/node": "^24.10.4",
