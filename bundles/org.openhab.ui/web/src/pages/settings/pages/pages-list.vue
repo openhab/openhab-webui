@@ -424,7 +424,7 @@ export default {
       })
     },
     doRemoveSelected() {
-      if (this.selectedItems.some((p) => this.pages.find((page) => page.uid === p)?.editable === false)) {
+      if (this.selection.some((p) => this.pages.find((page) => page.uid === p)?.editable === false)) {
         f7.dialog.alert('Some of the selected pages are not modifiable because they have been provisioned by files')
         return
       }
