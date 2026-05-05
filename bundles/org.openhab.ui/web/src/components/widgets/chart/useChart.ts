@@ -313,7 +313,8 @@ export function useChart(
         starttime: seriesStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
         boundary,
-        itemState
+        itemState,
+        displayState: 'displayState' in config ? config.displayState : undefined
       }
       const key = `${neededItem}-${query.serviceId ?? 'default'}-${query.starttime}-${query.endtime}-${boundary.toString()}-${itemState.toString()}`
       if (_persistencePromises[key] === undefined) {
