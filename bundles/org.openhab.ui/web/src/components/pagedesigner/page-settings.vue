@@ -15,7 +15,7 @@
         validate
         pattern="[A-Za-z0-9_]+"
         error-message="Required. A-Z,a-z,0-9,_ only"
-        :disabled="readOnly || (!createMode ? true : null)">
+        :disabled="readOnly || !createMode">
         <template #inner>
           <f7-link
             v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()"
@@ -34,7 +34,7 @@
         @input="page.config.label = $event.target.value"
         required
         validate
-        :disabled="readOnly ? true : null"
+        :disabled="readOnly"
         :clear-button="!readOnly" />
       <f7-list-item v-if="page.uid !== 'overview'" accordion-item title="Sidebar &amp; Visibility">
         <f7-accordion-content>
@@ -43,7 +43,7 @@
             title="Visible only to"
             smart-select
             :smart-select-params="{ openIn: 'popover' }"
-            :disabled="readOnly ? true : null">
+            :disabled="readOnly">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
               <optgroup label="Roles">
                 <option value="role:administrator" :selected="isVisibleTo('role:administrator') ? true : null">Administrators</option>
