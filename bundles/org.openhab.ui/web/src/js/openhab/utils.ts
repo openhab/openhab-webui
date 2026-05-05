@@ -1,4 +1,5 @@
 import { f7 } from 'framework7-vue'
+// eslint-disable-next-line import-x/named
 import { clean as cleanDiacritics } from 'diacritic'
 
 export function normalizeLabel(label: string) {
