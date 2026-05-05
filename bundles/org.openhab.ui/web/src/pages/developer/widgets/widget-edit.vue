@@ -199,7 +199,8 @@ export default {
     widget() {
       try {
         if (!this.widgetDefinition) return {}
-        return fromFileYAMLSyntax('widgets', this.widgetDefinition, this.uid)
+        const uid = this.createMode ? null : this.uid
+        return fromFileYAMLSyntax('widgets', this.widgetDefinition, uid)
       } catch (e) {
         return { component: 'Error', config: { error: e.message } }
       }

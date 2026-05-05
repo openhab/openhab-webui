@@ -1,16 +1,17 @@
 import YAML from 'yaml'
 
-type YamlObject = Record<string, unknown> & { uid: string }
+type YamlObject = Record<string, unknown> & { uid: string; editable?: boolean }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-function createYamlStructureError(yamlElement: string, uid: string): Error {
+function createYamlStructureError(yamlElement: string, uid: string | null): Error {
   const singularElement = yamlElement.endsWith('s') ? yamlElement.slice(0, -1) : yamlElement
-  return new Error(
-    `The YAML must contain a single ${singularElement} with the uid "${uid}" under the "${yamlElement}" key. Changing the uid in the YAML is not supported.`
-  )
+  const message = uid
+    ? `The YAML must contain a single ${singularElement} with the uid "${uid}" under the "${yamlElement}" key.`
+    : `The YAML must contain a single ${singularElement} under the "${yamlElement}" key with a "uid" property.`
+  return new Error(message)
 }
 
 function toYamlEntries(obj: YamlObject | YamlObject[]): YamlObject[] {
@@ -73,7 +74,7 @@ export function toFileYAMLSyntax(yamlElement: string, obj: YamlObject | YamlObje
  * @throws An error if the YAML structure does not match the expected format or if the specified `yamlElement` and `uid` are not found.
  */
 
-export function fromFileYAMLSyntax(yamlElement: string, yamlString: string, uid: string): unknown {
+export function fromFileYAMLSyntax(yamlElement: string, yamlString: string, uid: string | null): unknown {
   const obj = YAML.parse(yamlString) as unknown
 
   if (!isRecord(obj)) {
@@ -86,6 +87,19 @@ export function fromFileYAMLSyntax(yamlElement: string, yamlString: string, uid:
   }
 
   const wrappedObj = obj[yamlElement]
+  if (uid === null) {
+    // create mode - extract uid from YAML
+    if (!isRecord(wrappedObj)) {
+      throw createYamlStructureError(yamlElement, uid)
+    }
+    const entries = Object.entries(wrappedObj)
+    if (entries.length !== 1) {
+      throw new Error(`Expected exactly one entry under "${yamlElement}", but found ${entries.length}.`)
+    }
+    const extractedUid = entries[0][0]
+    uid = extractedUid
+  }
+
   const entry = isRecord(wrappedObj) ? wrappedObj[uid] : null
 
   if (!isRecord(entry)) {
