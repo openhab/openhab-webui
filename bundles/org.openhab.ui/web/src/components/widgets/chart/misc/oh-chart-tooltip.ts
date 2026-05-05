@@ -28,14 +28,14 @@ const chartTooltip: MiscChartComponent = {
         let tooltip = ''
         if (!Array.isArray(params)) {
           if (!params.seriesId) return ''
-          const [_seriesType, itemName, _id] = params.seriesId.split('#')
-          const item = context.items?.[itemName]
           // tooltip for aggregate & calendar series:
           // - header: series name
           // - content: category label and formatted value
           if (params.componentType === 'series') {
-            let state = context.numberFormatter!.format((params.data as number[])[1])
-            if (item && item.unitSymbol) state += ' ' + item.unitSymbol
+            if (!Array.isArray(params.data)) return ''
+            let state = context.numberFormatter!.format(params.data[1] as number)
+            const unit = params.data[params.data.length - 1] as string | undefined
+            if (unit) state += ' ' + unit
             tooltip += `<div>${params.seriesName}</div>`
             if (params.name) {
               // aggregate series
@@ -51,6 +51,8 @@ const chartTooltip: MiscChartComponent = {
           // - header: time range (start time to end time) in 'dd DD.MM.YYYY HH:mm - HH:mm'
           // - content: marker colour, series name and value (if available)
           if (params.componentType === 'markArea') {
+            const [_seriesType, itemName, _id] = params.seriesId.split('#')
+            const item = context.items?.[itemName]
             const state = item
               ? item.stateDescription?.options.find((o) => o.value === (params.value as string))?.label
               : (params.value as string)
@@ -67,17 +69,18 @@ const chartTooltip: MiscChartComponent = {
         // - header: x-axis time in 'dd DD.MM.YYYY HH:mm'
         // - content: for each oh-time-series marker color, series name and formatted value
         if (Array.isArray(params)) {
-          if (!params[0] || !('axisType' in params[0])) return ''
-          if (params[0].axisType === 'xAxis.time' && 'axisValue' in params[0]) {
-            tooltip += `<div>${dayjs(params[0].axisValue as string).format('llll')}</div>`
+          const param = params[0]
+          if (!param || !('axisType' in param)) return ''
+          if (param.axisType === 'xAxis.time' && 'axisValue' in param) {
+            tooltip += `<div>${dayjs(param.axisValue as string).format('llll')}</div>`
           }
           params.forEach((p) => {
             if (p.seriesId) {
-              const [seriesType, itemName, _id, markArea] = p.seriesId.split('#')
-              const item = context.items?.[itemName]
+              const [seriesType, _itemName, _id, markArea] = p.seriesId.split('#')
+              const unit = Array.isArray(param.value) ? (param.value[param.value.length - 1] as string) : undefined
               if ((seriesType === 'oh-time-series' && !markArea) || seriesType !== 'oh-time-series') {
                 let state = context.numberFormatter!.format((p.data as number[])[1])
-                if (item && item.unitSymbol) state += ' ' + item.unitSymbol
+                if (unit) state += ' ' + unit
                 tooltip += `${p.marker as string} ${p.seriesName}`
                 tooltip += `<span style="float: right; margin-left: 20px"><b style="text-align: right;">${state}</b></span><br/>`
               }
