@@ -53,9 +53,11 @@ const PageEditors = {
   tabs: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/tabs/tabs-edit.vue'),
   map: () => import(/* webpackChunkName: "admin-pages-leaflet" */ '@/pages/settings/pages/map/map-edit.vue'),
   plan: () => import(/* webpackChunkName: "admin-pages-leaflet" */ '@/pages/settings/pages/plan/plan-edit.vue'),
-  chart: () => import(/* webpackChunkName: "admin-pages-echarts" */ '@/pages/settings/pages/chart/chart-edit.vue'),
-  sitemap: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemap/sitemap-edit.vue')
+  chart: () => import(/* webpackChunkName: "admin-pages-echarts" */ '@/pages/settings/pages/chart/chart-edit.vue')
 }
+
+const SitemapsListPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemaps-list.vue')
+const SitemapEditPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemap/sitemap-edit.vue')
 
 const RulesListPage = () => import(/* webpackChunkName: "admin-rules" */ '@/pages/settings/rules/rules-list.vue')
 const RuleEditPage = () => import(/* webpackChunkName: "admin-rules" */ '@/pages/settings/rules/rule-edit.vue')
@@ -290,6 +292,31 @@ export default [
         async: loadAsync(PagesListPage),
         beforeEnter: [enforceAdminForRoute],
         routes: PageRoutes
+      },
+      {
+        path: 'sitemaps/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(SitemapsListPage),
+        routes: [
+          {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SitemapEditPage, { createMode: true })
+          },
+          {
+            path: 'duplicate',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SitemapEditPage, { createMode: true })
+          },
+          {
+            path: ':uid',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SitemapEditPage)
+          }
+        ]
       },
       {
         path: 'transformations/',

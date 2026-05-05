@@ -55,7 +55,8 @@
                 currentPath.settings?.services ||
                 currentPath.settings?.addons ||
                 currentPath.settings?.persistence ||
-                currentPath.settings?.transformations
+                currentPath.settings?.transformations ||
+                currentPath.settings?.sitemaps
             }">
             <template #media>
               <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
@@ -924,10 +925,13 @@ export default {
         }
 
         let currentSection = this.$$('.currentsection .item-title')?.[0]?.textContent
+        // Add special cases where the page doesn't have a special entry in the left sidebar menu
         if (this.currentPath.settings?.transformations) {
           currentSection = 'Transformations'
         } else if (this.currentPath.settings?.persistence) {
           currentSection = 'Persistence'
+        } else if (this.currentPath.settings?.sitemaps) {
+          currentSection = 'Sitemaps'
         }
         title.unshift(currentSection)
       }
