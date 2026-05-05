@@ -446,6 +446,19 @@ export default {
     fromYaml() {
       try {
         const updatedPage = fromFileYAMLSyntax('pages', this.pageYaml, this.page.uid)
+
+        if (!updatedPage.slots) {
+          // maintain compatibility with older versions of the page schema
+          // where blocks, masonry, grid, and canvas were directly on the page object instead of in a slots property
+          // so that users can paste older YAML code without having to adjust the structure
+          updatedPage.slots = {
+            default: updatedPage.blocks || [],
+            masonry: updatedPage.masonry || [],
+            grid: updatedPage.grid || [],
+            canvas: updatedPage.canvas || []
+          }
+        }
+
         if (
           updatedPage.config &&
           updatedPage.config.layoutType &&
@@ -459,19 +472,8 @@ export default {
         this.page.config = updatedPage.config
         this.page.tags = updatedPage.tags || []
         this.page.props = resolveDefaultProps(updatedPage.props)
-        if (!updatedPage.slots) {
-          // maintain compatibility with older versions of the page schema
-          // where blocks, masonry, grid, and canvas were directly on the page object instead of in a slots property
-          // so that users can paste older YAML code without having to adjust the structure
-          this.page.slots = {
-            default: updatedPage.blocks || [],
-            masonry: updatedPage.masonry || [],
-            grid: updatedPage.grid || [],
-            canvas: updatedPage.canvas || []
-          }
-        } else {
-          this.page.slots = updatedPage.slots
-        }
+        this.page.slots = updatedPage.slots
+
         this.forceUpdate()
         return true
       } catch (e) {

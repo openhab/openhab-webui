@@ -1,6 +1,6 @@
 // Note: useDirty() and useTabs() must be initialized in the page component using this mixin.
 // This mixin expects reactive dirty state (dirty/dirtyIndicator) and currentTab/switchTab to be provided at page level.
-import { nextTick, toRaw } from 'vue'
+import { nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import YAML from 'yaml'

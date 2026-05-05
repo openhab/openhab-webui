@@ -133,8 +133,6 @@ import { useDirty } from '@/pages/useDirty'
 
 import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
 
-const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
-
 export default {
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
