@@ -23,7 +23,8 @@ const calendarSeries: SeriesComponent = {
       component.config,
       OhCalendarSeriesDefinition
     )
-    const itemPoints = points.find((p) => p.name === series.item)?.data ?? []
+    const itemSeries = points.find((p) => p.name === series.item)
+    const itemPoints = itemSeries?.data ?? []
 
     type Group = [Dayjs, string[]]
     const groups: Group[] = itemPoints.reduce((acc: Group[], p) => {
@@ -42,7 +43,7 @@ const calendarSeries: SeriesComponent = {
     const data = groups.map((arr, idx, days) => {
       const aggregationFunction = series.aggregationFunction || OhCalendarSeries.AggregationFunction.average
       let value = aggregate(aggregationFunction, arr, idx, days)
-      return [arr[0].toDate(), parseFloat(formatter.format(value))]
+      return [arr[0].toDate(), parseFloat(formatter.format(value)), itemSeries?.unit]
     })
 
     if (!series.type) (series.type as unknown as string) = OhCalendarSeries.Type.heatmap
