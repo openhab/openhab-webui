@@ -18,7 +18,7 @@
               href="#"
               :text="childContext(slide).editmode.isEditable ? 'Edit YAML' : 'View YAML'" />
             <template v-if="childContext(slide).editmode.isEditable">
-              <f7-menu-dropdown-itemdivider />
+              <f7-menu-dropdown-item divider />
               <f7-menu-dropdown-item
                 @click="childContext(slide).editmode.cutWidget(childContext(slide).component, childContext(slide).parent)"
                 href="#"

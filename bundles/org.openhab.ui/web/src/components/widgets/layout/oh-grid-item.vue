@@ -47,7 +47,7 @@
       </f7-popover>
     </template>
     <oh-placeholder-widget
-      v-if="context.editmode.isEditable && !defaultSlots.length"
+      v-if="context.editmode?.isEditable && !defaultSlots.length"
       @click="context.editmode.addWidget(context.component, null, context.parent)"
       class="oh-grid-item-content" />
     <generic-widget-component
@@ -56,7 +56,7 @@
       :context="childContext(defaultSlots[0])"
       :style="{ overflow: context.editmode ? 'visible' : 'hidden' }" />
 
-    <f7-icon v-if="context.editmode.isEditable" class="drag-handle" f7="move" />
+    <f7-icon v-if="context.editmode?.isEditable" class="drag-handle" f7="move" />
   </grid-item>
 </template>
 

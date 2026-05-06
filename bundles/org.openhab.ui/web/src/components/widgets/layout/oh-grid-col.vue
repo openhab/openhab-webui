@@ -38,7 +38,7 @@
       </f7-menu>
     </div>
     <oh-placeholder-widget
-      v-if="context.editmode.isEditable && !defaultSlots.length"
+      v-if="context.editmode?.isEditable && !defaultSlots.length"
       @click="context.editmode.addWidget(context.component, null, context.parent)" />
     <generic-widget-component v-else-if="defaultSlots.length" :context="childContext(defaultSlots[0])" />
   </f7-col>

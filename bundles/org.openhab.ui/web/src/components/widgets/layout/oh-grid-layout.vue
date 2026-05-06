@@ -43,8 +43,8 @@
 
     <grid-layout
       ref="vueGridLayout"
-      :is-draggable="context.editmode.isEditable"
-      :is-resizable="context.editmode.isEditable"
+      :is-draggable="context.editmode?.isEditable ?? false"
+      :is-resizable="context.editmode?.isEditable ?? false"
       v-model:layout="layout"
       :auto-size="config.layoutType !== 'fixed'"
       :col-num="colNum"

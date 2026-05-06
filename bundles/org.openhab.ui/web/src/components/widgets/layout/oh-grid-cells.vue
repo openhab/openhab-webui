@@ -69,7 +69,7 @@
       </MasonryGridItem>
       <MasonryGridItem>
         <oh-placeholder-widget
-          v-if="context.editmode.isEditable"
+          v-if="context.editmode?.isEditable"
           class="cell-placeholder placeholder"
           @click="context.editmode.addWidget(context.component, null, context.parent)" />
       </MasonryGridItem>
