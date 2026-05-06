@@ -20,7 +20,7 @@
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
+      <div v-if="!theme.md && selection.length > 0" class="display-flex justify-content-center" style="width: 100%">
         <f7-link
           color="red"
           class="delete display-flex flex-direction-row margin-right"
@@ -40,7 +40,7 @@
       </div>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="toggleCheck()" />
       <div v-if="theme.md" class="title">{{ selection.length }} selected</div>
-      <div v-if="theme.md && selectedItems.length > 0" class="right">
+      <div v-if="theme.md && selection.length > 0" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
         <f7-link tooltip="Copy selected" icon-md="material:content_copy" icon-color="white" @click="copySelectedItemsToClipboard" />
       </div>
