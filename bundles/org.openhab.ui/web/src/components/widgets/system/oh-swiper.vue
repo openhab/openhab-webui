@@ -38,7 +38,7 @@
                 text="Move After" />
               <f7-menu-dropdown-item divider />
               <f7-menu-dropdown-item
-                @click="childContext(slide).editmode.removeWidget(context.component, context.parent)"
+                @click="childContext(slide).editmode.removeWidget(childContext(slide).component, childContext(slide).parent)"
                 href="#"
                 text="Remove Slide" />
             </template>
