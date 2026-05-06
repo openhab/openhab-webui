@@ -10,7 +10,7 @@ function createYamlStructureError(yamlElement: string, uid: string | null): Erro
   const singularElement = yamlElement.endsWith('s') ? yamlElement.slice(0, -1) : yamlElement
   const message = uid
     ? `The YAML must contain a single ${singularElement} with the uid "${uid}" under the "${yamlElement}" key.`
-    : `The YAML must contain a single ${singularElement} under the "${yamlElement}" key with a "uid" property.`
+    : `The YAML must contain a single ${singularElement} under the "${yamlElement}" key, with the entry key used as the uid.`
   return new Error(message)
 }
 
