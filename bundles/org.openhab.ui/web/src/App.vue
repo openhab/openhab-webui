@@ -8,7 +8,7 @@
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="960">
       <f7-page>
-        <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
+        <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close @click.capture="handleSidebarClick">
           <div class="logo-inner">
             <img v-if="uiOptionsStore.darkMode === 'dark'" src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px" />
             <img v-else src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px" />
@@ -18,7 +18,7 @@
           <f7-icon size="14" :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin' : 'pin_filled'" color="gray" />
         </f7-link>
 
-        <f7-list v-if="ready">
+        <f7-list v-if="ready" @click.capture="handleSidebarClick">
           <f7-list-item v-if="runtimeStore.apiEndpoint('ui') && (!pages || !pages.length)">
             <span
               ><em>{{ t('sidebar.noPages') }}</em></span
@@ -42,12 +42,12 @@
           {{ t('sidebar.administration') }}
         </f7-block-title>
         <!-- Settings -->
-        <f7-list v-if="userStore.isAdmin()" class="admin-links">
+        <f7-list v-if="userStore.isAdmin()" class="admin-links" @click.capture="handleSidebarClick">
           <f7-list-item
+            no-chevron
             link="/settings/"
             :title="t('sidebar.settings')"
             view=".view-main"
-            panel-close
             :animate="false"
             :class="{
               currentsection:
@@ -61,8 +61,13 @@
             <template #media>
               <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
             </template>
+            <template #after>
+              <f7-link class="section-toggle" @click.prevent="toggleSection('settings', $event)">
+                <f7-icon :f7="sectionChevron('settings')" />
+              </f7-link>
+            </template>
           </f7-list-item>
-          <li v-if="currentPath.settings">
+          <li v-if="isOpen('settings')">
             <ul class="menu-sublinks">
               <f7-list-item
                 v-if="runtimeStore.apiEndpoint('things')"
@@ -174,17 +179,22 @@
 
           <!-- Add-on Store -->
           <f7-list-item
+            no-chevron
             link="/addons/"
             :title="t('sidebar.addOnStore')"
             view=".view-main"
-            panel-close
             :animate="false"
             :class="{ currentsection: currentPath.addons?.$end }">
             <template #media>
               <f7-icon ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
             </template>
+            <template #after>
+              <f7-link class="section-toggle" @click.prevent="toggleSection('addons', $event)">
+                <f7-icon :f7="sectionChevron('addons')" />
+              </f7-link>
+            </template>
           </f7-list-item>
-          <li v-if="currentPath.addons && runtimeStore.apiEndpoint('addons')">
+          <li v-if="isOpen('addons') && runtimeStore.apiEndpoint('addons')">
             <ul class="menu-sublinks">
               <f7-list-item
                 v-for="section in Object.keys(AddonTitles)"
@@ -205,16 +215,21 @@
 
           <!-- Developer Tools -->
           <f7-list-item
+            no-chevron
             link="/developer/"
             :title="t('sidebar.developerTools')"
-            panel-close
             :animate="false"
             :class="{ currentsection: currentPath.developer?.$end }">
             <template #media>
               <f7-icon ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
             </template>
+            <template #after>
+              <f7-link class="section-toggle" @click.prevent="toggleSection('developer', $event)">
+                <f7-icon :f7="sectionChevron('developer')" />
+              </f7-link>
+            </template>
           </f7-list-item>
-          <li v-if="currentPath.developer">
+          <li v-if="isOpen('developer')">
             <ul class="menu-sublinks">
               <f7-list-item
                 v-if="runtimeStore.apiEndpoint('ui')"
@@ -277,8 +292,9 @@
           </li>
         </f7-list>
 
-        <f7-list class="admin-links">
+        <f7-list class="admin-links" @click.capture="handleSidebarClick">
           <f7-list-item
+            no-chevron
             link="/about/"
             :title="t('sidebar.helpAbout')"
             view=".view-main"
@@ -305,7 +321,7 @@
                 icon-size="34"
                 :tooltip="t('sidebar.unlockAdmin')" />
             </div>
-            <f7-list v-if="userStore.user" media-list>
+            <f7-list v-if="userStore.user" media-list @click.capture="handleSidebarClick">
               <f7-list-item
                 :title="userStore.user.name"
                 :footer="serverDisplayUrl"
@@ -483,6 +499,10 @@
   // --f7-list-item-padding-horizontal 32px
   // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
 
+.section-toggle
+  width 36px
+  color gray
+
 .safe-areas.log-dock-offset
   height calc(100dvh - var(--log-dock-height)) !important
   max-height calc(100dvh - var(--log-dock-height)) !important
@@ -644,6 +664,8 @@ export default {
       pages: null,
       showSidebar: true,
       loggedIn: false,
+
+      openSections: {},
 
       activeDock: 'tools',
       activeToolTab: 'pin',
@@ -1070,6 +1092,43 @@ export default {
         title.unshift(currentSection)
       }
       document.title = title.filter((t) => t).join(' - ')
+    },
+    sectionChevron(section) {
+      if (this.currentPath[section]) {
+        // if we're inside the section, don't show a chevron because the current section cannot be collapsed
+        return null
+      }
+
+      return this.isOpen(section) ? 'chevron_up' : 'chevron_down'
+    },
+    isOpen(section) {
+      if (this.currentPath[section]) {
+        return true
+      }
+
+      return !!this.openSections[section]
+    },
+    toggleSection(section, ev) {
+      if (ev) {
+        ev.stopPropagation()
+        if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation()
+      }
+      this.openSections = this.openSections || {}
+      this.openSections[section] = !this.isOpen(section)
+    },
+    collapseAllSections() {
+      this.openSections = {}
+    },
+    handleSidebarClick(ev) {
+      // Collapse all sections when clicking in another section / link
+      if (ev.target.closest('.section-toggle')) return
+      if (ev.target.closest('.list-item a, a[href]')) {
+        // avoid flicker (collapse + reopen)
+        setTimeout(this.collapseAllSections, 30)
+        if (useUIOptionsStore().visibleBreakpointDisabled) {
+          f7.panel.get('left')?.close()
+        }
+      }
     }
   },
   created() {
