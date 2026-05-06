@@ -81,7 +81,7 @@
             @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Widget Settings" />
-              <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(slotComponent, context)" href="#" text="Edit YAML" />
+              <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(slotComponent, context)" href="#" :text="context.editmode.isEditable ? 'Edit YAML' : 'View YAML'" />
               <f7-menu-dropdown-item v-if="context.editmode.isEditable" divider />
               <f7-menu-dropdown-item
                 v-if="context.editmode.isEditable"
