@@ -1,6 +1,10 @@
 import YAML from 'yaml'
 
-type YamlObject = Record<string, unknown> & { uid: string; editable?: boolean }
+type YamlObject = Record<string, unknown> & {
+  uid: string
+  editable?: boolean
+  timestamp?: string
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -42,8 +46,8 @@ export function toFileYAMLSyntax(yamlElement: string, obj: YamlObject | YamlObje
     version: 1,
     [yamlElement]: toYamlEntries(obj).reduce(
       (acc, yamlObject) => {
-        const { uid, editable, ...objWithoutUidEditable } = yamlObject
-        acc[uid] = objWithoutUidEditable
+        const { uid, editable, timestamp, ...strippedObj } = yamlObject
+        acc[uid] = strippedObj
         return acc
       },
       {} as Record<string, unknown>
