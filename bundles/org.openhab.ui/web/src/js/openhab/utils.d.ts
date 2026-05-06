@@ -12,6 +12,5 @@ declare namespace _default {
    * @returns {number[]} [r, g, b] array
    */
   function hsbToRgb(h: any, s: any, b: any): number[]
-  function ruleUidPattern(): string
 }
 export default _default

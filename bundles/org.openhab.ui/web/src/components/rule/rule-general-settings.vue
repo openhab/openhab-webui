@@ -14,7 +14,7 @@
             :disabled="!createMode ? true : null"
             :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
             input-id="input"
-            :pattern="$oh.utils.ruleUidPattern()"
+            :pattern="uidPattern"
             error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
             @input="rule.uid = $event.target.value"
             :clear-button="createMode">
@@ -112,6 +112,7 @@
 
 <script>
 import TagInput from '@/components/tags/tag-input.vue'
+import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 
 export default {
   props: {
@@ -126,6 +127,12 @@ export default {
   components: {
     TagInput
   },
+  data() {
+    return {
+      uidPattern: RULE_UID_PATTERN,
+      uidRegExp: new RegExp('^' + RULE_UID_PATTERN + '$')
+    }
+  },
   computed: {
     editable() {
       return this.createMode || (this.rule && this.rule.editable)
@@ -134,9 +141,6 @@ export default {
       if (this.inScriptEditor) return 'Script'
       if (this.inSceneEditor) return 'Scene'
       return 'Rule'
-    },
-    uidRegExp() {
-      return new RegExp('^' + this.$oh.utils.ruleUidPattern() + '$')
     },
     uidValid() {
       if (!this.rule || !this.rule.uid) return false

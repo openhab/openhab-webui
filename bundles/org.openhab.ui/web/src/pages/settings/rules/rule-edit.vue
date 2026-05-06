@@ -351,6 +351,7 @@ import RuleModulePopup from './rule-module-popup.vue'
 import RuleMixin from './rule-edit-mixin'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
+import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
@@ -411,7 +412,10 @@ export default {
       scriptCode: '',
       cronExpression: null,
       templates: null,
-      currentTemplate: null
+      currentTemplate: null,
+
+      uidPattern: RULE_UID_PATTERN,
+      uidRegExp: new RegExp('^' + RULE_UID_PATTERN + '$')
     }
   },
   watch: {
@@ -1005,9 +1009,6 @@ export default {
         }
       }
       return undefined
-    },
-    uidRegExp() {
-      return new RegExp('^' + this.$oh.utils.ruleUidPattern() + '$')
     },
     uidValid() {
       if (!this.rule || !this.rule.uid) return false
