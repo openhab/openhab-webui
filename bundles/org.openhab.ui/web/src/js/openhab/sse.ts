@@ -31,24 +31,27 @@ function newSSEConnection(
 ): KeepaliveEventSource {
   let eventSource: KeepaliveEventSource
   let reconnectSeconds = 1
-  const headers: Record<string, string> = {}
-
-  // Setup headers for authentication
-  const accessToken = getAccessToken()
-  if (accessToken && getRequireToken()) {
-    if (getTokenInCustomHeader()) {
-      headers['X-OPENHAB-TOKEN'] = accessToken
-    } else {
-      headers['Authorization'] = 'Bearer ' + accessToken
-    }
-  }
-  const basicCreds = getBasicCredentials()
-  if (basicCreds) {
-    headers['Authorization'] = 'Basic ' + btoa(basicCreds.id + ':' + basicCreds.password)
-  }
 
   // Core initialization logic
   function initEventSource(): KeepaliveEventSource {
+    const headers: Record<string, string> = {}
+    // Setup headers for authentication.
+    // We make sure to always use the latest token here, otherwise it may
+    // have already expired when initEventSource() is called again after
+    // a connection failure.
+    const accessToken = getAccessToken()
+    if (accessToken && getRequireToken()) {
+      if (getTokenInCustomHeader()) {
+        headers['X-OPENHAB-TOKEN'] = accessToken
+      } else {
+        headers['Authorization'] = 'Bearer ' + accessToken
+      }
+    }
+    const basicCreds = getBasicCredentials()
+    if (basicCreds) {
+      headers['Authorization'] = 'Basic ' + btoa(basicCreds.id + ':' + basicCreds.password)
+    }
+
     let newEventSource: EventSource
 
     if (Object.keys(headers).length > 0) {
