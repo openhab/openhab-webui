@@ -4,8 +4,8 @@
       <f7-col>
         <f7-list inline-labels no-hairlines-md>
           <f7-list-input
-            ref="ruleId"
-            :label="`${type} ID`"
+            ref="ruleUid"
+            :label="`${type} UID`"
             type="text"
             :placeholder="`A unique identifier for the ${type.toLowerCase()}`"
             :value="rule.uid"
@@ -14,17 +14,17 @@
             :disabled="!createMode ? true : null"
             :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
             input-id="input"
-            pattern="[A-Za-z0-9_\-]+"
-            error-message="Required. A-Z,a-z,0-9,_,- only"
+            :pattern="$oh.utils.ruleUidPattern()"
+            error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
             @input="rule.uid = $event.target.value"
             :clear-button="createMode">
             <template #inner>
               <f7-link
-                v-if="createMode && $refs.ruleId?.state?.inputInvalid && rule.uid.trim()"
+                v-if="createMode && !uidValid"
                 icon-f7="hammer_fill"
                 style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
-                tooltip="Fix ID"
-                @click="$oh.utils.normalizeInput('#input')" />
+                tooltip="Fix UID"
+                @click="this.normalizeUid('#input')" />
             </template>
           </f7-list-input>
           <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
@@ -67,7 +67,7 @@
       <f7-col class="skeleton-text skeleton-effect-blink">
         <f7-list inline-labels no-hairlines-md>
           <f7-list-input
-            label="Rule ID"
+            label="Rule UID"
             type="text"
             placeholder="Required"
             value="_______"
@@ -134,6 +134,13 @@ export default {
       if (this.inScriptEditor) return 'Script'
       if (this.inSceneEditor) return 'Scene'
       return 'Rule'
+    },
+    uidRegExp() {
+      return new RegExp('^' + this.$oh.utils.ruleUidPattern() + '$')
+    },
+    uidValid() {
+      if (!this.rule || !this.rule.uid) return false
+      return this.rule.uid.match(this.uidRegExp)
     }
   },
   methods: {
@@ -144,6 +151,11 @@ export default {
     isSceneTag(tag) {
       if (this.inSceneEditor !== true) return false
       if (tag === 'Scene') return true
+    },
+    normalizeUid(id) {
+      const inputElement = document.querySelector(id)
+      inputElement.value = inputElement.value.trim().replace(/\/|\\/, '_')
+      inputElement.dispatchEvent(new Event('input'))
     }
   }
 }

@@ -40,5 +40,8 @@ export default {
   hsbToRgb(h, s, b) {
     const hsl = utils.colorHsbToHsl(h, s, b)
     return utils.colorHslToRgb(hsl[0], hsl[1], hsl[2])
+  },
+  ruleUidPattern() {
+    return '[^\\s\\/\\\\\\x00-\\x1F\\x7F](?:[^\\/\\\\\\x00-\\x08\\x0A-\\x1F\\x7F]*[^\\s\\/\\\\\\x00-\\x1F\\x7F])?'
   }
 }

@@ -6,8 +6,10 @@
         :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined"
         :editable="isEditable"
         :save-link="
-          (stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) +
-          `${$device.desktop ? ' (Ctrl-S)' : ''}`
+          uidValid && labelValid
+            ? (stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) +
+              `${$device.desktop ? ' (Ctrl-S)' : ''}`
+            : undefined
         "
         @save="save()"
         :f7router />
@@ -541,11 +543,12 @@ export default {
         }
       }
       if (!this.rule.uid) {
+        f7.dialog.alert('Please provide a unique rule UID.', 'UID required').open()
+        return Promise.reject()
+      }
+      if (!this.uidValid) {
         f7.dialog
-          .alert(
-            'Please provide a unique rule ID. The ID must not be empty and should only contain letters, numbers, hyphens or underscores.',
-            'ID required'
-          )
+          .alert("Please provide a valid rule UID. It can't contain '/', '\\' or have leading or trailing whitespace.", 'Invalid UID')
           .open()
         return Promise.reject()
       }
@@ -1002,6 +1005,16 @@ export default {
         }
       }
       return undefined
+    },
+    uidRegExp() {
+      return new RegExp('^' + this.$oh.utils.ruleUidPattern() + '$')
+    },
+    uidValid() {
+      if (!this.rule || !this.rule.uid) return false
+      return this.rule.uid.match(this.uidRegExp)
+    },
+    labelValid() {
+      return this.rule?.name?.trim()
     },
     ...mapStores(useUIOptionsStore)
   }
