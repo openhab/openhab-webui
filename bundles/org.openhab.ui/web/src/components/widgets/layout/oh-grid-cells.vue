@@ -44,10 +44,7 @@
             @menu:opened="dropdownMenuOpened = idx"
             @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
-              <f7-menu-dropdown-item
-                @click="context.editmode.configureWidget(slotComponent, context)"
-                href="#"
-                :text="context.editmode.isEditable ? 'Configure Cell' : 'View Config'" />
+              <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Cell Settings" />
               <f7-menu-dropdown-item
                 @click="context.editmode.editWidgetCode(slotComponent, context)"
                 href="#"

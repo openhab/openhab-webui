@@ -96,7 +96,7 @@
                       <f7-menu class="configure-layout-menu">
                         <f7-menu-item icon-f7="list_bullet" dropdown>
                           <f7-menu-dropdown>
-                            <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
+                            <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Card Settings" />
                             <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
                             <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
                             <f7-menu-dropdown-item divider />

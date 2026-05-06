@@ -24,13 +24,10 @@
             <f7-menu-dropdown-item
               @click="context.editmode.configureWidget(context.component, context.parent, 'oh-canvas-layout')"
               href="#"
-              :text="context.editmode.isEditable ? 'Configure Canvas Layout' : 'View Canvas Layout'" />
+              text="Canvas Layout Settings" />
             <f7-menu-dropdown-item divider />
             <f7-menu-dropdown-item v-if="context.editmode.isEditable" @click="addLayer()" href="#" text="Add Layer" />
-            <f7-menu-dropdown-item
-              @click="configureLayer()"
-              href="#"
-              :text="context.editmode.isEditable ? 'Configure Layer' : 'View Layer'" />
+            <f7-menu-dropdown-item @click="configureLayer()" href="#" text="Layer Settings" />
             <template v-if="layerToolsVisible && context.editmode.isEditable">
               <f7-menu-dropdown-item divider />
               <f7-menu-dropdown-item class="justify-content-center" text="Layers" />

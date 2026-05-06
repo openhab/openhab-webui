@@ -71,7 +71,7 @@
                   <f7-menu v-if="isEditable" class="configure-layout-menu">
                     <f7-menu-item icon-f7="list_bullet" dropdown>
                       <f7-menu-dropdown>
-                        <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Configure marker" />
+                        <f7-menu-dropdown-item @click="configureWidget(marker, { component: page })" href="#" text="Marker Settings" />
                         <f7-menu-dropdown-item @click="editWidgetCode(marker, { component: page })" href="#" text="Edit YAML" />
                         <f7-menu-dropdown-item divider />
                         <f7-menu-dropdown-item @click="cutWidget(marker, { component: page })" href="#" text="Cut" />

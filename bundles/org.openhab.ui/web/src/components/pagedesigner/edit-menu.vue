@@ -4,7 +4,7 @@
       <f7-menu-dropdown-item
         @click="context.editmode.configureWidget(component, context)"
         href="#"
-        :text="context.editmode.isEditable ? configureLabel || 'Configure' : 'View Config'" />
+        :text="(context.editmode.isEditable && configureLabel) || 'Settings'" />
       <f7-menu-dropdown-item
         @click="context.editmode.editWidgetCode(component, context)"
         href="#"

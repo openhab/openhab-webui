@@ -30,12 +30,12 @@
             <f7-menu-dropdown-item
               @click="context.editmode.configureWidget(context.component, context.parent)"
               href="#"
-              :text="context.editmode.isEditable ? 'Configure Container' : 'View Config'" />
+              text="Container Settings" />
             <f7-menu-dropdown-item
               v-if="defaultSlots.length > 0"
               @click="context.editmode.configureWidget(defaultSlots[0], context)"
               href="#"
-              :text="context.editmode.isEditable ? 'Edit YAML' : 'View YAML'" />
+              text="Widget Settings" />
             <template v-if="context.editmode.isEditable">
               <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleAutoSize()" href="#">
                 <span>Auto Size</span>

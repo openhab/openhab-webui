@@ -19,7 +19,7 @@
                 <f7-menu-dropdown-item
                   @click="context.editmode.configureWidget(defaultSlots[idx], context)"
                   href="#"
-                  :text="context.editmode.isEditable ? 'Configure Item' : 'View Item'" />
+                  text="Item Settings" />
                 <f7-menu-dropdown-item
                   @click="context.editmode.editWidgetCode(defaultSlots[idx], context)"
                   href="#"
@@ -28,7 +28,7 @@
                   v-if="context.parent.component.config.accordionList"
                   @click="context.editmode.editWidgetCode(defaultSlots[idx], context, 'accordion')"
                   href="#"
-                  :text="context.editmode.isEditable ? 'Edit Accordion Code' : 'View Accordion Code'" />
+                  text="Accordion Item Settings" />
                 <template v-if="context.editmode.isEditable">
                   <f7-menu-dropdown-item divider />
                   <f7-menu-dropdown-item @click="context.editmode.cutWidget(defaultSlots[idx], context)" href="#" text="Cut" />

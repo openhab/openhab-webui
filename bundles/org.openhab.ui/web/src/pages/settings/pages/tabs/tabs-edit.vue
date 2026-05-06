@@ -50,7 +50,7 @@
                   <f7-menu v-if="isEditable" class="configure-tabs-menu">
                     <f7-menu-item icon-f7="list_bullet" dropdown>
                       <f7-menu-dropdown>
-                        <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Configure Tab" />
+                        <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Tab Settings" />
                         <f7-menu-dropdown-item @click="editWidgetCode(tab, { component: page })" href="#" text="Edit YAML" />
                         <f7-menu-dropdown-item divider />
                         <f7-menu-dropdown-item @click="cutWidget(tab, { component: page })" href="#" text="Cut" />

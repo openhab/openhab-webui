@@ -23,7 +23,7 @@
             :popover-close="'.item-popover-' + uid"
             @click="context.editmode.configureWidget(defaultSlots[0], context)"
             icon-f7="square_pencil">
-            {{ context.editmode.isEditable ? 'Configure' : 'View Config' }}
+            Settings
           </f7-link>
           <f7-link
             v-if="defaultSlots.length > 0"

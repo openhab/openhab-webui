@@ -12,7 +12,7 @@
             <f7-menu-dropdown-item
               @click="childContext(slide).editmode.configureWidget(childContext(slide).component, childContext(slide).parent)"
               href="#"
-              :text="childContext(slide).editmode.isEditable ? 'Configure Widget' : 'View Config'" />
+              text="Widget Settings" />
             <f7-menu-dropdown-item
               @click="childContext(slide).editmode.editWidgetCode(childContext(slide).component, childContext(slide).parent)"
               href="#"

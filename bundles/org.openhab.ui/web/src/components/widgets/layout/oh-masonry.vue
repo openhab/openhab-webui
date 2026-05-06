@@ -3,10 +3,7 @@
     <f7-menu v-if="context.editmode" class="configure-layout-menu margin-bottom">
       <f7-menu-item style="margin-left: auto" icon-f7="rectangle_grid_3x2" dropdown>
         <f7-menu-dropdown right>
-          <f7-menu-dropdown-item
-            @click="context.editmode.configureWidget(context.component, context)"
-            href="#"
-            :text="context.editmode.isEditable ? 'Configure Masonry' : 'View Masonry'" />
+          <f7-menu-dropdown-item @click="context.editmode.configureWidget(context.component, context)" href="#" text="Masonry Settings" />
           <f7-menu-dropdown-item
             @click="context.editmode.editWidgetCode(context.component, context)"
             href="#"
@@ -48,10 +45,7 @@
             @menu:opened="dropdownMenuOpened = idx as number"
             @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
-              <f7-menu-dropdown-item
-                @click="context.editmode.configureWidget(slotComponent, context)"
-                href="#"
-                :text="context.editmode.isEditable ? 'Configure Widget' : 'View Widget'" />
+              <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Widget Settings" />
               <f7-menu-dropdown-item
                 @click="context.editmode.editWidgetCode(slotComponent, context)"
                 href="#"
@@ -86,7 +80,7 @@
             @menu:opened="dropdownMenuOpened = idx as number"
             @menu:closed="dropdownMenuOpened = null">
             <f7-menu-dropdown right>
-              <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Configure Widget" />
+              <f7-menu-dropdown-item @click="context.editmode.configureWidget(slotComponent, context)" href="#" text="Widget Settings" />
               <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(slotComponent, context)" href="#" text="Edit YAML" />
               <f7-menu-dropdown-item v-if="context.editmode.isEditable" divider />
               <f7-menu-dropdown-item

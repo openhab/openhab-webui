@@ -33,7 +33,7 @@
           class="text-color-blue display-flex flex-direction-column margin-right"
           @click="context.editmode.configureWidget(context.component, context.parent)"
           icon-f7="square_pencil">
-          {{ context.editmode.isEditable ? 'Configure' : 'View Config' }}
+          Settings
         </f7-link>
         <f7-link
           href="#"

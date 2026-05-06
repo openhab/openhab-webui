@@ -8,7 +8,7 @@
               v-if="defaultSlots.length > 0"
               @click="context.editmode.configureWidget(defaultSlots[0], context)"
               href="#"
-              :text="context.editmode.isEditable ? 'Configure Widget' : 'View Config'" />
+              text="Widget Settings" />
             <f7-menu-dropdown-item
               v-if="defaultSlots.length > 0"
               @click="context.editmode.editWidgetCode(defaultSlots[0], context)"

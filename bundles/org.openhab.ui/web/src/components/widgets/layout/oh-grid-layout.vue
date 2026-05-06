@@ -10,7 +10,7 @@
               <f7-menu-dropdown-item
                 @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')"
                 href="#"
-                :text="context.editmode.isEditable ? 'Configure Grid Layout' : 'View Grid Layout'" />
+                text="Grid Layout Settings" />
             </f7-menu-dropdown>
           </f7-menu-item>
         </f7-menu>

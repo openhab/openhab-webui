@@ -27,7 +27,7 @@
           <f7-menu-dropdown-item
             @click="context.editmode.configureWidget(context.component, context.parent)"
             href="#"
-            :text="context.editmode.isEditable ? 'Configure Block' : 'View Config'" />
+            text="Block Settings" />
           <f7-menu-dropdown-item
             @click="context.editmode.editWidgetCode(context.component, context.parent)"
             href="#"
