@@ -5,11 +5,11 @@
     :class="context.editmode ? 'margin-top' : ''"
     @keydown="onKeyDown"
     @keyup="onKeyUp">
-    <f7-block v-if="context.editmode && context.isEditable">
+    <f7-block v-if="context.editmode">
       <f7-menu class="configure-layout-menu">
-        <f7-menu-item @click="addItem" icon="margin-left" icon-f7="plus" text="Add Widget" />
+        <f7-menu-item v-if="context.editmode.isEditable" @click="addItem" icon="margin-left" icon-f7="plus" text="Add Widget" />
         <f7-menu-item
-          v-if="context.clipboardtype"
+          v-if="context.editmode.isEditable && context.clipboardtype"
           @click="context.editmode.pasteWidget(activeLayer, context.component)"
           icon-f7="square_on_square" />
         <f7-menu-item
@@ -24,11 +24,14 @@
             <f7-menu-dropdown-item
               @click="context.editmode.configureWidget(context.component, context.parent, 'oh-canvas-layout')"
               href="#"
-              text="Configure Canvas Layout" />
+              :text="context.editmode.isEditable ? 'Configure Canvas Layout' : 'View Canvas Layout'" />
             <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item @click="addLayer()" href="#" text="Add Layer" />
-            <f7-menu-dropdown-item @click="configureLayer()" href="#" text="Configure Layer" />
-            <template v-if="layerToolsVisible">
+            <f7-menu-dropdown-item v-if="context.editmode.isEditable" @click="addLayer()" href="#" text="Add Layer" />
+            <f7-menu-dropdown-item
+              @click="configureLayer()"
+              href="#"
+              :text="context.editmode.isEditable ? 'Configure Layer' : 'View Layer'" />
+            <template v-if="layerToolsVisible && context.editmode.isEditable">
               <f7-menu-dropdown-item divider />
               <f7-menu-dropdown-item class="justify-content-center" text="Layers" />
               <f7-menu-dropdown-item
@@ -261,6 +264,9 @@ export default {
       )
     },
     addItem() {
+      if (!this.context.editmode?.isEditable) {
+        return
+      }
       if (!this.context.component.slots?.canvas[0]) {
         this.addLayer()
       }
@@ -272,6 +278,9 @@ export default {
       this.computeLayout()
     },
     addLayer() {
+      if (!this.context.editmode?.isEditable) {
+        return
+      }
       this.context.component.slots.canvas.push({
         component: 'oh-canvas-layer',
         config: {},
@@ -281,19 +290,29 @@ export default {
       this.computeLayout()
     },
     removeLayer() {
+      if (!this.context.editmode?.isEditable) {
+        return
+      }
       this.context.component.slots.canvas.splice(this.actLyrIdx, 1)
       this.setActiveLayer(Math.min(0, this.actLyrIdx--))
       this.computeLayout()
     },
     setActiveLayer(idx) {
+      if (!this.context.editmode?.isEditable) {
+        return this.actLyrIdx
+      }
       this.actLyrIdx = this.context.component.config.activeIdx = idx
       this.context.component.slots.canvas[this.actLyrIdx].config = this.context.component.slots.canvas[this.actLyrIdx].config || {}
       delete this.context.component.slots.canvas[this.actLyrIdx].config.editVisible
+      return this.actLyrIdx
     },
     configureLayer() {
       this.context.editmode.configureWidget(this.context.component.slots.canvas[this.actLyrIdx], this.context.component, 'oh-canvas-layer')
     },
     hideOtherLayers() {
+      if (!this.context.editmode?.isEditable) {
+        return
+      }
       this.context.component.slots.canvas.forEach((layer, idx) => {
         if (idx !== this.actLyrIdx) {
           layer.config = layer.config || {}
@@ -302,6 +321,9 @@ export default {
       })
     },
     showOtherLayers() {
+      if (!this.context.editmode?.isEditable) {
+        return
+      }
       this.context.component.slots.canvas.forEach((layer, idx) => {
         if (idx !== this.actLyrIdx) {
           layer.config.editVisible = true
@@ -309,6 +331,9 @@ export default {
       })
     },
     toggleGrid() {
+      if (!this.context.editmode?.isEditable) {
+        return
+      }
       this.context.component.config.gridEnable = this.grid.enable = !this.grid.enable
     },
     canvasLayoutStyle() {

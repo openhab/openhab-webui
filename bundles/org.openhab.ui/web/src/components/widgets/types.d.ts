@@ -5,6 +5,7 @@ import type { WidgetDefinition } from '@/assets/definitions/widgets'
 
 // TODO - improve typescript of functions in EditMode
 export interface EditMode {
+  isEditable: boolean
   addWidget: (...args: any[]) => any
   configureWidget: (...args: any[]) => any
   configureSlot: (...args: any[]) => any
@@ -38,10 +39,6 @@ export interface WidgetContext {
    */
   ctxVars?: ContextVarObj
   editmode?: EditMode
-  /**
-   * Whether the page/widget is editable. When false, edit controls are hidden.
-   */
-  isEditable?: boolean
   /**
    * oh-context functions
    */

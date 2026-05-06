@@ -1,6 +1,6 @@
 <template>
   <f7-col v-if="visible" v-bind="config" class="oh-col" :class="scopedCssUid">
-    <div v-if="context.editmode && context.isEditable" width="100%">
+    <div v-if="context.editmode" width="100%">
       <f7-menu class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_split_3x1" dropdown>
           <f7-menu-dropdown right>
@@ -8,33 +8,37 @@
               v-if="defaultSlots.length > 0"
               @click="context.editmode.configureWidget(defaultSlots[0], context)"
               href="#"
-              text="Configure Widget" />
+              :text="context.editmode.isEditable ? 'Configure Widget' : 'View Config'" />
             <f7-menu-dropdown-item
               v-if="defaultSlots.length > 0"
               @click="context.editmode.editWidgetCode(defaultSlots[0], context)"
               href="#"
-              text="Edit YAML" />
+              :text="context.editmode.isEditable ? 'Edit YAML' : 'View YAML'" />
             <f7-menu-dropdown-item
               @click="context.editmode.configureWidget(context.component, context.parent)"
               href="#"
               text="Column Options" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
-            <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Left" />
-            <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Right" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item
-              @click="context.editmode.removeWidget(context.component, context.parent)"
-              href="#"
-              text="Remove Widget" />
+            <template v-if="context.editmode.isEditable">
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
+              <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
+              <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Left" />
+              <f7-menu-dropdown-item
+                @click="context.editmode.moveWidgetDown(context.component, context.parent)"
+                href="#"
+                text="Move Right" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item
+                @click="context.editmode.removeWidget(context.component, context.parent)"
+                href="#"
+                text="Remove Widget" />
+            </template>
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
     </div>
     <oh-placeholder-widget
-      v-if="context.editmode && context.isEditable && !defaultSlots.length"
+      v-if="context.editmode.isEditable && !defaultSlots.length"
       @click="context.editmode.addWidget(context.component, null, context.parent)" />
     <generic-widget-component v-else-if="defaultSlots.length" :context="childContext(defaultSlots[0])" />
   </f7-col>

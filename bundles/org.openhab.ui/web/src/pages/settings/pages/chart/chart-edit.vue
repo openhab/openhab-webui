@@ -37,7 +37,12 @@
             :f7router />
         </f7-block>
 
-        <chart-designer v-if="ready && !previewMode && currentTab === 'design'" class="chart-designer" :context="context" />
+        <chart-designer
+          v-if="ready && !previewMode && currentTab === 'design'"
+          class="chart-designer"
+          :context="context"
+          :configureWidget="configureWidget"
+          :configureSlot="configureSlot" />
 
         <oh-chart-page v-else-if="ready && previewMode && currentTab === 'design'" class="chart-page" :context="context" :key="pageKey" />
       </f7-tab>
@@ -146,6 +151,7 @@ export default {
   },
   methods: {
     addWidget(component, widgetType, parentContext, slot) {
+      if (!this.isEditable) return
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -213,7 +219,8 @@ export default {
             removeComponentFromSlot: this.removeComponentFromSlot,
             editWidgetCode: this.editWidgetCode,
             currentSlotDefaultComponentType: this.currentSlotDefaultComponentType,
-            initialConfig: { show: true }
+            initialConfig: { show: true },
+            readOnly: !this.isEditable
           }
         }
       )

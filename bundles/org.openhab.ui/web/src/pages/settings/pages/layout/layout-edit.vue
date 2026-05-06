@@ -263,6 +263,7 @@ export default {
   },
   methods: {
     addWidget(component, widgetType, parentContext, slot = 'default') {
+      if (!this.isEditable) return
       const isList = component.component.indexOf('oh-list') === 0
       const isCells = component.component.indexOf('oh-grid-cells') === 0
       if (!component.slots) {

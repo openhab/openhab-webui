@@ -34,7 +34,7 @@
             @update="onMarkerUpdate" />
         </template>
       </l-feature-group>
-      <l-control v-if="context.editmode && context.isEditable" position="topright">
+      <l-control v-if="context.editmode?.isEditable" position="topright">
         <f7-menu class="padding">
           <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-plan-marker')" icon-f7="plus" text="Add Marker" />
           <f7-menu-item v-if="context.clipboardtype" @click="context.editmode.pasteWidget(context.component)" icon-f7="square_on_square" />

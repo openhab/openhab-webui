@@ -155,6 +155,7 @@ export default {
   },
   methods: {
     addWidget(component, widgetType, parentContext, slot) {
+      if (!this.isEditable) return
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -182,7 +183,7 @@ export default {
         if (el && el.classList.contains('menu')) return
         el = el.parentElement
       }
-      this.context.editmode.configureWidget(tab, context)
+      this.configureWidget(tab, context)
     },
     tabEvaluateExpression(tab, idx, key) {
       return this.evaluateExpression('tab-' + idx + '-' + key, tab.config[key], this.context, tab.config.pageConfig)

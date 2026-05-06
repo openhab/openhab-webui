@@ -1,15 +1,15 @@
 <template>
   <div>
-    <f7-block class="block-narrow margin-bottom" inset>
+    <f7-block v-if="context.editmode?.isEditable" class="block-narrow margin-bottom" inset>
       <f7-block-title>Coordinate Systems</f7-block-title>
       <f7-row class="margin-bottom">
-        <f7-col v-if="context.isEditable" class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
+        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addGrid">
             <img src="./gridSimple.svg" width="80px" />
             Add<br />Grid
           </f7-link>
         </f7-col>
-        <f7-col v-if="context.isEditable" class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
+        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
           <f7-link color="blue" class="display-flex flex-direction-column padding" @click="addCalendar">
             <img src="./calendar.svg" width="80px" />
             Add<br />Calendar
@@ -22,7 +22,7 @@
     <f7-block v-for="(grid, gridIdx) in context.component.slots.grid" strong :style="{ zIndex: 100 - gridIdx }" :key="gridIdx">
       <f7-block-title>Grid {{ gridIdx }}</f7-block-title>
       <div>
-        <f7-menu v-if="context.editmode && context.isEditable" class="configure-layout-menu">
+        <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <span v-for="(yAxis, yAxisIdx) in context.component.slots.yAxis" :key="yAxisIdx">
             <edit-context-menu
               v-if="yAxis.config.gridIndex === gridIdx"
@@ -34,7 +34,7 @@
               :configureLabel="'Configure Y Axis'"
               :removeLabel="'Remove Axis'" />
           </span>
-          <f7-menu-item icon-f7="plus" dropdown>
+          <f7-menu-item v-if="context.editmode.isEditable" icon-f7="plus" dropdown>
             <f7-menu-dropdown left>
               <f7-menu-dropdown-item @click="addAxis(gridIdx, 'yAxis', 'oh-value-axis')" href="#" text="Add value axis" />
               <f7-menu-dropdown-item @click="addAxis(gridIdx, 'yAxis', 'oh-category-axis')" href="#" text="Add category axis" />
@@ -85,7 +85,7 @@
                   </div>
                 </template>
               </f7-list-item>
-              <template v-if="context.isEditable">
+              <template v-if="context.editmode?.isEditable">
                 <f7-list-button color="blue" @click="addSeries('oh-time-series', gridIdx)"> Add Time Series </f7-list-button>
                 <f7-list-button color="blue" @click="addSeries('oh-aggregate-series', gridIdx)"> Add Aggregate Series </f7-list-button>
                 <f7-list-button color="blue" @click="addSeries('oh-state-series', gridIdx)"> Add State Series </f7-list-button>
@@ -96,7 +96,7 @@
         <chart-skeleton class="skeleton-chart" :option="skeletonGridOptions(grid, gridIdx)" :autoresize="true" />
       </div>
       <div>
-        <f7-menu v-if="context.editmode && context.isEditable" class="configure-layout-menu">
+        <f7-menu class="configure-layout-menu">
           <span
             v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis"
             :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }"
@@ -113,7 +113,11 @@
               :removeLabel="'Remove Axis'" />
           </span>
 
-          <f7-menu-item :style="{ marginLeft: context.component.slots.xAxis.length === 0 ? 'auto' : undefined }" icon-f7="plus" dropdown>
+          <f7-menu-item
+            v-if="context.editmode?.isEditable"
+            :style="{ marginLeft: context.component.slots.xAxis.length === 0 ? 'auto' : undefined }"
+            icon-f7="plus"
+            dropdown>
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item @click="addAxis(gridIdx, 'xAxis', 'oh-time-axis')" href="#" text="Add time axis" />
               <f7-menu-dropdown-item @click="addAxis(gridIdx, 'xAxis', 'oh-category-axis')" href="#" text="Add category axis" />
@@ -132,7 +136,7 @@
       :key="calendarIdx">
       <f7-block-title>Calendar {{ calendarIdx }}</f7-block-title>
       <div>
-        <f7-menu v-if="context.editmode && context.isEditable" class="configure-layout-menu">
+        <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <edit-context-menu
             :context="context"
             :component="calendar"
@@ -174,7 +178,10 @@
                   <img v-else src="./line.svg" width="32px" />
                 </template>
               </f7-list-item>
-              <f7-list-button v-if="context.isEditable" color="blue" @click="addCalendarSeries('oh-calendar-series', calendarIdx)">
+              <f7-list-button
+                v-if="context.editmode?.isEditable"
+                color="blue"
+                @click="addCalendarSeries('oh-calendar-series', calendarIdx)">
                 Add Calendar Series
               </f7-list-button>
             </f7-list>
@@ -189,7 +196,7 @@
       <f7-block-title>Other Components</f7-block-title>
       <f7-row class="margin-bottom">
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('tooltip')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('tooltip')">
             <f7-badge v-if="context.component.slots.tooltip" color="blue" class="count-badge">
               {{ context.component.slots.tooltip.length }}
             </f7-badge>
@@ -198,7 +205,7 @@
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('visualMap')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('visualMap')">
             <f7-badge v-if="context.component.slots.visualMap" color="blue" class="count-badge">
               {{ context.component.slots.visualMap.length }}
             </f7-badge>
@@ -218,7 +225,7 @@
       </f7-row>
       <f7-row class="margin-bottom">
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('legend')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('legend')">
             <f7-badge v-if="context.component.slots.legend" color="blue" class="count-badge">
               {{ context.component.slots.legend.length }}
             </f7-badge>
@@ -227,7 +234,7 @@
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('title')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('title')">
             <f7-badge v-if="context.component.slots.title" color="blue" class="count-badge">
               {{ context.component.slots.title.length }}
             </f7-badge>
@@ -236,7 +243,7 @@
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlot('toolbox')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('toolbox')">
             <f7-badge v-if="context.component.slots.toolbox" color="blue" class="count-badge">
               {{ context.component.slots.toolbox.length }}
             </f7-badge>
@@ -355,7 +362,9 @@ const defaultSlotComponentType = {
 
 export default {
   props: {
-    context: Object
+    context: Object,
+    configureWidget: Function,
+    configureSlot: Function
   },
   components: {
     'chart-skeleton': VChart,
@@ -586,10 +595,10 @@ export default {
         if (el && el.classList.contains('menu')) return
         el = el.parentElement
       }
-      this.context.editmode.configureWidget(series, context)
+      this.configureWidget(series, context)
     },
-    configureSlot(slotName) {
-      this.context.editmode.configureSlot(this.context.component, slotName, defaultSlotComponentType[slotName])
+    configureSlotName(slotName) {
+      this.configureSlot(this.context.component, slotName, defaultSlotComponentType[slotName])
     }
   }
 }

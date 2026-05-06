@@ -48,10 +48,10 @@ export default {
         store: useStatesStore().trackedItems,
         props: this.props,
         vars: this.page && this.page.config && this.page.config.defineVars ? this.page.config.defineVars : {},
-        isEditable: this.isEditable,
         editmode:
           !this.previewMode || this.forceEditMode
             ? {
+                isEditable: this.isEditable,
                 addWidget: this.addWidget,
                 configureWidget: this.configureWidget,
                 configureSlot: this.configureSlot,
@@ -257,7 +257,7 @@ export default {
           props: {
             component: this.currentComponent,
             widget: this.currentWidget,
-            readOnly: !(parentContext && parentContext.isEditable !== undefined ? parentContext.isEditable : this.isEditable)
+            readOnly: !this.isEditable
           }
         }
       )
@@ -291,7 +291,8 @@ export default {
         {
           props: {
             componentType: this.f7router.currentRoute.params.type,
-            component: this.currentComponent
+            component: this.currentComponent,
+            readOnly: !this.isEditable
           }
         }
       )
@@ -303,6 +304,7 @@ export default {
       })
     },
     cutWidget(component, parentContext, slot = 'default') {
+      if (!this.isEditable) return
       this.copyWidget(component, parentContext)
       this.removeWidget(component, parentContext)
     },
@@ -312,6 +314,7 @@ export default {
       this.clipboardType = component.component
     },
     pasteWidget(component, parentContext, slot = 'default') {
+      if (!this.isEditable) return
       if (!this.clipboard) return
       component.slots[slot].push(JSON.parse(this.clipboard))
       this.forceUpdate()
@@ -331,6 +334,7 @@ export default {
       return this.moveWidget(component, parentContext, slot, 0)
     },
     moveWidget(component, parentContext, slot = 'default', newPos) {
+      if (!this.isEditable) return
       let siblings = parentContext.component.slots[slot]
       let pos = siblings.indexOf(component)
       newPos = Math.max(0, Math.min(siblings.length, newPos))
@@ -341,6 +345,7 @@ export default {
       return Math.min(siblings.length - 1, newPos)
     },
     removeWidget(component, parentContext, slot = 'default') {
+      if (!this.isEditable) return
       parentContext.component.slots[slot].splice(parentContext.component.slots[slot].indexOf(component), 1)
       this.forceUpdate()
     },

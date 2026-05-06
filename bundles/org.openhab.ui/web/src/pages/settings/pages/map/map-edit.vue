@@ -248,6 +248,7 @@ export default {
       return null
     },
     addWidget(component, widgetType, parentContext, slot) {
+      if (!this.isEditable) return
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -276,7 +277,7 @@ export default {
         if (el && el.classList.contains('menu')) return
         el = el.parentElement
       }
-      this.context.editmode.configureWidget(marker, context)
+      this.configureWidget(marker, context)
     },
     toYaml() {
       this.pageYaml = toFileYAMLSyntax('pages', this.page)
