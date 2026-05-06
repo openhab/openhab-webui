@@ -96,7 +96,7 @@
         <chart-skeleton class="skeleton-chart" :option="skeletonGridOptions(grid, gridIdx)" :autoresize="true" />
       </div>
       <div>
-        <f7-menu class="configure-layout-menu">
+        <f7-menu v-if="context.editmode" class="configure-layout-menu">
           <span
             v-for="(xAxis, xAxisIdx) in context.component.slots.xAxis"
             :style="{ marginLeft: xAxisIdx === 0 ? 'auto' : undefined }"
@@ -114,7 +114,7 @@
           </span>
 
           <f7-menu-item
-            v-if="context.editmode?.isEditable"
+            v-if="context.editmode.isEditable"
             :style="{ marginLeft: context.component.slots.xAxis.length === 0 ? 'auto' : undefined }"
             icon-f7="plus"
             dropdown>
