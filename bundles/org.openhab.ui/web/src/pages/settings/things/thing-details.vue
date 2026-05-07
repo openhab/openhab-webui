@@ -43,6 +43,10 @@
             <f7-chip class="margin-left" :text="thing?.statusInfo?.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
               <strong>{{ thing?.statusInfo?.statusDetail !== 'NONE' ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
+              <template v-if="bridgeHasProblem">
+                -
+                <f7-link :href="'/settings/things/' + thing.bridgeUID"> View Bridge </f7-link>
+              </template>
               <br />
               <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />
             </div>
@@ -556,6 +560,9 @@ export default {
     },
     firmwareUpdating() {
       return this.thing.statusInfo.status === 'OFFLINE' && this.thing.statusInfo.statusDetail === 'FIRMWARE_UPDATING'
+    },
+    bridgeHasProblem() {
+      return this.thing && this.thing.bridgeUID && ['BRIDGE_OFFLINE', 'BRIDGE_UNINITIALIZED'].includes(this.thing.statusInfo?.statusDetail)
     },
     ...mapState(useThingEditStore, [
       'configDirty',
