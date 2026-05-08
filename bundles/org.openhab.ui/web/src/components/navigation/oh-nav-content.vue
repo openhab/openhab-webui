@@ -17,8 +17,8 @@
     <developer-dock-icon />
     <f7-link v-if="editable === false" icon-f7="lock_fill" icon-only tooltip="Not editable through the UI" />
     <template v-if="saveLink && (editable === undefined || editable === true)">
-      <f7-link v-if="theme.md" :href="saveLinkUrl" @click="$emit('save')" icon-md="material:save" icon-only />
-      <f7-link v-if="!theme.md" @click="$emit('save')">
+      <f7-link v-if="theme.md" :href="saveLinkUrl" @click="$emit('save')" :class="{ 'disabled': disableSaveLink }" icon-md="material:save" icon-only />
+      <f7-link v-if="!theme.md" @click="$emit('save')" :class="{ 'disabled': disableSaveLink }">
         {{ saveLink }}
       </f7-link>
     </template>
@@ -65,6 +65,7 @@ const props = withDefaults(
     editable?: boolean
     saveLink?: string
     saveLinkUrl?: string
+    disableSaveLink?: boolean
     large?: boolean
     f7router?: Router.Router
   }>(),
@@ -72,7 +73,8 @@ const props = withDefaults(
     menuIcon: true,
     backLink: 'Back',
     editable: undefined,
-    large: false
+    large: false,
+    disableSaveLink: false
   }
 )
 

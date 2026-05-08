@@ -5,12 +5,9 @@
         :title="pageTitle + dirtyIndicator"
         :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined"
         :editable="isEditable"
-        :save-link="
-          uidValid && labelValid
-            ? (stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) +
-              `${$device.desktop ? ' (Ctrl-S)' : ''}`
-            : undefined
-        "
+        :disable-save-link="!(uidValid && labelValid)"
+        :save-link="(stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) +
+              `${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
     </f7-navbar>
