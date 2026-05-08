@@ -5,6 +5,7 @@
         :title="pageTitle + dirtyIndicator"
         :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined"
         :editable="isEditable"
+        :disable-save-link="!(uidValid && labelValid)"
         :save-link="
           (stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) +
           `${$device.desktop ? ' (Ctrl-S)' : ''}`
@@ -349,6 +350,7 @@ import RuleModulePopup from './rule-module-popup.vue'
 import RuleMixin from './rule-edit-mixin'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
+import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
@@ -358,6 +360,8 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 import { useTabs } from '@/pages/useTabs'
+
+const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
 export default {
   mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus],
@@ -409,7 +413,9 @@ export default {
       scriptCode: '',
       cronExpression: null,
       templates: null,
-      currentTemplate: null
+      currentTemplate: null,
+
+      uidPattern: RULE_UID_PATTERN
     }
   },
   watch: {
@@ -541,11 +547,12 @@ export default {
         }
       }
       if (!this.rule.uid) {
+        f7.dialog.alert('Please provide a unique rule UID.', 'UID required').open()
+        return Promise.reject()
+      }
+      if (!this.uidValid) {
         f7.dialog
-          .alert(
-            'Please provide a unique rule ID. The ID must not be empty and should only contain letters, numbers, hyphens or underscores.',
-            'ID required'
-          )
+          .alert("Please provide a valid rule UID. It can't contain '/', '\\' or have leading or trailing whitespace.", 'Invalid UID')
           .open()
         return Promise.reject()
       }
@@ -1002,6 +1009,13 @@ export default {
         }
       }
       return undefined
+    },
+    uidValid() {
+      if (!this.rule || !this.rule.uid) return false
+      return UID_REGEX.test(this.rule.uid)
+    },
+    labelValid() {
+      return this.rule?.name?.trim()
     },
     ...mapStores(useUIOptionsStore)
   }
