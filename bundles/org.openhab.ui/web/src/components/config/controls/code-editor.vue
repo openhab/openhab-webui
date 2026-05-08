@@ -11,7 +11,7 @@
       @save="$emit('save')" />
   </div>
 
-  <f7-toolbar bottom :class="{ 'code-editor-toolbar': true, 'toolbar-narrow': $f7dim.width < 420 }">
+  <f7-toolbar bottom :class="{ 'code-editor-toolbar': true, 'toolbar-narrow': $f7dim.width < 450 }">
     <div class="toolbar-options display-flex flex-direction-row">
       <f7-segmented>
         <f7-button
@@ -20,6 +20,7 @@
           small
           :key="type"
           :active="uiOptionsStore.codeEditorType === type"
+          :tooltip="`Show code as ${type}`"
           @click="switchCodeType(type)">
           {{ type }}
         </f7-button>
@@ -32,13 +33,15 @@
         <span>Show all</span>
       </f7-checkbox>
     </div>
+    <slot name="additional-panel-controls" />
     <f7-button
       @click="copy"
       icon-ios="f7:square_on_square"
       icon-aurora="f7:square_on_square"
       color="blue"
+      tooltip="Copy code to clipboard"
       class="copy display-flex flex-direction-row">
-      &nbsp;Copy
+      &nbsp;{{ $f7dim.width < 390 ? '' : 'Copy' }}
     </f7-button>
     <f7-button
       v-if="!readOnly"
@@ -47,8 +50,9 @@
       icon-ios="f7:arrow_2_circlepath"
       icon-aurora="f7:arrow_2_circlepath"
       color="red"
+      tooltip="Revert local changes to the code"
       class="reset display-flex flex-direction-row">
-      &nbsp;Revert
+      &nbsp;{{ $f7dim.width < 390 ? '' : 'Revert' }}
     </f7-button>
   </f7-toolbar>
 

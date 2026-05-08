@@ -287,7 +287,36 @@
           :hint-context="{ rule: rule }"
           @save="save()"
           @parsed="updateRule"
-          @changed="onCodeChanged" />
+          @changed="onCodeChanged">
+          <template v-if="!createMode && !stubMode" #additional-panel-controls>
+            <f7-button
+              :color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+              :tooltip="(rule.status.statusDetail === 'DISABLED' ? 'Enable rule' : 'Disable rule') + ($device.desktop ? ' (Ctrl-D)' : '')"
+              icon-ios="f7:pause_circle"
+              icon-md="f7:pause_circle"
+              icon-aurora="f7:pause_circle"
+              class="toggle-enabled display-flex flex-direction-row"
+              @click="toggleDisabled">
+              &nbsp;{{ $f7dim.width < 550 ? '' : rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable' }}
+            </f7-button>
+            <f7-button
+              :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
+              :tooltip="`Run '${rule.name}' now${$device.desktop ? ' (Ctrl-R)' : ''}`"
+              icon-ios="f7:play_round"
+              icon-md="f7:play_round"
+              icon-aurora="f7:play_round"
+              class="run-now display-flex flex-direction-row"
+              @click="runNow">
+              &nbsp;{{ $f7dim.width < 550 ? '' : 'Run' }}
+            </f7-button>
+            <f7-chip
+              v-if="$f7dim.width > 600"
+              class="display-flex flex-direction-row"
+              :text="rule.status.status"
+              :color="ruleStatusBadgeColor(rule.status)"
+              :tooltip="`Rule '${rule.name}' is ${rule.status.status ? rule.status.status.toLocaleLowerCase() : 'unknown'}`" />
+          </template>
+        </code-editor>
       </f7-tab>
       <f7-tab v-if="ready && hasSource" id="source" :tab-active="currentTab === 'source'">
         <editor
