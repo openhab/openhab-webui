@@ -20,6 +20,7 @@
           small
           :key="type"
           :active="uiOptionsStore.codeEditorType === type"
+          :tooltip="`Show code as ${type}`"
           @click="switchCodeType(type)">
           {{ type }}
         </f7-button>
