@@ -17,8 +17,14 @@
     <developer-dock-icon />
     <f7-link v-if="editable === false" icon-f7="lock_fill" icon-only tooltip="Not editable through the UI" />
     <template v-if="saveLink && (editable === undefined || editable === true)">
-      <f7-link v-if="theme.md" :href="saveLinkUrl" @click="$emit('save')" :class="{ 'disabled': disableSaveLink }" icon-md="material:save" icon-only />
-      <f7-link v-if="!theme.md" @click="$emit('save')" :class="{ 'disabled': disableSaveLink }">
+      <f7-link
+        v-if="theme.md"
+        :href="saveLinkUrl"
+        @click="$emit('save')"
+        :class="{ disabled: disableSaveLink }"
+        icon-md="material:save"
+        icon-only />
+      <f7-link v-if="!theme.md" @click="$emit('save')" :class="{ disabled: disableSaveLink }">
         {{ saveLink }}
       </f7-link>
     </template>

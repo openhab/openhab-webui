@@ -6,8 +6,10 @@
         :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined"
         :editable="isEditable"
         :disable-save-link="!(uidValid && labelValid)"
-        :save-link="(stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) +
-              `${$device.desktop ? ' (Ctrl-S)' : ''}`"
+        :save-link="
+          (stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) +
+          `${$device.desktop ? ' (Ctrl-S)' : ''}`
+        "
         @save="save()"
         :f7router />
     </f7-navbar>
