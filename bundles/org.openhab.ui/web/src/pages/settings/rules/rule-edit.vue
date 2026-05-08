@@ -362,6 +362,8 @@ import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 import { useTabs } from '@/pages/useTabs'
 
+const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
+
 export default {
   mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus],
   components: {
@@ -414,8 +416,7 @@ export default {
       templates: null,
       currentTemplate: null,
 
-      uidPattern: RULE_UID_PATTERN,
-      uidRegExp: new RegExp('^' + RULE_UID_PATTERN + '$')
+      uidPattern: RULE_UID_PATTERN
     }
   },
   watch: {
@@ -1012,7 +1013,7 @@ export default {
     },
     uidValid() {
       if (!this.rule || !this.rule.uid) return false
-      return this.rule.uid.match(this.uidRegExp)
+      return UID_REGEX.test(this.rule.uid)
     },
     labelValid() {
       return this.rule?.name?.trim()

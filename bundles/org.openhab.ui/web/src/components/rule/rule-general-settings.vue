@@ -8,7 +8,7 @@
             :label="`${type} UID`"
             type="text"
             :placeholder="`A unique identifier for the ${type.toLowerCase()}`"
-            :value="rule.uid"
+            v-model:value="rule.uid"
             required
             :validate="editable"
             :disabled="!createMode ? true : null"
@@ -16,7 +16,6 @@
             input-id="input"
             :pattern="uidPattern"
             error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
-            @input="rule.uid = $event.target.value"
             :clear-button="createMode">
             <template #inner>
               <f7-link
@@ -24,7 +23,7 @@
                 icon-f7="hammer_fill"
                 style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
                 tooltip="Fix UID"
-                @click="this.normalizeUid('#input')" />
+                @click="normalizeUid()" />
             </template>
           </f7-list-input>
           <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
@@ -33,18 +32,16 @@
             type="text"
             :placeholder="`${type} label for display purposes`"
             :info="createMode ? 'Required' : ''"
-            :value="rule.name"
+            v-model:value="rule.name"
             required
             validate
             :disabled="!editable ? true : null"
-            @input="rule.name = $event.target.value"
             :clear-button="editable" />
           <f7-list-input
             label="Description"
             type="text"
-            :value="rule.description"
+            v-model:value="rule.description"
             :disabled="!editable ? true : null"
-            @input="rule.description = $event.target.value"
             :clear-button="editable" />
         </f7-list>
         <f7-list inline-labels no-hairlines-md>
@@ -75,24 +72,9 @@
             :validate="editable"
             :disabled="true"
             :info="createMode ? 'Note: cannot be changed after the creation' : ''"
-            @input="rule.uid = $event.target.value"
             :clear-button="createMode" />
-          <f7-list-input
-            label="Name"
-            type="text"
-            placeholder="Required"
-            required
-            validate
-            :disabled="true"
-            @input="rule.name = $event.target.value"
-            :clear-button="editable" />
-          <f7-list-input
-            label="Description"
-            type="text"
-            value="__ _____ ___ __ ___"
-            :disabled="true"
-            @input="rule.description = $event.target.value"
-            :clear-button="editable" />
+          <f7-list-input label="Name" type="text" placeholder="Required" required validate :disabled="true" :clear-button="editable" />
+          <f7-list-input label="Description" type="text" value="__ _____ ___ __ ___" :disabled="true" :clear-button="editable" />
         </f7-list>
         <f7-list inline-labels no-hairlines-md>
           <f7-list-group>
@@ -114,8 +96,11 @@
 import TagInput from '@/components/tags/tag-input.vue'
 import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 
+const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
+
 export default {
   props: {
+    // This component intentionally edits the shared rule object in place.
     rule: Object,
     ready: Boolean,
     createMode: Boolean,
@@ -129,8 +114,7 @@ export default {
   },
   data() {
     return {
-      uidPattern: RULE_UID_PATTERN,
-      uidRegExp: new RegExp('^' + RULE_UID_PATTERN + '$')
+      uidPattern: RULE_UID_PATTERN
     }
   },
   computed: {
@@ -144,7 +128,7 @@ export default {
     },
     uidValid() {
       if (!this.rule || !this.rule.uid) return false
-      return this.rule.uid.match(this.uidRegExp)
+      return UID_REGEX.test(this.rule.uid)
     }
   },
   methods: {
@@ -156,10 +140,8 @@ export default {
       if (this.inSceneEditor !== true) return false
       if (tag === 'Scene') return true
     },
-    normalizeUid(id) {
-      const inputElement = document.querySelector(id)
-      inputElement.value = inputElement.value.trim().replace(/\/|\\/, '_')
-      inputElement.dispatchEvent(new Event('input'))
+    normalizeUid() {
+      this.rule.uid = this.rule.uid.trim().replace(/\/|\\/g, '_')
     }
   }
 }
