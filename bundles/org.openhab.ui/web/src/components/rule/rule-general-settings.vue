@@ -132,14 +132,6 @@ export default {
     }
   },
   methods: {
-    isScriptTag(tag) {
-      if (this.inScriptEditor !== true) return false
-      if (tag === 'Script') return true
-    },
-    isSceneTag(tag) {
-      if (this.inSceneEditor !== true) return false
-      if (tag === 'Scene') return true
-    },
     normalizeUid() {
       this.rule.uid = this.rule.uid.trim().replace(/\/|\\/g, '_')
     }
