@@ -79,7 +79,7 @@
         </f7-list>
       </f7-col>
 
-      <f7-col v-show="ready && items.length > 0">
+      <f7-col v-if="ready && items.length > 0">
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>
           <template v-if="showCheckboxes && listedItems.length">
@@ -92,13 +92,7 @@
         <f7-list v-if="!listedItems.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list
-          v-show="listedItems.length > 0"
-          class="searchbar-found col"
-          ref="itemsList"
-          media-list
-          virtual-list
-          :virtual-list-params="vlParams">
+        <f7-list class="searchbar-found col" ref="itemsList" media-list virtual-list :virtual-list-params="vlParams">
           <ul>
             <f7-list-item
               v-for="(item, index) in vlData.items"
@@ -265,20 +259,30 @@ export default {
           const labelB = b.label || b.name
           return labelA.localeCompare(labelB)
         })
-        this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
         this.initSearchbar = true
         this.loading = false
-        this.updateListedItems()
-        this.processFilter()
-
         if (!this.eventSource) this.startEventSource()
         this.ready = true
 
         nextTick(() => {
-          if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+          this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
+          this.updateListedItems()
+          this.processFilter()
+
+          const searchbar = this.$refs.searchbar?.$el.f7Searchbar
+          if (this.$device.desktop && searchbar) {
+            searchbar.$inputEl[0].focus()
           }
-          this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastItemSearchQuery || '')
+          const lastQuery = useLastSearchQueryStore().lastItemSearchQuery || ''
+          if (lastQuery) {
+            searchbar?.search(lastQuery)
+          }
+
+          // Hard refresh can leave the virtual list measured at zero height until
+          // the page is fully visible, so trigger one delayed remeasure.
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'))
+          }, 100)
         })
       })
     },
