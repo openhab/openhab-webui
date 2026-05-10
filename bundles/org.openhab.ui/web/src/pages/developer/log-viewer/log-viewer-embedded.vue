@@ -110,7 +110,7 @@
           @click="logViewerCore?.setTextMode(true)"
           tooltip="Show logs as plain text" />
       </f7-segmented>
-      <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".logsettings-popup" class="popup-open" />
+      <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".log-settings-popup" class="popup-open" />
     </div>
   </div>
 </template>
