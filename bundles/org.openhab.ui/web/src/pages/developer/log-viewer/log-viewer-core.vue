@@ -323,17 +323,15 @@
   .input-with-buttons
     display flex
     align-items center
-    border 1px solid #ccc
-    border-radius 5px
+    border-radius 5px !important
     overflow hidden
-    max-width 400px
-    width 100%
+    width 100% !important
     background-color var(--f7-searchbar-input-bg-color)
 
   .custom-input
     flex 1
     border none
-    padding 10px
+    padding 10px !important
     outline none
 
 .log-details-popup
