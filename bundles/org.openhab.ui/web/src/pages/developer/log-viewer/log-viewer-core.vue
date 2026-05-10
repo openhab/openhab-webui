@@ -960,14 +960,29 @@ function updateFilter() {
   redrawPartOfTable()
 }
 
+/**
+ * Utility to escape unsafe HTML characters and prevent XSS from log payloads.
+ * @param unsafe
+ */
+function escapeHtml(unsafe: string): string {
+  return unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
+}
+
+/**
+ * Render text highlighting based on active highlight filters.
+ * @param text
+ */
 function highlightText(text: string) {
   if (activeHighlightFilters.value.length === 0) {
-    return text // Skip if no filters are active
+    return escapeHtml(text) // Skip if no filters are active
   }
 
   // Apply each filter with its respective color
   activeHighlightFilters.value.forEach((filter) => {
-    const regex = new RegExp(`(${filter.text})`, 'gi')
+    const safeFilterText = escapeHtml(filter.text)
+    // Escape regex special characters so users can search for things like "[WARN]"
+    const regexSafeFilter = safeFilterText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regex = new RegExp(`(${regexSafeFilter})`, 'gi')
     text = text.replace(regex, `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`)
   })
   return text
