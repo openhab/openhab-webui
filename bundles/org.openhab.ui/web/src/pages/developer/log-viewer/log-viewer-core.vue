@@ -427,13 +427,16 @@ const logDetailsPopupRef = useTemplateRef('logDetailsPopup')
 const logDetailsNavbarRef = useTemplateRef('logDetailsNavbar')
 let tableClickHandler: ((e: Event) => void) | null = null
 
-// Componsables
+// Composables
 useDraggable(() => logDetailsNavbarRef.value?.$el, {
   preventDefault: true,
   stopPropagation: true,
   onStart: () => {
     const popupEl = logDetailsPopupRef.value?.$el
-    if (!popupEl) return false
+    if (!popupEl || !popupEl.parentElement) return false
+
+    // Prevent dragging if the popup has full parent width (e.g. on mobile)
+    if (popupEl.offsetWidth !== popupEl.parentElement.offsetWidth) return false
 
     // Framework7 popups are centered with margins by default.
     // Reset margins so top/left updates take visible effect while dragging.
