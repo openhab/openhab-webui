@@ -80,11 +80,7 @@
                 <input type="checkbox" v-model="highlightFilter.active" />
               </template>
               <template #title>
-                <f7-input
-                  type="text"
-                  placeholder="Enter text to highlight..."
-                  :value="highlightFilter.text"
-                  @input="updateHighlightText($event, index)" />
+                <f7-input v-model:value="highlightFilter.text" type="text" placeholder="Enter text to highlight..." />
               </template>
 
               <!-- Color Picker -->
@@ -1091,11 +1087,6 @@ function addNewHighlight() {
     color: colors[0],
     active: false
   })
-}
-
-function updateHighlightText(event: InputEvent, index: number) {
-  if (!event.target) return
-  highlightFilters.value[index].text = (event.target as HTMLInputElement).value
 }
 
 function removeHighlight(index: number) {
