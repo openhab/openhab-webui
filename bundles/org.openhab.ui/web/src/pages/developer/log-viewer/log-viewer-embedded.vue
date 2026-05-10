@@ -212,14 +212,15 @@
 </style>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useTemplateRef, nextTick, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, useTemplateRef, nextTick } from 'vue'
 import { getDevice } from 'framework7'
 import { theme } from 'framework7-vue'
+import { storeToRefs } from 'pinia'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import LogViewerCore from './log-viewer-core.vue'
 
 // Constants
 const device = getDevice()
-const COLLAPSED_STORAGE_KEY = 'openhab.ui:logviewer.embedded.collapsedToolbar'
 
 // Defines
 defineEmits<{
@@ -232,26 +233,14 @@ defineProps<{
 }>()
 
 // State/Data
+const uiOptionsStore = useUIOptionsStore()
+const { logViewerEmbeddedCollapsed: collapsed } = storeToRefs(uiOptionsStore)
 const logViewerCore = useTemplateRef('logViewerCore')
 const searchbar = useTemplateRef('searchbar')
-let initialCollapsed = true
-try {
-  const stored = localStorage.getItem(COLLAPSED_STORAGE_KEY)
-  if (stored !== null) {
-    initialCollapsed = stored === 'true'
-  }
-} catch (e) {}
-const collapsed = ref(initialCollapsed)
 
 function toggleCollapsed() {
   collapsed.value = !collapsed.value
 }
-
-watch(collapsed, (val) => {
-  try {
-    localStorage.setItem(COLLAPSED_STORAGE_KEY, String(val))
-  } catch (e) {}
-})
 
 // Lifecycle Hooks
 onMounted(() => {

@@ -361,6 +361,8 @@
 import { ref, computed, nextTick, useTemplateRef, shallowRef, triggerRef } from 'vue'
 import { f7 } from 'framework7-vue'
 import { useDraggable } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 // TODO: Remove once we have refactored clipboard to TypeScript
 // @ts-expect-error-next-line
@@ -385,12 +387,6 @@ interface EnrichedLogEntry extends LogEntry {
   milliseconds: string
   visible: boolean
   time: string
-}
-
-interface HighlightFilter {
-  text: string
-  color: string
-  active: boolean
 }
 
 enum LEVEL_ICONS {
@@ -467,17 +463,21 @@ const colors: string[] = [
 
 let scrollTime: number = 0
 
+const uiOptionsStore = useUIOptionsStore()
+const {
+  logViewerTextMode: textMode,
+  logViewerShowErrors: showErrors,
+  logViewerHighlightFilters: highlightFilters,
+  logViewerFilterText: filterText
+} = storeToRefs(uiOptionsStore)
+
 const loggerPackages = ref<api.LoggerInfo[]>([])
 const stateConnected = ref(false)
 const stateProcessing = ref(true)
 const stateConnecting = ref(false)
 const loadingLoggers = ref(true)
 const autoScroll = ref(true)
-const showErrors = ref(false)
-const highlightFilters = ref<HighlightFilter[]>([])
-const filterText = ref('')
 const filterCount = ref(0)
-const textMode = ref(localStorage.getItem('openhab.ui:logviewer.textMode') === 'true')
 const tableData = shallowRef<EnrichedLogEntry[]>([])
 const logStart = ref('--:--:--')
 const logEnd = ref('--:--:--')
@@ -541,9 +541,6 @@ async function load() {
 
   startConnecting()
 
-  highlightFilters.value = JSON.parse(localStorage.getItem('openhab.ui:logviewer.logHighlightFilters') ?? '[]')
-  filterText.value = localStorage.getItem('openhab.ui:logviewer.logFilterText') ?? ''
-  showErrors.value = localStorage.getItem('openhab.ui:logviewer.logShowErrors') === 'true'
   updateFilter()
 
   nextTick(() => {
@@ -920,14 +917,12 @@ function handleFilter(searchbar: HTMLInputElement, filter: string) {
     return
   }
   filterText.value = filter
-  localStorage.setItem('openhab.ui:logviewer.logFilterText', filterText.value)
   updateFilter()
   scrollToBottom()
 }
 
 function clearFilter() {
   filterText.value = ''
-  localStorage.removeItem('openhab.ui:logviewer.logFilterText')
   updateFilter()
   scrollToBottom()
 }
@@ -1060,12 +1055,10 @@ function copyTableToClipboard() {
 
 function setTextMode(textModeEnabled: boolean) {
   textMode.value = textModeEnabled
-  localStorage.setItem('openhab.ui:logviewer.textMode', textMode.value.toString())
   updateFilter()
 }
 
 function saveHighlighters() {
-  localStorage.setItem('openhab.ui:logviewer.logHighlightFilters', JSON.stringify(highlightFilters.value))
   updateFilter()
 }
 
@@ -1097,7 +1090,6 @@ function selectHighlightColor(color: string | null) {
 function toggleErrorDisplay() {
   showErrors.value = !showErrors.value
   updateFilter()
-  localStorage.setItem('openhab.ui:logviewer.logShowErrors', showErrors.value.toString())
 }
 
 defineExpose({

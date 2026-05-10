@@ -651,7 +651,6 @@ export default {
       currentUrl: '',
 
       logDockFullscreen: false,
-      logDockHeight: parseInt(localStorage.getItem('openhab.ui:logDock.height')) || null,
 
       // Tracks whether the log-viewer page is active. Updated at pageBeforeIn (entering
       // log-viewer) and pageAfterIn (leaving log-viewer) so the dock is only shown after
@@ -698,6 +697,7 @@ export default {
       }
     },
     ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore),
+    ...mapWritableState(useUIOptionsStore, ['logDockHeight']),
     ...mapWritableState(useRuntimeStore, {
       modelSelectedItem: 'modelSelectedItem'
     })
@@ -970,7 +970,6 @@ export default {
           window.removeEventListener('pointercancel', c)
           this._logDockResizeHandlers = null
         }
-        localStorage.setItem('openhab.ui:logDock.height', String(this.logDockHeight))
       }
 
       const onUp = () => finish()
