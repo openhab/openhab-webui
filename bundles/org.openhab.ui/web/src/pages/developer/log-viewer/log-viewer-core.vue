@@ -318,6 +318,8 @@
     outline none
 
 .log-details-popup
+  .navbar
+    cursor move
   .log-message
     white-space normal
     word-break break-word
