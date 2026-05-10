@@ -1,6 +1,8 @@
+import type { ConfigDescriptionParameter, ConfigDescriptionParameterGroup } from '@/api'
+
 export type UIProps = {
-  parameters: unknown[]
-  parameterGroups: unknown[]
+  parameters: Array<ConfigDescriptionParameter>
+  parameterGroups: Array<ConfigDescriptionParameterGroup>
 }
 
 export const createDefaultProps = (): UIProps => ({
