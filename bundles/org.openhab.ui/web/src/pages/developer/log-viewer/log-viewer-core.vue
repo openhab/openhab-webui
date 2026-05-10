@@ -379,6 +379,7 @@ import { ref, computed, nextTick, useTemplateRef } from 'vue'
 import { f7 } from 'framework7-vue'
 import { useDraggable } from '@vueuse/core'
 
+// TODO: Remove once we have refactored clipboard to TypeScript
 // @ts-expect-error-next-line
 import copyToClipboard from '@/js/clipboard'
 
