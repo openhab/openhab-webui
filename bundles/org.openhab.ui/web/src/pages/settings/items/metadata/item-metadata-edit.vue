@@ -47,7 +47,7 @@
 </template>
 
 <style lang="stylus">
-.metadata-code-editor .v-codemirror
+.metadata-code-editor
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>
