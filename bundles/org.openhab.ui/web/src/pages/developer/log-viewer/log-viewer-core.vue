@@ -691,7 +691,7 @@ function renderEntry(entry: EnrichedLogEntry) {
       `<td class="text"><span class="time">${entry.time}${entry.milliseconds}</span>` +
       `[<span class="level ${levelLowerCased}">${entry.level}</span>] ` +
       `[<span class="logger" title="${entry.loggerName}">${entry.loggerName}</span>] - ` +
-      `<span class="msg ${levelLowerCased}">${highlightText(entry.message)}</span></td>`
+      `<span class="msg ${levelLowerCased}">${highlightText(escapeHtml(entry.message))}</span></td>`
   } else {
     tr.className = 'table-rows ' + levelLowerCased
     tr.innerHTML =
@@ -700,7 +700,7 @@ function renderEntry(entry: EnrichedLogEntry) {
       `</i> ${entry.time}<span class="milliseconds">${entry.milliseconds}</span></td>` +
       `<td class="level">${entry.level}</td>` +
       `<td class="logger"><span class="logger" title="${entry.loggerName}">${entry.loggerName}</span></td>` +
-      `<td class="nowrap">${highlightText(entry.message)}</td>`
+      `<td class="nowrap">${highlightText(escapeHtml(entry.message))}</td>`
   }
   // mark row for delegated click handling
   tr.dataset.id = String(entry.id)
@@ -957,14 +957,13 @@ function escapeHtml(unsafe: string): string {
  */
 function highlightText(text: string) {
   if (activeHighlightFilters.value.length === 0) {
-    return escapeHtml(text) // Skip if no filters are active
+    return text // Skip if no filters are active
   }
 
   // Apply each filter with its respective color
   activeHighlightFilters.value.forEach((filter) => {
-    const safeFilterText = escapeHtml(filter.text)
     // Escape regex special characters so users can search for things like "[WARN]"
-    const regexSafeFilter = safeFilterText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const regexSafeFilter = filter.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
     const regex = new RegExp(`(${regexSafeFilter})`, 'gi')
     text = text.replace(regex, `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`)
   })
