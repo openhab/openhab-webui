@@ -7,13 +7,13 @@
   </f7-block>
 </template>
 
-<script>
-export default {
-  props: {
-    subject: {
-      type: String,
-      default: 'page'
-    }
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    subject?: string
+  }>(),
+  {
+    subject: 'page'
   }
-}
+)
 </script>
