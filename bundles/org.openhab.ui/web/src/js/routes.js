@@ -73,7 +73,7 @@ const BlocksListPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/
 const BlocksEditPage = () => import(/* webpackChunkName: "blockly-editor" */ '@/pages/developer/blocks/blocks-edit.vue')
 const SemanticsEditPage = () => import(/* webpackChunkName: "semantics-editor" */ '@/pages/developer/semantics/semantic-tags-edit.vue')
 const ApiExplorerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/pages/developer/api-explorer.vue')
-const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/pages/developer/log-viewer.vue')
+const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/pages/developer/log-viewer/log-viewer-page.vue')
 
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '@/pages/wizards/setup-wizard.vue')
 
@@ -621,7 +621,10 @@ export default [
       {
         path: 'log-viewer/',
         beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(LogViewerPage)
+        async: loadAsync(LogViewerPage),
+        options: {
+          animate: false
+        }
       }
     ]
   },
