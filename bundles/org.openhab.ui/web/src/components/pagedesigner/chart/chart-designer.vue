@@ -196,7 +196,7 @@
       <f7-block-title>Other Components</f7-block-title>
       <f7-row class="margin-bottom">
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('tooltip')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotByName('tooltip')">
             <f7-badge v-if="context.component.slots.tooltip" color="blue" class="count-badge">
               {{ context.component.slots.tooltip.length }}
             </f7-badge>
@@ -205,7 +205,7 @@
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('visualMap')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotByName('visualMap')">
             <f7-badge v-if="context.component.slots.visualMap" color="blue" class="count-badge">
               {{ context.component.slots.visualMap.length }}
             </f7-badge>
@@ -225,7 +225,7 @@
       </f7-row>
       <f7-row class="margin-bottom">
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('legend')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotByName('legend')">
             <f7-badge v-if="context.component.slots.legend" color="blue" class="count-badge">
               {{ context.component.slots.legend.length }}
             </f7-badge>
@@ -234,7 +234,7 @@
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('title')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotByName('title')">
             <f7-badge v-if="context.component.slots.title" color="blue" class="count-badge">
               {{ context.component.slots.title.length }}
             </f7-badge>
@@ -243,7 +243,7 @@
           </f7-link>
         </f7-col>
         <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotName('toolbox')">
+          <f7-link color="blue" class="display-flex flex-direction-column padding" @click="configureSlotByName('toolbox')">
             <f7-badge v-if="context.component.slots.toolbox" color="blue" class="count-badge">
               {{ context.component.slots.toolbox.length }}
             </f7-badge>
@@ -597,7 +597,7 @@ export default {
       }
       this.configureWidget(series, context)
     },
-    configureSlotName(slotName) {
+    configureSlotByName(slotName) {
       this.configureSlot(this.context.component, slotName, defaultSlotComponentType[slotName])
     }
   }
