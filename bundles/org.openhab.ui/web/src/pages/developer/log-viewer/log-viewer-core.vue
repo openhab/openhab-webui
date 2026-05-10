@@ -944,11 +944,6 @@ function clearFilter() {
 function updateFilter() {
   let cnt = 0
 
-  const tableBody = getTableBody()
-  if (tableBody) {
-    tableBody.innerHTML = ''
-  }
-
   for (const entry of tableData.value) {
     entry.visible = processFilter(entry)
     if (entry.visible) {
