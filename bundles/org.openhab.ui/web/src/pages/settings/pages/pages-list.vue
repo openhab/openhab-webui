@@ -86,6 +86,7 @@
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
+        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
         <div v-show="ready && pages.length > 0" class="padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
@@ -198,8 +199,26 @@ import { getPageType, getPageIcon } from '@/pages/page-type'
 
 import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
+import ListFilter from '@/components/util/list-filter.vue'
+
+const ITEM_KINDS = {
+  editable: 'Editable',
+  readonly: 'Non-editable'
+}
+
+const PAGE_TYPE_OPTIONS = {
+  layout: 'Layout',
+  home: 'Home',
+  tabs: 'Tabbed',
+  map: 'Map',
+  plan: 'Floor plan',
+  chart: 'Chart'
+}
 
 export default {
+  components: {
+    ListFilter
+  },
   props: {
     f7router: Object
   },
@@ -219,6 +238,21 @@ export default {
       initSearchbar: false,
       loading: false,
       pages: [],
+      filteredItems: [],
+      filters: {
+        kinds: {
+          label: 'Kind',
+          options: { ...ITEM_KINDS }
+        },
+        pageTypes: {
+          label: 'Type',
+          options: { ...PAGE_TYPE_OPTIONS }
+        },
+        tags: {
+          label: 'Tag',
+          options: {}
+        }
+      },
       selectedItems: [],
       showCheckboxes: false,
       searchQuery: ''
@@ -234,8 +268,8 @@ export default {
       }
     },
     filteredPages() {
-      if (!this.searchQuery.length) return this.pages
-      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery))
+      if (!this.searchQuery.length) return this.filteredItems
+      return this.filteredItems.filter((page) => this.pageMatchesSearch(page, this.searchQuery))
     },
     filteredPagesCount() {
       return this.filteredPages.length
@@ -274,7 +308,7 @@ export default {
     },
     listTitle() {
       let title = this.filteredPagesCount
-      if (this.searchQuery.length) {
+      if (this.searchQuery.length || this.$refs.filters?.filtered) {
         title += ` of ${this.pages.length} pages found`
       } else {
         title += ' pages'
@@ -322,8 +356,17 @@ export default {
             const bLabel = b.config?.label || b.uid
             return aLabel.localeCompare(bLabel)
           })
+
+          const uniqueTags = new Set()
+          this.pages.forEach((page) => {
+            ;(page.tags || []).forEach((t) => uniqueTags.add(t))
+          })
+          const sortedTags = Array.from(uniqueTags).sort((a, b) => a.localeCompare(b))
+          this.filters.tags.options = Object.fromEntries(sortedTags.map((tag) => [tag, tag]))
+
           this.initSearchbar = true
           this.ready = true
+          this.updateFilteredItems()
 
           nextTick(() => {
             if (this.$refs.listIndex) this.$refs.listIndex.update()
@@ -380,6 +423,28 @@ export default {
       if (!terms.length) return true
       const pageSearchText = this.getPageSearchText(page)
       return terms.every((term) => pageSearchText.includes(term))
+    },
+    updateFilteredItems() {
+      const filters = this.$refs.filters
+      if (!filters || !filters.filtered) {
+        this.filteredItems = this.pages
+        return
+      }
+
+      const selected = filters.selected
+      this.filteredItems = this.pages.filter((page) => {
+        const kind = page.editable === false ? 'readonly' : 'editable'
+        const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
+
+        const pageType = getPageType(page).type
+        const typeMatch = !selected.pageTypes.size || selected.pageTypes.has(pageType)
+
+        const tagsMatch = !selected.tags.size || (page.tags || []).some((t) => selected.tags.has(t))
+
+        return kindMatch && typeMatch && tagsMatch
+      })
+
+      if (this.groupBy === 'alphabetical') this.$refs.listIndex?.update()
     },
     selectDeselectAll() {
       if (this.allSelected) {

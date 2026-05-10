@@ -13,7 +13,10 @@
           <div v-for="(filter, type) in filters" :key="type">
             <f7-list-item group-title style="height: 2em"> Filter by {{ filter.label }} </f7-list-item>
             <f7-list-item class="padding-bottom">
-              <div class="chip-wrap">
+              <div v-if="Object.keys(filter.options).length === 0" class="text-color-gray" style="font-size: 0.9em">
+                None of the items have any {{ filter.label.toLowerCase() }} assigned
+              </div>
+              <div v-else class="chip-wrap">
                 <f7-chip
                   v-for="(label, value) in filter.options"
                   :key="value"

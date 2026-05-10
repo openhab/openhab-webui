@@ -11,10 +11,10 @@
           v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-widgets"
-          :init="initSearchbar"
-          search-container=".widgets-list"
-          search-item=".widgetlist-item"
-          search-in=".item-title, .item-subtitle, .item-header, .item-footer"
+          custom-search
+          @searchbar:search="search"
+          @searchbar:clear="clearSearch"
+          @searchbar:disable="clearSearch"
           :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -46,10 +46,6 @@
       </div>
     </f7-toolbar>
 
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found" />
-    </f7-list>
-
     <f7-block v-show="!nowidgetEngine" class="block-narrow">
       <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
@@ -68,10 +64,14 @@
       </f7-col>
 
       <f7-col v-if="ready">
-        <f7-block-title class="searchbar-hide-on-search"> {{ widgets.length }} widgets </f7-block-title>
-        <f7-list v-show="widgets.length > 0" class="searchbar-found col widgets-list" ref="widgetsList" media-list>
+        <f7-block-title> {{ listTitle }} </f7-block-title>
+        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
+        <f7-list v-if="!listedItems.length && widgets.length" class="searchbar-not-found">
+          <f7-list-item title="Nothing found" />
+        </f7-list>
+        <f7-list v-show="listedItems.length > 0" class="col widgets-list" ref="widgetsList" media-list>
           <f7-list-item
-            v-for="(widget, index) in widgets"
+            v-for="(widget, index) in listedItems"
             :key="index"
             media-item
             class="widgetlist-item"
@@ -117,13 +117,23 @@
 
 <script>
 import { f7, theme } from 'framework7-vue'
-import { nextTick } from 'vue'
+import { nextTick, toRaw } from 'vue'
 import { showToast } from '@/js/dialog-promises'
 
 import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
+import ListFilter from '@/components/util/list-filter.vue'
+
+const ITEM_KINDS = {
+  editable: 'Editable',
+  readonly: 'Non-editable',
+  marketplace: 'Marketplace'
+}
 
 export default {
+  components: {
+    ListFilter
+  },
   props: {
     f7router: Object
   },
@@ -136,10 +146,41 @@ export default {
       loading: false,
       nowidgetEngine: false,
       widgets: [],
+      filteredItems: [],
+      filters: {
+        kinds: {
+          label: 'Kind',
+          options: { ...ITEM_KINDS }
+        },
+        tags: {
+          label: 'Tag',
+          options: {}
+        }
+      },
+      searchQuery: null,
       initSearchbar: false,
       selectedItems: [],
       showCheckboxes: false,
       eventSource: null
+    }
+  },
+  computed: {
+    listedItems() {
+      if (!this.searchQuery) return this.filteredItems
+      const query = this.searchQuery.toLowerCase()
+      return this.filteredItems.filter((widget) => {
+        const haystack = [widget.uid, ...(widget.tags || [])].join(' ').toLowerCase()
+        return haystack.includes(query)
+      })
+    },
+    listTitle() {
+      let title = this.listedItems.length
+      if (this.searchQuery || this.$refs.filters?.filtered) {
+        title += ` of ${this.widgets.length} widgets found`
+      } else {
+        title += ' widgets'
+      }
+      return title
     }
   },
   methods: {
@@ -153,8 +194,20 @@ export default {
         this.widgets = data.sort((a, b) => {
           return a.uid.localeCompare(b.uid)
         })
+
+        const uniqueTags = new Set()
+        this.widgets.forEach((widget) => {
+          ;(widget.tags || []).forEach((t) => {
+            if (t.startsWith('marketplace:')) return
+            uniqueTags.add(t)
+          })
+        })
+        const sortedTags = Array.from(uniqueTags).sort((a, b) => a.localeCompare(b))
+        this.filters.tags.options = Object.fromEntries(sortedTags.map((tag) => [tag, tag]))
+
         this.loading = false
         this.ready = true
+        this.updateFilteredItems()
         setTimeout(() => {
           this.initSearchbar = true
           nextTick(() => {
@@ -163,6 +216,31 @@ export default {
             }
           })
         })
+      })
+    },
+    search(searchbar, query) {
+      this.searchQuery = query.trim().toLowerCase() || null
+    },
+    clearSearch() {
+      this.searchQuery = null
+    },
+    updateFilteredItems() {
+      const filters = this.$refs.filters
+      if (!filters || !filters.filtered) {
+        this.filteredItems = this.widgets
+        return
+      }
+
+      const selected = filters.selected
+      this.filteredItems = this.widgets.filter((widget) => {
+        const widgetKinds = new Set()
+        widgetKinds.add(widget.editable === false ? 'readonly' : 'editable')
+        if ((widget.tags || []).some((t) => t.startsWith('marketplace:'))) widgetKinds.add('marketplace')
+        const kindMatch = !selected.kinds.size || toRaw(selected.kinds).intersection(widgetKinds).size > 0
+
+        const tagsMatch = !selected.tags.size || (widget.tags || []).some((t) => selected.tags.has(t))
+
+        return kindMatch && tagsMatch
       })
     },
     toggleCheck() {
