@@ -463,12 +463,13 @@ const colors: string[] = [
   '#4682B4' // Steel Blue
 ]
 
+let scrollTime: number = 0
+
 const loggerPackages = ref<api.LoggerInfo[]>([])
 const stateConnected = ref(false)
 const stateProcessing = ref(true)
 const stateConnecting = ref(false)
 const loadingLoggers = ref(true)
-const scrollTime = ref(0)
 const autoScroll = ref(true)
 const showErrors = ref(false)
 const highlightFilters = ref<HighlightFilter[]>([])
@@ -636,7 +637,6 @@ function socketConnect() {
   }
 
   const messageCallback: MessageCallback = (event) => {
-    // console.log('.')
     if (Array.isArray(event)) {
       event.forEach((ev) => {
         addLogEntry(ev as unknown as LogEntry)
@@ -841,7 +841,7 @@ function scrollToBottom() {
   if (tableContainer) {
     tableContainer.scrollTop = tableContainer.scrollHeight
     // Delay manual scroll detection to avoid autoscrolling being defeated when new logs arrive
-    scrollTime.value = Date.now() + 250
+    scrollTime = Date.now() + 250
   }
   redrawPartOfTable()
 }
@@ -850,7 +850,7 @@ function handleScroll() {
   const tableContainer = dataTableContainerRef.value
   if (!tableContainer) return
 
-  if (Date.now() < scrollTime.value) return
+  if (Date.now() < scrollTime) return
 
   // Detect if the user has scrolled up
   const isAtBottom = tableContainer.scrollHeight - tableContainer.scrollTop < tableContainer.clientHeight + 20
