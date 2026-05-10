@@ -18,9 +18,10 @@
       </div>
     </f7-block>
 
-    <f7-block>
-      <f7-link @click="f7router.back()">Go back</f7-link>
+    <f7-block strong>
+      <f7-link @click="f7router.back()"> Go back </f7-link>
     </f7-block>
+    <f7-button href="/"> Go home </f7-button>
   </f7-page>
 </template>
 
