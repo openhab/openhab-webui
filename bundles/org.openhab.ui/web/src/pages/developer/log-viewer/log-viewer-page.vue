@@ -77,7 +77,7 @@
         <f7-icon v-if="logViewerCore?.showErrors" f7="exclamationmark_triangle_fill" />
         <f7-icon v-else f7="exclamationmark_triangle" />
       </f7-link>
-      <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".loghighlights-popup" class="popup-open" />
+      <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".log-highlights-popup" class="popup-open" />
       <f7-segmented>
         <f7-button
           outline
