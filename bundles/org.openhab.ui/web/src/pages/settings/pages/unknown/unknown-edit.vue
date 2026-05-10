@@ -27,6 +27,8 @@
 
 <script>
 import { getPageComponentTypes } from '@/pages/page-type'
+import { mapStores } from 'pinia'
+import { useComponentsStore } from '@/js/stores/useComponentsStore.ts'
 
 export default {
   props: {
@@ -40,20 +42,27 @@ export default {
       suggestions: []
     }
   },
+  computed: {
+    ...mapStores(useComponentsStore)
+  },
+  watch: {
+    'componentsStore.ready'(newVal) {
+      if (newVal) this.load()
+    }
+  },
   methods: {
     onPageAfterIn() {
+      this.load()
+    },
+    load() {
       const uid = this.uid || this.f7route?.params?.uid
       if (!uid) return
-      this.$oh.api
-        .get('/rest/ui/components/ui:page/' + uid)
-        .then((data) => {
-          this.page = data
-          this.computeSuggestions()
-        })
-        .catch(() => {
-          this.page = null
-          this.suggestions = []
-        })
+      this.page = this.componentsStore.page(uid)
+      if (this.page) {
+        this.computeSuggestions()
+      } else {
+        this.suggestions = []
+      }
     },
     computeSuggestions() {
       if (!this.page || !this.page.component) {
@@ -99,5 +108,3 @@ export default {
   }
 }
 </script>
-
-<style scoped></style>
