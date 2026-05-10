@@ -277,7 +277,7 @@
 </template>
 
 <style lang="stylus">
-.rule-script-editor .v-codemirror
+.rule-script-editor
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>

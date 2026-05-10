@@ -305,19 +305,16 @@
     margin-bottom 0
   .list
     margin-top 0
-.rule-code-editor .v-codemirror
+.rule-code-editor
+.rule-source-viewer
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
+  width 100%
 .yaml-message
   display block
   position absolute
   top 80%
   white-space pre-wrap
-#source
-  .rule-source-viewer .v-codemirror
-    position absolute
-    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
-    width 100%
 </style>
 
 <script>
