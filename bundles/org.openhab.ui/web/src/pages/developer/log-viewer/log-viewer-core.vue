@@ -373,7 +373,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, useTemplateRef } from 'vue'
+import { ref, computed, nextTick, useTemplateRef, shallowRef, triggerRef } from 'vue'
 import { f7 } from 'framework7-vue'
 import { useDraggable } from '@vueuse/core'
 
@@ -492,7 +492,7 @@ const highlightFilters = ref<HighlightFilter[]>([])
 const filterText = ref('')
 const filterCount = ref(0)
 const textMode = ref(localStorage.getItem('openhab.ui:logviewer.textMode') === 'true')
-const tableData = ref<EnrichedLogEntry[]>([])
+const tableData = shallowRef<EnrichedLogEntry[]>([])
 const logStart = ref('--:--:--')
 const logEnd = ref('--:--:--')
 const currentHighlightColorItemIndex = ref<number | null>(null)
@@ -798,6 +798,10 @@ function addLogEntry(logEntry: LogEntry) {
         }
       })
       batchLogs.length = 0
+
+      // manually trigger shallowRef after pushing & optionally slicing data to/from tableData
+      triggerRef(tableData)
+
       if (autoScroll.value) {
         nextTick(() => scrollToBottom())
       } else {
