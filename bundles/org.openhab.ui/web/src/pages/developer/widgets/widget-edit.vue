@@ -3,6 +3,7 @@
     <f7-navbar>
       <oh-nav-content
         :title="(createMode ? 'Create Widget' : 'Widget: ' + widget.uid) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -16,12 +17,14 @@
       <f7-link @click="redrawWidget"> Redraw<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
     <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="widget-editor horizontal">
+      <not-editable-notice v-if="ready && !isEditable" subject="widget" />
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="widget-code">
           <editor
             class="widget-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=widget"
             :value="widgetDefinition"
+            :readOnly="!isEditable"
             @input="onEditorInput"
             @save="save()" />
         </f7-col>
@@ -33,12 +36,14 @@
       </f7-row>
     </f7-block>
     <f7-block v-else :key="blockKey + 'b'" class="widget-editor vertical">
+      <not-editable-notice v-if="ready && !isEditable" subject="widget" />
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="widget-code">
           <editor
             class="widget-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=widget"
             :value="widgetDefinition"
+            :readOnly="!isEditable"
             @input="onEditorInput"
             @save="save()" />
         </f7-col>
@@ -94,8 +99,11 @@
       overflow auto
     .widget-code
       height 100%
-  .v-codemirror
-    height 100%
+      position relative
+      .v-codemirror
+        position absolute
+        inset 0
+        height auto
   &.vertical
     .block
       z-index auto !important
@@ -111,8 +119,8 @@ import { defineAsyncComponent, nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 import { useThrottleFn } from '@vueuse/core'
 
-import YAML from 'yaml'
 import ConfigSheet from '@/components/config/config-sheet.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import * as StandardListWidgets from '@/components/widgets/standard/list'
 import * as api from '@/api'
@@ -123,12 +131,13 @@ import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
-const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
+import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 export default {
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
-    ConfigSheet
+    ConfigSheet,
+    NotEditableNotice
   },
   props: {
     uid: String,
@@ -144,6 +153,7 @@ export default {
   data() {
     return {
       widgetDefinition: null,
+      widgetEditable: true,
       items: [],
       ready: false,
       split: 'vertical',
@@ -159,6 +169,23 @@ export default {
     }
   },
   computed: {
+    editmode() {
+      return {
+        isEditable: this.isEditable,
+        addWidget: this.noopEditmodeAction,
+        configureWidget: this.noopEditmodeAction,
+        configureSlot: this.noopEditmodeAction,
+        editWidgetCode: this.noopEditmodeAction,
+        cutWidget: this.noopEditmodeAction,
+        copyWidget: this.noopEditmodeAction,
+        pasteWidget: this.noopEditmodeAction,
+        moveWidgetUp: this.noopEditmodeAction,
+        moveWidgetDown: this.noopEditmodeAction,
+        sendWidgetToBack: this.noopEditmodeAction,
+        bringWidgetToFront: this.noopEditmodeAction,
+        removeWidget: this.noopEditmodeAction
+      }
+    },
     context() {
       return {
         component:
@@ -180,19 +207,24 @@ export default {
         props: this.props,
         vars: this.vars,
         ctxVars: this.ctxVars,
-        editmode: true
+        editmode: this.editmode
       }
+    },
+    isEditable() {
+      return this.createMode || this.widgetEditable
     },
     widget() {
       try {
         if (!this.widgetDefinition) return {}
-        return YAML.parse(this.widgetDefinition, { prettyErrors: true, toStringOptions })
+        const uid = this.createMode ? null : this.uid
+        return fromFileYAMLSyntax('widgets', this.widgetDefinition, uid)
       } catch (e) {
         return { component: 'Error', config: { error: e.message } }
       }
     }
   },
   methods: {
+    noopEditmodeAction() {},
     onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
@@ -241,45 +273,46 @@ export default {
       if (this.loading) return
       this.loading = true
       if (this.createMode) {
-        this.widgetDefinition = YAML.stringify(
-          {
-            uid: 'widget_' + f7.utils.id(),
-            props: {
-              parameterGroups: [],
-              parameters: [
-                {
-                  name: 'prop1',
-                  label: 'Prop 1',
-                  type: 'TEXT',
-                  description: 'A text prop'
-                },
-                {
-                  name: 'item',
-                  label: 'Item',
-                  type: 'TEXT',
-                  context: 'item',
-                  description: 'An item to control'
-                }
-              ]
-            },
-            tags: [],
-            component: 'f7-card',
-            config: {
-              title: '=(props.item) ? "State of " + props.item : "Set props to test!"',
-              footer: '=props.prop1',
-              content: '=items[props.item].displayState || items[props.item].state'
-            }
+        this.widgetDefinition = toFileYAMLSyntax('widgets', {
+          uid: 'widget_' + f7.utils.id(),
+          props: {
+            parameterGroups: [],
+            parameters: [
+              {
+                name: 'prop1',
+                label: 'Prop 1',
+                type: 'TEXT',
+                description: 'A text prop'
+              },
+              {
+                name: 'item',
+                label: 'Item',
+                type: 'TEXT',
+                context: 'item',
+                description: 'An item to control'
+              }
+            ]
           },
-          { toStringOptions }
-        )
+          tags: [],
+          component: 'f7-card',
+          config: {
+            title: '=(props.item) ? "State of " + props.item : "Set props to test!"',
+            footer: '=props.prop1',
+            content: '=items[props.item].displayState || items[props.item].state'
+          }
+        })
         nextTick(() => {
           this.loading = false
           this.ready = true
         })
       } else {
         api.getUiComponentInNamespace({ namespace: 'ui:widget', componentUID: this.uid }).then((data) => {
-          data.props.parameters = transformParameterDefaults(data.props.parameters)
-          this.widgetDefinition = YAML.stringify(data, { toStringOptions })
+          if (data.props?.parameters) {
+            data.props.parameters = transformParameterDefaults(data.props.parameters)
+          }
+          this.widgetEditable = data.editable ?? true
+          delete data.editable
+          this.widgetDefinition = toFileYAMLSyntax('widgets', data)
           nextTick(() => {
             this.loading = false
             this.ready = true
@@ -288,6 +321,7 @@ export default {
       }
     },
     save(stay) {
+      if (!this.isEditable) return
       if (!this.widget.uid) {
         f7.dialog.alert('Please give an UID to the widget')
         return

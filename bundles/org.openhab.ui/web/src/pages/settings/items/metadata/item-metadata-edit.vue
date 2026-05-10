@@ -33,14 +33,6 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon
-          v-if="!editable"
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          tooltip="This metadata is not editable as it has not been created through the UI" />
         <editor
           v-if="currentTab === 'code'"
           class="metadata-code-editor"
@@ -55,7 +47,7 @@
 </template>
 
 <style lang="stylus">
-.metadata-code-editor.v-codemirror
+.metadata-code-editor
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>

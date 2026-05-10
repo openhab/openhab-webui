@@ -23,7 +23,7 @@
             :popover-close="'.item-popover-' + uid"
             @click="context.editmode.configureWidget(defaultSlots[0], context)"
             icon-f7="square_pencil">
-            Configure
+            Settings
           </f7-link>
           <f7-link
             v-if="defaultSlots.length > 0"
@@ -32,9 +32,10 @@
             :popover-close="'.item-popover-' + uid"
             @click="context.editmode.editWidgetCode(defaultSlots[0], context)"
             icon-f7="doc_text">
-            YAML
+            {{ context.editmode.isEditable ? 'Edit YAML' : 'View YAML' }}
           </f7-link>
           <f7-link
+            v-if="context.editmode.isEditable"
             href="#"
             class="text-color-red display-flex flex-direction-column"
             :popover-close="'.item-popover-' + uid"
@@ -46,7 +47,7 @@
       </f7-popover>
     </template>
     <oh-placeholder-widget
-      v-if="context.editmode && !defaultSlots.length"
+      v-if="context.editmode?.isEditable && !defaultSlots.length"
       @click="context.editmode.addWidget(context.component, null, context.parent)"
       class="oh-grid-item-content" />
     <generic-widget-component
@@ -55,7 +56,7 @@
       :context="childContext(defaultSlots[0])"
       :style="{ overflow: context.editmode ? 'visible' : 'hidden' }" />
 
-    <f7-icon v-if="context.editmode" class="drag-handle" f7="move" />
+    <f7-icon v-if="context.editmode?.isEditable" class="drag-handle" f7="move" />
   </grid-item>
 </template>
 

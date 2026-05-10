@@ -271,14 +271,6 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon
-          v-if="!createMode && !isEditable"
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          tooltip="This code is not editable" />
         <editor
           v-if="currentTab === 'code'"
           class="rule-code-editor"
@@ -290,13 +282,6 @@
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
       <f7-tab v-if="ready && hasSource" id="source" :tab-active="currentTab === 'source'">
-        <f7-icon
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          tooltip="Source code is not editable" />
         <editor v-if="currentTab === 'source'" class="rule-source-viewer" :mode="sourceType" :value="source" :readOnly="true" />
       </f7-tab>
     </f7-tabs>
@@ -321,19 +306,16 @@
     margin-bottom 0
   .list
     margin-top 0
-.rule-code-editor.v-codemirror
+.rule-code-editor
+.rule-source-viewer
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
+  width 100%
 .yaml-message
   display block
   position absolute
   top 80%
   white-space pre-wrap
-#source
-  .rule-source-viewer.v-codemirror
-    position absolute
-    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
-    width 100%
 </style>
 
 <script>

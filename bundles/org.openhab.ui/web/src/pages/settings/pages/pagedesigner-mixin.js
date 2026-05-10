@@ -39,6 +39,9 @@ export default {
     ready() {
       return this.pageReady && useComponentsStore().ready
     },
+    isEditable() {
+      return !this.page || (this.page.editable ?? true)
+    },
     context() {
       return {
         component: this.page,
@@ -48,6 +51,7 @@ export default {
         editmode:
           !this.previewMode || this.forceEditMode
             ? {
+                isEditable: this.isEditable,
                 addWidget: this.addWidget,
                 configureWidget: this.configureWidget,
                 configureSlot: this.configureSlot,
@@ -78,8 +82,8 @@ export default {
   watch: {
     page: {
       handler: function () {
-        if (!this.loading) {
-          // ignore changes during loading
+        if (!this.loading && this.isEditable) {
+          // ignore changes during loading or when page is not editable
           this.dirty = !fastDeepEqual(this.page, this.savedPage)
         }
       },
@@ -142,6 +146,7 @@ export default {
       }
     },
     save() {
+      if (!this.isEditable) return
       if (this.currentTab === 'code' && !this.fromYaml()) return
       if (!this.page.uid) {
         f7.dialog.alert('Please give an ID to the page')
@@ -251,7 +256,8 @@ export default {
         {
           props: {
             component: this.currentComponent,
-            widget: this.currentWidget
+            widget: this.currentWidget,
+            readOnly: !this.isEditable
           }
         }
       )
@@ -285,7 +291,8 @@ export default {
         {
           props: {
             componentType: this.f7router.currentRoute.params.type,
-            component: this.currentComponent
+            component: this.currentComponent,
+            readOnly: !this.isEditable
           }
         }
       )
@@ -297,6 +304,7 @@ export default {
       })
     },
     cutWidget(component, parentContext, slot = 'default') {
+      if (!this.isEditable) return
       this.copyWidget(component, parentContext)
       this.removeWidget(component, parentContext)
     },
@@ -306,6 +314,7 @@ export default {
       this.clipboardType = component.component
     },
     pasteWidget(component, parentContext, slot = 'default') {
+      if (!this.isEditable) return
       if (!this.clipboard) return
       component.slots[slot].push(JSON.parse(this.clipboard))
       this.forceUpdate()
@@ -325,6 +334,7 @@ export default {
       return this.moveWidget(component, parentContext, slot, 0)
     },
     moveWidget(component, parentContext, slot = 'default', newPos) {
+      if (!this.isEditable) return
       let siblings = parentContext.component.slots[slot]
       let pos = siblings.indexOf(component)
       newPos = Math.max(0, Math.min(siblings.length, newPos))
@@ -335,6 +345,7 @@ export default {
       return Math.min(siblings.length - 1, newPos)
     },
     removeWidget(component, parentContext, slot = 'default') {
+      if (!this.isEditable) return
       parentContext.component.slots[slot].splice(parentContext.component.slots[slot].indexOf(component), 1)
       this.forceUpdate()
     },

@@ -12,28 +12,41 @@
       {{ config.title }}
     </f7-block-title>
     <f7-menu v-if="context.editmode" class="configure-layout-menu padding-bottom">
-      <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-row')" icon-f7="plus" text="Add Row" />
-      <f7-menu-item @click="context.editmode.addWidget(context.component, 'oh-grid-cells')" icon-f7="plus" text="Add Cells" />
+      <f7-menu-item
+        v-if="context.editmode.isEditable"
+        @click="context.editmode.addWidget(context.component, 'oh-grid-row')"
+        icon-f7="plus"
+        text="Add Row" />
+      <f7-menu-item
+        v-if="context.editmode.isEditable"
+        @click="context.editmode.addWidget(context.component, 'oh-grid-cells')"
+        icon-f7="plus"
+        text="Add Cells" />
       <f7-menu-item style="margin-left: auto" icon-f7="rectangle_grid_1x2" dropdown>
         <f7-menu-dropdown right>
           <f7-menu-dropdown-item
             @click="context.editmode.configureWidget(context.component, context.parent)"
             href="#"
-            text="Configure Block" />
-          <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
-          <f7-menu-dropdown-item divider />
-          <!-- <f7-menu-dropdown-item @click="context.editmode.(context.component, context.parent)" href="#" text="Cut"></f7-menu-dropdown-item>
-            <f7-menu-dropdown-item @click="context.editmode.(context.component, context.parent)" href="#" text="Copy"></f7-menu-dropdown-item> -->
+            text="Block Settings" />
           <f7-menu-dropdown-item
-            v-if="context.clipboardtype === 'oh-grid-row' || context.clipboardtype === 'oh-grid-cells'"
-            @click="context.editmode.pasteWidget(context.component, context.parent)"
+            @click="context.editmode.editWidgetCode(context.component, context.parent)"
             href="#"
-            text="Paste" />
-          <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row' || context.clipboardtype === 'oh-grid-cells'" divider />
-          <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Up" />
-          <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Down" />
-          <f7-menu-dropdown-item divider />
-          <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Block" />
+            :text="context.editmode.isEditable ? 'Edit YAML' : 'View YAML'" />
+          <template v-if="context.editmode.isEditable">
+            <f7-menu-dropdown-item divider />
+            <!-- <f7-menu-dropdown-item @click="context.editmode.(context.component, context.parent)" href="#" text="Cut"></f7-menu-dropdown-item>
+            <f7-menu-dropdown-item @click="context.editmode.(context.component, context.parent)" href="#" text="Copy"></f7-menu-dropdown-item> -->
+            <f7-menu-dropdown-item
+              v-if="context.clipboardtype === 'oh-grid-row' || context.clipboardtype === 'oh-grid-cells'"
+              @click="context.editmode.pasteWidget(context.component, context.parent)"
+              href="#"
+              text="Paste" />
+            <f7-menu-dropdown-item v-if="context.clipboardtype === 'oh-grid-row' || context.clipboardtype === 'oh-grid-cells'" divider />
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Up" />
+            <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Down" />
+            <f7-menu-dropdown-item divider />
+            <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Block" />
+          </template>
         </f7-menu-dropdown>
       </f7-menu-item>
     </f7-menu>

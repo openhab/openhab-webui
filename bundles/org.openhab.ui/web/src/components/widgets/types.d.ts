@@ -5,6 +5,7 @@ import type { WidgetDefinition } from '@/assets/definitions/widgets'
 
 // TODO - improve typescript of functions in EditMode
 export interface EditMode {
+  isEditable: boolean
   addWidget: (...args: any[]) => any
   configureWidget: (...args: any[]) => any
   configureSlot: (...args: any[]) => any

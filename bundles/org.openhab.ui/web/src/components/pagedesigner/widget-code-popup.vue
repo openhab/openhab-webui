@@ -10,10 +10,11 @@
         <f7-nav-left>
           <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" @click="closeWithDirtyCheck" />
         </f7-nav-left>
-        <f7-nav-title>Edit Widget Code{{ dirtyIndicator }}</f7-nav-title>
+        <f7-nav-title v-if="!readOnly">Edit Widget Code{{ dirtyIndicator }}</f7-nav-title>
+        <f7-nav-title v-else>View Widget Code <f7-icon f7="lock_fill" size="12" color="gray" /></f7-nav-title>
         <f7-nav-right>
-          <f7-link v-if="dirty" @click="reset"> Reset </f7-link>
-          <f7-link v-if="dirty" @click="save"> Save </f7-link>
+          <f7-link v-if="!readOnly && dirty" @click="reset"> Reset </f7-link>
+          <f7-link v-if="!readOnly && dirty" @click="save"> Save </f7-link>
           <f7-link v-else popup-close> Close </f7-link>
         </f7-nav-right>
       </f7-navbar>
@@ -21,6 +22,7 @@
         class="page-code-editor"
         :mode="`application/vnd.openhab.uicomponent+yaml;type=${componentType || 'widget'}`"
         :value="code"
+        :readOnly="readOnly"
         @input="update" />
       <!-- <pre class="yaml-message padding-horizontal" :class="[widgetYamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{widgetYamlError}}</pre> -->
     </f7-page>
@@ -51,7 +53,8 @@ import { confirmLeaveWithoutSaving, useDirty } from '@/pages/useDirty'
 export default {
   props: {
     component: Object,
-    componentType: String
+    componentType: String,
+    readOnly: Boolean
   },
   mixins: [MovablePopupMixin],
   components: {
@@ -121,6 +124,7 @@ export default {
       }
     },
     reset() {
+      if (this.readOnly) return
       f7.dialog.confirm('Do you want to revert your changes?', 'Revert Changes', () => {
         this.code = this.originalCode
         this.updateWidgetCode(this.code)
@@ -128,6 +132,7 @@ export default {
       })
     },
     save() {
+      if (this.readOnly) return
       if (this.widgetYamlError !== 'OK') {
         f7.dialog.alert('Invalid YAML: ' + this.widgetYamlError, 'Unable to save changes').open()
         return
@@ -140,6 +145,7 @@ export default {
       this.$emit('update', value)
     },
     update(value) {
+      if (this.readOnly) return
       this.code = value
       clearTimeout(this.updateTimer)
       this.updateTimer = setTimeout(() => {

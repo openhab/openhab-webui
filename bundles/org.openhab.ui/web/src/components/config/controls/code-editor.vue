@@ -1,13 +1,4 @@
 <template>
-  <f7-icon
-    v-if="readOnly"
-    f7="lock"
-    class="float-right margin"
-    style="opacity: 0.5; z-index: 4000; user-select: none"
-    size="50"
-    color="gray"
-    :tooltip="readOnlyMsg" />
-
   <div class="code-editor">
     <editor
       ref="editor"
@@ -114,8 +105,7 @@ export default {
     objectType: String, // the type of the object, e.g. 'items', 'things' which corresponds to the yaml element name.
     objectId: String,
     hintContext: Object,
-    readOnly: Boolean,
-    readOnlyMsg: String
+    readOnly: Boolean
   },
   // @parsed  event is emitted when the code has been parsed back into an object
   //          as a result of calling the parseCode() method

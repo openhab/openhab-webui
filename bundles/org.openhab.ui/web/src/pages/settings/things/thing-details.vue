@@ -70,9 +70,7 @@
             <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
               Information
             </f7-block-title>
-            <f7-block-footer v-if="!editable" class="no-margin padding-left">
-              <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: {{ notEditableMsg }}
-            </f7-block-footer>
+            <not-editable-notice v-if="!editable" subject="Thing" />
             <f7-list accordion-opposite>
               <f7-list-item v-if="thingType" accordion-item title="Thing Type" :after="thingType.label">
                 <f7-accordion-content class="thing-type-description">
@@ -315,7 +313,6 @@
           :object="thing"
           :object-id="thing.UID"
           :read-only="!editable"
-          :read-only-msg="notEditableMsg"
           :hint-context="{ thingType: thingType, channelTypes: channelTypes }"
           @save="save()"
           @parsed="updateThing"
@@ -427,6 +424,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import NetworkPopup from '@/pages/settings/things/network/network-popup.vue'
 
@@ -451,6 +449,7 @@ export default {
     ConfigSheet,
     ChannelList,
     ThingGeneralSettings,
+    NotEditableNotice,
     CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   props: {
@@ -479,7 +478,6 @@ export default {
        */
       configActionsByGroup: [],
       eventSource: null,
-      notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.',
       propertyTruncation: {}
     }
   },

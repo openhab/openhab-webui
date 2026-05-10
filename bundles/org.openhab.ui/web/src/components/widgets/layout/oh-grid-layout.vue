@@ -4,13 +4,13 @@
       <!-- normal menu -->
       <f7-block v-if="!fullscreen">
         <f7-menu class="configure-layout-menu">
-          <f7-menu-item @click="addItem" icon-f7="plus" text="Add Widget" />
+          <f7-menu-item v-if="context.editmode.isEditable" @click="addItem" icon-f7="plus" text="Add Widget" />
           <f7-menu-item style="margin-left: auto" icon-f7="grid" dropdown>
             <f7-menu-dropdown right>
               <f7-menu-dropdown-item
                 @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')"
                 href="#"
-                text="Configure Grid Layout" />
+                text="Grid Layout Settings" />
             </f7-menu-dropdown>
           </f7-menu-item>
         </f7-menu>
@@ -28,12 +28,12 @@
               <f7-icon size="20" f7="rectangle_arrow_up_right_arrow_down_left_slash" />
             </f7-fab-button>
             <f7-fab-button
-              label="Configure Grid Layout"
+              :label="context.editmode.isEditable ? 'Configure Grid Layout' : 'View Grid Layout'"
               fab-close
               @click="context.editmode.configureWidget(context.component, context.parent, 'oh-grid-layout')">
               <f7-icon size="20" f7="square_pencil" />
             </f7-fab-button>
-            <f7-fab-button label="Add Widget" fab-close @click="addItem">
+            <f7-fab-button v-if="context.editmode.isEditable" label="Add Widget" fab-close @click="addItem">
               <f7-icon size="20" f7="plus" />
             </f7-fab-button>
           </f7-fab-buttons>
@@ -43,8 +43,8 @@
 
     <grid-layout
       ref="vueGridLayout"
-      :is-draggable="!!context.editmode"
-      :is-resizable="!!context.editmode"
+      :is-draggable="context.editmode?.isEditable ?? false"
+      :is-resizable="context.editmode?.isEditable ?? false"
       v-model:layout="layout"
       :auto-size="config.layoutType !== 'fixed'"
       :col-num="colNum"
@@ -205,6 +205,9 @@ export default {
       }
     },
     addItem() {
+      if (!this.context.editmode.isEditable) {
+        return
+      }
       // try adding a 2x2 widget, or a 1x1 widget if there's no room left
       if (!this.createItem(2) && !this.createItem(1)) {
         f7.dialog.alert('No more space available', 'Unable to add widget')

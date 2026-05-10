@@ -3,6 +3,7 @@
     <f7-navbar v-if="!(previewMode && page.config.hideNavbar) && !fullscreen" no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create layout page' : page.config.label) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -33,6 +34,7 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
+        <not-editable-notice v-if="ready && !isEditable && !previewMode" />
         <f7-block v-if="ready && createMode && !(previewMode || fullscreen)" id="page-settings" class="block-narrow">
           <page-settings :page="page" :createMode="createMode" :f7router />
           <f7-col>
@@ -123,7 +125,7 @@
               </div>
             </f7-toolbar>
             <f7-block class="block-narrow">
-              <page-settings :page="page" :createMode="createMode" :f7router />
+              <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
             </f7-block>
           </f7-page>
         </f7-sheet>
@@ -135,6 +137,7 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml?type=layout"
           :value="pageYaml"
+          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -168,7 +171,7 @@
         margin-bottom calc(var(--f7-toolbar-height) + 1rem)
         .oh-masonry
           z-index inherit
-  .page-code-editor.v-codemirror
+  .code-editor-fit.page-code-editor
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message
@@ -182,9 +185,9 @@
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
-import YAML from 'yaml'
-
 import PageDesigner from '../pagedesigner-mixin'
+import { resolveDefaultProps } from '../defaultProps'
+import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import * as SystemWidgets from '@/components/widgets/system'
@@ -194,6 +197,7 @@ import * as StandardCellWidgets from '@/components/widgets/standard/cell'
 import * as LayoutWidgets from '@/components/widgets/layout'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import ModelPickerPopup from '@/components/model/model-picker-popup.vue'
 
 import itemDefaultStandaloneComponent from '@/components/widgets/standard/default-standalone-item'
@@ -213,7 +217,8 @@ export default {
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhLayoutPage,
-    PageSettings
+    PageSettings,
+    NotEditableNotice
   },
   props: {
     createMode: Boolean,
@@ -258,6 +263,7 @@ export default {
   },
   methods: {
     addWidget(component, widgetType, parentContext, slot = 'default') {
+      if (!this.isEditable) return
       const isList = component.component.indexOf('oh-list') === 0
       const isCells = component.component.indexOf('oh-grid-cells') === 0
       if (!component.slots) {
@@ -436,32 +442,39 @@ export default {
       return component.widget()
     },
     toYaml() {
-      this.pageYaml = YAML.stringify({
-        config: this.page.config,
-        // make sure array is available for existing pages, where the prop might be undefined, by falling back to empty array
-        blocks: this.page.slots.default || [],
-        masonry: this.page.slots.masonry || [],
-        grid: this.page.slots.grid || [],
-        canvas: this.page.slots.canvas || []
-      })
+      this.pageYaml = toFileYAMLSyntax('pages', this.page)
     },
     fromYaml() {
       try {
-        const updatedPage = YAML.parse(this.pageYaml)
+        const updatedPage = fromFileYAMLSyntax('pages', this.pageYaml, this.page.uid)
+
+        if (!updatedPage.slots) {
+          // maintain compatibility with older versions of the page schema
+          // where blocks, masonry, grid, and canvas were directly on the page object instead of in a slots property
+          // so that users can paste older YAML code without having to adjust the structure
+          updatedPage.slots = {
+            default: updatedPage.blocks || [],
+            masonry: updatedPage.masonry || [],
+            grid: updatedPage.grid || [],
+            canvas: updatedPage.canvas || []
+          }
+        }
+
         if (
           updatedPage.config &&
           updatedPage.config.layoutType &&
           updatedPage.config.layoutType === 'fixed' &&
-          ((updatedPage.blocks && updatedPage.blocks.length) || (updatedPage.masonry && updatedPage.masonry.length))
+          ((updatedPage.slots && updatedPage.slots.default && updatedPage.slots.default.length) ||
+            (updatedPage.slots && updatedPage.slots.masonry && updatedPage.slots.masonry.length))
         ) {
           throw new Error('Using blocks and masonry in fixed layouts is not possible')
         }
 
         this.page.config = updatedPage.config
-        this.page.slots.default = updatedPage.blocks
-        this.page.slots.masonry = updatedPage.masonry
-        this.page.slots.grid = updatedPage.grid
-        this.page.slots.canvas = updatedPage.canvas
+        this.page.tags = updatedPage.tags || []
+        this.page.props = resolveDefaultProps(updatedPage.props)
+        this.page.slots = updatedPage.slots
+
         this.forceUpdate()
         return true
       } catch (e) {
