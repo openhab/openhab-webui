@@ -12,94 +12,81 @@
     </button>
   </div>
   <!-- Logger Settings Popup -->
-  <div class="popup log-settings-popup">
-    <div class="view">
-      <div class="page">
-        <div class="navbar">
-          <div class="navbar-bg" />
-          <div class="navbar-inner">
-            <div class="title">Logging Settings</div>
-            <div class="right">
-              <a class="link popup-close">Close</a>
-            </div>
+  <f7-popup class="log-settings-popup">
+    <f7-page>
+      <f7-navbar title="Logging Settings">
+        <f7-nav-right>
+          <f7-link class="popup-close">Close</f7-link>
+        </f7-nav-right>
+      </f7-navbar>
+      <f7-page-content class="no-padding">
+        <f7-block class="input-with-buttons-container">
+          <div class="input-with-buttons searchbar">
+            <input
+              type="text"
+              placeholder="Add custom logger package entry..."
+              @keyup.enter="handleLogPackageEnter($event)"
+              class="custom-input" />
           </div>
-        </div>
-        <div class="page-content">
-          <f7-block class="input-with-buttons-container">
-            <div class="input-with-buttons searchbar">
-              <input
-                type="text"
-                placeholder="Add custom logger package entry..."
-                @keyup.enter="handleLogPackageEnter($event)"
-                class="custom-input" />
-            </div>
-          </f7-block>
-          <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center">
-            Logger will be added with ROOT log level {{ defaultLogLevel }}
-          </f7-block>
+        </f7-block>
+        <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center">
+          Logger will be added with ROOT log level {{ defaultLogLevel }}
+        </f7-block>
 
-          <f7-list class="col wide">
-            <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName" :title="loggerPackage.loggerName">
-              <template #after>
-                <f7-input type="select" :value="loggerPackage.level" @input="updateLogLevel(loggerPackage, $event.target.value)">
-                  <option value="DEFAULT">Default</option>
-                  <option value="TRACE">Trace</option>
-                  <option value="DEBUG">Debug</option>
-                  <option value="INFO">Info</option>
-                  <option value="WARN">Warning</option>
-                  <option value="ERROR">Error</option>
-                  <option value="OFF">Off</option>
-                </f7-input>
-                <f7-button small icon-f7="xmark_circle" @click="removeLogLevel(loggerPackage)" />
-              </template>
-            </f7-list-item>
-          </f7-list>
-        </div>
-      </div>
-    </div>
-  </div>
+        <f7-list class="col wide">
+          <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName" :title="loggerPackage.loggerName">
+            <template #after>
+              <f7-input type="select" :value="loggerPackage.level" @input="updateLogLevel(loggerPackage, $event.target.value)">
+                <option value="DEFAULT">Default</option>
+                <option value="TRACE">Trace</option>
+                <option value="DEBUG">Debug</option>
+                <option value="INFO">Info</option>
+                <option value="WARN">Warning</option>
+                <option value="ERROR">Error</option>
+                <option value="OFF">Off</option>
+              </f7-input>
+              <f7-button small icon-f7="xmark_circle" @click="removeLogLevel(loggerPackage)" />
+            </template>
+          </f7-list-item>
+        </f7-list>
+      </f7-page-content>
+    </f7-page>
+  </f7-popup>
 
   <!-- Highlights Popup -->
-  <div class="popup loghighlights-popup" @popup:close="saveHighlighters">
-    <div class="view">
-      <div class="page">
-        <div class="navbar">
-          <div class="navbar-bg" />
-          <div class="navbar-inner">
-            <div class="title">Logging Highlight Filters</div>
-            <div class="right">
-              <!-- Link to close popup -->
-              <a class="link popup-close">Close</a>
-            </div>
-          </div>
-        </div>
-        <div class="page-content">
-          <f7-list class="col wide">
-            <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
-              <template #media>
-                <input type="checkbox" v-model="highlightFilter.active" />
-              </template>
-              <template #title>
-                <f7-input v-model:value="highlightFilter.text" type="text" placeholder="Enter text to highlight..." />
-              </template>
+  <f7-popup class="log-highlights-popup" @popup:close="saveHighlighters">
+    <f7-page>
+      <f7-navbar title="Logging Highlight Filters">
+        <f7-nav-right>
+          <f7-link class="popup-close">Close</f7-link>
+        </f7-nav-right>
+      </f7-navbar>
+      <f7-page-content>
+        <f7-list class="col wide">
+          <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
+            <template #media>
+              <input type="checkbox" v-model="highlightFilter.active" />
+            </template>
+            <template #title>
+              <f7-input v-model:value="highlightFilter.text" type="text" placeholder="Enter text to highlight..." />
+            </template>
 
-              <!-- Color Picker -->
-              <template #after>
-                <div>
-                  <f7-button
-                    class="color-picker-button"
-                    @click="openColorPopover(index, $event)"
-                    :style="{ backgroundColor: highlightFilter.color }" />
-                </div>
-                <f7-button small icon-f7="xmark_circle" @click="removeHighlight(index)" />
-              </template>
-            </f7-list-item>
-          </f7-list>
-          <button class="button" @click="addNewHighlight">Add New Highlight</button>
-        </div>
-      </div>
-    </div>
-  </div>
+            <!-- Color Picker -->
+            <template #after>
+              <div>
+                <f7-button
+                  class="color-picker-button"
+                  @click="openColorPopover(index, $event)"
+                  :style="{ backgroundColor: highlightFilter.color }" />
+              </div>
+              <f7-button small icon-f7="xmark_circle" @click="removeHighlight(index)" />
+            </template>
+          </f7-list-item>
+        </f7-list>
+        <button class="button" @click="addNewHighlight">Add New Highlight</button>
+      </f7-page-content>
+    </f7-page>
+  </f7-popup>
 
   <!-- Color Picker Popover -->
   <f7-popover id="color-picker-popover" class="color-picker-popover">
