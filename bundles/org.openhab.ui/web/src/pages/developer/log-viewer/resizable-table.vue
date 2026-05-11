@@ -2,7 +2,7 @@
   <div
     ref="tableContainer"
     class="table-container resizable-table-container"
-    :class="{ 'resize-hovering': !textMode && (hoveredResizeHandle >= 0 || activeResizeHandle >= 0) }"
+    :class="{ 'resize-hovering': columnResizeEnabled && (hoveredResizeHandle >= 0 || activeResizeHandle >= 0) }"
     @scroll="handleScroll"
     @mousemove="handleTableMouseMove"
     @mouseleave="handleTableMouseLeave"
@@ -10,7 +10,7 @@
     @dblclick="handleTableDoubleClick"
     @touchstart="handleTableTouchStart">
     <div
-      v-if="!textMode"
+      v-if="columnResizeEnabled"
       class="resizable-table-header-overlay"
       :class="{ 'resizable-table-header-overlay-visible': showColumnHeaders }"
       :style="{ width: totalTableWidth + 'px' }">
@@ -26,15 +26,15 @@
     <table
       ref="dataTable"
       class="resizable-table"
-      :class="{ 'wrap-messages': wrapMessages && !textMode }"
-      :style="!textMode ? { tableLayout: 'fixed', width: totalTableWidth + 'px' } : { width: '100%' }">
-      <colgroup v-if="!textMode">
+      :class="{ 'content-wrapped': contentWrapEnabled }"
+      :style="columnResizeEnabled ? { tableLayout: 'fixed', width: totalTableWidth + 'px' } : { width: '100%' }">
+      <colgroup v-if="columnResizeEnabled">
         <col v-for="(width, i) in columnWidths" :key="i" :style="{ width: width + 'px' }" />
       </colgroup>
       <tbody />
     </table>
     <div
-      v-if="!textMode && resizeGuideLeft !== null"
+      v-if="columnResizeEnabled && resizeGuideLeft !== null"
       class="resizable-table-guide"
       :class="{ 'resizable-table-guide-active': activeResizeHandle >= 0 }"
       :style="{ left: resizeGuideLeft + 'px', top: tableScrollTop + 'px', height: tableViewportHeight + 'px' }"
@@ -124,15 +124,35 @@ body.col-resizing .resizable-table-container
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 
+/**
+ * Reusable table shell with persisted resizable columns.
+ *
+ * Usage expectations:
+ * - The parent owns row rendering and writes rows directly into the exposed tbody.
+ * - The parent listens for `scroll` to keep any virtualized or lazy rendering in sync.
+ * - The parent listens for `auto-size-column` when column width depends on row data.
+ * - Width persistence is keyed by `storageKey`, so callers should pass a stable, feature-specific key.
+ *
+ * This component intentionally does not know anything about the row model. It only owns
+ * column widths, hover/drag/touch resize behavior, the temporary header overlay, and the
+ * DOM handles needed by parents that manage table body content themselves.
+ */
 type TableColumnDef = {
   label: string
 }
 
+/**
+ * Public configuration surface for the table shell.
+ *
+ * `columnResizeEnabled` controls whether the component uses explicit column widths and
+ * shows the resize affordance.
+ * `contentWrapEnabled` only affects the opt-in wrap class on the rendered table element.
+ */
 const props = withDefaults(
   defineProps<{
     columns: TableColumnDef[]
-    textMode: boolean
-    wrapMessages: boolean
+    columnResizeEnabled: boolean
+    contentWrapEnabled: boolean
     storageKey: string
     defaultColumnWidths: number[]
     minColumnWidth?: number
@@ -142,6 +162,10 @@ const props = withDefaults(
   }
 )
 
+/**
+ * `scroll` lets the parent react to viewport changes.
+ * `auto-size-column` lets the parent compute width from its own data model.
+ */
 const emit = defineEmits<{
   scroll: []
   'auto-size-column': [colIndex: number]
@@ -260,7 +284,7 @@ function clearResizeHoverState() {
 }
 
 function updateTableHoverState(clientX: number, clientY: number) {
-  if (props.textMode) {
+  if (!props.columnResizeEnabled) {
     clearResizeHoverState()
     return
   }
@@ -304,28 +328,28 @@ function handleTableMouseMove(event: MouseEvent) {
 }
 
 function handleTableMouseLeave() {
-  if (props.textMode) return
+  if (!props.columnResizeEnabled) return
   if (resizingIndex >= 0) return
   hoveredResizeHandle.value = -1
   isHoveringTableTop.value = false
 }
 
 function handleTableMouseDown(event: MouseEvent) {
-  if (props.textMode) return
+  if (!props.columnResizeEnabled) return
   if (event.button !== 0 || hoveredResizeHandle.value < 0) return
   event.preventDefault()
   startResize(event, hoveredResizeHandle.value)
 }
 
 function handleTableDoubleClick(event: MouseEvent) {
-  if (props.textMode) return
+  if (!props.columnResizeEnabled) return
   if (hoveredResizeHandle.value < 0) return
   event.preventDefault()
   emit('auto-size-column', hoveredResizeHandle.value)
 }
 
 function handleTableTouchStart(event: TouchEvent) {
-  if (props.textMode) return
+  if (!props.columnResizeEnabled) return
   if (event.touches.length !== 1) return
   const touch = event.touches[0]
   updateTableHoverState(touch.clientX, touch.clientY)
@@ -338,6 +362,12 @@ function handleScroll() {
   emit('scroll')
 }
 
+/**
+ * Imperative helpers exposed for parents that manage tbody content themselves.
+ *
+ * This keeps the resizable shell reusable while still supporting existing code paths that
+ * append/remove rows manually or need direct access to the scroll container and table node.
+ */
 function resetColumnWidths() {
   columnWidths.value = [...props.defaultColumnWidths]
   localStorage.removeItem(props.storageKey)
@@ -383,9 +413,9 @@ const resizeGuideLeft = computed(() => {
 const showColumnHeaders = computed(() => isHoveringTableTop.value || hoveredResizeHandle.value >= 0 || activeResizeHandle.value >= 0)
 
 watch(
-  () => props.textMode,
-  (textModeEnabled) => {
-    if (textModeEnabled) {
+  () => props.columnResizeEnabled,
+  (columnResizeEnabled) => {
+    if (!columnResizeEnabled) {
       clearResizeHoverState()
     }
   }

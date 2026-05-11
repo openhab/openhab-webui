@@ -4,8 +4,8 @@
       <resizable-table
         ref="resizableTable"
         :columns="TABLE_COLUMN_DEFS"
-        :text-mode="textMode"
-        :wrap-messages="wrapMessages"
+        :column-resize-enabled="!textMode"
+        :content-wrap-enabled="wrapMessages && !textMode"
         :storage-key="COLUMN_WIDTHS_KEY"
         :default-column-widths="DEFAULT_COLUMN_WIDTHS"
         @scroll="handleScroll"
@@ -278,7 +278,7 @@
     .resize-guide
       opacity 0.8
 
-  table.wrap-messages
+  table.content-wrapped
     tr.table-rows
       height auto
       min-height 31px
