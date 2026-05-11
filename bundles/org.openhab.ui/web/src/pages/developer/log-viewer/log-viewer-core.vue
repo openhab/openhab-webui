@@ -1,7 +1,30 @@
 <template>
   <div class="table-block">
     <f7-card class="log-viewer-card">
-      <div class="table-container" ref="tableContainer" @scroll="handleScroll">
+      <div
+        class="table-container"
+        :class="{ 'resize-hovering': !textMode && (hoveredResizeHandle >= 0 || activeResizeHandle >= 0) }"
+        ref="tableContainer"
+        @scroll="handleScroll"
+        @mousemove="handleTableMouseMove"
+        @mouseleave="handleTableMouseLeave"
+        @mousedown="handleTableMouseDown"
+        @dblclick="handleTableDoubleClick"
+        @touchstart="handleTableTouchStart">
+        <div
+          v-if="!textMode"
+          class="column-header-overlay"
+          :class="{ 'column-header-overlay-visible': showColumnHeaders }"
+          :style="{ width: totalTableWidth + 'px' }">
+          <div
+            v-for="(col, i) in TABLE_COLUMN_DEFS"
+            :key="i"
+            class="column-header-cell"
+            :class="{ 'column-header-cell-sticky': i === 0 }"
+            :style="{ width: columnWidths[i] + 'px' }">
+            <span>{{ col.label }}</span>
+          </div>
+        </div>
         <table
           ref="dataTable"
           :class="{ 'wrap-messages': wrapMessages && !textMode }"
@@ -9,21 +32,14 @@
           <colgroup v-if="!textMode">
             <col v-for="(width, i) in columnWidths" :key="i" :style="{ width: width + 'px' }" />
           </colgroup>
-          <thead v-if="!textMode">
-            <tr @mousemove="handleHeaderMouseMove" @mouseleave="handleHeaderMouseLeave">
-              <th v-for="(col, i) in TABLE_COLUMN_DEFS" :key="i" :class="{ 'th-sticky': i === 0 }">
-                <span>{{ col.label }}</span>
-                <div
-                  class="resize-handle"
-                  :class="{ 'resize-handle-active': activeResizeHandle === i }"
-                  @mousedown.prevent="startResize($event, i)"
-                  @touchstart="startResizeTouch($event, i)"
-                  @dblclick.prevent="autoSizeColumn(i)" />
-              </th>
-            </tr>
-          </thead>
           <tbody />
         </table>
+        <div
+          v-if="!textMode && resizeGuideLeft !== null"
+          class="resize-guide"
+          :class="{ 'resize-guide-active': activeResizeHandle >= 0 }"
+          :style="{ left: resizeGuideLeft + 'px', top: tableScrollTop + 'px', height: tableViewportHeight + 'px' }"
+          aria-hidden="true" />
       </div>
     </f7-card>
     <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-blue" @click="showLatestLogs()">
@@ -219,6 +235,10 @@
     overflow-y auto
     overflow-x auto
     display block
+    position relative
+
+  .table-container.resize-hovering
+    cursor col-resize
 
   table
     overflow-x auto
@@ -226,12 +246,27 @@
     border-collapse collapse
     table-layout auto
 
-  thead th
+  .column-header-overlay
     position sticky
     top 0
+    z-index 4
+    display flex
+    align-items stretch
+    height 31px
+    margin-bottom -31px
+    opacity 0
+    transform translateY(-100%)
+    transition opacity 0.12s ease, transform 0.12s ease
+    pointer-events none
+
+  .column-header-overlay-visible
+    opacity 1
+    transform translateY(0)
+
+  .column-header-cell
     background var(--f7-bars-bg-color)
     color var(--f7-bars-text-color)
-    z-index 2
+    box-sizing border-box
     padding 5px
     padding-right 14px
     text-align left
@@ -241,34 +276,29 @@
     user-select none
     white-space nowrap
     overflow hidden
+    flex 0 0 auto
 
-  thead th.th-sticky
+  .column-header-cell-sticky
+    position sticky
     left 0
-    z-index 3
+    z-index 1
 
-  .resize-handle
+  .resize-guide
     position absolute
-    right 0
-    top 0
-    bottom 0
-    width 8px
-    cursor col-resize
-    touch-action none
-    background transparent
-    &::after
-      content ''
-      position absolute
-      top 15%
-      bottom 15%
-      right 2px
-      width 2px
-      border-radius 1px
-      background currentColor
-      opacity 0.2
-      transition opacity 0.15s ease
+    width 2px
+    transform translateX(-1px)
+    background rgba(90, 90, 90, 0.95)
+    box-shadow 0 0 0 1px rgba(255, 255, 255, 0.55)
+    border-radius 1px
+    opacity 0.9
+    z-index 6
+    pointer-events none
+    transition opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease
 
-  .resize-handle.resize-handle-active::after
-    opacity 0.75
+  .resize-guide-active
+    background var(--f7-theme-color)
+    box-shadow 0 0 0 1px rgba(255, 255, 255, 0.7)
+    opacity 1
 
   body.col-resizing &
     *
@@ -276,8 +306,8 @@
       cursor col-resize !important
 
   @media (pointer coarse)
-    .resize-handle::after
-      opacity 0.45
+    .resize-guide
+      opacity 0.8
 
   table.wrap-messages
     tr.table-rows
@@ -301,11 +331,17 @@
     position sticky
     left 0
     width 105px
-    color var(--f7-bars-text-color)
-    background var(--f7-bars-bg-color)
+    color #000
+    background-color #fff
     z-index 1
     white-space nowrap
     overflow hidden
+
+  td.details-trigger
+    cursor pointer
+
+  td.details-trigger *
+    cursor pointer
 
   td.level
     width 50px
@@ -355,6 +391,7 @@
       margin-right 5px
     .time
       margin-left -3.2em
+      cursor pointer
     .level
       width 3em
       display inline-block
@@ -483,6 +520,7 @@ enum LEVEL_ICONS {
 
 const maxEntries = 2000
 const lineHeight = 31
+const resizeHoverDistance = 6
 
 const dataTableRef = useTemplateRef('dataTable')
 const dataTableContainerRef = useTemplateRef('tableContainer')
@@ -599,6 +637,10 @@ let resizingIndex = -1
 let resizeStartX = 0
 let resizeStartWidth = 0
 const activeResizeHandle = ref(-1)
+const hoveredResizeHandle = ref(-1)
+const isHoveringTableTop = ref(false)
+const tableScrollTop = ref(0)
+const tableViewportHeight = ref(0)
 let measureCanvasCtx: CanvasRenderingContext2D | null = null
 
 function getMeasureCtx(): CanvasRenderingContext2D | null {
@@ -615,11 +657,22 @@ function measureTextWidth(text: string, font: string): number {
   return ctx.measureText(text).width
 }
 
-function startResize(event: MouseEvent, colIndex: number) {
+function syncTableViewportMetrics() {
+  const tableContainer = dataTableContainerRef.value
+  if (!tableContainer) return
+  tableScrollTop.value = tableContainer.scrollTop
+  tableViewportHeight.value = tableContainer.clientHeight
+}
+
+function beginResize(clientX: number, colIndex: number) {
   resizingIndex = colIndex
-  resizeStartX = event.clientX
+  resizeStartX = clientX
   resizeStartWidth = columnWidths.value[colIndex]
   activeResizeHandle.value = colIndex
+}
+
+function startResize(event: MouseEvent, colIndex: number) {
+  beginResize(event.clientX, colIndex)
   document.body.classList.add('col-resizing')
   document.body.style.cursor = 'col-resize'
   document.addEventListener('mousemove', handleResize)
@@ -650,10 +703,7 @@ function resetColumnWidths() {
 function startResizeTouch(event: TouchEvent, colIndex: number) {
   if (event.touches.length !== 1) return
   const touch = event.touches[0]
-  resizingIndex = colIndex
-  resizeStartX = touch.clientX
-  resizeStartWidth = columnWidths.value[colIndex]
-  activeResizeHandle.value = colIndex
+  beginResize(touch.clientX, colIndex)
   document.addEventListener('touchmove', handleResizeTouch, { passive: false })
   document.addEventListener('touchend', stopResizeTouch)
   document.addEventListener('touchcancel', stopResizeTouch)
@@ -676,26 +726,88 @@ function stopResizeTouch() {
   document.removeEventListener('touchcancel', stopResizeTouch)
 }
 
-function handleHeaderMouseMove(event: MouseEvent) {
-  if (resizingIndex >= 0) return // don't override during active drag
-  const tr = event.currentTarget as HTMLElement
-  const ths = Array.from(tr.children) as HTMLElement[]
-  const cursorX = event.clientX
-  let closestCol = -1
-  let closestDist = Infinity
-  for (let i = 0; i < ths.length; i++) {
-    const dist = Math.abs(cursorX - ths[i].getBoundingClientRect().right)
-    if (dist < closestDist) {
-      closestDist = dist
-      closestCol = i
-    }
+function clearResizeHoverState() {
+  if (resizingIndex >= 0) {
+    stopResize()
+    stopResizeTouch()
   }
-  activeResizeHandle.value = closestCol
+  hoveredResizeHandle.value = -1
+  activeResizeHandle.value = -1
+  isHoveringTableTop.value = false
 }
 
-function handleHeaderMouseLeave() {
-  if (resizingIndex >= 0) return // don't clear during active drag
-  activeResizeHandle.value = -1
+function updateTableHoverState(clientX: number, clientY: number) {
+  if (textMode.value) {
+    clearResizeHoverState()
+    return
+  }
+
+  const tableContainer = dataTableContainerRef.value
+  if (!tableContainer) return
+  syncTableViewportMetrics()
+
+  const rect = tableContainer.getBoundingClientRect()
+  const withinContainer = clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom
+
+  if (!withinContainer) {
+    if (resizingIndex < 0) {
+      hoveredResizeHandle.value = -1
+    }
+    isHoveringTableTop.value = false
+    return
+  }
+
+  isHoveringTableTop.value = clientY - rect.top <= lineHeight
+
+  if (resizingIndex >= 0) return
+
+  const cursorX = clientX - rect.left + tableContainer.scrollLeft
+  let closestCol = -1
+  let closestDist = Infinity
+
+  for (const border of columnBorders.value) {
+    const dist = Math.abs(cursorX - border.left)
+    if (dist < closestDist) {
+      closestDist = dist
+      closestCol = border.index
+    }
+  }
+
+  hoveredResizeHandle.value = closestDist <= resizeHoverDistance ? closestCol : -1
+}
+
+function handleTableMouseMove(event: MouseEvent) {
+  updateTableHoverState(event.clientX, event.clientY)
+}
+
+function handleTableMouseLeave() {
+  if (textMode.value) return
+  if (resizingIndex >= 0) return
+  hoveredResizeHandle.value = -1
+  isHoveringTableTop.value = false
+}
+
+function handleTableMouseDown(event: MouseEvent) {
+  if (textMode.value) return
+  if (event.button !== 0 || hoveredResizeHandle.value < 0) return
+  event.preventDefault()
+  startResize(event, hoveredResizeHandle.value)
+}
+
+function handleTableDoubleClick(event: MouseEvent) {
+  if (textMode.value) return
+  if (hoveredResizeHandle.value < 0) return
+  event.preventDefault()
+  autoSizeColumn(hoveredResizeHandle.value)
+}
+
+function handleTableTouchStart(event: TouchEvent) {
+  if (textMode.value) return
+  if (event.touches.length !== 1) return
+  const touch = event.touches[0]
+  updateTableHoverState(touch.clientX, touch.clientY)
+  if (hoveredResizeHandle.value < 0) return
+  startResizeTouch(event, hoveredResizeHandle.value)
 }
 
 function autoSizeColumn(colIndex: number) {
@@ -722,6 +834,25 @@ const filteredTableData = computed(() => {
 })
 
 const totalTableWidth = computed(() => columnWidths.value.reduce((sum, w) => sum + w, 0))
+
+const columnBorders = computed(() => {
+  let offset = 0
+  return columnWidths.value.map((width, index) => {
+    offset += width
+    return {
+      index,
+      left: offset
+    }
+  })
+})
+
+const resizeGuideLeft = computed(() => {
+  const guideIndex = activeResizeHandle.value >= 0 ? activeResizeHandle.value : hoveredResizeHandle.value
+  if (guideIndex < 0) return null
+  return columnBorders.value[guideIndex]?.left ?? null
+})
+
+const showColumnHeaders = computed(() => isHoveringTableTop.value || hoveredResizeHandle.value >= 0 || activeResizeHandle.value >= 0)
 
 const countersBadgeColor = computed(() => {
   if (tableData.value.length >= maxEntries) return 'red'
@@ -786,7 +917,9 @@ async function load() {
 
     tableClickHandler = (e: Event) => {
       const target = e.target as HTMLElement
-      const tr = target.closest('tr') as HTMLTableRowElement | null
+      const detailTrigger = target.closest('.details-trigger') as HTMLElement | null
+      if (!detailTrigger) return
+      const tr = detailTrigger.closest('tr') as HTMLTableRowElement | null
       if (!tr) return
       if (tr.classList.contains('padder')) return
       const idAttr = tr.dataset.id
@@ -927,14 +1060,14 @@ function renderEntry(entry: EnrichedLogEntry) {
   const levelLowerCased = entry.level.toLowerCase()
   if (textMode.value) {
     tr.innerHTML =
-      `<td class="text"><span class="time">${entry.time}${entry.milliseconds}</span>` +
+      `<td class="text"><span class="time details-trigger">${entry.time}${entry.milliseconds}</span>` +
       `[<span class="level ${levelLowerCased}">${entry.level}</span>] ` +
       `[<span class="logger" title="${entry.loggerName}">${entry.loggerName}</span>] - ` +
       `<span class="msg ${levelLowerCased}">${highlightText(escapeHtml(entry.message))}</span></td>`
   } else {
     tr.className = 'table-rows ' + levelLowerCased
     tr.innerHTML =
-      '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' +
+      '<td class="sticky details-trigger"><i class="icon f7-icons" style="font-size: 18px;">' +
       icon +
       `</i> ${entry.time}<span class="milliseconds">${entry.milliseconds}</span></td>` +
       `<td class="level">${entry.level}</td>` +
@@ -943,7 +1076,6 @@ function renderEntry(entry: EnrichedLogEntry) {
   }
   // mark row for delegated click handling
   tr.dataset.id = String(entry.id)
-  tr.style.cursor = 'pointer'
   return tr
 }
 
@@ -1088,6 +1220,7 @@ function scrollToBottom() {
 function handleScroll() {
   const tableContainer = dataTableContainerRef.value
   if (!tableContainer) return
+  syncTableViewportMetrics()
 
   if (Date.now() < scrollTime) return
 
@@ -1305,6 +1438,9 @@ function copyTableToClipboard() {
 
 function setTextMode(textModeEnabled: boolean) {
   textMode.value = textModeEnabled
+  if (textModeEnabled) {
+    clearResizeHoverState()
+  }
   updateFilter()
 }
 
