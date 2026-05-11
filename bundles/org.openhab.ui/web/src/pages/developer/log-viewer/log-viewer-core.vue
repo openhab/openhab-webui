@@ -358,7 +358,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, useTemplateRef, shallowRef, triggerRef } from 'vue'
+import { ref, computed, nextTick, useTemplateRef, shallowRef, triggerRef, watch } from 'vue'
 import { f7 } from 'framework7-vue'
 import { useDraggable } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
@@ -485,6 +485,7 @@ const currentHighlightColorItemIndex = ref<number | null>(null)
 const currentHighlightColor = ref('#FF5252')
 const lastSequence = ref(0)
 const selectedId = ref<number>(0)
+const selectedLog = ref<EnrichedLogEntry | null>(null)
 
 // Computed
 const filteredTableData = computed(() => {
@@ -497,13 +498,15 @@ const countersBadgeColor = computed(() => {
   return 'green'
 })
 
-const selectedLog = computed<EnrichedLogEntry | null>(() => {
-  return tableData.value.find((entry) => entry.id === selectedId.value) || null
-})
-
 const periodRangeColor = computed(() => {
   if (!stateConnected.value) return 'red'
   return stateProcessing.value ? 'green' : 'orange'
+})
+
+// Watchers
+watch(selectedId, (newId) => {
+  const log = tableData.value[newId]
+  if (log) selectedLog.value = { ...log }
 })
 
 const periodRangeTooltip = computed(() => {
@@ -708,8 +711,12 @@ function renderEntry(entry: EnrichedLogEntry) {
 }
 
 function onRowClick(entityId: number) {
-  selectedId.value = entityId
-  f7.popup.open('#logdetails-popup')
+  const index = tableData.value.findIndex((e) => e.id === entityId)
+  if (index !== -1) {
+    selectedId.value = index
+    selectedLog.value = { ...tableData.value[index] }
+    f7.popup.open('#logdetails-popup')
+  }
 }
 
 function addLogEntry(logEntry: LogEntry) {
@@ -825,6 +832,10 @@ function clearLog() {
   filterCount.value = 0
   logStart.value = '--:--:--'
   logEnd.value = '--:--:--'
+  selectedId.value = 0
+  selectedLog.value = null
+  nextId = 0
+  batchLogs.length = 0
   const tableBody = getTableBody()
   if (tableBody) tableBody.innerHTML = ''
 }
