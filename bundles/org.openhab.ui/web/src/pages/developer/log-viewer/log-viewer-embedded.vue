@@ -69,7 +69,20 @@
 
     <log-viewer-core ref="logViewerCore" />
 
-    <div v-if="!collapsed" class="dock-toolbar">
+    <div
+      v-if="!collapsed"
+      class="dock-toolbar"
+      :class="{ 'has-scroll-left': showToolbarScrollLeft, 'has-scroll-right': showToolbarScrollRight, 'toolbar-scrollable-mobile': !device.desktop }"
+      ref="toolbarRef">
+      <button
+        v-if="showToolbarScrollLeft && !device.desktop"
+        type="button"
+        class="toolbar-scroll-indicator toolbar-scroll-indicator-left"
+        aria-label="Scroll toolbar left"
+        @pointerdown.stop.prevent
+        @click.stop.prevent="scrollToolbar('left')">
+        <i class="icon f7-icons">chevron_left</i>
+      </button>
       <f7-link
         icon-f7="cloud_download"
         tooltip="Download filtered log as CSV"
@@ -122,6 +135,15 @@
         tooltip="Toggle message wrapping"
         @click="logViewerCore?.toggleWrapMessages()" />
       <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".log-settings-popup" class="popup-open" />
+      <button
+        v-if="showToolbarScrollRight && !device.desktop"
+        type="button"
+        class="toolbar-scroll-indicator toolbar-scroll-indicator-right"
+        aria-label="Scroll toolbar right"
+        @pointerdown.stop.prevent
+        @click.stop.prevent="scrollToolbar('right')">
+        <i class="icon f7-icons">chevron_right</i>
+      </button>
     </div>
   </div>
 </template>
@@ -220,10 +242,53 @@
       height 100%
     .table-container
       height 100%
+
+  @media (max-width 767px)
+    .dock-toolbar.toolbar-scrollable-mobile
+      position relative
+      justify-content flex-start
+      gap 4px
+      overflow-x auto
+      overflow-y hidden
+      scrollbar-width none
+      -ms-overflow-style none
+
+      .toolbar-scroll-indicator
+        position sticky
+        z-index 2
+        flex 0 0 18px
+        display flex
+        align-items center
+        justify-content center
+        color var(--f7-text-color)
+        font-size 18px
+        line-height 1
+        background var(--f7-bars-bg-color)
+        border 0
+        margin 0
+        padding 0
+        cursor pointer
+
+        .icon
+          pointer-events none
+
+      .toolbar-scroll-indicator-left
+        left 0
+        box-shadow -10px 0 12px 10px var(--f7-bars-bg-color)
+
+      .toolbar-scroll-indicator-right
+        right 0
+        box-shadow 10px 0 12px 10px var(--f7-bars-bg-color)
+
+      &::-webkit-scrollbar
+        display none
+
+      > *
+        flex 0 0 auto
 </style>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useTemplateRef, nextTick } from 'vue'
+import { onBeforeUnmount, onMounted, useTemplateRef, nextTick, ref, watch } from 'vue'
 import { getDevice } from 'framework7'
 import { theme } from 'framework7-vue'
 import { storeToRefs } from 'pinia'
@@ -248,6 +313,64 @@ const uiOptionsStore = useUIOptionsStore()
 const { logViewerEmbeddedCollapsed: collapsed } = storeToRefs(uiOptionsStore)
 const logViewerCore = useTemplateRef('logViewerCore')
 const searchbar = useTemplateRef('searchbar')
+const toolbarRef = useTemplateRef('toolbarRef')
+const showToolbarScrollLeft = ref(false)
+const showToolbarScrollRight = ref(false)
+let toolbarResizeObserver: ResizeObserver | null = null
+let toolbarMutationObserver: MutationObserver | null = null
+
+function updateToolbarScrollIndicators() {
+  const toolbarEl = toolbarRef.value
+  if (!toolbarEl) {
+    showToolbarScrollLeft.value = false
+    showToolbarScrollRight.value = false
+    return
+  }
+
+  const maxScrollLeft = Math.max(0, toolbarEl.scrollWidth - toolbarEl.clientWidth)
+  showToolbarScrollLeft.value = toolbarEl.scrollLeft > 4
+  showToolbarScrollRight.value = maxScrollLeft - toolbarEl.scrollLeft > 4
+}
+
+function handleToolbarScroll() {
+  updateToolbarScrollIndicators()
+}
+
+function scrollToolbar(direction: 'left' | 'right') {
+  const toolbarEl = toolbarRef.value
+  if (!toolbarEl) return
+
+  const distance = Math.max(toolbarEl.clientWidth * 0.75, 120)
+  toolbarEl.scrollBy({
+    left: direction === 'left' ? -distance : distance,
+    behavior: 'smooth'
+  })
+}
+
+function setupToolbarScrollIndicators() {
+  nextTick(() => {
+    const toolbarEl = toolbarRef.value
+    if (!toolbarEl) return
+
+    toolbarEl.addEventListener('scroll', handleToolbarScroll, { passive: true })
+
+    toolbarResizeObserver = new ResizeObserver(() => updateToolbarScrollIndicators())
+    toolbarResizeObserver.observe(toolbarEl)
+
+    toolbarMutationObserver = new MutationObserver(() => nextTick(updateToolbarScrollIndicators))
+    toolbarMutationObserver.observe(toolbarEl, { childList: true, subtree: true, attributes: true })
+
+    updateToolbarScrollIndicators()
+  })
+}
+
+function cleanupToolbarScrollIndicators() {
+  toolbarRef.value?.removeEventListener('scroll', handleToolbarScroll)
+  toolbarResizeObserver?.disconnect()
+  toolbarResizeObserver = null
+  toolbarMutationObserver?.disconnect()
+  toolbarMutationObserver = null
+}
 
 function toggleCollapsed() {
   collapsed.value = !collapsed.value
@@ -256,6 +379,7 @@ function toggleCollapsed() {
 // Lifecycle Hooks
 onMounted(() => {
   logViewerCore.value?.load()
+  setupToolbarScrollIndicators()
   // Ensure the F7 searchbar shows the persisted query (Framework7 may not
   // update its internal query from the prop binding in some cases).
   nextTick(() => {
@@ -267,6 +391,11 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  cleanupToolbarScrollIndicators()
   logViewerCore.value?.cleanup()
+})
+
+watch(collapsed, () => {
+  nextTick(updateToolbarScrollIndicators)
 })
 </script>
