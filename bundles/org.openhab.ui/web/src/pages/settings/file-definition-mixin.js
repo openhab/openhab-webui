@@ -75,6 +75,7 @@ export default {
         .create({
           title: `Copy ${copyOptions.label} File Definition`,
           text: `Select the file format to copy ${copyOptions.objectName} to clipboard`,
+          closeByBackdropClick: true,
           buttons: [
             {
               text: 'Cancel',
