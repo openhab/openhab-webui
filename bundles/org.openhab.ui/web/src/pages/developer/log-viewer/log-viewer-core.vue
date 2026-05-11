@@ -206,77 +206,11 @@
     display block
     position relative
 
-  .table-container.resize-hovering
-    cursor col-resize
-
   table
     overflow-x auto
     position relative
     border-collapse collapse
     table-layout auto
-
-  .column-header-overlay
-    position sticky
-    top 0
-    z-index 4
-    display flex
-    align-items stretch
-    height 31px
-    margin-bottom -31px
-    opacity 0
-    transform translateY(-100%)
-    transition opacity 0.12s ease, transform 0.12s ease
-    pointer-events none
-
-  .column-header-overlay-visible
-    opacity 1
-    transform translateY(0)
-
-  .column-header-cell
-    background var(--f7-bars-bg-color)
-    color var(--f7-bars-text-color)
-    box-sizing border-box
-    padding 5px
-    padding-right 14px
-    text-align left
-    font-weight bold
-    // box-shadow avoids border-collapse clipping on sticky cells
-    box-shadow 0 1px 0 rgba(128, 128, 128, 0.3)
-    user-select none
-    white-space nowrap
-    overflow hidden
-    flex 0 0 auto
-
-  .column-header-cell-sticky
-    position sticky
-    left 0
-    z-index 1
-
-  .resize-guide
-    position absolute
-    width 2px
-    transform translateX(-1px)
-    background rgba(90, 90, 90, 0.95)
-    box-shadow 0 0 0 1px rgba(255, 255, 255, 0.55)
-    border-radius 1px
-    opacity 0.9
-    z-index 6
-    pointer-events none
-    transition opacity 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease
-
-  .resize-guide-active
-    background var(--f7-theme-color)
-    box-shadow 0 0 0 1px rgba(255, 255, 255, 0.7)
-    opacity 1
-
-  body.col-resizing &
-    *
-      user-select none
-      cursor col-resize !important
-
-  @media (pointer coarse)
-    .resize-guide
-      opacity 0.8
 
   table.content-wrapped
     tr.table-rows
