@@ -621,11 +621,7 @@ function loadColumnWidths(): number[] {
     const stored = localStorage.getItem(COLUMN_WIDTHS_KEY)
     if (stored) {
       const parsed = JSON.parse(stored) as unknown
-      if (
-        Array.isArray(parsed) &&
-        parsed.length === DEFAULT_COLUMN_WIDTHS.length &&
-        parsed.every((n) => typeof n === 'number' && n > 0)
-      ) {
+      if (Array.isArray(parsed) && parsed.length === DEFAULT_COLUMN_WIDTHS.length && parsed.every((n) => typeof n === 'number' && n > 0)) {
         return parsed as number[]
       }
     }

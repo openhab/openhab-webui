@@ -60,7 +60,11 @@
     <f7-toolbar
       bottom
       class="log-viewer-toolbar"
-      :class="{ 'has-scroll-left': showToolbarScrollLeft, 'has-scroll-right': showToolbarScrollRight, 'toolbar-scrollable-mobile': !device.desktop }"
+      :class="{
+        'has-scroll-left': showToolbarScrollLeft,
+        'has-scroll-right': showToolbarScrollRight,
+        'toolbar-scrollable-mobile': !device.desktop
+      }"
       ref="toolbarRef">
       <button
         v-if="showToolbarScrollLeft && !device.desktop"
