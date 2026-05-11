@@ -346,6 +346,7 @@ export default {
       this.initSearchbar = false
 
       this.pages = []
+      this.filteredItems = []
       this.selectedItems = []
       this.showCheckboxes = false
       this.$oh.api
