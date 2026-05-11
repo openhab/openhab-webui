@@ -25,12 +25,11 @@ BuiltinType {
   @specialize[@name=BuiltinType]<Identifier, "Item" | "Channel" | "Time">
 }
 WidgetType {
-  @specialize[@name=WidgetType]<Identifier, "Frame" | "Default" | "Text" | "Selection" | "Setpoint" | "Slider" | "Colorpicker" | "Chart" | "Webview" | "Video">
+  @specialize[@name=WidgetType]<Identifier, "Frame" | "Default" | "Text" | "Button" | "Buttongrid" | "Selection" | "Setpoint" | "Slider" | "Colorpicker" | "Colortemperaturepicker" | "Input" | "Chart" | "Webview" | "Mapview" | "Video">
 }
 
 Value {
   LineComment |
-  HashComment |
   BlockComment |
   String |
   Number |
@@ -57,6 +56,7 @@ Value {
   Colon |
   Semicolon |
   QuestionMark |
+  Hash |
   AtSign |
   Arrow |
   CompareOp |
@@ -71,7 +71,6 @@ Value {
   newline { $[\n\r]+ }
 
   LineComment[isolate] { "//" ![\n\r]* }
-  HashComment[isolate] { "#" ![\n\r]* }
 
   BlockComment[isolate] { "/*" blockCommentRest }
   blockCommentRest { ![*] blockCommentRest | "*" blockCommentAfterStar }
@@ -94,7 +93,6 @@ Value {
 
   @precedence {
     LineComment,
-    HashComment,
     BlockComment,
     String,
     Number,
@@ -115,6 +113,7 @@ Value {
     Colon,
     Semicolon,
     QuestionMark,
+    Hash,
     AtSign,
     Unknown
   }
@@ -136,6 +135,7 @@ Value {
   Colon[@export] { ":" }
   Semicolon[@export] { ";" }
   QuestionMark[@export] { "?" }
+  Hash[@export] { "#" }
   AtSign[@export] { "@" }
 
   Unknown { ![ \t\n\r] }

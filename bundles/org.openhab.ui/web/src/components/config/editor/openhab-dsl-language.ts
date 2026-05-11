@@ -14,12 +14,12 @@ export const openHABDslLanguage = LRLanguage.define({
         Identifier: tags.variableName,
         String: tags.string,
         Number: tags.number,
-        'LineComment HashComment BlockComment': tags.comment,
+        'LineComment BlockComment': tags.comment,
         'ArithOp LogicOp CompareOp AssignOp Arrow': tags.operator,
         'BraceL BraceR': tags.brace,
         'BracketL BracketR': tags.squareBracket,
         'ParenL ParenR': tags.paren,
-        'Comma Dot Colon Semicolon QuestionMark AtSign': tags.punctuation
+        'Comma Dot Colon Semicolon QuestionMark Hash AtSign': tags.punctuation
       })
     ]
   }),
