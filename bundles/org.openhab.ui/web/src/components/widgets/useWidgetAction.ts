@@ -53,6 +53,16 @@ function showActionFeedback(prefix: string, actionConfig: ActionConfig, text?: s
   }
 }
 
+const normalizeActionList = (value: unknown): Action[] => {
+  if (value === undefined || value === null) return []
+  const values = Array.isArray(value) ? value : [value]
+  const actions = values.flatMap((entry) => {
+    if (typeof entry === 'string') return entry.split(',')
+    return [String(entry)]
+  })
+  return actions.map((action) => action.trim()).filter(Boolean) as Action[]
+}
+
 export type WidgetActionConfig = ActionConfig & { actionPropsParameterGroup?: string; taphold_actionPropsParameterGroup?: string }
 
 /**
@@ -146,10 +156,11 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
     prefix = actionPropsParameterGroup ? actionPropsParameterGroup.replace(/action/gi, '') : prefix
     prefix = prefix ? (prefix += '_') : ''
     processedPrefix = processPrefix(prefix)
-    const action = actionConfig[`${processedPrefix}action`] as Action | undefined
-    if (!action) return false
+    const actionValue = actionConfig[`${processedPrefix}action`]
+    const actionList = normalizeActionList(actionValue)
+    if (!actionList.length) return false
     if (ctx.editmode) {
-      showActionFeedback(prefix, actionConfig, `Action '${action}' not performed while in edit mode`)
+      showActionFeedback(prefix, actionConfig, `Action '${actionList.join(', ')}' not performed while in edit mode`)
       return false
     }
 
@@ -158,15 +169,21 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
 
     confirmationPromise
       .then(async (): Promise<boolean> => {
-        switch (action) {
+        for (const action of actionList) {
+          let actionResult = true
+          switch (action) {
           case Action.navigate:
             const actionPage = actionConfig[`${processedPrefix}actionPage`]
-            if (!actionPage) return false
+            if (!actionPage) {
+              actionResult = false
+              break
+            }
             const actionPageTransition = actionConfig[`${processedPrefix}actionPageTransition`]
             const actionPageVars = actionConfig[`${processedPrefix}actionPageDefineVars`]
             if (actionPage.indexOf('page:') !== 0) {
               console.log('Action target is not of the format page:uid')
-              return false
+              actionResult = false
+              break
             }
             let navigateOptions: Router.RouteOptions & { props: { deep: boolean; defineVars?: unknown } } = { props: { deep: true } }
             if (actionPageTransition) navigateOptions.transition = actionPageTransition
@@ -177,7 +194,10 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
           case Action.command:
             const actionItem = actionConfig[`${processedPrefix}actionItem`]
             const actionCommand = actionConfig[`${processedPrefix}actionCommand`]
-            if (!actionItem || !actionCommand) return false
+            if (!actionItem || !actionCommand) {
+              actionResult = false
+              break
+            }
             await statesStore.sendCommand(actionItem, actionCommand)
             showActionFeedback(prefix, actionConfig)
             break
@@ -185,9 +205,15 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             const actionToggleItem = actionConfig[`${processedPrefix}actionItem`]
             const actionToggleCommand = actionConfig[`${processedPrefix}actionCommand`]
             const actionToggleCommandAlt = actionConfig[`${processedPrefix}actionCommandAlt`]
-            if (!actionToggleItem) return false
+            if (!actionToggleItem) {
+              actionResult = false
+              break
+            }
             const state = ctx.store ? ctx.store[actionToggleItem]?.state : undefined
-            if (!state) return false
+            if (!state) {
+              actionResult = false
+              break
+            }
             let cmd = state === actionToggleCommand ? actionToggleCommandAlt : actionToggleCommand
             // special behavior for Color, Dimmer
             if (actionToggleCommand === 'OFF' && state.split(',').length === 3 && parseInt(state.split(',')[2]) === 0)
@@ -196,13 +222,19 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
               cmd = actionToggleCommandAlt
             if (actionToggleCommand === 'OFF' && state.indexOf(',') < 0 && parseInt(state) === 0) cmd = actionToggleCommandAlt
             if (actionToggleCommand === 'ON' && state.indexOf(',') < 0 && parseInt(state) > 0) cmd = actionToggleCommandAlt
-            if (!cmd) return false
+            if (!cmd) {
+              actionResult = false
+              break
+            }
             await statesStore.sendCommand(actionToggleItem, cmd)
             showActionFeedback(prefix, actionConfig)
             break
           case Action.options:
             const actionCommandOptionsItem = actionConfig[`${processedPrefix}actionItem`]
-            if (!actionCommandOptionsItem) return false
+            if (!actionCommandOptionsItem) {
+              actionResult = false
+              break
+            }
             const actionCommandOptions = actionConfig[`${processedPrefix}actionOptions`] as string | object | undefined
             const actionsPromise = async (): Promise<Actions.Button[]> => {
               if (actionCommandOptions && typeof actionCommandOptions === 'string') {
@@ -282,17 +314,22 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
           case Action.popover:
           case Action.sheet:
             const actionModal = actionConfig[`${processedPrefix}actionModal`]
-            if (!actionModal) return false
+            if (!actionModal) {
+              actionResult = false
+              break
+            }
             const actionModalConfig = actionConfig[`${processedPrefix}actionModalConfig`]
             if (actionModal.indexOf('page:') !== 0 && actionModal.indexOf('widget:') !== 0 && actionModal.indexOf('oh-') !== 0) {
               console.log('Action target is not of the format page:uid or widget:uid or oh-')
-              return false
+              actionResult = false
+              break
             }
 
             const modalUrl = action + '/' + actionModal
             if (f7.views.main.router?.currentRoute.url.endsWith(modalUrl)) {
               console.log(`Modal ${actionModal} already open, not opening again`)
-              return false
+              actionResult = false
+              break
             }
 
             console.log(`Opening ${actionModal} in ${action} modal`)
@@ -380,14 +417,20 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             break
           case Action.url:
             const actionUrl = actionConfig[`${processedPrefix}actionUrl`]
-            if (!actionUrl) return false
+            if (!actionUrl) {
+              actionResult = false
+              break
+            }
             const actionUrlSameWindow = actionConfig[`${processedPrefix}actionUrlSameWindow`]
             console.log(`Opening external URL ${actionUrl}`)
             window.open(actionUrl, actionUrlSameWindow ? '_top' : '_blank')
             break
           case Action.http:
             const actionHttpUrl = actionConfig[`${processedPrefix}actionUrl`]
-            if (!actionHttpUrl) return false
+            if (!actionHttpUrl) {
+              actionResult = false
+              break
+            }
             const actionHttpMethod = actionConfig[`${processedPrefix}actionHttpMethod`] || 'GET'
             const actionHttpBody = actionConfig[`${processedPrefix}actionHttpBody`]
             const actionHttpVariable = actionConfig[`${processedPrefix}actionVariable`]
@@ -396,7 +439,10 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             if (actionHttpVariable) {
               const actionHttpVariableScope = ctx.ctxVars ? getVariableScope(ctx.ctxVars, ctx.varScope, actionHttpVariable) : null
               const actionHttpVariableLocation = actionHttpVariableScope ? ctx.ctxVars![actionHttpVariableScope] : ctx.vars
-              if (!actionHttpVariableLocation) return false
+              if (!actionHttpVariableLocation) {
+                actionResult = false
+                break
+              }
               if (actionHttpVariableKey) {
                 actionHttpVariableValue = setVariableKeyValues(
                   actionHttpVariableLocation[actionHttpVariable],
@@ -415,7 +461,8 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
               })
             } catch (e: unknown) {
               showActionFeedback(prefix, actionConfig, `Failed to perform HTTP request: ${e instanceof Error ? e.message : String(e)}`)
-              return false
+              actionResult = false
+              break
             }
             showActionFeedback(prefix, actionConfig)
             break
@@ -423,10 +470,16 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
             const actionVariable = actionConfig[`${processedPrefix}actionVariable`]
             let actionVariableValue: VariableValue | undefined = actionConfig[`${processedPrefix}actionVariableValue`]
             const actionVariableKey = actionConfig[`${processedPrefix}actionVariableKey`]
-            if (!actionVariable) return false
+            if (!actionVariable) {
+              actionResult = false
+              break
+            }
             const actionVariableScope = ctx.ctxVars ? getVariableScope(ctx.ctxVars, ctx.varScope, actionVariable) : null
             const actionVariableLocation = actionVariableScope ? ctx.ctxVars![actionVariableScope] : ctx.vars
-            if (!actionVariableLocation) return false
+            if (!actionVariableLocation) {
+              actionResult = false
+              break
+            }
             if (actionVariableKey) {
               actionVariableValue = setVariableKeyValues(actionVariableLocation[actionVariable], actionVariableKey, actionVariableValue)
             }
@@ -435,7 +488,10 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
           default:
             const exhaustiveCheck: never = action
             console.log('Invalid widget action', exhaustiveCheck)
+            actionResult = false
             break
+        }
+          if (!actionResult) return false
         }
         return true
       })
