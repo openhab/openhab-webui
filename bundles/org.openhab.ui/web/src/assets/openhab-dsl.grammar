@@ -1,0 +1,142 @@
+@top Program { Value* }
+
+@skip { space | newline }
+
+RuleKeyword { @specialize[@name=RuleKeyword]<Identifier, "rule" | "when" | "then" | "end"> }
+SectionKeyword { @specialize[@name=SectionKeyword]<Identifier, "Bridge" | "Thing" | "Type" | "Group"> }
+ControlKeyword {
+  @specialize[@name=ControlKeyword]<Identifier, "if" | "else" | "switch" | "case" | "default" | "for" | "while" | "try" | "catch" | "finally" | "return" | "break" | "continue">
+}
+DeclarationKeyword {
+  @specialize[@name=DeclarationKeyword]<Identifier, "import" | "package" | "var" | "val" | "def" | "static" | "override" | "new">
+}
+EventKeyword {
+  @specialize[@name=EventKeyword]<Identifier, "received" | "command" | "update" | "triggered" | "changed" | "from" | "to" | "started">
+}
+CommandKeyword {
+  @specialize[@name=CommandKeyword]<Identifier, "ON" | "OFF" | "OPEN" | "CLOSED" | "UP" | "DOWN" | "MOVE" | "STOP" | "PLAY" | "PAUSE" | "REWIND" | "FASTFORWARD" | "NEXT" | "PREVIOUS" | "INCREASE" | "DECREASE">
+}
+BooleanLiteral { @specialize[@name=BooleanLiteral]<Identifier, "true" | "false"> }
+NullLiteral { @specialize[@name=NullLiteral]<Identifier, "null"> }
+PrimitiveType {
+  @specialize[@name=PrimitiveType]<Identifier, "Color" | "Contact" | "DateTime" | "Dimmer" | "Image" | "Location" | "Number" | "Player" | "Rollershutter" | "String" | "Switch">
+}
+BuiltinType {
+  @specialize[@name=BuiltinType]<Identifier, "Item" | "Channel" | "Time">
+}
+WidgetType {
+  @specialize[@name=WidgetType]<Identifier, "Frame" | "Default" | "Text" | "Selection" | "Setpoint" | "Slider" | "Colorpicker" | "Chart" | "Webview" | "Video">
+}
+
+Value {
+  LineComment |
+  HashComment |
+  BlockComment |
+  String |
+  Number |
+  RuleKeyword |
+  SectionKeyword |
+  ControlKeyword |
+  DeclarationKeyword |
+  EventKeyword |
+  CommandKeyword |
+  BooleanLiteral |
+  NullLiteral |
+  PrimitiveType |
+  BuiltinType |
+  WidgetType |
+  Identifier |
+  BraceL |
+  BraceR |
+  BracketL |
+  BracketR |
+  ParenL |
+  ParenR |
+  Comma |
+  Dot |
+  Colon |
+  Semicolon |
+  QuestionMark |
+  AtSign |
+  Arrow |
+  CompareOp |
+  AssignOp |
+  LogicOp |
+  ArithOp |
+  Unknown
+}
+
+@tokens {
+  space { $[ \t]+ }
+  newline { $[\n\r]+ }
+
+  LineComment[isolate] { "//" ![\n\r]* }
+  HashComment[isolate] { "#" ![\n\r]* }
+
+  BlockComment[isolate] { "/*" blockCommentRest }
+  blockCommentRest { ![*] blockCommentRest | "*" blockCommentAfterStar }
+  blockCommentAfterStar { "/" | ![*/] blockCommentRest | "*" blockCommentAfterStar }
+
+  String[isolate] {
+    '"' (![\\"\n\r] | "\\" ![\n\r])* '"' |
+    "'" (![\\'\n\r] | "\\" ![\n\r])* "'"
+  }
+
+  Number {
+    (@digit+ ("." @digit+)?) |
+    ("." @digit+) |
+    ("0x" $[0-9a-fA-F]+)
+  }
+
+  identifierStart { @asciiLetter | "_" }
+  identifierChar { identifierStart | @digit | $[-:.*+/] }
+  Identifier { identifierStart identifierChar* }
+
+  @precedence {
+    LineComment,
+    HashComment,
+    BlockComment,
+    String,
+    Number,
+    Identifier,
+    Arrow,
+    CompareOp,
+    AssignOp,
+    LogicOp,
+    ArithOp,
+    BraceL,
+    BraceR,
+    BracketL,
+    BracketR,
+    ParenL,
+    ParenR,
+    Comma,
+    Dot,
+    Colon,
+    Semicolon,
+    QuestionMark,
+    AtSign,
+    Unknown
+  }
+
+  CompareOp { "==" | "!=" | "<=" | ">=" | "<>" | "<" | ">" }
+  AssignOp { "=" }
+  LogicOp { "!" | "&&" | "||" }
+  ArithOp { "+" | "-" | "*" | "/" | "%" }
+  Arrow { "=>" }
+
+  BraceL[@export] { "{" }
+  BraceR[@export] { "}" }
+  BracketL[@export] { "[" }
+  BracketR[@export] { "]" }
+  ParenL[@export] { "(" }
+  ParenR[@export] { ")" }
+  Comma[@export] { "," }
+  Dot[@export] { "." }
+  Colon[@export] { ":" }
+  Semicolon[@export] { ";" }
+  QuestionMark[@export] { "?" }
+  AtSign[@export] { "@" }
+
+  Unknown { ![ \t\n\r] }
+}

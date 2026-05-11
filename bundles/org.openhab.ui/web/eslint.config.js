@@ -218,6 +218,6 @@ export default defineConfig([
       'no-undef': 'off'
     }
   },
-  globalIgnores(['dist', 'build', 'public', '**/*.nearley.js', 'src/api/**']),
+  globalIgnores(['dist', 'build', 'public', '**/*.nearley.js', '**/*.parser.js', 'src/api/**']),
   eslintConfigPrettier // Disables all ESLint rules that conflict with Prettier/oxfmt
 ])

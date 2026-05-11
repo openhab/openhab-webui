@@ -208,7 +208,7 @@ watch(
   () => props.mode,
   (newMode) => {
     if (!cmView.value || !newMode) return
-    const extensions = languageCompartmentExtension(newMode)
+    const extensions = languageCompartmentExtension(newMode, !props.readOnly)
     cmView.value.dispatch({
       effects: languageCompartment.reconfigure(extensions)
     })

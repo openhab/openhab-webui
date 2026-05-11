@@ -21,13 +21,13 @@ import { javascript, esLint } from '@codemirror/lang-javascript'
 import { python } from '@codemirror/lang-python'
 import { groovy } from '@codemirror/legacy-modes/mode/groovy'
 import { ruby } from '@codemirror/legacy-modes/mode/ruby'
-import { java } from '@codemirror/lang-java'
 import { xml } from '@codemirror/lang-xml'
 import { yaml } from '@codemirror/lang-yaml'
 import { jinja2 } from '@codemirror/legacy-modes/mode/jinja2'
 import { properties } from '@codemirror/legacy-modes/mode/properties'
 import { shell } from '@codemirror/legacy-modes/mode/shell'
 import { MediaType } from '@/assets/definitions/media-types'
+import { openHABDsl } from './openhab-dsl-language'
 
 /**
  * Provides the CodeMirror language for the given mode.
@@ -47,11 +47,9 @@ function languageExtension(mode: string): StreamLanguage<unknown> | LanguageSupp
 
     case mode === 'dsl':
     case mode === (MediaType.RULE_DSL as string):
-      return java()
-
     case mode === (MediaType.THING_DSL as string):
     case mode === (MediaType.ITEM_DSL as string):
-      return javascript()
+      return openHABDsl()
 
     case mode === 'js':
     case mode.startsWith(MediaType.JAVASCRIPT as string):
@@ -188,8 +186,9 @@ export function languageCompartmentExtension(mode: string | undefined, includeLi
   }
 
   const linter = includeLinter ? linterExtension(mode) : null
+  const lintGutterExtension = includeLinter && linter != null ? lintGutter() : null
 
-  const extensions: Extension[] = [languageExtension(mode), autocompletionExtension(mode), linter, linter && lintGutter()].filter(
+  const extensions: Extension[] = [languageExtension(mode), autocompletionExtension(mode), linter, lintGutterExtension].filter(
     (ext) => ext != null
   )
 
