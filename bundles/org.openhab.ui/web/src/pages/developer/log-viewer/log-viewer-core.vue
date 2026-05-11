@@ -1,46 +1,15 @@
 <template>
   <div class="table-block">
     <f7-card class="log-viewer-card">
-      <div
-        class="table-container"
-        :class="{ 'resize-hovering': !textMode && (hoveredResizeHandle >= 0 || activeResizeHandle >= 0) }"
-        ref="tableContainer"
+      <resizable-table
+        ref="resizableTable"
+        :columns="TABLE_COLUMN_DEFS"
+        :text-mode="textMode"
+        :wrap-messages="wrapMessages"
+        :storage-key="COLUMN_WIDTHS_KEY"
+        :default-column-widths="DEFAULT_COLUMN_WIDTHS"
         @scroll="handleScroll"
-        @mousemove="handleTableMouseMove"
-        @mouseleave="handleTableMouseLeave"
-        @mousedown="handleTableMouseDown"
-        @dblclick="handleTableDoubleClick"
-        @touchstart="handleTableTouchStart">
-        <div
-          v-if="!textMode"
-          class="column-header-overlay"
-          :class="{ 'column-header-overlay-visible': showColumnHeaders }"
-          :style="{ width: totalTableWidth + 'px' }">
-          <div
-            v-for="(col, i) in TABLE_COLUMN_DEFS"
-            :key="i"
-            class="column-header-cell"
-            :class="{ 'column-header-cell-sticky': i === 0 }"
-            :style="{ width: columnWidths[i] + 'px' }">
-            <span>{{ col.label }}</span>
-          </div>
-        </div>
-        <table
-          ref="dataTable"
-          :class="{ 'wrap-messages': wrapMessages && !textMode }"
-          :style="!textMode ? { tableLayout: 'fixed', width: totalTableWidth + 'px' } : { width: '100%' }">
-          <colgroup v-if="!textMode">
-            <col v-for="(width, i) in columnWidths" :key="i" :style="{ width: width + 'px' }" />
-          </colgroup>
-          <tbody />
-        </table>
-        <div
-          v-if="!textMode && resizeGuideLeft !== null"
-          class="resize-guide"
-          :class="{ 'resize-guide-active': activeResizeHandle >= 0 }"
-          :style="{ left: resizeGuideLeft + 'px', top: tableScrollTop + 'px', height: tableViewportHeight + 'px' }"
-          aria-hidden="true" />
-      </div>
+        @auto-size-column="autoSizeColumn" />
     </f7-card>
     <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-blue" @click="showLatestLogs()">
       <f7-icon f7="arrow_down_to_line" />
@@ -483,6 +452,7 @@ import { f7 } from 'framework7-vue'
 import { useDraggable } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import ResizableTable from './resizable-table.vue'
 
 // TODO: Remove once we have refactored clipboard to TypeScript
 // @ts-expect-error-next-line
@@ -520,13 +490,24 @@ enum LEVEL_ICONS {
 
 const maxEntries = 2000
 const lineHeight = 31
-const resizeHoverDistance = 6
 
-const dataTableRef = useTemplateRef('dataTable')
-const dataTableContainerRef = useTemplateRef('tableContainer')
+type ResizableTableExposed = {
+  getTableBody: () => HTMLTableSectionElement | null
+  getTableElement: () => HTMLTableElement | null
+  getContainerElement: () => HTMLDivElement | null
+  resetColumnWidths: () => void
+  setColumnWidth: (colIndex: number, width: number) => void
+  clearResizeHoverState: () => void
+}
+
+const resizableTableRef = useTemplateRef('resizableTable')
 const logDetailsPopupRef = useTemplateRef('logDetailsPopup')
 const logDetailsNavbarRef = useTemplateRef('logDetailsNavbar')
 let tableClickHandler: ((e: Event) => void) | null = null
+
+function getResizableTable(): ResizableTableExposed | null {
+  return (resizableTableRef.value as unknown as ResizableTableExposed | null) ?? null
+}
 
 // Composables
 useDraggable(() => logDetailsNavbarRef.value?.$el, {
@@ -615,31 +596,6 @@ const selectedId = ref<number>(0)
 const COLUMN_WIDTHS_KEY = 'openhab.ui:logviewer.columnWidths'
 const DEFAULT_COLUMN_WIDTHS = [110, 60, 280, 2000]
 const TABLE_COLUMN_DEFS = [{ label: 'Time' }, { label: 'Level' }, { label: 'Logger' }, { label: 'Message' }]
-
-function loadColumnWidths(): number[] {
-  try {
-    const stored = localStorage.getItem(COLUMN_WIDTHS_KEY)
-    if (stored) {
-      const parsed = JSON.parse(stored) as unknown
-      if (Array.isArray(parsed) && parsed.length === DEFAULT_COLUMN_WIDTHS.length && parsed.every((n) => typeof n === 'number' && n > 0)) {
-        return parsed as number[]
-      }
-    }
-  } catch {}
-  return [...DEFAULT_COLUMN_WIDTHS]
-}
-
-const columnWidths = ref<number[]>(loadColumnWidths())
-
-// Column resize state
-let resizingIndex = -1
-let resizeStartX = 0
-let resizeStartWidth = 0
-const activeResizeHandle = ref(-1)
-const hoveredResizeHandle = ref(-1)
-const isHoveringTableTop = ref(false)
-const tableScrollTop = ref(0)
-const tableViewportHeight = ref(0)
 let measureCanvasCtx: CanvasRenderingContext2D | null = null
 
 function getMeasureCtx(): CanvasRenderingContext2D | null {
@@ -656,159 +612,6 @@ function measureTextWidth(text: string, font: string): number {
   return ctx.measureText(text).width
 }
 
-function syncTableViewportMetrics() {
-  const tableContainer = dataTableContainerRef.value
-  if (!tableContainer) return
-  tableScrollTop.value = tableContainer.scrollTop
-  tableViewportHeight.value = tableContainer.clientHeight
-}
-
-function beginResize(clientX: number, colIndex: number) {
-  resizingIndex = colIndex
-  resizeStartX = clientX
-  resizeStartWidth = columnWidths.value[colIndex]
-  activeResizeHandle.value = colIndex
-}
-
-function startResize(event: MouseEvent, colIndex: number) {
-  beginResize(event.clientX, colIndex)
-  document.body.classList.add('col-resizing')
-  document.body.style.cursor = 'col-resize'
-  document.addEventListener('mousemove', handleResize)
-  document.addEventListener('mouseup', stopResize)
-}
-
-function handleResize(event: MouseEvent) {
-  if (resizingIndex < 0) return
-  columnWidths.value[resizingIndex] = Math.max(40, resizeStartWidth + (event.clientX - resizeStartX))
-}
-
-function stopResize() {
-  if (resizingIndex < 0) return
-  resizingIndex = -1
-  activeResizeHandle.value = -1
-  document.body.classList.remove('col-resizing')
-  document.body.style.cursor = ''
-  localStorage.setItem(COLUMN_WIDTHS_KEY, JSON.stringify(columnWidths.value))
-  document.removeEventListener('mousemove', handleResize)
-  document.removeEventListener('mouseup', stopResize)
-}
-
-function resetColumnWidths() {
-  columnWidths.value = [...DEFAULT_COLUMN_WIDTHS]
-  localStorage.removeItem(COLUMN_WIDTHS_KEY)
-}
-
-function startResizeTouch(event: TouchEvent, colIndex: number) {
-  if (event.touches.length !== 1) return
-  const touch = event.touches[0]
-  beginResize(touch.clientX, colIndex)
-  document.addEventListener('touchmove', handleResizeTouch, { passive: false })
-  document.addEventListener('touchend', stopResizeTouch)
-  document.addEventListener('touchcancel', stopResizeTouch)
-}
-
-function handleResizeTouch(event: TouchEvent) {
-  if (resizingIndex < 0 || event.touches.length !== 1) return
-  event.preventDefault()
-  const touch = event.touches[0]
-  columnWidths.value[resizingIndex] = Math.max(40, resizeStartWidth + (touch.clientX - resizeStartX))
-}
-
-function stopResizeTouch() {
-  if (resizingIndex < 0) return
-  resizingIndex = -1
-  activeResizeHandle.value = -1
-  localStorage.setItem(COLUMN_WIDTHS_KEY, JSON.stringify(columnWidths.value))
-  document.removeEventListener('touchmove', handleResizeTouch)
-  document.removeEventListener('touchend', stopResizeTouch)
-  document.removeEventListener('touchcancel', stopResizeTouch)
-}
-
-function clearResizeHoverState() {
-  if (resizingIndex >= 0) {
-    stopResize()
-    stopResizeTouch()
-  }
-  hoveredResizeHandle.value = -1
-  activeResizeHandle.value = -1
-  isHoveringTableTop.value = false
-}
-
-function updateTableHoverState(clientX: number, clientY: number) {
-  if (textMode.value) {
-    clearResizeHoverState()
-    return
-  }
-
-  const tableContainer = dataTableContainerRef.value
-  if (!tableContainer) return
-  syncTableViewportMetrics()
-
-  const rect = tableContainer.getBoundingClientRect()
-  const withinContainer = clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom
-
-  if (!withinContainer) {
-    if (resizingIndex < 0) {
-      hoveredResizeHandle.value = -1
-    }
-    isHoveringTableTop.value = false
-    return
-  }
-
-  isHoveringTableTop.value = clientY - rect.top <= lineHeight
-
-  if (resizingIndex >= 0) return
-
-  const cursorX = clientX - rect.left + tableContainer.scrollLeft
-  let closestCol = -1
-  let closestDist = Infinity
-
-  for (const border of columnBorders.value) {
-    const dist = Math.abs(cursorX - border.left)
-    if (dist < closestDist) {
-      closestDist = dist
-      closestCol = border.index
-    }
-  }
-
-  hoveredResizeHandle.value = closestDist <= resizeHoverDistance ? closestCol : -1
-}
-
-function handleTableMouseMove(event: MouseEvent) {
-  updateTableHoverState(event.clientX, event.clientY)
-}
-
-function handleTableMouseLeave() {
-  if (textMode.value) return
-  if (resizingIndex >= 0) return
-  hoveredResizeHandle.value = -1
-  isHoveringTableTop.value = false
-}
-
-function handleTableMouseDown(event: MouseEvent) {
-  if (textMode.value) return
-  if (event.button !== 0 || hoveredResizeHandle.value < 0) return
-  event.preventDefault()
-  startResize(event, hoveredResizeHandle.value)
-}
-
-function handleTableDoubleClick(event: MouseEvent) {
-  if (textMode.value) return
-  if (hoveredResizeHandle.value < 0) return
-  event.preventDefault()
-  autoSizeColumn(hoveredResizeHandle.value)
-}
-
-function handleTableTouchStart(event: TouchEvent) {
-  if (textMode.value) return
-  if (event.touches.length !== 1) return
-  const touch = event.touches[0]
-  updateTableHoverState(touch.clientX, touch.clientY)
-  if (hoveredResizeHandle.value < 0) return
-  startResizeTouch(event, hoveredResizeHandle.value)
-}
-
 function autoSizeColumn(colIndex: number) {
   const tbody = getTableBody()
   const firstTd = tbody?.querySelector('td')
@@ -823,35 +626,17 @@ function autoSizeColumn(colIndex: number) {
   }
   // add cell padding; col 0 also needs room for the icon (~26px)
   const padding = colIndex === 0 ? 52 : 16
-  columnWidths.value[colIndex] = Math.min(Math.ceil(maxWidth) + padding, 6000)
-  localStorage.setItem(COLUMN_WIDTHS_KEY, JSON.stringify(columnWidths.value))
+  getResizableTable()?.setColumnWidth(colIndex, Math.min(Math.ceil(maxWidth) + padding, 6000))
+}
+
+function resetColumnWidths() {
+  getResizableTable()?.resetColumnWidths()
 }
 
 // Computed
 const filteredTableData = computed(() => {
   return tableData.value.filter((item) => item.visible)
 })
-
-const totalTableWidth = computed(() => columnWidths.value.reduce((sum, w) => sum + w, 0))
-
-const columnBorders = computed(() => {
-  let offset = 0
-  return columnWidths.value.map((width, index) => {
-    offset += width
-    return {
-      index,
-      left: offset
-    }
-  })
-})
-
-const resizeGuideLeft = computed(() => {
-  const guideIndex = activeResizeHandle.value >= 0 ? activeResizeHandle.value : hoveredResizeHandle.value
-  if (guideIndex < 0) return null
-  return columnBorders.value[guideIndex]?.left ?? null
-})
-
-const showColumnHeaders = computed(() => isHoveringTableTop.value || hoveredResizeHandle.value >= 0 || activeResizeHandle.value >= 0)
 
 const countersBadgeColor = computed(() => {
   if (tableData.value.length >= maxEntries) return 'red'
@@ -941,18 +726,10 @@ function cleanup() {
     }
     tableClickHandler = null
   }
-  // Clean up any active column resize listeners
-  document.body.classList.remove('col-resizing')
-  document.body.style.cursor = ''
-  document.removeEventListener('mousemove', handleResize)
-  document.removeEventListener('mouseup', stopResize)
-  document.removeEventListener('touchmove', handleResizeTouch)
-  document.removeEventListener('touchend', stopResizeTouch)
-  document.removeEventListener('touchcancel', stopResizeTouch)
 }
 
 function getTableBody(): HTMLTableSectionElement | null {
-  return dataTableRef.value?.tBodies?.[0] ?? null
+  return getResizableTable()?.getTableBody() ?? null
 }
 
 function updateLogLevel(logger: api.LoggerInfo, value: string) {
@@ -1207,7 +984,7 @@ function showLatestLogs() {
 
 function scrollToBottom() {
   // Scroll to the bottom of the table
-  const tableContainer = dataTableContainerRef.value
+  const tableContainer = getResizableTable()?.getContainerElement()
   if (tableContainer) {
     tableContainer.scrollTop = tableContainer.scrollHeight
     // Delay manual scroll detection to avoid autoscrolling being defeated when new logs arrive
@@ -1217,9 +994,8 @@ function scrollToBottom() {
 }
 
 function handleScroll() {
-  const tableContainer = dataTableContainerRef.value
+  const tableContainer = getResizableTable()?.getContainerElement()
   if (!tableContainer) return
-  syncTableViewportMetrics()
 
   if (Date.now() < scrollTime) return
 
@@ -1231,7 +1007,7 @@ function handleScroll() {
 }
 
 function redrawPartOfTable() {
-  const tableContainer = dataTableContainerRef.value
+  const tableContainer = getResizableTable()?.getContainerElement()
   if (!tableContainer) return
 
   const tableBody = getTableBody()
@@ -1406,7 +1182,7 @@ function copyTableToClipboard() {
     return
   }
 
-  const table = dataTableRef.value
+  const table = getResizableTable()?.getTableElement()
   if (!table) {
     return
   }
@@ -1438,7 +1214,7 @@ function copyTableToClipboard() {
 function setTextMode(textModeEnabled: boolean) {
   textMode.value = textModeEnabled
   if (textModeEnabled) {
-    clearResizeHoverState()
+    getResizableTable()?.clearResizeHoverState()
   }
   updateFilter()
 }
