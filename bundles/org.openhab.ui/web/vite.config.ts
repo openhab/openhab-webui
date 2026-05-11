@@ -154,7 +154,7 @@ export default defineConfig({
   build: {
     outDir: resolve(outPath),
     emptyOutDir: true,
-    target: ['chrome107', 'edge107', 'firefox104', 'safari11.1'],
+    target: ['chrome111', 'edge111', 'firefox114', 'safari15.4'],
     sourcemap: sourceMaps ? 'hidden' : false,
     rolldownOptions: {
       output: {
