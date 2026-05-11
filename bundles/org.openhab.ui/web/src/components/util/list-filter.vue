@@ -105,6 +105,37 @@ export default {
       return Object.keys(this.filters).some((type) => this.isFilteredBy(type))
     }
   },
+  watch: {
+    filters: {
+      deep: true,
+      handler(newFilters = {}) {
+        Object.keys(newFilters).forEach((type) => {
+          const opts = (newFilters[type] && newFilters[type].options) || {}
+          const valid = new Set(Object.keys(opts))
+
+          // Ensure there's a Set for this type
+          if (!this.selected[type]) this.selected[type] = new Set()
+
+          const sel = this.selected[type]
+
+          // Remove any selected values that are no longer valid
+          for (const v of Array.from(sel)) {
+            if (!valid.has(v)) sel.delete(v)
+          }
+
+          // If there are no options left, clear the selection entirely
+          if (valid.size === 0 && sel.size > 0) {
+            sel.clear()
+          }
+        })
+
+        // Notify parent(s) that selected values changed so they can recompute
+        // Emit a generic toggled event without specific value so parents using
+        // @toggled will refresh their filtered lists.
+        this.$emit('toggled', this)
+      }
+    }
+  },
   methods: {
     /**
      * Checks if a specific filter type has any selections, or if a specific value is selected.
