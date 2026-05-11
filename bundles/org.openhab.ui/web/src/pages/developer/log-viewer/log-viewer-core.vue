@@ -532,7 +532,10 @@ let tableClickHandler: ((e: Event) => void) | null = null
 useDraggable(() => logDetailsNavbarRef.value?.$el, {
   preventDefault: true,
   stopPropagation: true,
-  onStart: () => {
+  onStart: (_, event) => {
+    const target = event.target as HTMLElement | null
+    if (target?.closest('.popup-close, .link, a, button, input, select, textarea')) return false
+
     const popupEl = logDetailsPopupRef.value?.$el
     if (!popupEl || !popupEl.parentElement) return false
 
