@@ -331,8 +331,8 @@
     position sticky
     left 0
     width 105px
-    color #000
-    background-color #fff
+    color black
+    background-color #f1f1f1
     z-index 1
     white-space nowrap
     overflow hidden
