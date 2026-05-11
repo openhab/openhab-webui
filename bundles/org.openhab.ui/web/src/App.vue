@@ -32,6 +32,7 @@
             :link="'/page/' + page.uid"
             :title="page.config.label"
             view=".view-main"
+            no-chevron
             panel-close>
             <template #media>
               <oh-icon :icon="getPageIcon(page)" height="18" width="18" />
