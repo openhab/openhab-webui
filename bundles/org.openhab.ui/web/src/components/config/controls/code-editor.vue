@@ -6,6 +6,7 @@
       :value="code"
       :hint-context="hintContext"
       :read-only="readOnly"
+      :read-only-msg="readOnlyMsg"
       @input="onEditorInput"
       @save="$emit('save')" />
   </div>
@@ -105,7 +106,8 @@ export default {
     objectType: String, // the type of the object, e.g. 'items', 'things' which corresponds to the yaml element name.
     objectId: String,
     hintContext: Object,
-    readOnly: Boolean
+    readOnly: Boolean,
+    readOnlyMsg: String
   },
   // @parsed  event is emitted when the code has been parsed back into an object
   //          as a result of calling the parseCode() method

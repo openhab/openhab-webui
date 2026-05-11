@@ -313,6 +313,7 @@
           :object="thing"
           :object-id="thing.UID"
           :read-only="!editable"
+          read-only-msg="This Thing is not editable because it has been provisioned from a file."
           :hint-context="{ thingType: thingType, channelTypes: channelTypes }"
           @save="save()"
           @parsed="updateThing"
