@@ -1,11 +1,6 @@
 <template>
   <div class="code-editor-fit">
-    <f7-icon
-      v-if="readOnly"
-      f7="lock"
-      size="50"
-      class="code-readonly-icon"
-      :tooltip="readOnlyMsg || 'Read-only: provisioned from a file'" />
+    <f7-icon v-if="readOnly" f7="lock" size="50" class="code-readonly-icon" :tooltip="readOnlyMsg || 'Not editable'" />
     <codemirror ref="cm" :model-value="value" :extensions="extensions" @ready="onCmReady" @change="onCmCodeChange" />
   </div>
 </template>

@@ -56,6 +56,7 @@
           :object="item"
           :object-id="item.name"
           :read-only="!editable"
+          read-only-msg="This Item is not editable because it has been provisioned from a file."
           @save="save()"
           @parsed="updateItem"
           @changed="onCodeChanged" />
