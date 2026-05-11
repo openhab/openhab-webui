@@ -3,9 +3,9 @@
 @skip { space | newline }
 
 RuleKeyword { @specialize[@name=RuleKeyword]<Identifier, "rule" | "when" | "then" | "end"> }
-SectionKeyword { @specialize[@name=SectionKeyword]<Identifier, "Bridge" | "Thing" | "Type" | "Group"> }
+SectionKeyword { @specialize[@name=SectionKeyword]<Identifier, "Bridge" | "Thing" | "Type" | "sitemap"> }
 ControlKeyword {
-  @specialize[@name=ControlKeyword]<Identifier, "if" | "else" | "switch" | "case" | "default" | "for" | "while" | "try" | "catch" | "finally" | "return" | "break" | "continue">
+  @specialize[@name=ControlKeyword]<Identifier, "if" | "else" | "switch" | "case" | "default" | "for" | "while" | "try" | "catch" | "finally" | "return" | "break" | "continue" | "AND">
 }
 DeclarationKeyword {
   @specialize[@name=DeclarationKeyword]<Identifier, "import" | "package" | "var" | "val" | "def" | "static" | "override" | "new">
@@ -19,7 +19,7 @@ CommandKeyword {
 BooleanLiteral { @specialize[@name=BooleanLiteral]<Identifier, "true" | "false"> }
 NullLiteral { @specialize[@name=NullLiteral]<Identifier, "null"> }
 PrimitiveType {
-  @specialize[@name=PrimitiveType]<Identifier, "Color" | "Contact" | "DateTime" | "Dimmer" | "Image" | "Location" | "Number" | "Player" | "Rollershutter" | "String" | "Switch">
+  @specialize[@name=PrimitiveType]<Identifier, "Group" | "Color" | "Contact" | "DateTime" | "Dimmer" | "Image" | "Location" | "Number" | "Player" | "Rollershutter" | "String" | "Switch">
 }
 BuiltinType {
   @specialize[@name=BuiltinType]<Identifier, "Item" | "Channel" | "Time">
