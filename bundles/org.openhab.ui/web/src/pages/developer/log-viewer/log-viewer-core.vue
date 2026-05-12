@@ -1,11 +1,15 @@
 <template>
   <div class="table-block">
     <f7-card class="log-viewer-card">
-      <div class="table-container" ref="tableContainer" @scroll="handleScroll">
-        <table ref="dataTable">
-          <tbody />
-        </table>
-      </div>
+      <resizable-table
+        ref="resizableTable"
+        :columns="TABLE_COLUMN_DEFS"
+        :column-resize-enabled="!textMode"
+        :content-wrap-enabled="wrapMessages && !textMode"
+        :storage-key="COLUMN_WIDTHS_KEY"
+        :default-column-widths="DEFAULT_COLUMN_WIDTHS"
+        @scroll="handleScroll"
+        @auto-size-column="autoSizeColumn" />
     </f7-card>
     <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-blue" @click="showLatestLogs()">
       <f7-icon f7="arrow_down_to_line" />
@@ -200,13 +204,23 @@
     overflow-y auto
     overflow-x auto
     display block
+    position relative
 
   table
-    width 100%
     overflow-x auto
     position relative
     border-collapse collapse
     table-layout auto
+
+  table.content-wrapped
+    tr.table-rows
+      height auto
+      min-height 31px
+    td.nowrap
+      white-space pre-wrap
+      overflow visible
+      text-overflow unset
+      word-break break-word
 
   td.nowrap
     padding 5px
@@ -221,19 +235,27 @@
     left 0
     width 105px
     color black
-    background #f1f1f1
+    background-color #f1f1f1
     z-index 1
     white-space nowrap
     overflow hidden
 
+  td.details-trigger
+    cursor pointer
+
+  td.details-trigger *
+    cursor pointer
+
   td.level
     width 50px
+    overflow hidden
 
   td.logger
     width 280px
+    overflow hidden
 
   span.logger
-    width 280px
+    width 100%
     display block
     direction rtl
     text-align left
@@ -272,6 +294,7 @@
       margin-right 5px
     .time
       margin-left -3.2em
+      cursor pointer
     .level
       width 3em
       display inline-block
@@ -363,6 +386,7 @@ import { f7 } from 'framework7-vue'
 import { useDraggable } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import ResizableTable from './resizable-table.vue'
 
 // TODO: Remove once we have refactored clipboard to TypeScript
 // @ts-expect-error-next-line
@@ -401,17 +425,32 @@ enum LEVEL_ICONS {
 const maxEntries = 2000
 const lineHeight = 31
 
-const dataTableRef = useTemplateRef('dataTable')
-const dataTableContainerRef = useTemplateRef('tableContainer')
+type ResizableTableExposed = {
+  getTableBody: () => HTMLTableSectionElement | null
+  getTableElement: () => HTMLTableElement | null
+  getContainerElement: () => HTMLDivElement | null
+  resetColumnWidths: () => void
+  setColumnWidth: (colIndex: number, width: number) => void
+  clearResizeHoverState: () => void
+}
+
+const resizableTableRef = useTemplateRef('resizableTable')
 const logDetailsPopupRef = useTemplateRef('logDetailsPopup')
 const logDetailsNavbarRef = useTemplateRef('logDetailsNavbar')
 let tableClickHandler: ((e: Event) => void) | null = null
+
+function getResizableTable(): ResizableTableExposed | null {
+  return (resizableTableRef.value as unknown as ResizableTableExposed | null) ?? null
+}
 
 // Composables
 useDraggable(() => logDetailsNavbarRef.value?.$el, {
   preventDefault: true,
   stopPropagation: true,
-  onStart: () => {
+  onStart: (_, event) => {
+    const target = event.target as HTMLElement | null
+    if (target?.closest('.popup-close, .link, a, button, input, select, textarea')) return false
+
     const popupEl = logDetailsPopupRef.value?.$el
     if (!popupEl || !popupEl.parentElement) return false
 
@@ -478,6 +517,7 @@ const stateConnecting = ref(false)
 const loadingLoggers = ref(true)
 const autoScroll = ref(true)
 const filterCount = ref(0)
+const wrapMessages = ref(localStorage.getItem('openhab.ui:logviewer.wrapMessages') === 'true')
 const tableData = shallowRef<EnrichedLogEntry[]>([])
 const logStart = ref('--:--:--')
 const logEnd = ref('--:--:--')
@@ -485,6 +525,47 @@ const currentHighlightColorItemIndex = ref<number | null>(null)
 const currentHighlightColor = ref('#FF5252')
 const lastSequence = ref(0)
 const selectedId = ref<number>(0)
+
+// Column definitions (table mode only)
+const COLUMN_WIDTHS_KEY = 'openhab.ui:logviewer.columnWidths'
+const DEFAULT_COLUMN_WIDTHS = [110, 60, 280, 2000]
+const TABLE_COLUMN_DEFS = [{ label: 'Time' }, { label: 'Level' }, { label: 'Logger' }, { label: 'Message' }]
+let measureCanvasCtx: CanvasRenderingContext2D | null = null
+
+function getMeasureCtx(): CanvasRenderingContext2D | null {
+  if (!measureCanvasCtx) {
+    measureCanvasCtx = document.createElement('canvas').getContext('2d')
+  }
+  return measureCanvasCtx
+}
+
+function measureTextWidth(text: string, font: string): number {
+  const ctx = getMeasureCtx()
+  if (!ctx) return 0
+  ctx.font = font
+  return ctx.measureText(text).width
+}
+
+function autoSizeColumn(colIndex: number) {
+  const tbody = getTableBody()
+  const firstTd = tbody?.querySelector('td')
+  const font = firstTd ? getComputedStyle(firstTd).font : '13px sans-serif'
+  const fields: (keyof EnrichedLogEntry)[] = ['time', 'level', 'loggerName', 'message']
+  const field = fields[colIndex]
+  let maxWidth = measureTextWidth(TABLE_COLUMN_DEFS[colIndex].label, font)
+  for (const entry of filteredTableData.value) {
+    const text = colIndex === 0 ? entry.time + entry.milliseconds : String(entry[field])
+    const w = measureTextWidth(text, font)
+    if (w > maxWidth) maxWidth = w
+  }
+  // add cell padding; col 0 also needs room for the icon (~26px)
+  const padding = colIndex === 0 ? 52 : 16
+  getResizableTable()?.setColumnWidth(colIndex, Math.min(Math.ceil(maxWidth) + padding, 6000))
+}
+
+function resetColumnWidths() {
+  getResizableTable()?.resetColumnWidths()
+}
 
 // Computed
 const filteredTableData = computed(() => {
@@ -554,7 +635,9 @@ async function load() {
 
     tableClickHandler = (e: Event) => {
       const target = e.target as HTMLElement
-      const tr = target.closest('tr') as HTMLTableRowElement | null
+      const detailTrigger = target.closest('.details-trigger') as HTMLElement | null
+      if (!detailTrigger) return
+      const tr = detailTrigger.closest('tr') as HTMLTableRowElement | null
       if (!tr) return
       if (tr.classList.contains('padder')) return
       const idAttr = tr.dataset.id
@@ -580,7 +663,7 @@ function cleanup() {
 }
 
 function getTableBody(): HTMLTableSectionElement | null {
-  return dataTableRef.value?.tBodies?.[0] ?? null
+  return getResizableTable()?.getTableBody() ?? null
 }
 
 function updateLogLevel(logger: api.LoggerInfo, value: string) {
@@ -687,14 +770,14 @@ function renderEntry(entry: EnrichedLogEntry) {
   const levelLowerCased = entry.level.toLowerCase()
   if (textMode.value) {
     tr.innerHTML =
-      `<td class="text"><span class="time">${entry.time}${entry.milliseconds}</span>` +
+      `<td class="text"><span class="time details-trigger">${entry.time}${entry.milliseconds}</span>` +
       `[<span class="level ${levelLowerCased}">${entry.level}</span>] ` +
       `[<span class="logger" title="${entry.loggerName}">${entry.loggerName}</span>] - ` +
       `<span class="msg ${levelLowerCased}">${highlightText(escapeHtml(entry.message))}</span></td>`
   } else {
     tr.className = 'table-rows ' + levelLowerCased
     tr.innerHTML =
-      '<td class="sticky"><i class="icon f7-icons" style="font-size: 18px;">' +
+      '<td class="sticky details-trigger"><i class="icon f7-icons" style="font-size: 18px;">' +
       icon +
       `</i> ${entry.time}<span class="milliseconds">${entry.milliseconds}</span></td>` +
       `<td class="level">${entry.level}</td>` +
@@ -703,7 +786,6 @@ function renderEntry(entry: EnrichedLogEntry) {
   }
   // mark row for delegated click handling
   tr.dataset.id = String(entry.id)
-  tr.style.cursor = 'pointer'
   return tr
 }
 
@@ -836,7 +918,7 @@ function showLatestLogs() {
 
 function scrollToBottom() {
   // Scroll to the bottom of the table
-  const tableContainer = dataTableContainerRef.value
+  const tableContainer = getResizableTable()?.getContainerElement()
   if (tableContainer) {
     tableContainer.scrollTop = tableContainer.scrollHeight
     // Delay manual scroll detection to avoid autoscrolling being defeated when new logs arrive
@@ -846,7 +928,7 @@ function scrollToBottom() {
 }
 
 function handleScroll() {
-  const tableContainer = dataTableContainerRef.value
+  const tableContainer = getResizableTable()?.getContainerElement()
   if (!tableContainer) return
 
   if (Date.now() < scrollTime) return
@@ -859,11 +941,23 @@ function handleScroll() {
 }
 
 function redrawPartOfTable() {
-  const tableContainer = dataTableContainerRef.value
+  const tableContainer = getResizableTable()?.getContainerElement()
   if (!tableContainer) return
 
   const tableBody = getTableBody()
+  if (!tableBody) return
+
   const filteredItemsCount = filteredTableData.value.length
+
+  // When messages wrap, row heights vary — skip fixed-height virtual windowing
+  if (!textMode.value && wrapMessages.value) {
+    tableBody.innerHTML = ''
+    for (let i = 0; i < filteredItemsCount; i++) {
+      tableBody.appendChild(renderEntry(filteredTableData.value[i]))
+    }
+    return
+  }
+
   const currentIndexAtTop = Math.floor(tableContainer.scrollTop / lineHeight)
   const nbVisibleLines = Math.floor(tableContainer.offsetHeight / lineHeight)
 
@@ -871,8 +965,6 @@ function redrawPartOfTable() {
   const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
   const lastIndexToRedraw = Math.min(currentIndexAtTop + nbVisibleLines + 50, filteredItemsCount - 1)
   // console.debug(`Should redraw ${firstIndexToRedraw}/${lastIndexToRedraw}`)
-
-  if (!tableBody) return
 
   tableBody.innerHTML = ''
   if (firstIndexToRedraw > 0) {
@@ -1024,7 +1116,7 @@ function copyTableToClipboard() {
     return
   }
 
-  const table = dataTableRef.value
+  const table = getResizableTable()?.getTableElement()
   if (!table) {
     return
   }
@@ -1055,6 +1147,9 @@ function copyTableToClipboard() {
 
 function setTextMode(textModeEnabled: boolean) {
   textMode.value = textModeEnabled
+  if (textModeEnabled) {
+    getResizableTable()?.clearResizeHoverState()
+  }
   updateFilter()
 }
 
@@ -1092,6 +1187,12 @@ function toggleErrorDisplay() {
   updateFilter()
 }
 
+function toggleWrapMessages() {
+  wrapMessages.value = !wrapMessages.value
+  localStorage.setItem('openhab.ui:logviewer.wrapMessages', wrapMessages.value.toString())
+  updateFilter()
+}
+
 defineExpose({
   logStart,
   logEnd,
@@ -1121,6 +1222,9 @@ defineExpose({
   downloadCSV,
   copyTableToClipboard,
   clearLog,
-  setTextMode
+  setTextMode,
+  resetColumnWidths,
+  wrapMessages,
+  toggleWrapMessages
 })
 </script>
