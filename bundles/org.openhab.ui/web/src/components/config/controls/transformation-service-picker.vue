@@ -1,26 +1,32 @@
 <template>
-  <ul class="persistence-picker-container">
+  <ul class="transformation-service-picker-container">
     <f7-list-item
       v-if="ready"
-      :title="title || 'Persistence'"
+      :title="showPlaceholder ? title || 'Transformation Service' : undefined"
       smart-select
       :smart-select-params="smartSelectParams"
       ref="smartSelect"
+      :no-chevron="noChevron"
       :disabled="disabled">
       <select :name="name" @change="select" :required="required">
         <option value="" />
-        <option v-for="service in services" :value="service.id" :key="service.id" :selected="value === service.id ? true : null">
-          {{ service.label ? service.label + ' (' + service.id + ')' : service.id }}
+        <option v-for="service in services" :value="service" :key="service" :selected="value === service ? true : null">
+          {{ service }}
         </option>
       </select>
     </f7-list-item>
-    <!-- for placeholder purposes before persistence services are loaded -->
-    <f7-list-item v-show="!ready" link :title="title" />
+    <!-- for placeholder purposes before transformation services are loaded -->
+    <f7-list-item
+      v-show="!ready"
+      link
+      :title="showPlaceholder ? title : undefined"
+      :after="!showPlaceholder ? value : undefined"
+      :no-chevron="noChevron" />
   </ul>
 </template>
 
 <style lang="stylus">
-.persistence-picker-container
+.transformation-service-picker-container
   .item-inner:after
     display none
 </style>
@@ -37,9 +43,14 @@ export default {
     required: Boolean,
     filterType: Array,
     openOnReady: Boolean,
-    disabled: Boolean
+    disabled: Boolean,
+    noChevron: Boolean,
+    showPlaceholder: {
+      type: Boolean,
+      default: true
+    }
   },
-  emits: ['persistencePicked', 'input'],
+  emits: ['input'],
   data() {
     return {
       ready: false,
@@ -48,20 +59,16 @@ export default {
         view: f7.view.main,
         openIn: 'popup',
         searchbar: true,
-        searchbarPlaceholder: this.$t('dialogs.search.persistence')
+        searchbarPlaceholder: this.$t('dialogs.search.transformationService')
       }
     }
   },
   created() {
     this.smartSelectParams.closeOnSelect = true
-    this.$oh.api.get('/rest/persistence').then((data) => {
-      this.services = data.sort((a, b) => {
-        const labelA = a.label || a.id
-        const labelB = b.label || b.id
-        return labelA.localeCompare(labelB)
-      })
+    this.$oh.api.get('/rest/transformations/services').then((data) => {
+      this.services = data.sort()
       if (this.filterType) {
-        this.services = this.services.filter((i) => this.filterType.indexOf(i.type) >= 0)
+        this.services = this.services.filter((s) => this.filterType.indexOf(s) >= 0)
         if (this.services.length < 5) {
           this.smartSelectParams.openIn = 'sheet'
           this.smartSelectParams.searchbar = false
@@ -82,7 +89,6 @@ export default {
     select(e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
-      f7.emit('persistencePicked', e.target.value)
     }
   }
 }

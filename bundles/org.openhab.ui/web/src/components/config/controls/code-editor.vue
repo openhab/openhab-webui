@@ -127,7 +127,7 @@ export default {
   },
   computed: {
     editorMode() {
-      return this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      return this.mediaTypes[this.uiOptionsStore.codeEditorType] || this.mediaTypes[Object.keys(this.mediaTypes)[0]]
     },
     mediaTypes() {
       return SupportedMediaTypes[this.objectType] || DefaultMediaTypes
@@ -147,14 +147,18 @@ export default {
      *
      * @param {string} codeType - Optional. The type of code to generate (e.g. YAML, DSL)
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been generated
+     * @param {object} sourceObject - Optional. The object to generate code from. Defaults to the current prop value.
      */
-    generateCode(codeType, onSuccessCallback) {
+    generateCode(codeType, onSuccessCallback, sourceObject = this.object) {
       codeType ||= this.uiOptionsStore.codeEditorType
+      if (!this.mediaTypes[codeType]) {
+        codeType = Object.keys(this.mediaTypes)[0]
+      }
       const sourceMediaType = MediaType.JSON
       let targetMediaType = this.mediaTypes[codeType]
       targetMediaType = targetMediaType.split('+')[0] // remove the +thing or +item suffix, if present
       const payload = {}
-      payload[this.objectType] = [this.object]
+      payload[this.objectType] = [sourceObject]
       this.$oh.api
         .postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
         .then((code) => {
@@ -162,6 +166,7 @@ export default {
           // therefore normalize before loading in editor.
           this.code = code.replaceAll('\r\n', '\n').replaceAll('\r', '\n')
           this.originalCode = this.code
+          this.dirty = false
           this.uiOptionsStore.codeEditorType = codeType
           if (onSuccessCallback) {
             onSuccessCallback()
@@ -177,7 +182,7 @@ export default {
      * Called from the parent component to update the object from code.
      * The resulting object is emitted in a `parsed` event.
      *
-     * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed
+     * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed. Receives the parsed object.
      * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
      */
     parseCode(onSuccessCallback, onFailureCallback) {
@@ -195,11 +200,15 @@ export default {
         })
         .then((data) => {
           let object = JSON.parse(data.data)
+          const warnings = object.warnings
+          if (warnings && warnings.length > 0) {
+            f7.dialog.alert(`Code parsed with warnings:\n${warnings.join('\n')}`).open()
+          }
           object = object[this.objectType]
           if (object?.length > 0) {
             this.$emit('parsed', object[0])
             if (onSuccessCallback) {
-              onSuccessCallback()
+              onSuccessCallback(object[0])
             }
           } else {
             if (onFailureCallback) {
@@ -251,8 +260,8 @@ export default {
       if (this.readOnly || !this.dirty) {
         this.generateCode(type)
       } else {
-        this.parseCode(() => {
-          this.generateCode(type)
+        this.parseCode((parsedObject) => {
+          this.generateCode(type, null, parsedObject)
         })
       }
     },
