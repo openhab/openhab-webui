@@ -4,6 +4,21 @@ import type { ConfigDescriptionParameterGroup } from '@/api'
 import { po, pt, pi, pb } from './helpers.ts'
 import { aggregationTypeOptions } from './chart/options.ts'
 
+const normalizeActionList = (value: unknown): string[] => {
+  if (value === undefined || value === null) return []
+  const values = Array.isArray(value) ? value : [value]
+  const actions = values.flatMap((entry) => {
+    if (typeof entry === 'string') return entry.split(',')
+    return [String(entry)]
+  })
+  return actions.map((action) => action.trim()).filter(Boolean)
+}
+
+const hasAction = (configuration: Record<string, unknown>, actionKey: string, ...actions: string[]): boolean => {
+  const selectedActions = normalizeActionList(configuration[actionKey])
+  return actions.some((action) => selectedActions.includes(action))
+}
+
 export const actionGroup = (groupPrefix?: string, label?: string, description?: string): ConfigDescriptionParameterGroup => {
   groupPrefix = groupPrefix ? (groupPrefix += '_') : ''
   return {
@@ -17,6 +32,8 @@ export const actionGroup = (groupPrefix?: string, label?: string, description?: 
 export const actionParams = (paramPrefix?: string, groupName?: string) => {
   paramPrefix = paramPrefix ? (paramPrefix += '_') : ''
   if (!groupName) groupName = 'actions'
+  const actionKey = paramPrefix + 'action'
+  const actionSelected = (configuration: Record<string, unknown>, ...actions: string[]) => hasAction(configuration, actionKey, ...actions)
   return [
     po(paramPrefix + 'action', 'Action', 'Type of action to perform', [
       { value: 'navigate', label: 'Navigate to page' },
@@ -33,18 +50,18 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
       { value: 'url', label: 'Navigate to external URL' },
       { value: 'http', label: 'Send HTTP request' },
       { value: 'variable', label: 'Set Variable' }
-    ]),
+    ]).m(),
     pt(paramPrefix + 'actionUrl', 'Action URL', 'URL to navigate to or to send HTTP request to')
       .c('url')
       .v((_value, configuration) => {
-        return ['url', 'http'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'url', 'http')
       }),
     pb(
       paramPrefix + 'actionUrlSameWindow',
       'Open in same tab/window',
       'Open the URL in the same tab/window instead of a new one. This will exit the app.'
     ).v((_value, configuration) => {
-      return ['url'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'url')
     }),
     po(paramPrefix + 'actionHttpMethod', 'HTTP Method', 'HTTP method to use for the request', [
       { value: 'GET', label: 'GET' },
@@ -52,39 +69,39 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
       { value: 'PUT', label: 'PUT' },
       { value: 'DELETE', label: 'DELETE' }
     ]).v((_value, configuration) => {
-      return ['http'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'http')
     }),
     pt(paramPrefix + 'actionHttpBody', 'HTTP Body', 'Body to send with the request').v((_value, configuration) => {
-      return ['http'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'http')
     }),
     pi(paramPrefix + 'actionItem', 'Action Item', 'Item to perform the action on').v((_value, configuration) => {
-      return ['command', 'toggle', 'options'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'command', 'toggle', 'options')
     }),
     pt(
       paramPrefix + 'actionCommand',
       'Action Command',
       'Command to send to the Item. If "Toggle Item" is selected as the action, only send the command when the state is different'
     ).v((_value, configuration) => {
-      return ['command', 'toggle'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'command', 'toggle')
     }),
     pt(
       paramPrefix + 'actionCommandAlt',
       'Action Toggle Command',
       'Command to send to the Item when "Toggle Item" is selected as the action, and the Item\'s state is equal to the command above'
     ).v((_value, configuration) => {
-      return ['toggle'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'toggle')
     }),
     pt(
       paramPrefix + 'actionOptions',
       'Command Options',
       'Comma-separated list of options; if omitted, retrieve the command options from the Item dynamically. Use <code>value=label</code> format to provide a label different than the option.'
     ).v((_value, configuration) => {
-      return ['options'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'options')
     }),
     pt(paramPrefix + 'actionRule', 'Scene, Script or Rule', 'Scene, Script or Rule to run')
       .c('rule')
       .v((_value, configuration) => {
-        return ['rule'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'rule')
       }),
     pt(
       paramPrefix + 'actionRuleContext',
@@ -93,12 +110,12 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     )
       .c('script')
       .v((_value, configuration) => {
-        return ['rule'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'rule')
       }),
     pt(paramPrefix + 'actionPage', 'Page', 'Page to navigate to')
       .c('page')
       .v((_value, configuration) => {
-        return ['navigate'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'navigate')
       }),
     pt(
       paramPrefix + 'actionPageDefineVars',
@@ -123,12 +140,12 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
         { value: 'f7-push', label: 'Push' }
       ]
     ).v((_value, configuration) => {
-      return ['navigate'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'navigate')
     }),
     pt(paramPrefix + 'actionModal', 'Modal Page or Widget', 'Page or widget to display in the modal')
       .c('pagewidget')
       .v((_value, configuration) => {
-        return ['popup', 'popover', 'sheet'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'popup', 'popover', 'sheet')
       }),
     pt(
       paramPrefix + 'actionModalConfig',
@@ -137,32 +154,32 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     )
       .c('props')
       .v((_value, configuration) => {
-        return ['navigate', 'popup', 'popover', 'sheet'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'navigate', 'popup', 'popover', 'sheet')
       }),
     pt(
       paramPrefix + 'actionPhotos',
       'Images to show',
       'Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML, e.g.<br /><code><pre>- item: ImageItem1<br />  caption: Camera</pre></code>or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.'
     ).v((_value, configuration) => {
-      return ['photos'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'photos')
     }),
     pt(
       paramPrefix + 'actionPhotoBrowserConfig',
       'Photo browser configuration',
       'Configuration for the photo browser.<br />Edit in YAML or provide a JSON object, e.g.<br /><code>{ "exposition": false, "type": "popup", "theme": "dark" }</code><br /> See <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photo-browser-parameters">photo browser parameters</a> (not all are supported).'
     ).v((_value, configuration) => {
-      return ['photos'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'photos')
     }),
     pi(paramPrefix + 'actionGroupPopupItem', 'Group Popup Item', 'Group Item whose members to show in a popup').v(
       (_value, configuration) => {
-        return ['group'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'group')
       }
     ),
     pi(paramPrefix + 'actionAnalyzerItems', 'Item(s) to Analyze', 'Start analyzing with the specified (set of) Item(s)')
       .m()
       .r()
       .v((_value, configuration) => {
-        return ['analyzer'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'analyzer')
       }),
     po(
       paramPrefix + 'actionAnalyzerChartType',
@@ -176,7 +193,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
         { value: 'year', label: 'Year' }
       ]
     ).v((_value, configuration) => {
-      return ['analyzer'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'analyzer')
     }),
     po(
       paramPrefix + 'actionAnalyzerCoordSystem',
@@ -188,7 +205,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
         { value: 'calendar', label: 'Calendar' }
       ]
     ).v((_value, configuration) => {
-      return ['analyzer'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'analyzer')
     }),
     po(
       paramPrefix + 'actionAnalyzerAggregation',
@@ -196,10 +213,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
       'The initial aggregation of the analyzer - ',
       aggregationTypeOptions
     ).v((_value, configuration) => {
-      return (
-        ['analyzer'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0 &&
-        configuration[paramPrefix + 'actionAnalyzerCoordSystem'] === 'aggregate'
-      )
+      return actionSelected(configuration, 'analyzer') && configuration[paramPrefix + 'actionAnalyzerCoordSystem'] === 'aggregate'
     }),
     pt(
       paramPrefix + 'actionConfirmation',
@@ -213,13 +227,13 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     )
       .a()
       .v((_value, configuration) => {
-        return ['command', 'toggle', 'options', 'rule', 'http'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'command', 'toggle', 'options', 'rule', 'http')
       }),
     pt(paramPrefix + 'actionVariable', 'Variable', 'The variable name to set').v((_value, configuration) => {
-      return ['variable'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'variable', 'http')
     }),
     pt(paramPrefix + 'actionVariableValue', 'Variable Value', 'The value to set the variable to').v((_value, configuration) => {
-      return ['variable'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+      return actionSelected(configuration, 'variable', 'http')
     }),
     pt(
       paramPrefix + 'actionVariableKey',
@@ -228,7 +242,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     )
       .a()
       .v((_value, configuration) => {
-        return ['variable'].indexOf(configuration[paramPrefix + 'action'] as string) >= 0
+        return actionSelected(configuration, 'variable', 'http')
       })
   ].map((p) => {
     p.groupName = groupName
