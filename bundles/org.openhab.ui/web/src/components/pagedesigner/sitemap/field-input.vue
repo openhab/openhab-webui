@@ -16,6 +16,7 @@
     v-else-if="isOperatorField"
     :style="style"
     :inputStyle="inputStyle"
+    :size="1"
     tabindex="0"
     type="select"
     :value="value"
@@ -28,6 +29,7 @@
     v-else-if="isFieldObject"
     :style="style"
     :inputStyle="inputStyle"
+    :size="computedSize"
     tabindex="0"
     :type="type"
     :min="min"
@@ -36,6 +38,7 @@
     :value="value"
     :disabled="disabled"
     validate
+    @input="$emit('input', $event)"
     @change="$emit('change', $event)" />
   <div v-else :style="style">{{ field }}</div>
 </template>
@@ -65,19 +68,13 @@ export default {
   },
   emits: ['change', 'input'],
   computed: {
+    computedSize() {
+      const valueLength = String(this.value || '').length
+      return Math.max(1, valueLength)
+    },
     operatorOptions() {
       return SITEMAP_OPERATOR_OPTIONS
     }
   }
 }
 </script>
-
-<style lang="stylus" scoped>
-.attribute-details-item-picker
-  .item-content
-    padding-left 0 !important
-  .item-media
-    display none
-  .sortable-handler
-    display none
-</style>

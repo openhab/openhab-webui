@@ -35,7 +35,7 @@
                 v-for="(nestedValue, nestedIdx) in arrayFieldValues(attr.value, arrayField)"
                 :key="nestedIdx"
                 :data-array-entry-index="nestedIdx"
-                style="display: flex; align-items: center; width: 100%">
+                :style="nestedGridStyle(attr, nestedIdx)">
                 <template v-if="nestedIdx === 0">
                   <field-input
                     v-for="(field, fieldidx) in leadingFields"
@@ -50,7 +50,7 @@
                   v-bind="getFieldInputProps(field, fieldidx, nestedValue, isItemField(field), isOperatorField(field))"
                   @input="updateNestedAttributeValue($event, idx, attr, arrayField, nestedIdx, fieldKey(field))"
                   @change="updateNestedAttribute($event, idx, attr, arrayField, nestedIdx, fieldKey(field))" />
-                <div v-if="nestedIdx < arrayFieldValues(attr.value, arrayField).length - 1" style="padding-left: 0px; flex-shrink: 0">
+                <div v-if="nestedIdx < arrayFieldValues(attr.value, arrayField).length - 1" style="padding-left: 0px">
                   AND
                 </div>
                 <template v-if="nestedIdx === arrayFieldValues(attr.value, arrayField).length - 1">
@@ -78,7 +78,7 @@
               @click="!disabled && startArrayEditing(idx)">
               <div :style="collapsedFieldValueStyle(attr.value)">{{ fieldDisplayValue(attr.value) }}</div>
             </div>
-            <div v-else style="display: flex; align-items: center; width: 100%">
+            <div v-else :style="gridStyle(fields)">
               <field-input
                 v-for="(field, fieldidx) in fields"
                 :key="fieldidx"
@@ -254,22 +254,47 @@ export default {
       }
       return this.fieldDefaults[prop]
     },
-    fieldStyle(field) {
-      const style = {}
-      if (!this.fieldDefinition(field)) {
-        style.flex = 0
-      } else if (this.fieldProp(field, 'width') !== undefined) {
-        style.flexGrow = '1'
-        style.flexShrink = '0'
-        style.flexBasis = this.fieldProp(field, 'width')
-      } else {
-        style.flex = 1
+    gridStyle (fields) {
+      const gridTemplateColumns = fields.map((field) => {
+        if (!this.fieldDefinition(field)) {
+          return 'max-content'
+        } else if (this.fieldProp(field, 'width') !== undefined) {
+          return `minmax(${this.fieldProp(field, 'width')}, max-content)`
+        } else {
+          return '1fr'
+        }
+      }).join(' ')
+      return {
+        display: 'grid',
+        gridTemplateColumns: gridTemplateColumns,
+        gridAutoFlow: 'column',
+        width: '100%',
+        alignItems: 'baseline',
+        gap: '5px'
       }
-      return style
+    },
+    nestedGridStyle (attr, nestedIdx) {
+      let fields = []
+      if (nestedIdx === 0) {
+        fields = fields.concat(...this.leadingFields)
+      }
+      fields = fields.concat(...this.arrayFieldDefinition(this.arrayField))
+      if (nestedIdx < this.arrayFieldValues(attr.value, this.arrayField).length - 1) {
+        fields = fields.concat('AND')
+      }
+      if (nestedIdx === this.arrayFieldValues(attr.value, this.arrayField).length - 1) {
+        fields = fields.concat(...this.trailingFields)
+        fields = fields.concat('plusButton')
+      }
+      if (this.canRemoveArrayFieldEntry(attr.value, this.arrayField)) {
+        fields = fields.concat('minusButton')
+      }
+      return this.gridStyle(fields)
     },
     inputFieldStyle(field) {
       const style = {}
       style.width = '100%'
+      style.minWidth = '2ch'
       if (this.fieldProp(field, 'type') === 'number') {
         style.textAlign = 'end'
       }
@@ -619,8 +644,14 @@ export default {
       }
       this.widget[this.attribute][idx] = value
     },
+    normalizeInputValue(input) {
+      if (input && typeof input === 'object' && input.target) {
+        return input.target.value ?? ''
+      }
+      return input ?? ''
+    },
     updateAttributeValue(rawValue, idx, attr, field) {
-      this.updateAttribute({ target: { value: rawValue ?? '' } }, idx, attr, field)
+      this.updateAttribute({ target: { value: this.normalizeInputValue(rawValue) } }, idx, attr, field)
     },
     updateNestedAttribute($event, idx, attr, arrayField, nestedIdx, field) {
       const value = this.ensureAttributeValue(idx)
@@ -635,7 +666,7 @@ export default {
       this.widget[this.attribute][idx] = value
     },
     updateNestedAttributeValue(rawValue, idx, attr, arrayField, nestedIdx, field) {
-      this.updateNestedAttribute({ target: { value: rawValue ?? '' } }, idx, attr, arrayField, nestedIdx, field)
+      this.updateNestedAttribute({ target: { value: this.normalizeInputValue(rawValue) } }, idx, attr, arrayField, nestedIdx, field)
     },
     removeAttribute(idx) {
       this.widget[this.attribute].splice(idx, 1)
@@ -700,7 +731,6 @@ export default {
       return {
         field,
         value: this.fieldValue(value, field),
-        style: this.fieldStyle(field),
         inputStyle: this.inputFieldStyle(field),
         disabled: this.disabled,
         type: this.fieldProp(field, 'type'),

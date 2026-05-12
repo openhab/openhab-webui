@@ -3,7 +3,7 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="!ready ? '' : (createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.label) + dirtyIndicator"
-        :editable="editable"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router>
@@ -49,7 +49,7 @@
                     :itemsList="items"
                     @selected="selectWidget"
                     :selected="selectedWidget"
-                    :editable="editable" />
+                    :editable="isEditable" />
                 </f7-treeview>
               </f7-block>
             </f7-col>
@@ -58,7 +58,7 @@
                 <widget-details
                   :widget="selectedWidget"
                   :createMode="createMode"
-                  :editable="editable"
+                  :editable="isEditable"
                   @duplicate="duplicateWidget"
                   @remove="removeWidget"
                   @movedown="moveWidgetDown"
@@ -67,42 +67,42 @@
               <f7-block v-else>
                 <div class="padding text-align-center">Nothing selected</div>
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (editable || selectedWidget.visibilityRules?.length)">
+              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.visibilityRules?.length)">
                 <div><f7-block-title>Visibility</f7-block-title></div>
                 <attribute-details
                   :widget="selectedWidget"
                   attribute="visibilityRules"
                   :fields="visibilityRulesFields"
-                  :disabled="!editable" />
+                  :disabled="!isEditable" />
               </f7-block>
               <f7-block
                 v-if="
-                  selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (editable || selectedWidget.mappings?.length)
+                  selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (isEditable || selectedWidget.mappings?.length)
                 ">
                 <div><f7-block-title>Mappings</f7-block-title></div>
                 <attribute-details
                   :widget="selectedWidget"
                   attribute="mappings"
                   :fields="selectedWidget.type === 'Switch' ? switchMappingFields : selectionMappingFields"
-                  :disabled="!editable" />
+                  :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (editable || selectedWidget.iconRules?.length)">
+              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.iconRules?.length)">
                 <div><f7-block-title>Icon Rules</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="iconRules" :fields="iconRulesFields" :disabled="!editable" />
+                <attribute-details :widget="selectedWidget" attribute="iconRules" :fields="iconRulesFields" :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (editable || selectedWidget.labelColorRules?.length)">
+              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.labelColorRules?.length)">
                 <div><f7-block-title>Label Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="labelColorRules" :fields="colorRulesFields" :disabled="!editable" />
+                <attribute-details :widget="selectedWidget" attribute="labelColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && canShowValue && (editable || selectedWidget.valueColorRules?.length)">
+              <f7-block v-if="selectedWidget && canShowValue && (isEditable || selectedWidget.valueColorRules?.length)">
                 <div><f7-block-title>Value Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="valueColorRules" :fields="colorRulesFields" :disabled="!editable" />
+                <attribute-details :widget="selectedWidget" attribute="valueColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (editable || selectedWidget.iconColorRules?.length)">
+              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.iconColorRules?.length)">
                 <div><f7-block-title>Icon Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!editable" />
+                <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="editable && selectedWidget && canAddChildren(selectedWidget) && selectedWidget.type !== 'Buttongrid'">
+              <f7-block v-if="isEditable && selectedWidget && canAddChildren(selectedWidget) && selectedWidget.type !== 'Buttongrid'">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
@@ -115,7 +115,7 @@
                   </f7-card-content>
                 </f7-card>
               </f7-block>
-              <f7-block v-if="editable && selectedWidget && canAddChildren(selectedWidget) && selectedWidget.type === 'Buttongrid'">
+              <f7-block v-if="isEditable && selectedWidget && canAddChildren(selectedWidget) && selectedWidget.type === 'Buttongrid'">
                 <div><f7-block-title>Add Button Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
@@ -151,8 +151,7 @@
           object-type="sitemaps"
           :object="preProcessSitemapSave(sitemap)"
           :object-id="sitemap.name"
-          :read-only="!editable"
-          :read-only-msg="notEditableMsg"
+          :read-only="!isEditable"
           @parsed="update"
           @changed="onCodeChanged" />
       </f7-tab>
@@ -198,21 +197,21 @@
             Widget
           </f7-link>
           <f7-link
-            v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (editable || selectedWidget.visibilityRules?.length)"
+            v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.visibilityRules?.length)"
             class="padding-left padding-right"
             :tab-link-active="detailsTab === 'visibilityRules'"
             @click="detailsTab = 'visibilityRules'">
             Visibility
           </f7-link>
           <f7-link
-            v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (editable || selectedWidget.mappings?.length)"
+            v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (isEditable || selectedWidget.mappings?.length)"
             class="padding-left padding-right"
             :tab-link-active="detailsTab === 'mappings'"
             @click="detailsTab = 'mappings'">
             Mappings
           </f7-link>
           <f7-link
-            v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (editable || selectedWidget.iconRules?.length)"
+            v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.iconRules?.length)"
             class="padding-left padding-right"
             :tab-link-active="detailsTab === 'icons'"
             @click="detailsTab = 'icons'">
@@ -222,7 +221,7 @@
             v-if="
               selectedWidget &&
               selectedWidget.type !== 'Sitemap' &&
-              (editable ||
+              (isEditable ||
                 selectedWidget.labelColorRules?.length ||
                 selectedWidget.valueColorRules?.length ||
                 selectedWidget.iconColorRules?.length)
@@ -237,37 +236,37 @@
           <widget-details
             :widget="selectedWidget"
             :createMode="createMode"
-            :editable="editable"
+            :editable="isEditable"
             @duplicate="duplicateWidget"
             @remove="removeWidget"
             @movedown="moveWidgetDown"
             @moveup="moveWidgetUp" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'visibilityRules'" style="margin-bottom: 6rem">
-          <attribute-details :widget="selectedWidget" attribute="visibilityRules" :fields="visibilityRulesFields" :disabled="!editable" />
+          <attribute-details :widget="selectedWidget" attribute="visibilityRules" :fields="visibilityRulesFields" :disabled="!isEditable" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'mappings'" style="margin-bottom: 6rem">
           <attribute-details
             :widget="selectedWidget"
             attribute="mappings"
             :fields="selectedWidget.type === 'Switch' ? switchMappingFields : selectionMappingFields"
-            :disabled="!editable" />
+            :disabled="!isEditable" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'icons'" style="margin-bottom: 6rem">
-          <attribute-details :widget="selectedWidget" attribute="iconRules" :fields="iconRulesFields" :disabled="!editable" />
+          <attribute-details :widget="selectedWidget" attribute="iconRules" :fields="iconRulesFields" :disabled="!isEditable" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'colors'" style="margin-bottom: 6rem">
-          <div v-if="editable || selectedWidget.labelColorRules?.length">
+          <div v-if="isEditable || selectedWidget.labelColorRules?.length">
             <f7-block-title>Label Color</f7-block-title>
-            <attribute-details :widget="selectedWidget" attribute="labelColorRules" :fields="colorRulesFields" :disabled="!editable" />
+            <attribute-details :widget="selectedWidget" attribute="labelColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
           </div>
-          <div v-if="canShowValue && (editable || selectedWidget.valueColorRules?.length)">
+          <div v-if="canShowValue && (isEditable || selectedWidget.valueColorRules?.length)">
             <f7-block-title>Value Color</f7-block-title>
-            <attribute-details :widget="selectedWidget" attribute="valueColorRules" :fields="colorRulesFields" :disabled="!editable" />
+            <attribute-details :widget="selectedWidget" attribute="valueColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
           </div>
-          <div v-if="editable || selectedWidget.iconColorRules?.length">
+          <div v-if="isEditable || selectedWidget.iconColorRules?.length">
             <f7-block-title>Icon Color</f7-block-title>
-            <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="iconRulesFields" :disabled="!editable" />
+            <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="iconRulesFields" :disabled="!isEditable" />
           </div>
         </f7-block>
       </f7-page>
@@ -459,30 +458,29 @@ export default {
       detailsTab: 'widget',
       currentTab: 'tree',
       eventSource: null,
-      notEditableMsg: 'This Sitemap is not editable because it has been provisioned from a file.',
       defaultFalseWidgetBooleans: ['staticIcon', 'switchSupport', 'releaseOnly', 'forceAsItem', 'stateless'],
       switchMappingFields: [
-        { command: { width: '15%', placeholder: 'cmd', required: true } },
+        { command: { width: '10%', placeholder: 'cmd', required: true } },
         ':',
-        { releaseCommand: { width: '15%', placeholder: '[release]' } },
+        { releaseCommand: { width: '10%', placeholder: '[release]' } },
         '=',
-        { label: { placeholder: 'label', required: true } },
+        { label: { width: '20%', placeholder: 'label', required: true } },
         '=',
-        { icon: { width: '20%', placeholder: '[icon]' } }
+        { icon: { placeholder: '[icon]' } }
       ],
       selectionMappingFields: [
         { command: { width: '20%', placeholder: 'cmd', required: true } },
         '=',
-        { label: { placeholder: 'label', required: true } },
+        { label: { width: '20%', placeholder: 'label', required: true } },
         '=',
-        { icon: { width: '20%', placeholder: '[icon]' } }
+        { icon: { placeholder: '[icon]' } }
       ],
       visibilityRulesFields: [
         {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
-            { condition: { width: '10%', type: 'operator' } },
-            { value: { width: '20%', placeholder: 'value', required: true } }
+            { condition: { width: '0%', type: 'operator' } },
+            { value: { placeholder: 'value', required: true } }
           ]
         }
       ],
@@ -490,8 +488,8 @@ export default {
         {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
-            { condition: { width: '10%', type: 'operator' } },
-            { value: { width: '20%', placeholder: 'value', required: true } }
+            { condition: { width: '0%', type: 'operator' } },
+            { value: { placeholder: 'value', required: true } }
           ]
         },
         '=',
@@ -501,8 +499,8 @@ export default {
         {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
-            { condition: { width: '10%', type: 'operator' } },
-            { value: { width: '20%', placeholder: 'value', required: true } }
+            { condition: { width: '0%', type: 'operator' } },
+            { value: { placeholder: 'value', required: true } }
           ]
         },
         '=',
@@ -529,9 +527,6 @@ export default {
     ...mapWritableState(useUIOptionsStore, {
       sitemapIncludeItemName: 'sitemapShowItemName'
     }),
-    editable() {
-      return this.sitemap.editable ?? true
-    },
     preProcessedSitemap() {
       return this.currentTab === 'code' ? this.preProcessSitemapSave(this.sitemap) : undefined
     }
@@ -634,7 +629,7 @@ export default {
     },
     keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
-        if (this.editable) {
+        if (this.isEditable) {
           this.save(!this.createMode)
         }
         ev.stopPropagation()
