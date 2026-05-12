@@ -962,7 +962,7 @@ export default {
                   visibilityRulePositions.add(key)
                 }
               }
-              if (!child.command) {
+              if (child.command === null || child.command === undefined || child.command === '') {
                 validationWarnings.push('Button widget ' + childLabel + ", doesn't have click command defined")
               }
             })
@@ -984,7 +984,7 @@ export default {
               if (!widget.column || isNaN(widget.column) || widget.column <= 0) {
                 validationWarnings.push(widget.type + ' widget ' + label + ', invalid column configured: ' + widget.column)
               }
-              if (!widget.command) {
+              if (widget.command === null || widget.command === undefined || widget.command === '') {
                 validationWarnings.push(widget.type + ' widget ' + label + ', no click command defined')
               }
             } else {
