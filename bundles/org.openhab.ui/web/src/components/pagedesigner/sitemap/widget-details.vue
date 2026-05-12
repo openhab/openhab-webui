@@ -165,7 +165,10 @@
             class="widget-smart-select"
             :no-chevron="!editable"
             :disabled="!editable">
-            <select name="interpolations" :value="widget.interpolation?.toLowerCase() || ''" @change="updateParameter('interpolation', $event)">
+            <select
+              name="interpolations"
+              :value="widget.interpolation?.toLowerCase() || ''"
+              @change="updateParameter('interpolation', $event)">
               <option key="" />
               <option v-for="def in INTERPOLATION_DEFS" :key="def.key" :value="def.key">
                 {{ def.value }}
