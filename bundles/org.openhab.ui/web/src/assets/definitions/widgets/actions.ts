@@ -33,8 +33,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
   paramPrefix = paramPrefix ? (paramPrefix += '_') : ''
   if (!groupName) groupName = 'actions'
   const actionKey = paramPrefix + 'action'
-  const actionSelected = (configuration: Record<string, unknown>, ...actions: string[]) =>
-    hasAction(configuration, actionKey, ...actions)
+  const actionSelected = (configuration: Record<string, unknown>, ...actions: string[]) => hasAction(configuration, actionKey, ...actions)
   return [
     po(paramPrefix + 'action', 'Action', 'Type of action to perform', [
       { value: 'navigate', label: 'Navigate to page' },
