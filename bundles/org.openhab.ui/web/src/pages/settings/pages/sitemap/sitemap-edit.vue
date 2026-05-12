@@ -888,8 +888,10 @@ export default {
             if (widget.step !== undefined && widget.step !== null && widget.step !== '' && Number(widget.step) <= 0) {
               validationWarnings.push(widget.type + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.step)
             }
-            const minValue = widget.minValue ? parseFloat(widget.minValue) : 0
-            const maxValue = widget.maxValue ? parseFloat(widget.maxValue) : 100
+            const hasMinValue = widget.minValue !== undefined && widget.minValue !== null && widget.minValue !== ''
+            const hasMaxValue = widget.maxValue !== undefined && widget.maxValue !== null && widget.maxValue !== ''
+            const minValue = hasMinValue ? parseFloat(widget.minValue) : 0
+            const maxValue = hasMaxValue ? parseFloat(widget.maxValue) : 100
             if (minValue > maxValue) {
               validationWarnings.push(
                 widget.type + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + minValue + ' > ' + maxValue
@@ -1145,9 +1147,11 @@ export default {
     },
     preProcessWidgetLoad(widget) {
       if (widget.label) {
-        const label = widget.label.split('[')
-        widget.label = label[0].trim()
-        widget.format = label[1]?.replace(']', '').trim()
+        const labelMatch = widget.label.match(/^(.*)\s\[(.*?)\]\s*$/)
+        if (labelMatch) {
+          widget.label = labelMatch[1].trim()
+          widget.format = labelMatch[2].trim()
+        }
       }
       this.addEmptySlot(widget)
       widget.widgets?.forEach(this.preProcessWidgetLoad)
