@@ -69,7 +69,7 @@ export default {
   emits: ['change', 'input'],
   computed: {
     computedSize() {
-      const valueLength = String(this.value || '').length
+      const valueLength = String(this.value ?? '').length
       return Math.max(1, valueLength)
     },
     operatorOptions() {
