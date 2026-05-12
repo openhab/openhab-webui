@@ -16,35 +16,35 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
-
-import org.osgi.service.http.HttpContext;
-import org.osgi.service.http.HttpService;
+import org.osgi.framework.Bundle;
+import org.osgi.service.servlet.context.ServletContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.ws.rs.core.HttpHeaders;
+
 /**
- * An implementation of {@link HttpContext} which will handle the gzip-compressed assets.
+ * A custom {@link ServletContextHelper} which handles gzip-compressed assets and SPA fallbacks.
  *
  * @author Yannick Schaus - Initial contribution
  */
-public class HABotHttpContext implements HttpContext {
+public class HABotHttpContext extends ServletContextHelper {
     private final Logger logger = LoggerFactory.getLogger(HABotHttpContext.class);
 
-    private HttpContext defaultHttpContext;
-    private String resourcesBase;
-    private boolean useGzipCompression;
+    private final String resourcesBase;
+    private final boolean useGzipCompression;
 
     /**
-     * Constructs an {@link HABotHttpContext} with will another {@link HttpContext} as a base.
+     * Constructs an {@link HABotHttpContext}.
      *
-     * @param defaultHttpContext the base {@link HttpContext} - use {@link HttpService#createDefaultHttpContext()} to
-     *            create a default one
+     * @param bundle the bundle providing the resources
+     * @param resourcesBase the base folder for web resources
+     * @param useGzipCompression whether to serve pre-compressed gzip assets when available
      */
-    public HABotHttpContext(HttpContext defaultHttpContext, String resourcesBase, boolean useGzipCompression) {
-        this.defaultHttpContext = defaultHttpContext;
+    public HABotHttpContext(Bundle bundle, String resourcesBase, boolean useGzipCompression) {
+        super(bundle);
         this.resourcesBase = resourcesBase;
         this.useGzipCompression = useGzipCompression;
     }
@@ -56,31 +56,40 @@ public class HABotHttpContext implements HttpContext {
         if (useGzipCompression && isGzipVersionAvailable(request.getRequestURI())) {
             response.addHeader(HttpHeaders.CONTENT_ENCODING, "gzip");
         }
-        return defaultHttpContext.handleSecurity(request, response);
+        return super.handleSecurity(request, response);
     }
 
     @Override
     public URL getResource(String name) {
         logger.debug("Requesting resource: {}", name);
         // Get the gzipped version for selected resources, built as static resources by webpack
-        URL defaultResource = defaultHttpContext.getResource(name);
-        if (useGzipCompression && isGzipVersionAvailable(name)) {
+        URL defaultResource = super.getResource(name);
+        if (useGzipCompression && defaultResource != null && isGzipVersionAvailable(name)) {
             try {
                 return new URL(defaultResource.toString() + ".gz");
             } catch (MalformedURLException e) {
                 return defaultResource;
             }
         } else {
-            if (name.equals(resourcesBase) || (resourcesBase + "/").equals(name) || !name.contains(".")) {
-                return defaultHttpContext.getResource(resourcesBase + "/index.html");
+            if (defaultResource != null) {
+                if (name.equals(resourcesBase) || name.equals("/" + resourcesBase) || (resourcesBase + "/").equals(name)
+                        || ("/" + resourcesBase + "/").equals(name) || !name.contains(".")) {
+                    URL index = super.getResource("/" + resourcesBase + "/index.html");
+                    return index != null ? index : defaultResource;
+                }
+                return defaultResource;
             }
-            return defaultResource;
+
+            if (!name.contains(".")) {
+                return super.getResource("/" + resourcesBase + "/index.html");
+            }
+            return null;
         }
     }
 
     @Override
     public String getMimeType(String name) {
-        return defaultHttpContext.getMimeType(name);
+        return super.getMimeType(name);
     }
 
     private boolean isGzipVersionAvailable(String name) {

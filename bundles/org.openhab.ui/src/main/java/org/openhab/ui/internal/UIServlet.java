@@ -17,31 +17,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.ReadableByteChannel;
-import java.util.Arrays;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.net.URLConnection;
+import java.util.List;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.util.resource.Resource;
 import org.openhab.core.OpenHAB;
-import org.ops4j.pax.web.service.WebContainer;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.http.HttpContext;
-import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardContext;
-import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletName;
-import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletPattern;
+import org.osgi.service.servlet.whiteboard.propertytypes.HttpWhiteboardContext;
+import org.osgi.service.servlet.whiteboard.propertytypes.HttpWhiteboardServletName;
+import org.osgi.service.servlet.whiteboard.propertytypes.HttpWhiteboardServletPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Servlet that serves files from both the filesystem and the local bundle. Supports general file caching as well as
@@ -55,7 +50,7 @@ import org.slf4j.LoggerFactory;
 @HttpWhiteboardServletName(UIServlet.SERVLET_PATH)
 @HttpWhiteboardServletPattern(UIServlet.SERVLET_PATH + "*")
 @HttpWhiteboardContext(name = "=org.openhab.ui.context", path = "=/")
-public class UIServlet extends DefaultServlet {
+public class UIServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,64 +60,16 @@ public class UIServlet extends DefaultServlet {
     public static final String SERVLET_PATH = "/";
     private static final String STATIC_PATH = "/static";
     private static final String STATIC_BASE = OpenHAB.getConfigFolder() + "/html";
-    private static final String[] COMPRESS_EXT = { "gz", "br" };
+    private static final List<String> COMPRESS_EXT = List.of("br", "gz");
 
-    private final HttpContext defaultHttpContext;
+    private final UIContext uiContext;
     private final long bundleModifiedTime;
-    private @Nullable ContextHandler contextHandler;
 
     @Activate
-    public UIServlet(final @Reference WebContainer webContainer) {
-        this.defaultHttpContext = webContainer.createDefaultHttpContext();
+    public UIServlet(final @Reference UIContext uiContext) {
+        this.uiContext = uiContext;
         logger.debug("Starting up {} at {}", getClass().getSimpleName(), SERVLET_PATH);
         bundleModifiedTime = (System.currentTimeMillis() / 1000) * 1000; // round milliseconds
-    }
-
-    @Override
-    public void init() throws UnavailableException {
-        contextHandler = ContextHandler.getCurrentContext().getContextHandler();
-        super.init();
-    }
-
-    @Override
-    public @Nullable Resource getResource(@NonNullByDefault({}) String name) {
-        logger.debug("getResource: {}", name);
-        ContextHandler contextHandler = this.contextHandler;
-        if (contextHandler == null) {
-            return null;
-        }
-
-        if (name.startsWith(STATIC_PATH) && !name.endsWith("/")) {
-            URL url = null;
-            try {
-                url = new File(STATIC_BASE + name.substring(STATIC_PATH.length())).toURI().toURL();
-            } catch (MalformedURLException e) {
-                logger.error("Error while serving static content: {}", e.getMessage());
-                url = defaultHttpContext.getResource(APP_BASE + name);
-            }
-            try {
-                logger.debug("getResource static file returning {}", url);
-                return contextHandler.newResource(url);
-            } catch (IOException e) {
-                logger.error("Error while serving content: {}", e.getMessage());
-                return null;
-            }
-        } else {
-            URL url = defaultHttpContext.getResource(APP_BASE + name);
-            // if we don't find a resource, and it's not a check for a compressed version,
-            // let the UIErrorPageServlet return the app base with a proper response code that lets
-            // the Vue.js main UI handle routing
-            if (url == null && Arrays.stream(COMPRESS_EXT).noneMatch(name::endsWith)) {
-                return null;
-            }
-            try {
-                logger.debug("getResource bundle file returning {}", url);
-                return url == null ? null : new ResourceWrapper(contextHandler.newResource(url));
-            } catch (IOException e) {
-                logger.error("Error while serving content: {}", e.getMessage());
-                return null;
-            }
-        }
     }
 
     @Override
@@ -131,113 +78,127 @@ public class UIServlet extends DefaultServlet {
         if (request == null || response == null) {
             return;
         }
-        if (!defaultHttpContext.handleSecurity(request, response)) {
+
+        if (!uiContext.handleSecurity(request, response)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-        super.doGet(request, response);
+
+        String requestPath = request.getRequestURI().substring(request.getContextPath().length());
+        if (requestPath.isEmpty()) {
+            requestPath = SERVLET_PATH;
+        }
+        if (SERVLET_PATH.equals(requestPath)) {
+            requestPath = "/index.html";
+        }
+
+        ResourceDescriptor resource = resolveResource(requestPath, request.getHeader("Accept-Encoding"));
+        if (resource == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        if (resource.contentType != null) {
+            response.setContentType(resource.contentType);
+        }
+        if (resource.contentEncoding != null) {
+            response.setHeader("Content-Encoding", resource.contentEncoding);
+            response.setHeader("Vary", "Accept-Encoding");
+        }
+        if (resource.lastModified > 0) {
+            response.setDateHeader("Last-Modified", resource.lastModified);
+        }
+        if (resource.contentLength >= 0) {
+            response.setContentLengthLong(resource.contentLength);
+        }
+
+        try (InputStream is = resource.url.openStream()) {
+            is.transferTo(response.getOutputStream());
+        }
     }
 
-    @Override
-    public @Nullable String getWelcomeFile(@Nullable String pathInContext) {
-        logger.debug("getWelcomeFile {}", pathInContext);
-        if (pathInContext != null && pathInContext.startsWith(STATIC_PATH)) {
+    private @Nullable ResourceDescriptor resolveResource(String requestPath, @Nullable String acceptEncoding) {
+        logger.debug("Resolving UI resource: {}", requestPath);
+
+        if (requestPath.startsWith(STATIC_PATH) && !requestPath.endsWith("/")) {
+            return resolveStaticResource(requestPath, acceptEncoding);
+        }
+
+        if (requestPath.endsWith("/")) {
             return null;
         }
-        return "/index.html";
+
+        return resolveBundleResource(APP_BASE + requestPath, requestPath, acceptEncoding);
     }
 
-    /**
-     *
-     * Wraps a resource and returns a consistent time for bundled files
-     *
-     */
-    class ResourceWrapper extends Resource {
-
-        private final Resource baseResource;
-
-        public ResourceWrapper(Resource baseResource) {
-            this.baseResource = baseResource;
+    private @Nullable ResourceDescriptor resolveStaticResource(String requestPath, @Nullable String acceptEncoding) {
+        String relativePath = requestPath.substring(STATIC_PATH.length());
+        File file = new File(STATIC_BASE + relativePath);
+        if (file.isDirectory() || !file.exists()) {
+            return null;
         }
 
-        @Override
-        public long lastModified() {
-            return bundleModifiedTime;
+        if (acceptEncoding != null) {
+            for (String ext : COMPRESS_EXT) {
+                if (acceptEncoding.contains(ext)) {
+                    File compressed = new File(file.getPath() + "." + ext);
+                    if (compressed.exists()) {
+                        URL compressedUrl = fileUrl(compressed);
+                        if (compressedUrl != null) {
+                            return new ResourceDescriptor(compressedUrl, contentType(requestPath), ext,
+                                    compressed.length(), compressed.lastModified());
+                        }
+                    }
+                }
+            }
         }
 
-        @Override
-        public boolean isContainedIn(@Nullable Resource r) throws MalformedURLException {
-            return baseResource.isContainedIn(r);
+        URL fileUrl = fileUrl(file);
+        return fileUrl == null ? null
+                : new ResourceDescriptor(fileUrl, contentType(requestPath), null, file.length(), file.lastModified());
+    }
+
+    private @Nullable URL fileUrl(File file) {
+        try {
+            return file.toURI().toURL();
+        } catch (MalformedURLException e) {
+            logger.debug("Failed to create URL for static resource {}", file, e);
+            return null;
+        }
+    }
+
+    private @Nullable ResourceDescriptor resolveBundleResource(String bundlePath, String requestPath,
+            @Nullable String acceptEncoding) {
+        if (acceptEncoding != null) {
+            for (String ext : COMPRESS_EXT) {
+                if (acceptEncoding.contains(ext)) {
+                    URL compressed = uiContext.getResource(bundlePath + "." + ext);
+                    if (compressed != null) {
+                        return new ResourceDescriptor(compressed, contentType(requestPath), ext, -1,
+                                bundleModifiedTime);
+                    }
+                }
+            }
         }
 
-        @Override
-        public void close() {
-            baseResource.close();
+        URL resource = uiContext.getResource(bundlePath);
+        if (resource == null && COMPRESS_EXT.stream().noneMatch(requestPath::endsWith)) {
+            // Missing resources should return 404 so the error page servlet can handle SPA routes.
+            return null;
         }
+        return resource == null ? null
+                : new ResourceDescriptor(resource, contentType(requestPath), null, -1, bundleModifiedTime);
+    }
 
-        @Override
-        public boolean exists() {
-            return baseResource.exists();
+    private @Nullable String contentType(String path) {
+        String contentType = getServletContext().getMimeType(path);
+        if (contentType == null) {
+            contentType = URLConnection.guessContentTypeFromName(path);
         }
+        return contentType;
+    }
 
-        @Override
-        public boolean isDirectory() {
-            return baseResource.isDirectory();
-        }
-
-        @Override
-        public long length() {
-            return baseResource.length();
-        }
-
-        @Override
-        public URL getURL() {
-            return baseResource.getURL();
-        }
-
-        @Override
-        public File getFile() throws IOException {
-            return baseResource.getFile();
-        }
-
-        @Override
-        public String getName() {
-            return baseResource.getName();
-        }
-
-        @Override
-        public InputStream getInputStream() throws IOException {
-            return baseResource.getInputStream();
-        }
-
-        @Override
-        public ReadableByteChannel getReadableByteChannel() throws IOException {
-            return baseResource.getReadableByteChannel();
-        }
-
-        @Override
-        public boolean delete() throws SecurityException {
-            return baseResource.delete();
-        }
-
-        @Override
-        public boolean renameTo(@Nullable Resource dest) throws SecurityException {
-            return baseResource.renameTo(dest);
-        }
-
-        @Override
-        public String[] list() {
-            return baseResource.list();
-        }
-
-        @Override
-        public Resource addPath(@Nullable String path) throws IOException {
-            return baseResource.addPath(path);
-        }
-
-        @Override
-        public String toString() {
-            return getURL().toString();
-        }
+    private record ResourceDescriptor(URL url, @Nullable String contentType, @Nullable String contentEncoding,
+            long contentLength, long lastModified) {
     }
 }
