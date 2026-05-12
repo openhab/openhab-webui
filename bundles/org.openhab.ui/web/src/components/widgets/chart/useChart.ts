@@ -53,6 +53,7 @@ import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 import cloneDeep from 'lodash/cloneDeep'
 import type { EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
 import type { WidgetDefinition } from '@/assets/definitions/widgets/helpers.ts'
+import { simpleHash } from '@/js/openhab/utils.ts'
 
 dayjs.extend(IsoWeek)
 dayjs.extend(DayDuration)
@@ -313,17 +314,18 @@ export function useChart(
         starttime: seriesStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
         boundary,
-        itemState
+        itemState,
+        displayState: 'displayState' in config ? config.displayState : undefined
       }
-      const key = `${neededItem}-${query.serviceId ?? 'default'}-${query.starttime}-${query.endtime}-${boundary.toString()}-${itemState.toString()}`
-      if (_persistencePromises[key] === undefined) {
-        _persistencePromises[key] = api.getItemDataFromPersistenceService(query).then((result) => {
-          delete _persistencePromises[key]
+      const hash = simpleHash(query)
+      if (_persistencePromises[hash] === undefined) {
+        _persistencePromises[hash] = api.getItemDataFromPersistenceService(query).then((result) => {
+          delete _persistencePromises[hash]
           return result!
         })
       }
 
-      return await Promise.all([_itemPromises[neededItem], _persistencePromises[key]])
+      return await Promise.all([_itemPromises[neededItem], _persistencePromises[hash]])
     })
 
     return Promise.all(combinedPromises).then(getter)

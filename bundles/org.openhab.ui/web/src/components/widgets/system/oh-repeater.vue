@@ -33,6 +33,7 @@ import { OhRepeater } from '@/types/components/widgets'
 
 import * as api from '@/api'
 import { ApiError } from '@/js/hey-api'
+import { simpleHash } from '@/js/openhab/utils'
 
 type SourceTypeElement = api.EnrichedItem | api.EnrichedGroupItem | api.EnrichedRule | api.StateOption | api.CommandOption | string | number
 type SourceArray = SourceTypeElement[] | null
@@ -174,18 +175,6 @@ const source = computedAsync(async (): Promise<SourceArray> => {
 })
 
 // Methods
-function simpleHash(obj: object | string): string {
-  const str = JSON.stringify(obj)
-  let hash = 0
-  if (str.length === 0) return hash.toString()
-  for (let i = 0; i < str.length; i++) {
-    const chr = str.charCodeAt(i)
-    hash = (hash << 5) - hash + chr
-    hash |= 0 // Convert to 32bit integer
-  }
-  return (hash >>> 0).toString(36)
-}
-
 function getKey(el: SourceTypeElement): string {
   let key = 'repeater-'
   switch (sourceType.value) {

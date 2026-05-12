@@ -92,6 +92,12 @@ const itemStateParameter = pb(
   'Do not add the current Item state into the requested period (the item state will be before or at the end time)'
 ).a()
 
+const displayStateParameter = pb(
+  'displayState',
+  'Use Display State',
+  'If set to true, formatting from the state description is applied to the values. For QuantityType states, the unit from the state description is respected, but no formatting is applied.'
+)
+
 const offsetAmountParameter = pn(
   'offsetAmount',
   'Offset Amount',
@@ -143,6 +149,7 @@ const baseSeriesParameter = [
   persistenceServiceParameter,
   boundaryParameter,
   itemStateParameter,
+  displayStateParameter,
   offsetAmountParameter,
   offsetUnitParameter
 ]
