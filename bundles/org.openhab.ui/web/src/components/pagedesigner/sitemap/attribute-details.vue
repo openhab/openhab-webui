@@ -50,9 +50,7 @@
                   v-bind="getFieldInputProps(field, fieldidx, nestedValue, isItemField(field), isOperatorField(field))"
                   @input="updateNestedAttributeValue($event, idx, attr, arrayField, nestedIdx, fieldKey(field))"
                   @change="updateNestedAttribute($event, idx, attr, arrayField, nestedIdx, fieldKey(field))" />
-                <div v-if="nestedIdx < arrayFieldValues(attr.value, arrayField).length - 1" style="padding-left: 0px">
-                  AND
-                </div>
+                <div v-if="nestedIdx < arrayFieldValues(attr.value, arrayField).length - 1" style="padding-left: 0px">AND</div>
                 <template v-if="nestedIdx === arrayFieldValues(attr.value, arrayField).length - 1">
                   <field-input
                     v-for="(field, fieldidx) in trailingFields"
@@ -254,16 +252,18 @@ export default {
       }
       return this.fieldDefaults[prop]
     },
-    gridStyle (fields) {
-      const gridTemplateColumns = fields.map((field) => {
-        if (!this.fieldDefinition(field)) {
-          return 'max-content'
-        } else if (this.fieldProp(field, 'width') !== undefined) {
-          return `minmax(${this.fieldProp(field, 'width')}, max-content)`
-        } else {
-          return '1fr'
-        }
-      }).join(' ')
+    gridStyle(fields) {
+      const gridTemplateColumns = fields
+        .map((field) => {
+          if (!this.fieldDefinition(field)) {
+            return 'max-content'
+          } else if (this.fieldProp(field, 'width') !== undefined) {
+            return `minmax(${this.fieldProp(field, 'width')}, max-content)`
+          } else {
+            return '1fr'
+          }
+        })
+        .join(' ')
       return {
         display: 'grid',
         gridTemplateColumns: gridTemplateColumns,
@@ -273,7 +273,7 @@ export default {
         gap: '5px'
       }
     },
-    nestedGridStyle (attr, nestedIdx) {
+    nestedGridStyle(attr, nestedIdx) {
       let fields = []
       if (nestedIdx === 0) {
         fields = fields.concat(...this.leadingFields)

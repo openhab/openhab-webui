@@ -67,7 +67,8 @@
               <f7-block v-else>
                 <div class="padding text-align-center">Nothing selected</div>
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.visibilityRules?.length)">
+              <f7-block
+                v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.visibilityRules?.length)">
                 <div><f7-block-title>Visibility</f7-block-title></div>
                 <attribute-details
                   :widget="selectedWidget"
@@ -90,13 +91,22 @@
                 <div><f7-block-title>Icon Rules</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconRules" :fields="iconRulesFields" :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.labelColorRules?.length)">
+              <f7-block
+                v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.labelColorRules?.length)">
                 <div><f7-block-title>Label Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="labelColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="labelColorRules"
+                  :fields="colorRulesFields"
+                  :disabled="!isEditable" />
               </f7-block>
               <f7-block v-if="selectedWidget && canShowValue && (isEditable || selectedWidget.valueColorRules?.length)">
                 <div><f7-block-title>Value Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="valueColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="valueColorRules"
+                  :fields="colorRulesFields"
+                  :disabled="!isEditable" />
               </f7-block>
               <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.iconColorRules?.length)">
                 <div><f7-block-title>Icon Color</f7-block-title></div>
@@ -204,7 +214,9 @@
             Visibility
           </f7-link>
           <f7-link
-            v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (isEditable || selectedWidget.mappings?.length)"
+            v-if="
+              selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (isEditable || selectedWidget.mappings?.length)
+            "
             class="padding-left padding-right"
             :tab-link-active="detailsTab === 'mappings'"
             @click="detailsTab = 'mappings'">
