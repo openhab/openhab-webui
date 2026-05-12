@@ -50,15 +50,7 @@
             :title="t('sidebar.settings')"
             view=".view-main"
             :animate="false"
-            :class="{
-              currentsection:
-                currentPath.settings?.$end ||
-                currentPath.settings?.services ||
-                currentPath.settings?.addons ||
-                currentPath.settings?.persistence ||
-                currentPath.settings?.transformations ||
-                currentPath.settings?.sitemaps
-            }">
+            :class="{ currentsection: isMainMenuHighlighted('settings') }">
             <template #media>
               <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
             </template>
@@ -69,113 +61,11 @@
             </template>
           </f7-list-item>
           <li v-if="isOpen('settings')">
-            <ul class="menu-sublinks">
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('things')"
-                link="/settings/things/"
-                title="Things"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.settings?.things }">
-                <template #media>
-                  <f7-icon f7="lightbulb" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('items')"
-                link="/settings/model/"
-                title="Model"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                @click="modelSelectedItem = null"
-                :class="{ currentsection: currentPath.settings?.model }">
-                <template #media>
-                  <f7-icon f7="list_bullet_indent" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('items')"
-                link="/settings/items/"
-                title="Items"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.settings?.items }">
-                <template #media>
-                  <f7-icon f7="square_on_circle" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('ui')"
-                link="/settings/pages/"
-                title="Pages"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.settings?.pages }">
-                <template #media>
-                  <f7-icon f7="tv" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('rules')"
-                link="/settings/rules/"
-                title="Rules"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.settings?.rules }">
-                <template #media>
-                  <f7-icon f7="wand_stars" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('rules')"
-                link="/settings/scenes/"
-                title="Scenes"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.settings?.scenes }">
-                <template #media>
-                  <f7-icon f7="film" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('rules')"
-                link="/settings/scripts/"
-                title="Scripts"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.settings?.scripts }">
-                <template #media>
-                  <f7-icon f7="doc_plaintext" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('rules')"
-                link="/settings/schedule/"
-                title="Schedule"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.settings?.schedule }">
-                <template #media>
-                  <f7-icon f7="calendar" color="gray" />
-                </template>
-              </f7-list-item>
-            </ul>
+            <sidebar-admin-submenu
+              :key="`settings-${uiOptionsStore.showSidebarSubmenuEditor}`"
+              section="settings"
+              :active-path="currentPath.settings"
+              @navigate="handleSidebarSubmenuNavigate" />
           </li>
 
           <!-- Add-on Store -->
@@ -220,7 +110,7 @@
             link="/developer/"
             :title="t('sidebar.developerTools')"
             :animate="false"
-            :class="{ currentsection: currentPath.developer?.$end }">
+            :class="{ currentsection: isMainMenuHighlighted('developer') }">
             <template #media>
               <f7-icon ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
             </template>
@@ -231,65 +121,11 @@
             </template>
           </f7-list-item>
           <li v-if="isOpen('developer')">
-            <ul class="menu-sublinks">
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('ui')"
-                link="/developer/widgets/"
-                title="Widgets"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.developer?.widgets }">
-                <template #media>
-                  <f7-icon f7="rectangle_on_rectangle_angled" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                v-if="runtimeStore.apiEndpoint('ui')"
-                link="/developer/blocks/"
-                title="Block Libraries"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.developer?.blocks }">
-                <template #media>
-                  <f7-icon f7="ticket" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                link="/developer/api-explorer/"
-                title="API Explorer"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{
-                  currentsection: currentPath.developer?.['api-explorer']
-                }">
-                <template #media>
-                  <f7-icon f7="burn" color="gray" />
-                </template>
-              </f7-list-item>
-              <f7-list-item
-                link="/developer/log-viewer/"
-                title="Log Viewer"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{
-                  currentsection: currentPath.developer?.['log-viewer']
-                }">
-                <template #media>
-                  <f7-icon f7="square_list" color="gray" />
-                </template>
-              </f7-list-item>
-              <!-- <f7-list-item link="" @click="f7.emit('toggleDeveloperDock')" title="Dock" view=".view-main" panel-close :animate="false" no-chevron>
-                <f7-icon :f7="runtimeStore.showDeveloperDock ? 'wrench_fill' : 'wrench'" color="gray" />
-              </f7-list-item> -->
-            </ul>
+            <sidebar-admin-submenu
+              :key="`developer-${uiOptionsStore.showSidebarSubmenuEditor}`"
+              section="developer"
+              :active-path="currentPath.developer"
+              @navigate="handleSidebarSubmenuNavigate" />
           </li>
         </f7-list>
 
@@ -449,6 +285,7 @@
     position fixed
     bottom 0
     width 100%
+    overflow visible
     .hint-signin
       position absolute
       bottom calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
@@ -495,7 +332,6 @@
   color var(--f7-list-item-footer-text-color)
   padding-left 0
   margin-bottom var(--f7-list-margin-vertical)
-  background-color red
   // --f7-list-item-media-margin 24px
   // --f7-list-item-padding-horizontal 32px
   // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
@@ -561,6 +397,7 @@ import PanelRight from '@/pages/panel-right.vue'
 import LogViewerEmbedded from '@/pages/developer/log-viewer/log-viewer-embedded.vue'
 import { getPageIcon } from '@/pages/page-type'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import SidebarAdminSubmenu from '@/components/navigation/sidebar-admin-submenu.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
@@ -569,6 +406,7 @@ import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
 
 import { useDialog } from '@/js/composables/useDialog'
+import { useSidebarAdminSubmenu } from '@/js/composables/useSidebarAdminSubmenu'
 
 import { i18n, loadLocaleMessages } from '@/js/i18n'
 
@@ -591,12 +429,14 @@ export default {
     EmptyStatePlaceholder,
     PanelRight,
     LogViewerEmbedded,
+    SidebarAdminSubmenu,
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
   setup() {
     const { locale, mergeLocaleMessage: globalMergeLocaleMessage } = useI18n({ useScope: 'global' })
     const { t, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
     const { startAudioWebSocket, triggerDialog } = useDialog()
+    const sidebarAdminSubmenu = useSidebarAdminSubmenu()
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
     loadLocaleMessages('about', localMergeLocaleMessage)
@@ -608,7 +448,8 @@ export default {
       globalMergeLocaleMessage,
       locale,
       startAudioWebSocket,
-      triggerDialog
+      triggerDialog,
+      ...sidebarAdminSubmenu
     }
   },
   data() {
@@ -768,11 +609,27 @@ export default {
         if (val) document.documentElement.style.setProperty('--log-dock-height', val + 'px')
       }
     },
+    'uiOptionsStore.sidebarSubmenuCustomizationSection': {
+      handler(section) {
+        if (!section) return
+        this.openSections = {
+          ...this.openSections,
+          [section]: true
+        }
+      }
+    },
     currentUrl() {
       if (this.logDockFullscreen) this.logDockFullscreen = false
+      const customizationSection = this.uiOptionsStore.sidebarSubmenuCustomizationSection
+      if (customizationSection && !this.currentPath[customizationSection]) {
+        this.uiOptionsStore.sidebarSubmenuCustomizationSection = null
+      }
     }
   },
   methods: {
+    handleSidebarSubmenuNavigate(item) {
+      if (item.id === 'model') this.modelSelectedItem = null
+    },
     loadData(useCredentials) {
       performance.mark('loadDataStart')
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
@@ -876,7 +733,7 @@ export default {
             // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
             if (dayjsLocale?.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
 
-            // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
+            // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmal)
             if (dayjsLocale?.key === 'no') dayjsLocale = dayjsLocales.find((l) => l.key === 'nb')
 
             dayjsLocalePromise = dayjsLocale
@@ -934,6 +791,18 @@ export default {
           f7.panel.get('left').disableVisibleBreakpoint()
         })
       }
+    },
+    isMainMenuHighlighted(section) {
+      const sectionPath = this.currentPath[section]
+      if (!sectionPath) return false
+      if (sectionPath.$end) return true // highlight when on the /section/ itself
+
+      // don't highlight when on a section submenu page that is available in the sidebar
+      if (useSidebarAdminSubmenu(section).items.value.some((item) => sectionPath[item.id])) return false
+
+      // highlight when on a section submenu page that is NOT available in the sidebar and thus has no direct link to it
+      // e.g. /settings/services/ and /settings/addons/
+      return true
     },
     toggleDeveloperDock() {
       if (!useUserStore().isAdmin()) return
@@ -1123,6 +992,7 @@ export default {
     handleSidebarClick(ev) {
       // Collapse all sections when clicking in another section / link
       if (ev.target.closest('.section-toggle')) return
+      if (ev.target.closest('.submenu-customizer, .submenu-customize-entry')) return
       if (ev.target.closest('.list-item a, a[href]')) {
         // avoid flicker (collapse + reopen)
         setTimeout(this.collapseAllSections, 30)

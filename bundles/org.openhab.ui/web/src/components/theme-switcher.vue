@@ -94,6 +94,10 @@
             <span>{{ t('about.miscellaneous.webaudio.enable') }}</span>
             <f7-toggle v-model:checked="webAudio" />
           </f7-list-item>
+          <f7-list-item v-if="userStore.isAdmin()">
+            <span>{{ t('about.miscellaneous.sidebar.showSubmenuEditor') }}</span>
+            <f7-toggle v-model:checked="showSidebarSubmenuEditor" />
+          </f7-list-item>
           <f7-list-group>
             <item-picker
               :label="t('about.miscellaneous.commandItem.title')"
@@ -165,6 +169,7 @@ import ItemPicker from '@/components/config/controls/item-picker.vue'
 import { loadLocaleMessages } from '@/js/i18n'
 import { useI18n } from 'vue-i18n'
 
+import { useUserStore } from '@/js/stores/useUserStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
@@ -209,7 +214,7 @@ export default {
       const getUserMediaSupported = !!(window.navigator && window.navigator.mediaDevices && window.navigator.mediaDevices.getUserMedia)
       return getUserMediaSupported && !!window.AudioContext && !!window.crypto
     },
-    ...mapStores(useRuntimeStore, useUIOptionsStore),
+    ...mapStores(useUserStore, useRuntimeStore, useUIOptionsStore),
     ...mapWritableState(useUIOptionsStore, [
       'disablePageTransitionAnimation',
       'bars',
@@ -218,6 +223,7 @@ export default {
       'hideChatInput',
       'disableExpandableCardAnimation',
       'webAudio',
+      'showSidebarSubmenuEditor',
       'dialogEnabled',
       'dialogIdentifier',
       'dialogListeningItem',

@@ -3,6 +3,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
+import type { AdminMenuSection } from '@/js/admin-menu.ts'
 
 type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
@@ -11,6 +12,8 @@ export interface LogHighlightFilter {
   color: string
   active: boolean
 }
+
+type SidebarSubmenuSelections = Partial<Record<AdminMenuSection, string[]>>
 
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
@@ -48,6 +51,23 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
 
   const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
+
+  const showSidebarSubmenuEditor = ref<boolean>(localStorage.getItem('openhab.ui:sidebar.showSubmenuEditor') === 'true')
+
+  const _storedSidebarSubmenuSelections = localStorage.getItem('openhab.ui:sidebar.submenuSelections')
+  const parseSidebarSubmenuSelections = (): SidebarSubmenuSelections => {
+    if (!_storedSidebarSubmenuSelections) return {}
+    try {
+      const parsed = JSON.parse(_storedSidebarSubmenuSelections) as Record<string, unknown>
+      return Object.fromEntries(
+        Object.entries(parsed).filter(([, value]) => Array.isArray(value) && value.every((item) => typeof item === 'string'))
+      ) as SidebarSubmenuSelections
+    } catch {
+      return {}
+    }
+  }
+  const sidebarSubmenuSelections = ref<SidebarSubmenuSelections>(parseSidebarSubmenuSelections())
+  const sidebarSubmenuCustomizationSection = ref<AdminMenuSection | null>(null)
 
   const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
   const codeEditorType = ref<CodeEditorType>(
@@ -183,6 +203,25 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', newValue.toString())
   })
 
+  watch(showSidebarSubmenuEditor, (newValue) => {
+    localStorage.setItem('openhab.ui:sidebar.showSubmenuEditor', newValue.toString())
+    if (!newValue) {
+      sidebarSubmenuCustomizationSection.value = null
+    }
+  })
+
+  watch(
+    sidebarSubmenuSelections,
+    (newValue) => {
+      if (!Object.keys(newValue).length) {
+        localStorage.removeItem('openhab.ui:sidebar.submenuSelections')
+      } else {
+        localStorage.setItem('openhab.ui:sidebar.submenuSelections', JSON.stringify(newValue))
+      }
+    },
+    { deep: true }
+  )
+
   watch(codeEditorType, (newValue) => {
     localStorage.setItem('openhab.ui:codeEditor.type', newValue)
   })
@@ -311,7 +350,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
       disablePageTransitionAnimation: disablePageTransitionAnimation.value,
       hideChatInput: hideChatInput.value,
       webAudio: webAudio.value,
-      visibleBreakpointDisabled: visibleBreakpointDisabled.value
+      visibleBreakpointDisabled: visibleBreakpointDisabled.value,
+      showSidebarSubmenuEditor: showSidebarSubmenuEditor.value
     }
   }
 
@@ -328,6 +368,9 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     hideChatInput,
     webAudio,
     visibleBreakpointDisabled,
+    showSidebarSubmenuEditor,
+    sidebarSubmenuSelections,
+    sidebarSubmenuCustomizationSection,
     codeEditorType,
     modelPickerShowItemName,
     modelPickerShowItemTags,
