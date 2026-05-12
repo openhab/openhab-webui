@@ -1,6 +1,9 @@
 <template>
   <div class="code-editor-fit">
-    <f7-icon v-if="readOnly" f7="lock" size="50" class="code-readonly-icon" :tooltip="readOnlyMsg || 'Not editable'" />
+    <div v-if="$slots['floating-icons'] || readOnly" class="code-editor-icons">
+      <slot name="floating-icons" />
+      <f7-icon v-if="readOnly" f7="lock" size="50" class="lock-icon" :tooltip="resolvedReadOnlyMsg" />
+    </div>
     <codemirror ref="cm" :model-value="value" :extensions="extensions" @ready="onCmReady" @change="onCmCodeChange" />
   </div>
 </template>
@@ -17,15 +20,19 @@
   height 100%
   display flex !important
 
-  .code-readonly-icon
+  .code-editor-icons
     position absolute
     top 0
     right 0
+    display flex
+    gap 6px
     margin var(--f7-typography-margin) !important
-    color var(--f7-color-gray)
-    opacity 0.5
     z-index 4000
     user-select none
+
+    .lock-icon
+      color var(--f7-color-gray)
+      opacity 0.5
 
   .v-codemirror
     flex 1
@@ -173,6 +180,8 @@ const dynamicExtensions = computed((): Extension[] => {
 
   return extensions
 })
+
+const resolvedReadOnlyMsg = computed(() => props.readOnlyMsg || 'Not editable')
 
 const extensions = [
   keymap.of([...defaultKeymap, ...historyKeymap, ...KEYMAP]),

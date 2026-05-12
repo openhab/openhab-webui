@@ -8,7 +8,11 @@
       :read-only="readOnly"
       :read-only-msg="readOnlyMsg"
       @input="onEditorInput"
-      @save="$emit('save')" />
+      @save="$emit('save')">
+      <template v-if="$slots['floating-icons']" #floating-icons>
+        <slot name="floating-icons" />
+      </template>
+    </editor>
   </div>
 
   <f7-toolbar bottom class="code-editor-toolbar">
