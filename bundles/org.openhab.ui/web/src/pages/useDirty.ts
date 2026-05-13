@@ -112,7 +112,7 @@ export function useDirty(pageRefOrName: string | Ref<PageRef> | null) {
     watch(
       value,
       (newValue, oldValue) => {
-        if (oldValue === undefined) {
+        if (newValue && !oldValue) {
           // First time real data is loaded, capture it as pristine baseline
           pristineValue = cloneDeep(newValue)
           dirty.value = false
