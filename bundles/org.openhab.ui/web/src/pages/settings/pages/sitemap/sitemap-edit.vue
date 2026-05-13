@@ -278,7 +278,7 @@
           </div>
           <div v-if="isEditable || selectedWidget.iconColorRules?.length">
             <f7-block-title>Icon Color</f7-block-title>
-            <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="iconRulesFields" :disabled="!isEditable" />
+            <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
           </div>
         </f7-block>
       </f7-page>
