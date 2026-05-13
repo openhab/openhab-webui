@@ -680,7 +680,7 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.selectedWidget.visibilityRules = [
       { conditions: [{ item: 'Day_time', condition: '==', value: 'Morning Time' }] },
-      { conditions: [{ item: 'Bettery', condition: '>', value: 50 }] },
+      { conditions: [{ item: 'Battery', condition: '>', value: 50 }] },
       { conditions: [{ item: 'Battery_Level', condition: '>=', value: 20 }] }
     ]
     wrapper.vm.validateWidgets()
