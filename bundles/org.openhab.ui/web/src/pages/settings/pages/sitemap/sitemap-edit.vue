@@ -537,10 +537,7 @@ export default {
     },
     ...mapWritableState(useUIOptionsStore, {
       sitemapIncludeItemName: 'sitemapShowItemName'
-    }),
-    preProcessedSitemap() {
-      return this.currentTab === 'code' ? this.preProcessSitemapSave(this.sitemap) : undefined
-    }
+    })
   },
   watch: {
     sitemap: {

@@ -8,9 +8,9 @@
       :textColor="textColor"
       :class="{ 'item-picker': true, 'item-picker-empty': showTitle && isEmptySelection }"
       :no-chevron="disabled"
-      @click="openPopup"
-      @keydown.enter.prevent="openPopup"
-      @keydown.space.prevent="openPopup">
+      @click="!disabled && openPopup()"
+      @keydown.enter.prevent="!disabled && openPopup()"
+      @keydown.space.prevent="!disabled && openPopup()">
       <template #media>
         <f7-button
           v-if="!noModelPicker"
