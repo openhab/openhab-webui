@@ -9,7 +9,11 @@
         :sortable-opposite="!disabled"
         :sortable-enabled="!disabled"
         @sortable:sort="onSort">
-        <f7-list-item v-for="(attr, idx) in attributes" :key="idx" :data-attribute-index="idx" @keydown.tab="onFieldTab($event, idx)">
+        <f7-list-item
+          v-for="(attr, idx) in attributes"
+          :key="JSON.stringify(attr.value)"
+          :data-attribute-index="idx"
+          @keydown.tab="onFieldTab($event, idx)">
           <f7-input
             v-if="!hasFields"
             style="flex: 1"

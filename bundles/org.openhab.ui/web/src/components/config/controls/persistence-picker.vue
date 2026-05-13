@@ -6,6 +6,7 @@
       smart-select
       :smart-select-params="smartSelectParams"
       ref="smartSelect"
+      :no-chevron="disabled"
       :disabled="disabled">
       <select :name="name" @change="select" :required="required">
         <option value="" />

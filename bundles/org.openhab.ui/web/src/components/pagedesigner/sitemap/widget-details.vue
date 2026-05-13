@@ -100,6 +100,7 @@
             title="Persistence service"
             :value="widget.service"
             class="widget-persistence"
+            :disabled="!editable"
             @input="(value) => (widget.service = value)" />
           <f7-list-input
             v-if="supports('period')"
