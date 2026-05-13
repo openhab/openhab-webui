@@ -12,6 +12,7 @@
       :required="configDescription.required"
       validate
       :clear-button="false"
+      :readonly="readOnly || configDescription.readOnly"
       type="number" />
   </ul>
 </template>
@@ -22,7 +23,8 @@ import { theme } from 'framework7-vue'
 export default {
   props: {
     configDescription: Object,
-    value: [String, Number]
+    value: [String, Number],
+    readOnly: Boolean
   },
   emits: ['input'],
   setup() {
@@ -39,6 +41,7 @@ export default {
   },
   methods: {
     updateValue(event) {
+      if (this.readOnly || this.configDescription.readOnly) return
       const value = this.configDescription.type === 'DECIMAL' ? parseFloat(event.target.value) : parseInt(event.target.value)
       this.$emit('input', value)
     }

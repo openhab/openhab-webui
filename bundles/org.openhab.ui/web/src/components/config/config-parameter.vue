@@ -8,7 +8,7 @@
       (!configDescription.options || !configDescription.options.length) &&
       ['item'].indexOf(configDescription.context) < 0
     ">
-    <f7-list-group v-if="(!readOnly && !configDescription.readOnly) || configDescription.context === 'password'">
+    <f7-list-group v-if="showControl">
       <component
         :is="control"
         :read-only="readOnly"
@@ -20,7 +20,7 @@
         :f7router="f7router"
         @input="updateValue" />
     </f7-list-group>
-    <f7-list-item v-else :title="configDescription.label" :after="value != null ? value.toString() : 'N/A'" />
+    <f7-list-item v-else :title="configDescription.label" :after="displayValue" />
     <template #after-list>
       <f7-block-footer class="param-description">
         <div v-if="status" class="param-status-info">
@@ -133,6 +133,37 @@ export default {
       }
       return ParameterText
     },
+    showControl() {
+      if (this.configDescription.context === 'password') return true
+      if (!this.readOnly && !this.configDescription.readOnly) return true
+      return this.readOnly && this.controlSupportsReadOnly
+    },
+    controlSupportsReadOnly() {
+      return [ParameterText, ParameterBoolean, ParameterNumber, ParameterOptions].includes(this.control)
+    },
+    displayValue() {
+      if (this.value === null || this.value === undefined) return 'N/A'
+
+      if (this.configDescription.options?.length) {
+        const optionLabels = (Array.isArray(this.value) ? this.value : [this.value])
+          .map((value) => this.optionLabel(value))
+          .filter((label) => label !== null)
+
+        if (optionLabels.length) {
+          return optionLabels.join(', ')
+        }
+      }
+
+      if (Array.isArray(this.value)) {
+        return this.value.length ? this.value.join(', ') : 'N/A'
+      }
+
+      if (typeof this.value === 'object') {
+        return JSON.stringify(this.value)
+      }
+
+      return this.value.toString()
+    },
     description() {
       let description = this.configDescription.description || ''
       description = description.replace(/<a href="http/g, '<a class="external" target="_blank" href="http') // if class/target already declared, will be overwritten in most browsers
@@ -148,6 +179,17 @@ export default {
     // f7.input.validateInputs(this.$refs.parameter.$el)
   },
   methods: {
+    optionLabel(value) {
+      const option = this.configDescription.options?.find((candidate) => {
+        if (candidate.value === value) return true
+        if (this.configDescription.type === 'INTEGER') return parseInt(candidate.value) === value
+        if (this.configDescription.type === 'DECIMAL') return parseFloat(candidate.value) === value
+        if (this.configDescription.type === 'BOOLEAN' && typeof value === 'boolean') return (candidate.value === 'true') === value
+        return false
+      })
+
+      return option ? option.label || option.value : null
+    },
     updateValue(value) {
       console.debug(`Update ${this.configDescription.name} to ${value}`)
       this.$emit('update', value)
