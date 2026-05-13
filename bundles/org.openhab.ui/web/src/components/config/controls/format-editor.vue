@@ -325,7 +325,8 @@ export default {
         return
       }
       const target = event.target instanceof Element ? event.target : event.target?.parentElement
-      if (target?.closest('.format-editor-item')) {
+      const root = this.$el
+      if (root instanceof Element && target && root.contains(target)) {
         return
       }
       this.stopFormatEditing()

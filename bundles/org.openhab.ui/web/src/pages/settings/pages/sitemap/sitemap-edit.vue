@@ -1037,11 +1037,11 @@ export default {
       return this.isNonEmptyValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
     },
     validateRule(attr, rule) {
-      if (rule.conditions?.some((condition) => !this.isNonEmptyValue(condition.value))) {
-        return false
-      }
       if (attr !== 'visibilityRules') {
         return this.isNonEmptyValue(rule.argument)
+      }
+      if (rule.conditions?.some((condition) => !this.isNonEmptyValue(condition.value))) {
+        return false
       }
       return true
     },
