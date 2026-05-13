@@ -121,7 +121,6 @@
 </style>
 
 <script>
-import { SITEMAP_OPERATOR_OPTIONS } from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import FieldInput from './field-input.vue'
 
 export default {
@@ -154,9 +153,6 @@ export default {
     document.removeEventListener('pointerdown', this.onDocumentPointerDown, true)
   },
   computed: {
-    operatorOptions() {
-      return SITEMAP_OPERATOR_OPTIONS
-    },
     hasFields() {
       return Array.isArray(this.fields) && this.fields.length > 0
     },

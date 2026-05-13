@@ -420,7 +420,6 @@ import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
 import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
-import FileDefinition from '@/pages/settings/file-definition-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
@@ -428,7 +427,7 @@ import { useDirty } from '@/pages/useDirty'
 import * as api from '@/api'
 
 export default {
-  mixins: [SitemapMixin, FileDefinition],
+  mixins: [SitemapMixin],
   components: {
     NotEditableNotice,
     WidgetDetails,
@@ -1123,7 +1122,7 @@ export default {
         if (widget[key] && Array.isArray(widget[key])) {
           widget[key] = widget[key].filter(Boolean)
         }
-        if (!widget[key] && widget[key] !== 0) {
+        if ((key !== 'legend' &&!widget[key] && widget[key] !== 0) || widget[key] === null || widget[key] === undefined) {
           delete widget[key]
         }
       }
