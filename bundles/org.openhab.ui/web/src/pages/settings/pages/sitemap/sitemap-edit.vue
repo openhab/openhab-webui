@@ -37,7 +37,7 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <f7-block class="sitemap-tree-wrapper" :class="{ 'sheet-opened': detailsOpened }">
+        <f7-block v-else class="sitemap-tree-wrapper" :class="{ 'sheet-opened': detailsOpened }">
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
             <f7-col>
@@ -1171,7 +1171,8 @@ export default {
     },
     preProcessWidgetSave(widget) {
       if (widget.format) {
-        widget.label = (widget.label || '') + ' [' + widget.format + ']'
+        const label = widget.label || ''
+        widget.label = label + (label ? ' ' : '') + '[' + widget.format + ']'
       }
       delete widget.format
       delete widget.parent // remove parent from widget, as this would cause a circular reference error when converting to JSON
