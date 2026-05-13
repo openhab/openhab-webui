@@ -1,17 +1,19 @@
 <template>
-  <f7-page ref="sitemap-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page class="sitemap-editor" ref="sitemap-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar no-hairline>
       <oh-nav-content
-        :title="!ready ? '' : (createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.config.label) + dirtyIndicator"
+        :title="!ready ? '' : (createMode ? 'Create sitemap' : 'Sitemap: ' + sitemap.label) + dirtyIndicator"
         :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
-        :f7router />
+        :f7router>
+      </oh-nav-content>
     </f7-navbar>
     <f7-toolbar tabbar position="top">
-      <f7-link @click="currentTab = 'tree'" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
-      <f7-link @click="currentTab = 'code'" :tab-link-active="currentTab === 'code'"> Code </f7-link>
+      <f7-link @click="switchTab('tree')" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
+      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'"> Code </f7-link>
     </f7-toolbar>
+    <not-editable-notice v-if="currentTab === 'tree' && !isEditable" class="sitemap-not-editable" subject="sitemap" />
     <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedWidget == null }" @click="selectedWidget = null"> Clear </f7-link>
       <div class="padding-right text-align-right">
@@ -35,7 +37,6 @@
           <f7-preloader />
           <div>Loading...</div>
         </f7-block>
-        <not-editable-notice v-else-if="!isEditable" subject="sitemap" />
         <f7-block v-else class="sitemap-tree-wrapper" :class="{ 'sheet-opened': detailsOpened }">
           <f7-row v-if="currentTab === 'tree'">
             <!-- do not set column width as usual, instead use custom CSS because of https://github.com/openhab/openhab-webui/issues/2574 -->
@@ -47,15 +48,17 @@
                     :includeItemName="sitemapIncludeItemName"
                     :itemsList="items"
                     @selected="selectWidget"
-                    :selected="selectedWidget" />
+                    :selected="selectedWidget"
+                    :editable="isEditable" />
                 </f7-treeview>
               </f7-block>
             </f7-col>
-            <f7-col class="details-pane">
+            <f7-col class="details-pane sitemap-details-no-spinners">
               <f7-block v-if="selectedWidget" no-gap>
                 <widget-details
                   :widget="selectedWidget"
                   :createMode="createMode"
+                  :editable="isEditable"
                   @duplicate="duplicateWidget"
                   @remove="removeWidget"
                   @movedown="moveWidgetDown"
@@ -64,62 +67,65 @@
               <f7-block v-else>
                 <div class="padding text-align-center">Nothing selected</div>
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+              <f7-block
+                v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.visibilityRules?.length)">
                 <div><f7-block-title>Visibility</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
-              </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren">
-                <div><f7-block-title>Buttons</f7-block-title></div>
                 <attribute-details
                   :widget="selectedWidget"
-                  attribute="buttons"
-                  placeholder="command = label = icon"
-                  :fields="
-                    JSON.stringify([
-                      { row: { width: '10%', type: 'number', min: 1, placeholder: 'row' } },
-                      { column: { width: '10%', type: 'number', min: 1, placeholder: 'col' } },
-                      { command: {} }
-                    ])
-                  " />
+                  attribute="visibilityRules"
+                  :fields="visibilityRulesFields"
+                  :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component === 'Switch'">
+              <f7-block
+                v-if="
+                  selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (isEditable || selectedWidget.mappings?.length)
+                ">
                 <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command:releaseCommand = label = icon" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="mappings"
+                  :fields="selectedWidget.type === 'Switch' ? switchMappingFields : selectionMappingFields"
+                  :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component === 'Selection'">
-                <div><f7-block-title>Mappings</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="mappings" placeholder="command = label = icon" />
-              </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.iconRules?.length)">
                 <div><f7-block-title>Icon Rules</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
+                <attribute-details :widget="selectedWidget" attribute="iconRules" :fields="iconRulesFields" :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+              <f7-block
+                v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.labelColorRules?.length)">
                 <div><f7-block-title>Label Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="labelColorRules"
+                  :fields="colorRulesFields"
+                  :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && canShowValue">
+              <f7-block v-if="selectedWidget && canShowValue && (isEditable || selectedWidget.valueColorRules?.length)">
                 <div><f7-block-title>Value Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="valuecolor" placeholder="item_name operator value = color" />
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="valueColorRules"
+                  :fields="colorRulesFields"
+                  :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && selectedWidget.component !== 'Sitemap'">
+              <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.iconColorRules?.length)">
                 <div><f7-block-title>Icon Color</f7-block-title></div>
-                <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
+                <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
               </f7-block>
-              <f7-block v-if="selectedWidget && canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'">
+              <f7-block v-if="isEditable && selectedWidget && canAddChildren(selectedWidget) && selectedWidget.type !== 'Buttongrid'">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
                     <f7-list>
                       <f7-list-button
                         color="blue"
-                        :title="`Insert Widget Inside ${selectedWidget.component}`"
+                        :title="`Insert Widget Inside ${selectedWidget.type}`"
                         actions-open="#widget-type-selection" />
                     </f7-list>
                   </f7-card-content>
                 </f7-card>
               </f7-block>
-              <f7-block v-if="selectedWidget && canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'">
+              <f7-block v-if="isEditable && selectedWidget && canAddChildren(selectedWidget) && selectedWidget.type === 'Buttongrid'">
                 <div><f7-block-title>Add Button Widget</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
@@ -148,18 +154,22 @@
           </f7-actions-group>
         </f7-actions>
       </f7-tab>
-      <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <sitemap-code
-          v-if="currentTab === 'code'"
-          :sitemap="sitemap"
-          :readOnly="!isEditable"
-          @updated="isEditable ? update($event) : null" />
+      <f7-tab v-if="sitemap" id="code" :tab-active="currentTab === 'code' ? true : null">
+        <code-editor
+          v-if="ready"
+          ref="codeEditor"
+          object-type="sitemaps"
+          :object="preProcessSitemapSave(sitemap)"
+          :object-id="sitemap.name"
+          :read-only="!isEditable"
+          @parsed="update"
+          @changed="onCodeChanged" />
       </f7-tab>
     </f7-tabs>
 
     <template #fixed>
       <f7-fab
-        v-if="canAddChildren(selectedWidget) && selectedWidget.component !== 'Buttongrid'"
+        v-if="canAddChildren(selectedWidget) && selectedWidget.type !== 'Buttongrid'"
         class="add-to-sitemap-fab"
         position="right-center"
         color="blue"
@@ -168,7 +178,7 @@
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       </f7-fab>
       <f7-fab
-        v-if="canAddChildren(selectedWidget) && selectedWidget.component === 'Buttongrid'"
+        v-if="canAddChildren(selectedWidget) && selectedWidget.type === 'Buttongrid'"
         class="add-to-sitemap-fab"
         position="right-center"
         color="blue"
@@ -177,16 +187,17 @@
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       </f7-fab>
     </template>
+
     <f7-sheet
       v-if="currentTab === 'tree'"
       ref="detailsSheet"
-      class="sitemap-details-sheet"
+      class="sitemap-details-sheet sitemap-details-no-spinners"
       :backdrop="false"
       :close-on-escape="true"
       :opened="detailsOpened"
       @sheet:closed="detailsOpened = false">
       <f7-page>
-        <f7-toolbar tabbar bottom scrollable>
+        <f7-toolbar tabbar bottom scrollable @wheel="onDetailsToolbarWheel">
           <div class="left">
             <f7-link sheet-close class="padding-right">
               <f7-icon f7="chevron_down" />
@@ -196,35 +207,37 @@
             Widget
           </f7-link>
           <f7-link
-            v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+            v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.visibilityRules?.length)"
             class="padding-left padding-right"
-            :tab-link-active="detailsTab === 'visibility'"
-            @click="detailsTab = 'visibility'">
+            :tab-link-active="detailsTab === 'visibilityRules'"
+            @click="detailsTab = 'visibilityRules'">
             Visibility
           </f7-link>
           <f7-link
-            v-if="selectedWidget && selectedWidget.component === 'Buttongrid' && !hasChildren"
-            class="padding-left padding-right"
-            :tab-link-active="detailsTab === 'buttons'"
-            @click="detailsTab = 'buttons'">
-            Buttons
-          </f7-link>
-          <f7-link
-            v-if="selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.component) >= 0"
+            v-if="
+              selectedWidget && ['Switch', 'Selection'].includes(selectedWidget.type) && (isEditable || selectedWidget.mappings?.length)
+            "
             class="padding-left padding-right"
             :tab-link-active="detailsTab === 'mappings'"
             @click="detailsTab = 'mappings'">
             Mappings
           </f7-link>
           <f7-link
-            v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+            v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.iconRules?.length)"
             class="padding-left padding-right"
             :tab-link-active="detailsTab === 'icons'"
             @click="detailsTab = 'icons'">
             Icons
           </f7-link>
           <f7-link
-            v-if="selectedWidget && selectedWidget.component !== 'Sitemap'"
+            v-if="
+              selectedWidget &&
+              selectedWidget.type !== 'Sitemap' &&
+              (isEditable ||
+                selectedWidget.labelColorRules?.length ||
+                selectedWidget.valueColorRules?.length ||
+                selectedWidget.iconColorRules?.length)
+            "
             class="padding-left padding-right"
             :tab-link-active="detailsTab === 'colors'"
             @click="detailsTab = 'colors'">
@@ -235,49 +248,38 @@
           <widget-details
             :widget="selectedWidget"
             :createMode="createMode"
+            :editable="isEditable"
             @duplicate="duplicateWidget"
             @remove="removeWidget"
             @movedown="moveWidgetDown"
             @moveup="moveWidgetUp" />
         </f7-block>
-        <f7-block v-if="selectedWidget && detailsTab === 'visibility'" style="margin-bottom: 6rem">
-          <attribute-details :widget="selectedWidget" attribute="visibility" placeholder="item_name operator value" />
-        </f7-block>
-        <f7-block v-if="selectedWidget && detailsTab === 'buttons'" style="margin-bottom: 6rem">
-          <attribute-details
-            :widget="selectedWidget"
-            attribute="buttons"
-            placeholder="command = label = icon"
-            :fields="
-              JSON.stringify([
-                { row: { width: '10%', type: 'number', min: 1, placeholder: 'row' } },
-                { column: { width: '10%', type: 'number', min: 1, placeholder: 'col' } },
-                { command: {} }
-              ])
-            " />
+        <f7-block v-if="selectedWidget && detailsTab === 'visibilityRules'" style="margin-bottom: 6rem">
+          <attribute-details :widget="selectedWidget" attribute="visibilityRules" :fields="visibilityRulesFields" :disabled="!isEditable" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'mappings'" style="margin-bottom: 6rem">
           <attribute-details
             :widget="selectedWidget"
             attribute="mappings"
-            :placeholder="selectedWidget.component === 'Switch' ? 'cmd:releaseCmd = label = icon' : 'command = label = icon'" />
+            :fields="selectedWidget.type === 'Switch' ? switchMappingFields : selectionMappingFields"
+            :disabled="!isEditable" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'icons'" style="margin-bottom: 6rem">
-          <attribute-details :widget="selectedWidget" attribute="iconrules" placeholder="item_name operator value = icon" />
+          <attribute-details :widget="selectedWidget" attribute="iconRules" :fields="iconRulesFields" :disabled="!isEditable" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'colors'" style="margin-bottom: 6rem">
-          <div><f7-block-title>Label Color</f7-block-title></div>
-          <attribute-details :widget="selectedWidget" attribute="labelcolor" placeholder="item_name operator value = color" />
-          <div v-if="canShowValue">
-            <f7-block-title>Value Color</f7-block-title>
+          <div v-if="isEditable || selectedWidget.labelColorRules?.length">
+            <f7-block-title>Label Color</f7-block-title>
+            <attribute-details :widget="selectedWidget" attribute="labelColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
           </div>
-          <attribute-details
-            v-if="canShowValue"
-            :widget="selectedWidget"
-            attribute="valuecolor"
-            placeholder="item_name operator value = color" />
-          <div><f7-block-title>Icon Color</f7-block-title></div>
-          <attribute-details :widget="selectedWidget" attribute="iconcolor" placeholder="item_name operator value = color" />
+          <div v-if="canShowValue && (isEditable || selectedWidget.valueColorRules?.length)">
+            <f7-block-title>Value Color</f7-block-title>
+            <attribute-details :widget="selectedWidget" attribute="valueColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
+          </div>
+          <div v-if="isEditable || selectedWidget.iconColorRules?.length">
+            <f7-block-title>Icon Color</f7-block-title>
+            <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
+          </div>
         </f7-block>
       </f7-page>
     </f7-sheet>
@@ -285,7 +287,15 @@
 </template>
 
 <style lang="stylus">
-.sitemap-editor-tabs
+.sitemap-editor .page-content
+  display flex
+  flex-direction column
+  overflow hidden !important
+.tabs.sitemap-editor-tabs
+  flex 1
+  min-height 0
+  display flex
+  flex-direction column
   height 100%
   overflow hidden
   .tab
@@ -293,7 +303,15 @@
   .design
     --f7-grid-gap 0px
     overflow auto
+  .tab-active
+    flex 1
+    min-height 0
+    overflow-y auto
+.block.sitemap-not-editable
+  flex-shrink 0
 
+.sitemap-not-editable
+  margin-bottom 0
 .sitemap-tree-wrapper
   padding 0
   margin-bottom 0
@@ -316,9 +334,21 @@
   .toolbar
     --f7-theme-color var(--f7-color-blue)
     --f7-theme-color-rgb var(--f7-color-blue-rgb)
+    .toolbar-inner
+      display flex
+      overflow-x auto
+      overflow-y hidden
+      flex-wrap nowrap
+      -webkit-overflow-scrolling touch
+      scrollbar-width none
+      &::-webkit-scrollbar
+        display none
+    &.tabbar .link
+      width auto
+      flex 0 0 auto
+  .left
+    flex-shrink 0
   z-index 10900
-.md .sitemap-details-sheet .toolbar .link
-  width 35%
 .widget-button
   padding-bottom 8px !important
   .actions-button-text
@@ -332,6 +362,13 @@
     white-space normal
     max-height 2lh
     line-height 1lh
+/* Spinners overlap with clear button, so hide them */
+.sitemap-details-no-spinners input::-webkit-outer-spin-button,
+.sitemap-details-no-spinners input::-webkit-inner-spin-button
+  -webkit-appearance none !important
+  margin 0 !important
+.sitemap-details-no-spinners input[type=number]
+  -moz-appearance textfield !important
 
 @media (min-width: 768px)
   .sitemap-tree-wrapper
@@ -360,7 +397,7 @@
 @media (max-width: 767px)
   .details-pane
     display none
-  .sitemap-tree-wrapper
+  .sitemap-tree
     margin-top 0 !important
   .sitemap-tree-wrapper.sheet-opened
     margin-bottom calc(var(--f7-sheet-height) - var(--f7-toolbar-height))
@@ -370,7 +407,7 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 import { mapWritableState } from 'pinia'
 
@@ -378,7 +415,6 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import SitemapCode from '@/components/pagedesigner/sitemap/sitemap-code.vue'
 import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import WidgetDetails from '@/components/pagedesigner/sitemap/widget-details.vue'
 import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-details.vue'
@@ -388,19 +424,22 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
+import * as api from '@/api'
+
 export default {
   mixins: [SitemapMixin],
   components: {
-    SitemapCode,
     NotEditableNotice,
     WidgetDetails,
     AttributeDetails,
-    SitemapTreeviewItem
+    SitemapTreeviewItem,
+    CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   props: {
     createMode: Boolean,
     uid: String,
     itemsList: Array,
+    sitemapCopy: Object,
     f7router: Object,
     f7route: Object
   },
@@ -412,15 +451,16 @@ export default {
     return {
       ready: false,
       loading: false,
+      codeDirty: false,
+      sitemapDirty: false,
       sitemap: {
-        uid: 'page_' + f7.utils.id(),
-        component: 'Sitemap',
-        config: {
-          label: 'New Sitemap'
-        },
-        tags: [],
-        slots: { widgets: [] }
+        name: 'sitemap_' + f7.utils.id(),
+        type: 'Sitemap',
+        icon: '',
+        label: 'New Sitemap',
+        widgets: []
       },
+      sitemaps: [],
       lastCleanSitemap: null,
       selectedWidget: null,
       selectedWidgetParent: null,
@@ -428,23 +468,71 @@ export default {
       detailsOpened: false,
       detailsTab: 'widget',
       currentTab: 'tree',
-      eventSource: null
+      eventSource: null,
+      defaultFalseWidgetBooleans: ['staticIcon', 'switchSupport', 'releaseOnly', 'forceAsItem', 'stateless'],
+      switchMappingFields: [
+        { command: { width: '10%', placeholder: 'cmd', required: true } },
+        ':',
+        { releaseCommand: { width: '10%', placeholder: '[release]' } },
+        '=',
+        { label: { width: '20%', placeholder: 'label', required: true } },
+        '=',
+        { icon: { placeholder: '[icon]' } }
+      ],
+      selectionMappingFields: [
+        { command: { width: '20%', placeholder: 'cmd', required: true } },
+        '=',
+        { label: { width: '20%', placeholder: 'label', required: true } },
+        '=',
+        { icon: { placeholder: '[icon]' } }
+      ],
+      visibilityRulesFields: [
+        {
+          conditions: [
+            { item: { width: '30%', type: 'item', placeholder: '[item]' } },
+            { condition: { width: '0%', type: 'operator' } },
+            { value: { placeholder: 'value', required: true } }
+          ]
+        }
+      ],
+      iconRulesFields: [
+        {
+          conditions: [
+            { item: { width: '30%', type: 'item', placeholder: '[item]' } },
+            { condition: { width: '0%', type: 'operator' } },
+            { value: { placeholder: 'value', required: true } }
+          ]
+        },
+        '=',
+        { argument: { width: '20%', placeholder: 'icon', required: true } }
+      ],
+      colorRulesFields: [
+        {
+          conditions: [
+            { item: { width: '30%', type: 'item', placeholder: '[item]' } },
+            { condition: { width: '0%', type: 'operator' } },
+            { value: { placeholder: 'value', required: true } }
+          ]
+        },
+        '=',
+        { argument: { width: '20%', placeholder: 'color', required: true } }
+      ]
     }
   },
   computed: {
     hasChildren() {
       if (!this.selectedWidget) return false
-      return Array.isArray(this.selectedWidget.slots?.widgets) && this.selectedWidget.slots.widgets.length
+      return Array.isArray(this.selectedWidget.widgets) && this.selectedWidget.widgets.length
     },
     canShowValue() {
       if (!this.selectedWidget) return false
-      return this.WIDGET_TYPES_SHOWING_VALUE.includes(this.selectedWidget.component)
+      return this.WIDGET_TYPES_SHOWING_VALUE.includes(this.selectedWidget.type)
     },
     isEditable() {
       return !this.sitemap || (this.sitemap.editable ?? true)
     },
     addableWidgetTypes() {
-      if (!this.selectedWidget) return
+      if (!this.selectedWidget) return []
       return this.allowedWidgetTypes(this.selectedWidget)
     },
     ...mapWritableState(useUIOptionsStore, {
@@ -456,20 +544,53 @@ export default {
       handler(newVal) {
         if (this.loading) return
         if (!fastDeepEqual(this.stripClosed(newVal), this.lastCleanSitemap)) {
-          this.dirty = true
+          this.sitemapDirty = true
         } else {
-          this.dirty = false
+          this.sitemapDirty = false
         }
       },
       deep: true
     },
+    codeDirty() {
+      this.dirty = this.sitemapDirty || this.codeDirty
+    },
+    sitemapDirty() {
+      this.dirty = this.sitemapDirty || this.codeDirty
+    },
     currentTab(newTab, oldTab) {
-      if (oldTab === 'tree' && this.$refs.detailsSheet) {
-        this.$refs.detailsSheet.$el.f7Modal.close()
+      if (oldTab === 'tree') {
+        this.$refs.detailsSheet?.$el?.f7Modal?.close?.()
       }
     }
   },
   methods: {
+    createDefaultSitemapName() {
+      return 'sitemap_' + f7.utils.id()
+    },
+    selectRootSitemapWidget() {
+      this.selectedWidget = this.sitemap
+      this.selectedWidgetParent = null
+    },
+    initializeCreateModeSitemap() {
+      if (this.sitemapCopy) {
+        const sitemapCopy = this.preProcessSitemapLoad(this.sitemapCopy)
+        sitemapCopy.name = this.createDefaultSitemapName()
+        this.sitemap = sitemapCopy
+      }
+      this.selectRootSitemapWidget()
+    },
+    onDetailsToolbarWheel(ev) {
+      const toolbarInner = ev.currentTarget?.querySelector('.toolbar-inner')
+      if (!toolbarInner || toolbarInner.scrollWidth <= toolbarInner.clientWidth) {
+        return
+      }
+      const delta = Math.abs(ev.deltaX) > Math.abs(ev.deltaY) ? ev.deltaX : ev.deltaY
+      if (!delta) {
+        return
+      }
+      toolbarInner.scrollLeft += delta
+      ev.preventDefault()
+    },
     onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
@@ -482,15 +603,49 @@ export default {
       }
       this.detailsOpened = false
     },
+    switchTab(newTab) {
+      if (this.currentTab === newTab) return
+
+      if (newTab === 'code') {
+        // Switching to code tab: set immediately, then generate
+        this.currentTab = newTab
+        nextTick(() => {
+          this.$refs.codeEditor?.generateCode?.()
+        })
+      } else if (this.codeDirty) {
+        // Switching from code tab with dirty code: parse first, then switch on success
+        this.$refs.codeEditor.parseCode(
+          () => {
+            this.currentTab = newTab
+            this.codeDirty = false
+            this.dirty = this.sitemapDirty
+          },
+          () => {
+            // Parse failed: stay in code tab
+            this.currentTab = 'code'
+            f7.tab.show('#code')
+          }
+        )
+      } else {
+        // Switching from code tab with clean code: switch immediately
+        this.currentTab = newTab
+      }
+    },
+    onCodeChanged(codeDirty) {
+      this.codeDirty = codeDirty
+      this.dirty = this.sitemapDirty || this.codeDirty
+    },
     keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
-        this.save(!this.createMode)
+        if (this.isEditable) {
+          this.save(!this.createMode)
+        }
         ev.stopPropagation()
         ev.preventDefault()
       }
     },
     stripClosed(obj) {
-      // Remove the closed field as it is only used for expanding the tree, and should not impact the dirty state
+      // Remove the closed and parents field as it is only used for expanding the tree, and should not impact the dirty state
       if (Array.isArray(obj)) {
         return obj.map(this.stripClosed)
       } else if (obj !== null && typeof obj === 'object') {
@@ -498,7 +653,11 @@ export default {
         const { parent, closed, ...rest } = obj
         const result = {}
         for (const key in rest) {
-          result[key] = this.stripClosed(rest[key])
+          const value = this.stripClosed(rest[key])
+          if (value === false && this.defaultFalseWidgetBooleans.includes(key)) continue
+          if (value === '') continue
+          if (Array.isArray(value) && value.length === 0) continue
+          result[key] = value
         }
         return result
       } else {
@@ -507,7 +666,7 @@ export default {
     },
     setParents(widget) {
       // keep parents with widget for drag and drop
-      widget.slots?.widgets?.forEach((w) => {
+      widget.widgets?.forEach((w) => {
         w.parent = widget
         this.setParents(w)
       })
@@ -519,35 +678,75 @@ export default {
       if (this.ready && this.dirty) this.save(true, true)
 
       if (this.createMode) {
-        this.lastCleanSitemap = this.stripClosed(this.sitemap)
-        this.loading = false
-        this.ready = true
-      } else {
-        this.$oh.api.get('/rest/ui/components/system:sitemap/' + this.uid).then((data) => {
-          const sitemap = this.preProcessSitemapLoad(data)
-          this.sitemap = sitemap
-          nextTick(() => {
-            this.lastCleanSitemap = this.stripClosed(this.sitemap)
-            this.setParents(this.sitemap)
+        this.initializeCreateModeSitemap()
+        api
+          .getSitemapDefinitions()
+          .then((sitemaps) => {
+            this.sitemaps = sitemaps.map((sitemap) => sitemap.name)
             this.ready = true
+          })
+          .catch((err) => {
+            console.error(err)
+            showToast('An error occurred while loading sitemaps: ' + (err?.message || String(err)))
+          })
+          .finally(() => {
             this.loading = false
           })
-        })
+        this.lastCleanSitemap = this.sitemapCopy ? null : this.stripClosed(this.sitemap)
+        this.sitemapDirty = !!this.sitemapCopy
+        this.dirty = this.sitemapDirty || this.codeDirty
+      } else {
+        api
+          .getSitemapDefinitionByName({ sitemapname: this.uid })
+          .then((data) => {
+            const sitemap = this.preProcessSitemapLoad(data)
+            this.lastCleanSitemap = this.stripClosed(sitemap)
+            this.sitemap = sitemap
+            this.selectRootSitemapWidget()
+            nextTick(() => {
+              this.ready = true
+            })
+          })
+          .catch((err) => {
+            console.error(err)
+            showToast('An error occurred while loading sitemap: ' + (err?.message || String(err)))
+          })
+          .finally(() => {
+            this.loading = false
+          })
       }
     },
     save(stay, force) {
       if (!this.isEditable) return
-      this.cleanConfig(this.sitemap)
-      if (!this.sitemap.uid) {
-        f7.dialog.alert('Please give an ID to the sitemap')
+      if (this.currentTab === 'code' && this.codeDirty) {
+        this.$refs.codeEditor.parseCode(
+          () => {
+            this.codeDirty = false
+            this.dirty = this.sitemapDirty
+            this.save(stay, true)
+          },
+          () => {
+            this.currentTab = 'code'
+            f7.tab.show('#code')
+            showToast('Please fix errors in the code before saving.')
+          }
+        )
         return
       }
-      if (!this.sitemap.config.label) {
+      if (!this.sitemap.name) {
+        f7.dialog.alert('Please give a name to the sitemap')
+        return
+      }
+      if (this.createMode && this.isExistingSitemap(this.sitemap.name)) {
+        f7.dialog.alert('A sitemap with the name ' + this.sitemap.name + ' already exists. Please choose another name.')
+        return
+      }
+      if (!this.sitemap.label) {
         f7.dialog.alert('Please give a label to the sitemap')
         return
       }
-      if (!this.createMode && this.uid !== this.sitemap.uid) {
-        f7.dialog.alert('You cannot change the ID of an existing sitemap. Duplicate it with the new ID then delete this one.')
+      if (!this.createMode && this.uid !== this.sitemap.name) {
+        f7.dialog.alert('You cannot change the name of an existing sitemap. Duplicate it with the new name then delete this one.')
         return
       }
 
@@ -555,374 +754,459 @@ export default {
 
       const sitemap = this.preProcessSitemapSave(this.sitemap)
 
-      const promise = this.createMode
-        ? this.$oh.api.postPlain('/rest/ui/components/system:sitemap', JSON.stringify(sitemap), 'text/plain', 'application/json')
-        : this.$oh.api.put('/rest/ui/components/system:sitemap/' + sitemap.uid, sitemap)
-      promise
+      api
+        .addOrUpdateSitemapInRegistry({ sitemapname: sitemap.name, sitemapDefinition: sitemap })
         .then((data) => {
+          this.sitemapDirty = this.codeDirty = false
           this.dirty = false
           if (this.createMode) {
             showToast('Sitemap created')
-            this.load()
-            this.f7router.navigate(this.f7route.url.replace('/add', '/' + sitemap.uid), { reloadCurrent: true })
+            const targetUrl = (this.f7route?.url || '').replace(/\/(add|duplicate)(?:\/)?$/, '/' + sitemap.name)
+            this.f7router.navigate(targetUrl || '/settings/sitemaps/' + sitemap.name, { reloadCurrent: true })
           } else {
             showToast('Sitemap updated')
             this.lastCleanSitemap = this.stripClosed(this.sitemap)
-            this.setParents(sitemap)
           }
           f7.emit('sidebarRefresh', null)
-          // if (!stay) this.f7router.back()
         })
         .catch((err) => {
-          showToast('Error while saving sitemap: ' + err)
+          showToast('Error while saving sitemap: ' + (err?.message || String(err)))
         })
+    },
+    isExistingSitemap(name) {
+      return this.sitemaps.includes(name)
     },
     validateWidgets(stay) {
       let scope = this
-      if (Array.isArray(this.sitemap.slots?.widgets) && this.sitemap.slots.widgets.length) {
-        let validationWarnings = []
-        const widgetList = this.sitemap.slots.widgets.reduce(function iter(widgets, widget) {
+      const validationWarnings = []
+      if (!Array.isArray(this.sitemap.widgets) || !this.sitemap.widgets.length) {
+        const label = scope.widgetErrorLabel(this.sitemap)
+        validationWarnings.push('Sitemap ' + label + ' should have at least one widget')
+      } else {
+        const registeredItemNames = this.itemsReady ? new Set(this.items.map((item) => item.name)) : null
+        const widgetList = this.sitemap.widgets.reduce(function iter(widgets, widget) {
           widgets.push(widget)
-          if (Array.isArray(widget.slots?.widgets)) {
-            return widget.slots.widgets.reduce(iter, widgets)
+          if (Array.isArray(widget.widgets)) {
+            return widget.widgets.reduce(iter, widgets)
           }
           return widgets
         }, [])
-        let isFrame = [false]
-        let siblingIsFrame = [undefined]
-        this.sitemap.slots.widgets.forEach(function iter(widget) {
-          let label = scope.widgetErrorLabel(widget.config)
-          if (isFrame[isFrame.length - 1] && widget.component === 'Frame') {
+        // Check frame widget is not in frame and linkable widget does not contain mix of frames and non-frames
+        const isFrame = [false]
+        const siblingIsFrame = [undefined]
+        this.sitemap.widgets.forEach(function iter(widget) {
+          const label = scope.widgetErrorLabel(widget)
+          if (isFrame[isFrame.length - 1] && widget.type === 'Frame') {
             validationWarnings.push('Frame widget ' + label + ', frame not allowed in frame')
           }
           if (siblingIsFrame[siblingIsFrame.length - 1] !== undefined) {
             if (
-              (siblingIsFrame[siblingIsFrame.length - 1] && widget.component !== 'Frame') ||
-              (!siblingIsFrame[siblingIsFrame.length - 1] && widget.component === 'Frame')
+              (siblingIsFrame[siblingIsFrame.length - 1] && widget.type !== 'Frame') ||
+              (!siblingIsFrame[siblingIsFrame.length - 1] && widget.type === 'Frame')
             ) {
               validationWarnings.push('Widget ' + label + ', only frames or no frames at all allowed in linkable widget')
             }
           }
-          siblingIsFrame.push(siblingIsFrame.pop() || widget.component === 'Frame')
-          if (Array.isArray(widget.slots?.widgets)) {
-            isFrame.push(widget.component === 'Frame')
+          siblingIsFrame.push(siblingIsFrame.pop() || widget.type === 'Frame')
+          if (Array.isArray(widget.widgets)) {
+            isFrame.push(widget.type === 'Frame')
             siblingIsFrame.push(undefined)
-            widget.slots.widgets.forEach(iter)
+            widget.widgets.forEach(iter)
             isFrame.pop()
             siblingIsFrame.pop()
           }
         })
+        // Check frame widget has children
         widgetList
-          .filter((widget) => widget.component === 'Frame')
+          .filter((widget) => widget.type === 'Frame')
           .forEach((widget) => {
-            if (!widget.slots?.widgets || !widget.slots.widgets.length) {
-              let label = scope.widgetErrorLabel(widget.config)
-              validationWarnings.push(widget.component + ' widget ' + label + ' should not be empty')
+            if (!widget.widgets?.length) {
+              const label = scope.widgetErrorLabel(widget)
+              validationWarnings.push(widget.type + ' widget ' + label + ' should not be empty')
             }
           })
+        // Check widget has item configured if required
         widgetList
-          .filter((widget) => this.WIDGET_TYPES_REQUIRING_ITEM.includes(widget.component))
+          .filter((widget) => !this.WIDGET_TYPES_NOT_REQUIRING_ITEM.includes(widget.type))
           .forEach((widget) => {
-            if (!widget.config?.item) {
-              let label = scope.widgetErrorLabel(widget.config)
-              validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
+            if (!widget.item) {
+              const label = scope.widgetErrorLabel(widget)
+              validationWarnings.push(widget.type + ' widget ' + label + ', no item configured')
             }
           })
+        // Check configured widget item exists in item registry
         widgetList
-          .filter((widget) => widget.component === 'Video' || widget.component === 'Webview')
+          .filter((widget) => widget.item)
           .forEach((widget) => {
-            if (!widget.config?.url) {
-              let label = scope.widgetErrorLabel(widget.config)
-              validationWarnings.push(widget.component + ' widget ' + label + ', no url configured')
+            if (registeredItemNames && !registeredItemNames.has(widget.item)) {
+              const label = scope.widgetErrorLabel(widget)
+              validationWarnings.push(widget.type + ' widget ' + label + ', invalid item configured: ' + widget.item)
             }
           })
+        // Check Video and Webview widgets have url configured
         widgetList
-          .filter((widget) => widget.component === 'Chart')
+          .filter((widget) => widget.type === 'Video' || widget.type === 'Webview')
           .forEach((widget) => {
-            if (!(widget.config?.period && this.REGEX_PERIOD.test(widget.config.period))) {
-              let label = scope.widgetErrorLabel(widget.config)
-              validationWarnings.push(widget.component + ' widget ' + label + ', invalid period configured: ' + widget.config?.period)
+            if (!widget.url) {
+              const label = scope.widgetErrorLabel(widget)
+              validationWarnings.push(widget.type + ' widget ' + label + ', no url configured')
             }
-            if (widget.config?.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.config.yAxisDecimalPattern)) {
-              let label = scope.widgetErrorLabel(widget.config)
+          })
+        // Check Chart widget has valid period and decimal pattern configured
+        widgetList
+          .filter((widget) => widget.type === 'Chart')
+          .forEach((widget) => {
+            if (!(widget.period && this.REGEX_PERIOD.test(widget.period))) {
+              const label = scope.widgetErrorLabel(widget)
+              validationWarnings.push(widget.type + ' widget ' + label + ', invalid period configured: ' + widget.period)
+            }
+            if (widget.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.yAxisDecimalPattern)) {
+              const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(
-                widget.component + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.config?.yAxisDecimalPattern
+                widget.type + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.yAxisDecimalPattern
               )
             }
           })
+        // Check Input widget has valid inputHint if configured
         widgetList
-          .filter((widget) => widget.component === 'Input')
+          .filter((widget) => widget.type === 'Input')
           .forEach((widget) => {
-            if (widget.config?.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.config.inputHint)) {
-              let label = scope.widgetErrorLabel(widget.config)
-              validationWarnings.push(widget.component + ' widget ' + label + ', invalid inputHint configured: ' + widget.config?.inputHint)
+            if (widget.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.inputHint)) {
+              const label = scope.widgetErrorLabel(widget)
+              validationWarnings.push(widget.type + ' widget ' + label + ', invalid inputHint configured: ' + widget.inputHint)
             }
           })
+        // Check Slider, Setpoint and Colortemperaturepicker widgets have valid step, minValue and maxValue if configured
         widgetList
-          .filter((widget) => ['Slider', 'Setpoint', 'Colortemperaturepicker'].includes(widget.component))
+          .filter((widget) => ['Slider', 'Setpoint', 'Colortemperaturepicker'].includes(widget.type))
           .forEach((widget) => {
-            let label = scope.widgetErrorLabel(widget.config)
-            if (widget.config?.step <= 0) {
-              validationWarnings.push(widget.component + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.config.step)
+            const label = scope.widgetErrorLabel(widget)
+            if (widget.step !== undefined && widget.step !== null && widget.step !== '' && Number(widget.step) <= 0) {
+              validationWarnings.push(widget.type + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.step)
             }
-            if (widget.config?.minValue > widget.config?.maxValue) {
+            const hasMinValue = widget.minValue !== undefined && widget.minValue !== null && widget.minValue !== ''
+            const hasMaxValue = widget.maxValue !== undefined && widget.maxValue !== null && widget.maxValue !== ''
+            const minValue = hasMinValue ? parseFloat(widget.minValue) : 0
+            const maxValue = hasMaxValue ? parseFloat(widget.maxValue) : 100
+            if (minValue > maxValue) {
               validationWarnings.push(
-                widget.component +
-                  ' widget ' +
-                  label +
-                  ', minValue must be less than or equal maxValue: ' +
-                  widget.config.minValue +
-                  ' > ' +
-                  widget.config.maxValue
+                widget.type + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + minValue + ' > ' + maxValue
               )
             }
           })
+        // Check Buttongrid widget has widgets defined.
+        // Duplicate row and column are only allowed if there are visibility rules to differentiate them
         widgetList
-          .filter((widget) => widget.component === 'Buttongrid')
+          .filter((widget) => widget.type === 'Buttongrid')
           .forEach((widget) => {
-            let label = scope.widgetErrorLabel(widget.config)
-            if (!widget.config?.item && !widget.slots?.widgets?.length) {
-              validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
+            const label = scope.widgetErrorLabel(widget)
+            if (!widget.widgets?.length) {
+              validationWarnings.push(widget.type + ' widget ' + label + ', no buttons defined')
             }
-            if (!(widget.config?.buttons?.length || widget.slots?.widgets?.length)) {
-              validationWarnings.push(widget.component + ' widget ' + label + ', no buttons defined')
-            }
-            let positions = []
-            if (widget.config?.buttons?.length) {
-              positions = widget.config.buttons.map((param) => {
-                return { row: param.row, column: param.column }
-              })
-            } else if (widget.slots?.widgets?.length) {
-              positions = widget.slots.widgets
-                .filter((widget) => widget.config)
-                .map((widget) => {
-                  return { row: widget.config.row, column: widget.config.column }
-                })
-            }
-            let occurrences = {}
-            const duplicates = positions.filter((pos) => {
-              const jsonpos = JSON.stringify(pos)
-              if (occurrences[jsonpos]) return true
-              occurrences[jsonpos] = true
-              return false
+            const noVisibilityRulePositions = new Set()
+            const visibilityRulePositions = new Set()
+            let invalidChildFound = false
+            widget.widgets?.forEach((child) => {
+              if (invalidChildFound) {
+                return
+              }
+              if (child.type !== 'Button') {
+                validationWarnings.push(widget.type + ' widget ' + label + ', Buttongrid must contain only Buttons')
+                invalidChildFound = true
+                return
+              }
+              const childLabel = scope.widgetErrorLabel(child)
+              const hasVisibilityRule = Array.isArray(child.visibilityRules) && child.visibilityRules.length > 0
+              const row = Number(child.row)
+              const column = Number(child.column)
+              if (!(row > 0)) {
+                validationWarnings.push('Button widget ' + childLabel + ", doesn't have positive row index defined")
+              }
+              if (!(column > 0)) {
+                validationWarnings.push('Button widget ' + childLabel + ", doesn't have positive column index defined")
+              }
+              const key = row + ':' + column
+              if (row > 0 && column > 0) {
+                if (!hasVisibilityRule) {
+                  if (noVisibilityRulePositions.has(key)) {
+                    validationWarnings.push('Button widget ' + childLabel + ', already exists for position (' + row + ',' + column + ')')
+                  }
+                  if (visibilityRulePositions.has(key)) {
+                    validationWarnings.push(
+                      'Button widget ' +
+                        childLabel +
+                        ', with and without visibilityRules rule for same position (' +
+                        row +
+                        ',' +
+                        column +
+                        ')'
+                    )
+                  }
+                  noVisibilityRulePositions.add(key)
+                } else {
+                  if (noVisibilityRulePositions.has(key)) {
+                    validationWarnings.push(
+                      'Button widget ' +
+                        childLabel +
+                        ', without and with visibilityRules rule for same position (' +
+                        row +
+                        ',' +
+                        column +
+                        ')'
+                    )
+                  }
+                  visibilityRulePositions.add(key)
+                }
+              }
+              if (child.command === null || child.command === undefined || child.command === '') {
+                validationWarnings.push('Button widget ' + childLabel + ", doesn't have click command defined")
+              }
             })
-            duplicates.forEach((duplicate) =>
-              validationWarnings.push(
-                widget.component + ' widget ' + label + ', duplicate button position : row ' + duplicate.row + ' column ' + duplicate.column
-              )
-            )
           })
+        // Check Button widget is inside a Buttongrid and has valid row, column and command configured
         widgetList
-          .filter((widget) => widget.component === 'Button')
+          .filter((widget) => widget.type === 'Button')
           .forEach((widget) => {
-            let label = scope.widgetErrorLabel(widget.config)
-            let parentWidget = widgetList.find((w) => {
-              if (w.slots?.widgets?.includes(widget)) return w
+            const label = scope.widgetErrorLabel(widget)
+            const parentWidget = widgetList.find((w) => {
+              if (w.widgets?.includes(widget)) return w
               return undefined
             })
-            if (!(parentWidget?.component === 'Buttongrid')) {
-              validationWarnings.push(widget.component + ' widget ' + label + ', can only be defined inside a Buttongrid component')
-            }
-            if (!widget.config?.item) {
-              // if there is an item configured on the Buttongrid level, we will use that when saving
-              if (!(parentWidget?.component === 'Buttongrid' && parentWidget?.config?.item)) {
-                validationWarnings.push(widget.component + ' widget ' + label + ', no item configured')
+            if (!(parentWidget?.type === 'Buttongrid')) {
+              validationWarnings.push(widget.type + ' widget ' + label + ', can only be defined inside a Buttongrid widget')
+              if (!widget.row || isNaN(widget.row) || widget.row <= 0) {
+                validationWarnings.push(widget.type + ' widget ' + label + ', invalid row configured: ' + widget.row)
               }
-            }
-            if (!widget.config?.row || isNaN(widget.config?.row) || widget.config?.row <= 0 || widget.config?.row > 12) {
-              validationWarnings.push(widget.component + ' widget ' + label + ', invalid row configured: ' + widget.config.row)
-            }
-            if (!widget.config?.column || isNaN(widget.config?.column) || widget.config?.column <= 0) {
-              validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + widget.config.column)
-            }
-            if (!widget.config?.cmd) {
-              validationWarnings.push(widget.component + ' widget ' + label + ', no click command defined')
+              if (!widget.column || isNaN(widget.column) || widget.column <= 0) {
+                validationWarnings.push(widget.type + ' widget ' + label + ', invalid column configured: ' + widget.column)
+              }
+              if (widget.command === null || widget.command === undefined || widget.command === '') {
+                validationWarnings.push(widget.type + ' widget ' + label + ', no click command defined')
+              }
+            } else {
+              if (widget.column && !isNaN(widget.column) && widget.column > this.MAX_BUTTONGRID_COLUMNS) {
+                validationWarnings.push(widget.type + ' widget ' + label + ', invalid column configured: ' + widget.column)
+              }
             }
           })
         widgetList.forEach((widget) => {
-          if (widget.config) {
-            let label = scope.widgetErrorLabel(widget.config)
-            Object.keys(widget.config)
-              .filter((attr) => ['buttons', 'mappings', 'visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr))
-              .forEach((attr) => {
-                widget.config[attr].forEach((param) => {
-                  if (
-                    (attr === 'mappings' && !this.validateMapping(widget.component, param)) ||
-                    (['visibility', 'valuecolor', 'labelcolor', 'iconcolor', 'iconrules'].includes(attr) && !this.validateRule(attr, param))
-                  ) {
-                    validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in ' + attr + ': ' + param)
-                  }
-                  if (attr === 'buttons') {
-                    if (!param.row || isNaN(param.row) || param.row <= 0 || param.row > 12) {
-                      validationWarnings.push(widget.component + ' widget ' + label + ', invalid row configured: ' + param.row)
-                    }
-                    if (!param.column || isNaN(param.column) || param.column <= 0) {
-                      validationWarnings.push(widget.component + ' widget ' + label + ', invalid column configured: ' + param.column)
-                    }
-                    if (!this.validateMapping(widget.component, param.command)) {
-                      validationWarnings.push(widget.component + ' widget ' + label + ', syntax error in button command: ' + param.command)
-                    }
-                  }
-                })
+          const label = scope.widgetErrorLabel(widget)
+          Object.keys(widget)
+            .filter((attr) =>
+              ['mappings', 'visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr)
+            )
+            .forEach((attr) => {
+              widget[attr].forEach((param) => {
+                if (attr === 'mappings' && !this.validateMapping(param)) {
+                  validationWarnings.push(
+                    widget.type + ' widget ' + label + ', syntax error in ' + attr + ': ' + param.command + '=' + param.label
+                  )
+                }
+                if (
+                  ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr) &&
+                  !this.validateRule(attr, param)
+                ) {
+                  validationWarnings.push(widget.type + ' widget ' + label + ', syntax error in ' + attr)
+                }
               })
-          }
-        })
-        if (validationWarnings.length > 0) {
-          f7.dialog
-            .create({
-              cssClass: 'sitemap-validation-dialog',
-              title: 'Validation errors',
-              text: 'Sitemap definition has validation errors:',
-              content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
-              buttons: [
-                { text: 'Cancel', color: 'gray', close: true },
-                { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
-              ],
-              destroyOnClose: true
             })
-            .open()
-          return false
-        }
+        })
+      }
+      if (validationWarnings.length > 0) {
+        f7.dialog
+          .create({
+            cssClass: 'sitemap-validation-dialog',
+            title: 'Validation errors',
+            text: 'Sitemap definition has validation errors:',
+            content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
+            buttons: [
+              { text: 'Cancel', color: 'gray', close: true },
+              { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
+            ],
+            destroyOnClose: true
+          })
+          .open()
+        return false
       }
       return true
     },
-    widgetErrorLabel(config) {
-      return config?.label ?? (config?.item ? 'for item ' + config.item : 'without label')
+    widgetErrorLabel(widget) {
+      return widget.label ?? (widget.item ? 'for item ' + widget.item : 'without label')
     },
-    validateMapping(component, mapping) {
-      if (component === 'Switch') {
-        // for Switch widget, also check for releaseCommand
-        return this.REGEX_MAPPING_SWITCH.test(mapping)
-      }
-      return this.REGEX_MAPPING.test(mapping)
+    validateMapping(mapping) {
+      return this.isNonEmptyValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
     },
     validateRule(attr, rule) {
-      if (attr === 'visibility') {
-        return this.REGEX_RULE_VISIBILITY.test(rule)
+      if (attr !== 'visibilityRules') {
+        return this.isNonEmptyValue(rule.argument)
       }
-      return this.REGEX_RULE.test(rule)
+      if (rule.conditions?.some((condition) => !this.isNonEmptyValue(condition.value))) {
+        return false
+      }
+      return true
     },
-    cleanConfig(widget) {
-      if (widget.config) {
-        for (let key in widget.config) {
-          if (widget.config[key] && Array.isArray(widget.config[key])) {
-            widget.config[key] = widget.config[key].filter(Boolean)
-            if (key === 'buttons') {
-              widget.config[key].sort((value1, value2) => value1.row - value2.row || value1.column - value2.column)
-            }
-          }
-          if (!widget.config[key] && widget.config[key] !== 0) {
-            delete widget.config[key]
-          }
+    isNonEmptyValue(value) {
+      if (typeof value === 'string') {
+        return value !== ''
+      }
+      return value !== null && value !== undefined
+    },
+    sanitizeRuleCondition(condition) {
+      if (!condition || typeof condition !== 'object' || Array.isArray(condition)) {
+        return null
+      }
+      const sanitizedCondition = {}
+      ;['item', 'condition', 'value'].forEach((key) => {
+        if (this.isNonEmptyValue(condition[key])) {
+          sanitizedCondition[key] = condition[key]
+        }
+      })
+      return Object.keys(sanitizedCondition).length ? sanitizedCondition : null
+    },
+    sanitizeRuleEntry(rule) {
+      if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
+        return null
+      }
+      const sanitizedRule = {}
+      if (Array.isArray(rule.conditions)) {
+        const sanitizedConditions = rule.conditions.map((condition) => this.sanitizeRuleCondition(condition)).filter(Boolean)
+        if (sanitizedConditions.length) {
+          sanitizedRule.conditions = sanitizedConditions
         }
       }
-      if (widget.component === 'Buttongrid') {
-        widget.slots?.widgets?.sort(
-          (button1, button2) =>
-            (button1.config?.row ?? 0) - (button2.config?.row ?? 0) || (button1.config?.column ?? 0) - (button2.config?.column ?? 0)
-        )
+      if (this.isNonEmptyValue(rule.argument)) {
+        sanitizedRule.argument = rule.argument
+      }
+      return Object.keys(sanitizedRule).length ? sanitizedRule : null
+    },
+    sanitizeRuleAttributes(widget) {
+      const ruleAttributes = ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules']
+      ruleAttributes.forEach((ruleAttribute) => {
+        if (!Array.isArray(widget[ruleAttribute])) {
+          return
+        }
+        widget[ruleAttribute] = widget[ruleAttribute].map((rule) => this.sanitizeRuleEntry(rule)).filter(Boolean)
+        if (!widget[ruleAttribute].length) {
+          delete widget[ruleAttribute]
+        }
+      })
+    },
+    sanitizeMappingEntry(mapping) {
+      if (!mapping || typeof mapping !== 'object' || Array.isArray(mapping)) {
+        return null
+      }
+      const sanitizedMapping = {}
+      Object.keys(mapping).forEach((key) => {
+        if (this.isNonEmptyValue(mapping[key])) {
+          sanitizedMapping[key] = mapping[key]
+        }
+      })
+      return Object.keys(sanitizedMapping).length ? sanitizedMapping : null
+    },
+    sanitizeMappings(widget) {
+      if (!Array.isArray(widget.mappings)) {
+        return
+      }
+      widget.mappings = widget.mappings.map((mapping) => this.sanitizeMappingEntry(mapping)).filter(Boolean)
+      if (!widget.mappings.length) {
+        delete widget.mappings
+      }
+    },
+    cleanConfig(widget) {
+      this.sanitizeRuleAttributes(widget)
+      this.sanitizeMappings(widget)
+      for (let key in widget) {
+        if (widget[key] && Array.isArray(widget[key])) {
+          widget[key] = widget[key].filter(Boolean)
+        }
+        if ((key !== 'legend' && !widget[key] && widget[key] !== 0) || widget[key] === null || widget[key] === undefined) {
+          delete widget[key]
+        }
+      }
+      if (widget.type === 'Buttongrid') {
+        widget.widgets?.sort((button1, button2) => (button1.row ?? 0) - (button2.row ?? 0) || (button1.column ?? 0) - (button2.column ?? 0))
       }
       this.addEmptySlot(widget)
-      widget.slots?.widgets?.forEach(this.cleanConfig)
+      widget.widgets?.forEach(this.cleanConfig)
     },
     preProcessSitemapLoad(sitemap) {
       const processed = JSON.parse(JSON.stringify(sitemap))
-      if (processed.slots && processed.slots.widgets) {
-        processed.slots.widgets.forEach(this.preProcessWidgetLoad)
+      processed.type = 'Sitemap' // ensure type is set to Sitemap for the root element
+      if (processed.widgets) {
+        processed.widgets.forEach(this.preProcessWidgetLoad)
       }
+      this.setParents(processed)
+      const editable = processed.editable ?? true
+      this.cleanConfig(processed)
+      processed.editable = editable
       return processed
     },
     preProcessWidgetLoad(widget) {
-      if (widget.config) {
-        for (let key in widget.config) {
-          if (widget.config[key] && Array.isArray(widget.config[key])) {
-            if (key === 'buttons') {
-              widget.config[key].forEach((value, index) => {
-                const vArray = value.split(':')
-                const row = vArray[0]
-                const column = vArray[1]
-                const command = vArray.slice(2).join(':')
-                widget.config[key][index] = { row, column, command }
-              })
-            }
-          }
+      if (widget.label) {
+        const labelMatch = widget.label.match(/^(.*)\s\[(.*?)\]\s*$/)
+        if (labelMatch) {
+          widget.label = labelMatch[1].trim()
+          widget.format = labelMatch[2].trim()
         }
       }
       this.addEmptySlot(widget)
-      widget.slots?.widgets?.forEach(this.preProcessWidgetLoad)
+      widget.widgets?.forEach(this.preProcessWidgetLoad)
     },
     addEmptySlot(widget) {
       // Needed for drag and drop to work into empty slot
-      if (this.LINKABLE_WIDGET_TYPES.includes(widget.component)) {
-        if (!widget.slots) {
-          widget.slots = {}
-        }
-        if (!widget.slots.widgets) {
-          widget.slots.widgets = []
+      if (this.LINKABLE_WIDGET_TYPES.includes(widget.type)) {
+        if (!widget.widgets) {
+          widget.widgets = []
         }
       }
     },
     preProcessSitemapSave(sitemap) {
       const processed = cloneDeep(sitemap)
-      processed.slots?.widgets?.forEach(this.preProcessWidgetSave)
+      processed.widgets?.forEach(this.preProcessWidgetSave)
+      this.cleanConfig(processed)
       return processed
     },
     preProcessWidgetSave(widget) {
+      if (widget.format) {
+        const label = widget.label || ''
+        widget.label = label + (label ? ' ' : '') + '[' + widget.format + ']'
+      }
+      delete widget.format
       delete widget.parent // remove parent from widget, as this would cause a circular reference error when converting to JSON
-      if (widget.config) {
-        for (let key in widget.config) {
-          if (widget.config[key] && Array.isArray(widget.config[key])) {
-            if (key === 'buttons') {
-              widget.config[key].forEach((value, index) => {
-                widget.config[key][index] = value.row + ':' + value.column + ':' + value.command
-              })
-            }
-          }
-        }
-      }
-      if (widget.component === 'Buttongrid' && widget.config?.item) {
-        if (!widget.config.buttons && widget.slots?.widgets) {
-          widget.slots.widgets.forEach((w) => {
-            if (!w.config) w.config = {}
-            if (!w.config.item) w.config.item = widget.config.item
-          })
-          delete widget.config.item
-        }
-      }
-      widget.slots?.widgets?.forEach(this.preProcessWidgetSave)
+      widget.widgets?.forEach(this.preProcessWidgetSave)
     },
     update(value) {
-      this.selectedWidget = null
-      this.selectedWidgetParent = null
-      this.sitemap = value
-      this.cleanConfig(this.sitemap)
+      this.sitemap = this.preProcessSitemapLoad(value)
+      this.selectRootSitemapWidget()
     },
     startEventSource() {},
     stopEventSource() {},
     duplicateWidget() {
+      if (this.selectedWidget.type === 'Sitemap') {
+        const sitemapCopy = this.preProcessSitemapSave(this.selectedWidget)
+        this.f7router.navigate('/settings/sitemaps/duplicate', { props: { sitemapCopy } })
+        return
+      }
       const duplicate = cloneDeep(this.selectedWidget)
-      const index = this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget) + 1
-      this.selectedWidgetParent.slots.widgets.splice(index, 0, duplicate)
-      this.selectedWidget = this.selectedWidgetParent.slots.widgets[index]
+      const index = this.selectedWidgetParent.widgets.indexOf(this.selectedWidget) + 1
+      this.selectedWidgetParent.widgets.splice(index, 0, duplicate)
+      this.selectedWidget = this.selectedWidgetParent.widgets[index]
     },
     removeWidget() {
-      this.selectedWidgetParent.slots.widgets.splice(this.selectedWidgetParent.slots.widgets.indexOf(this.selectedWidget), 1)
-      if (!this.selectedWidgetParent.slots.widgets.length) {
-        delete this.selectedWidgetParent.slots
-      }
+      this.selectedWidgetParent.widgets.splice(this.selectedWidgetParent.widgets.indexOf(this.selectedWidget), 1)
       this.selectedWidget = null
       this.selectedWidgetParent = null
     },
     moveWidgetDown() {
-      let widgets = this.selectedWidgetParent.slots.widgets
-      let pos = widgets.indexOf(this.selectedWidget)
+      const widgets = this.selectedWidgetParent.widgets
+      const pos = widgets.indexOf(this.selectedWidget)
       if (pos >= widgets.length - 1) return
       widgets.splice(pos, 1)
       widgets.splice(pos + 1, 0, this.selectedWidget)
     },
     moveWidgetUp() {
-      let widgets = this.selectedWidgetParent.slots.widgets
-      let pos = widgets.indexOf(this.selectedWidget)
+      const widgets = this.selectedWidgetParent.widgets
+      const pos = widgets.indexOf(this.selectedWidget)
       if (pos <= 0) return
       widgets.splice(pos, 1)
       widgets.splice(pos - 1, 0, this.selectedWidget)
@@ -956,14 +1240,13 @@ export default {
       }
     },
     addWidget(widgetType) {
-      if (!this.selectedWidget.slots) {
-        this.selectedWidget.slots = { widgets: [] }
+      if (!this.selectedWidget.widgets) {
+        this.selectedWidget.widgets = []
       }
       const widget = {
-        component: widgetType,
-        config: {}
+        type: widgetType
       }
-      this.selectedWidget.slots.widgets.push(widget)
+      this.selectedWidget.widgets.push(widget)
       this.selectWidget([widget, this.selectedWidget])
       this.detailsTab = 'widget'
     }

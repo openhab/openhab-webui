@@ -1,3 +1,5 @@
+export const SITEMAP_OPERATOR_OPTIONS = ['', '==', '!=', '>=', '<=', '>', '<']
+
 export default {
   data() {
     return {
@@ -28,31 +30,13 @@ export default {
       { type: 'Video', icon: 'videocam' }
     ]
     this.LINKABLE_WIDGET_TYPES = ['Sitemap', 'Text', 'Frame', 'Group', 'Image', 'Buttongrid']
-    this.WIDGET_TYPES_REQUIRING_ITEM = [
-      'Group',
-      'Chart',
-      'Switch',
-      'Mapview',
-      'Slider',
-      'Selection',
-      'Setpoint',
-      'Input',
-      'Colorpicker',
-      'Colortemperaturepicker',
-      'Default'
-    ]
+    this.WIDGET_TYPES_NOT_REQUIRING_ITEM = ['Frame', 'Text', 'Image', 'Video', 'Webview', 'Buttongrid']
     this.WIDGET_TYPES_SHOWING_VALUE = ['Text', 'Switch', 'Selection', 'Slider', 'Setpoint', 'Input', 'Default', 'Group']
 
     this.REGEX_PERIOD =
       /^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$/
     this.REGEX_DECIMAL_PATTERN =
       /^(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?(?:';'|[^;])*(?:;(?:'[0#.,;E]?'|[^0#.,;E'])*((#[,#]*|0)[,0]*)(\.(0+#*|#+))?(?:E0+)?.*)?$/
-    this.REGEX_MAPPING = /^\s*("[^\n"]*"|\w+)\s*=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|[\w:-]+))?$/u
-    this.REGEX_MAPPING_SWITCH = /^\s*("[^\n"]*"|\w+)\s*(:\s*("[^\n"]*"|\w+)\s*)?=\s*("[^\n"]*"|\w+)\s*(=\s*("[^\n"]*"|\w+))?$/u
-    this.REGEX_RULE_VISIBILITY =
-      /^(\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*$/u
-    this.REGEX_RULE =
-      /^(((\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*AND)*\s*((\w+\s*)?(==|>=|<=|!=|>|<)\s*)?("[^\n"]*"|\w+)\s*)?\s*=)?\s*("#?(\w|:|-)+"|#?(\w|:|-)+)$/u
 
     this.ADDITIONAL_CONTROLS = {
       Image: ['url', 'refresh'],
@@ -60,16 +44,16 @@ export default {
       Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern', 'interpolation'],
       Webview: ['url', 'height'],
       Mapview: ['height'],
-      Slider: ['switchEnabled', 'releaseOnly', 'minValue', 'maxValue', 'step'],
+      Slider: ['switchSupport', 'releaseOnly', 'minValue', 'maxValue', 'step'],
       Setpoint: ['minValue', 'maxValue', 'step'],
       Colortemperaturepicker: ['minValue', 'maxValue'],
       Input: ['inputHint'],
-      Button: ['row', 'column', 'stateless', 'cmd', 'releaseCmd'],
+      Button: ['row', 'column', 'stateless', 'command', 'releaseCommand'],
       Default: ['height']
     }
     this.ENCODING_DEFS = [
       { key: 'mjpeg', value: 'MJPEG Video' },
-      { key: 'HLS', value: 'HTTP Live Streaming' }
+      { key: 'hls', value: 'HTTP Live Streaming' }
     ]
     this.INPUT_HINT_DEFS = [
       { key: 'text', value: 'Text' },
@@ -82,6 +66,11 @@ export default {
       { key: 'linear', value: 'Linear' },
       { key: 'step', value: 'Step' }
     ]
+    this.LEGEND_DEFS = [
+      { key: true, value: 'Always show legend' },
+      { key: false, value: 'Never show legend' }
+    ]
+    this.MAX_BUTTONGRID_COLUMNS = 12
 
     if (!this.itemsList) {
       this.$oh.api.get('/rest/items?staticDataOnly=true').then((items) => {
@@ -97,14 +86,14 @@ export default {
     allowedWidgetTypes(parentWidget) {
       let types = this.WIDGET_TYPES.filter((w) => w.type !== 'Sitemap')
       // Button only allowed inside Buttongrid
-      if (parentWidget.component === 'Buttongrid') return types.filter((t) => t.type === 'Button')
+      if (parentWidget.type === 'Buttongrid') return types.filter((t) => t.type === 'Button')
       types = types.filter((t) => t.type !== 'Button')
       // No frames in frame
-      if (parentWidget.component === 'Frame') return types.filter((t) => t.type !== 'Frame')
+      if (parentWidget.type === 'Frame') return types.filter((t) => t.type !== 'Frame')
       // Linkable widget types only contain frames or none at all
-      if (this.LINKABLE_WIDGET_TYPES.includes(parentWidget.component)) {
-        if (parentWidget.slots?.widgets?.length > 0) {
-          if (parentWidget.slots.widgets.find((w) => w.component === 'Frame')) {
+      if (this.LINKABLE_WIDGET_TYPES.includes(parentWidget.type)) {
+        if (parentWidget.widgets?.length > 0) {
+          if (parentWidget.widgets.find((w) => w.type === 'Frame')) {
             return types.filter((t) => t.type === 'Frame')
           } else {
             return types.filter((t) => t.type !== 'Frame')
@@ -115,33 +104,32 @@ export default {
     },
     canAddChildren(widget) {
       if (!widget) return false
-      if (widget.component === 'Buttongrid') {
-        const buttons = widget.config.buttons
+      if (widget.type === 'Buttongrid') {
+        const buttons = widget.buttons
         if (Array.isArray(buttons) && buttons.length) return false
       }
-      return this.LINKABLE_WIDGET_TYPES.includes(widget.component)
+      return this.LINKABLE_WIDGET_TYPES.includes(widget.type)
     },
-    widgetTypeDef(component) {
-      const componentType = component ?? this.widget.component
-      return this.WIDGET_TYPES.find((w) => w.type === componentType)
+    widgetTypeDef(type) {
+      const widgetType = type ?? this.widget.type
+      return this.WIDGET_TYPES.find((w) => w.type === widgetType)
     },
-    widgetTypeIcon(component) {
-      return this.widgetTypeDef(component).icon
+    widgetTypeIcon(type) {
+      return this.widgetTypeDef(type).icon
     },
-    widgetTypeLabel(component) {
-      return this.widgetTypeDef(component).label ?? this.widgetTypeDef(component).type
+    widgetTypeLabel(type) {
+      return this.widgetTypeDef(type).label ?? this.widgetTypeDef(type).type
     },
     widgetConfigLabel() {
-      return this.widget.config.label ?? (this.widget.component === 'Button' ? this.widget.config.cmd : '')
+      return this.widget.label ?? (this.widget.type === 'Button' ? this.widget.command : '')
     },
     widgetItemLabel(includeItemName) {
-      const item = this.items.find((i) => i.name === this.widget.config.item)
-      return (item?.label || this.widget.config.item) + (includeItemName && item ? ` (${item.name})` : '')
+      const item = this.items.find((i) => i.name === this.widget.item)
+      return (item?.label || this.widget.item) + (includeItemName && item ? ` (${item.name})` : '')
     },
     widgetConfigDescription(includeItemName) {
-      const buttonPosition =
-        this.widget.component === 'Button' ? ` (${this.widget.config?.row ?? '-'},${this.widget.config?.column ?? '-'})` : ''
-      return (this.widget.config?.item ? ': ' + this.widgetItemLabel(includeItemName) : '') + buttonPosition
+      const buttonPosition = this.widget.type === 'Button' ? ` (${this.widget.row ?? '-'},${this.widget.column ?? '-'})` : ''
+      return (this.widget.item ? ': ' + this.widgetItemLabel(includeItemName) : '') + buttonPosition
     }
   }
 }
