@@ -1034,7 +1034,7 @@ export default {
       return widget.label ?? (widget.item ? 'for item ' + widget.item : 'without label')
     },
     validateMapping(mapping) {
-      return mapping.command?.length && (mapping.label?.length || mapping.icon?.length)
+      return this.isNonEmptyValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
     },
     validateRule(attr, rule) {
       if (rule.conditions?.some((condition) => !this.isNonEmptyValue(condition.value))) {

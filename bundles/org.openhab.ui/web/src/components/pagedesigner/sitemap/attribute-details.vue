@@ -738,17 +738,6 @@ export default {
         isFieldObject: this.isFieldObject(field),
         textColor: isItemField ? this.itemPickerTextColor(this.fieldValue(value, field)) : undefined
       }
-    },
-    renderFieldsForRow(fields, value, emitHandler) {
-      return fields.map((field, fieldidx) => ({
-        field,
-        fieldidx,
-        isItemField: this.isItemField(field),
-        isOperatorField: this.isOperatorField(field),
-        props: this.getFieldInputProps(field, fieldidx, value, this.isItemField(field), this.isOperatorField(field)),
-        showLiteral: this.showLiteral(value, fields, fieldidx, '', '', false),
-        emitHandler
-      }))
     }
   }
 }
