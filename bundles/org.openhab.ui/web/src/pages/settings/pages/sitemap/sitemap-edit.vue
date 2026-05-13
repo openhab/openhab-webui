@@ -1122,7 +1122,7 @@ export default {
         if (widget[key] && Array.isArray(widget[key])) {
           widget[key] = widget[key].filter(Boolean)
         }
-        if ((key !== 'legend' &&!widget[key] && widget[key] !== 0) || widget[key] === null || widget[key] === undefined) {
+        if ((key !== 'legend' && !widget[key] && widget[key] !== 0) || widget[key] === null || widget[key] === undefined) {
           delete widget[key]
         }
       }
