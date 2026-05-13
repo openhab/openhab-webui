@@ -81,7 +81,7 @@
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
           <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && selectablePageUids.length">
+          <template v-if="showCheckboxes && pageUids.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
@@ -109,9 +109,8 @@
               :key="page.uid"
               media-item
               class="pagelist-item"
-              :checkbox="showCheckboxes && page.uid !== 'overview'"
+              :checkbox="showCheckboxes"
               :checked="isChecked(page.uid) ? true : null"
-              :disabled="showCheckboxes && page.uid === 'overview' ? true : null"
               prevent-router
               @click.ctrl="ctrlClick($event, page)"
               @click.meta="ctrlClick($event, page)"
@@ -149,11 +148,7 @@
                 <f7-icon v-if="page.editable === false" f7="lock_fill" size="1rem" color="gray" />
               </template>
               <template #media>
-                <oh-icon
-                  :color="page.config?.sidebar || page.uid === 'overview' ? '' : 'gray'"
-                  :icon="getPageIcon(page)"
-                  :height="32"
-                  :width="32" />
+                <oh-icon :color="page.config?.sidebar || 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
               </template>
             </f7-list-item>
           </f7-list-group>
@@ -270,7 +265,7 @@ export default {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
-      return this.selectablePageUids.length > 0 && this.selectablePageUids.every((uid) => this.selectedItems.includes(uid))
+      return this.pageUids.length > 0 && this.pageUids.every((uid) => this.selectedItems.includes(uid))
     },
     listTitle() {
       let title = this.filteredPagesCount
@@ -284,11 +279,11 @@ export default {
       }
       return title
     },
-    selectablePageUids() {
-      return this.filteredPages.filter((page) => page.uid !== 'overview').map((page) => page.uid)
+    pageUids() {
+      return this.filteredPages.map((page) => page.uid)
     },
     selection() {
-      return this.selectablePageUids.filter((uid) => this.selectedItems.includes(uid))
+      return this.pageUids.filter((uid) => this.selectedItems.includes(uid))
     }
   },
   methods: {
@@ -385,8 +380,8 @@ export default {
       if (this.allSelected) {
         this.selectedItems = []
       } else {
-        // assign a copy so mutations to `selectedItems` don't modify the computed `selectablePageUids` array
-        this.selectedItems = Array.from(this.selectablePageUids)
+        // assign a copy so mutations to `selectedItems` don't modify the computed `pageUids` array
+        this.selectedItems = Array.from(this.pageUids)
       }
     },
     click(event, item) {
@@ -402,7 +397,6 @@ export default {
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, itemName, item) {
-      if (itemName === 'overview') return
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(itemName)) {
         this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)

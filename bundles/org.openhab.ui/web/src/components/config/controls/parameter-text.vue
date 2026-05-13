@@ -45,7 +45,7 @@
       :required="configDescription.required"
       :validate="configDescription.context !== 'network-address'"
       :validate-on-blur="false"
-      :clear-button="!configDescription.required && configDescription.context !== 'password'"
+      :clear-button="!configDescription.required && configDescription.context !== 'password' && !readOnly && !configDescription.readOnly"
       @input="updateValue"
       @change="updateValue"
       @focus="onFocus"

@@ -1,5 +1,8 @@
 <template>
-  <ul v-if="!inlineList">
+  <ul v-if="readOnly">
+    <f7-list-item :title="configDescription.label" :after="displayValue" />
+  </ul>
+  <ul v-else-if="!inlineList">
     <f7-list-item :title="configDescription.label" smart-select :smart-select-params="smartSelectParams" ref="item">
       <select
         :name="configDescription.name"
@@ -54,9 +57,20 @@ import { f7, theme } from 'framework7-vue'
 export default {
   props: {
     configDescription: Object,
-    value: [Number, String, Array, Boolean]
+    value: [Number, String, Array, Boolean],
+    readOnly: Boolean
   },
   emits: ['input'],
+  computed: {
+    displayValue() {
+      if (this.value === null || this.value === undefined) return 'N/A'
+      const values = Array.isArray(this.value) ? this.value : [this.value]
+      const labels = values
+        .map((value) => this.configDescription.options.find((option) => this.isSelected(option, value))?.label || value)
+        .filter((value) => value !== null && value !== undefined)
+      return labels.length ? labels.join(', ') : 'N/A'
+    }
+  },
   data() {
     return {
       inlineList: false,
@@ -81,12 +95,13 @@ export default {
     }
     this.smartSelectParams.closeOnSelect = !this.configDescription.multiple
     // this.smartSelectParams.routableModals = false // to fix bug on firefox
-    if (!this.configDescription.multiple && this.configDescription.required && this.value === undefined) {
+    if (!this.readOnly && !this.configDescription.multiple && this.configDescription.required && this.value === undefined) {
       this.$emit('input', this.configDescription.options[0].value)
     }
   },
   methods: {
     updateValue(evt) {
+      if (this.readOnly) return
       let value = this.inlineList ? evt : this.$refs.item.$el.children[0].f7SmartSelect.getValue()
       if (!this.configDescription.multiple) {
         if (this.configDescription.type === 'INTEGER') value = parseInt(value)
@@ -95,16 +110,16 @@ export default {
       }
       this.$emit('input', value)
     },
-    isSelected(option) {
-      if (this.value === null || this.value === undefined) return
+    isSelected(option, selectedValue = this.value) {
+      if (selectedValue === null || selectedValue === undefined) return
       let castedVal = null
       if (this.configDescription.type === 'INTEGER') castedVal = parseInt(option.value)
       if (this.configDescription.type === 'DECIMAL') castedVal = parseFloat(option.value)
-      if (this.configDescription.type === 'BOOLEAN' && typeof this.value === 'boolean') castedVal = option.value === 'true'
+      if (this.configDescription.type === 'BOOLEAN' && typeof selectedValue === 'boolean') castedVal = option.value === 'true'
       if (!this.configDescription.multiple) {
-        return this.value === option.value || this.value === castedVal
+        return selectedValue === option.value || selectedValue === castedVal
       } else {
-        return this.value && (this.value.indexOf(option.value) >= 0 || this.value.indexOf(castedVal) >= 0)
+        return selectedValue && (selectedValue.indexOf(option.value) >= 0 || selectedValue.indexOf(castedVal) >= 0)
       }
     }
   }
