@@ -71,7 +71,7 @@
         </f7-list>
         <f7-list v-show="listedItems.length > 0" class="col widgets-list" ref="widgetsList" media-list>
           <f7-list-item
-            v-for="(widget, index) in listedItems"
+            v-for="widget in listedItems"
             :key="widget.uid"
             media-item
             class="widgetlist-item"
