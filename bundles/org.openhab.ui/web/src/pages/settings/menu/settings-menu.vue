@@ -24,18 +24,18 @@
       <f7-row>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
           <template v-for="section in settingsNavigationSections" :key="section.id">
-            <f7-block-title>{{ section.title }}</f7-block-title>
+            <f7-block-title>{{ $t(section.titleKey) }}</f7-block-title>
             <f7-list media-list class="search-list">
               <f7-list-item
                 v-for="item in section.items"
                 :key="item.id"
                 media-item
+                :title="$t(item.titleKey)"
+                :footer="$t(item.footerKey)"
                 :link="item.link"
-                :title="item.title"
                 :badge="settingsMenuBadge(item)"
                 :after="settingsMenuAfter(item)"
                 :badge-color="settingsMenuBadgeColor(item)"
-                :footer="settingsMenuFooter(item)"
                 @click="handleSettingsMenuItemClick(item)">
                 <template #media>
                   <f7-icon :f7="item.icon" color="gray" />
@@ -46,7 +46,7 @@
         </f7-col>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
           <div v-show="servicesLoaded">
-            <f7-block-title>System Settings</f7-block-title>
+            <f7-block-title>{{ $t('settings.groups.system-settings') }}</f7-block-title>
             <f7-list class="search-list">
               <f7-list-item
                 v-for="service in systemSettings"
@@ -61,7 +61,7 @@
           </div>
           <!-- skeleton for not servicesLoaded -->
           <div v-if="!servicesLoaded">
-            <f7-block-title>System Settings</f7-block-title>
+            <f7-block-title>{{ $t('settings.groups.system-settings') }}</f7-block-title>
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
@@ -77,7 +77,7 @@
             </div>
             <!-- skeleton for not addonsLoaded -->
             <div v-if="!addonsLoaded">
-              <f7-block-title>Add-on Settings</f7-block-title>
+              <f7-block-title>{{ $t('settings.groups.addon-settings') }}</f7-block-title>
               <f7-list>
                 <f7-list-item v-for="n in 4" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
               </f7-list>
@@ -94,7 +94,7 @@
           </div>
           <!-- skeleton for not addonsLoaded -->
           <div v-if="!addonsLoaded">
-            <f7-block-title>Add-on Settings</f7-block-title>
+            <f7-block-title>{{ $t('settings.groups.addon-settings') }}</f7-block-title>
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
@@ -152,20 +152,7 @@ export default {
       persistenceAddonsInstalled: [],
       addonsServices: [],
       systemServices: [],
-      objectsSubtitles: {
-        health: 'Manage detected system health issues',
-        things: 'Manage the physical layer',
-        model: 'The semantic model of your home',
-        items: 'Manage the functional layer',
-        transform: 'Make raw data human-readable',
-        persistence: 'How to keep data for future use',
-        pages: 'Design displays for user interaction',
-        sitemaps: 'Design classic sitemaps for user interaction',
-        rules: 'Automate with triggers and actions',
-        scenes: 'Store a set of desired states to recall',
-        scripts: 'Rules dedicated to running code',
-        schedule: 'View upcoming time-based rules'
-      },
+
       inboxCount: '',
       thingsCount: '',
       itemsCount: '',
@@ -395,9 +382,6 @@ export default {
     settingsMenuBadgeColor(item) {
       if (item.id === 'things' && this.inboxCount > 0) return 'red'
       return 'blue'
-    },
-    settingsMenuFooter(item) {
-      return item.footer ? this.objectsSubtitles[item.footer] : undefined
     },
     handleSettingsMenuItemClick(item) {
       if (item.id === 'model') this.modelSelectedItem = null

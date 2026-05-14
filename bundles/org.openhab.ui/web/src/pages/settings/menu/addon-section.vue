@@ -1,6 +1,6 @@
 <template>
   <div>
-    <f7-block-title> Add-on Settings </f7-block-title>
+    <f7-block-title>{{ $t('settings.groups.addon-settings') }}</f7-block-title>
     <f7-list class="search-list">
       <f7-list-item v-for="a in addonsSettings" v-show="!a.hidden" :key="a.uid" :link="'addons/' + a.uid" :title="a.label" />
       <f7-list-button v-if="!expanded && addonsSettings.find((a) => a.hidden)" color="blue" @click="$emit('expand')">
