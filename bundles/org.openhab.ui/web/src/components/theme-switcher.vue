@@ -50,62 +50,63 @@
 
     <f7-row>
       <f7-col>
-        <f7-block-title>{{ t('about.miscellaneous') }}</f7-block-title>
-        <f7-list>
-          <f7-list-item>
-            <span>{{ t('about.miscellaneous.home.navbar') }}</span>
-            <f7-segmented class="home-navbar-selection">
-              <f7-button
-                v-for="navbarstyle in ['default', 'simple', 'large']"
-                outline
-                small
-                :active="homeNavBar === navbarstyle"
-                @click="homeNavBar = navbarstyle"
-                :text="t('about.miscellaneous.home.navbar.' + navbarstyle)"
-                :key="navbarstyle" />
-            </f7-segmented>
-          </f7-list-item>
-          <f7-list-item>
-            <span>{{ t('about.miscellaneous.home.background') }}</span>
-            <f7-segmented class="home-navbar-selection">
-              <f7-button
-                v-for="background in ['default', 'standard', 'white']"
-                outline
-                small
-                :active="homeBackground === background"
-                @click="homeBackground = background"
-                :text="t('about.miscellaneous.home.background.' + background)"
-                :key="background" />
-            </f7-segmented>
-          </f7-list-item>
-          <f7-list-item v-show="runtimeStore.apiEndpoint('habot')">
-            <span>{{ t('about.miscellaneous.home.hideChatInput') }}</span>
-            <f7-toggle v-model:checked="hideChatInput" />
-          </f7-list-item>
-          <f7-list-item>
-            <span>{{ t('about.miscellaneous.home.disableCardExpansionAnimation') }}</span>
-            <f7-toggle v-model:checked="disableExpandableCardAnimation" />
-          </f7-list-item>
-          <f7-list-item>
-            <span>{{ t('about.miscellaneous.theme.disablePageTransition') }}</span>
-            <f7-toggle v-model:checked="disablePageTransitionAnimation" />
-          </f7-list-item>
-          <f7-list-item>
-            <span>{{ t('about.miscellaneous.webaudio.enable') }}</span>
-            <f7-toggle v-model:checked="webAudio" />
-          </f7-list-item>
-          <f7-list-item v-if="userStore.isAdmin()">
-            <span>{{ t('about.miscellaneous.sidebar.showSubmenuEditor') }}</span>
-            <f7-toggle v-model:checked="showSidebarSubmenuEditor" />
-          </f7-list-item>
-          <f7-list-group>
-            <item-picker
-              :label="t('about.miscellaneous.commandItem.title')"
-              :multiple="false"
-              :value="commandItem"
-              @input="setCommandItem" />
-          </f7-list-group>
-        </f7-list>
+        <group-container full-width top-spacing="block" :title="t('about.miscellaneous')">
+          <f7-list>
+            <f7-list-item>
+              <span>{{ t('about.miscellaneous.home.navbar') }}</span>
+              <f7-segmented class="home-navbar-selection">
+                <f7-button
+                  v-for="navbarstyle in ['default', 'simple', 'large']"
+                  outline
+                  small
+                  :active="homeNavBar === navbarstyle"
+                  @click="homeNavBar = navbarstyle"
+                  :text="t('about.miscellaneous.home.navbar.' + navbarstyle)"
+                  :key="navbarstyle" />
+              </f7-segmented>
+            </f7-list-item>
+            <f7-list-item>
+              <span>{{ t('about.miscellaneous.home.background') }}</span>
+              <f7-segmented class="home-navbar-selection">
+                <f7-button
+                  v-for="background in ['default', 'standard', 'white']"
+                  outline
+                  small
+                  :active="homeBackground === background"
+                  @click="homeBackground = background"
+                  :text="t('about.miscellaneous.home.background.' + background)"
+                  :key="background" />
+              </f7-segmented>
+            </f7-list-item>
+            <f7-list-item v-show="runtimeStore.apiEndpoint('habot')">
+              <span>{{ t('about.miscellaneous.home.hideChatInput') }}</span>
+              <f7-toggle v-model:checked="hideChatInput" />
+            </f7-list-item>
+            <f7-list-item>
+              <span>{{ t('about.miscellaneous.home.disableCardExpansionAnimation') }}</span>
+              <f7-toggle v-model:checked="disableExpandableCardAnimation" />
+            </f7-list-item>
+            <f7-list-item>
+              <span>{{ t('about.miscellaneous.theme.disablePageTransition') }}</span>
+              <f7-toggle v-model:checked="disablePageTransitionAnimation" />
+            </f7-list-item>
+            <f7-list-item>
+              <span>{{ t('about.miscellaneous.webaudio.enable') }}</span>
+              <f7-toggle v-model:checked="webAudio" />
+            </f7-list-item>
+            <f7-list-item v-if="userStore.isAdmin()">
+              <span>{{ t('about.miscellaneous.sidebar.showSubmenuEditor') }}</span>
+              <f7-toggle v-model:checked="showSidebarSubmenuEditor" />
+            </f7-list-item>
+            <f7-list-group>
+              <item-picker
+                :label="t('about.miscellaneous.commandItem.title')"
+                :multiple="false"
+                :value="commandItem"
+                @input="setCommandItem" />
+            </f7-list-group>
+          </f7-list>
+        </group-container>
       </f7-col>
     </f7-row>
 
@@ -172,10 +173,12 @@ import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import GroupContainer from './util/group-container.vue'
 
 export default {
   components: {
-    ItemPicker
+    ItemPicker,
+    GroupContainer
   },
   setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })

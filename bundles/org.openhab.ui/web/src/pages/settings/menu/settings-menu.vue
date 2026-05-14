@@ -23,8 +23,7 @@
     <f7-block class="block-narrow after-big-title settings-menu">
       <f7-row>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
-          <template v-for="section in settingsNavigationSections" :key="section.id">
-            <f7-block-title>{{ $t(section.titleKey) }}</f7-block-title>
+          <group-container v-for="section in settingsNavigationSections" :key="section.id" :title="$t(section.titleKey)">
             <f7-list media-list class="search-list">
               <f7-list-item
                 v-for="item in section.items"
@@ -42,30 +41,29 @@
                 </template>
               </f7-list-item>
             </f7-list>
-          </template>
+          </group-container>
         </f7-col>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
-          <div v-show="servicesLoaded">
-            <f7-block-title>{{ $t('settings.groups.system-settings') }}</f7-block-title>
-            <f7-list class="search-list">
+          <group-container v-show="servicesLoaded" :title="$t('settings.groups.system-settings')">
+            <f7-list class="search-list no-margin-top">
               <f7-list-item
                 v-for="service in systemSettings"
                 v-show="!service.hidden"
                 :key="service.id"
                 :link="'services/' + service.id"
                 :title="service.label" />
+
               <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
-          </div>
+          </group-container>
           <!-- skeleton for not servicesLoaded -->
-          <div v-if="!servicesLoaded">
-            <f7-block-title>{{ $t('settings.groups.system-settings') }}</f7-block-title>
+          <group-container v-if="!servicesLoaded" :title="$t('settings.groups.system-settings')">
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
-          </div>
+          </group-container>
           <div v-show="$f7dim.width < 1450">
             <div v-show="addonsLoaded && addonsInstalled.length > 0">
               <addon-section
@@ -76,12 +74,11 @@
                 @expand="expand('addonsExpanded')" />
             </div>
             <!-- skeleton for not addonsLoaded -->
-            <div v-if="!addonsLoaded">
-              <f7-block-title>{{ $t('settings.groups.addon-settings') }}</f7-block-title>
+            <group-container v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')">
               <f7-list>
                 <f7-list-item v-for="n in 4" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
               </f7-list>
-            </div>
+            </group-container>
           </div>
         </f7-col>
         <f7-col v-show="$f7dim.width >= 1450" width="33" class="add-on-col">
@@ -93,12 +90,11 @@
               @expand="expand('addonsExpanded')" />
           </div>
           <!-- skeleton for not addonsLoaded -->
-          <div v-if="!addonsLoaded">
-            <f7-block-title>{{ $t('settings.groups.addon-settings') }}</f7-block-title>
+          <group-container v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')">
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
-          </div>
+          </group-container>
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
@@ -120,6 +116,20 @@
     height calc(var(--f7-searchbar-input-height) + var(--f7-searchbar-inner-padding-left))
     .searchbar
       top calc(0.5 * var(--f7-searchbar-inner-padding-left))
+
+  .list-group
+    background var(--f7-list-bg-color, #fff)
+    border-radius 16px
+    overflow hidden
+    margin-bottom 20px
+
+    .list
+      margin-bottom 6px
+      ul:after
+        display none !important
+      li:first-child
+        padding-top 6px
+        border-top 1px solid var(--f7-list-border-color)
 </style>
 
 <script>
@@ -132,11 +142,14 @@ import { getAdminMenuPageSections } from '@/js/admin-menu.ts'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
+import GroupContainer from '@/components/util/group-container.vue'
+
 import * as api from '@/api'
 
 export default {
   components: {
-    AddonSection
+    AddonSection,
+    GroupContainer
   },
   props: {
     f7router: Object
