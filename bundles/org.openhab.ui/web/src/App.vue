@@ -50,7 +50,7 @@
             :title="t('sidebar.settings')"
             view=".view-main"
             :animate="false"
-            :class="{ currentsection: isMainMenuHighlighted('settings') }">
+            :class="{ currentsection: isMainMenuHighlighted('settings', $refs.settingsSubmenu) }">
             <template #media>
               <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
             </template>
@@ -64,6 +64,7 @@
             <transition name="submenu">
               <sidebar-admin-submenu
                 v-if="isOpen('settings')"
+                ref="settingsSubmenu"
                 :key="`settings-${uiOptionsStore.showSidebarSubmenuEditor}`"
                 section="settings"
                 :active-path="currentPath.settings"
@@ -115,7 +116,7 @@
             link="/developer/"
             :title="t('sidebar.developerTools')"
             :animate="false"
-            :class="{ currentsection: isMainMenuHighlighted('developer') }">
+            :class="{ currentsection: isMainMenuHighlighted('developer', $refs.developerSubmenu) }">
             <template #media>
               <f7-icon ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
             </template>
@@ -129,6 +130,7 @@
             <transition name="submenu">
               <sidebar-admin-submenu
                 v-if="isOpen('developer')"
+                ref="developerSubmenu"
                 :key="`developer-${uiOptionsStore.showSidebarSubmenuEditor}`"
                 section="developer"
                 :active-path="currentPath.developer"
@@ -431,7 +433,6 @@ import connectionHealth from '@/components/connection-health-mixin'
 import sseEvents from '@/components/sse-events-mixin'
 
 import { useDialog } from '@/js/composables/useDialog'
-import { useSidebarAdminSubmenu } from '@/js/composables/useSidebarAdminSubmenu'
 
 import { i18n, loadLocaleMessages } from '@/js/i18n'
 
@@ -461,7 +462,6 @@ export default {
     const { locale, mergeLocaleMessage: globalMergeLocaleMessage } = useI18n({ useScope: 'global' })
     const { t, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
     const { startAudioWebSocket, triggerDialog } = useDialog()
-    const sidebarAdminSubmenu = useSidebarAdminSubmenu()
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
     loadLocaleMessages('about', localMergeLocaleMessage)
@@ -473,8 +473,7 @@ export default {
       globalMergeLocaleMessage,
       locale,
       startAudioWebSocket,
-      triggerDialog,
-      ...sidebarAdminSubmenu
+      triggerDialog
     }
   },
   data() {
@@ -817,13 +816,13 @@ export default {
         })
       }
     },
-    isMainMenuHighlighted(section) {
+    isMainMenuHighlighted(section, submenu) {
       const sectionPath = this.currentPath[section]
       if (!sectionPath) return false
       if (sectionPath.$end) return true // highlight when on the /section/ itself
 
       // don't highlight when on a section submenu page that is available in the sidebar
-      if (useSidebarAdminSubmenu(section).items.value.some((item) => sectionPath[item.id])) return false
+      if (submenu && submenu.items.some((item) => sectionPath[item.id])) return false
 
       // highlight when on a section submenu page that is NOT available in the sidebar and thus has no direct link to it
       // e.g. /settings/services/ and /settings/addons/

@@ -121,6 +121,10 @@ const customizeAvailable = computed(() => uiOptionsStore.showSidebarSubmenuEdito
 function isItemActive(itemId: string) {
   return Boolean(props.activePath?.[itemId])
 }
+
+defineExpose({
+  items
+})
 </script>
 
 <style lang="stylus">
