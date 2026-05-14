@@ -1,32 +1,56 @@
 <template>
   <div class="sidebar-admin-submenu">
     <ul v-if="!customizing" class="menu-sublinks">
-      <f7-list-item
-        v-for="item in items"
-        :key="item.id"
-        :link="item.link"
-        :title="item.title"
-        view=".view-main"
-        panel-close
-        :animate="false"
-        no-chevron
-        :class="{ currentsection: isItemActive(item.id) }"
-        @click="emit('navigate', item)">
-        <template #media>
-          <f7-icon :f7="item.icon" color="gray" />
-        </template>
-      </f7-list-item>
-      <f7-list-item
-        v-if="customizeAvailable"
-        class="submenu-customize-entry"
-        title="Edit submenu"
-        link="#"
-        no-chevron
-        @click.prevent="startCustomization">
-        <template #media>
-          <f7-icon f7="slider_horizontal_3" color="gray" />
-        </template>
-      </f7-list-item>
+      <transition-group name="list-expand" tag="div">
+        <f7-list-item
+          v-for="item in items"
+          :key="item.id"
+          :link="item.link"
+          :title="item.title"
+          view=".view-main"
+          panel-close
+          :animate="false"
+          no-chevron
+          :class="{ currentsection: isItemActive(item.id) }"
+          @click="emit('navigate', item)">
+          <template #media>
+            <f7-icon :f7="item.icon" color="gray" />
+          </template>
+        </f7-list-item>
+        <f7-list-item
+          v-if="customizeAvailable"
+          class="submenu-customize-entry"
+          title="Edit submenu"
+          link="#"
+          no-chevron
+          @click.prevent="startCustomization">
+          <template #media>
+            <f7-icon f7="slider_horizontal_3" color="gray" />
+          </template>
+        </f7-list-item>
+        <f7-list-item
+          v-else-if="!expanded"
+          title="show all"
+          class="submenu-expand-entry"
+          link="#"
+          no-chevron
+          @click.stop.prevent="showAllSubmenuEntries">
+          <template #media>
+            <f7-icon f7="chevron_down" color="gray" />
+          </template>
+        </f7-list-item>
+        <f7-list-item
+          v-else
+          title="show less"
+          class="submenu-collapse-entry"
+          link="#"
+          no-chevron
+          @click.stop.prevent="collapseSubmenuEntries">
+          <template #media>
+            <f7-icon f7="chevron_up" color="gray" />
+          </template>
+        </f7-list-item>
+      </transition-group>
     </ul>
 
     <div v-if="customizing" class="submenu-customizer">
@@ -77,6 +101,7 @@ const uiOptionsStore = useUIOptionsStore()
 const {
   items,
   candidates,
+  expanded,
   customizing,
   draftSelectedIds,
   isCustomized,
@@ -84,11 +109,13 @@ const {
   toggleDraft,
   applyCustomization,
   resetCustomization,
-  cancelCustomization
+  cancelCustomization,
+  showAllSubmenuEntries,
+  collapseSubmenuEntries
 } = useSidebarAdminSubmenu(props.section)
 
 // --- Computed ---
-const customizeAvailable = computed(() => uiOptionsStore.showSidebarSubmenuEditor)
+const customizeAvailable = computed(() => uiOptionsStore.showSidebarSubmenuEditor && !uiOptionsStore.sidebarSubmenuCustomizationSection)
 
 // --- Methods ---
 function isItemActive(itemId: string) {
@@ -145,6 +172,24 @@ function isItemActive(itemId: string) {
     .item-title,
     .icon
       color var(--f7-list-item-footer-text-color) !important
+
+  .submenu-expand-entry, .submenu-collapse-entry
+    opacity 0.6
+
+  .list-expand-enter-active,
+  .list-expand-leave-active
+    transition all 0.4s ease
+    overflow hidden
+    max-height 50px
+
+  .list-expand-enter-from,
+  .list-expand-leave-to
+    opacity 0
+    max-height 0
+    transform translateX(20px)
+
+  .list-expand-move
+    transition transform 0.4s ease
 
 .dark
   .sidebar-admin-submenu

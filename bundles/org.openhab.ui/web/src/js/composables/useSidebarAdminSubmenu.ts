@@ -17,8 +17,12 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
   }
 
   const draftSelectedIds = ref<string[]>([])
+  const expandedState = ref(false)
 
   const items = computed<AdminMenuLinkItemDefinition[]>(() => {
+    if (expanded.value) {
+      return getAdminSidebarCandidates(section, runtimeStoreLike)
+    }
     return getEffectiveAdminSidebarItems(section, runtimeStoreLike, uiOptionsStore.sidebarSubmenuSelections[section])
   })
 
@@ -27,6 +31,15 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
   })
 
   const customizing = computed(() => uiOptionsStore.sidebarSubmenuCustomizationSection === section)
+  const expanded = computed(() => !customizing.value && expandedState.value)
+
+  const showAllSubmenuEntries = () => {
+    expandedState.value = true
+  }
+
+  const collapseSubmenuEntries = () => {
+    expandedState.value = false
+  }
 
   const syncDraft = () => {
     draftSelectedIds.value = items.value.map((item) => item.id)
@@ -78,6 +91,7 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
   return {
     items,
     candidates,
+    expanded,
     customizing,
     draftSelectedIds,
     startCustomization,
@@ -85,6 +99,8 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
     applyCustomization,
     isCustomized,
     resetCustomization,
-    cancelCustomization
+    cancelCustomization,
+    showAllSubmenuEntries,
+    collapseSubmenuEntries
   }
 }
