@@ -12,117 +12,81 @@
       <f7-tab id="tab-menu" :tab-active="currentTab === 'menu'">
         <f7-block class="block-narrow after-big-title settings-menu">
           <f7-row>
-            <f7-col width="100" medium="50">
-              <f7-block-title>Advanced Object Management</f7-block-title>
-              <f7-list>
-                <f7-list-item media-item title="Widgets" footer="Develop custom widgets to use on pages" link="widgets/">
-                  <template #media>
-                    <f7-icon f7="rectangle_on_rectangle_angled" color="gray" />
+            <f7-col
+              v-for="column in developerNavigationColumns"
+              :key="column"
+              width="100"
+              :medium="developerNavigationColumns.length > 1 ? '50' : '100'">
+              <template v-for="section in developerColumnSections(column)" :key="section.id">
+                <f7-block-title>{{ $t(section.titleKey) }}</f7-block-title>
+                <f7-list>
+                  <template v-for="item in section.items" :key="item.id">
+                    <f7-list-item
+                      v-if="item.kind === 'link'"
+                      media-item
+                      :class="item.className"
+                      :title="$t(item.titleKey)"
+                      :footer="$t(item.footerKey)"
+                      :link="item.link">
+                      <template #media>
+                        <f7-icon :f7="item.icon" color="gray" />
+                      </template>
+                    </f7-list-item>
+                    <f7-list-item
+                      v-else-if="item.kind === 'action'"
+                      media-item
+                      :class="item.className"
+                      :title="$t(item.titleKey)"
+                      :footer="$t(item.footerKey)"
+                      link="#"
+                      @click.prevent="runDeveloperMenuAction(item.actionId)">
+                      <template #media>
+                        <f7-icon :f7="item.icon" color="gray" />
+                      </template>
+                    </f7-list-item>
+                    <f7-list-item
+                      v-else-if="item.kind === 'toggle'"
+                      media-item
+                      no-chevron
+                      :class="item.className"
+                      :title="$t(item.titleKey)"
+                      :footer="$t(item.footerKey)"
+                      link="#"
+                      @click.prevent="toggleDeveloperMenuControl(item.controlId)">
+                      <template #media>
+                        <f7-icon :f7="item.icon" color="gray" />
+                      </template>
+                      <template #header>
+                        <div
+                          style="height: 100%; height: 32px"
+                          class="display-flex float-right flex-direction-column justify-content-center">
+                          <f7-toggle
+                            color="blue"
+                            :checked="developerToggleValue(item.controlId) ? true : null"
+                            @click.stop="toggleDeveloperMenuControl(item.controlId)" />
+                        </div>
+                      </template>
+                    </f7-list-item>
+                    <f7-list-item
+                      v-else-if="item.kind === 'select'"
+                      smart-select
+                      :smartSelectParams="item.smartSelectParams"
+                      media-item
+                      :class="item.className"
+                      :title="$t(item.titleKey)"
+                      :footer="$t(item.footerKey)">
+                      <template #media>
+                        <f7-icon :f7="item.icon" color="gray" />
+                      </template>
+                      <select
+                        :value="developerSelectValue(item.controlId)"
+                        @change="updateDeveloperSelectValue(item.controlId, $event.target.value)">
+                        <option v-for="option in item.options" :key="option.value" :value="option.value">{{ option.label }}</option>
+                      </select>
+                    </f7-list-item>
                   </template>
-                </f7-list-item>
-                <f7-list-item media-item title="Block Libraries" footer="Develop custom extensions for Blockly scripts" link="blocks/">
-                  <template #media>
-                    <f7-icon f7="ticket" color="gray" />
-                  </template>
-                </f7-list-item>
-                <f7-list-item media-item title="Semantic Tags" footer="Extend the list of semantic tags for the model" link="semantics/">
-                  <template #media>
-                    <f7-icon f7="list_bullet_indent" color="gray" />
-                  </template>
-                </f7-list-item>
-                <f7-list-item
-                  media-item
-                  title="Things File Definitions"
-                  footer="Copy all Things' file definitions to clipboard"
-                  link="#"
-                  @click="copyFileDefinitionToClipboard(ObjectType.THING)">
-                  <template #media>
-                    <f7-icon f7="lightbulb" color="gray" />
-                  </template>
-                </f7-list-item>
-                <f7-list-item
-                  media-item
-                  title="Items File Definitions"
-                  footer="Copy all Items' file definitions to clipboard"
-                  link="#"
-                  @click="copyFileDefinitionToClipboard(ObjectType.ITEM)">
-                  <template #media>
-                    <f7-icon f7="square_on_circle" color="gray" />
-                  </template>
-                </f7-list-item>
-                <f7-list-item
-                  media-item
-                  title="Add Items from Textual Definition"
-                  footer="Create or update items &amp; links in bulk"
-                  link="add-items-dsl/">
-                  <template #media>
-                    <f7-icon f7="text_badge_plus" color="gray" />
-                  </template>
-                </f7-list-item>
-              </f7-list>
-            </f7-col>
-            <f7-col width="100" medium="50">
-              <f7-block-title>Maintenance Tools</f7-block-title>
-              <f7-list>
-                <f7-list-item
-                  media-item
-                  title="Developer Sidebar"
-                  class="developer-sidebar-toggle"
-                  footer="Show a panel with various tools and help"
-                  link=""
-                  no-chevron
-                  @click="f7.emit('toggleDeveloperDock')">
-                  <template #media>
-                    <f7-icon f7="wrench" color="gray" />
-                  </template>
-                  <template #header>
-                    <div style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
-                      <f7-toggle color="blue" :checked="runtimeStore.showDeveloperDock ? true : null" />
-                    </div>
-                  </template>
-                </f7-list-item>
-                <f7-list-item media-item title="API Explorer" footer="Discover and access the REST API directly" link="api-explorer/">
-                  <template #media>
-                    <f7-icon f7="burn" color="gray" />
-                  </template>
-                </f7-list-item>
-                <f7-list-item media-item title="Log Viewer" footer="Monitor openHAB log output" link="log-viewer/">
-                  <template #media>
-                    <f7-icon f7="square_list" color="gray" />
-                  </template>
-                </f7-list-item>
-              </f7-list>
-              <f7-block-title>Local Developer Settings</f7-block-title>
-              <f7-list>
-                <f7-list-item
-                  smart-select
-                  :smartSelectParams="{ openIn: 'popup', closeOnSelect: true }"
-                  media-item
-                  title="UI Logging"
-                  footer="Set the log level for the browser console logs">
-                  <template #media>
-                    <f7-icon f7="exclamationmark_circle" color="gray" />
-                  </template>
-                  <select v-model="logLevel" @change="onLogLevelChange">
-                    <option value="TRACE">Trace</option>
-                    <option value="DEBUG">Debug</option>
-                    <option value="INFO">Info</option>
-                    <option value="WARN">Warn</option>
-                    <option value="ERROR">Error</option>
-                    <option value="OFF">Off</option>
-                  </select>
-                </f7-list-item>
-                <f7-list-item media-item title="Code Editor: Vim Mode" footer="Enable Vim keybindings in code editors">
-                  <template #media>
-                    <f7-icon f7="keyboard" color="gray" />
-                  </template>
-                  <template #header>
-                    <div style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
-                      <f7-toggle color="blue" v-model:checked="uiOptionsStore.codeMirrorSettings.vimMode" />
-                    </div>
-                  </template>
-                </f7-list-item>
-              </f7-list>
+                </f7-list>
+              </template>
             </f7-col>
           </f7-row>
           <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
@@ -211,6 +175,7 @@ import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import FileDefinition from '@/pages/settings/file-definition-mixin'
+import { getAdminMenuPageSections } from '@/js/admin-menu.ts'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
@@ -238,9 +203,64 @@ export default {
     }
   },
   computed: {
+    developerNavigationSections() {
+      return getAdminMenuPageSections('developer', this.runtimeStore)
+    },
+    developerNavigationColumns() {
+      return [...new Set(this.developerNavigationSections.map((section) => section.column))]
+    },
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
+    developerColumnSections(column) {
+      return this.developerNavigationSections.filter((section) => section.column === column)
+    },
+    runDeveloperMenuAction(actionId) {
+      switch (actionId) {
+        case 'copy-thing-file-definitions':
+          this.copyFileDefinitionToClipboard(this.ObjectType.THING)
+          break
+        case 'copy-item-file-definitions':
+          this.copyFileDefinitionToClipboard(this.ObjectType.ITEM)
+          break
+      }
+    },
+    developerToggleValue(controlId) {
+      switch (controlId) {
+        case 'developer-sidebar':
+          return this.runtimeStore.showDeveloperDock
+        case 'vim-mode':
+          return this.uiOptionsStore.codeMirrorSettings.vimMode
+        default:
+          return false
+      }
+    },
+    toggleDeveloperMenuControl(controlId) {
+      switch (controlId) {
+        case 'developer-sidebar':
+          this.f7.emit('toggleDeveloperDock')
+          break
+        case 'vim-mode':
+          this.uiOptionsStore.codeMirrorSettings.vimMode = !this.uiOptionsStore.codeMirrorSettings.vimMode
+          break
+      }
+    },
+    developerSelectValue(controlId) {
+      switch (controlId) {
+        case 'ui-logging':
+          return this.logLevel
+        default:
+          return ''
+      }
+    },
+    updateDeveloperSelectValue(controlId, value) {
+      switch (controlId) {
+        case 'ui-logging':
+          this.logLevel = value
+          this.onLogLevelChange()
+          break
+      }
+    },
     onPageBeforeRemove() {
       if (this.sseClient) this.$oh.sse.close(this.sseClient)
     },
