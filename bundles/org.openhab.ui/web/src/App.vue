@@ -355,14 +355,6 @@
     .logo-inner
       background #111111 !important
 
-.menu-sublinks
-  color var(--f7-list-item-footer-text-color)
-  padding-left 0
-  margin-bottom var(--f7-list-margin-vertical)
-  // --f7-list-item-media-margin 24px
-  // --f7-list-item-padding-horizontal 32px
-  // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
-
 .section-toggle
   width 36px
   color gray
@@ -822,7 +814,7 @@ export default {
       if (sectionPath.$end) return true // highlight when on the /section/ itself
 
       // don't highlight when on a section submenu page that is available in the sidebar
-      if (submenu && submenu.items.some((item) => sectionPath[item.id])) return false
+      if (submenu?.hasVisibleItem(sectionPath.$key)) return false
 
       // highlight when on a section submenu page that is NOT available in the sidebar and thus has no direct link to it
       // e.g. /settings/services/ and /settings/addons/
@@ -1016,7 +1008,7 @@ export default {
     handleSidebarClick(ev) {
       // Collapse all sections when clicking in another section / link
       if (ev.target.closest('.section-toggle')) return
-      if (ev.target.closest('.submenu-customizer, .submenu-customize-entry, .submenu-expand-entry, .submenu-collapse-entry')) return
+      if (ev.target.closest('[data-sidebar-ignore-collapse]')) return
       if (ev.target.closest('.list-item a, a[href]')) {
         // avoid flicker (collapse + reopen)
         setTimeout(this.collapseAllSections, 30)
