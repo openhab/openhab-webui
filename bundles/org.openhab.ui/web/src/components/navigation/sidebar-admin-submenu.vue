@@ -23,7 +23,8 @@
           title="Edit submenu"
           link="#"
           no-chevron
-          @click.prevent="startCustomization">
+          data-sidebar-ignore-collapse
+          @click="startCustomization">
           <template #media>
             <f7-icon f7="slider_horizontal_3" color="gray" />
           </template>
@@ -34,7 +35,8 @@
           title="Hide submenu editor"
           link="#"
           no-chevron
-          @click.prevent="uiOptionsStore.showSidebarSubmenuEditor = false">
+          data-sidebar-ignore-collapse
+          @click="hideSubmenuEditor">
           <template #media>
             <f7-icon f7="xmark" color="gray" />
           </template>
@@ -45,7 +47,8 @@
           class="submenu-expand-entry"
           link="#"
           no-chevron
-          @click.stop.prevent="showAllSubmenuEntries">
+          data-sidebar-ignore-collapse
+          @click="showAllSubmenuEntries">
           <template #media>
             <f7-icon f7="chevron_down" color="gray" />
           </template>
@@ -56,7 +59,8 @@
           class="submenu-collapse-entry"
           link="#"
           no-chevron
-          @click.stop.prevent="collapseSubmenuEntries">
+          data-sidebar-ignore-collapse
+          @click="collapseSubmenuEntries">
           <template #media>
             <f7-icon f7="chevron_up" color="gray" />
           </template>
@@ -64,7 +68,7 @@
       </transition-group>
     </ul>
 
-    <div v-if="customizing" class="submenu-customizer">
+    <div v-if="customizing" class="submenu-customizer" data-sidebar-ignore-collapse>
       <div class="submenu-customizer-help">Select the entries to show here, then apply, cancel, or reset the draft below.</div>
       <f7-list class="menu-sublinks-customize">
         <f7-list-item
@@ -76,7 +80,7 @@
           @click="toggleDraft(item.id)">
           <template #media>
             <div class="submenu-customizer-media">
-              <f7-checkbox :checked="draftSelectedIds.includes(item.id) ? true : null" @click.stop @change.stop="toggleDraft(item.id)" />
+              <f7-checkbox :checked="draftSelectedIds.includes(item.id) ? true : null" @click="toggleDraft(item.id)" />
               <f7-icon :f7="item.icon" color="gray" />
             </div>
           </template>
@@ -90,53 +94,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import type { AdminMenuLinkItemDefinition, AdminMenuSection } from '@/js/admin-menu'
-import { useSidebarAdminSubmenu } from '@/js/composables/useSidebarAdminSubmenu'
-import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-
-// --- Defines ---
-const props = defineProps<{
-  section: AdminMenuSection
-  activePath?: Record<string, unknown> | null
-}>()
-
-const emit = defineEmits<{
-  navigate: [item: AdminMenuLinkItemDefinition]
-}>()
-
-// --- Composables ---
-const uiOptionsStore = useUIOptionsStore()
-const {
-  items,
-  candidates,
-  expanded,
-  customizing,
-  draftSelectedIds,
-  isCustomized,
-  startCustomization,
-  toggleDraft,
-  applyCustomization,
-  resetCustomization,
-  cancelCustomization,
-  showAllSubmenuEntries,
-  collapseSubmenuEntries
-} = useSidebarAdminSubmenu(props.section)
-
-// --- Computed ---
-const customizeAvailable = computed(() => uiOptionsStore.showSidebarSubmenuEditor && !uiOptionsStore.sidebarSubmenuCustomizationSection)
-
-// --- Methods ---
-function isItemActive(itemId: string) {
-  return Boolean(props.activePath?.[itemId])
-}
-
-defineExpose({
-  items
-})
-</script>
 
 <style lang="stylus">
 .sidebar-admin-submenu
@@ -159,6 +116,7 @@ defineExpose({
     line-height 1.35
 
   .submenu-customizer-item
+    cursor pointer
     .item-content
       padding-left 2px
     .item-media
@@ -216,3 +174,47 @@ defineExpose({
       .icon
         color var(--f7-list-item-text-color) !important
 </style>
+
+<script setup lang="ts">
+import type { AdminMenuLinkItemDefinition, AdminMenuSection } from '@/js/admin-menu'
+import { useSidebarAdminSubmenu } from '@/js/composables/useSidebarAdminSubmenu'
+
+// --- Defines ---
+const props = defineProps<{
+  section: AdminMenuSection
+  activePath?: Record<string, unknown> | null
+}>()
+
+const emit = defineEmits<{
+  navigate: [item: AdminMenuLinkItemDefinition]
+}>()
+
+// --- Composables ---
+const {
+  items,
+  candidates,
+  expanded,
+  customizing,
+  customizeAvailable,
+  draftSelectedIds,
+  isCustomized,
+  startCustomization,
+  hideSubmenuEditor,
+  toggleDraft,
+  applyCustomization,
+  resetCustomization,
+  cancelCustomization,
+  hasVisibleItem,
+  showAllSubmenuEntries,
+  collapseSubmenuEntries
+} = useSidebarAdminSubmenu(props.section)
+
+// --- Methods ---
+function isItemActive(itemId: string) {
+  return Boolean(props.activePath?.[itemId])
+}
+
+defineExpose({
+  hasVisibleItem
+})
+</script>
