@@ -83,7 +83,7 @@
           <li>
             <transition name="submenu">
               <sidebar-admin-submenu
-                v-if="isOpen('settings')"
+                v-show="isOpen('settings')"
                 ref="settingsSubmenu"
                 :key="`settings-${uiOptionsStore.showSidebarSubmenuEditor}`"
                 section="settings"
@@ -111,7 +111,7 @@
           </f7-list-item>
           <li>
             <transition name="submenu">
-              <ul v-if="isOpen('addons') && runtimeStore.apiEndpoint('addons')" class="menu-sublinks">
+              <ul v-show="isOpen('addons') && runtimeStore.apiEndpoint('addons')" class="menu-sublinks">
                 <f7-list-item
                   v-for="section in Object.keys(AddonTitles)"
                   :key="section"
@@ -149,7 +149,7 @@
           <li>
             <transition name="submenu">
               <sidebar-admin-submenu
-                v-if="isOpen('developer')"
+                v-show="isOpen('developer')"
                 ref="developerSubmenu"
                 :key="`developer-${uiOptionsStore.showSidebarSubmenuEditor}`"
                 section="developer"
