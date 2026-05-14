@@ -29,6 +29,17 @@
           </template>
         </f7-list-item>
         <f7-list-item
+          v-if="customizeAvailable"
+          class="submenu-customize-entry"
+          title="Hide submenu editor"
+          link="#"
+          no-chevron
+          @click.prevent="uiOptionsStore.showSidebarSubmenuEditor = false">
+          <template #media>
+            <f7-icon f7="xmark" color="gray" />
+          </template>
+        </f7-list-item>
+        <f7-list-item
           v-else-if="!expanded"
           title="show all"
           class="submenu-expand-entry"
