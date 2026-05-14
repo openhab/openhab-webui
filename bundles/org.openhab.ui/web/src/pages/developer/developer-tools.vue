@@ -18,15 +18,15 @@
               width="100"
               :medium="developerNavigationColumns.length > 1 ? '50' : '100'">
               <template v-for="section in developerColumnSections(column)" :key="section.id">
-                <f7-block-title>{{ section.title }}</f7-block-title>
+                <f7-block-title>{{ $t(section.titleKey) }}</f7-block-title>
                 <f7-list>
                   <template v-for="item in section.items" :key="item.id">
                     <f7-list-item
                       v-if="item.kind === 'link'"
                       media-item
                       :class="item.className"
-                      :title="item.title"
-                      :footer="item.footer"
+                      :title="$t(item.titleKey)"
+                      :footer="$t(item.footerKey)"
                       :link="item.link">
                       <template #media>
                         <f7-icon :f7="item.icon" color="gray" />
@@ -36,8 +36,8 @@
                       v-else-if="item.kind === 'action'"
                       media-item
                       :class="item.className"
-                      :title="item.title"
-                      :footer="item.footer"
+                      :title="$t(item.titleKey)"
+                      :footer="$t(item.footerKey)"
                       link="#"
                       @click.prevent="runDeveloperMenuAction(item.actionId)">
                       <template #media>
@@ -49,8 +49,8 @@
                       media-item
                       no-chevron
                       :class="item.className"
-                      :title="item.title"
-                      :footer="item.footer"
+                      :title="$t(item.titleKey)"
+                      :footer="$t(item.footerKey)"
                       link="#"
                       @click.prevent="toggleDeveloperMenuControl(item.controlId)">
                       <template #media>
@@ -73,8 +73,8 @@
                       :smartSelectParams="item.smartSelectParams"
                       media-item
                       :class="item.className"
-                      :title="item.title"
-                      :footer="item.footer">
+                      :title="$t(item.titleKey)"
+                      :footer="$t(item.footerKey)">
                       <template #media>
                         <f7-icon :f7="item.icon" color="gray" />
                       </template>

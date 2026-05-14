@@ -6,7 +6,7 @@
           v-for="item in items"
           :key="item.id"
           :link="item.link"
-          :title="item.title"
+          :title="$t(item.titleKey)"
           view=".view-main"
           panel-close
           :animate="false"
@@ -20,7 +20,7 @@
         <f7-list-item
           v-if="customizeAvailable"
           class="submenu-customize-entry"
-          title="Edit submenu"
+          :title="$t('sidebar.submenu.edit-submenu')"
           link="#"
           no-chevron
           data-sidebar-ignore-collapse
@@ -32,7 +32,7 @@
         <f7-list-item
           v-if="customizeAvailable"
           class="submenu-customize-entry"
-          title="Hide submenu editor"
+          :title="$t('sidebar.submenu.hide-submenu-editor')"
           link="#"
           no-chevron
           data-sidebar-ignore-collapse
@@ -43,7 +43,7 @@
         </f7-list-item>
         <f7-list-item
           v-else-if="!expanded"
-          title="show all"
+          :title="$t('sidebar.submenu.show-all')"
           class="submenu-expand-entry"
           link="#"
           no-chevron
@@ -55,7 +55,7 @@
         </f7-list-item>
         <f7-list-item
           v-else
-          title="show less"
+          :title="$t('sidebar.submenu.show-less')"
           class="submenu-collapse-entry"
           link="#"
           no-chevron
@@ -75,7 +75,7 @@
           v-for="item in candidates"
           :key="item.id"
           class="submenu-customizer-item"
-          :title="item.title"
+          :title="$t(item.titleKey)"
           no-chevron
           @click="toggleDraft(item.id)">
           <template #media>

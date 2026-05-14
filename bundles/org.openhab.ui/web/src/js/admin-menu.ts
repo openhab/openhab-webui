@@ -11,10 +11,10 @@ type VisibilityCheck = (runtimeStore: RuntimeStoreLike) => boolean
 
 interface AdminMenuBaseItemDefinition {
   id: string
-  title: string
+  titleKey: string // i18n key for the title
+  footerKey?: string // i18n key for the footer/description
   icon: string
   pageGroup: AdminMenuPageGroupId
-  footer?: string
   className?: string
   sidebarDefault?: boolean
   sidebarEligible?: boolean
@@ -56,7 +56,7 @@ export type AdminMenuItemDefinition =
 
 interface AdminMenuPageGroup {
   id: AdminMenuPageGroupId
-  title: string
+  titleKey: string // i18n key for the group title
   column: AdminMenuPageColumn
 }
 
@@ -66,14 +66,14 @@ const hasEndpoint = (runtimeStore: RuntimeStoreLike, endpoint: string) => {
 
 const adminMenuPageGroups: Record<AdminMenuSection, AdminMenuPageGroup[]> = {
   settings: [
-    { id: 'configuration', title: 'Configuration', column: 'primary' },
-    { id: 'ui', title: 'User Interface', column: 'primary' },
-    { id: 'automation', title: 'Automation', column: 'primary' }
+    { id: 'configuration', titleKey: 'settings.groups.configuration', column: 'primary' },
+    { id: 'ui', titleKey: 'settings.groups.ui', column: 'primary' },
+    { id: 'automation', titleKey: 'settings.groups.automation', column: 'primary' }
   ],
   developer: [
-    { id: 'advanced', title: 'Advanced Object Management', column: 'primary' },
-    { id: 'maintenance', title: 'Maintenance Tools', column: 'secondary' },
-    { id: 'local', title: 'Local Developer Settings', column: 'secondary' }
+    { id: 'advanced', titleKey: 'developer.groups.advanced', column: 'primary' },
+    { id: 'maintenance', titleKey: 'developer.groups.maintenance', column: 'secondary' },
+    { id: 'local', titleKey: 'developer.groups.local', column: 'secondary' }
   ]
 }
 
@@ -82,117 +82,118 @@ const adminMenuItems: Record<AdminMenuSection, AdminMenuItemDefinition[]> = {
     {
       id: 'things',
       kind: 'link',
-      title: 'Things',
+      titleKey: 'settings.things.title',
+      footerKey: 'settings.things.footer',
       link: '/settings/things/',
       icon: 'lightbulb',
       pageGroup: 'configuration',
-      footer: 'things',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'things')
     },
     {
       id: 'model',
       kind: 'link',
-      title: 'Model',
+      titleKey: 'settings.model.title',
+      footerKey: 'settings.model.footer',
       link: '/settings/model/',
       icon: 'list_bullet_indent',
       pageGroup: 'configuration',
-      footer: 'model',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'items')
     },
     {
       id: 'items',
       kind: 'link',
-      title: 'Items',
+      titleKey: 'settings.items.title',
+      footerKey: 'settings.items.footer',
       link: '/settings/items/',
       icon: 'square_on_circle',
       pageGroup: 'configuration',
-      footer: 'items',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'items')
     },
     {
       id: 'transformations',
       kind: 'link',
-      title: 'Transformations',
+      titleKey: 'settings.transformations.title',
+      footerKey: 'settings.transformations.footer',
       link: '/settings/transformations/',
       icon: 'function',
       pageGroup: 'configuration',
-      footer: 'transform',
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'transformations')
     },
     {
       id: 'persistence',
       kind: 'link',
-      title: 'Persistence',
+      titleKey: 'settings.persistence.title',
+      footerKey: 'settings.persistence.footer',
       link: '/settings/persistence/',
       icon: 'download_circle',
       pageGroup: 'configuration',
-      footer: 'persistence'
+      isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'persistence')
     },
     {
       id: 'pages',
       kind: 'link',
-      title: 'Pages',
+      titleKey: 'settings.pages.title',
+      footerKey: 'settings.pages.footer',
       link: '/settings/pages/',
       icon: 'tv',
       pageGroup: 'ui',
-      footer: 'pages',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'ui')
     },
     {
       id: 'sitemaps',
       kind: 'link',
-      title: 'Sitemaps',
+      titleKey: 'settings.sitemaps.title',
+      footerKey: 'settings.sitemaps.footer',
       link: '/settings/sitemaps/',
       icon: 'menu',
       pageGroup: 'ui',
-      footer: 'sitemaps',
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'sitemaps')
     },
     {
       id: 'rules',
       kind: 'link',
-      title: 'Rules',
+      titleKey: 'settings.rules.title',
+      footerKey: 'settings.rules.footer',
       link: '/settings/rules/',
       icon: 'wand_stars',
       pageGroup: 'automation',
-      footer: 'rules',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'rules')
     },
     {
       id: 'scenes',
       kind: 'link',
-      title: 'Scenes',
+      titleKey: 'settings.scenes.title',
+      footerKey: 'settings.scenes.footer',
       link: '/settings/scenes/',
       icon: 'film',
       pageGroup: 'automation',
-      footer: 'scenes',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'rules')
     },
     {
       id: 'scripts',
       kind: 'link',
-      title: 'Scripts',
+      titleKey: 'settings.scripts.title',
+      footerKey: 'settings.scripts.footer',
       link: '/settings/scripts/',
       icon: 'doc_plaintext',
       pageGroup: 'automation',
-      footer: 'scripts',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'rules')
     },
     {
       id: 'schedule',
       kind: 'link',
-      title: 'Schedule',
+      titleKey: 'settings.schedule.title',
+      footerKey: 'settings.schedule.footer',
       link: '/settings/schedule/',
       icon: 'calendar',
       pageGroup: 'automation',
-      footer: 'schedule',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'rules')
     }
@@ -201,99 +202,99 @@ const adminMenuItems: Record<AdminMenuSection, AdminMenuItemDefinition[]> = {
     {
       id: 'widgets',
       kind: 'link',
-      title: 'Widgets',
+      titleKey: 'developer.widgets.title',
+      footerKey: 'developer.widgets.footer',
       link: '/developer/widgets/',
       icon: 'rectangle_on_rectangle_angled',
       pageGroup: 'advanced',
-      footer: 'Develop custom widgets to use on pages',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'ui')
     },
     {
       id: 'blocks',
       kind: 'link',
-      title: 'Block Libraries',
+      titleKey: 'developer.blocks.title',
+      footerKey: 'developer.blocks.footer',
       link: '/developer/blocks/',
       icon: 'ticket',
       pageGroup: 'advanced',
-      footer: 'Develop custom extensions for Blockly scripts',
       sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'ui')
     },
     {
       id: 'semantics',
       kind: 'link',
-      title: 'Semantic Tags',
+      titleKey: 'developer.semantics.title',
+      footerKey: 'developer.semantics.footer',
       link: '/developer/semantics/',
       icon: 'list_bullet_indent',
-      pageGroup: 'advanced',
-      footer: 'Extend the list of semantic tags for the model'
+      pageGroup: 'advanced'
     },
     {
       id: 'add-items-dsl',
       kind: 'link',
-      title: 'Add Items from Textual Definition',
+      titleKey: 'developer.add-items-dsl.title',
+      footerKey: 'developer.add-items-dsl.footer',
       link: '/developer/add-items-dsl/',
       icon: 'text_badge_plus',
-      pageGroup: 'advanced',
-      footer: 'Create or update items & links in bulk'
+      pageGroup: 'advanced'
     },
     {
       id: 'things-file-definitions',
       kind: 'action',
       actionId: 'copy-thing-file-definitions',
-      title: 'Things File Definitions',
+      titleKey: 'developer.things-file-definitions.title',
+      footerKey: 'developer.things-file-definitions.footer',
       icon: 'lightbulb',
-      pageGroup: 'advanced',
-      footer: "Copy all Things' file definitions to clipboard"
+      pageGroup: 'advanced'
     },
     {
       id: 'items-file-definitions',
       kind: 'action',
       actionId: 'copy-item-file-definitions',
-      title: 'Items File Definitions',
+      titleKey: 'developer.items-file-definitions.title',
+      footerKey: 'developer.items-file-definitions.footer',
       icon: 'square_on_circle',
-      pageGroup: 'advanced',
-      footer: "Copy all Items' file definitions to clipboard"
+      pageGroup: 'advanced'
     },
     {
       id: 'developer-sidebar',
       kind: 'toggle',
       controlId: 'developer-sidebar',
-      title: 'Developer Sidebar',
+      titleKey: 'developer.developer-sidebar.title',
+      footerKey: 'developer.developer-sidebar.footer',
       icon: 'wrench',
       pageGroup: 'maintenance',
-      footer: 'Show a panel with various tools and help',
       className: 'developer-sidebar-toggle'
     },
     {
       id: 'api-explorer',
       kind: 'link',
-      title: 'API Explorer',
+      titleKey: 'developer.api-explorer.title',
+      footerKey: 'developer.api-explorer.footer',
       link: '/developer/api-explorer/',
       icon: 'burn',
       pageGroup: 'maintenance',
-      footer: 'Discover and access the REST API directly',
       sidebarDefault: true
     },
     {
       id: 'log-viewer',
       kind: 'link',
-      title: 'Log Viewer',
+      titleKey: 'developer.log-viewer.title',
+      footerKey: 'developer.log-viewer.footer',
       link: '/developer/log-viewer/',
       icon: 'square_list',
       pageGroup: 'maintenance',
-      footer: 'Monitor openHAB log output',
       sidebarDefault: true
     },
     {
       id: 'ui-logging',
       kind: 'select',
       controlId: 'ui-logging',
-      title: 'UI Logging',
+      titleKey: 'developer.ui-logging.title',
+      footerKey: 'developer.ui-logging.footer',
       icon: 'exclamationmark_circle',
       pageGroup: 'local',
-      footer: 'Set the log level for the browser console logs',
       smartSelectParams: {
         openIn: 'popup',
         closeOnSelect: true
@@ -311,10 +312,10 @@ const adminMenuItems: Record<AdminMenuSection, AdminMenuItemDefinition[]> = {
       id: 'vim-mode',
       kind: 'toggle',
       controlId: 'vim-mode',
-      title: 'Code Editor: Vim Mode',
+      titleKey: 'developer.vim-mode.title',
+      footerKey: 'developer.vim-mode.footer',
       icon: 'keyboard',
-      pageGroup: 'local',
-      footer: 'Enable Vim keybindings in code editors'
+      pageGroup: 'local'
     }
   ]
 }
