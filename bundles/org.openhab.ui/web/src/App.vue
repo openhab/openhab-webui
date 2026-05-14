@@ -60,12 +60,15 @@
               </f7-link>
             </template>
           </f7-list-item>
-          <li v-if="isOpen('settings')">
-            <sidebar-admin-submenu
-              :key="`settings-${uiOptionsStore.showSidebarSubmenuEditor}`"
-              section="settings"
-              :active-path="currentPath.settings"
-              @navigate="handleSidebarSubmenuNavigate" />
+          <li>
+            <transition name="submenu">
+              <sidebar-admin-submenu
+                v-if="isOpen('settings')"
+                :key="`settings-${uiOptionsStore.showSidebarSubmenuEditor}`"
+                section="settings"
+                :active-path="currentPath.settings"
+                @navigate="handleSidebarSubmenuNavigate" />
+            </transition>
           </li>
 
           <!-- Add-on Store -->
@@ -85,23 +88,25 @@
               </f7-link>
             </template>
           </f7-list-item>
-          <li v-if="isOpen('addons') && runtimeStore.apiEndpoint('addons')">
-            <ul class="menu-sublinks">
-              <f7-list-item
-                v-for="section in Object.keys(AddonTitles)"
-                :key="section"
-                :link="`/addons/${section}/`"
-                :title="AddonTitles[section]"
-                view=".view-main"
-                panel-close
-                :animate="false"
-                no-chevron
-                :class="{ currentsection: currentPath.addons?.[section] }">
-                <template #media>
-                  <f7-icon :f7="AddonIcons[section]" color="gray" />
-                </template>
-              </f7-list-item>
-            </ul>
+          <li>
+            <transition name="submenu">
+              <ul v-if="isOpen('addons') && runtimeStore.apiEndpoint('addons')" class="menu-sublinks">
+                <f7-list-item
+                  v-for="section in Object.keys(AddonTitles)"
+                  :key="section"
+                  :link="`/addons/${section}/`"
+                  :title="AddonTitles[section]"
+                  view=".view-main"
+                  panel-close
+                  :animate="false"
+                  no-chevron
+                  :class="{ currentsection: currentPath.addons?.[section] }">
+                  <template #media>
+                    <f7-icon :f7="AddonIcons[section]" color="gray" />
+                  </template>
+                </f7-list-item>
+              </ul>
+            </transition>
           </li>
 
           <!-- Developer Tools -->
@@ -120,12 +125,15 @@
               </f7-link>
             </template>
           </f7-list-item>
-          <li v-if="isOpen('developer')">
-            <sidebar-admin-submenu
-              :key="`developer-${uiOptionsStore.showSidebarSubmenuEditor}`"
-              section="developer"
-              :active-path="currentPath.developer"
-              @navigate="handleSidebarSubmenuNavigate" />
+          <li>
+            <transition name="submenu">
+              <sidebar-admin-submenu
+                v-if="isOpen('developer')"
+                :key="`developer-${uiOptionsStore.showSidebarSubmenuEditor}`"
+                section="developer"
+                :active-path="currentPath.developer"
+                @navigate="handleSidebarSubmenuNavigate" />
+            </transition>
           </li>
         </f7-list>
 
@@ -278,6 +286,23 @@
     --f7-list-chevron-icon-color var(--f7-color-white)
     .icon
       color var(--f7-color-white) !important
+
+  .submenu-enter-active
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important
+    overflow: hidden
+    display: block
+
+  .submenu-leave-active
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 1, 1) !important
+    overflow: hidden
+    display: block
+
+  .submenu-enter-from, .submenu-leave-to
+    max-height: 0 !important
+
+  .submenu-enter-to, .submenu-leave-from
+    max-height: 300px !important
+
   .account
     z-index 300
     height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
@@ -992,7 +1017,7 @@ export default {
     handleSidebarClick(ev) {
       // Collapse all sections when clicking in another section / link
       if (ev.target.closest('.section-toggle')) return
-      if (ev.target.closest('.submenu-customizer, .submenu-customize-entry')) return
+      if (ev.target.closest('.submenu-customizer, .submenu-customize-entry, .submenu-expand-entry, .submenu-collapse-entry')) return
       if (ev.target.closest('.list-item a, a[href]')) {
         // avoid flicker (collapse + reopen)
         setTimeout(this.collapseAllSections, 30)
