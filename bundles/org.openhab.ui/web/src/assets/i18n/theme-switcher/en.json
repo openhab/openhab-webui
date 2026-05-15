@@ -19,6 +19,7 @@
   "about.miscellaneous.home.disableCardExpansionAnimation": "Disable card expansion animations",
   "about.miscellaneous.theme.disablePageTransition": "Disable page transition animations",
   "about.miscellaneous.webaudio.enable": "Enable Web Audio sink support",
+  "about.miscellaneous.sidebar.showSubmenuEditor": "Show sidebar submenu editor",
   "about.miscellaneous.commandItem.title": "Listen for UI commands to ",
   "about.miscellaneous.commandItem.selectItem": "Item",
   "about.dialog": "Voice Support",

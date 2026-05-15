@@ -23,149 +23,47 @@
     <f7-block class="block-narrow after-big-title settings-menu">
       <f7-row>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
-          <f7-block-title>Configuration</f7-block-title>
-          <f7-list media-list class="search-list">
-            <f7-list-item
-              v-if="runtimeStore.apiEndpoint('things')"
-              media-item
-              link="things/"
-              title="Things"
-              :badge="inboxCount > 0 ? inboxCount : undefined"
-              :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
-              :badge-color="inboxCount ? 'red' : 'blue'"
-              :footer="objectsSubtitles.things">
-              <template #media>
-                <f7-icon f7="lightbulb" color="gray" />
-              </template>
-            </f7-list-item>
-            <f7-list-item
-              v-if="runtimeStore.apiEndpoint('items')"
-              media-item
-              link="model/"
-              title="Model"
-              badge-color="blue"
-              :footer="objectsSubtitles.model"
-              @click="modelSelectedItem = null">
-              <template #media>
-                <f7-icon f7="list_bullet_indent" color="gray" />
-              </template>
-            </f7-list-item>
-            <f7-list-item
-              v-if="runtimeStore.apiEndpoint('items')"
-              media-item
-              link="items/"
-              title="Items"
-              :after="itemsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.items">
-              <template #media>
-                <f7-icon f7="square_on_circle" color="gray" />
-              </template>
-            </f7-list-item>
-          </f7-list>
-          <f7-list media-list class="search-list">
-            <f7-list-item
-              v-if="runtimeStore.apiEndpoint('transformations')"
-              media-item
-              link="transformations/"
-              title="Transformations"
-              :after="transformationsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.transform">
-              <template #media>
-                <f7-icon f7="function" color="gray" />
-              </template>
-            </f7-list-item>
-            <f7-list-item media-item link="persistence/" title="Persistence" badge-color="blue" :footer="objectsSubtitles.persistence">
-              <template #media>
-                <f7-icon f7="download_circle" color="gray" />
-              </template>
-            </f7-list-item>
-          </f7-list>
-          <f7-block-title v-if="runtimeStore.apiEndpoint('ui') || runtimeStore.apiEndpoint('sitemaps')"> User Interface </f7-block-title>
-          <f7-list media-list class="search-list">
-            <f7-list-item
-              v-if="runtimeStore.apiEndpoint('ui')"
-              link="pages/"
-              title="Pages"
-              :after="componentsStore.pages().length"
-              badge-color="blue"
-              :footer="objectsSubtitles.pages">
-              <template #media>
-                <f7-icon f7="tv" color="gray" />
-              </template>
-            </f7-list-item>
-            <f7-list-item
-              v-if="runtimeStore.apiEndpoint('sitemaps')"
-              media-item
-              link="sitemaps/"
-              title="Sitemaps"
-              :after="sitemapsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.sitemaps">
-              <template #media>
-                <f7-icon f7="menu" color="gray" />
-              </template>
-            </f7-list-item>
-          </f7-list>
-          <f7-block-title v-if="runtimeStore.apiEndpoint('rules')"> Automation </f7-block-title>
-          <f7-list media-list class="search-list">
-            <f7-list-item media-item link="rules/" title="Rules" :after="rulesCount" badge-color="blue" :footer="objectsSubtitles.rules">
-              <template #media>
-                <f7-icon f7="wand_stars" color="gray" />
-              </template>
-            </f7-list-item>
-            <f7-list-item
-              media-item
-              link="scenes/"
-              title="Scenes"
-              :after="scenesCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.scenes">
-              <template #media>
-                <f7-icon f7="film" color="gray" />
-              </template>
-            </f7-list-item>
-            <f7-list-item
-              media-item
-              link="scripts/"
-              title="Scripts"
-              :after="scriptsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.scripts">
-              <template #media>
-                <f7-icon f7="doc_plaintext" color="gray" />
-              </template>
-            </f7-list-item>
-            <f7-list-item media-item link="schedule/" title="Schedule" badge-color="blue" :footer="objectsSubtitles.schedule">
-              <template #media>
-                <f7-icon f7="calendar" color="gray" />
-              </template>
-            </f7-list-item>
-          </f7-list>
+          <group-container v-for="section in settingsNavigationSections" :key="section.id" :title="$t(section.titleKey)">
+            <f7-list media-list class="search-list">
+              <f7-list-item
+                v-for="item in section.items"
+                :key="item.id"
+                media-item
+                :title="$t(item.titleKey)"
+                :footer="$t(item.footerKey)"
+                :link="item.link"
+                :badge="settingsMenuBadge(item)"
+                :after="settingsMenuAfter(item)"
+                :badge-color="settingsMenuBadgeColor(item)"
+                @click="handleSettingsMenuItemClick(item)">
+                <template #media>
+                  <f7-icon :f7="item.icon" color="gray" />
+                </template>
+              </f7-list-item>
+            </f7-list>
+          </group-container>
         </f7-col>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
-          <div v-show="servicesLoaded">
-            <f7-block-title>System Settings</f7-block-title>
-            <f7-list class="search-list">
+          <group-container v-show="servicesLoaded" :title="$t('settings.groups.system-settings')">
+            <f7-list class="search-list no-margin-top">
               <f7-list-item
                 v-for="service in systemSettings"
                 v-show="!service.hidden"
                 :key="service.id"
                 :link="'services/' + service.id"
                 :title="service.label" />
+
               <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
-          </div>
+          </group-container>
           <!-- skeleton for not servicesLoaded -->
-          <div v-if="!servicesLoaded">
-            <f7-block-title>System Settings</f7-block-title>
+          <group-container v-if="!servicesLoaded" :title="$t('settings.groups.system-settings')">
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
-          </div>
+          </group-container>
           <div v-show="$f7dim.width < 1450">
             <div v-show="addonsLoaded && addonsInstalled.length > 0">
               <addon-section
@@ -176,12 +74,11 @@
                 @expand="expand('addonsExpanded')" />
             </div>
             <!-- skeleton for not addonsLoaded -->
-            <div v-if="!addonsLoaded">
-              <f7-block-title>Add-on Settings</f7-block-title>
+            <group-container v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')">
               <f7-list>
                 <f7-list-item v-for="n in 4" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
               </f7-list>
-            </div>
+            </group-container>
           </div>
         </f7-col>
         <f7-col v-show="$f7dim.width >= 1450" width="33" class="add-on-col">
@@ -193,12 +90,11 @@
               @expand="expand('addonsExpanded')" />
           </div>
           <!-- skeleton for not addonsLoaded -->
-          <div v-if="!addonsLoaded">
-            <f7-block-title>Add-on Settings</f7-block-title>
+          <group-container v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')">
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
-          </div>
+          </group-container>
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
@@ -220,6 +116,20 @@
     height calc(var(--f7-searchbar-input-height) + var(--f7-searchbar-inner-padding-left))
     .searchbar
       top calc(0.5 * var(--f7-searchbar-inner-padding-left))
+
+  .list-group
+    background var(--f7-list-bg-color, #fff)
+    border-radius 16px
+    overflow hidden
+    margin-bottom 20px
+
+    .list
+      margin-bottom 6px
+      ul:after
+        display none !important
+      li:first-child
+        padding-top 6px
+        border-top 1px solid var(--f7-list-border-color)
 </style>
 
 <script>
@@ -227,15 +137,19 @@ import { theme } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
 
 import AddonSection from './addon-section.vue'
+import { getAdminMenuPageSections } from '@/js/admin-menu.ts'
 
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+
+import GroupContainer from '@/components/util/group-container.vue'
 
 import * as api from '@/api'
 
 export default {
   components: {
-    AddonSection
+    AddonSection,
+    GroupContainer
   },
   props: {
     f7router: Object
@@ -251,20 +165,7 @@ export default {
       persistenceAddonsInstalled: [],
       addonsServices: [],
       systemServices: [],
-      objectsSubtitles: {
-        health: 'Manage detected system health issues',
-        things: 'Manage the physical layer',
-        model: 'The semantic model of your home',
-        items: 'Manage the functional layer',
-        transform: 'Make raw data human-readable',
-        persistence: 'How to keep data for future use',
-        pages: 'Design displays for user interaction',
-        sitemaps: 'Design classic sitemaps for user interaction',
-        rules: 'Automate with triggers and actions',
-        scenes: 'Store a set of desired states to recall',
-        scripts: 'Rules dedicated to running code',
-        schedule: 'View upcoming time-based rules'
-      },
+
       inboxCount: '',
       thingsCount: '',
       itemsCount: '',
@@ -309,6 +210,9 @@ export default {
     healthCount() {
       const problemCount = this.orphanLinkCount + this.semanticsProblemCount + this.persistenceProblemCount
       return problemCount.toString()
+    },
+    settingsNavigationSections() {
+      return getAdminMenuPageSections('settings', this.runtimeStore)
     },
     ...mapStores(useComponentsStore, useRuntimeStore),
     ...mapWritableState(useRuntimeStore, {
@@ -461,6 +365,39 @@ export default {
     },
     expandAll() {
       Object.keys(this.expandedTypes).forEach((type) => this.expand(type))
+    },
+    settingsMenuBadge(item) {
+      if (item.id === 'things' && this.inboxCount > 0) return this.inboxCount
+      return undefined
+    },
+    settingsMenuAfter(item) {
+      switch (item.id) {
+        case 'things':
+          return this.inboxCount > 0 ? this.thingsCount + '+' : this.thingsCount
+        case 'items':
+          return this.itemsCount
+        case 'transformations':
+          return this.transformationsCount
+        case 'pages':
+          return this.componentsStore.pages().length
+        case 'sitemaps':
+          return this.sitemapsCount
+        case 'rules':
+          return this.rulesCount
+        case 'scenes':
+          return this.scenesCount
+        case 'scripts':
+          return this.scriptsCount
+        default:
+          return undefined
+      }
+    },
+    settingsMenuBadgeColor(item) {
+      if (item.id === 'things' && this.inboxCount > 0) return 'red'
+      return 'blue'
+    },
+    handleSettingsMenuItemClick(item) {
+      if (item.id === 'model') this.modelSelectedItem = null
     },
     onPageInit() {
       this.loadMenu()
