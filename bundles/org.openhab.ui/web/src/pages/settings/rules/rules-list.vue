@@ -58,6 +58,16 @@
       </f7-link>
       <f7-link
         v-if="!theme.md && !showScenes"
+        v-show="selectedItems?.length"
+        color="blue"
+        class="copy"
+        @click="initRuleDefinitionsPopup()"
+        icon-ios="f7:square_on_square"
+        icon-aurora="f7:square_on_square">
+        &nbsp;{{ $t('dialogs.copy') }}&nbsp;{{ selectedItems?.length }}
+      </f7-link>
+      <f7-link
+        v-if="!theme.md && !showScenes"
         v-show="selectedItems.length && canRegenerate"
         :color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
         class="enable"
@@ -90,6 +100,13 @@
           icon-md="material:play_circle_outline"
           icon-color="white"
           @click="doDisableEnableSelected(true)" />
+        <f7-link
+          v-if="!showScenes"
+          v-show="selectedItems?.length"
+          tooltip="Copy selected"
+          icon-md="material:content_copy"
+          icon-color="white"
+          @click="initRuleDefinitionsPopup()" />
         <f7-link
           v-show="selectedDeletableItems.length"
           tooltip="Delete selected"
@@ -220,6 +237,104 @@
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>
     </template>
+
+    <f7-popup v-model:opened="copyPopupOpened" class="copy-definition-popup" backdrop closeOnEscape>
+      <div class="popup-content-wrapper">
+        <f7-block-title>Copy Rule File Definition</f7-block-title>
+        <f7-block>
+          <p>Select the format to copy to clipboard</p>
+          <div class="button-stack">
+            <f7-button
+              fill
+              large
+              :color="canCopyToDSL ? 'teal' : 'red'"
+              :tooltip="canCopyToDSL ? 'Copy DSL to clipboard' : showDslErrors ? 'Hide DSL errors' : 'Show DSL errors'"
+              @click="exportDslClicked">
+              DSL{{ canCopyToDSL ? '' : showDslErrors ? ' ▲' : ' ▼' }}
+            </f7-button>
+            <f7-block v-if="!canCopyToDSL && showDslErrors" inset class="dsl-errors">
+              <f7-block-title small>DSL problems:</f7-block-title>
+              <f7-list>
+                <f7-list-item v-for="(line, idx) in dslCopyErrors" :key="idx">
+                  {{ line }}
+                </f7-list-item>
+              </f7-list>
+              <f7-button
+                v-if="dslCopyOk?.length"
+                fill
+                tooltip="Exclude rules that cannot be expressed using DSL"
+                @click="deselectIncompatibleDsl">
+                Deselect Incompatible
+              </f7-button>
+            </f7-block>
+            <f7-button
+              fill
+              large
+              :color="canCopyToYAML ? 'blue' : 'red'"
+              :tooltip="
+                canCopyToYAML
+                  ? showYamlExportOptions
+                    ? 'Hide YAML options'
+                    : 'Show YAML options'
+                  : showYamlErrors
+                    ? 'Hide YAML errors'
+                    : 'Show YAML errors'
+              "
+              @click="exportYamlClicked">
+              YAML{{ (canCopyToYAML && showYamlExportOptions) || (!canCopyToYAML && showYamlErrors) ? ' ▲' : ' ▼' }}
+            </f7-button>
+            <div v-if="canCopyToYAML && showYamlExportOptions" class="yaml-sub-menu">
+              <f7-button
+                fill
+                color="blue"
+                tooltip="Copy YAML, where empty collections and normally irrelevant elements are omitted, to clipboard"
+                @click="copyRuleDefinitionsToClipboard('YAML', serializationOptions.NORMAL)">
+                Normal
+              </f7-button>
+              <f7-button
+                fill
+                color="blue"
+                tooltip="Copy YAML, where empty collections and normally irrelevant elements are included, to clipboard"
+                @click="copyRuleDefinitionsToClipboard('YAML', serializationOptions.ALL)">
+                With All Details
+              </f7-button>
+              <f7-button
+                v-if="yamlCopyCanStub"
+                fill
+                color="blue"
+                tooltip="Copy YAML, where only templates and configured template parameters are included, to clipboard"
+                @click="copyRuleDefinitionsToClipboard('YAML', serializationOptions.STUB)">
+                Rule Stub Only
+              </f7-button>
+              <f7-button
+                v-if="yamlCopyCanStrip"
+                fill
+                color="blue"
+                tooltip="Copy YAML, where templates and configured parameters are removed, resulting in indentical but fully independent rules, to clipboard"
+                @click="copyRuleDefinitionsToClipboard('YAML', serializationOptions.STRIPPED)">
+                Stripped Of Template
+              </f7-button>
+            </div>
+            <f7-block v-if="!canCopyToYAML && showYamlErrors" inset class="yaml-errors">
+              <f7-block-title small>YAML problems:</f7-block-title>
+              <f7-list>
+                <f7-list-item v-for="(line, idx) in yamlCopyErrors" :key="idx">
+                  {{ line }}
+                </f7-list-item>
+              </f7-list>
+              <f7-button
+                v-if="yamlCopyOk?.length"
+                fill
+                tooltip="Exclude rules that cannot be expressed using YAML"
+                @click="deselectIncompatibleYaml">
+                Deselect Incompatible
+              </f7-button>
+            </f7-block>
+            <f7-button fill large @click="copyPopupOpened = false" color="gray">Cancel</f7-button>
+          </div>
+        </f7-block>
+      </div>
+    </f7-popup>
   </f7-page>
 </template>
 
@@ -235,6 +350,53 @@
       a
         color var(--f7-toolbar-link-color, var(--f7-bars-link-color, var(--f7-theme-color)))
         font-size var(--f7-tabbar-label-font-size)
+
+.dark
+  .popup
+    &.copy-definition-popup
+      .yaml-sub-menu
+        background #fff3
+
+.popup
+  &.copy-definition-popup
+
+    @media (min-width: 630px) and (min-height: 630px)
+      width 90%
+      max-width 450px
+      height auto
+      max-height 80vh
+      top 50%
+      left 50%
+      overflow-y auto
+      margin 0
+      transition-property transform, margin-left, top
+      .block-title
+        font-size calc(var(--f7-block-title-font-size) + 3px)
+      &.modal-in
+        transform translate3d(-50%, -50%, 0)
+
+    .button-stack
+      display flex
+      flex-direction column
+      gap 10px
+
+    .yaml-sub-menu
+      display flex
+      flex-direction column
+      gap 8px
+      padding 10px
+      background #0001
+      .block-title
+        font-size var(--f7-block-title-font-size)
+
+    .yaml-errors, .dsl-errors
+      padding-block-start calc(var(--f7-block-padding-vertical) / 2)
+      background var(--f7-page-bg-color)
+      margin-top 0
+      margin-bottom 0
+
+      .block-title
+        font-size var(--f7-block-title-font-size)
 </style>
 
 <script>
@@ -252,6 +414,8 @@ import RuleStatus from '@/components/rule/rule-status-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
+import { canSerializeRules, createFileFormatForRules } from '@/api'
+import copyToClipboard from '@/js/clipboard'
 
 const ITEM_KINDS = {
   editable: 'Editable',
@@ -272,7 +436,13 @@ export default {
     EmptyStatePlaceholder
   },
   setup() {
-    return { f7, theme }
+    const serializationOptions = Object.freeze({
+      NORMAL: 'Normal',
+      ALL: 'Include all',
+      STUB: 'Stub only',
+      STRIPPED: 'Strip template'
+    })
+    return { f7, theme, serializationOptions }
   },
   data() {
     return {
@@ -297,7 +467,18 @@ export default {
       searchQuery: null,
       showCheckboxes: false,
       eventSource: null,
-      templates: []
+      templates: [],
+
+      copyPopupOpened: false,
+      showYamlExportOptions: false,
+      yamlCopyCanStub: false,
+      yamlCopyCanStrip: false,
+      showYamlErrors: false,
+      showDslErrors: false,
+      yamlCopyOk: [],
+      dslCopyOk: [],
+      yamlCopyErrors: [],
+      dslCopyErrors: []
     }
   },
   mounted() {
@@ -401,6 +582,12 @@ export default {
     },
     canRegenerate() {
       return this.regeneratableItemsCount > 0
+    },
+    canCopyToYAML() {
+      return this.yamlCopyOk?.length && !this.yamlCopyErrors?.length
+    },
+    canCopyToDSL() {
+      return this.dslCopyOk?.length && !this.dslCopyErrors?.length
     },
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
@@ -701,6 +888,173 @@ export default {
     templateName(rule) {
       let template = this.templates ? this.templates.find((t) => t.uid === rule.templateUID) : undefined
       return template ? template.label : rule.templateUID
+    },
+    async initRuleDefinitionsPopup() {
+      const ruleUids = this.selectedItems
+      if (!ruleUids || !ruleUids.length) {
+        return
+      }
+      const [yamlResult, dslResult] = await Promise.allSettled([
+        canSerializeRules({
+          targetFormat: 'application/yaml',
+          body: ruleUids
+        }),
+        canSerializeRules({
+          targetFormat: 'application/vnd.openhab.dsl.rule',
+          body: ruleUids
+        })
+      ])
+      if (yamlResult.status === 'fulfilled') {
+        const results = yamlResult.value.results
+        if (results.length > 0) {
+          let can = []
+          let reasons = []
+          for (let i = 0; i < results.length; i++) {
+            if (results[i].ok) {
+              can.push(results[i].uid)
+            } else {
+              reasons.push(results[i].failureReason)
+            }
+          }
+
+          if (reasons.length) {
+            this.yamlCopyCanStub = false
+            this.yamlCopyCanStrip = false
+          }
+          if (!reasons.length) {
+            let stub = true
+            let strip = true
+            let rule
+            for (let i = 0; (stub || strip) && i < ruleUids.length; i++) {
+              rule = this.rules.find((r) => r.uid === ruleUids[i])
+              if (rule) {
+                if (stub && (!rule.templateUID || !rule.configuration || Object.keys(rule.configuration).length < 1)) {
+                  stub = false
+                }
+                if (strip && (!rule.templateUID || rule.templateState !== 'instantiated')) {
+                  strip = false
+                }
+              } else {
+                stub = false
+                strip = false
+              }
+            }
+            this.yamlCopyCanStub = stub
+            this.yamlCopyCanStrip = strip
+          }
+
+          this.yamlCopyOk = can
+          this.yamlCopyErrors = reasons
+        } else {
+          this.yamlCopyOk = []
+          this.yamlCopyErrors = []
+          console.warn('Failed to check YAML serialization support, received an empty result')
+        }
+      } else {
+        this.yamlCopyOk = []
+        this.yamlCopyErrors = []
+        console.warn('Failed to check YAML serialization support:', yamlResult.reason)
+      }
+      if (dslResult.status === 'fulfilled') {
+        const results = dslResult.value.results
+        if (results.length > 0) {
+          let can = []
+          let reasons = []
+          for (let i = 0; i < results.length; i++) {
+            if (results[i].ok) {
+              can.push(results[i].uid)
+            } else {
+              reasons.push(results[i].failureReason)
+            }
+          }
+          this.dslCopyOk = can
+          this.dslCopyErrors = reasons
+        } else {
+          this.dslCopyOk = []
+          this.dslCopyErrors = []
+          console.warn('Failed to check DSL serialization support, received an empty result')
+        }
+      } else {
+        this.dslCopyOk = []
+        this.dslCopyErrors = []
+        console.warn('Failed to check DSL serialization support:', yamlResult.reason)
+      }
+
+      this.copyPopupOpened = true
+      console.debug("Can't serialize to YAML:", this.yamlCopyErrors)
+      console.debug("Can't serialize to DSL:", this.dslCopyFailures)
+    },
+    deselectIncompatibleDsl() {
+      if (!this.selectedItems || !this.selectedItems.length) {
+        return
+      }
+      this.selectedItems = this.dslCopyOk
+      this.initRuleDefinitionsPopup()
+    },
+    deselectIncompatibleYaml() {
+      if (!this.selectedItems || !this.selectedItems.length) {
+        return
+      }
+      this.selectedItems = this.yamlCopyOk
+      this.initRuleDefinitionsPopup()
+    },
+    exportDslClicked() {
+      if (this.canCopyToDSL) {
+        this.copyRuleDefinitionsToClipboard('DSL')
+      } else {
+        this.showDslErrors = !this.showDslErrors
+      }
+    },
+    exportYamlClicked() {
+      if (this.canCopyToYAML) {
+        this.showYamlExportOptions = !this.showYamlExportOptions
+      } else {
+        this.showYamlErrors = !this.showYamlErrors
+      }
+    },
+    copyRuleDefinitionsToClipboard(type, serializationOption) {
+      if (!this.selectedItems || !this.selectedItems.length) {
+        return
+      }
+      const mediaType = type === 'DSL' ? 'application/vnd.openhab.dsl.rule' : 'application/yaml'
+      const progressDialog = f7.dialog.progress(`Loading ${type || 'YAML'} definition${this.selectedItems.length === 1 ? '' : 's'}...`)
+      createFileFormatForRules(
+        {
+          serializationOption: serializationOption || undefined,
+          body: this.selectedItems
+        },
+        {
+          parseAs: 'text',
+          headers: {
+            Accept: mediaType
+          }
+        }
+      )
+        .then((ruleDefinition) => {
+          progressDialog.close()
+          copyToClipboard(ruleDefinition, {
+            dialogTitle: `Copy '${this.selectedItems.length}' Rule File Definition${this.selectedItems.length === 1 ? '' : 's'}`,
+            dialogText: `Rule definition${this.selectedItems.length === 1 ? '' : 's'} retrieved successfully. Click OK to copy ${this.selectedItems.length === 1 ? 'it' : 'them'} to the clipboard.`,
+            onSuccess: () => {
+              showToast(
+                `${this.selectedItems.length} ${type || 'YAML'} rule definition${this.selectedItems.length === 1 ? '' : 's'} copied to clipboard`
+              )
+            },
+            onError: () => {
+              f7.dialog.alert(
+                `Error copying rule ${type || 'YAML'} definition${this.selectedItems.length === 1 ? '' : 's'} to the clipboard`,
+                'Error'
+              )
+            }
+          })
+          this.copyPopupOpened = false
+        })
+        .catch((error) => {
+          progressDialog.close()
+          console.error(`Failed to generate rule definiton${this.selectedItems.length === 1 ? '' : 's'}`, error)
+          f7.dialog.alert(`Error loading rule ${type || 'YAML'} definition${this.selectedItems.length === 1 ? '' : 's'}: ${error}`, 'Error')
+          this.copyPopupOpened = false
+        })
     }
   }
 }
