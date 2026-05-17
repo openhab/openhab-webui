@@ -14,7 +14,7 @@ export default {
       default: ''
     }
   },
-  emits: ['input', 'validation-message'],
+  emits: ['input', 'update:value', 'validation-message'],
   watch: {
     value(newValue) {
       this.emitValidation(newValue || '')
@@ -33,6 +33,7 @@ export default {
     onInput(event) {
       const nextValue = event?.target?.value || ''
       this.$emit('input', nextValue)
+      this.$emit('update:value', nextValue)
       this.emitValidation(nextValue)
     },
     emitValidation(format) {

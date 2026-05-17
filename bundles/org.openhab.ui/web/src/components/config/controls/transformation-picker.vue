@@ -66,7 +66,7 @@ export default {
       default: true
     }
   },
-  emits: ['input'],
+  emits: ['input', 'update:value'],
   data() {
     return {
       ready: false,
@@ -161,6 +161,7 @@ export default {
       this.committedInlineValue = committedValue
       this.inlineDefinitionSearchValue = committedValue
       this.$emit('input', committedValue)
+      this.$emit('update:value', committedValue)
 
       const smartSelect = this.$refs.smartSelect?.$el?.children?.[0]?.f7SmartSelect
       if (smartSelect && typeof smartSelect.setValue === 'function') {
@@ -243,6 +244,7 @@ export default {
       const isKnownTransformation = this.transformations.some((t) => t.uid === selectedValue)
       this.committedInlineValue = isKnownTransformation ? '' : selectedValue
       this.$emit('input', selectedValue)
+      this.$emit('update:value', selectedValue)
     }
   }
 }

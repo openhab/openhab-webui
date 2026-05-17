@@ -52,7 +52,7 @@ export default {
       default: true
     }
   },
-  emits: ['input'],
+  emits: ['input', 'update:value'],
   data() {
     return {
       ready: false,
@@ -97,6 +97,7 @@ export default {
     select(e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       this.$emit('input', e.target.value)
+      this.$emit('update:value', e.target.value)
     }
   }
 }

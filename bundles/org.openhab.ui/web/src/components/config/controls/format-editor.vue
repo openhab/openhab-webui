@@ -31,7 +31,7 @@
             title="SERVICE"
             :value="formatModel.service"
             :no-chevron="true"
-            @input="updateFormatService" />
+            @update:value="updateFormatService" />
           <span class="format-editor-token">(</span>
           <transformation-picker
             :class="['format-inline-picker', { 'format-inline-empty': !formatModel.transformation }]"
@@ -42,7 +42,7 @@
             :allow-inline="true"
             :no-chevron="true"
             :value="formatModel.transformation"
-            @input="updateFormatTransformation" />
+            @update:value="updateFormatTransformation" />
           <span class="format-editor-token">):</span>
         </div>
         <div class="format-editor-java-row">
@@ -52,7 +52,7 @@
             placeholder="%.1f %unit%"
             :value="formatModel.javaFormat"
             :tabindex="editable && isFormatEditing ? 0 : -1"
-            @input="updateFormatJava"
+            @update:value="updateFormatJava"
             @validation-message="javaFormatValidationMessage = $event" />
         </div>
         <div v-if="javaFormatValidationMessage" class="format-editor-error">{{ javaFormatValidationMessage }}</div>
@@ -197,7 +197,7 @@ export default {
       default: 'Format'
     }
   },
-  emits: ['input'],
+  emits: ['input', 'update:value'],
   data() {
     return {
       isFormatEditing: false,
@@ -293,7 +293,9 @@ export default {
       this.stopFormatEditing()
     },
     applyFormatModel() {
-      this.$emit('input', this.buildFormatString(this.formatModel))
+      const value = this.buildFormatString(this.formatModel)
+      this.$emit('input', value)
+      this.$emit('update:value', value)
     },
     updateFormatService(value) {
       const nextService = (value || '').trim()
@@ -316,6 +318,7 @@ export default {
       this.javaFormatValidationMessage = ''
       this.formatModel = { service: '', transformation: '', javaFormat: '' }
       this.$emit('input', '')
+      this.$emit('update:value', '')
     },
     onDocumentPointerDown(event) {
       if (!this.isFormatEditing) {
