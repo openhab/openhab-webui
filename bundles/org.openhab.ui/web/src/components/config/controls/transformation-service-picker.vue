@@ -61,30 +61,36 @@ export default {
         view: f7.view.main,
         openIn: 'popup',
         searchbar: true,
+        closeOnSelect: true,
         searchbarPlaceholder: this.$t('dialogs.search.transformationService')
       }
     }
   },
   created() {
-    this.smartSelectParams.closeOnSelect = true
-    api.getTransformationServices().then((data) => {
-      this.services = data.sort()
-      if (this.filterType) {
-        this.services = this.services.filter((s) => this.filterType.indexOf(s) >= 0)
-        if (this.services.length < 5) {
-          this.smartSelectParams.openIn = 'sheet'
-          this.smartSelectParams.searchbar = false
-        }
-      }
-      this.ready = true
-      if (this.openOnReady) {
-        nextTick(() => {
-          this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
-        })
-      }
-    })
+    this.loadServices()
   },
   methods: {
+    loadServices() {
+      api.getTransformationServices().then((data) => {
+        this.services = data.sort()
+        if (this.filterType) {
+          this.services = this.services.filter((s) => this.filterType.indexOf(s) >= 0)
+          if (this.services.length < 5) {
+            this.smartSelectParams.openIn = 'sheet'
+            this.smartSelectParams.searchbar = false
+          } else {
+            this.smartSelectParams.openIn = 'popup'
+            this.smartSelectParams.searchbar = true
+          }
+        }
+        this.ready = true
+        if (this.openOnReady) {
+          nextTick(() => {
+            this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
+          })
+        }
+      })
+    },
     open() {
       this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
     },

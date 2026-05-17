@@ -81,6 +81,7 @@ export default {
         view: f7.view.main,
         openIn: 'popup',
         searchbar: true,
+        closeOnSelect: true,
         searchbarPlaceholder: this.allowInline
           ? `${this.$t('dialogs.searchOrCreate.transformation')}`
           : this.$t('dialogs.search.transformation')
@@ -130,7 +131,6 @@ export default {
     }
   },
   created() {
-    this.smartSelectParams.closeOnSelect = true
     api.getTransformations().then((data) => {
       this.allTransformations = data
       this.transformations = this.filterTransformations(data)
