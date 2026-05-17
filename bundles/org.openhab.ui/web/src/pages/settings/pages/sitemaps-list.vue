@@ -79,15 +79,13 @@
               v-for="sitemap in sitemapsWithInitial"
               :key="sitemap.name"
               media-item
-              class="sitemapslist-item"
               :checkbox="showCheckboxes"
               :checked="isChecked(sitemap.name) ? true : null"
               prevent-router
               @click.ctrl="ctrlClick($event, sitemap)"
               @click.meta="ctrlClick($event, sitemap)"
               @click.exact="click($event, sitemap)"
-              :link="sitemap.editable ? encodeURIComponent(sitemap.name) : null"
-              :no-chevron="!sitemap.editable"
+              :link="encodeURIComponent(sitemap.name)"
               :title="sitemap.label || sitemap.name"
               :footer="sitemap.name">
               <template #media>
@@ -299,7 +297,7 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.name, item)
-      } else if (item.editable) {
+      } else {
         this.f7router.navigate(encodeURIComponent(item.name))
       }
     },
