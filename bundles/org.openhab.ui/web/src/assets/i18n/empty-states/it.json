@@ -32,5 +32,7 @@
   "page.unavailable.title": "Pagina non disponibile",
   "page.unavailable.text": "Non puoi visualizzare questa pagina a causa di restrizioni di visibilità.",
   "persistence.title": "Nessun componente aggiuntivo di persistenza installato",
-  "persistence.text": "Con la persistenza è possibile memorizzare gli stati degli oggetti nel tempo, indipendentemente dal fatto che si tratti di valori storici o futuri. Per configurare la persistenza, è necessario che sia installato almeno un componente aggiuntivo di persistenza."
+  "persistence.text": "Con la persistenza è possibile memorizzare gli stati degli oggetti nel tempo, indipendentemente dal fatto che si tratti di valori storici o futuri. Per configurare la persistenza, è necessario che sia installato almeno un componente aggiuntivo di persistenza.",
+  "sitemaps.title": "Ancora nessun sitemap",
+  "sitemaps.text": "Sitemap sono un modo dichiarativo di definire la struttura di una interfaccia utente per le UI che le supportano (BasicUI, app mobile...). Sono fatte di widget per mostrare lo stato degli Item o inviare comandi agli Item. <br><br>Usa il pulsante + per creare il tuo primo sitemap."
 }
