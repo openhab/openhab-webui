@@ -1033,7 +1033,7 @@ export default {
         .then((ruleDefinition) => {
           progressDialog.close()
           copyToClipboard(ruleDefinition, {
-            dialogTitle: `Copy '${this.selectedItems.length}' Rule File Definition${this.selectedItems.length === 1 ? '' : 's'}`,
+            dialogTitle: `Copy ${this.selectedItems.length} Rule File Definition${this.selectedItems.length === 1 ? '' : 's'}`,
             dialogText: `Rule definition${this.selectedItems.length === 1 ? '' : 's'} retrieved successfully. Click OK to copy ${this.selectedItems.length === 1 ? 'it' : 'them'} to the clipboard.`,
             onSuccess: () => {
               showToast(
