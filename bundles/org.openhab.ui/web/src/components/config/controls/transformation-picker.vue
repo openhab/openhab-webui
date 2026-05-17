@@ -47,6 +47,8 @@
 import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
 
+import * as api from '@/api'
+
 export default {
   props: {
     title: String,
@@ -129,7 +131,7 @@ export default {
   },
   created() {
     this.smartSelectParams.closeOnSelect = true
-    this.$oh.api.get('/rest/transformations').then((data) => {
+    api.getTransformations().then((data) => {
       this.allTransformations = data
       this.transformations = this.filterTransformations(data)
       if (this.filterType && this.transformations.length < 5) {

@@ -35,6 +35,8 @@
 import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
 
+import * as api from '@/api'
+
 export default {
   props: {
     title: String,
@@ -65,7 +67,7 @@ export default {
   },
   created() {
     this.smartSelectParams.closeOnSelect = true
-    this.$oh.api.get('/rest/transformations/services').then((data) => {
+    api.getTransformationServices().then((data) => {
       this.services = data.sort()
       if (this.filterType) {
         this.services = this.services.filter((s) => this.filterType.indexOf(s) >= 0)
