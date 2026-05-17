@@ -421,7 +421,7 @@ import AttributeDetails from '@/components/pagedesigner/sitemap/attribute-detail
 import SitemapTreeviewItem from '@/components/pagedesigner/sitemap/treeview-item.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
-import { showToast } from '@/js/dialog-promises'
+import { showAlertDialog, showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
 import * as api from '@/api'
@@ -734,19 +734,19 @@ export default {
         return
       }
       if (!this.sitemap.name) {
-        f7.dialog.alert('Please give a name to the sitemap')
+        showAlertDialog('Please give a name to the sitemap')
         return
       }
       if (this.createMode && this.isExistingSitemap(this.sitemap.name)) {
-        f7.dialog.alert('A sitemap with the name ' + this.sitemap.name + ' already exists. Please choose another name.')
+        showAlertDialog('A sitemap with the name ' + this.sitemap.name + ' already exists. Please choose another name.')
         return
       }
       if (!this.sitemap.label) {
-        f7.dialog.alert('Please give a label to the sitemap')
+        showAlertDialog('Please give a label to the sitemap')
         return
       }
       if (!this.createMode && this.uid !== this.sitemap.name) {
-        f7.dialog.alert('You cannot change the name of an existing sitemap. Duplicate it with the new name then delete this one.')
+        showAlertDialog('You cannot change the name of an existing sitemap. Duplicate it with the new name then delete this one.')
         return
       }
 

@@ -94,7 +94,7 @@ import Editor from '@/components/config/controls/script-editor.vue'
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
 import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
-import { showToast } from '@/js/dialog-promises'
+import { showAlertDialog, showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [MovablePopup],
@@ -173,7 +173,7 @@ export default {
           }
         })
         .catch((err) => {
-          f7.dialog.alert(`Error creating ${codeType}: ${err}`).open()
+          showAlertDialog(`Error creating ${codeType}: ${err}`)
         })
     },
     /**
@@ -202,7 +202,7 @@ export default {
           let object = JSON.parse(data.data)
           const warnings = object.warnings
           if (warnings && warnings.length > 0) {
-            f7.dialog.alert(`Code parsed with warnings:\n${warnings.join('\n')}`)
+            showAlertDialog(`Code parsed with warnings:\n${warnings.join('\n')}`)
           }
           object = object[this.objectType]
           if (object?.length > 0) {
@@ -214,7 +214,7 @@ export default {
             if (onFailureCallback) {
               onFailureCallback()
             }
-            f7.dialog.alert(`Error parsing ${this.uiOptionsStore.codeEditorType}: no ${this.objectType} found`)
+            showAlertDialog(`Error parsing ${this.uiOptionsStore.codeEditorType}: no ${this.objectType} found`)
           }
         })
         .catch((err) => {
@@ -245,7 +245,7 @@ export default {
               f7.popup.open(this.$refs.errors.$el)
             }
           } else {
-            f7.dialog.alert(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`).open()
+            showAlertDialog(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`)
           }
         })
     },
