@@ -98,7 +98,7 @@
 <style lang="stylus">
 .attribute-details-item-picker
   .item-content
-    padding-left 0 !important
+    padding-left 8px !important
   .item-media
     display none
   .item-inner
