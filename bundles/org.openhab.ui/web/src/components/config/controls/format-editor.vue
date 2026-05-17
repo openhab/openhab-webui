@@ -172,6 +172,8 @@
   width 100%
   color var(--f7-input-error-text-color)
   font-size var(--f7-input-info-font-size)
+  white-space normal
+  overflow-wrap break-word
 </style>
 
 <script>
