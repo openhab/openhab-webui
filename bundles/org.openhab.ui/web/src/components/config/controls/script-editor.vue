@@ -1,6 +1,9 @@
 <template>
   <div class="code-editor-fit">
-    <f7-icon v-if="readOnly" f7="lock" size="50" class="code-readonly-icon" :tooltip="readOnlyMsg || 'Not editable'" />
+    <div class="code-editor-icons">
+      <f7-icon v-if="readOnly" f7="lock" size="50" class="code-readonly-icon" :tooltip="readOnlyMsg || 'Not editable from the UI'" />
+      <slot name="editor-icons" />
+    </div>
     <codemirror ref="cm" :model-value="value" :extensions="extensions" @ready="onCmReady" @change="onCmCodeChange" />
   </div>
 </template>
@@ -17,15 +20,17 @@
   height 100%
   display flex !important
 
-  .code-readonly-icon
+  .code-editor-icons
     position absolute
     top 0
     right 0
-    margin var(--f7-typography-margin) !important
-    color var(--f7-color-gray)
-    opacity 0.5
-    z-index 4000
-    user-select none
+    > *
+      margin var(--f7-typography-margin)
+      color var(--f7-color-gray)
+      opacity 0.5
+      z-index 4000
+      user-select none
+      float right
 
   .v-codemirror
     flex 1
@@ -170,6 +175,9 @@ const dynamicExtensions = computed((): Extension[] => {
   }
 
   extensions.push(EditorState.readOnly.of(props.readOnly ?? false))
+  if (props?.mode === 'application/vnd.openhab.dsl.rule') {
+    extensions.push(EditorState.tabSize.of(4))
+  }
 
   return extensions
 })

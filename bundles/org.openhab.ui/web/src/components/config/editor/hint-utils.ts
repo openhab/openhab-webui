@@ -282,7 +282,7 @@ export function hintParameterValues(
       return hintBooleanValue(context, line, colonPos)
     } else if (parameter.context === 'item') {
       return hintItems(context, { replaceAfterColon: true })
-    } else if (parameter.options) {
+    } else if (parameter.options && parameter.options.length > 0) {
       return hintParameterOptions(context, parameter, colonPos)
     }
   }

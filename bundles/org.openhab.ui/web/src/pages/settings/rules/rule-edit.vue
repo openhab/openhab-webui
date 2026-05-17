@@ -14,18 +14,12 @@
         :f7router />
     </f7-navbar>
     <f7-toolbar v-if="ready" tabbar position="top">
-      <f7-link @click="switchTab('design', fromYaml)" :tab-link-active="currentTab === 'design' ? true : null" tab-link="#design">
-        Design
-      </f7-link>
-      <f7-link
-        v-if="!(hasSource && hasOpaqueModule)"
-        @click="switchTab('code', toYaml)"
-        :tab-link-active="currentTab === 'code' ? true : null"
-        tab-link="#code">
+      <f7-link @click="switchTab('design')" :tab-link-active="currentTab === 'design' ? true : null" tab-link="#design"> Design </f7-link>
+      <f7-link v-if="hasCode" @click="switchTab('code')" :tab-link-active="currentTab === 'code' ? true : null" tab-link="#code">
         Code
       </f7-link>
       <f7-link v-if="hasSource" @click="switchTab('source')" :tab-link-active="currentTab === 'source' ? true : null" tab-link="#source">
-        Source
+        {{ sourceTypeText }} Source
       </f7-link>
     </f7-toolbar>
     <f7-tabs class="sitemap-editor-tabs">
@@ -264,31 +258,209 @@
           </f7-col>
           <f7-col v-if="!createMode && !stubMode">
             <f7-list>
-              <f7-list-button v-if="isEditable || !hasOpaqueModule" color="blue" @click="duplicateRule"> Duplicate Rule </f7-list-button>
+              <f7-list-button v-if="isEditable || (!hasOpaqueModule && !hasSharedContextModule)" color="blue" @click="duplicateRule">
+                Duplicate Rule
+              </f7-list-button>
+              <f7-list-button
+                v-if="!hasOpaqueModule"
+                color="blue"
+                title="Copy File Definition"
+                @click="copyPopupOpened = !copyPopupOpened" />
               <f7-list-button v-if="isEditable" color="red" @click="deleteRule"> Delete Rule </f7-list-button>
             </f7-list>
           </f7-col>
         </f7-block>
       </f7-tab>
-      <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor
-          v-if="currentTab === 'code'"
-          class="rule-code-editor"
-          mode="application/vnd.openhab.rule+yaml"
-          :value="ruleYaml"
-          :readOnly="!isEditable"
-          @input="onEditorInput"
-          @save="save()" />
-        <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
+      <f7-tab v-if="ready && hasCode && rule" id="code" :tab-active="currentTab === 'code' ? true : null">
+        <code-editor
+          v-if="ready"
+          ref="codeEditor"
+          object-type="rules"
+          :object="rule"
+          :object-id="rule.uid"
+          :read-only="!isEditable"
+          :read-only-msg="notEditableMsg"
+          :valid-media-types="validMediaTypes"
+          :opt-show-all-media-types="stubMode ? [] : ['application/yaml+rule']"
+          :is-object-empty="isEmpty"
+          :empty-media-type-templates="emptyMediaTypeTemplates"
+          :post-parse-callback="
+            () => {
+              return this.resolveEditorTypes()
+            }
+          "
+          :hint-context="{ rule: rule }"
+          @save="save()"
+          @parsed="updateRule"
+          @changed="onCodeChanged">
+          <template v-if="!createMode && !stubMode" #additional-panel-controls>
+            <f7-button
+              :color="rule.status.statusDetail === 'DISABLED' ? 'orange' : 'gray'"
+              :tooltip="(rule.status.statusDetail === 'DISABLED' ? 'Enable rule' : 'Disable rule') + ($device.desktop ? ' (Ctrl-D)' : '')"
+              icon-ios="f7:pause_circle"
+              icon-md="f7:pause_circle"
+              icon-aurora="f7:pause_circle"
+              class="toggle-enabled display-flex flex-direction-row"
+              @click="toggleDisabled">
+              &nbsp;{{ $f7dim.width < 550 ? '' : rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable' }}
+            </f7-button>
+            <f7-button
+              :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
+              :tooltip="`Run '${rule.name}' now${$device.desktop ? ' (Ctrl-R)' : ''}`"
+              icon-ios="f7:play_round"
+              icon-md="f7:play_round"
+              icon-aurora="f7:play_round"
+              class="run-now display-flex flex-direction-row"
+              @click="runNow">
+              &nbsp;{{ $f7dim.width < 550 ? '' : 'Run' }}
+            </f7-button>
+            <f7-chip
+              v-if="$f7dim.width > 600"
+              class="display-flex flex-direction-row"
+              :text="rule.status.status"
+              :color="ruleStatusBadgeColor(rule.status)"
+              :tooltip="`Rule '${rule.name}' is ${rule.status.status ? rule.status.status.toLocaleLowerCase() : 'unknown'}`" />
+          </template>
+        </code-editor>
       </f7-tab>
       <f7-tab v-if="ready && hasSource" id="source" :tab-active="currentTab === 'source'">
-        <editor v-if="currentTab === 'source'" class="rule-source-viewer" :mode="sourceType" :value="source" :readOnly="true" />
+        <editor
+          v-if="currentTab === 'source'"
+          class="rule-source-viewer"
+          :mode="sourceType"
+          :value="source"
+          :readOnly="true"
+          readOnlyMsg="Source code is not editable" />
       </f7-tab>
     </f7-tabs>
+
+    <f7-popup v-model:opened="copyPopupOpened" class="copy-definition-popup" backdrop closeOnEscape>
+      <div class="popup-content-wrapper">
+        <f7-block-title>Copy Rule File Definition</f7-block-title>
+        <f7-block>
+          <p>Select the format to copy to clipboard</p>
+          <div class="button-stack">
+            <f7-button
+              fill
+              large
+              :color="canDSL ? 'teal' : 'red'"
+              :tooltip="canDSL ? 'Copy DSL to clipboard' : showDslErrors ? 'Hide DSL errors' : 'Show DSL errors'"
+              @click="exportDslClicked">
+              DSL{{ canDSL ? '' : showDslErrors ? ' ▲' : ' ▼' }}
+            </f7-button>
+            <f7-block v-if="!canDSL && showDslErrors" inset class="dsl-errors">
+              <f7-block-title small>DSL problems:</f7-block-title>
+              {{ dslErrors }}
+            </f7-block>
+            <f7-button
+              fill
+              large
+              :color="canYAML ? 'blue' : 'red'"
+              :tooltip="
+                canYAML
+                  ? showYamlExportOptions
+                    ? 'Hide YAML options'
+                    : 'Show YAML options'
+                  : showYamlErrors
+                    ? 'Hide YAML errors'
+                    : 'Show YAML errors'
+              "
+              @click="exportYamlClicked">
+              YAML{{ (canYAML && showYamlExportOptions) || (!canYAML && showYamlErrors) ? ' ▲' : ' ▼' }}
+            </f7-button>
+            <div v-if="canYAML && showYamlExportOptions" class="yaml-sub-menu">
+              <f7-button
+                fill
+                color="blue"
+                tooltip="Copy YAML, where empty collections and normally irrelevant elements are omitted, to clipboard"
+                @click="copyRuleDefinitionToClipboard('YAML', serializationOptions.NORMAL)">
+                Normal
+              </f7-button>
+              <f7-button
+                fill
+                color="blue"
+                tooltip="Copy YAML, where empty collections and normally irrelevant elements are included, to clipboard"
+                @click="copyRuleDefinitionToClipboard('YAML', serializationOptions.ALL)">
+                With All Details
+              </f7-button>
+              <f7-button
+                v-if="rule.templateUID && Object.keys(rule.configuration).length > 0"
+                fill
+                color="blue"
+                tooltip="Copy YAML, where only the template and the configured template parameters are included, to clipboard"
+                @click="copyRuleDefinitionToClipboard('YAML', serializationOptions.STUB)">
+                Rule Stub Only
+              </f7-button>
+              <f7-button
+                v-if="rule.templateUID && rule.templateState === 'instantiated'"
+                fill
+                color="blue"
+                tooltip="Copy YAML, where the template and the configured parameters are removed, resulting in an indentical but fully independent rule, to clipboard"
+                @click="copyRuleDefinitionToClipboard('YAML', serializationOptions.STRIPPED)">
+                Stripped Of Template
+              </f7-button>
+            </div>
+            <f7-block v-if="!canYAML && showYamlErrors" inset class="yaml-errors">
+              <f7-block-title small>YAML problems:</f7-block-title>
+              {{ yamlErrors }}
+            </f7-block>
+            <f7-button fill large @click="copyPopupOpened = false" color="gray">Cancel</f7-button>
+          </div>
+        </f7-block>
+      </div>
+    </f7-popup>
   </f7-page>
 </template>
 
 <style lang="stylus">
+.dark
+  .popup
+    &.copy-definition-popup
+      .yaml-sub-menu
+        background #fff3
+
+.popup
+  &.copy-definition-popup
+
+    @media (min-width: 630px) and (min-height: 630px)
+      width 90%
+      max-width 450px
+      height auto
+      max-height 80vh
+      top 50%
+      left 50%
+      overflow-y auto
+      margin 0
+      transition-property transform, margin-left, top
+      .block-title
+        font-size calc(var(--f7-block-title-font-size) + 3px)
+      &.modal-in
+        transform translate3d(-50%, -50%, 0)
+
+    .button-stack
+      display flex
+      flex-direction column
+      gap 10px
+
+    .yaml-sub-menu
+      display flex
+      flex-direction column
+      gap 8px
+      padding 10px
+      background #0001
+      .block-title
+        font-size var(--f7-block-title-font-size)
+
+    .yaml-errors, .dsl-errors
+      padding-block-start calc(var(--f7-block-padding-vertical) / 2)
+      padding-block-end var(--f7-block-padding-vertical)
+      background var(--f7-page-bg-color)
+      margin-top 0
+      margin-bottom 0
+
+      .block-title
+        font-size var(--f7-block-title-font-size)
+
 .enable-toggle
   vertical-align inherit
 .moduleconfig-popup
@@ -311,11 +483,6 @@
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
   width 100%
-.yaml-message
-  display block
-  position absolute
-  top 80%
-  white-space pre-wrap
 </style>
 
 <script>
@@ -323,7 +490,6 @@ import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
@@ -337,20 +503,23 @@ import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
 import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
+import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
-import { useTabs } from '@/pages/useTabs'
+import { canSerializeRules, create } from '@/api'
+import copyToClipboard from '@/js/clipboard'
 
 const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
 export default {
-  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus],
+  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus, FileDefinition],
   components: {
     RuleGeneralSettings,
     ConfigSheet,
-    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
+    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
+    CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   props: {
     ruleId: String,
@@ -363,8 +532,13 @@ export default {
   },
   setup() {
     const { dirty, dirtyIndicator } = useDirty('rule-edit-page')
-    const { currentTab, switchTab } = useTabs('design')
-    return { theme, dirty, dirtyIndicator, currentTab, switchTab }
+    const serializationOptions = Object.freeze({
+      NORMAL: 'Normal',
+      ALL: 'Include all',
+      STUB: 'Stub only',
+      STRIPPED: 'Strip template'
+    })
+    return { theme, dirty, dirtyIndicator, serializationOptions }
   },
   data() {
     return {
@@ -379,7 +553,6 @@ export default {
 
       rule: {},
       savedRule: {},
-      ruleYaml: '',
       moduleTypes: {
         actions: [],
         conditions: [],
@@ -390,14 +563,33 @@ export default {
       currentModule: null,
       currentModuleConfig: {},
 
+      currentTab: 'design',
       codeEditorOpened: false,
       cronPopupOpened: false,
       scriptCode: '',
       cronExpression: null,
       templates: null,
       currentTemplate: null,
+      ruleDirty: false,
+      codeDirty: false,
+      notEditableMsg: 'This rule is read-only.',
+      uidPattern: RULE_UID_PATTERN,
 
-      uidPattern: RULE_UID_PATTERN
+      canYAML: false,
+      yamlErrors: undefined,
+      canDSL: false,
+      dslErrors: undefined,
+
+      copyPopupOpened: false,
+      showYamlExportOptions: false,
+      showYamlErrors: false,
+      showDslErrors: false,
+
+      emptyMediaTypeTemplates: {
+        'application/vnd.openhab.dsl.rule': () => {
+          return `rule "${this.rule.name || 'New Rule'}" uid="${this.rule.uid || f7.utils.id()}"\nwhen\n\nthen\n\nend\n`
+        }
+      }
     }
   },
   watch: {
@@ -411,10 +603,23 @@ export default {
           delete ruleClone.status
           delete this.savedRule.status
 
-          this.dirty = !fastDeepEqual(ruleClone, this.savedRule)
+          this.ruleDirty = !fastDeepEqual(ruleClone, this.savedRule)
         }
       },
       deep: true
+    },
+    savedRule: function () {
+      let ruleClone = cloneDeep(this.rule)
+      delete ruleClone.status
+      delete this.savedRule.status
+
+      this.ruleDirty = !fastDeepEqual(ruleClone, this.savedRule)
+    },
+    ruleDirty: function () {
+      this.dirty = this.ruleDirty || this.codeDirty
+    },
+    codeDirty: function () {
+      this.dirty = this.ruleDirty || this.codeDirty
     }
   },
   methods: {
@@ -475,9 +680,11 @@ export default {
               }
               this.currentTemplate = currentTemplate
             }
-            loadingFinished()
+            this.resolveEditorTypes().then(() => {
+              // no need for an event source, the rule doesn't exist yet
+              loadingFinished()
+            })
           })
-          // no need for an event source, the rule doesn't exist yet
         } else if (this.stubMode) {
           if (!this.ruleCopy || !this.ruleCopy.templateUID) {
             showToast(
@@ -501,6 +708,11 @@ export default {
               this.f7router.back()
             }
             this.currentTemplate = template
+            this.canYAML = true
+            this.yamlErrors = undefined
+            this.canDSL = false
+            this.dslErrors = undefined
+
             loadingFinished()
           })
           // no need for an event source, we're going to overwrite the existing rule
@@ -510,23 +722,192 @@ export default {
             if (data2.templateUID) {
               this.$oh.api.get('/rest/templates').then((templateData) => {
                 this.templates = templateData
+                this.resolveEditorTypes().then(() => {
+                  if (!this.eventSource) this.startEventSource()
+                  loadingFinished()
+                })
+              })
+            } else {
+              this.resolveEditorTypes().then(() => {
                 if (!this.eventSource) this.startEventSource()
                 loadingFinished()
               })
-            } else {
-              if (!this.eventSource) this.startEventSource()
-              loadingFinished()
             }
           })
         }
       })
     },
-    save(noToast) {
-      if (!this.isEditable) return Promise.reject()
-      if (this.currentTab === 'code') {
-        if (!this.fromYaml()) {
-          return Promise.reject()
+    async resolveEditorTypes() {
+      if (this.createMode && this.isEmpty) {
+        // Allow code editors for new, empty rules that haven't been edited yet.
+        this.canYAML = true
+        this.yamlErrors = undefined
+        this.canDSL = true
+        this.dslErrors = undefined
+        return
+      }
+      const [yamlResult, dslResult] = await Promise.allSettled([
+        canSerializeRules({
+          targetFormat: 'application/yaml',
+          body: {
+            rules: [this.rule]
+          }
+        }),
+        canSerializeRules({
+          targetFormat: 'application/vnd.openhab.dsl.rule',
+          body: {
+            rules: [this.rule]
+          }
+        })
+      ])
+      if (yamlResult.status === 'fulfilled') {
+        const yamlRes = yamlResult.value.results.filter((r) => r.uid === this.rule.uid)
+        if (yamlRes.length > 0) {
+          if (yamlRes[0].ok) {
+            this.canYAML = true
+            this.yamlErrors = undefined
+          } else {
+            this.canYAML = false
+            this.yamlErrors = yamlRes[0].failureReason
+          }
+        } else {
+          this.canYAML = false
+          this.yamlErrors = undefined
+          console.warn('Failed to check YAML serialization support, received an empty result')
         }
+      } else {
+        this.canYAML = false
+        this.yamlErrors = undefined
+        console.warn('Failed to check YAML serialization support:', yamlResult.reason)
+      }
+      if (dslResult.status === 'fulfilled') {
+        const dslRes = dslResult.value.results.filter((r_1) => r_1.uid === this.rule.uid)
+        if (dslRes.length > 0) {
+          if (dslRes[0].ok) {
+            this.canDSL = true
+            this.dslErrors = undefined
+          } else {
+            this.canDSL = false
+            this.dslErrors = dslRes[0].failureReason
+          }
+        } else {
+          this.canDSL = false
+          this.dslErrors = undefined
+          console.warn('Failed to check DSL serialization support, received an empty result')
+        }
+      } else {
+        this.canDSL = false
+        this.dslErrors = undefined
+        console.error('Failed to check DSL serialization support:', dslResult.reason)
+      }
+      console.debug('Can serialize ' + this.rule.uid + ' to YAML:', this.canYAML)
+      console.debug('Can serialize ' + this.rule.uid + ' to DSL:', this.canDSL)
+    },
+    switchTab(newTab) {
+      if (this.currentTab === newTab) return
+
+      // We can't prevent the tab switch here. Instead, we'll switch back if parsing fails
+      const previousTab = this.currentTab
+      this.currentTab = newTab
+
+      const editor = this.$refs.codeEditor
+      if (newTab === 'code') {
+        this.resolveEditorTypes().then(() => {
+          if (!this.hasCode) {
+            showToast('This rule cannot be shown in code form because it contains elements that cannot be serialized to YAML or DSL.')
+            this.currentTab = 'design'
+            f7.tab.show('#design')
+          } else {
+            this.$refs.codeEditor.generateCode()
+          }
+        })
+      } else if (previousTab === 'code' && this.codeDirty) {
+        editor.parseCode(
+          () => {
+            this.codeDirty = false
+          },
+          () => {
+            this.currentTab = 'code'
+            f7.tab.show('#code')
+          },
+          { editorType: this.uiOptionsStore.codeEditorType, showAll: editor.isShowAll }
+        )
+      }
+    },
+    onCodeChanged(codeDirty) {
+      this.codeDirty = codeDirty
+    },
+    updateRule(updatedRule, params = {}) {
+      const yaml = params.editorType === 'YAML'
+      const showAll = params.showAll || false
+      try {
+        if (!this.createMode && this.rule.uid && updatedRule.uid !== this.rule.uid)
+          throw new Error('Changing the rule UID is not allowed, it must remain "' + this.rule.uid + '"')
+        if (yaml) {
+          if (showAll && updatedRule.templateState != this.rule.templateState) {
+            console.debug(
+              `Ignoring template state change to ${updatedRule.templateState}, template state is controlled by the rule engine.`
+            )
+          }
+          if (updatedRule.templateUID !== this.rule.templateUID) {
+            this.rule.templateUID = updatedRule.templateUID
+            // if the template is changed, the templateState becomes invalid
+            delete this.rule.templateState
+          }
+        }
+        if (updatedRule.name !== this.rule.name) this.rule.name = updatedRule.name
+        if (!fastDeepEqual(updatedRule.tags, this.rule.tags)) this.rule.tags = updatedRule.tags
+        if (updatedRule.description !== this.rule.description) this.rule.description = updatedRule.description
+        if (!this.rule.description) {
+          // The UI control returns an empty string for description if it's not set, but the code editor sets it to null if it's not set.
+          // In both cases, we want to end up with no description.
+          delete this.rule.description
+        }
+        if (yaml && updatedRule.visibility !== this.rule.visibility && (showAll || updatedRule.visibility !== 'VISIBLE')) {
+          this.rule.visibility = updatedRule.visibility
+        }
+
+        if (yaml) {
+          // "source" and "sourceType" should only exist for read-only rules, so they should never get here. If they do,
+          // they will be stripped from the rule unless "showAll" is enabled, which would be confusing to the user,
+          // so let's make sure they don't get here by throwing an error if they do.
+          const updatedConfigKeys = Object.keys(updatedRule.configuration || {})
+          if (updatedConfigKeys.includes('source') || updatedConfigKeys.includes('sourceType')) {
+            throw new Error(`Invalid configuration key ${updatedConfigKeys.find((key) => ['source', 'sourceType'].includes(key))} found.`)
+          }
+          if (!fastDeepEqual(updatedRule.configuration, this.rule.configuration)) this.rule.configuration = updatedRule.configuration
+        }
+
+        if (yaml && showAll) {
+          // The configuration description is only shown with YAML and showAll enabled, so leave it along unless both conditions are true
+          if (!fastDeepEqual(updatedRule.configDescriptions, this.rule.configDescriptions))
+            this.rule.configDescriptions = updatedRule.configDescriptions
+        }
+
+        if (!fastDeepEqual(updatedRule.conditions, this.rule.conditions)) this.rule.conditions = updatedRule.conditions
+        if (!fastDeepEqual(updatedRule.actions, this.rule.actions)) this.rule.actions = updatedRule.actions
+        if (!fastDeepEqual(updatedRule.triggers, this.rule.triggers)) this.rule.triggers = updatedRule.triggers
+
+        this.resolveEditorTypes()
+        return true
+      } catch (e) {
+        f7.dialog.alert(e).open()
+        this.resolveEditorTypes()
+        return false
+      }
+    },
+    async save(noToast) {
+      if (!this.ready || !this.isEditable) return Promise.reject()
+      if (this.currentTab === 'code' && this.codeDirty) {
+        const editor = this.$refs.codeEditor
+        try {
+          await editor.parseCode(undefined, undefined, { editorType: this.uiOptionsStore.codeEditorType, showAll: editor.isShowAll })
+        } catch (e) {
+          this.currentTab = 'code'
+          f7.tab.show('#code')
+          throw e
+        }
+        this.codeDirty = false
       }
       if (!this.rule.uid) {
         f7.dialog.alert('Please provide a unique rule UID.', 'UID required').open()
@@ -549,9 +930,11 @@ export default {
         : this.$oh.api.put('/rest/rules/' + this.rule.uid, this.rule)
       return promise
         .then((data) => {
-          this.dirty = false
           if (this.createMode) {
-            showToast('Rule created')
+            if (!noToast) {
+              showToast('Rule created')
+            }
+            this.dirty = this.ruleDirty = this.codeDirty = false
             this.f7router.navigate(
               this.f7route.url
                 .replace('/add', '/' + this.rule.uid)
@@ -561,7 +944,10 @@ export default {
             )
             this.load()
           } else if (this.stubMode) {
-            showToast('Rule regenerated')
+            if (!noToast) {
+              showToast('Rule generated')
+            }
+            this.dirty = this.ruleDirty = this.codeDirty = false
             this.f7router.navigate(this.f7route.url.replace('/stub', '/' + this.rule.uid).replace('/schedule/', '/rules/'), {
               reloadCurrent: true
             })
@@ -580,6 +966,23 @@ export default {
     },
     duplicateRule() {
       let ruleClone = cloneDeep(this.rule)
+
+      // Remove embedded information that only applied to the original
+      const config = ruleClone.configuration
+      if (config) {
+        delete config.source
+        delete config.sourceType
+      }
+
+      // Remove embedded DSL context information
+      if (ruleClone.actions?.length == 1) {
+        const action = ruleClone.actions[0]
+        if (action.configuration?.script && action.configuration?.type === 'application/vnd.openhab.dsl.rule') {
+          action.configuration.script = action.configuration.script.replace(/^\/\/ context:[^\r\n]+$(?:\r\n|\r|\n)/m, '')
+          delete action.configuration.sharedContext
+        }
+      }
+
       ruleClone.name = (ruleClone.name || '') + ' copy'
       ruleClone.editable = true
       this.f7router.navigate(
@@ -643,7 +1046,7 @@ export default {
     deleteRule() {
       f7.dialog.confirm(`Are you sure you want to delete ${this.rule.name}?`, 'Delete Rule', () => {
         this.$oh.api.delete('/rest/rules/' + this.rule.uid).then(() => {
-          this.dirty = false
+          this.dirty = this.ruleDirty = this.codeDirty = false
           this.f7router.back('/settings/rules/', { force: true })
         })
       })
@@ -856,48 +1259,9 @@ export default {
         this.f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: theme.aurora ? 'f7-cover-v' : '' })
       })
     },
-    toYaml() {
-      this.ruleYaml = YAML.stringify(
-        {
-          configuration: this.rule.configuration,
-          triggers: this.rule.triggers,
-          conditions: this.rule.conditions,
-          actions: this.rule.actions
-        },
-        this.isEditable ? undefined : this.replacer
-      )
-    },
-    fromYaml() {
-      if (!this.isEditable || !this.ruleYaml) return
-      try {
-        const updatedRule = YAML.parse(this.ruleYaml)
-        this.rule.configuration = updatedRule.configuration
-        this.rule.triggers = updatedRule.triggers
-        this.rule.conditions = updatedRule.conditions
-        this.rule.actions = updatedRule.actions
-        return true
-      } catch (e) {
-        f7.dialog.alert(e).open()
-        return false
-      }
-    },
-    /**
-     * Replaces CRLF (Windows) or CR (Mac) with LF in scripts before YAMLification.
-     *
-     * @param key the key being processed
-     * @param value the value being processed
-     */
-    replacer(key, value) {
-      switch (key) {
-        case 'script':
-          return value ? value.replaceAll(/(\r\n|\r)/g, '\n') : value
-        default:
-          return value
-      }
-    },
     /**
      * Determines if the module is "opaque" in that it doesn't actually execute the content of the module, but instead executes
-     * a referenced in-memory runnable method.
+     * a referenced in-memory runnable method, or that the code depends on a referenced in-memory object/context.
      *
      * @param module the module to evaluate
      */
@@ -906,6 +1270,75 @@ export default {
       return (
         module.type === 'jsr223.ScriptedAction' || module.type === 'jsr223.ScriptedCondition' || module.type === 'jsr223.ScriptedTrigger'
       )
+    },
+    /**
+     * Determines if a module relies on shared context without being "opaque", that is, it's possible to show the script, but it won't
+     * work without an "invisible" context that can't be shown.
+     *
+     * @param module the module to evaluate
+     */
+    moduleHasSharedContext(module) {
+      if (!module?.type) return false
+      return (
+        module.type === 'script.ScriptAction' &&
+        module.configuration?.type === 'application/vnd.openhab.dsl.rule' &&
+        module.configuration?.sharedContext === true
+      )
+    },
+    copyRuleDefinitionToClipboard(type, serializationOption) {
+      if (!this.rule) {
+        return
+      }
+      const mediaType = type === 'DSL' ? 'application/vnd.openhab.dsl.rule' : 'application/yaml'
+      const progressDialog = f7.dialog.progress(`Loading '${this.rule.name}' ${type || 'YAML'} definition...`)
+      create(
+        {
+          serializationOption: serializationOption || undefined,
+          fileFormat: {
+            rules: [this.rule]
+          }
+        },
+        {
+          parseAs: 'text',
+          headers: {
+            Accept: mediaType
+          }
+        }
+      )
+        .then((ruleDefinition) => {
+          progressDialog.close()
+          copyToClipboard(ruleDefinition, {
+            dialogTitle: `Copy '${this.rule.name}' File Definition`,
+            dialogText: 'Rule definition retrieved successfully. Click OK to copy it to the clipboard.',
+            onSuccess: () => {
+              showToast(`Rule ${type || 'YAML'} definition copied to clipboard:\n${this.rule.name}`)
+            },
+            onError: () => {
+              f7.dialog.alert(`Error copying rule ${type || 'YAML'} definition to the clipboard`, 'Error')
+            }
+          })
+          this.copyPopupOpened = false
+        })
+        .catch((error) => {
+          progressDialog.close()
+          console.error('Failed to generate rule definiton', error)
+          f7.dialog.alert(`Error loading rule ${type || 'YAML'} definition: ${error}`, 'Error')
+          this.copyPopupOpened = false
+        })
+    },
+    exportDslClicked() {
+      if (this.canDSL) {
+        this.copyRuleDefinitionToClipboard('DSL')
+      } else {
+        this.showDslErrors = !this.showDslErrors
+      }
+    },
+    exportYamlClicked() {
+      if (this.canYAML) {
+        this.showYamlExportOptions = !this.showYamlExportOptions
+      } else {
+        this.showYamlErrors = !this.showYamlErrors
+      }
     }
   },
   computed: {
@@ -953,13 +1386,22 @@ export default {
     opaqueModulesType() {
       const modules = this.opaqueModules
       if (!modules || !modules.length) return undefined
-      // "Opaque modules" implies that the rule is created through JSR223.
+      // "Opaque modules" implies that the rule is created programmatically.
       // The assumption is therefore that all opaque module types are of the same type/scripting language.
       return modules.find((m) => m.configuration?.type)?.configuration?.type
     },
     opaqueModules() {
       if (!this.rule) return []
       return [...(this.rule.actions || []), this.rule.triggers || [], this.rule.conditions || []].filter((m) => this.isOpaqueModule(m))
+    },
+    hasSharedContextModule() {
+      return this.sharedContextModules.length > 0
+    },
+    sharedContextModules() {
+      if (!this.rule) return []
+      return [...(this.rule.actions || []), this.rule.triggers || [], this.rule.conditions || []].filter((m) =>
+        this.moduleHasSharedContext(m)
+      )
     },
     hasSource() {
       const sourceContainer = this.sourceSource
@@ -972,7 +1414,7 @@ export default {
     },
     sourceTypeText() {
       const result = this.sourceType
-      return result ? AUTOMATION_LANGUAGES[result]?.name || result : result
+      return result ? AUTOMATION_LANGUAGES[result]?.shortName || result : result
     },
     sourceType() {
       const sourceContainer = this.sourceSource
@@ -998,6 +1440,43 @@ export default {
     },
     labelValid() {
       return this.rule?.name?.trim()
+    },
+    hasCode() {
+      return this.canYAML || this.canDSL
+    },
+    validMediaTypes() {
+      const types = []
+      if (this.canYAML) types.push('application/yaml+rule')
+      if (this.canDSL) types.push('application/vnd.openhab.dsl.rule')
+      return types
+    },
+    /**
+     * Determines if the rule is "empty" from the code editor's perspective. An "empty" rule is one that
+     * can't yet be tested for YAML/DSL serialization support, and will allow showing the code editor
+     * regardless, so that a new rule can be created from the code editor.
+     *
+     * To qualify as empty, the rule must not have any properties other than an optional UID, and optional
+     * label/name, and optional empty arrays for triggers, actions, and conditions.
+     *
+     * @returns true if the rule is "empty" as defined above, false otherwise
+     */
+    isEmpty() {
+      const rule = this.rule
+      if (!rule) return true
+      if (
+        rule.description ||
+        rule.tags?.length ||
+        rule.templateUID ||
+        (rule.visibility && rule.visibility !== 'VISIBLE') ||
+        (rule.configuration && Object.keys(rule.configuration).length > 0) ||
+        (rule.configDescriptions && Object.keys(rule.configDescriptions).length > 0) ||
+        rule.triggers?.length > 0 ||
+        rule.actions?.length > 0 ||
+        rule.conditions?.length > 0
+      ) {
+        return false
+      }
+      return true
     },
     ...mapStores(useUIOptionsStore)
   }
