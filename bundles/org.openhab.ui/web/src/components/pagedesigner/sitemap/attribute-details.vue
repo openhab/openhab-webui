@@ -265,7 +265,7 @@ export default {
         gridTemplateColumns: gridTemplateColumns,
         gridAutoFlow: 'column',
         width: '100%',
-        alignItems: 'baseline',
+        alignItems: 'center',
         gap: '5px'
       }
     },
