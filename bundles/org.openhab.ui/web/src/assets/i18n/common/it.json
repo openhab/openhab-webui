@@ -14,8 +14,12 @@
   "dialogs.reload": "Aggiorna",
   "dialogs.retry": "Riprova",
   "dialogs.showAll": "Visualizza tutti",
+  "dialogs.itemPicker.tooltip.pickFromModel": "Scegli dai Modelli",
+  "dialogs.itemPicker.popup.title": "Seleziona Item",
   "dialogs.search": "Cerca",
   "dialogs.search.items": "Cerca Item",
+  "dialogs.search.items.tooltip.filtered": "Filtro applicato sugli Item",
+  "dialogs.search.items.tooltip.unfiltered": "Nessun filtro applicato sugli Item",
   "dialogs.search.things": "Cerca Things",
   "dialogs.search.rules": "Cerca regole",
   "dialogs.search.nothingFound": "Nessun risultato trovato",
@@ -38,6 +42,7 @@
   "home.editHome": "Modifica Home Page",
   "home.pinToHome": "Aggiungi a Pagina Iniziale",
   "home.exitToApp": "Ritorna alla App",
+  "home.triggerVoice": "Attivazione Dialogo voce",
   "home.tip.otherApps": "Apri il pannello delle app per avviare altre interfacce",
   "sidebar.noPages": "Nessuna pagina",
   "sidebar.administration": "Amministrazione",
@@ -52,6 +57,7 @@
   "admin.notTranslatedYet": "La sezione Amministrazione non è stata ancora tradotta.",
   "error.communicationFailure": "Errore di comunicazione",
   "error.itemNotFound": "%s non trovato",
+  "error.invalidCommand": "Comando non valido per %s",
   "error.notReachable.title": "openHAB è offline",
   "error.notReachable.msg": "Al momento non è possibile raggiungere il server openHAB. Controlla la connessione di rete e il server."
 }
