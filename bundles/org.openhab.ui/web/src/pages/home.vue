@@ -49,7 +49,7 @@
                  icon-md="material:exit_to_app"
                  :tooltip="$t('home.otherApps')"
                  panel-open="right"
-                 @click="runtimeStore.showDeveloperDock ? f7.emit('toggleDeveloperDock') : ''" />
+          @click="appDrawerClick" />
       </f7-nav-right>
     </f7-navbar>
 
@@ -305,6 +305,11 @@ export default {
       const hiddenTabs = this.homePageComponent.config.hiddenModelTabs
       if (hiddenTabs === undefined || !hiddenTabs.length) return true
       return hiddenTabs.indexOf(tab) < 0
+    },
+    appDrawerClick () {
+      if (useRuntimeStore().showDeveloperDock) {
+        f7.emit('toggleDeveloperDock')
+      }
     }
   }
 }

@@ -362,6 +362,7 @@
     <f7-panel right
               reveal
               dark
+              resizable
               v-if="ready">
       <panel-right />
       <!-- <f7-view url="/panel-right/"></f7-view> -->
