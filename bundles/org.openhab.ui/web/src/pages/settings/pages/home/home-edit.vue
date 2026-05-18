@@ -164,7 +164,6 @@
         </div>
 
         <div v-else :context="context" :key="pageKey">
-          asdfsf
           <model-tab style="margin-bottom: 4rem" :context="context" :type="currentModelTab" :page="page" />
         </div>
       </f7-tab>
@@ -524,8 +523,8 @@ export default {
           // so that users can paste older YAML code without having to adjust the structure
           updatedPage.slots = {
             equipment: updatedPage.equipment || [],
-            location: updatedPage.location || [],
-            property: updatedPage.property || []
+            locations: updatedPage.locations || [],
+            properties: updatedPage.properties || []
           }
         }
 
