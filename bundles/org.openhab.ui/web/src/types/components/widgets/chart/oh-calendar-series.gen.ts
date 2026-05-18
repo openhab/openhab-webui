@@ -29,7 +29,7 @@ export interface Config {
   color?: string
   aggregationFunction?: AggregationFunction
   calendarIndex?: number
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

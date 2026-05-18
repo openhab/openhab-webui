@@ -31,7 +31,7 @@ export interface Config {
   releaseOnly?: boolean
   commandInterval?: number
   delayStateDisplay?: number
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

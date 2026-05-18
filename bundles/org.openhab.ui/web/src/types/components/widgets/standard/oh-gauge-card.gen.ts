@@ -34,7 +34,7 @@ export interface Config {
   labelTextColor?: string
   labelFontSize?: string
   labelFontWeight?: string
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

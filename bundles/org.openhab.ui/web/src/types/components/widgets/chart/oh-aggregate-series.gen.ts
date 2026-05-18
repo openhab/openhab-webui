@@ -50,7 +50,7 @@ export interface Config {
   aggregationFunction?: AggregationFunction
   xAxisIndex?: number
   yAxisIndex?: number
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

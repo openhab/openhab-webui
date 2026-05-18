@@ -19,7 +19,7 @@ export interface Config {
   height?: string
   orient?: Orient
   gridIndex?: number
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

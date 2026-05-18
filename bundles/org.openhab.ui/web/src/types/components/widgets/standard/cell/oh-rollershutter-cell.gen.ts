@@ -23,7 +23,7 @@ export interface Config {
   dirIconsStyle?: DirIconsStyle
   stopIconStyle?: StopIconStyle
   stateInCenter?: boolean
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod
