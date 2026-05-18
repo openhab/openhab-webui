@@ -21,9 +21,3 @@ declare module '*?worker' {
   }
   export default workerConstructor
 }
-
-declare module '@/assets/openhab-dsl.parser.js' {
-  import type { LRParser } from '@lezer/lr'
-
-  export const parser: LRParser
-}
