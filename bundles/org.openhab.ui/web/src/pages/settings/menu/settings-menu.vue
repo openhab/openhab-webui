@@ -62,17 +62,6 @@
                 <f7-icon f7="square_on_circle" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item
-              v-if="runtimeStore.apiEndpoint('ui')"
-              link="pages/"
-              title="Pages"
-              :after="componentsStore.pages().length + sitemapsCount"
-              badge-color="blue"
-              :footer="objectsSubtitles.pages">
-              <template #media>
-                <f7-icon f7="tv" color="gray" />
-              </template>
-            </f7-list-item>
           </f7-list>
           <f7-list media-list class="search-list">
             <f7-list-item
@@ -90,6 +79,32 @@
             <f7-list-item media-item link="persistence/" title="Persistence" badge-color="blue" :footer="objectsSubtitles.persistence">
               <template #media>
                 <f7-icon f7="download_circle" color="gray" />
+              </template>
+            </f7-list-item>
+          </f7-list>
+          <f7-block-title v-if="runtimeStore.apiEndpoint('ui') || runtimeStore.apiEndpoint('sitemaps')"> User Interface </f7-block-title>
+          <f7-list media-list class="search-list">
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('ui')"
+              link="pages/"
+              title="Pages"
+              :after="componentsStore.pages().length"
+              badge-color="blue"
+              :footer="objectsSubtitles.pages">
+              <template #media>
+                <f7-icon f7="tv" color="gray" />
+              </template>
+            </f7-list-item>
+            <f7-list-item
+              v-if="runtimeStore.apiEndpoint('sitemaps')"
+              media-item
+              link="sitemaps/"
+              title="Sitemaps"
+              :after="sitemapsCount"
+              badge-color="blue"
+              :footer="objectsSubtitles.sitemaps">
+              <template #media>
+                <f7-icon f7="menu" color="gray" />
               </template>
             </f7-list-item>
           </f7-list>
@@ -241,9 +256,10 @@ export default {
         things: 'Manage the physical layer',
         model: 'The semantic model of your home',
         items: 'Manage the functional layer',
-        pages: 'Design displays for user interaction',
         transform: 'Make raw data human-readable',
         persistence: 'How to keep data for future use',
+        pages: 'Design displays for user interaction',
+        sitemaps: 'Design classic sitemaps for user interaction',
         rules: 'Automate with triggers and actions',
         scenes: 'Store a set of desired states to recall',
         scripts: 'Rules dedicated to running code',
@@ -408,9 +424,9 @@ export default {
             console.error('Error loading items:', error.message)
           })
 
-      if (useRuntimeStore().apiEndpoint('ui'))
+      if (useRuntimeStore().apiEndpoint('sitemaps'))
         api
-          .getRegisteredUiComponentsInNamespace({ namespace: 'system:sitemap' })
+          .getSitemaps()
           .then((data) => {
             this.sitemapsCount = data.length
           })

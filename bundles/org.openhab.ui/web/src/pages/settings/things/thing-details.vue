@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
+  <f7-page ref="thing-details-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="thing-details-page">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
@@ -43,6 +43,10 @@
             <f7-chip class="margin-left" :text="thing?.statusInfo?.status" :color="thingStatusBadgeColor(thing.statusInfo)" />
             <div>
               <strong>{{ thing?.statusInfo?.statusDetail !== 'NONE' ? thing.statusInfo.statusDetail : '&nbsp;' }}</strong>
+              <template v-if="bridgeHasProblem">
+                -
+                <f7-link :href="'/settings/things/' + thing.bridgeUID"> View Bridge </f7-link>
+              </template>
               <br />
               <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />
             </div>
@@ -66,9 +70,7 @@
             <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
               Information
             </f7-block-title>
-            <f7-block-footer v-if="!editable" class="no-margin padding-left">
-              <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: {{ notEditableMsg }}
-            </f7-block-footer>
+            <not-editable-notice v-if="!editable" subject="Thing" />
             <f7-list accordion-opposite>
               <f7-list-item v-if="thingType" accordion-item title="Thing Type" :after="thingType.label">
                 <f7-accordion-content class="thing-type-description">
@@ -311,8 +313,9 @@
           :object="thing"
           :object-id="thing.UID"
           :read-only="!editable"
-          :read-only-msg="notEditableMsg"
+          read-only-msg="This Thing is not editable because it has been provisioned from a file."
           :hint-context="{ thingType: thingType, channelTypes: channelTypes }"
+          @save="save()"
           @parsed="updateThing"
           @changed="onCodeChanged" />
       </f7-tab>
@@ -422,6 +425,7 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ChannelList from '@/components/thing/channel-list.vue'
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import NetworkPopup from '@/pages/settings/things/network/network-popup.vue'
 
@@ -430,26 +434,36 @@ import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
 
 import ThingStatus from '@/components/thing/thing-status-mixin'
 
-import DirtyMixin from '../dirty-mixin'
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 import { useThingEditStore } from '@/js/stores/useThingEditStore.ts'
 import { mapState } from 'pinia'
 
+import { useDirty } from '@/pages/useDirty'
+
 import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingStatus, DirtyMixin, FileDefinition],
+  mixins: [ThingStatus, FileDefinition],
   components: {
     ConfigSheet,
     ChannelList,
     ThingGeneralSettings,
+    NotEditableNotice,
     CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   props: {
     thingId: String,
     f7router: Object
+  },
+  setup(props) {
+    const { dirty, dirtyIndicator } = useDirty('thing-details-page')
+
+    return {
+      dirty,
+      dirtyIndicator
+    }
   },
   data() {
     return {
@@ -465,7 +479,6 @@ export default {
        */
       configActionsByGroup: [],
       eventSource: null,
-      notEditableMsg: 'This Thing is not editable because it has been provisioned from a file.',
       propertyTruncation: {}
     }
   },
@@ -546,6 +559,9 @@ export default {
     },
     firmwareUpdating() {
       return this.thing.statusInfo.status === 'OFFLINE' && this.thing.statusInfo.statusDetail === 'FIRMWARE_UPDATING'
+    },
+    bridgeHasProblem() {
+      return this.thing && this.thing.bridgeUID && ['BRIDGE_OFFLINE', 'BRIDGE_UNINITIALIZED'].includes(this.thing.statusInfo?.statusDetail)
     },
     ...mapState(useThingEditStore, [
       'configDirty',
@@ -810,7 +826,8 @@ export default {
         },
         {
           props: {
-            searchFor: this.thing.UID.split(':')[0]
+            searchFor: this.thing.UID.split(':')[0],
+            backLinkUrl: this.f7router.currentRoute.url
           }
         }
       )

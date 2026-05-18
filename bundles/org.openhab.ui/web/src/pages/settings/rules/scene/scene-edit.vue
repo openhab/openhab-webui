@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut" class="scene-edit">
+  <f7-page ref="scene-edit-page" @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut" class="scene-edit">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="(createMode ? 'Create scene' : rule.name) + dirtyIndicator"
@@ -239,7 +239,7 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 
 import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
@@ -249,14 +249,15 @@ import SceneConfigureItemPopup from './scene-configure-item-popup.vue'
 
 import RuleMixin from '../rule-edit-mixin'
 import RuleStatus from '@/components/rule/rule-status-mixin'
-import DirtyMixin from '../../dirty-mixin'
 
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
-  mixins: [RuleMixin, RuleStatus, DirtyMixin],
+  mixins: [RuleMixin, RuleStatus],
   components: {
     RuleGeneralSettings,
     ItemPicker,
@@ -270,7 +271,9 @@ export default {
     f7route: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('scene-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
+    return { dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {
@@ -283,7 +286,6 @@ export default {
         conditions: [],
         triggers: []
       },
-      currentTab: 'design',
       currentModuleType: null,
       currentModule: null,
       currentModuleConfig: {},

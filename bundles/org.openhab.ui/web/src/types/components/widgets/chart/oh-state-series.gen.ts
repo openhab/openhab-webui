@@ -16,6 +16,7 @@ export interface Config {
   service?: string
   noBoundary?: boolean
   noItemState?: boolean
+  displayState?: boolean
   offsetAmount?: number
   offsetUnit?: OffsetUnit
   yValue?: number

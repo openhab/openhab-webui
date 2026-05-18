@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="home-editor">
+  <f7-page ref="home-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="home-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="'Edit Home Page' + dirtyIndicator"
@@ -96,7 +96,7 @@
                       <f7-menu class="configure-layout-menu">
                         <f7-menu-item icon-f7="list_bullet" dropdown>
                           <f7-menu-dropdown>
-                            <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Configure Card" />
+                            <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Card Settings" />
                             <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
                             <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
                             <f7-menu-dropdown-item divider />
@@ -210,13 +210,16 @@
 </style>
 
 <script>
-import { nextTick, defineAsyncComponent, provide } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { nextTick, defineAsyncComponent } from 'vue'
+import { f7 } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
 import HomeCards from '../../../home/homecards-mixin'
 
 import YAML from 'yaml'
+
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 import {
   OhHomePageDefinition,
@@ -254,8 +257,10 @@ export default {
   },
   setup() {
     useViewArea()
+    const { dirty, dirtyIndicator } = useDirty('home-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
 
-    return { theme }
+    return { dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {

@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:beforein="onPageBeforeIn">
+  <f7-page ref="item-metadata-edit-page" @page:beforein="onPageBeforeIn">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="`${editable ? 'Edit' : 'View'} Item Metadata: ${namespace} ${dirtyIndicator}`"
@@ -33,14 +33,6 @@
       </f7-tab>
 
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon
-          v-if="!editable"
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          tooltip="This metadata is not editable as it has not been created through the UI" />
         <editor
           v-if="currentTab === 'code'"
           class="metadata-code-editor"
@@ -55,13 +47,13 @@
 </template>
 
 <style lang="stylus">
-.metadata-code-editor.v-codemirror
+.metadata-code-editor
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>
 
 <script>
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 import { nextTick, defineAsyncComponent } from 'vue'
 import YAML from 'yaml'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -82,12 +74,13 @@ import ItemMetadataHomeKit from '@/components/item/metadata/item-metadata-homeki
 import ItemMetadataMatter from '@/components/item/metadata/item-metadata-matter.vue'
 import ItemMetadataGa from '@/components/item/metadata/item-metadata-ga.vue'
 import ItemMetadataLinktomore from '@/components/item/metadata/item-metadata-linktomore.vue'
-import DirtyMixin from '../../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin.js'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
-  mixins: [DirtyMixin, ItemMixin],
+  mixins: [ItemMixin],
   props: {
     itemName: String,
     namespace: String,
@@ -97,12 +90,14 @@ export default {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   setup() {
-    return { theme }
+    const { currentTab, switchTab } = useTabs('config')
+    const { dirty, dirtyIndicator, setupDirtyWatch } = useDirty('item-metadata-edit-page')
+
+    return { dirty, dirtyIndicator, setupDirtyWatch, currentTab, switchTab }
   },
   data() {
     return {
       ready: false,
-      currentTab: 'config',
       creationMode: true,
       generic: MetadataNamespaces.map((n) => n.name).indexOf(this.namespace) < 0,
       item: {},

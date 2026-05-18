@@ -11,6 +11,7 @@ export enum CategoryType {
   week = 'week',
   month = 'month',
   year = 'year',
+  years = 'years',
   values = 'values'
 }
 
@@ -34,7 +35,6 @@ export interface Config {
   gridIndex?: number
   categoryType: CategoryType
   weekdayFormat: WeekdayFormat
-  startOnSunday?: boolean
   monthFormat: MonthFormat
   data?: string[]
 }

@@ -3,9 +3,9 @@
     <f7-navbar>
       <oh-nav-content title="API Explorer" back-link="Developer Tools" back-link-url="/developer/" :f7router />
     </f7-navbar>
-    <f7-block>
+    <f7-block class="no-padding no-margin">
       <f7-col>
-        <f7-card id="swaggerUi" />
+        <div class="no-margin" id="swaggerUi" />
       </f7-col>
     </f7-block>
   </f7-page>
@@ -17,7 +17,6 @@
   padding-bottom 5px
   color var(--f7-text-color) !important
   .wrapper
-    padding 0
     max-width inherit
   .information-container, .scheme-container, .authorization__btn
     display none
@@ -74,12 +73,12 @@
   .parameter__name
     font-weight bold
     white-space nowrap
-  .parameter__name, .parameter__type, .response-col_status, .response-col_description
+  .parameter__name, .parameter__type
     color var(--f7-text-color) !important
     padding 0
     font-size var(--f7-list-font-size) !important
-  tbody .response-col_status
-    padding-top 0.9rem !important
+  .response-col_description h5
+    margin 0
   .parameters input
     background-color #fff
     color #000
@@ -116,7 +115,6 @@
 </style>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import { type Router } from 'framework7'
 import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from '@/js/openhab/auth'
 

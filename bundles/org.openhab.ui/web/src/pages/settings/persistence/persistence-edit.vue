@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="persistence-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content :title="pageTitle + dirtyIndicator" :editable save-link="Save" @save="save()" :f7router />
     </f7-navbar>
@@ -62,9 +62,7 @@
         </f7-block>
 
         <f7-block v-if="ready" class="block-narrow">
-          <f7-col v-if="!editable">
-            <div class="padding-left">Note: {{ notEditableMgs }}</div>
-          </f7-col>
+          <not-editable-notice v-if="!editable" subject="persistence configuration" />
           <f7-col class="modules">
             <!-- Configuration -->
             <div>
@@ -270,14 +268,6 @@
 
       <!-- Code Tab -->
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon
-          v-if="!editable"
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          :tooltip="notEditableMgs" />
         <editor
           v-if="currentTab === 'code'"
           class="persistence-code-editor"
@@ -324,7 +314,7 @@
 .alias-item-picker .item-picker .item-content
   padding-left: calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
 
-.persistence-code-editor.v-codemirror
+.persistence-code-editor
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>
@@ -338,22 +328,24 @@ import YAML from 'yaml'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
-import DirtyMixin from '../dirty-mixin'
 import { FilterTypes, PredefinedStrategies, CommonCronStrategies } from '@/assets/definitions/persistence'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
-  mixins: [DirtyMixin],
   components: {
     ItemPicker,
     StrategyPicker,
+    NotEditableNotice,
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
   },
   props: {
@@ -361,7 +353,9 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('persistence-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
+    return { theme, dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {
@@ -372,12 +366,9 @@ export default {
       persistenceYaml: '',
       ready: false,
       loading: false,
-      currentTab: 'design',
       currentConfiguration: null,
       currentCronStrategy: null,
-      currentFilter: null,
-
-      notEditableMgs: 'This persistence configuration is not editable because it has been provisioned from a file.'
+      currentFilter: null
     }
   },
   computed: {

@@ -12,34 +12,36 @@
             <f7-menu-dropdown-item
               @click="childContext(slide).editmode.configureWidget(childContext(slide).component, childContext(slide).parent)"
               href="#"
-              text="Configure Widget" />
+              text="Widget Settings" />
             <f7-menu-dropdown-item
               @click="childContext(slide).editmode.editWidgetCode(childContext(slide).component, childContext(slide).parent)"
               href="#"
-              text="Edit YAML" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item
-              @click="childContext(slide).editmode.cutWidget(childContext(slide).component, childContext(slide).parent)"
-              href="#"
-              text="Cut" />
-            <f7-menu-dropdown-item
-              @click="childContext(slide).editmode.copyWidget(childContext(slide).component, childContext(slide).parent)"
-              href="#"
-              text="Copy" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item
-              @click="childContext(slide).editmode.moveWidgetUp(childContext(slide).component, childContext(slide).parent)"
-              href="#"
-              text="Move Before" />
-            <f7-menu-dropdown-item
-              @click="childContext(slide).editmode.moveWidgetDown(childContext(slide).component, childContext(slide).parent)"
-              href="#"
-              text="Move After" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item
-              @click="childContext(slide).editmode.removeWidget(context.component, context.parent)"
-              href="#"
-              text="Remove Slide" />
+              :text="childContext(slide).editmode.isEditable ? 'Edit YAML' : 'View YAML'" />
+            <template v-if="childContext(slide).editmode.isEditable">
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item
+                @click="childContext(slide).editmode.cutWidget(childContext(slide).component, childContext(slide).parent)"
+                href="#"
+                text="Cut" />
+              <f7-menu-dropdown-item
+                @click="childContext(slide).editmode.copyWidget(childContext(slide).component, childContext(slide).parent)"
+                href="#"
+                text="Copy" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item
+                @click="childContext(slide).editmode.moveWidgetUp(childContext(slide).component, childContext(slide).parent)"
+                href="#"
+                text="Move Before" />
+              <f7-menu-dropdown-item
+                @click="childContext(slide).editmode.moveWidgetDown(childContext(slide).component, childContext(slide).parent)"
+                href="#"
+                text="Move After" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item
+                @click="childContext(slide).editmode.removeWidget(childContext(slide).component, childContext(slide).parent)"
+                href="#"
+                text="Remove Slide" />
+            </template>
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
@@ -58,7 +60,7 @@
     <generic-widget-component v-for="(repeater, idx) in repeater" :key="'gwc-repeater-' + idx" :context="childContext(repeater)" />
 
     <!-- add slide component to add slides in the page editor -->
-    <f7-swiper-slide v-if="context.editmode">
+    <f7-swiper-slide v-if="context.editmode?.isEditable">
       <oh-placeholder-widget @click="context.editmode.addWidget(context.component, null, context.parent)" />
     </f7-swiper-slide>
   </f7-swiper>

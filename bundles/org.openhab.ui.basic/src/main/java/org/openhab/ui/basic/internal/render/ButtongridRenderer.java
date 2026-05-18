@@ -26,7 +26,6 @@ import org.openhab.core.items.ItemNotFoundException;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.types.QuantityType;
 import org.openhab.core.sitemap.Button;
-import org.openhab.core.sitemap.ButtonDefinition;
 import org.openhab.core.sitemap.Buttongrid;
 import org.openhab.core.sitemap.Widget;
 import org.openhab.core.types.State;
@@ -69,39 +68,10 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
     public List<Widget> renderWidget(Widget w, StringBuilder sb, String sitemap) throws RenderException {
         Buttongrid grid = (Buttongrid) w;
 
-        Map<Integer, Map<Integer, ButtonDefinition>> rowsButtons = new HashMap<>();
         Map<Integer, Map<Integer, List<Button>>> rowsButtonWidgets = new HashMap<>();
 
         int maxColumn = 0;
         int mawRow = 0;
-        // Go through buttons defined in the "buttons" parameter of the Buttongrid to fill the map rows
-        for (ButtonDefinition button : grid.getButtons()) {
-            int row = button.getRow();
-            int column = button.getColumn();
-            if (row < 1 || column < 1) {
-                logger.warn("Invalid row or column number; button at position {}:{} is ignored", row, column);
-                continue;
-            }
-            if (row > mawRow) {
-                mawRow = row;
-            }
-            if (column > maxColumn) {
-                maxColumn = column;
-            }
-
-            Map<Integer, ButtonDefinition> columnsButtons = rowsButtons.get(row);
-            if (columnsButtons == null) {
-                columnsButtons = new HashMap<>();
-                rowsButtons.put(row, columnsButtons);
-            }
-            if (columnsButtons.get(column) != null) {
-                logger.warn(
-                        "Several buttons at row {} and column {} in \"buttons\" parameter; only the first is considered",
-                        row, column);
-            } else {
-                columnsButtons.put(column, button);
-            }
-        }
         // Go through buttons defined as sub-element of the Buttongrid to fill the map rowsWidgets
         for (Widget widget : grid.getWidgets()) {
             if (widget instanceof Button button) {
@@ -118,32 +88,25 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
                     maxColumn = column;
                 }
 
-                Map<Integer, ButtonDefinition> columnsButtons = rowsButtons.get(row);
-                if (columnsButtons != null && columnsButtons.get(column) != null) {
-                    logger.warn(
-                            "Several buttons at row {} and column {} in \"buttons\" parameter and as \"Button\" element; only the first is considered",
-                            row, column);
+                Map<Integer, List<Button>> columnsButtonWidgets = rowsButtonWidgets.get(row);
+                if (columnsButtonWidgets == null) {
+                    columnsButtonWidgets = new HashMap<>();
+                    rowsButtonWidgets.put(row, columnsButtonWidgets);
+                }
+                List<Button> buttonWidgets = columnsButtonWidgets.get(column);
+                if (buttonWidgets == null) {
+                    buttonWidgets = new ArrayList<>();
+                    buttonWidgets.add(button);
+                    columnsButtonWidgets.put(column, buttonWidgets);
+                } else if (!buttonWidgets.get(0).getVisibility().isEmpty() && !button.getVisibility().isEmpty()) {
+                    buttonWidgets.add(button);
                 } else {
-                    Map<Integer, List<Button>> columnsButtonWidgets = rowsButtonWidgets.get(row);
-                    if (columnsButtonWidgets == null) {
-                        columnsButtonWidgets = new HashMap<>();
-                        rowsButtonWidgets.put(row, columnsButtonWidgets);
-                    }
-                    List<Button> buttonWidgets = columnsButtonWidgets.get(column);
-                    if (buttonWidgets == null) {
-                        buttonWidgets = new ArrayList<>();
+                    logger.warn(
+                            "Several \"Button\" elements at row {} and column {}; only the first button without visibility conditions is kept",
+                            row, column);
+                    if (!buttonWidgets.get(0).getVisibility().isEmpty() && button.getVisibility().isEmpty()) {
+                        buttonWidgets.clear();
                         buttonWidgets.add(button);
-                        columnsButtonWidgets.put(column, buttonWidgets);
-                    } else if (!buttonWidgets.get(0).getVisibility().isEmpty() && !button.getVisibility().isEmpty()) {
-                        buttonWidgets.add(button);
-                    } else {
-                        logger.warn(
-                                "Several \"Button\" elements at row {} and column {}; only the first button without visibility conditions is kept",
-                                row, column);
-                        if (!buttonWidgets.get(0).getVisibility().isEmpty() && button.getVisibility().isEmpty()) {
-                            buttonWidgets.clear();
-                            buttonWidgets.add(button);
-                        }
                     }
                 }
             }
@@ -166,7 +129,7 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
 
         StringBuilder buttons = new StringBuilder();
         for (int row = 1; row <= mawRow; row++) {
-            buildRow(maxColumn, rowsButtons.get(row), rowsButtonWidgets.get(row), buttons);
+            buildRow(maxColumn, rowsButtonWidgets.get(row), buttons);
         }
         snippet = snippet.replace("%buttons%", buttons.toString());
 
@@ -174,8 +137,8 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
         return List.of();
     }
 
-    private void buildRow(int columns, @Nullable Map<Integer, ButtonDefinition> buttonsInRow,
-            @Nullable Map<Integer, List<Button>> buttonWidgetsInRow, StringBuilder builder) throws RenderException {
+    private void buildRow(int columns, @Nullable Map<Integer, List<Button>> buttonWidgetsInRow, StringBuilder builder)
+            throws RenderException {
         // Add extra cells to fill the row
         // Try to center the grid at best with one extra cell at beginning of row and one at end of row
         int extraCellSizeDesktop = 12 % columns;
@@ -196,12 +159,8 @@ public class ButtongridRenderer extends AbstractWidgetRenderer {
         int sizeTablet = Math.max(1, 8 / columns);
         int sizePhone = Math.max(1, 4 / columns);
         for (int col = 1; col <= columns; col++) {
-            ButtonDefinition button = buttonsInRow == null ? null : buttonsInRow.get(col);
             List<Button> buttonWidgets = buttonWidgetsInRow == null ? null : buttonWidgetsInRow.get(col);
-            if (button != null) {
-                String buttonHtml = buildButton(null, button.getLabel(), button.getCmd(), "", button.getIcon(), true);
-                buildCell(false, sizeDessktop, col > 8, sizeTablet, col > 4, sizePhone, buttonHtml, builder);
-            } else if (buttonWidgets != null) {
+            if (buttonWidgets != null) {
                 String buttonHtml = "";
                 for (Button b : buttonWidgets) {
                     String icon = b.getIcon() != null || !b.getIconRules().isEmpty() ? getCategory(b) : null;

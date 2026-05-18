@@ -7,17 +7,17 @@ import * as api from '@/api'
 
 export const useComponentsStore = defineStore('components', () => {
   // States
-  const _widgets = ref<api.RootUiComponent[]>([])
-  const _pages = ref<api.RootUiComponent[]>([])
+  const _widgets = ref<api.EnrichedRootUiComponent[]>([])
+  const _pages = ref<api.EnrichedRootUiComponent[]>([])
   const ready = ref<boolean>(false)
 
   // Getters
-  function widget(uid: string): DeepReadonly<api.RootUiComponent> | null {
+  function widget(uid: string): DeepReadonly<api.EnrichedRootUiComponent> | null {
     const widget = _widgets.value.find((widget) => widget.uid === uid)
     return widget ? readonly(widget) : null
   }
 
-  function widgets(): DeepReadonly<api.RootUiComponent[]> {
+  function widgets(): DeepReadonly<api.EnrichedRootUiComponent[]> {
     return readonly(_widgets.value.sort((a, b) => a.uid.localeCompare(b.uid)))
   }
 
@@ -26,13 +26,13 @@ export const useComponentsStore = defineStore('components', () => {
     return page ? readonly(page) : null
   }
 
-  function pages(): DeepReadonly<api.RootUiComponent[]> {
+  function pages(): DeepReadonly<api.EnrichedRootUiComponent[]> {
     const pages = _pages.value.sort((a, b) => a.uid.localeCompare(b.uid))
     return readonly(pages)
   }
 
   // Actions
-  function setPagesAndWidgets(pages: api.RootUiComponent[], widgets: api.RootUiComponent[]): void {
+  function setPagesAndWidgets(pages: api.EnrichedRootUiComponent[], widgets: api.EnrichedRootUiComponent[]): void {
     _pages.value = pages
     _widgets.value = widgets
     ready.value = true
@@ -45,7 +45,7 @@ export const useComponentsStore = defineStore('components', () => {
       api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:page' }),
       api.getRegisteredUiComponentsInNamespace({ namespace: 'ui:widget' })
     ]).then((data) => {
-      setPagesAndWidgets(data[0] as api.RootUiComponent[], data[1] as api.RootUiComponent[])
+      setPagesAndWidgets(data[0] as api.EnrichedRootUiComponent[], data[1] as api.EnrichedRootUiComponent[])
     })
   }
 

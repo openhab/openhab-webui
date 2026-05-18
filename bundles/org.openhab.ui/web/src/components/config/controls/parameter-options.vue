@@ -69,7 +69,7 @@ export default {
     if (this.configDescription.options.length <= 5 && !this.configDescription.multiple) {
       this.inlineList = true
     } else if (this.configDescription.options.length <= 10) {
-      this.smartSelectParams.openIn = this.configDescription.options.some((o) => o.label.length > 25) ? 'sheet' : 'popover'
+      this.smartSelectParams.openIn = this.configDescription.options.some((o) => o.label.length > 35) ? 'sheet' : 'popover'
     } else if (this.configDescription.options.length > 100) {
       this.smartSelectParams.openIn = 'popup'
       this.smartSelectParams.searchbar = true

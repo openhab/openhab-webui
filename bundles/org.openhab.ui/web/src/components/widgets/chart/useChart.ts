@@ -1,4 +1,4 @@
-import { computed, type ComputedRef, readonly, ref } from 'vue'
+import { computed, type Ref, readonly, ref } from 'vue'
 import { computedAsync } from '@vueuse/core'
 import dayjs, { type Dayjs } from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
@@ -53,6 +53,7 @@ import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 import cloneDeep from 'lodash/cloneDeep'
 import type { EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
 import type { WidgetDefinition } from '@/assets/definitions/widgets/helpers.ts'
+import { simpleHash } from '@/js/openhab/utils.ts'
 
 dayjs.extend(IsoWeek)
 dayjs.extend(DayDuration)
@@ -75,9 +76,9 @@ const seriesComponents: Record<string, SeriesComponent> = {
 }
 
 export function useChart(
-  context: WidgetContext,
-  rawConfig: ComputedRef<OhChart.Config>,
-  slots: ComputedRef<Record<string, api.UiComponent[]>>,
+  context: Ref<WidgetContext>,
+  rawConfig: Ref<OhChart.Config>,
+  slots: Ref<Record<string, api.UiComponent[]>>,
   evaluateExpression: EvaluateExpressionFn
 ) {
   const uiOptionsStore = useUIOptionsStore()
@@ -118,6 +119,10 @@ export function useChart(
         case ChartType.year:
           if (config.value.initialYear !== undefined) day = dayjs().year(config.value.initialYear)
           break
+        case ChartType.twoYears:
+        case ChartType.threeYears:
+        case ChartType.fiveYears:
+          break
         default:
           const exhaustiveCheck: never = chartType
       }
@@ -152,7 +157,7 @@ export function useChart(
 
   const chartContext = computed<ChartContext>(() => ({
     chart: {
-      ...(context.component as api.UiComponent),
+      ...(context.value.component as api.UiComponent),
       config: config.value
     },
     evaluateExpression: chartComponentEvaluateExpression,
@@ -309,17 +314,18 @@ export function useChart(
         starttime: seriesStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
         boundary,
-        itemState
+        itemState,
+        displayState: 'displayState' in config ? config.displayState : undefined
       }
-      const key = `${neededItem}-${query.serviceId ?? 'default'}-${query.starttime}-${query.endtime}-${boundary.toString()}-${itemState.toString()}`
-      if (_persistencePromises[key] === undefined) {
-        _persistencePromises[key] = api.getItemDataFromPersistenceService(query).then((result) => {
-          delete _persistencePromises[key]
+      const hash = simpleHash(query)
+      if (_persistencePromises[hash] === undefined) {
+        _persistencePromises[hash] = api.getItemDataFromPersistenceService(query).then((result) => {
+          delete _persistencePromises[hash]
           return result!
         })
       }
 
-      return await Promise.all([_itemPromises[neededItem], _persistencePromises[key]])
+      return await Promise.all([_itemPromises[neededItem], _persistencePromises[hash]])
     })
 
     return Promise.all(combinedPromises).then(getter)

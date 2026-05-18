@@ -67,11 +67,11 @@
             class="blockslist-item"
             :checkbox="showCheckboxes"
             :checked="isChecked(b.uid) ? true : null"
-            :prevent-router="showCheckboxes"
+            prevent-router
             @click.ctrl="ctrlClick($event, b)"
             @click.meta="ctrlClick($event, b)"
             @click.exact="click($event, b)"
-            :link="`/developer/blocks/${b.uid}`"
+            :link="`${b.uid}`"
             :title="b.uid">
             <template #subtitle>
               <div>
@@ -154,6 +154,8 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
+      } else {
+        this.f7router.navigate(item.uid, { animate: false })
       }
     },
     ctrlClick(event, item) {

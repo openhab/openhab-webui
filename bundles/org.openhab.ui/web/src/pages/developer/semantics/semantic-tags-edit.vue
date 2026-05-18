@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @page:afterout="onPageAfterOut">
+  <f7-page ref="semantic-tags-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" @page:afterout="onPageAfterOut">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="'Semantic Tags' + dirtyIndicator"
@@ -358,7 +358,7 @@ import YAML from 'yaml'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
 import TagMixin from '@/components/tags/tag-mixin'
-import DirtyMixin from '@/pages/settings/dirty-mixin'
+import { useDirty } from '@/pages/useDirty'
 
 import { i18n } from '@/js/i18n'
 
@@ -366,7 +366,7 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [DirtyMixin, TagMixin],
+  mixins: [TagMixin],
   components: {
     SemanticsTreeview,
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
@@ -375,8 +375,11 @@ export default {
     f7router: Object
   },
   setup() {
+    const { dirty, dirtyIndicator } = useDirty('semantic-tags-edit-page')
     return {
-      theme
+      theme,
+      dirty,
+      dirtyIndicator
     }
   },
   data() {

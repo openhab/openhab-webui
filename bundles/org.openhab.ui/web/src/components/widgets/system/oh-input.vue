@@ -102,26 +102,21 @@ export default {
     type() {
       return this.config.type || getDefaultInputType(this.item?.type) || 'text'
     },
-    // Returns the unit from the item's displayState, state description pattern or the item's unit symbol
+    /**
+     * The unit from the stateDescription pattern (if `useDisplayState` is enabled) or the item's unit symbol.
+     * @return {string|null}
+     */
     unit() {
       if (this.type !== 'number') return null
       if (!this.item?.unitSymbol) return null
 
-      const storeItem = this.context.store[this.config.item]
-      // When the state of a dimensioned item is UNDEF/NULL, item.displayState is undefined
-      // so we need to pull it out of the item's state description pattern
       if (this.config.useDisplayState) {
-        const unit = this.extractUnit(storeItem.displayState || this.item.stateDescription?.pattern)
-        return unit === '%unit%' ? this.item.unitSymbol : unit
+        const pattern = this.item.stateDescription?.pattern
+        const unit = this.extractUnit(pattern)
+        if (unit === '%unit%') return this.item.unitSymbol
+        return unit ?? this.item.unitSymbol
       }
       return this.item.unitSymbol
-    },
-    // Returns the index of the last pattern in the stateDescription
-    // Example: displayState = "Some label %0.1f footext °C", returns 2
-    // Returns -1 if no pattern is found
-    valueIndexInDisplayState() {
-      const parts = this.item?.stateDescription?.pattern?.trim()?.split(/\s+/) || []
-      return parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
     },
     calendarParams() {
       if (this.type !== 'datepicker') return null
@@ -232,22 +227,17 @@ export default {
     },
     extractUnit(pattern) {
       if (!pattern) return null
-      return pattern.trim().split(/\s+/).pop()
+      const parts = pattern.trim().split(/\s+/)
+      // Ignore %unit% and %% placeholders while detecting actual value tokens.
+      const valueIndex = parts.findLastIndex((part) => part.startsWith('%') && part !== '%unit%' && part !== '%%')
+
+      if (valueIndex === -1 || valueIndex === parts.length - 1) return null
+      return parts[valueIndex + 1] ?? null
     },
     extractValue(pattern) {
-      if (!pattern) return null
-
-      const parts = pattern.trim().split(/\s+/)
-      switch (parts.length) {
-        case 0:
-          return null
-        case 1:
-          return pattern
-        case 2:
-          return parts[0]
-        default:
-          return parts[this.valueIndexInDisplayState]
-      }
+      const endIndex = pattern.lastIndexOf(this.unit)
+      if (endIndex < 0) return pattern
+      return pattern.substring(0, endIndex).trim()
     }
   }
 }

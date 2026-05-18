@@ -1,8 +1,9 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="chart-editor">
+  <f7-page ref="chart-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="chart-editor">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="(createMode ? 'Create chart page' : page.config.label) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -25,16 +26,23 @@
           <div>Loading...</div>
         </f7-block>
         <f7-block v-if="ready && !previewMode" class="block-narrow">
-          <page-settings :page="page" :createMode="createMode" :f7router />
+          <not-editable-notice v-if="!isEditable" subject="chart" />
+          <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
           <f7-block-title>Chart Configuration</f7-block-title>
           <config-sheet
             :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
             :parameters="pageWidgetDefinition.props.parameters || []"
             :configuration="page.config"
+            :readOnly="!isEditable"
             :f7router />
         </f7-block>
 
-        <chart-designer v-if="ready && !previewMode && currentTab === 'design'" class="chart-designer" :context="context" />
+        <chart-designer
+          v-if="ready && !previewMode && currentTab === 'design'"
+          class="chart-designer"
+          :context="context"
+          :configureWidget="configureWidget"
+          :configureSlot="configureSlot" />
 
         <oh-chart-page v-else-if="ready && previewMode && currentTab === 'design'" class="chart-page" :context="context" :key="pageKey" />
       </f7-tab>
@@ -46,6 +54,7 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=chart"
           :value="pageYaml"
+          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre v-show="!previewMode" class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -61,7 +70,7 @@
   .oh-chart-page-chart
     top calc(var(--f7-navbar-height) + var(--f7-toolbar-height)) !important
     height calc(100% - var(--f7-navbar-height) - 2 * var(--f7-toolbar-height)) !important
-  .page-code-editor.v-codemirror
+  .code-editor-fit.page-code-editor
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message
@@ -76,16 +85,17 @@
 </style>
 
 <script>
-import { defineAsyncComponent, provide } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { defineAsyncComponent } from 'vue'
+import { f7 } from 'framework7-vue'
 
 import PageDesigner from '../pagedesigner-mixin'
-
-import YAML from 'yaml'
+import { resolveDefaultProps } from '../defaultProps'
+import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 import OhChartPage from '@/components/widgets/chart/oh-chart-page.vue'
 
 import PageSettings from '@/components/pagedesigner/page-settings.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import ChartDesigner from '@/components/pagedesigner/chart/chart-designer.vue'
 import ChartWidgetsDefinitions from '@/assets/definitions/widgets/chart/index'
@@ -94,6 +104,8 @@ import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import WidgetSlotConfigPopup from '@/components/pagedesigner/widget-slot-config-popup.vue'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 export default {
   mixins: [PageDesigner],
@@ -101,6 +113,7 @@ export default {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     OhChartPage,
     PageSettings,
+    NotEditableNotice,
     ChartDesigner,
     ConfigSheet
   },
@@ -113,8 +126,10 @@ export default {
   },
   setup() {
     useViewArea()
+    const { dirty, dirtyIndicator } = useDirty('chart-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
 
-    return { theme }
+    return { dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {
@@ -136,6 +151,7 @@ export default {
   },
   methods: {
     addWidget(component, widgetType, parentContext, slot) {
+      if (!this.isEditable) return
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -203,7 +219,8 @@ export default {
             removeComponentFromSlot: this.removeComponentFromSlot,
             editWidgetCode: this.editWidgetCode,
             currentSlotDefaultComponentType: this.currentSlotDefaultComponentType,
-            initialConfig: { show: true }
+            initialConfig: { show: true },
+            readOnly: !this.isEditable
           }
         }
       )
@@ -224,15 +241,14 @@ export default {
       this.forceUpdate()
     },
     toYaml() {
-      this.pageYaml = YAML.stringify({
-        config: this.page.config,
-        slots: this.page.slots
-      })
+      this.pageYaml = toFileYAMLSyntax('pages', this.page)
     },
     fromYaml() {
       try {
-        const updatedPage = YAML.parse(this.pageYaml)
+        const updatedPage = fromFileYAMLSyntax('pages', this.pageYaml, this.page.uid)
         this.page.config = updatedPage.config
+        this.page.tags = updatedPage.tags || []
+        this.page.props = resolveDefaultProps(updatedPage.props)
         this.page.slots = updatedPage.slots
         this.forceUpdate()
         return true

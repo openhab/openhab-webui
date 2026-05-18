@@ -60,8 +60,9 @@ export default {
     footer: Object
   },
   setup(props) {
-    const { config, hasAction, evaluateExpression } = useWidgetContext(computed(() => props.context))
-    const { performAction, onTaphold, onContextMenu } = useWidgetAction(props.context, config, evaluateExpression)
+    const context = computed(() => props.context)
+    const { config, hasAction, evaluateExpression } = useWidgetContext(context)
+    const { performAction, onTaphold, onContextMenu } = useWidgetAction(context, config, evaluateExpression)
     return { config, hasAction, performAction, onTaphold, onContextMenu }
   },
   computed: {

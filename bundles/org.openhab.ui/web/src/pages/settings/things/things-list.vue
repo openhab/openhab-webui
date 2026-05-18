@@ -154,11 +154,11 @@
               :checkbox="showCheckboxes"
               :checked="isChecked(thing.UID) ? true : null"
               :value="thing.UID"
-              :prevent-router="showCheckboxes"
+              prevent-router
               @click.ctrl="ctrlClick($event, thing)"
               @click.meta="ctrlClick($event, thing)"
               @click.exact="click($event, thing)"
-              :link="`/settings/things/${thing.UID}`"
+              :link="`${encodeURIComponent(thing.UID)}`"
               :title="thing.label || thing.UID">
               <template #footer>
                 <div>
@@ -174,9 +174,15 @@
                 </div>
               </template>
               <template #after>
-                <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description">
-                  {{ thingStatusBadgeText(thing.statusInfo) }}
-                </f7-badge>
+                <div class="badge-with-marker">
+                  <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description || null">
+                    {{ thingStatusBadgeText(thing.statusInfo) }}
+                  </f7-badge>
+                  <span
+                    v-if="thing.statusInfo.status === 'ONLINE' && thing.statusInfo.description && thing.statusInfo.description !== ''"
+                    class="badge-marker-dot">
+                  </span>
+                </div>
               </template>
               <template #after-title>
                 <f7-icon v-if="!thing.editable" f7="lock_fill" size="1rem" color="gray" />
@@ -215,6 +221,19 @@
 <style lang="stylus">
 .things-list
   margin-bottom calc(var(--f7-fab-size) + 2 * calc(var(--f7-fab-margin) + var(--f7-safe-area-bottom)))
+  .badge-with-marker
+    position relative
+    display inline-block
+  .badge-marker-dot
+    position absolute
+    top -4px
+    right -4px
+    width 10px
+    height 10px
+    background-color var(--f7-color-blue)
+    border 1px solid var(--f7-list-bg-color)
+    border-radius 50%
+    pointer-events none
 </style>
 
 <script>
@@ -481,6 +500,8 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.UID, item)
+      } else {
+        this.f7router.navigate(item.UID)
       }
     },
     ctrlClick(event, item) {

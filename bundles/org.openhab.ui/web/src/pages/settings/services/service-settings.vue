@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="service-settings-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="service.label + dirtyIndicator"
@@ -23,17 +23,16 @@
 
 <script>
 import { nextTick } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 
 import fastDeepEqual from 'fast-deep-equal/es6'
 import cloneDeep from 'lodash/cloneDeep'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import DirtyMixin from '../dirty-mixin'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [DirtyMixin],
   components: {
     ConfigSheet
   },
@@ -42,7 +41,8 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('service-settings-page')
+    return { dirty, dirtyIndicator }
   },
   data() {
     return {

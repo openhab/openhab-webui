@@ -284,6 +284,8 @@
 .model-page
   .subnavbar
     background-color var(--f7-searchbar-bg-color, var(--f7-bars-bg-color))
+    .button, .link
+      color var(--f7-toolbar-link-color, var(--f7-bars-link-color, var(--f7-theme-color)))
   .expand-button
     height unset
     margin-right 8px

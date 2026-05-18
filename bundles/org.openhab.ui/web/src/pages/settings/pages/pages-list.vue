@@ -11,29 +11,38 @@
           v-if="initSearchbar"
           ref="searchbar"
           class="searchbar-pages"
-          search-container=".pages-list"
-          search-item=".pagelist-item"
-          search-in=".item-title, .item-subtitle, .item-header, .item-footer"
+          :custom-search="true"
+          @searchbar:search="searchbarSearch"
+          @searchbar:clear="searchbarClear"
           :placeholder="searchPlaceholder"
           :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <f7-link
-        v-if="!theme.md"
-        v-show="selectedItems.length"
-        color="red"
-        class="delete"
-        icon-ios="f7:trash"
-        icon-aurora="f7:trash"
-        @click="removeSelected">
-        Remove {{ selectedItems.length }}
-      </f7-link>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
-      <div v-if="theme.md" class="right">
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+      <div v-if="!theme.md && selection.length > 0" class="display-flex justify-content-center" style="width: 100%">
+        <f7-link
+          color="red"
+          class="delete display-flex flex-direction-row margin-right"
+          icon-ios="f7:trash"
+          icon-aurora="f7:trash"
+          @click="removeSelected">
+          Remove
+        </f7-link>
+        <f7-link
+          color="blue"
+          class="copy display-flex flex-direction-row"
+          @click="copySelectedItemsToClipboard"
+          icon-ios="f7:square_on_square"
+          icon-aurora="f7:square_on_square">
+          &nbsp;Copy
+        </f7-link>
+      </div>
+      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="toggleCheck()" />
+      <div v-if="theme.md" class="title">{{ selection.length }} selected</div>
+      <div v-if="theme.md && selection.length > 0" class="right">
+        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link tooltip="Copy selected" icon-md="material:content_copy" icon-color="white" @click="copySelectedItemsToClipboard" />
       </div>
     </f7-toolbar>
 
@@ -70,37 +79,48 @@
       </f7-col>
 
       <f7-col v-show="ready">
-        <f7-block-title class="searchbar-hide-on-search"> {{ pages.length }} pages </f7-block-title>
-        <div v-show="!ready || pages.length > 0" class="padding-left padding-right">
+        <f7-block-title class="no-margin-top">
+          <span>{{ listTitle }}</span>
+          <template v-if="showCheckboxes && selectablePageUids.length">
+            -
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
+        </f7-block-title>
+        <div v-show="ready && pages.length > 0" class="padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
             <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')"> By type </f7-button>
           </f7-segmented>
         </div>
 
-        <f7-list class="searchbar-not-found">
+        <f7-list v-if="pages.length > 0 && filteredPages.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-show="pages.length > 0" class="col pages-list" ref="pagesList" :contacts-list="groupBy === 'alphabetical'" media-list>
+        <f7-list
+          v-show="filteredPages.length > 0"
+          class="col pages-list"
+          ref="pagesList"
+          :contacts-list="groupBy === 'alphabetical'"
+          media-list>
           <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
             <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
             <f7-list-item
-              v-for="(page, index) in pagesWithInitial"
-              :key="index"
+              v-for="page in pagesWithInitial"
+              :key="page.uid"
               media-item
               class="pagelist-item"
               :checkbox="showCheckboxes && page.uid !== 'overview'"
-              :checked="isChecked((page.component === 'Sitemap' ? 'system:sitemap:' : 'ui:page:') + page.uid)"
+              :checked="isChecked(page.uid) ? true : null"
               :disabled="showCheckboxes && page.uid === 'overview' ? true : null"
-              :prevent-router="showCheckboxes && page.uid !== 'overview'"
+              prevent-router
               @click.ctrl="ctrlClick($event, page)"
               @click.meta="ctrlClick($event, page)"
               @click.exact="click($event, page)"
-              :link="`/settings/pages/${getPageType(page).type}/${page.uid}`"
-              :title="page.config.label"
+              :link="getPageLink(page)"
+              :title="page.config?.label || page.uid"
               :subtitle="getPageType(page).label"
               :footer="page.uid"
-              :badge="page.config.order">
+              :badge="page.config?.order">
               <template #subtitle>
                 <div>
                   <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
@@ -109,7 +129,7 @@
                     </template>
                   </f7-chip>
                   <f7-chip
-                    v-for="userrole in page.config.visibleTo || []"
+                    v-for="userrole in page.config?.visibleTo || []"
                     :key="userrole"
                     :text="userrole"
                     media-bg-color="green"
@@ -121,9 +141,16 @@
                 </div>
               </template>
               <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
+              <template #after>
+                <!-- This is here to push the after-title icon so it would appear immediately after the title
+                     for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
+              </template>
+              <template #after-title>
+                <f7-icon v-if="page.editable === false" f7="lock_fill" size="1rem" color="gray" />
+              </template>
               <template #media>
                 <oh-icon
-                  :color="page.config.sidebar || page.uid === 'overview' ? '' : 'gray'"
+                  :color="page.config?.sidebar || page.uid === 'overview' ? '' : 'gray'"
                   :icon="getPageIcon(page)"
                   :height="32"
                   :width="32" />
@@ -134,16 +161,11 @@
       </f7-col>
     </f7-block>
 
-    <!-- empty-state-placeholder not needed because the overview page cannot be deleted, so there is at least 1 page -->
-
     <template #fixed>
       <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
         <f7-fab-buttons position="top">
-          <f7-fab-button fab-close label="Create sitemap" href="sitemap/add">
-            <f7-icon f7="menu" />
-          </f7-fab-button>
           <f7-fab-button fab-close label="Create layout" href="layout/add">
             <f7-icon f7="rectangle_grid_2x2" />
           </f7-fab-button>
@@ -170,14 +192,26 @@ import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
+import { getPageType, getPageIcon } from '@/pages/page-type'
+
+import copyToClipboard from '@/js/clipboard'
+import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 export default {
   props: {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const runtimeStore = useRuntimeStore()
+    const lastSearchQueryStore = useLastSearchQueryStore()
+
+    return {
+      theme,
+      runtimeStore,
+      lastSearchQueryStore
+    }
   },
   data() {
     return {
@@ -186,38 +220,40 @@ export default {
       loading: false,
       pages: [],
       selectedItems: [],
-      groupBy: 'alphabetical',
       showCheckboxes: false,
-      pageTypes: [
-        { type: 'sitemap', label: 'Sitemap', componentType: 'Sitemap', icon: 'f7:menu' },
-        { type: 'layout', label: 'Layout', componentType: 'oh-layout-page', icon: 'f7:rectangle_grid_2x2' },
-        { type: 'home', label: 'Home', componentType: 'oh-home-page', icon: 'f7:house' },
-        { type: 'tabs', label: 'Tabbed', componentType: 'oh-tabs-page', icon: 'f7:squares_below_rectangle' },
-        { type: 'map', label: 'Map', componentType: 'oh-map-page', icon: 'f7:map' },
-        { type: 'plan', label: 'Floor plan', componentType: 'oh-plan-page', icon: 'f7:square_stack_3d_up' },
-        { type: 'chart', label: 'Chart', componentType: 'oh-chart-page', icon: 'f7:graph_square' }
-      ]
+      searchQuery: ''
     }
   },
   computed: {
+    groupBy: {
+      get() {
+        return this.runtimeStore.pagesGroupOrder
+      },
+      set(value) {
+        this.runtimeStore.pagesGroupOrder = value
+      }
+    },
+    filteredPages() {
+      if (!this.searchQuery.length) return this.pages
+      return this.pages.filter((page) => this.pageMatchesSearch(page, this.searchQuery))
+    },
+    filteredPagesCount() {
+      return this.filteredPages.length
+    },
     indexedPages() {
       if (this.groupBy === 'alphabetical') {
-        return this.pages.reduce((prev, page, i, pages) => {
-          const label = page.config.label || page.uid
+        return this.filteredPages.reduce((prev, page) => {
+          const label = page.config?.label || page.uid
           const initial = label.substring(0, 1).toUpperCase()
-          if (!prev[initial]) {
-            prev[initial] = []
-          }
+          if (!prev[initial]) prev[initial] = []
           prev[initial].push(page)
 
           return prev
         }, {})
       } else {
-        const typeGroups = this.pages.reduce((prev, page, i, things) => {
-          const type = this.getPageType(page).label
-          if (!prev[type]) {
-            prev[type] = []
-          }
+        const typeGroups = this.filteredPages.reduce((prev, page) => {
+          const type = getPageType(page).label
+          if (!prev[type]) prev[type] = []
           prev[type].push(page)
 
           return prev
@@ -232,65 +268,133 @@ export default {
     },
     searchPlaceholder() {
       return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+    },
+    allSelected() {
+      return this.selectablePageUids.length > 0 && this.selectablePageUids.every((uid) => this.selectedItems.includes(uid))
+    },
+    listTitle() {
+      let title = this.filteredPagesCount
+      if (this.searchQuery.length) {
+        title += ` of ${this.pages.length} pages found`
+      } else {
+        title += ' pages'
+      }
+      if (this.selection.length > 0) {
+        title += `, ${this.selection.length} selected`
+      }
+      return title
+    },
+    selectablePageUids() {
+      return this.filteredPages.filter((page) => page.uid !== 'overview').map((page) => page.uid)
+    },
+    selection() {
+      return this.selectablePageUids.filter((uid) => this.selectedItems.includes(uid))
     }
   },
   methods: {
+    searchbarSearch(event) {
+      this.searchQuery = event?.query || ''
+    },
+    searchbarClear() {
+      this.searchQuery = ''
+    },
     onPageAfterIn() {
       this.load()
     },
     onPageBeforeOut() {
-      useLastSearchQueryStore().lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
     },
     load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) useLastSearchQueryStore().lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      if (this.initSearchbar) this.lastSearchQueryStore.lastPagesSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
+      this.pages = []
       this.selectedItems = []
       this.showCheckboxes = false
-      let promises = [this.$oh.api.get('/rest/ui/components/system:sitemap'), this.$oh.api.get('/rest/ui/components/ui:page')]
-      Promise.all(promises).then((data) => {
-        const pagesAndSitemaps = data[0].concat(data[1])
-        this.pages = pagesAndSitemaps.sort((a, b) => {
-          return a.config.label.localeCompare(b.config.label)
-        })
-        this.initSearchbar = true
+      this.$oh.api
+        .get('/rest/ui/components/ui:page')
+        .then((data) => {
+          this.pages = data.sort((a, b) => {
+            const aLabel = a.config?.label || a.uid
+            const bLabel = b.config?.label || b.uid
+            return aLabel.localeCompare(bLabel)
+          })
+          this.initSearchbar = true
+          this.ready = true
 
-        this.loading = false
-        this.ready = true
-
-        nextTick(() => {
-          if (this.$refs.listIndex) this.$refs.listIndex.update()
-          if (this.$device.desktop && this.$refs.searchbar) {
-            this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
-          }
-          this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastPagesSearchQuery || '')
+          nextTick(() => {
+            if (this.$refs.listIndex) this.$refs.listIndex.update()
+            if (this.$device.desktop && this.$refs.searchbar) {
+              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+            }
+            this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastPagesSearchQuery || '')
+          })
         })
-      })
+        .catch((err) => {
+          console.error(err)
+          showToast('An error occurred while loading pages: ' + (err?.message || String(err)))
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     switchGroupOrder(groupBy) {
       this.groupBy = groupBy
-      const searchbar = this.$refs.searchbar.$el.f7Searchbar
-      const filterQuery = searchbar.query
+      const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
+      const filterQuery = searchbar?.query
       nextTick(() => {
         if (filterQuery) {
           searchbar.clear()
           searchbar.search(filterQuery)
         }
-        if (groupBy === 'alphabetical') this.$refs.listIndex.update()
+        if (this.groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
     toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
+      if (!this.showCheckboxes) {
+        this.selectedItems = []
+      }
     },
     isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0
     },
+    getNormalizedSearchTerms(query) {
+      return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
+    },
+    getPageSearchText(page) {
+      const searchFields = [
+        page.config?.label,
+        page.uid,
+        this.getPageType(page)?.label,
+        ...(page.tags || []),
+        ...(page.config?.visibleTo || []).map((role) => role)
+      ]
+      return searchFields.filter(Boolean).join(' ').toLowerCase()
+    },
+    pageMatchesSearch(page, query) {
+      const terms = this.getNormalizedSearchTerms(query)
+      if (!terms.length) return true
+      const pageSearchText = this.getPageSearchText(page)
+      return terms.every((term) => pageSearchText.includes(term))
+    },
+    selectDeselectAll() {
+      if (this.allSelected) {
+        this.selectedItems = []
+      } else {
+        // assign a copy so mutations to `selectedItems` don't modify the computed `selectablePageUids` array
+        this.selectedItems = Array.from(this.selectablePageUids)
+      }
+    },
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
+      } else {
+        const pageLink = this.getPageLink(item)
+        if (pageLink) this.f7router.navigate(pageLink)
       }
     },
     ctrlClick(event, item) {
@@ -298,45 +402,36 @@ export default {
       if (!this.selectedItems.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, itemName, item) {
+      if (itemName === 'overview') return
       if (!this.showCheckboxes) this.showCheckboxes = true
-      itemName = item.component === 'Sitemap' ? 'system:sitemap:' + itemName : 'ui:page:' + itemName
       if (this.isChecked(itemName)) {
         this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
       } else {
         this.selectedItems.push(itemName)
       }
     },
-    getPageType(page) {
-      return this.pageTypes.find((t) => t.componentType === page.component)
-    },
-    getPageIcon(page) {
-      if (page.uid === 'overview') return 'f7:house'
-      if (page.config && page.config.icon) return page.config.icon
-      const pageType = this.pageTypes.find((t) => t.componentType === page.component)
-      return pageType ? pageType.icon : 'f7:tv'
+    getPageType,
+    getPageIcon,
+    getPageLink(page) {
+      const type = this.getPageType(page)
+      return type ? `${encodeURIComponent(type.type)}/${encodeURIComponent(page.uid)}` : null
     },
     removeSelected() {
       const vm = this
 
-      if (this.selectedItems.indexOf('ui:page:overview') >= 0) {
-        f7.dialog.alert('The overview page cannot be deleted!')
-        return
-      }
-
-      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected pages?`, 'Remove Pages', () => {
+      f7.dialog.confirm(`Remove ${this.selection.length} selected pages?`, `Remove Pages`, () => {
         vm.doRemoveSelected()
       })
     },
     doRemoveSelected() {
+      if (this.selection.some((p) => this.pages.find((page) => page.uid === p)?.editable === false)) {
+        f7.dialog.alert('Some of the selected pages are not modifiable because they have been provisioned by files')
+        return
+      }
+
       let dialog = f7.dialog.progress('Deleting Pages...')
 
-      const promises = this.selectedItems.map((p) => {
-        if (p.startsWith('system:sitemap')) {
-          return this.$oh.api.delete('/rest/ui/components/system:sitemap/' + p.replace('system:sitemap:', ''))
-        } else {
-          return this.$oh.api.delete('/rest/ui/components/ui:page/' + p.replace('ui:page:', ''))
-        }
-      })
+      const promises = this.selection.map((p) => this.$oh.api.delete('/rest/ui/components/ui:page/' + p))
       Promise.all(promises)
         .then((data) => {
           showToast('Pages removed')
@@ -349,9 +444,17 @@ export default {
           dialog.close()
           this.load()
           console.error(err)
-          f7.dialog.alert('An error occurred while deleting: ' + err)
+          showToast('An error occurred while deleting: ' + (err?.message || String(err)))
           f7.emit('sidebarRefresh', null)
         })
+    },
+    copySelectedItemsToClipboard() {
+      const itemsToCopy = this.pages.filter((page) => this.selection.includes(page.uid))
+      const yaml = toFileYAMLSyntax('pages', itemsToCopy)
+      copyToClipboard(yaml, {
+        onSuccess: () => showToast('Selected Page definitions copied to clipboard'),
+        onError: () => showToast('Failed to copy page definitions to clipboard')
+      })
     }
   },
   asyncComputed: {

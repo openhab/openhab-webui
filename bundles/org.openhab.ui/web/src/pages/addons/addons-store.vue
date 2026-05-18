@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" ref="addonstore" class="page-addon-store">
     <f7-navbar large class="store-nav">
-      <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :large="true" back-link-url="/" :f7router />
+      <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :large="true" :back-link-url="backLinkUrl" :f7router />
     </f7-navbar>
     <f7-toolbar v-show="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
       <f7-link
@@ -296,6 +296,10 @@ export default {
   mixins: [AddonStoreMixin],
   props: {
     searchFor: String,
+    backLinkUrl: {
+      type: String,
+      default: '/'
+    },
     f7router: Object
   },
   components: {

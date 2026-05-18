@@ -25,7 +25,8 @@ export enum Dimension {
   isoWeekday = 'isoWeekday',
   weekday = 'weekday',
   date = 'date',
-  month = 'month'
+  month = 'month',
+  year = 'year'
 }
 
 export interface Config {
@@ -34,6 +35,7 @@ export interface Config {
   service?: string
   noBoundary?: boolean
   noItemState?: boolean
+  displayState?: boolean
   offsetAmount?: number
   offsetUnit?: OffsetUnit
   markers?: Markers[]

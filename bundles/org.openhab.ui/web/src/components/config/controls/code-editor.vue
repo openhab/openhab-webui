@@ -1,15 +1,14 @@
 <template>
-  <f7-icon
-    v-if="readOnly"
-    f7="lock"
-    class="float-right margin"
-    style="opacity: 0.5; z-index: 4000; user-select: none"
-    size="50"
-    color="gray"
-    :tooltip="readOnlyMsg" />
-
   <div class="code-editor">
-    <editor ref="editor" :mode="editorMode" :value="code" :hint-context="hintContext" :read-only="readOnly" @input="onEditorInput" />
+    <editor
+      ref="editor"
+      :mode="editorMode"
+      :value="code"
+      :hint-context="hintContext"
+      :read-only="readOnly"
+      :read-only-msg="readOnlyMsg"
+      @input="onEditorInput"
+      @save="$emit('save')" />
   </div>
 
   <f7-toolbar bottom class="code-editor-toolbar">
@@ -95,7 +94,7 @@ import Editor from '@/components/config/controls/script-editor.vue'
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
 import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
-import { showToast } from '@/js/dialog-promises'
+import { showAlertDialog, showToast } from '@/js/dialog-promises'
 
 export default {
   mixins: [MovablePopup],
@@ -116,7 +115,7 @@ export default {
   //          The parsed object is passed as the argument.
   // @changed event is emitted when the code is changed in the editor
   //          The code editor's dirty status is passed as a boolean argument.
-  emits: ['changed', 'parsed'],
+  emits: ['changed', 'parsed', 'save'],
   data() {
     return {
       code: null,
@@ -128,7 +127,7 @@ export default {
   },
   computed: {
     editorMode() {
-      return this.mediaTypes[this.uiOptionsStore.codeEditorType]
+      return this.mediaTypes[this.uiOptionsStore.codeEditorType] || this.mediaTypes[Object.keys(this.mediaTypes)[0]]
     },
     mediaTypes() {
       return SupportedMediaTypes[this.objectType] || DefaultMediaTypes
@@ -148,14 +147,18 @@ export default {
      *
      * @param {string} codeType - Optional. The type of code to generate (e.g. YAML, DSL)
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been generated
+     * @param {object} sourceObject - Optional. The object to generate code from. Defaults to the current prop value.
      */
-    generateCode(codeType, onSuccessCallback) {
+    generateCode(codeType, onSuccessCallback, sourceObject = this.object) {
       codeType ||= this.uiOptionsStore.codeEditorType
+      if (!this.mediaTypes[codeType]) {
+        codeType = Object.keys(this.mediaTypes)[0]
+      }
       const sourceMediaType = MediaType.JSON
       let targetMediaType = this.mediaTypes[codeType]
       targetMediaType = targetMediaType.split('+')[0] // remove the +thing or +item suffix, if present
       const payload = {}
-      payload[this.objectType] = [this.object]
+      payload[this.objectType] = [sourceObject]
       this.$oh.api
         .postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
         .then((code) => {
@@ -163,13 +166,14 @@ export default {
           // therefore normalize before loading in editor.
           this.code = code.replaceAll('\r\n', '\n').replaceAll('\r', '\n')
           this.originalCode = this.code
+          this.dirty = false
           this.uiOptionsStore.codeEditorType = codeType
           if (onSuccessCallback) {
             onSuccessCallback()
           }
         })
         .catch((err) => {
-          f7.dialog.alert(`Error creating ${codeType}: ${err}`).open()
+          showAlertDialog(`Error creating ${codeType}: ${err}`)
         })
     },
     /**
@@ -178,7 +182,7 @@ export default {
      * Called from the parent component to update the object from code.
      * The resulting object is emitted in a `parsed` event.
      *
-     * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed
+     * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed. Receives the parsed object.
      * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
      */
     parseCode(onSuccessCallback, onFailureCallback) {
@@ -196,17 +200,21 @@ export default {
         })
         .then((data) => {
           let object = JSON.parse(data.data)
+          const warnings = object.warnings
+          if (warnings && warnings.length > 0) {
+            showAlertDialog(`Code parsed with warnings:\n${warnings.join('\n')}`)
+          }
           object = object[this.objectType]
           if (object?.length > 0) {
             this.$emit('parsed', object[0])
             if (onSuccessCallback) {
-              onSuccessCallback()
+              onSuccessCallback(object[0])
             }
           } else {
             if (onFailureCallback) {
               onFailureCallback()
             }
-            f7.dialog.alert(`Error parsing ${this.uiOptionsStore.codeEditorType}: no ${this.objectType} found`).open()
+            showAlertDialog(`Error parsing ${this.uiOptionsStore.codeEditorType}: no ${this.objectType} found`)
           }
         })
         .catch((err) => {
@@ -237,7 +245,7 @@ export default {
               f7.popup.open(this.$refs.errors.$el)
             }
           } else {
-            f7.dialog.alert(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`).open()
+            showAlertDialog(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`)
           }
         })
     },
@@ -252,8 +260,8 @@ export default {
       if (this.readOnly || !this.dirty) {
         this.generateCode(type)
       } else {
-        this.parseCode(() => {
-          this.generateCode(type)
+        this.parseCode((parsedObject) => {
+          this.generateCode(type, null, parsedObject)
         })
       }
     },

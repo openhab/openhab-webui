@@ -139,8 +139,8 @@ export type RuleStatusInfo = {
 export type Module = {
     typeUID: string;
     description: string;
-    configuration: Configuration;
     label: string;
+    configuration: Configuration;
     id: string;
 };
 
@@ -316,10 +316,36 @@ export type StateOption = {
     label: string;
 };
 
-export type ConfigDescription = {
+export type EnrichedConfigDescription = {
     uri?: string;
-    parameters: Array<ConfigDescriptionParameter>;
+    parameters: Array<EnrichedConfigDescriptionParameter>;
     parameterGroups: Array<ConfigDescriptionParameterGroup>;
+};
+
+export type EnrichedConfigDescriptionParameter = {
+    context?: string;
+    default?: string;
+    description?: string;
+    label?: string;
+    name: string;
+    required?: boolean;
+    type: 'TEXT' | 'INTEGER' | 'DECIMAL' | 'BOOLEAN';
+    min?: number;
+    max?: number;
+    step?: number;
+    pattern?: string;
+    readOnly?: boolean;
+    multiple?: boolean;
+    multipleLimit?: number;
+    groupName?: string;
+    advanced?: boolean;
+    verify?: boolean;
+    limitToOptions?: boolean;
+    unit?: string;
+    unitLabel?: string;
+    options?: Array<ParameterOption>;
+    filterCriteria?: Array<FilterCriteria>;
+    defaultValues?: Array<string>;
 };
 
 export type DiscoveryInfo = {
@@ -365,6 +391,7 @@ export type Channel = {
 export type FileFormat = {
     items: Array<FileFormatItem>;
     things: Array<Thing>;
+    sitemaps: Array<SitemapDefinition>;
 };
 
 export type FileFormatChannelLink = {
@@ -407,6 +434,68 @@ export type Metadata = {
     editable: boolean;
 };
 
+export type SitemapCondition = {
+    item: string;
+    condition: string;
+    value: string;
+};
+
+export type SitemapDefinition = {
+    name: string;
+    icon: string;
+    label: string;
+    widgets: Array<SitemapWidgetDefinition>;
+};
+
+export type SitemapMapping = {
+    row: number;
+    column: number;
+    command: string;
+    releaseCommand: string;
+    label: string;
+    icon: string;
+};
+
+export type SitemapRule = {
+    conditions: Array<SitemapCondition>;
+    argument: string;
+};
+
+export type SitemapWidgetDefinition = {
+    type: string;
+    label: string;
+    icon: string;
+    staticIcon: boolean;
+    mappings: Array<SitemapMapping>;
+    switchSupport: boolean;
+    releaseOnly: boolean;
+    refresh: number;
+    height: number;
+    minValue: number;
+    maxValue: number;
+    step: number;
+    inputHint: string;
+    url: string;
+    encoding: string;
+    service: string;
+    period: string;
+    yAxisDecimalPattern: string;
+    interpolation: string;
+    legend: boolean;
+    forceAsItem: boolean;
+    row: number;
+    column: number;
+    command: string;
+    releaseCommand: string;
+    stateless: boolean;
+    item: string;
+    visibilityRules: Array<SitemapRule>;
+    iconRules: Array<SitemapRule>;
+    labelColorRules: Array<SitemapRule>;
+    valueColorRules: Array<SitemapRule>;
+    iconColorRules: Array<SitemapRule>;
+};
+
 export type Thing = {
     label?: string;
     bridgeUID?: string;
@@ -428,6 +517,7 @@ export type Thing = {
 export type ExtendedFileFormat = {
     items: Array<FileFormatItem>;
     things: Array<Thing>;
+    sitemaps: Array<SitemapDefinition>;
     warnings: Array<string>;
 };
 
@@ -549,6 +639,10 @@ export type HistoryDataBean = {
 export type ItemHistory = {
     name: string;
     datapoints: string;
+    /**
+     * The unit for the returned values (if available)
+     */
+    unit: string;
     data: Array<HistoryDataBean>;
 };
 
@@ -805,41 +899,23 @@ export type UoMInfoBean = {
     uomInfo: UoMInfo;
 };
 
-export type Mapping = {
-    row: number;
-    column: number;
-    command: string;
-    releaseCommand: string;
-    label: string;
-    icon: string;
-};
-
-export type Page = {
+export type SitemapPage = {
     id: string;
     title: string;
     icon: string;
     link: string;
-    parent: Page;
+    parent: SitemapPage;
     leaf: boolean;
     timeout: boolean;
-    widgets: Array<Widget>;
+    widgets: Array<SitemapWidget>;
 };
 
-export type Widget = {
-    widgetId: string;
+export type SitemapWidget = {
     type: string;
-    name: string;
-    visibility: boolean;
     label: string;
-    labelSource: string;
     icon: string;
     staticIcon: boolean;
-    labelcolor: string;
-    valuecolor: string;
-    iconcolor: string;
-    pattern: string;
-    unit: string;
-    mappings: Array<Mapping>;
+    mappings: Array<SitemapMapping>;
     switchSupport: boolean;
     releaseOnly: boolean;
     refresh: number;
@@ -861,9 +937,17 @@ export type Widget = {
     command: string;
     releaseCommand: string;
     stateless: boolean;
+    widgetId: string;
+    visibility: boolean;
+    labelSource: string;
+    labelcolor: string;
+    valuecolor: string;
+    iconcolor: string;
+    pattern: string;
+    unit: string;
     state: string;
     item: EnrichedItem;
-    linkedPage: Page;
+    linkedPage: SitemapPage;
 };
 
 export type Sitemap = {
@@ -871,7 +955,15 @@ export type Sitemap = {
     icon: string;
     label: string;
     link: string;
-    homepage: Page;
+    homepage: SitemapPage;
+};
+
+export type EnrichedSitemapDefinition = {
+    name: string;
+    icon: string;
+    label: string;
+    widgets: Array<SitemapWidgetDefinition>;
+    editable: boolean;
 };
 
 export type Transformation = {
@@ -882,6 +974,34 @@ export type Transformation = {
         [key: string]: string;
     };
     editable: boolean;
+};
+
+export type ConfigDescription = {
+    uri?: string;
+    parameters: Array<ConfigDescriptionParameter>;
+    parameterGroups: Array<ConfigDescriptionParameterGroup>;
+};
+
+export type EnrichedRootUiComponent = {
+    component: string;
+    config: {
+        [key: string]: unknown;
+    };
+    slots: {
+        [key: string]: Array<UiComponent>;
+    };
+    uid: string;
+    tags: Array<string>;
+    props: ConfigDescription;
+    timestamp: string;
+    editable: boolean;
+};
+
+export type UiComponent = {
+    component: string;
+    config: {
+        [key: string]: unknown;
+    };
 };
 
 export type RootUiComponent = {
@@ -896,13 +1016,6 @@ export type RootUiComponent = {
     tags: Array<string>;
     props: ConfigDescription;
     timestamp: string;
-};
-
-export type UiComponent = {
-    component: string;
-    config: {
-        [key: string]: unknown;
-    };
 };
 
 export type Tile = {
@@ -2416,7 +2529,7 @@ export type GetConfigDescriptionsResponses = {
     /**
      * OK
      */
-    200: Array<ConfigDescription>;
+    200: Array<EnrichedConfigDescription>;
 };
 
 export type GetConfigDescriptionsResponse = GetConfigDescriptionsResponses[keyof GetConfigDescriptionsResponses];
@@ -2454,7 +2567,7 @@ export type GetConfigDescriptionByUriResponses = {
     /**
      * OK
      */
-    200: ConfigDescription;
+    200: EnrichedConfigDescription;
 };
 
 export type GetConfigDescriptionByUriResponse = GetConfigDescriptionByUriResponses[keyof GetConfigDescriptionByUriResponses];
@@ -2752,6 +2865,36 @@ export type CreateFileFormatForItemsResponses = {
 };
 
 export type CreateFileFormatForItemsResponse = CreateFileFormatForItemsResponses[keyof CreateFileFormatForItemsResponses];
+
+export type CreateFileFormatForSitemapsData = {
+    /**
+     * Array of Sitemap names. If empty or omitted, return all Sitemaps from the Registry.
+     */
+    body?: Array<string>;
+    path?: never;
+    query?: never;
+    url: '/file-format/sitemaps';
+};
+
+export type CreateFileFormatForSitemapsErrors = {
+    /**
+     * One or more sitemaps not found in registry.
+     */
+    404: unknown;
+    /**
+     * Unsupported media type.
+     */
+    415: unknown;
+};
+
+export type CreateFileFormatForSitemapsResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type CreateFileFormatForSitemapsResponse = CreateFileFormatForSitemapsResponses[keyof CreateFileFormatForSitemapsResponses];
 
 export type CreateFileFormatForThingsData = {
     /**
@@ -3816,6 +3959,12 @@ export type DeleteItemFromPersistenceServiceResponse = DeleteItemFromPersistence
 
 export type GetItemDataFromPersistenceServiceData = {
     body?: never;
+    headers?: {
+        /**
+         * language
+         */
+        'Accept-Language'?: string;
+    };
     path: {
         /**
          * The Item name
@@ -3851,6 +4000,10 @@ export type GetItemDataFromPersistenceServiceData = {
          * Adds the current Item state into the requested period (the Item state will be before or at the endtime)
          */
         itemState?: boolean;
+        /**
+         * If set to true, formatting from the state description is applied to the values. For QuantityType states, the value in the display unit as defined by the pattern, is returned.
+         */
+        displayState?: boolean;
     };
     url: '/persistence/items/{itemName}';
 };
@@ -4982,6 +5135,107 @@ export type CreateSitemapEventSubscriptionResponses = {
     201: unknown;
 };
 
+export type RemoveSitemapFromRegistryData = {
+    body?: never;
+    path: {
+        /**
+         * sitemap name
+         */
+        sitemapname: string;
+    };
+    query?: never;
+    url: '/sitemaps/{sitemapname}';
+};
+
+export type RemoveSitemapFromRegistryErrors = {
+    /**
+     * Sitemap not found.
+     */
+    404: unknown;
+    /**
+     * Sitemap not editable.
+     */
+    405: unknown;
+};
+
+export type RemoveSitemapFromRegistryResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetSitemapByNameData = {
+    body?: never;
+    headers?: {
+        /**
+         * language
+         */
+        'Accept-Language'?: string;
+    };
+    path: {
+        /**
+         * sitemap name
+         */
+        sitemapname: string;
+    };
+    query?: {
+        /**
+         * include hidden widgets
+         */
+        includeHidden?: boolean;
+    };
+    url: '/sitemaps/{sitemapname}';
+};
+
+export type GetSitemapByNameResponses = {
+    /**
+     * OK
+     */
+    200: Sitemap;
+};
+
+export type GetSitemapByNameResponse = GetSitemapByNameResponses[keyof GetSitemapByNameResponses];
+
+export type AddOrUpdateSitemapInRegistryData = {
+    /**
+     * sitemap data
+     */
+    body: SitemapDefinition;
+    path: {
+        /**
+         * sitemap name
+         */
+        sitemapname: string;
+    };
+    query?: never;
+    url: '/sitemaps/{sitemapname}';
+};
+
+export type AddOrUpdateSitemapInRegistryErrors = {
+    /**
+     * Payload invalid.
+     */
+    400: unknown;
+    /**
+     * Sitemap not editable.
+     */
+    405: unknown;
+};
+
+export type AddOrUpdateSitemapInRegistryResponses = {
+    /**
+     * Sitemap updated.
+     */
+    200: SitemapDefinition;
+    /**
+     * Sitemap created.
+     */
+    201: SitemapDefinition;
+};
+
+export type AddOrUpdateSitemapInRegistryResponse = AddOrUpdateSitemapInRegistryResponses[keyof AddOrUpdateSitemapInRegistryResponses];
+
 export type PollDataForPageData = {
     body?: never;
     headers?: {
@@ -5028,7 +5282,7 @@ export type PollDataForPageResponses = {
     /**
      * OK
      */
-    200: Page;
+    200: SitemapPage;
 };
 
 export type PollDataForPageResponse = PollDataForPageResponses[keyof PollDataForPageResponses];
@@ -5080,39 +5334,33 @@ export type PollDataForSitemapResponses = {
 
 export type PollDataForSitemapResponse = PollDataForSitemapResponses[keyof PollDataForSitemapResponses];
 
-export type GetSitemapByNameData = {
+export type GetSitemapDefinitionByNameData = {
     body?: never;
-    headers?: {
-        /**
-         * language
-         */
-        'Accept-Language'?: string;
-    };
     path: {
         /**
          * sitemap name
          */
         sitemapname: string;
     };
-    query?: {
-        type?: string;
-        jsoncallback?: string;
-        /**
-         * include hidden widgets
-         */
-        includeHidden?: boolean;
-    };
-    url: '/sitemaps/{sitemapname}';
+    query?: never;
+    url: '/sitemaps/{sitemapname}/definition';
 };
 
-export type GetSitemapByNameResponses = {
+export type GetSitemapDefinitionByNameErrors = {
+    /**
+     * Sitemap not found
+     */
+    404: unknown;
+};
+
+export type GetSitemapDefinitionByNameResponses = {
     /**
      * OK
      */
-    200: Sitemap;
+    200: EnrichedSitemapDefinition;
 };
 
-export type GetSitemapByNameResponse = GetSitemapByNameResponses[keyof GetSitemapByNameResponses];
+export type GetSitemapDefinitionByNameResponse = GetSitemapDefinitionByNameResponses[keyof GetSitemapDefinitionByNameResponses];
 
 export type GetSitemapEventsData = {
     body?: never;
@@ -5203,6 +5451,22 @@ export type GetSitemapsResponses = {
 };
 
 export type GetSitemapsResponse = GetSitemapsResponses[keyof GetSitemapsResponses];
+
+export type GetSitemapDefinitionsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/sitemaps/*/definition';
+};
+
+export type GetSitemapDefinitionsResponses = {
+    /**
+     * OK
+     */
+    200: Array<EnrichedSitemapDefinition>;
+};
+
+export type GetSitemapDefinitionsResponse = GetSitemapDefinitionsResponses[keyof GetSitemapDefinitionsResponses];
 
 export type InitNewStateTackerData = {
     body?: never;
@@ -5411,7 +5675,7 @@ export type GetRegisteredUiComponentsInNamespaceResponses = {
     /**
      * OK
      */
-    200: Array<RootUiComponent>;
+    200: Array<EnrichedRootUiComponent>;
 };
 
 export type GetRegisteredUiComponentsInNamespaceResponse = GetRegisteredUiComponentsInNamespaceResponses[keyof GetRegisteredUiComponentsInNamespaceResponses];
@@ -5429,7 +5693,7 @@ export type AddUiComponentToNamespaceResponses = {
     /**
      * OK
      */
-    200: RootUiComponent;
+    200: EnrichedRootUiComponent;
 };
 
 export type AddUiComponentToNamespaceResponse = AddUiComponentToNamespaceResponses[keyof AddUiComponentToNamespaceResponses];
@@ -5449,6 +5713,10 @@ export type RemoveUiComponentFromNamespaceErrors = {
      * Component not found
      */
     404: unknown;
+    /**
+     * Component is not editable.
+     */
+    405: unknown;
 };
 
 export type RemoveUiComponentFromNamespaceResponses = {
@@ -5479,7 +5747,7 @@ export type GetUiComponentInNamespaceResponses = {
     /**
      * OK
      */
-    200: RootUiComponent;
+    200: EnrichedRootUiComponent;
 };
 
 export type GetUiComponentInNamespaceResponse = GetUiComponentInNamespaceResponses[keyof GetUiComponentInNamespaceResponses];
@@ -5499,13 +5767,17 @@ export type UpdateUiComponentInNamespaceErrors = {
      * Component not found
      */
     404: unknown;
+    /**
+     * Component is not editable.
+     */
+    405: unknown;
 };
 
 export type UpdateUiComponentInNamespaceResponses = {
     /**
      * OK
      */
-    200: RootUiComponent;
+    200: EnrichedRootUiComponent;
 };
 
 export type UpdateUiComponentInNamespaceResponse = UpdateUiComponentInNamespaceResponses[keyof UpdateUiComponentInNamespaceResponses];

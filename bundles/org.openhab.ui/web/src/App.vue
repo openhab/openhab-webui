@@ -6,9 +6,9 @@
       visibility: userStore.user || componentsStore.page('overview') || communicationFailureMsg ? '' : 'hidden'
     }">
     <!-- Left Panel -->
-    <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="1024">
+    <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="960">
       <f7-page>
-        <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close>
+        <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close @click.capture="handleSidebarClick">
           <div class="logo-inner">
             <img v-if="uiOptionsStore.darkMode === 'dark'" src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px" />
             <img v-else src="@/images/openhab-logo.svg" type="image/svg+xml" width="196px" />
@@ -18,7 +18,7 @@
           <f7-icon size="14" :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin' : 'pin_filled'" color="gray" />
         </f7-link>
 
-        <f7-list v-if="ready">
+        <f7-list v-if="ready" @click.capture="handleSidebarClick">
           <f7-list-item v-if="runtimeStore.apiEndpoint('ui') && (!pages || !pages.length)">
             <span
               ><em>{{ t('sidebar.noPages') }}</em></span
@@ -32,9 +32,10 @@
             :link="'/page/' + page.uid"
             :title="page.config.label"
             view=".view-main"
+            no-chevron
             panel-close>
             <template #media>
-              <oh-icon :icon="pageIcon(page)" height="18" width="18" />
+              <oh-icon :icon="getPageIcon(page)" height="18" width="18" />
             </template>
           </f7-list-item>
         </f7-list>
@@ -42,12 +43,12 @@
           {{ t('sidebar.administration') }}
         </f7-block-title>
         <!-- Settings -->
-        <f7-list v-if="userStore.isAdmin()" class="admin-links">
+        <f7-list v-if="userStore.isAdmin()" class="admin-links" @click.capture="handleSidebarClick">
           <f7-list-item
+            no-chevron
             link="/settings/"
             :title="t('sidebar.settings')"
             view=".view-main"
-            panel-close
             :animate="false"
             :class="{
               currentsection:
@@ -55,13 +56,19 @@
                 currentPath.settings?.services ||
                 currentPath.settings?.addons ||
                 currentPath.settings?.persistence ||
-                currentPath.settings?.transformations
+                currentPath.settings?.transformations ||
+                currentPath.settings?.sitemaps
             }">
             <template #media>
               <f7-icon ios="f7:gear_alt_fill" aurora="f7:gear_alt_fill" md="material:settings" color="gray" />
             </template>
+            <template #after>
+              <f7-link class="section-toggle" @click.prevent="toggleSection('settings', $event)">
+                <f7-icon :f7="sectionChevron('settings')" />
+              </f7-link>
+            </template>
           </f7-list-item>
-          <li v-if="currentPath.settings">
+          <li v-if="isOpen('settings')">
             <ul class="menu-sublinks">
               <f7-list-item
                 v-if="runtimeStore.apiEndpoint('things')"
@@ -173,17 +180,22 @@
 
           <!-- Add-on Store -->
           <f7-list-item
+            no-chevron
             link="/addons/"
             :title="t('sidebar.addOnStore')"
             view=".view-main"
-            panel-close
             :animate="false"
             :class="{ currentsection: currentPath.addons?.$end }">
             <template #media>
               <f7-icon ios="f7:bag_fill" aurora="f7:bag_fill" md="material:shopping_bag" color="gray" />
             </template>
+            <template #after>
+              <f7-link class="section-toggle" @click.prevent="toggleSection('addons', $event)">
+                <f7-icon :f7="sectionChevron('addons')" />
+              </f7-link>
+            </template>
           </f7-list-item>
-          <li v-if="currentPath.addons && runtimeStore.apiEndpoint('addons')">
+          <li v-if="isOpen('addons') && runtimeStore.apiEndpoint('addons')">
             <ul class="menu-sublinks">
               <f7-list-item
                 v-for="section in Object.keys(AddonTitles)"
@@ -204,16 +216,21 @@
 
           <!-- Developer Tools -->
           <f7-list-item
+            no-chevron
             link="/developer/"
             :title="t('sidebar.developerTools')"
-            panel-close
             :animate="false"
             :class="{ currentsection: currentPath.developer?.$end }">
             <template #media>
               <f7-icon ios="f7:wrench_fill" aurora="f7:wrench_fill" md="material:construction" color="gray" />
             </template>
+            <template #after>
+              <f7-link class="section-toggle" @click.prevent="toggleSection('developer', $event)">
+                <f7-icon :f7="sectionChevron('developer')" />
+              </f7-link>
+            </template>
           </f7-list-item>
-          <li v-if="currentPath.developer">
+          <li v-if="isOpen('developer')">
             <ul class="menu-sublinks">
               <f7-list-item
                 v-if="runtimeStore.apiEndpoint('ui')"
@@ -276,8 +293,9 @@
           </li>
         </f7-list>
 
-        <f7-list class="admin-links">
+        <f7-list class="admin-links" @click.capture="handleSidebarClick">
           <f7-list-item
+            no-chevron
             link="/about/"
             :title="t('sidebar.helpAbout')"
             view=".view-main"
@@ -304,7 +322,7 @@
                 icon-size="34"
                 :tooltip="t('sidebar.unlockAdmin')" />
             </div>
-            <f7-list v-if="userStore.user" media-list>
+            <f7-list v-if="userStore.user" media-list @click.capture="handleSidebarClick">
               <f7-list-item
                 :title="userStore.user.name"
                 :footer="serverDisplayUrl"
@@ -366,6 +384,7 @@
       url="/"
       :main="true"
       class="safe-areas"
+      :class="{ 'log-dock-offset': showDockedLogViewer && !logDockFullscreen }"
       :master-detail-breakpoint="960"
       :browser-history="true"
       :browser-history-root="origin"
@@ -373,6 +392,16 @@
       :preload-previous-page="false"
       :ios-swipe-back="false"
       :animate="!uiOptionsStore.disablePageTransitionAnimation" />
+
+    <Teleport to="body">
+      <div v-if="showDockedLogViewer" class="log-dock" :class="{ fullscreen: logDockFullscreen }" :style="logDockStyle">
+        <div class="log-dock-resize-handle" @pointerdown.prevent="startDockResize" />
+        <log-viewer-embedded
+          :fullscreen="logDockFullscreen"
+          @hide="setLogDockVisible(false)"
+          @toggle-fullscreen="toggleLogDockFullscreen" />
+      </div>
+    </Teleport>
   </f7-app>
 </template>
 
@@ -444,6 +473,18 @@
     .breakpoint-pin
       opacity 0.75
 
+.panel-left:not(.panel-in-breakpoint),
+.panel-right:not(.panel-in-breakpoint)
+  z-index 10001
+
+.with-panel-left-cover .panel-backdrop-in,
+.with-panel-left-push .panel-backdrop-in,
+.with-panel-left-reveal .panel-backdrop-in,
+.with-panel-right-cover .panel-backdrop-in,
+.with-panel-right-push .panel-backdrop-in,
+.with-panel-right-reveal .panel-backdrop-in
+  z-index 10000
+
 .aurora
   .account
     --f7-list-item-padding-vertical 4px
@@ -470,6 +511,51 @@
   // --f7-list-item-media-margin 24px
   // --f7-list-item-padding-horizontal 32px
   // --f7-list-chevron-icon-color var(--f7-color-blue-tint) !important
+
+.section-toggle
+  width 36px
+  color gray
+
+.safe-areas.log-dock-offset
+  height calc(100dvh - var(--log-dock-height)) !important
+  max-height calc(100dvh - var(--log-dock-height)) !important
+
+.log-dock
+  position fixed !important
+  bottom 0
+  z-index 10000
+  height var(--log-dock-height)
+  max-height var(--log-dock-height)
+  border-top 1px solid var(--f7-bars-border-color)
+  background var(--f7-page-bg-color)
+  box-shadow 0 -8px 24px rgba(0, 0, 0, 0.16)
+  overflow hidden
+  display flex
+  flex-direction column
+  --log-viewer-height 100%
+
+  > *:not(.log-dock-resize-handle)
+    flex 1
+    min-height 0
+
+.log-dock-resize-handle
+  position absolute
+  top 0
+  left 0
+  right 0
+  height 5px
+  cursor ns-resize
+  z-index 1
+  &:hover
+    background var(--f7-color-blue)
+    opacity 0.35
+
+.log-dock.fullscreen
+  height calc(100dvh - var(--f7-safe-area-top))
+  max-height none
+
+:root
+  --log-dock-height clamp(120px, 34vh, 460px)
 </style>
 
 <script>
@@ -484,6 +570,8 @@ import buildInfo from '@/assets/build-info'
 
 import routes from '@/js/routes.js'
 import PanelRight from '@/pages/panel-right.vue'
+import LogViewerEmbedded from '@/pages/developer/log-viewer/log-viewer-embedded.vue'
+import { getPageIcon } from '@/pages/page-type'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
@@ -514,6 +602,7 @@ export default {
   components: {
     EmptyStatePlaceholder,
     PanelRight,
+    LogViewerEmbedded,
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
   setup() {
@@ -589,11 +678,25 @@ export default {
       showSidebar: true,
       loggedIn: false,
 
+      openSections: {},
+
       activeDock: 'tools',
       activeToolTab: 'pin',
       activeHelpTab: 'current',
       developerSearch: null,
-      currentUrl: ''
+      currentUrl: '',
+
+      mainViewBounds: {
+        left: 0,
+        right: 0
+      },
+
+      logDockFullscreen: false,
+
+      // Tracks whether the log-viewer page is active. Updated at pageBeforeIn (entering
+      // log-viewer) and pageAfterIn (leaving log-viewer) so the dock is only shown after
+      // the page transition completes, avoiding interference with F7's router.
+      logViewerPageActive: false
     }
   },
   computed: {
@@ -623,7 +726,18 @@ export default {
     serverDisplayUrl() {
       return window.location.origin
     },
+    showDockedLogViewer() {
+      return this.runtimeStore.showLogDock && !this.logViewerPageActive
+    },
+    logDockStyle() {
+      const { left, right } = this.mainViewBounds
+      return {
+        left: `${left}px`,
+        right: `${right}px`
+      }
+    },
     ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore),
+    ...mapWritableState(useUIOptionsStore, ['logDockHeight']),
     ...mapWritableState(useRuntimeStore, {
       modelSelectedItem: 'modelSelectedItem'
     })
@@ -663,9 +777,33 @@ export default {
 
         loadLocaleMessages('about', this.globalMergeLocaleMessage)
       }
+    },
+    logDockHeight: {
+      immediate: true,
+      handler(val) {
+        if (val) document.documentElement.style.setProperty('--log-dock-height', val + 'px')
+      }
+    },
+    currentUrl() {
+      if (this.logDockFullscreen) this.logDockFullscreen = false
     }
   },
   methods: {
+    refreshLogDockLayout() {
+      const mainViewEl = document.querySelector('.view-main.safe-areas')
+      if (!mainViewEl) {
+        this.mainViewBounds = { left: 0, right: 0 }
+        return
+      }
+
+      const rect = mainViewEl.getBoundingClientRect()
+      const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0
+
+      this.mainViewBounds = {
+        left: Math.max(0, Math.round(rect.left)),
+        right: Math.max(0, Math.round(viewportWidth - rect.right))
+      }
+    },
     loadData(useCredentials) {
       performance.mark('loadDataStart')
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
@@ -805,6 +943,9 @@ export default {
         .then(() => {
           // finished with loading
           this.ready = true
+
+          nextTick(() => this.refreshLogDockLayout())
+
           performance.mark('loadDataEnd')
           const measure = performance.measure('loadData', 'loadDataStart', 'loadDataEnd')
           console.info(`Init data loading: ${measure.duration.toFixed(2)} ms`)
@@ -820,23 +961,7 @@ export default {
       if (page.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
       return false
     },
-    pageIcon(page) {
-      if (page.config && page.config.icon) return page.config.icon
-      switch (page.component) {
-        case 'oh-layout-page':
-          return 'f7:rectangle_grid_2x2'
-        case 'oh-tabs-page':
-          return 'f7:squares_below_rectangle'
-        case 'oh-map-page':
-          return 'f7:map'
-        case 'oh-plan-page':
-          return 'f7:square_stack_3d_up'
-        case 'oh-chart-page':
-          return 'f7:graph_square'
-        default:
-          return 'f7:tv'
-      }
-    },
+    getPageIcon,
     updateThemeOptions() {
       if (useUIOptionsStore().visibleBreakpointDisabled) {
         nextTick(() => {
@@ -871,25 +996,77 @@ export default {
       f7.panel.get('left').toggleVisibleBreakpoint()
       useUIOptionsStore().visibleBreakpointDisabled = f7.panel.get('left').visibleBreakpointDisabled
     },
-    keyDown(ev) {
-      if (ev.shiftKey && ev.altKey) {
-        switch (ev.keyCode) {
-          case 68: // D for developer dock
-            this.toggleDeveloperDock()
-            break
-          case 77: // M for menu
-            const leftPanel = f7.panel.get('left')
-            if (leftPanel.opened) {
-              leftPanel.close()
-            } else {
-              leftPanel.open()
-            }
-            break
-          default:
-            return
+    setLogDockVisible(visible) {
+      if (visible && !useUserStore().isAdmin()) return
+      useRuntimeStore().showLogDock = visible
+      if (!visible) this.logDockFullscreen = false
+    },
+    toggleLogDock() {
+      this.setLogDockVisible(!useRuntimeStore().showLogDock)
+    },
+    toggleLogDockFullscreen() {
+      if (!useRuntimeStore().showLogDock) this.setLogDockVisible(true)
+      this.logDockFullscreen = !this.logDockFullscreen
+    },
+    startDockResize(ev) {
+      const startY = ev.clientY
+      const startHeight =
+        this.logDockHeight || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--log-dock-height')) || 300
+      const minHeight = 120
+      const maxHeight = window.innerHeight * 0.85
+
+      const onMove = (moveEv) => {
+        const delta = startY - moveEv.clientY
+        this.logDockHeight = Math.round(Math.min(maxHeight, Math.max(minHeight, startHeight + delta)))
+      }
+
+      const finish = () => {
+        if (this._logDockResizeHandlers) {
+          const { onMove: m, onUp: u, onCancel: c } = this._logDockResizeHandlers
+          window.removeEventListener('pointermove', m)
+          window.removeEventListener('pointerup', u)
+          window.removeEventListener('pointercancel', c)
+          this._logDockResizeHandlers = null
         }
-        ev.stopPropagation()
-        ev.preventDefault()
+      }
+
+      const onUp = () => finish()
+      const onCancel = () => finish()
+
+      this._logDockResizeHandlers = { onMove, onUp, onCancel }
+
+      window.addEventListener('pointermove', onMove)
+      window.addEventListener('pointerup', onUp, { once: true })
+      window.addEventListener('pointercancel', onCancel, { once: true })
+    },
+    keyDown(ev) {
+      if (!(ev.shiftKey && ev.altKey)) return
+
+      // Claim our known shortcuts unconditionally so the OS/browser never
+      // inserts an extended character (e.g. ¬, Ð, ˝) even when an input is focused.
+      const ourKeys = ['KeyD', 'KeyF', 'KeyL', 'KeyM']
+      if (!ourKeys.includes(ev.code)) return
+      ev.preventDefault()
+      ev.stopPropagation()
+
+      switch (ev.code) {
+        case 'KeyD':
+          this.toggleDeveloperDock()
+          break
+        case 'KeyF':
+          if (useRuntimeStore().showLogDock) this.toggleLogDockFullscreen()
+          break
+        case 'KeyL':
+          this.toggleLogDock()
+          break
+        case 'KeyM':
+          const leftPanel = f7.panel.get('left')
+          if (leftPanel.opened) {
+            leftPanel.close()
+          } else {
+            leftPanel.open()
+          }
+          break
       }
     },
     updateUrl(newUrl) {
@@ -939,14 +1116,54 @@ export default {
         }
 
         let currentSection = this.$$('.currentsection .item-title')?.[0]?.textContent
+        // Add special cases where the page doesn't have a special entry in the left sidebar menu
         if (this.currentPath.settings?.transformations) {
           currentSection = 'Transformations'
         } else if (this.currentPath.settings?.persistence) {
           currentSection = 'Persistence'
+        } else if (this.currentPath.settings?.sitemaps) {
+          currentSection = 'Sitemaps'
         }
         title.unshift(currentSection)
       }
       document.title = title.filter((t) => t).join(' - ')
+    },
+    sectionChevron(section) {
+      if (this.currentPath[section]) {
+        // if we're inside the section, don't show a chevron because the current section cannot be collapsed
+        return null
+      }
+
+      return this.isOpen(section) ? 'chevron_up' : 'chevron_down'
+    },
+    isOpen(section) {
+      if (this.currentPath[section]) {
+        return true
+      }
+
+      return !!this.openSections[section]
+    },
+    toggleSection(section, ev) {
+      if (ev) {
+        ev.stopPropagation()
+        if (typeof ev.stopImmediatePropagation === 'function') ev.stopImmediatePropagation()
+      }
+      this.openSections = this.openSections || {}
+      this.openSections[section] = !this.isOpen(section)
+    },
+    collapseAllSections() {
+      this.openSections = {}
+    },
+    handleSidebarClick(ev) {
+      // Collapse all sections when clicking in another section / link
+      if (ev.target.closest('.section-toggle')) return
+      if (ev.target.closest('.list-item a, a[href]')) {
+        // avoid flicker (collapse + reopen)
+        setTimeout(this.collapseAllSections, 30)
+        if (useUIOptionsStore().visibleBreakpointDisabled) {
+          f7.panel.get('left')?.close()
+        }
+      }
     }
   },
   created() {
@@ -1011,14 +1228,24 @@ export default {
         })
 
       f7.on('routeChange', (route) => {
-        // console.log('Route changed:', route.url)
-        // console.log('Browser history state:', history.state) // Native browser history state
+        // Keep App.vue's reactive currentUrl in sync with Framework7's router
+        // in case some router updates don't trigger the 'routeUrlUpdate' event.
+        if (route && route.url) {
+          this.updateUrl(route.url)
+          nextTick(this.updateTitle)
+        }
       })
 
       f7.on('pageBeforeIn', (page) => {
         if (page.route && page.route.url) {
           // console.log('pageBeforeIn: current URL:', page.route.url)
           this.updateUrl(page.route.url)
+          // Hide the dock immediately when entering the log-viewer page so it doesn't
+          // overlap the full-page viewer. (Re-showing on exit is handled in pageAfterIn
+          // to avoid mounting the dock mid-transition and breaking F7's router.)
+          if (page.route.url.includes('/log-viewer/')) {
+            this.logViewerPageActive = true
+          }
         }
       })
 
@@ -1031,6 +1258,13 @@ export default {
         const router = f7.views.main?.router
         if (router && router.history.length === 0 && page.route?.url) {
           router.history.push(page.route.url)
+        }
+
+        // Update logViewerPageActive after the transition so the dock is only shown/hidden
+        // once the page is fully in view. This prevents the dock from mounting mid-transition
+        // when navigating back from log-viewer, which would interfere with F7's router.
+        if (page.route?.url !== undefined) {
+          this.logViewerPageActive = page.route.url.includes('/log-viewer/')
         }
 
         nextTick(this.updateTitle)
@@ -1060,6 +1294,14 @@ export default {
         this.toggleDeveloperDock()
       })
 
+      f7.on('toggleLogDock', () => {
+        this.toggleLogDock()
+      })
+
+      f7.on('toggleLogDockFullscreen', () => {
+        this.toggleLogDockFullscreen()
+      })
+
       f7.on('selectDeveloperDock', (opts) => {
         this.selectDeveloperDock(opts)
       })
@@ -1073,6 +1315,7 @@ export default {
       f7.on('resize', () => {
         this.$f7dim.width = f7.width
         this.$f7dim.height = f7.height
+        this.refreshLogDockLayout()
       })
 
       f7.on('triggerDialog', () => {
@@ -1083,9 +1326,41 @@ export default {
         window.addEventListener('keydown', this.keyDown)
       }
 
+      this._panelLayoutListener = () => {
+        requestAnimationFrame(() => this.refreshLogDockLayout())
+      }
+      document.addEventListener('panel:open', this._panelLayoutListener)
+      document.addEventListener('panel:close', this._panelLayoutListener)
+      document.addEventListener('panel:opened', this._panelLayoutListener)
+      document.addEventListener('panel:closed', this._panelLayoutListener)
+      document.addEventListener('panel:resize', this._panelLayoutListener)
+      document.addEventListener('panel:breakpoint', this._panelLayoutListener)
+
       this.startEventSource()
       this.startAudioWebSocket()
     })
+  },
+  beforeUnmount() {
+    if (window) {
+      window.removeEventListener('keydown', this.keyDown)
+      if (this._logDockResizeHandlers) {
+        const { onMove, onUp, onCancel } = this._logDockResizeHandlers
+        window.removeEventListener('pointermove', onMove)
+        window.removeEventListener('pointerup', onUp)
+        window.removeEventListener('pointercancel', onCancel)
+        this._logDockResizeHandlers = null
+      }
+    }
+
+    if (this._panelLayoutListener) {
+      document.removeEventListener('panel:open', this._panelLayoutListener)
+      document.removeEventListener('panel:close', this._panelLayoutListener)
+      document.removeEventListener('panel:opened', this._panelLayoutListener)
+      document.removeEventListener('panel:closed', this._panelLayoutListener)
+      document.removeEventListener('panel:resize', this._panelLayoutListener)
+      document.removeEventListener('panel:breakpoint', this._panelLayoutListener)
+      this._panelLayoutListener = null
+    }
   }
 }
 </script>

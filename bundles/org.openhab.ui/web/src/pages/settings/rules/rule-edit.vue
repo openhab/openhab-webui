@@ -1,10 +1,11 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
+  <f7-page ref="rule-edit-page" @page:afterin="onPageAfterIn" @page:afterout="onPageAfterOut">
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
         :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined"
         :editable="isEditable"
+        :disable-save-link="!(uidValid && labelValid)"
         :save-link="
           (stubMode ? $t('dialogs.regenerate') : $t(createMode ? 'dialogs.create' : 'dialogs.save')) +
           `${$device.desktop ? ' (Ctrl-S)' : ''}`
@@ -250,7 +251,7 @@
                   link
                   no-chevron
                   media-item
-                  :color="theme.dark ? 'black' : 'white'"
+                  :color="uiOptionsStore.darkMode === 'dark' ? 'black' : 'white'"
                   :subtitle="SECTION_LABELS[section][2]"
                   @click="addModule(section)">
                   <template #media>
@@ -270,14 +271,6 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <f7-icon
-          v-if="!createMode && !isEditable"
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          tooltip="This code is not editable" />
         <editor
           v-if="currentTab === 'code'"
           class="rule-code-editor"
@@ -289,13 +282,6 @@
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
       </f7-tab>
       <f7-tab v-if="ready && hasSource" id="source" :tab-active="currentTab === 'source'">
-        <f7-icon
-          f7="lock"
-          class="float-right margin"
-          style="opacity: 0.5; z-index: 4000; user-select: none"
-          size="50"
-          color="gray"
-          tooltip="Source code is not editable" />
         <editor v-if="currentTab === 'source'" class="rule-source-viewer" :mode="sourceType" :value="source" :readOnly="true" />
       </f7-tab>
     </f7-tabs>
@@ -320,19 +306,16 @@
     margin-bottom 0
   .list
     margin-top 0
-.rule-code-editor.v-codemirror
+.rule-code-editor
+.rule-source-viewer
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
+  width 100%
 .yaml-message
   display block
   position absolute
   top 80%
   white-space pre-wrap
-#source
-  .rule-source-viewer.v-codemirror
-    position absolute
-    height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
-    width 100%
 </style>
 
 <script>
@@ -349,7 +332,7 @@ import RuleModulePopup from './rule-module-popup.vue'
 import RuleMixin from './rule-edit-mixin'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
 import RuleStatus from '@/components/rule/rule-status-mixin'
-import DirtyMixin from '../dirty-mixin'
+import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
@@ -357,9 +340,13 @@ import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
+
+const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
 export default {
-  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus, DirtyMixin],
+  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus],
   components: {
     RuleGeneralSettings,
     ConfigSheet,
@@ -375,7 +362,9 @@ export default {
     f7route: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('rule-edit-page')
+    const { currentTab, switchTab } = useTabs('design')
+    return { theme, dirty, dirtyIndicator, currentTab, switchTab }
   },
   data() {
     return {
@@ -401,13 +390,14 @@ export default {
       currentModule: null,
       currentModuleConfig: {},
 
-      currentTab: 'design',
       codeEditorOpened: false,
       cronPopupOpened: false,
       scriptCode: '',
       cronExpression: null,
       templates: null,
-      currentTemplate: null
+      currentTemplate: null,
+
+      uidPattern: RULE_UID_PATTERN
     }
   },
   watch: {
@@ -539,11 +529,12 @@ export default {
         }
       }
       if (!this.rule.uid) {
+        f7.dialog.alert('Please provide a unique rule UID.', 'UID required').open()
+        return Promise.reject()
+      }
+      if (!this.uidValid) {
         f7.dialog
-          .alert(
-            'Please provide a unique rule ID. The ID must not be empty and should only contain letters, numbers, hyphens or underscores.',
-            'ID required'
-          )
+          .alert("Please provide a valid rule UID. It can't contain '/', '\\' or have leading or trailing whitespace.", 'Invalid UID')
           .open()
         return Promise.reject()
       }
@@ -828,7 +819,7 @@ export default {
     reorderModule(ev, section) {
       const newSection = [...this.rule[section]]
       newSection.splice(ev.to, 0, newSection.splice(ev.from, 1)[0])
-      this.rule.section = newSection
+      this.rule[section] = newSection
     },
     saveModule(updatedModule) {
       if (!updatedModule.type) return
@@ -1000,6 +991,13 @@ export default {
         }
       }
       return undefined
+    },
+    uidValid() {
+      if (!this.rule || !this.rule.uid) return false
+      return UID_REGEX.test(this.rule.uid)
+    },
+    labelValid() {
+      return this.rule?.name?.trim()
     },
     ...mapStores(useUIOptionsStore)
   }

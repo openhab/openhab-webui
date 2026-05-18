@@ -92,6 +92,12 @@ const itemStateParameter = pb(
   'Do not add the current Item state into the requested period (the item state will be before or at the end time)'
 ).a()
 
+const displayStateParameter = pb(
+  'displayState',
+  'Use Display State',
+  'If set to true, formatting from the state description is applied to the values. For QuantityType states, the unit from the state description is respected, but no formatting is applied.'
+)
+
 const offsetAmountParameter = pn(
   'offsetAmount',
   'Offset Amount',
@@ -143,6 +149,7 @@ const baseSeriesParameter = [
   persistenceServiceParameter,
   boundaryParameter,
   itemStateParameter,
+  displayStateParameter,
   offsetAmountParameter,
   offsetUnitParameter
 ]
@@ -195,11 +202,11 @@ const lineChartSymbolParameter = pb(
   return configuration.type === 'line'
 })
 
-const barChartBorderRadiusParameter = pn('barBorderRadius', 'Bar Border Radius', 'The radius of the border of the bar.')
-  .d('0')
-  .v((_value, configuration) => {
+const barChartBorderRadiusParameter = pn('barBorderRadius', 'Bar Border Radius', 'The radius of the border of the bar.').v(
+  (_value, configuration) => {
     return configuration.type === 'bar'
-  })
+  }
+)
 
 const seriesStyleParameters = [seriesLabelPositionParameter, seriesColorParameter, lineChartSymbolParameter, barChartBorderRadiusParameter]
 
@@ -232,6 +239,7 @@ export const OhCategoryAxisDefinition = new WidgetDefinition('oh-category-axis',
       { value: 'week', label: 'Days of week' },
       { value: 'month', label: 'Days of month' },
       { value: 'year', label: 'Months of year' },
+      { value: 'years', label: 'Multiple years' },
       { value: 'values', label: 'Values' }
     ]).r(),
     po('weekdayFormat', 'Weekday Format', 'Format of weekdays labels', [
@@ -242,9 +250,6 @@ export const OhCategoryAxisDefinition = new WidgetDefinition('oh-category-axis',
       .r()
       .d('default')
       .v((_, cfg) => cfg.categoryType === 'week'),
-    pb('startOnSunday', 'Start Week on Sunday', 'Check to start the week on Sundays instead of Mondays').v(
-      (_, cfg) => cfg.categoryType === 'week'
-    ),
     po('monthFormat', 'Month Format', 'Format of months labels', [
       { value: 'default', label: 'Long (default)' },
       { value: 'short', label: 'Short' }

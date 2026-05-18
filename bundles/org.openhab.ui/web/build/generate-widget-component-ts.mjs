@@ -5,13 +5,17 @@ const outDir = './src/types/components/widgets'
 import * as SystemWidgets from '../src/assets/definitions/widgets/system/index.ts'
 import * as StdCardWidgets from '../src/assets/definitions/widgets/standard/cards.ts'
 import * as StdListItemWidgets from '../src/assets/definitions/widgets/standard/listitems.ts'
-import * as StdCellWidgets from  '../src/assets/definitions/widgets/standard/cells.ts'
+import * as StdCellWidgets from '../src/assets/definitions/widgets/standard/cells.ts'
 import * as LayoutWidgets from '../src/assets/definitions/widgets/layout/index.ts'
 import * as PlanWidgets from '../src/assets/definitions/widgets/plan/index.ts'
-import * as MapWidgets from  '../src/assets/definitions/widgets/map/index.ts'
+import * as MapWidgets from '../src/assets/definitions/widgets/map/index.ts'
 import { OhChartPageDefinition } from '../src/assets/definitions/widgets/chart/page.ts'
 import ChartWidgetsDefinitions from '../src/assets/definitions/widgets/chart/index.ts'
-import { OhLocationCardParameters, OhEquipmentCardParameters, OhPropertyCardParameters } from '../src/assets/definitions/widgets/home/index.ts'
+import {
+  OhLocationCardParameters,
+  OhEquipmentCardParameters,
+  OhPropertyCardParameters
+} from '../src/assets/definitions/widgets/home/index.ts'
 import { actionParams } from '../src/assets/definitions/widgets/actions.ts'
 
 const ActionParams = [...actionParams(), ...actionParams('taphold')]
@@ -77,38 +81,47 @@ async function loadConfig() {
 
 function renderEnum(name, options) {
   let content = `export enum ${kebabToPascalCase(name)} {\n`
-  content += options.map(o => {
-    if (!o.value || o.value === '') return '  none = \'\''
-    if (!isNaN(parseInt(o.value))) return ''
-    return `  ${kebabToCamelCase(o.value)} = '${o.value}'`}).join(',\n')
+  content += options
+    .map((o) => {
+      if (!o.value || o.value === '') return "  none = ''"
+      if (!isNaN(parseInt(o.value))) return ''
+      return `  ${kebabToCamelCase(o.value)} = '${o.value}'`
+    })
+    .join(',\n')
   content += `\n}\n\n`
   return content
 }
 
 function renderType(name, options) {
   let content = `export type ${kebabToPascalCase(name)} = `
-  content += options.map(o => {
-    if (!o.value || o.value === '') return ''
-    if (!isNaN(parseInt(o.value))) return ''
-    return `'${kebabToCamelCase(o.value)}'`}).join(' | ')
+  content += options
+    .map((o) => {
+      if (!o.value || o.value === '') return ''
+      if (!isNaN(parseInt(o.value))) return ''
+      return `'${kebabToCamelCase(o.value)}'`
+    })
+    .join(' | ')
   content += '\n'
   return content
 }
 
 function renderDict(name, options) {
   let content = `export const ${kebabToPascalCase(name)} = {\n`
-  content += options.map(o => {
-    if (!o.value || o.value === '') return `  none: ''`
-    if (!isNaN(parseInt(o.value))) return ''
-    return `  ${kebabToCamelCase(o.value)}: '${o.value}'`}).join(',\n')
+  content += options
+    .map((o) => {
+      if (!o.value || o.value === '') return `  none: ''`
+      if (!isNaN(parseInt(o.value))) return ''
+      return `  ${kebabToCamelCase(o.value)}: '${o.value}'`
+    })
+    .join(',\n')
   content += `\n} as const\n\n`
   content += `export type ${kebabToPascalCase(name)}Key = typeof ${kebabToPascalCase(name)}[keyof typeof ${kebabToPascalCase(name)}]\n\n`
   return content
 }
 
 function renderOption(name, options, type) {
-  const textOptions = options.filter(o => isNaN(parseInt(o.value)))
-  switch(type) {
+  const textOptions = options.filter((o) => isNaN(parseInt(o.value)))
+  switch (type) {
     case 'type':
       return renderType(name, textOptions)
     case 'enum':
@@ -124,7 +137,7 @@ function createCommonOptionsMap() {
   Object.keys(widgetLibraries).forEach((l) => {
     const library = widgetLibraries[l]
     Object.keys(library).forEach((w) => {
-      const widget = (typeof library[w] === 'function') ? library[w]() : library[w]
+      const widget = typeof library[w] === 'function' ? library[w]() : library[w]
       const widgetName = widget.name || w
       if (!widgetName.startsWith('oh-')) return
       widget.pascalCaseName = kebabToPascalCase(widgetName)
@@ -254,7 +267,7 @@ function generateActionTS(mapCommonOptions) {
   let postamble = ''
   if (commonComponents.length > 0) {
     preamble += 'import {\n'
-    preamble += commonComponents.map(name => `  ${name}`).join(',\n')
+    preamble += commonComponents.map((name) => `  ${name}`).join(',\n')
     preamble += `\n} from './common.gen.ts'\n\n`
   }
 
@@ -276,7 +289,7 @@ function generateComponentTS(mapCommonOptions) {
     const library = widgetLibraries[l]
     const widgetDir = widgetDirectories[l] || 'misc'
     Object.keys(library).forEach((w) => {
-      const widget = (typeof library[w] === 'function') ? library[w]() : library[w]
+      const widget = typeof library[w] === 'function' ? library[w]() : library[w]
       const widgetName = widget.name || w
       const widgetPascalCaseName = kebabToPascalCase(widgetName)
       const configWidget = config[widgetPascalCaseName] || {}
@@ -347,12 +360,12 @@ function generateComponentTS(mapCommonOptions) {
       let postamble = ''
       if (commonComponents.length > 0) {
         preamble += 'import {\n'
-        preamble += commonComponents.map(name => name === 'Period' ? `  type ${name}` : `  ${name}`).join(',\n')
+        preamble += commonComponents.map((name) => (name === 'Period' ? `  type ${name}` : `  ${name}`)).join(',\n')
         const depth = widgetDir.split('/').length
         preamble += `\n} from '${'../'.repeat(depth)}common.gen.ts'\n\n`
 
         postamble += '\nexport {\n'
-        postamble += commonComponents.map(name => name === 'Period' ? `  type ${name}` : `  ${name}`).join(',\n')
+        postamble += commonComponents.map((name) => (name === 'Period' ? `  type ${name}` : `  ${name}`)).join(',\n')
         postamble += '\n}\n'
       }
 
@@ -380,7 +393,7 @@ function generateIndexTS() {
     const library = widgetLibraries[l]
     const widgetDir = widgetDirectories[l] || 'misc'
     Object.keys(library).forEach((w) => {
-      const widget = (typeof library[w] === 'function') ? library[w]() : library[w]
+      const widget = typeof library[w] === 'function' ? library[w]() : library[w]
       const widgetName = widget.name || w
 
       if (!widgetName.startsWith('oh-')) return
@@ -407,4 +420,3 @@ generateCommonTS(mapCommonOptions)
 generateActionTS(mapCommonOptions)
 generateComponentTS(mapCommonOptions)
 generateIndexTS()
-

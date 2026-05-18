@@ -8,14 +8,14 @@
         placeholder="A unique identifier for the page"
         :value="page.uid"
         @input="page.uid = $event.target.value"
-        :clear-button="createMode"
+        :clear-button="createMode && !readOnly"
         :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
         input-id="input"
         required
         validate
         pattern="[A-Za-z0-9_]+"
         error-message="Required. A-Z,a-z,0-9,_ only"
-        :disabled="!createMode ? true : null">
+        :disabled="readOnly || !createMode">
         <template #inner>
           <f7-link
             v-if="createMode && $refs.pageId?.state?.inputInvalid && page.uid.trim()"
@@ -34,10 +34,16 @@
         @input="page.config.label = $event.target.value"
         required
         validate
-        clear-button />
+        :disabled="readOnly"
+        :clear-button="!readOnly" />
       <f7-list-item v-if="page.uid !== 'overview'" accordion-item title="Sidebar &amp; Visibility">
         <f7-accordion-content>
-          <f7-list-item ref="pageVisibility" title="Visible only to" smart-select :smart-select-params="{ openIn: 'popover' }">
+          <f7-list-item
+            ref="pageVisibility"
+            title="Visible only to"
+            smart-select
+            :smart-select-params="{ openIn: 'popover' }"
+            :disabled="readOnly">
             <select name="pagevisibility" multiple @change="updatePageVisibility">
               <optgroup label="Roles">
                 <option value="role:administrator" :selected="isVisibleTo('role:administrator') ? true : null">Administrators</option>
@@ -48,7 +54,10 @@
           <f7-list inline-labels no-hairline-md>
             <f7-list-item title="Show on sidebar">
               <template #after>
-                <f7-toggle :checked="page.config.sidebar ? true : null" @toggle:change="page.config.sidebar = $event" />
+                <f7-toggle
+                  :checked="page.config.sidebar ? true : null"
+                  @toggle:change="page.config.sidebar = $event"
+                  :disabled="readOnly" />
               </template>
             </f7-list-item>
             <f7-list-input
@@ -57,21 +66,24 @@
               placeholder="Assign order index to rearrange pages on sidebar"
               :value="page.config.order"
               @input="page.config.order = $event.target.value"
-              clear-button />
+              :disabled="readOnly ? true : null"
+              :clear-button="!readOnly" />
             <f7-list-input
               label="Icon"
               type="text"
               placeholder="Assign a custom icon"
               :value="page.config.icon"
               @input="page.config.icon = $event.target.value"
-              clear-button />
+              :disabled="readOnly ? true : null"
+              :clear-button="!readOnly" />
             <f7-list-input
               label="Browser Title"
               type="text"
               placeholder="A custom browser title instead of the label"
               :value="page.config.browserTitle"
               @input="page.config.browserTitle = $event.target.value"
-              clear-button />
+              :disabled="readOnly ? true : null"
+              :clear-button="!readOnly" />
           </f7-list>
         </f7-accordion-content>
       </f7-list-item>
@@ -79,12 +91,12 @@
     <template v-if="page.uid !== 'overview'">
       <f7-list inline-labels no-hairline-md>
         <div>
-          <tag-input :item="page" />
+          <tag-input :item="page" :disabled="readOnly" />
         </div>
       </f7-list>
       <f7-list v-if="!createMode" inline-labels no-hairline-md>
         <f7-list-button color="blue" @click="duplicatePage"> Duplicate Page </f7-list-button>
-        <f7-list-button color="red" @click="deletePage"> Remove Page </f7-list-button>
+        <f7-list-button v-if="!readOnly" color="red" @click="deletePage"> Remove Page </f7-list-button>
       </f7-list>
     </template>
   </f7-col>
@@ -104,6 +116,7 @@ export default {
   props: {
     page: Object,
     createMode: Boolean,
+    readOnly: Boolean,
     f7router: Object
   },
   data() {
@@ -126,6 +139,7 @@ export default {
       const pageClone = cloneDeep(this.page)
       const pageType = pageClone.component.replace(/^oh-|-page$/g, '')
       pageClone.uid = pageClone.uid + '_copy'
+      delete pageClone.editable
       this.f7router.navigate(`/settings/pages/${pageType}/duplicate`, { props: { pageCopy: pageClone } })
     },
     deletePage() {

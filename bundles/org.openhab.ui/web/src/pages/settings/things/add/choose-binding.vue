@@ -53,11 +53,11 @@
     <f7-block v-if="runtimeStore.apiEndpoint('addons')" class="block-narrow">
       <f7-col v-if="bindings.length">
         <f7-list>
-          <f7-list-button color="blue" title="Install More Bindings" href="/addons/binding/" />
+          <f7-list-button color="blue" title="Install More Bindings" @click="installBindings" />
         </f7-list>
       </f7-col>
       <f7-row v-else-if="ready" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" href="/addons/binding/"> Install Bindings </f7-button>
+        <f7-button large fill color="blue" @click="installBindings"> Install Bindings </f7-button>
       </f7-row>
     </f7-block>
   </f7-page>
@@ -112,6 +112,19 @@ export default {
       this.$oh.api.get('/rest/inbox?includeIgnored=false').then((data) => {
         this.inbox = data
       })
+    },
+    installBindings() {
+      console.log('current route', this.f7router.currentRoute)
+      this.f7router.navigate(
+        {
+          url: '/addons/binding/'
+        },
+        {
+          props: {
+            backLinkUrl: this.f7router.currentRoute.url
+          }
+        }
+      )
     }
   }
 }

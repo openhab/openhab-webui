@@ -5,9 +5,10 @@
         <f7-nav-left>
           <f7-link icon-ios="f7:arrow_left" icon-md="material:arrow_back" icon-aurora="f7:arrow_left" popup-close />
         </f7-nav-left>
-        <f7-nav-title>Edit {{ currentSlot }}</f7-nav-title>
+        <f7-nav-title>{{ readOnly ? 'View' : 'Edit' }} {{ currentSlot }}</f7-nav-title>
         <f7-nav-right>
-          <f7-link @click="updateWidgetSlotConfig" class="popup-close"> Done </f7-link>
+          <f7-link v-if="readOnly" class="popup-close"> Close </f7-link>
+          <f7-link v-else @click="updateWidgetSlotConfig" class="popup-close"> Done </f7-link>
         </f7-nav-right>
       </f7-navbar>
       <f7-toolbar tabbar position="top">
@@ -19,7 +20,7 @@
           :tab-link="'#tab-' + idx">
           {{ idx }}
         </f7-link>
-        <f7-link @click="addComponentToSlot" icon-f7="plus_filled" />
+        <f7-link v-if="!readOnly" @click="addComponentToSlot" icon-f7="plus_filled" />
       </f7-toolbar>
       <f7-tabs>
         <f7-tab v-for="(slotComponent, idx) in slotConfig" :id="'tab-' + idx" :key="idx" :tab-active="currentTab === idx">
@@ -28,12 +29,14 @@
             :parameterGroups="getWidgetDefinition(slotComponent.component).props.parameterGroups || []"
             :parameters="getWidgetDefinition(slotComponent.component).props.parameters || []"
             :configuration="slotComponent.config"
+            :readOnly="readOnly"
             @updated="dirty = true" />
           <f7-block v-else strong> This type of component cannot be configured: {{ slotComponent.component }}. </f7-block>
           <f7-list>
-            <f7-list-button color="blue" @click="editWidgetCode(slotComponent)"> Edit YAML </f7-list-button>
+            <f7-list-button v-if="!readOnly" color="blue" @click="editWidgetCode(slotComponent)"> Edit YAML </f7-list-button>
             <!-- prettier-ignore  -->
             <f7-list-button
+              v-if="!readOnly"
               color="Remove"
               @click="removeComponentFromSlot(slotComponent, slotConfig); switchTab(slotConfig.length - 1)">
               Remove
@@ -65,7 +68,8 @@ export default {
     currentSlotDefaultComponentType: String,
     initialConfig: Object,
     removeComponentFromSlot: Function,
-    editWidgetCode: Function
+    editWidgetCode: Function,
+    readOnly: Boolean
   },
   emits: ['widgetSlotConfigClosed', 'widgetSlotConfigUpdate'],
   components: {

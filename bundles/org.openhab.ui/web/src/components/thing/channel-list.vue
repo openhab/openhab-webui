@@ -91,10 +91,10 @@
           </f7-col>
         </f7-row>
         <f7-list v-if="multipleLinksMode">
-          <f7-list-button style="padding-left: 0; text-align: left" color="blue" @click="toggleAllChecks(true)">
+          <f7-list-button style="padding-left: 0; text-align: left" color="blue" @click="toggleAllChecks(true, $event)">
             Select All
           </f7-list-button>
-          <f7-list-button color="blue" @click="toggleAllChecks(false)"> Unselect All </f7-list-button>
+          <f7-list-button color="blue" @click="toggleAllChecks(false, $event)"> Unselect All </f7-list-button>
         </f7-list>
       </f7-block>
     </f7-col>
@@ -272,7 +272,7 @@ export default {
     stateDescription(channelType) {
       return channelType?.stateDescription?.pattern
     },
-    toggleAllChecks(checked) {
+    toggleAllChecks(checked, event) {
       this.thing.channels.forEach((c) => {
         if (this.multipleLinksMode && c.kind === 'TRIGGER') return
         const channelType = this.channelTypesMap.get(c.channelTypeUID)
@@ -288,6 +288,10 @@ export default {
         .forEach((i) => {
           this.$$(i).prop('checked', checked)
         })
+
+      nextTick(() => {
+        event.currentTarget?.scrollIntoView()
+      })
     },
     newItem(channel) {
       return this.newItems.find((i) => i.channel === channel)

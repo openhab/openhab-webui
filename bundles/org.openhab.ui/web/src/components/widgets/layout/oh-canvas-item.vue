@@ -11,8 +11,8 @@
       :h="h"
       :z="active ? 10 : 0"
       :parent="false"
-      :draggable="true"
-      :resizable="!autosize"
+      :draggable="context.editmode.isEditable"
+      :resizable="context.editmode.isEditable && !autosize"
       class="oh-canvas-item oh-canvas-item-editmode no-margin"
       :grid="gridEnable ? [gridPitch, gridPitch] : undefined"
       :min-height="gridEnable ? gridPitch : undefined"
@@ -30,37 +30,41 @@
             <f7-menu-dropdown-item
               @click="context.editmode.configureWidget(context.component, context.parent)"
               href="#"
-              text="Configure container" />
+              text="Container Settings" />
             <f7-menu-dropdown-item
               v-if="defaultSlots.length > 0"
               @click="context.editmode.configureWidget(defaultSlots[0], context)"
               href="#"
-              text="Configure Widget" />
-            <f7-menu-dropdown-item @click="context.editmode.editWidgetCode(context.component, context.parent)" href="#" text="Edit YAML" />
-            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleAutoSize()" href="#">
-              <span>Auto Size</span>
-              <f7-icon class="margin-left" :f7="autosize ? 'checkmark_square' : 'square'" />
-            </f7-menu-dropdown-item>
-            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleShadow()" href="#">
-              <span>Shadow</span>
-              <f7-icon class="margin-left" :f7="shadow ? 'checkmark_square' : 'square'" />
-            </f7-menu-dropdown-item>
-            <f7-menu-dropdown-item v-if="defaultSlots.length > 0" divider />
-            <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
-            <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item
-              @click="context.editmode.bringWidgetToFront(context.component, context.parent)"
-              href="#"
-              text="Bring to Front" />
-            <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Up" />
-            <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Down" />
-            <f7-menu-dropdown-item
-              @click="context.editmode.sendWidgetToBack(context.component, context.parent)"
-              href="#"
-              text="Send to Back" />
-            <f7-menu-dropdown-item divider />
-            <f7-menu-dropdown-item @click="context.editmode.removeWidget(context.component, context.parent)" href="#" text="Remove Item" />
+              text="Widget Settings" />
+            <template v-if="context.editmode.isEditable">
+              <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleAutoSize()" href="#">
+                <span>Auto Size</span>
+                <f7-icon class="margin-left" :f7="autosize ? 'checkmark_square' : 'square'" />
+              </f7-menu-dropdown-item>
+              <f7-menu-dropdown-item v-if="defaultSlots.length > 0" @click="toggleShadow()" href="#">
+                <span>Shadow</span>
+                <f7-icon class="margin-left" :f7="shadow ? 'checkmark_square' : 'square'" />
+              </f7-menu-dropdown-item>
+              <f7-menu-dropdown-item v-if="defaultSlots.length > 0" divider />
+              <f7-menu-dropdown-item @click="context.editmode.copyWidget(context.component, context.parent)" href="#" text="Copy" />
+              <f7-menu-dropdown-item @click="context.editmode.cutWidget(context.component, context.parent)" href="#" text="Cut" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item
+                @click="context.editmode.bringWidgetToFront(context.component, context.parent)"
+                href="#"
+                text="Bring to Front" />
+              <f7-menu-dropdown-item @click="context.editmode.moveWidgetDown(context.component, context.parent)" href="#" text="Move Up" />
+              <f7-menu-dropdown-item @click="context.editmode.moveWidgetUp(context.component, context.parent)" href="#" text="Move Down" />
+              <f7-menu-dropdown-item
+                @click="context.editmode.sendWidgetToBack(context.component, context.parent)"
+                href="#"
+                text="Send to Back" />
+              <f7-menu-dropdown-item divider />
+              <f7-menu-dropdown-item
+                @click="context.editmode.removeWidget(context.component, context.parent)"
+                href="#"
+                text="Remove Item" />
+            </template>
           </f7-menu-dropdown>
         </f7-menu-item>
       </f7-menu>
@@ -72,7 +76,7 @@
         }"
         class="disable-user-select">
         <oh-placeholder-widget
-          v-if="!defaultSlots.length"
+          v-if="context.editmode.isEditable && !defaultSlots.length"
           @click="context.editmode.addWidget(context.component, null, context.parent)"
           class="oh-canvas-item-content" />
         <generic-widget-component
@@ -83,7 +87,7 @@
             'oh-canvas-item-styled': styled,
             'oh-canvas-item-shadow': styled && shadow
           }" />
-        <f7-icon class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
+        <f7-icon v-if="context.editmode.isEditable" class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
         <div class="oh-canvas-item-id disable-user-select">{{ config.id }}</div>
         <div v-if="active" class="oh-canvas-item-msg disable-user-select">{{ editMessage }}</div>
       </div>

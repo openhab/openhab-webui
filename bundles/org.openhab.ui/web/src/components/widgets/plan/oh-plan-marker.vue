@@ -3,7 +3,7 @@
     v-if="visible && coords"
     ref="marker"
     :key="markerKey"
-    :draggable="context.editmode !== undefined && context.editmode !== null"
+    :draggable="!!context.editmode?.isEditable"
     :lat-lng="coords"
     @update:lat-lng="onMove"
     @click="onClick">
@@ -33,7 +33,7 @@
           class="text-color-blue display-flex flex-direction-column margin-right"
           @click="context.editmode.configureWidget(context.component, context.parent)"
           icon-f7="square_pencil">
-          Configure
+          Settings
         </f7-link>
         <f7-link
           href="#"
@@ -43,6 +43,7 @@
           YAML
         </f7-link>
         <f7-link
+          v-if="context.editmode.isEditable"
           href="#"
           class="text-color-blue display-flex flex-direction-column margin-right"
           @click="context.editmode.copyWidget(context.component, context.parent)"
@@ -50,6 +51,7 @@
           Copy
         </f7-link>
         <f7-link
+          v-if="context.editmode.isEditable"
           href="#"
           class="text-color-red display-flex flex-direction-column"
           @click="context.editmode.removeWidget(context.component, context.parent)"
@@ -85,8 +87,9 @@ export default {
   widget: OhPlanMarkerDefinition,
   emits: ['update'],
   setup(props) {
-    const { config, visible, evaluateExpression } = useWidgetContext(computed(() => props.context))
-    const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+    const context = computed(() => props.context)
+    const { config, visible, evaluateExpression } = useWidgetContext(context)
+    const { performAction } = useWidgetAction(context, config, evaluateExpression)
     return { config, visible, performAction }
   },
   data() {
@@ -158,6 +161,9 @@ export default {
   },
   methods: {
     onMove(latlng) {
+      if (!this.context.editmode?.isEditable) {
+        return
+      }
       this.context.component.config.coords = [latlng.lat, latlng.lng].join(',')
     },
     onClick(event) {

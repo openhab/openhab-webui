@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="item-edit-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
@@ -18,7 +18,7 @@
       <f7-tab id="design" :tab-active="currentTab === 'design'">
         <f7-block v-if="item.name || item.created === false" class="block-narrow">
           <f7-col v-if="!editable">
-            <div class="padding-left">Note: {{ notEditableMsg }}</div>
+            <not-editable-notice subject="Item" />
           </f7-col>
           <f7-col>
             <item-form ref="itemForm" :item="item" :items="items" :createMode="createMode" />
@@ -56,7 +56,8 @@
           :object="item"
           :object-id="item.name"
           :read-only="!editable"
-          :read-only-msg="notEditableMsg"
+          read-only-msg="This Item is not editable because it has been provisioned from a file."
+          @save="save()"
           @parsed="updateItem"
           @changed="onCodeChanged" />
       </f7-tab>
@@ -79,7 +80,7 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { f7 } from 'framework7-vue'
 
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -87,13 +88,15 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import * as Types from '@/assets/item-types.js'
 
 import ItemForm from '@/components/item/item-form.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
-import DirtyMixin from '../dirty-mixin'
 import ItemMixin from '@/components/item/item-mixin'
 import { showToast } from '@/js/dialog-promises'
 
+import { useDirty } from '@/pages/useDirty'
+
 export default {
-  mixins: [DirtyMixin, ItemMixin],
+  mixins: [ItemMixin],
   props: {
     itemName: String,
     createMode: Boolean,
@@ -102,10 +105,13 @@ export default {
   },
   components: {
     ItemForm,
+    NotEditableNotice,
     CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('item-edit-page')
+
+    return { dirty, dirtyIndicator }
   },
   data() {
     return {
@@ -120,8 +126,7 @@ export default {
       semanticClass: '',
       semanticProperty: '',
       pendingTag: '',
-      currentTab: 'design',
-      notEditableMsg: 'This Item is not editable because it has been provisioned from a file.'
+      currentTab: 'design'
     }
   },
   computed: {

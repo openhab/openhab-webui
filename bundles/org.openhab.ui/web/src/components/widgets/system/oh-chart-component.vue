@@ -141,11 +141,12 @@ let initOptions = echartsLocale
   : {}
 
 // composables
-const { config, slots, evaluateExpression } = useWidgetContext(computed(() => props.context))
-const { performAction } = useWidgetAction(props.context, config, evaluateExpression)
+const context = computed(() => props.context)
+const { config, slots, evaluateExpression } = useWidgetContext(context)
+const { performAction } = useWidgetAction(context, config, evaluateExpression)
 
-const chartComposable = useChart(props.context, config, slots, evaluateExpression)
-const { startTime, options, period, earlierPeriod, laterPeriod, setDate, setPeriod } = chartComposable
+const chartComposable = useChart(context, config, slots, evaluateExpression)
+const { startTime, endTime, options, period, earlierPeriod, laterPeriod, setDate, setPeriod } = chartComposable
 
 // data (state)
 const ready = ref(false)
@@ -182,6 +183,10 @@ const fixedPeriodLabel = computed(() => {
         return startTime.value.format('MMM YYYY')
       case ChartType.year:
         return startTime.value.format('YYYY')
+      case ChartType.twoYears:
+      case ChartType.threeYears:
+      case ChartType.fiveYears:
+        return `${startTime.value.format('YYYY')} - ${endTime.value.subtract(1, 'year').format('YYYY')}`
       case ChartType.dynamic:
         return ''
       default:

@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 
 describe('Time Utility Tests', () => {
   describe('startOf', () => {
-    it('should return Monday 00:00 for isoWeek (standard)', () => {
+    it('should return Monday 00:00 for ChartType.isoWeek', () => {
       // Saturday, Feb 14, 2026
       const date = dayjs('2026-02-14')
       const result = startOf(ChartType.isoWeek, date)
@@ -13,12 +13,27 @@ describe('Time Utility Tests', () => {
       expect(result.format('YYYY-MM-DD HH:mm')).toBe('2026-02-09 00:00')
     })
 
-    it('should return Sunday 00:00 for ChartType.week', () => {
+    it('should return Sunday 00:00 for ChartType.week (default locale)', () => {
       // Saturday, Feb 14, 2026
       const date = dayjs('2026-02-14')
       const result = startOf(ChartType.week, date)
 
       expect(result.format('YYYY-MM-DD HH:mm')).toBe('2026-02-08 00:00')
+    })
+
+    it('should return Monday 00:00 for ChartType.week when locale is de', async () => {
+      const originalLocale = dayjs.locale()
+      try {
+        await import('dayjs/locale/de')
+        dayjs.locale('de')
+        // Saturday, Feb 14, 2026. German week starts on Monday, Feb 9.
+        const date = dayjs('2026-02-14')
+        const result = startOf(ChartType.week, date)
+
+        expect(result.format('YYYY-MM-DD HH:mm')).toBe('2026-02-09 00:00')
+      } finally {
+        dayjs.locale(originalLocale)
+      }
     })
 
     it('should avoid shifting back if date is already Sunday for ChartType.week', () => {
@@ -33,6 +48,19 @@ describe('Time Utility Tests', () => {
       const result = startOf(ChartType.month as any, date)
 
       expect(result.format('YYYY-MM-DD')).toBe('2024-10-01')
+    })
+
+    describe('Special Cases not out-of-the-box-supported by Dayjs', () => {
+      it.each([
+        { type: ChartType.twoYears, expected: '2024-01-01' },
+        { type: ChartType.threeYears, expected: '2023-01-01' },
+        { type: ChartType.fiveYears, expected: '2021-01-01' }
+      ])('should handle ChartType.$type correctly', ({ type, expected }) => {
+        const date = dayjs('2025-10-23')
+        const result = startOf(type, date)
+
+        expect(result.format('YYYY-MM-DD')).toBe(expected)
+      })
     })
   })
 
@@ -158,6 +186,27 @@ describe('Time Utility Tests', () => {
         const result = addOrSubtractPeriod(ChartType.month as any, 'M', start, -1)
 
         expect(result.format('YYYY-MM-DD')).toBe('2023-02-28')
+      })
+    })
+
+    describe('Special Cases not out-of-the-box-supported by Dayjs', () => {
+      it.each([
+        // Two Years
+        { type: ChartType.twoYears, diff: 1, expected: '2026-10-23' },
+        { type: ChartType.twoYears, diff: -1, expected: '2022-10-23' },
+
+        // Three Years
+        { type: ChartType.threeYears, diff: 1, expected: '2027-10-23' },
+        { type: ChartType.threeYears, diff: -1, expected: '2021-10-23' },
+
+        // Five Years
+        { type: ChartType.fiveYears, diff: 1, expected: '2029-10-23' },
+        { type: ChartType.fiveYears, diff: -1, expected: '2019-10-23' }
+      ])('should handle ChartType.$diff of $type correctly', ({ type, diff, expected }) => {
+        const date = dayjs('2024-10-23')
+        const result = addOrSubtractPeriod(type, null, date, diff)
+
+        expect(result.format('YYYY-MM-DD')).toBe(expected)
       })
     })
   })

@@ -20,20 +20,29 @@
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <f7-link
-        v-if="!theme.md"
-        v-show="selectedItems.length"
-        color="red"
-        class="delete"
-        icon-ios="f7:trash"
-        icon-aurora="f7:trash"
-        @click="removeSelected">
-        Remove {{ selectedItems.length }}
-      </f7-link>
+      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
+        <f7-link
+          color="red"
+          class="delete display-flex flex-direction-row margin-right"
+          icon-ios="f7:trash"
+          icon-aurora="f7:trash"
+          @click="removeSelected">
+          Remove {{ selectedItems.length }}
+        </f7-link>
+        <f7-link
+          color="blue"
+          class="copy display-flex flex-direction-row"
+          @click="copySelectedItemsToClipboard"
+          icon-ios="f7:square_on_square"
+          icon-aurora="f7:square_on_square">
+          &nbsp;Copy
+        </f7-link>
+      </div>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
-      <div v-if="theme.md" class="right">
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+      <div v-if="theme.md && selectedItems.length" class="right">
+        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link tooltip="Copy selected" icon-md="material:content_copy" icon-color="white" @click="copySelectedItemsToClipboard" />
       </div>
     </f7-toolbar>
 
@@ -68,11 +77,11 @@
             class="widgetlist-item"
             :checkbox="showCheckboxes"
             :checked="isChecked(widget.uid)"
-            :prevent-router="showCheckboxes"
+            prevent-router
             @click.ctrl="ctrlClick($event, widget)"
             @click.meta="ctrlClick($event, widget)"
             @click.exact="click($event, widget)"
-            :link="`/developer/widgets/${widget.uid}`"
+            :link="`${encodeURIComponent(widget.uid)}`"
             :title="widget.uid">
             <template #subtitle>
               <div>
@@ -85,6 +94,13 @@
             </template>
             <template #media>
               <span class="item-initial">{{ widget.uid[0].toUpperCase() }}</span>
+            </template>
+            <template #after>
+              <!-- This is here to push the after-title icon so it would appear immediately after the title
+                    for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
+            </template>
+            <template #after-title>
+              <f7-icon v-if="widget.editable === false" f7="lock_fill" size="1rem" color="gray" />
             </template>
           </f7-list-item>
         </f7-list>
@@ -103,6 +119,9 @@
 import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
 import { showToast } from '@/js/dialog-promises'
+
+import copyToClipboard from '@/js/clipboard'
+import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 export default {
   props: {
@@ -155,6 +174,8 @@ export default {
     click(event, item) {
       if (this.showCheckboxes) {
         this.toggleItemCheck(event, item.uid, item)
+      } else {
+        this.f7router.navigate(item.uid, { animate: false })
       }
     },
     ctrlClick(event, item) {
@@ -171,6 +192,11 @@ export default {
     },
     removeSelected() {
       const vm = this
+
+      if (this.selectedItems.some((i) => this.widgets.find((w) => w.uid === i)?.editable === false)) {
+        f7.dialog.alert('Some of the selected widgets are not modifiable because they have been provisioned by files')
+        return
+      }
 
       f7.dialog.confirm(`Remove ${this.selectedItems.length} selected widgets?`, 'Remove widgets', () => {
         vm.doRemoveSelected()
@@ -195,6 +221,14 @@ export default {
           f7.dialog.alert('An error occurred while deleting: ' + err)
           f7.emit('sidebarRefresh', null)
         })
+    },
+    copySelectedItemsToClipboard() {
+      const itemsToCopy = this.widgets.filter((widget) => this.selectedItems.includes(widget.uid))
+      const yaml = toFileYAMLSyntax('widgets', itemsToCopy)
+      copyToClipboard(yaml, {
+        onSuccess: () => showToast('Selected Widget definitions copied to clipboard'),
+        onError: () => showToast('Failed to copy widget definitions to clipboard')
+      })
     }
   }
 }

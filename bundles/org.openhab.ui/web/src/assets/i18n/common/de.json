@@ -42,6 +42,7 @@
   "home.editHome": "Homepage bearbeiten",
   "home.pinToHome": "An Startbildschirm anheften",
   "home.exitToApp": "Zurück zur App",
+  "home.triggerVoice": "Sprachsteuerung starten",
   "home.tip.otherApps": "Dieses Panel öffnen, um andere Anwendungen zu starten",
   "sidebar.noPages": "Keine Seiten",
   "sidebar.administration": "Administration",
@@ -56,6 +57,7 @@
   "admin.notTranslatedYet": "Der Administrationsbereich ist noch nicht übersetzt.",
   "error.communicationFailure": "Kommunikation fehlgeschlagen",
   "error.itemNotFound": "%s nicht gefunden",
+  "error.invalidCommand": "Ungültiger Befehl für %s",
   "error.notReachable.title": "openHAB ist offline",
   "error.notReachable.msg": "Der openHAB Server kann momentan nicht erreicht werden. Bitte überprüfen Sie Ihre Netzwerkverbindung und Ihren Server."
 }

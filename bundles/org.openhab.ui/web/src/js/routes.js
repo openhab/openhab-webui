@@ -1,4 +1,5 @@
 import { authorize, isLoggedIn, enforceAdminForRoute } from '@/js/openhab/auth'
+import { beforeLeave } from '@/pages/useDirty'
 
 import HomePage from '../pages/home.vue'
 import NotFoundPage from '../pages/not-found.vue'
@@ -53,8 +54,11 @@ const PageEditors = {
   map: () => import(/* webpackChunkName: "admin-pages-leaflet" */ '@/pages/settings/pages/map/map-edit.vue'),
   plan: () => import(/* webpackChunkName: "admin-pages-leaflet" */ '@/pages/settings/pages/plan/plan-edit.vue'),
   chart: () => import(/* webpackChunkName: "admin-pages-echarts" */ '@/pages/settings/pages/chart/chart-edit.vue'),
-  sitemap: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemap/sitemap-edit.vue')
+  unknown: () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/unknown/unknown-edit.vue')
 }
+
+const SitemapsListPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemaps-list.vue')
+const SitemapEditPage = () => import(/* webpackChunkName: "admin-pages" */ '@/pages/settings/pages/sitemap/sitemap-edit.vue')
 
 const RulesListPage = () => import(/* webpackChunkName: "admin-rules" */ '@/pages/settings/rules/rules-list.vue')
 const RuleEditPage = () => import(/* webpackChunkName: "admin-rules" */ '@/pages/settings/rules/rule-edit.vue')
@@ -69,13 +73,21 @@ const BlocksListPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/
 const BlocksEditPage = () => import(/* webpackChunkName: "blockly-editor" */ '@/pages/developer/blocks/blocks-edit.vue')
 const SemanticsEditPage = () => import(/* webpackChunkName: "semantics-editor" */ '@/pages/developer/semantics/semantic-tags-edit.vue')
 const ApiExplorerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/pages/developer/api-explorer.vue')
-const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/pages/developer/log-viewer.vue')
+const LogViewerPage = () => import(/* webpackChunkName: "admin-devtools" */ '@/pages/developer/log-viewer/log-viewer-page.vue')
 
 const SetupWizardPage = () => import(/* webpackChunkName: "setup-wizard" */ '@/pages/wizards/setup-wizard.vue')
 
-const checkDirtyBeforeLeave = function ({ router, to, from, resolve, reject }) {
-  if (this.currentPageEl?.beforeLeave && !to.path.startsWith(from.path)) {
-    this.currentPageEl.beforeLeave({ router, to, from, resolve, reject })
+const checkDirtyBeforeLeave = async function ({ router, to, from, resolve, reject }) {
+  // Check if not navigating to a sub-path of current path
+  if (to.path.startsWith(from.path)) {
+    resolve()
+    return
+  }
+
+  // Check if there's unsaved changes in the component
+  const dirtyRef = this.currentPageEl?.__dirty
+  if (dirtyRef?.value) {
+    await beforeLeave({ resolve, reject, router, from, dirty: dirtyRef })
   } else {
     resolve()
   }
@@ -281,6 +293,31 @@ export default [
         async: loadAsync(PagesListPage),
         beforeEnter: [enforceAdminForRoute],
         routes: PageRoutes
+      },
+      {
+        path: 'sitemaps/',
+        beforeEnter: [enforceAdminForRoute],
+        async: loadAsync(SitemapsListPage),
+        routes: [
+          {
+            path: 'add',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SitemapEditPage, { createMode: true })
+          },
+          {
+            path: 'duplicate',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SitemapEditPage, { createMode: true })
+          },
+          {
+            path: ':uid',
+            beforeEnter: [enforceAdminForRoute],
+            beforeLeave: [checkDirtyBeforeLeave],
+            async: loadAsync(SitemapEditPage)
+          }
+        ]
       },
       {
         path: 'transformations/',
@@ -584,7 +621,10 @@ export default [
       {
         path: 'log-viewer/',
         beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(LogViewerPage)
+        async: loadAsync(LogViewerPage),
+        options: {
+          animate: false
+        }
       }
     ]
   },

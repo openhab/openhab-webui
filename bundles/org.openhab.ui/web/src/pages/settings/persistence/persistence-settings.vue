@@ -1,5 +1,5 @@
 <template>
-  <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
+  <f7-page ref="persistence-settings-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
       <oh-nav-content
         title="Persistence Settings"
@@ -75,15 +75,14 @@ import { nextTick } from 'vue'
 import { theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import DirtyMixin from '../dirty-mixin'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
+import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [DirtyMixin],
   components: {
     EmptyStatePlaceholder,
     ConfigSheet
@@ -92,7 +91,9 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const { dirty, dirtyIndicator } = useDirty('persistence-settings-page')
+
+    return { theme, dirty, dirtyIndicator }
   },
   data() {
     return {

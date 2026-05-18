@@ -38,6 +38,8 @@ Note that the source maps have to be manually loaded in the browser, e.g. for Ch
 * `npm run format` - run `oxfmt` and apply Prettier formatting
 * `npm run format:check` - run `oxfmt` to verify Prettier formatting is intact
 * `npm run bundle-analyzer` - generate both a [HTML report](web/stats.html) and a [Webpack JSON report](web/www/webpack-stats.json) of the bundled assets, e.g., useful for debugging chunking and optimize JS loading
+* `npm run generate-rest-client` - generate the REST client from the [OpenAPI specification](web/build/openhab-api-spec.json)
+* `npm run generate-rest-client -- --url http://localhost:8080/rest/spec` - pull the OpenAPI specification from a running openHAB instance, save it to [`web/build/openhab-api-spec.json`](web/build/openhab-api-spec.json) and generate the REST client
 
 ## Development server
 
