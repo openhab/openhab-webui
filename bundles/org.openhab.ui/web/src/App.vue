@@ -347,7 +347,7 @@
     </f7-panel>
 
     <!-- Right Panel -->
-    <f7-panel v-if="ready" right reveal dark>
+    <f7-panel v-if="ready" right reveal dark resizable>
       <panel-right />
       <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
