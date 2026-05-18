@@ -1,7 +1,7 @@
 {
   "about.theme": "Tema",
   "about.theme.auto": "Automatico",
-  "about.darkMode": "Modalità Scura",
+  "about.darkMode": "Aspetto",
   "about.darkMode.auto": "Automatico",
   "about.darkMode.light": "Chiaro",
   "about.darkMode.dark": "Scuro",
@@ -20,5 +20,12 @@
   "about.miscellaneous.theme.disablePageTransition": "Disabilita animazioni transizione di pagina",
   "about.miscellaneous.webaudio.enable": "Abilita il supporto per l'audio web sink",
   "about.miscellaneous.commandItem.title": "Ricezione per i comandi UI ",
-  "about.miscellaneous.commandItem.selectItem": "Item"
+  "about.miscellaneous.commandItem.selectItem": "Item",
+  "about.dialog": "Supporto Vocale",
+  "about.dialog.enable": "Abilita Dialogo Vocale",
+  "about.dialog.id": "Id connessione",
+  "about.dialog.listeningItem": "Item In Ascolto",
+  "about.dialog.locationItem": "Item Locale",
+  "about.dialog.connectOnWindowEvent": "Avvia alla prima finestra evento",
+  "about.dialog.triggerOnConnect": "Attiva al primo clic"
 }
