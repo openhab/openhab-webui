@@ -4,18 +4,17 @@ import type { ConfigDescriptionParameterGroup } from '@/api'
 import { po, pt, pi, pb } from './helpers.ts'
 import { aggregationTypeOptions } from './chart/options.ts'
 
-const normalizeActionList = (value: unknown): string[] => {
-  if (value === undefined || value === null) return []
+export const normalizeActionList = (value: string | string[] | undefined): string[] => {
+  if (value === undefined) return []
   const values = Array.isArray(value) ? value : [value]
-  const actions = values.flatMap((entry) => {
-    if (typeof entry === 'string') return entry.split(',')
-    return [String(entry)]
-  })
-  return actions.map((action) => action.trim()).filter(Boolean)
+  return values
+    .flatMap((entry) => entry.split(','))
+    .map((action) => action.trim())
+    .filter(Boolean)
 }
 
 const hasAction = (configuration: Record<string, unknown>, actionKey: string, ...actions: string[]): boolean => {
-  const selectedActions = normalizeActionList(configuration[actionKey])
+  const selectedActions = normalizeActionList(configuration[actionKey] as string | string[] | undefined)
   return actions.some((action) => selectedActions.includes(action))
 }
 
@@ -230,10 +229,10 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
         return actionSelected(configuration, 'command', 'toggle', 'options', 'rule', 'http')
       }),
     pt(paramPrefix + 'actionVariable', 'Variable', 'The variable name to set').v((_value, configuration) => {
-      return actionSelected(configuration, 'variable', 'http')
+      return actionSelected(configuration, 'variable')
     }),
     pt(paramPrefix + 'actionVariableValue', 'Variable Value', 'The value to set the variable to').v((_value, configuration) => {
-      return actionSelected(configuration, 'variable', 'http')
+      return actionSelected(configuration, 'variable')
     }),
     pt(
       paramPrefix + 'actionVariableKey',
@@ -242,7 +241,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     )
       .a()
       .v((_value, configuration) => {
-        return actionSelected(configuration, 'variable', 'http')
+        return actionSelected(configuration, 'variable')
       })
   ].map((p) => {
     p.groupName = groupName

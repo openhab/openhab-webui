@@ -16,7 +16,7 @@ export interface Config {
   icon?: string
   iconColor?: string
   iconUseState?: boolean
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

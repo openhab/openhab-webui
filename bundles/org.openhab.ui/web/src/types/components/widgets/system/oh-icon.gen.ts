@@ -10,7 +10,7 @@ import {
 } from '../common.gen.ts'
 
 export interface Config {
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

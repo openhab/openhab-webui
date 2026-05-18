@@ -6,8 +6,8 @@ import {
 
 export enum Split {
   line = 'line',
-  area = 'area',
-  minor = 'minor'
+  minor = 'minor',
+  area = 'area'
 }
 
 export interface Config {

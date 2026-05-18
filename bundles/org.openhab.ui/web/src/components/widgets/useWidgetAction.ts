@@ -1,6 +1,7 @@
 import { f7 } from 'framework7-vue'
 import { useI18n } from 'vue-i18n'
 
+import { normalizeActionList } from '@/assets/definitions/widgets/actions.ts'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
@@ -51,16 +52,6 @@ function showActionFeedback(prefix: string, actionConfig: ActionConfig, text?: s
   } else {
     void showToast(feedbackText)
   }
-}
-
-const normalizeActionList = (value: unknown): Action[] => {
-  if (value === undefined || value === null) return []
-  const values = Array.isArray(value) ? value : [value]
-  const actions = values.flatMap((entry) => {
-    if (typeof entry === 'string') return entry.split(',')
-    return [String(entry)]
-  })
-  return actions.map((action) => action.trim()).filter(Boolean) as Action[]
 }
 
 export type WidgetActionConfig = ActionConfig & { actionPropsParameterGroup?: string; taphold_actionPropsParameterGroup?: string }
@@ -156,7 +147,7 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
     prefix = prefix ? (prefix += '_') : ''
     processedPrefix = processPrefix(prefix)
     const actionValue = actionConfig[`${processedPrefix}action`]
-    const actionList = normalizeActionList(actionValue)
+    const actionList = normalizeActionList(actionValue as string | string[] | undefined) as Action[]
     if (!actionList.length) return false
     if (ctx.editmode) {
       showActionFeedback(prefix, actionConfig, `Action '${actionList.join(', ')}' not performed while in edit mode`)
@@ -432,25 +423,6 @@ export function useWidgetAction(context: WidgetContext, config: ComputedRef<Widg
               }
               const actionHttpMethod = actionConfig[`${processedPrefix}actionHttpMethod`] || 'GET'
               const actionHttpBody = actionConfig[`${processedPrefix}actionHttpBody`]
-              const actionHttpVariable = actionConfig[`${processedPrefix}actionVariable`]
-              let actionHttpVariableValue: VariableValue | undefined = actionConfig[`${processedPrefix}actionVariableValue`]
-              const actionHttpVariableKey = actionConfig[`${processedPrefix}actionVariableKey`]
-              if (actionHttpVariable) {
-                const actionHttpVariableScope = ctx.ctxVars ? getVariableScope(ctx.ctxVars, ctx.varScope, actionHttpVariable) : null
-                const actionHttpVariableLocation = actionHttpVariableScope ? ctx.ctxVars![actionHttpVariableScope] : ctx.vars
-                if (!actionHttpVariableLocation) {
-                  actionResult = false
-                  break
-                }
-                if (actionHttpVariableKey) {
-                  actionHttpVariableValue = setVariableKeyValues(
-                    actionHttpVariableLocation[actionHttpVariable],
-                    actionHttpVariableKey,
-                    actionHttpVariableValue
-                  )
-                }
-                actionHttpVariableLocation[actionHttpVariable] = actionHttpVariableValue!
-              }
               console.log(`Performing HTTP ${actionHttpMethod} request to ${actionHttpUrl}`)
               try {
                 await fetch(actionHttpUrl, {

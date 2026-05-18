@@ -35,7 +35,7 @@ export interface Config {
   barBorderRadius?: number
   xAxisIndex?: number
   yAxisIndex?: number
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

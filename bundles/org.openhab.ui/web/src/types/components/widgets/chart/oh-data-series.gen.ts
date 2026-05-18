@@ -25,7 +25,7 @@ export interface Config {
   color?: string
   showSymbol?: boolean
   barBorderRadius?: number
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

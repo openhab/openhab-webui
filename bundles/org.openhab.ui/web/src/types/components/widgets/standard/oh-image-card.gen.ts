@@ -20,7 +20,7 @@ export interface Config {
   lazy?: boolean
   lazyFadeIn?: boolean
   refreshInterval?: number
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

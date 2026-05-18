@@ -4,6 +4,8 @@ export default {
         modifier: (e) => e
           .replace('actionAnalyzerItems: string', 'actionAnalyzerItems?: string | string[]') // Fix array type
           .replace('taphold_actionAnalyzerItems: string', 'taphold_actionAnalyzerItems?: string | string[]') // Fix array type
+            .replace('action?: Action', 'action?: Action | Action[]')
+            .replace('taphold_action?: Taphold_action', 'taphold_action?: Taphold_action | Taphold_action[]')
           .replace('actionPageDefineVars?: string', 'actionPageDefineVars?: Record<string, unknown>[]')
           .replace('taphold_actionPageDefineVars?: string', 'taphold_actionPageDefineVars?: Record<string, unknown>[]')
     },

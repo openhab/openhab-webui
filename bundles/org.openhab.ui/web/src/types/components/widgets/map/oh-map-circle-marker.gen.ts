@@ -16,7 +16,7 @@ export interface Config {
   location?: string
   radiusItem?: string
   radius?: number
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

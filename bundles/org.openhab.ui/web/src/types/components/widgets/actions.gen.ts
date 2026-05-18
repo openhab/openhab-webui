@@ -16,7 +16,7 @@ import {
 } from './common.gen.ts'
 
 export interface ActionConfig {
-  action?: Action
+  action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod
@@ -44,7 +44,7 @@ export interface ActionConfig {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
-  taphold_action?: Taphold_action
+  taphold_action?: Taphold_action | Taphold_action[]
   taphold_actionUrl?: string
   taphold_actionUrlSameWindow?: boolean
   taphold_actionHttpMethod?: Taphold_actionHttpMethod
