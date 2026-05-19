@@ -280,8 +280,14 @@
     <f7-card-footer v-if="editable || widget.type === 'Sitemap'" key="sitemap-widget-buttons-edit-mode" class="widget-details-footer">
       <!-- <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button> -->
       <f7-segmented v-if="editable && widget.type !== 'Sitemap'">
-        <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" />
-        <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down" />
+        <f7-button
+          v-if="widget.type === 'Button'"
+          color="blue"
+          @click="$emit('sortbuttons', widget.parent)"
+          icon-f7="sort_down"
+          tooltip="Sort Buttons" />
+        <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" tooltip="Move Up" />
+        <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down" tooltip="Move Down" />
       </f7-segmented>
       <f7-button v-if="editable || widget.type === 'Sitemap'" color="blue" @click="$emit('duplicate', widget)"> Duplicate </f7-button>
       <f7-button v-if="editable && widget.type !== 'Sitemap'" color="red" @click="$emit('remove', widget)"> Remove </f7-button>
@@ -335,7 +341,7 @@ export default {
     editable: Boolean,
     createMode: Boolean
   },
-  emits: ['moveup', 'movedown', 'duplicate', 'remove'],
+  emits: ['sortbuttons', 'moveup', 'movedown', 'duplicate', 'remove'],
   data() {
     return {
       iconInputId: '',

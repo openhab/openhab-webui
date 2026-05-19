@@ -62,7 +62,8 @@
                   @duplicate="duplicateWidget"
                   @remove="removeWidget"
                   @movedown="moveWidgetDown"
-                  @moveup="moveWidgetUp" />
+                  @moveup="moveWidgetUp"
+                  @sortbuttons="sortButtongrid" />
               </f7-block>
               <f7-block v-else>
                 <div class="padding text-align-center">Nothing selected</div>
@@ -252,7 +253,8 @@
             @duplicate="duplicateWidget"
             @remove="removeWidget"
             @movedown="moveWidgetDown"
-            @moveup="moveWidgetUp" />
+            @moveup="moveWidgetUp"
+            @sortbuttons="sortButtongrid" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'visibilityRules'" style="margin-bottom: 6rem">
           <attribute-details :widget="selectedWidget" attribute="visibilityRules" :fields="visibilityRulesFields" :disabled="!isEditable" />
@@ -985,7 +987,9 @@ export default {
               }
             } else {
               if (widget.column && !isNaN(widget.column) && widget.column > this.MAX_BUTTONGRID_COLUMNS) {
-                validationWarnings.push(widget.type + ' widget ' + label + ', invalid column configured: ' + widget.column)
+                validationWarnings.push(
+                  widget.type + ' widget ' + label + ', more than ' + this.MAX_BUTTONGRID_COLUMNS + ' configured: ' + widget.column
+                )
               }
             }
           })
@@ -1123,9 +1127,6 @@ export default {
           delete widget[key]
         }
       }
-      if (widget.type === 'Buttongrid') {
-        widget.widgets?.sort((button1, button2) => (button1.row ?? 0) - (button2.row ?? 0) || (button1.column ?? 0) - (button2.column ?? 0))
-      }
       this.addEmptySlot(widget)
       widget.widgets?.forEach(this.cleanConfig)
     },
@@ -1181,6 +1182,16 @@ export default {
     },
     startEventSource() {},
     stopEventSource() {},
+    sortButtongrid(widget) {
+      if (widget.type === 'Buttongrid' && Array.isArray(widget.widgets)) {
+        widget.widgets.sort(
+          (button1, button2) =>
+            (button1.row ?? 0) - (button2.row ?? 0) ||
+            (button1.column ?? 0) - (button2.column ?? 0) ||
+            (button1.visibilityRules?.length ?? 0) - (button2.visibilityRules?.length ?? 0)
+        )
+      }
+    },
     duplicateWidget() {
       if (this.selectedWidget.type === 'Sitemap') {
         const sitemapCopy = this.preProcessSitemapSave(this.selectedWidget)
