@@ -13,7 +13,10 @@
           <div v-for="(filter, type) in filters" :key="type">
             <f7-list-item group-title style="height: 2em"> Filter by {{ filter.label }} </f7-list-item>
             <f7-list-item class="padding-bottom">
-              <div class="chip-wrap">
+              <div v-if="Object.keys(filter.options).length === 0" class="text-color-gray" style="font-size: 0.9em">
+                None of the items have any {{ filter.label.toLowerCase() }} assigned
+              </div>
+              <div v-else class="chip-wrap">
                 <f7-chip
                   v-for="(label, value) in filter.options"
                   :key="value"
@@ -100,6 +103,37 @@ export default {
      */
     filtered() {
       return Object.keys(this.filters).some((type) => this.isFilteredBy(type))
+    }
+  },
+  watch: {
+    filters: {
+      deep: true,
+      handler(newFilters = {}) {
+        Object.keys(newFilters).forEach((type) => {
+          const opts = (newFilters[type] && newFilters[type].options) || {}
+          const valid = new Set(Object.keys(opts))
+
+          // Ensure there's a Set for this type
+          if (!this.selected[type]) this.selected[type] = new Set()
+
+          const sel = this.selected[type]
+
+          // Remove any selected values that are no longer valid
+          for (const v of Array.from(sel)) {
+            if (!valid.has(v)) sel.delete(v)
+          }
+
+          // If there are no options left, clear the selection entirely
+          if (valid.size === 0 && sel.size > 0) {
+            sel.clear()
+          }
+        })
+
+        // Notify parent(s) that selected values changed so they can recompute
+        // Emit a generic toggled event without specific value so parents using
+        // @toggled will refresh their filtered lists.
+        this.$emit('toggled', this)
+      }
     }
   },
   methods: {
