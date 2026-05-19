@@ -174,7 +174,7 @@
         class="add-to-sitemap-fab"
         position="right-center"
         color="blue"
-        @click="$refs.widgetTypeSelection.open()">
+        @click="selectWidgetType">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       </f7-fab>
@@ -1221,6 +1221,9 @@ export default {
       if (pos <= 0) return
       widgets.splice(pos, 1)
       widgets.splice(pos - 1, 0, this.selectedWidget)
+    },
+    selectWidgetType() {
+      this.$refs.widgetTypeSelection.elRef.f7Modal.open()
     },
     selectWidget(widgets) {
       const widget = widgets[0]
