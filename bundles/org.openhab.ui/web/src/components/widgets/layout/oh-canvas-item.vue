@@ -132,17 +132,22 @@
   pointer-events auto
 
   .oh-canvas-item-content
-    width 100%                // use full width and
-    height 100%               // height of item
-    margin 0                  // without any margin
-    box-sizing border-box     // include padding
+    position relative
+    width 100%
+    height 100%
+    margin 0
+    box-sizing border-box // include padding
 
     &.card
-      display flex            // use flexbox to distribute card elements
-      flex-direction column   // from top to bottom
-      .card-content           // with content centered
-        margin-top auto       // independent of presence
-        margin-bottom auto    // of header or footer
+      // use flexbox to distribute card elements from top to bottom
+      display flex
+      flex-direction column
+      .card-content
+        // use flexbox to vertically center card contents
+        display flex
+        flex 1
+        flex-direction column
+        justify-content center
 
         // oh-swiper-card
         .swiper-container .placeholder-widget
