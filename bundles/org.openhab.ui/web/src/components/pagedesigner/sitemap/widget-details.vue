@@ -22,8 +22,16 @@
           @input="updateParameter('label', $event)"
           :clear-button="editable"
           :disabled="!editable" />
-        <ul v-if="widget.type !== 'Sitemap'" class="format-editor-wrapper">
-          <format-editor title="Format" :editable="editable" :value="widget.format" @input="(value) => (widget.format = value)" />
+        <ul v-if="widget.type !== 'Sitemap' && !['Frame', 'Buttongrid'].includes(widget.type)" class="format-editor-wrapper">
+          <format-editor title="Format" :editable="editable" :value="widget.format" @input="updateItemFormat" />
+          <f7-list-item title="No state" :disabled="!editable || widget.format?.length > 0">
+            <template #after>
+              <f7-toggle
+                tooltip="Do not show item state"
+                :checked="widget.itemFormatOverride && !widget.format?.length"
+                @toggle:change="toggleItemFormatOverride" />
+            </template>
+          </f7-list-item>
         </ul>
         <ul v-if="widget.type !== 'Sitemap' && !['Frame', 'Buttongrid'].includes(widget.type)">
           <item-picker
@@ -55,7 +63,8 @@
           <f7-list-item title="Static icon" :disabled="!editable || widget.iconRules?.length > 0">
             <template #after>
               <f7-toggle
-                :checked="widget.staticIcon && !widget.iconRules?.length ? true : false"
+                tooltip="openHAB icon does not change with state"
+                :checked="widget.staticIcon && !widget.iconRules?.length"
                 @toggle:change="widget.staticIcon = $event" />
             </template>
           </f7-list-item>
@@ -386,6 +395,22 @@ export default {
         this.widget[parameter] = false
       } else {
         delete this.widget[parameter]
+      }
+    },
+    updateItemFormat($event) {
+      if ($event === null || $event === undefined || $event.length === 0) {
+        delete this.widget.format
+      } else {
+        this.widget.format = $event
+      }
+    },
+    toggleItemFormatOverride($event) {
+      if (!this.widget.format?.length) {
+        if ($event) {
+          this.widget.itemFormatOverride = true
+        } else {
+          delete this.widget.itemFormatOverride
+        }
       }
     },
     remove() {

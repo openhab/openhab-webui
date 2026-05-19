@@ -542,9 +542,13 @@ export default {
     })
   },
   watch: {
+    lastCleanSitemap(newVal) {
+      console.log('lastCleanSitemap updated:', cloneDeep(newVal))
+    },
     sitemap: {
       handler(newVal) {
         if (this.loading) return
+        console.log('Sitemap changed:', cloneDeep(this.stripClosed(newVal)))
         if (!fastDeepEqual(this.stripClosed(newVal), this.lastCleanSitemap)) {
           this.sitemapDirty = true
         } else {
@@ -1148,6 +1152,9 @@ export default {
         if (labelMatch) {
           widget.label = labelMatch[1].trim()
           widget.format = labelMatch[2].trim()
+          if (!widget.format || widget.format.length === 0) {
+            widget.itemFormatOverride = true
+          }
         }
       }
       this.addEmptySlot(widget)
@@ -1168,11 +1175,12 @@ export default {
       return processed
     },
     preProcessWidgetSave(widget) {
-      if (widget.format) {
-        const label = widget.label || ''
-        widget.label = label + (label ? ' ' : '') + '[' + widget.format + ']'
+      if (widget.itemFormatOverride || widget.format?.length) {
+        const label = widget.label?.trim() || ''
+        widget.label = label + (label ? ' ' : '') + '[' + (widget.format?.trim() || '') + ']'
       }
       delete widget.format
+      delete widget.itemFormatOverride
       delete widget.parent // remove parent from widget, as this would cause a circular reference error when converting to JSON
       widget.widgets?.forEach(this.preProcessWidgetSave)
     },
