@@ -397,16 +397,16 @@ export default {
         delete this.widget[parameter]
       }
     },
-    updateItemFormat($event) {
-      if ($event === null || $event === undefined || $event.length === 0) {
+    updateItemFormat(event) {
+      if (event === null || event === undefined || event.length === 0) {
         delete this.widget.format
       } else {
-        this.widget.format = $event
+        this.widget.format = event
       }
     },
-    toggleItemFormatOverride($event) {
+    toggleItemFormatOverride(event) {
       if (!this.widget.format?.length) {
-        if ($event) {
+        if (event) {
           this.widget.itemFormatOverride = true
         } else {
           delete this.widget.itemFormatOverride
