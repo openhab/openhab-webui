@@ -29,6 +29,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 import { nextTick } from 'vue'
+import { showToast } from '@/js/dialog-promises'
 
 import * as api from '@/api'
 
