@@ -542,13 +542,9 @@ export default {
     })
   },
   watch: {
-    lastCleanSitemap(newVal) {
-      console.log('lastCleanSitemap updated:', cloneDeep(newVal))
-    },
     sitemap: {
       handler(newVal) {
         if (this.loading) return
-        console.log('Sitemap changed:', cloneDeep(this.stripClosed(newVal)))
         if (!fastDeepEqual(this.stripClosed(newVal), this.lastCleanSitemap)) {
           this.sitemapDirty = true
         } else {
