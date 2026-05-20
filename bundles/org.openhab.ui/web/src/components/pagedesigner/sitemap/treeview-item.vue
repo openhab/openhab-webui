@@ -61,6 +61,7 @@
 <script>
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
+import { showToast } from '@/js/dialog-promises'
 
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -118,14 +119,24 @@ export default {
       console.debug('Drag end event:', event)
       const widget = this.localMoveState.widget
       const parentWidget = this.localMoveState.newParent
-      if (widget && parentWidget && this.dropAllowed(parentWidget)) {
-        console.debug('Dropping widget:', cloneDeep(widget), 'into parent widget:', cloneDeep(parentWidget))
+      if (!widget || !parentWidget) {
+        this.localMoveState.moving = false
+        return
+      }
+      if (this.dropAllowed(parentWidget)) {
         widget.parent = parentWidget
+        console.debug('Dropping widget:', cloneDeep(widget), 'into parent widget:', cloneDeep(parentWidget))
       } else {
         widget.parent = this.localMoveState.originalParent
         widget.parent.widgets.splice(this.localMoveState.originalIndex, 0, widget)
         this.localMoveState.newParent.widgets.splice(this.localMoveState.newIndex, 1)
         console.debug('Drop not allowed. Resetting widget parent to original parent:', cloneDeep(this.localMoveState.originalParent))
+        showToast(
+          'Widget of type ' +
+            this.widgetTypeLabel(widget.type) +
+            ', drop not allowed in parent of type ' +
+            this.widgetTypeLabel(parentWidget.type)
+        )
       }
       this.localMoveState.moving = false
     },
