@@ -283,6 +283,16 @@
               </option>
             </select>
           </f7-list-item>
+          <ul v-if="supports('name')" style="padding-left: 0" class="widget-nested-sitemap">
+            <sitemap-picker
+              style="padding-left: 0"
+              title="Sitemap"
+              :value="widget.name"
+              :disabled="!editable"
+              @input="(value) => (widget.name = value)" />
+            <f7-link v-if="widget.name" @click="navigateNestedSitemap(widget.name)"> <a>Edit Sitemap</a></f7-link>
+            <f7-link v-else-if="!widget.item" @click="navigateNestedSitemap()"> <a>Add Sitemap</a></f7-link>
+          </ul>
         </ul>
       </f7-list>
     </f7-card-content>
@@ -318,6 +328,14 @@
     color var(--f7-block-text-color)
   .widget-persistence .item-after
     color var(--f7-block-text-color)
+  .widget-nested-sitemap
+    .item-after
+      color var(--f7-block-text-color)
+    .link
+      display flex
+      flex-direction column
+      align-items flex-end
+      padding-right calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-right) - var(--menu-list-offset))
 #additional:before
   display block !important /* need two selectors to override the important Vue card css */
 
@@ -336,6 +354,7 @@ import { Categories } from '@/assets/categories.js'
 import FormatEditor from '@/components/config/controls/format-editor.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import PersistencePicker from '@/components/config/controls/persistence-picker.vue'
+import SitemapPicker from '@/components/config/controls/sitemap-picker.vue'
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 
 export default {
@@ -343,14 +362,15 @@ export default {
   components: {
     FormatEditor,
     ItemPicker,
-    PersistencePicker
+    PersistencePicker,
+    SitemapPicker
   },
   props: {
     widget: Object,
     editable: Boolean,
     createMode: Boolean
   },
-  emits: ['sortbuttons', 'moveup', 'movedown', 'duplicate', 'remove'],
+  emits: ['sortbuttons', 'moveup', 'movedown', 'duplicate', 'remove', 'navigate-nested-sitemap'],
   data() {
     return {
       iconInputId: '',
@@ -412,6 +432,9 @@ export default {
           delete this.widget.itemFormatOverride
         }
       }
+    },
+    navigateNestedSitemap(target) {
+      this.$emit('navigate-nested-sitemap', target)
     },
     remove() {
       this.$emit('remove')
