@@ -24,6 +24,7 @@
   "dialogs.search.rules": "Search rules",
   "dialogs.search.nothingFound": "Nothing found",
   "dialogs.search.persistence": "Search persistence",
+  "dialogs.search.sitemaps": "Search sitemaps",
   "dialogs.search.transformationService": "Search transformation services",
   "dialogs.search.transformation": "Search transformations",
   "dialogs.searchOrCreate.transformation": "Search transformations / create definition inline",

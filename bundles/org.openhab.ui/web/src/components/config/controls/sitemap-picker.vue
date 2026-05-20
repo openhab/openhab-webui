@@ -51,7 +51,7 @@ export default {
         view: f7.view.main,
         openIn: 'popup',
         searchbar: true,
-        searchbarPlaceholder: this.$t('dialogs.search.sitemap')
+        searchbarPlaceholder: this.$t('dialogs.search.sitemaps')
       }
     }
   },
