@@ -62,6 +62,8 @@
 import SitemapMixin from '@/components/pagedesigner/sitemap/sitemap-mixin'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 
+import cloneDeep from 'lodash/cloneDeep'
+
 export default {
   name: 'sitemap-treeview-item',
   mixins: [SitemapMixin],
@@ -96,12 +98,19 @@ export default {
       console.debug('Drag start event:', event)
       this.localMoveState.moving = true
       this.localMoveState.widget = this.widget.widgets[event.oldIndex]
-      this.localMoveState.newParent = this.parentWidget
+      this.localMoveState.originalParent = this.localMoveState.widget.parent
+      this.localMoveState.originalIndex = event.oldIndex
+      this.localMoveState.newParent = null
+      this.localMoveState.newIndex = null
+      console.debug('Moving:', cloneDeep(this.localMoveState.widget))
     },
     onMove(event) {
       console.debug('Drag move event:', event)
+      if (!this.localMoveState.moving) return
       const newParent = event.relatedContext?.element?.parent
+      this.localMoveState.newIndex = event.newIndex
       if (newParent) {
+        console.debug('New parent:', cloneDeep(newParent))
         this.localMoveState.newParent = newParent
       }
     },
@@ -109,15 +118,18 @@ export default {
       console.debug('Drag end event:', event)
       const widget = this.localMoveState.widget
       const parentWidget = this.localMoveState.newParent
-      if (widget && parentWidget) {
+      if (widget && parentWidget && this.dropAllowed(parentWidget)) {
+        console.debug('Dropping widget:', cloneDeep(widget), 'into parent widget:', cloneDeep(parentWidget))
         widget.parent = parentWidget
+      } else {
+        widget.parent = this.localMoveState.originalParent
+        widget.parent.widgets.splice(this.localMoveState.originalIndex, 0, widget)
+        this.localMoveState.newParent.widgets.splice(this.localMoveState.newIndex, 1)
+        console.debug('Drop not allowed. Resetting widget parent to original parent:', cloneDeep(this.localMoveState.originalParent))
       }
       this.localMoveState.moving = false
-      this.localMoveState.widget = null
-      this.localMoveState.newParent = null
     },
     dropAllowed(widget) {
-      if (!this.canAddChildren(widget)) return false
       if (
         !this.localMoveState.widget ||
         this.allowedWidgetTypes(widget)

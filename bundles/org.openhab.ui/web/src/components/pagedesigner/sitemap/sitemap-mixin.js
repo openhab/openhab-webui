@@ -84,6 +84,7 @@ export default {
   },
   methods: {
     allowedWidgetTypes(parentWidget) {
+      if (!this.canAddChildren(parentWidget)) return []
       let types = this.WIDGET_TYPES.filter((w) => w.type !== 'Sitemap')
       // Button only allowed inside Buttongrid
       if (parentWidget.type === 'Buttongrid') return types.filter((t) => t.type === 'Button')
@@ -104,10 +105,6 @@ export default {
     },
     canAddChildren(widget) {
       if (!widget) return false
-      if (widget.type === 'Buttongrid') {
-        const buttons = widget.buttons
-        if (Array.isArray(buttons) && buttons.length) return false
-      }
       return this.LINKABLE_WIDGET_TYPES.includes(widget.type)
     },
     widgetTypeDef(type) {
