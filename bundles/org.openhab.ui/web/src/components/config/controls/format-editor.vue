@@ -319,8 +319,8 @@ export default {
     clearFormat() {
       this.javaFormatValidationMessage = ''
       this.formatModel = { service: '', transformation: '', javaFormat: '' }
-      this.$emit('input', '')
-      this.$emit('update:value', '')
+      this.$emit('input', null)
+      this.$emit('update:value', null)
     },
     onDocumentPointerDown(event) {
       if (!this.isFormatEditing) {

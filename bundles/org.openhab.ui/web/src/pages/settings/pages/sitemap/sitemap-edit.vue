@@ -62,7 +62,8 @@
                   @duplicate="duplicateWidget"
                   @remove="removeWidget"
                   @movedown="moveWidgetDown"
-                  @moveup="moveWidgetUp" />
+                  @moveup="moveWidgetUp"
+                  @sortbuttons="sortButtongrid" />
               </f7-block>
               <f7-block v-else>
                 <div class="padding text-align-center">Nothing selected</div>
@@ -173,7 +174,7 @@
         class="add-to-sitemap-fab"
         position="right-center"
         color="blue"
-        @click="$refs.widgetTypeSelection.open()">
+        @click="selectWidgetType">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
       </f7-fab>
@@ -252,7 +253,8 @@
             @duplicate="duplicateWidget"
             @remove="removeWidget"
             @movedown="moveWidgetDown"
-            @moveup="moveWidgetUp" />
+            @moveup="moveWidgetUp"
+            @sortbuttons="sortButtongrid" />
         </f7-block>
         <f7-block v-if="selectedWidget && detailsTab === 'visibilityRules'" style="margin-bottom: 6rem">
           <attribute-details :widget="selectedWidget" attribute="visibilityRules" :fields="visibilityRulesFields" :disabled="!isEditable" />
@@ -985,7 +987,9 @@ export default {
               }
             } else {
               if (widget.column && !isNaN(widget.column) && widget.column > this.MAX_BUTTONGRID_COLUMNS) {
-                validationWarnings.push(widget.type + ' widget ' + label + ', invalid column configured: ' + widget.column)
+                validationWarnings.push(
+                  widget.type + ' widget ' + label + ', more than ' + this.MAX_BUTTONGRID_COLUMNS + ' configured: ' + widget.column
+                )
               }
             }
           })
@@ -1123,9 +1127,6 @@ export default {
           delete widget[key]
         }
       }
-      if (widget.type === 'Buttongrid') {
-        widget.widgets?.sort((button1, button2) => (button1.row ?? 0) - (button2.row ?? 0) || (button1.column ?? 0) - (button2.column ?? 0))
-      }
       this.addEmptySlot(widget)
       widget.widgets?.forEach(this.cleanConfig)
     },
@@ -1147,6 +1148,9 @@ export default {
         if (labelMatch) {
           widget.label = labelMatch[1].trim()
           widget.format = labelMatch[2].trim()
+          if (!widget.format || widget.format.length === 0) {
+            widget.itemFormatOverride = true
+          }
         }
       }
       this.addEmptySlot(widget)
@@ -1167,11 +1171,12 @@ export default {
       return processed
     },
     preProcessWidgetSave(widget) {
-      if (widget.format) {
-        const label = widget.label || ''
-        widget.label = label + (label ? ' ' : '') + '[' + widget.format + ']'
+      if (widget.itemFormatOverride || widget.format?.length) {
+        const label = widget.label?.trim() || ''
+        widget.label = label + (label ? ' ' : '') + '[' + (widget.format?.trim() || '') + ']'
       }
       delete widget.format
+      delete widget.itemFormatOverride
       delete widget.parent // remove parent from widget, as this would cause a circular reference error when converting to JSON
       widget.widgets?.forEach(this.preProcessWidgetSave)
     },
@@ -1181,6 +1186,16 @@ export default {
     },
     startEventSource() {},
     stopEventSource() {},
+    sortButtongrid(widget) {
+      if (widget.type === 'Buttongrid' && Array.isArray(widget.widgets)) {
+        widget.widgets.sort(
+          (button1, button2) =>
+            (button1.row ?? 0) - (button2.row ?? 0) ||
+            (button1.column ?? 0) - (button2.column ?? 0) ||
+            (button1.visibilityRules?.length ?? 0) - (button2.visibilityRules?.length ?? 0)
+        )
+      }
+    },
     duplicateWidget() {
       if (this.selectedWidget.type === 'Sitemap') {
         const sitemapCopy = this.preProcessSitemapSave(this.selectedWidget)
@@ -1210,6 +1225,9 @@ export default {
       if (pos <= 0) return
       widgets.splice(pos, 1)
       widgets.splice(pos - 1, 0, this.selectedWidget)
+    },
+    selectWidgetType() {
+      this.$refs.widgetTypeSelection.elRef.f7Modal.open()
     },
     selectWidget(widgets) {
       const widget = widgets[0]

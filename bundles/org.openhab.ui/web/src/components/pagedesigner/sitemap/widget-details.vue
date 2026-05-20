@@ -22,8 +22,16 @@
           @input="updateParameter('label', $event)"
           :clear-button="editable"
           :disabled="!editable" />
-        <ul v-if="widget.type !== 'Sitemap'" class="format-editor-wrapper">
-          <format-editor title="Format" :editable="editable" :value="widget.format" @input="(value) => (widget.format = value)" />
+        <ul v-if="widget.type !== 'Sitemap' && !['Frame', 'Buttongrid'].includes(widget.type)" class="format-editor-wrapper">
+          <format-editor title="Format" :editable="editable" :value="widget.format" @input="updateItemFormat" />
+          <f7-list-item title="No state" :disabled="!editable || widget.format?.length > 0">
+            <template #after>
+              <f7-toggle
+                tooltip="Do not show item state"
+                :checked="widget.itemFormatOverride && !widget.format?.length"
+                @toggle:change="toggleItemFormatOverride" />
+            </template>
+          </f7-list-item>
         </ul>
         <ul v-if="widget.type !== 'Sitemap' && !['Frame', 'Buttongrid'].includes(widget.type)">
           <item-picker
@@ -55,7 +63,8 @@
           <f7-list-item title="Static icon" :disabled="!editable || widget.iconRules?.length > 0">
             <template #after>
               <f7-toggle
-                :checked="widget.staticIcon && !widget.iconRules?.length ? true : false"
+                tooltip="openHAB icon does not change with state"
+                :checked="widget.staticIcon && !widget.iconRules?.length"
                 @toggle:change="widget.staticIcon = $event" />
             </template>
           </f7-list-item>
@@ -280,8 +289,14 @@
     <f7-card-footer v-if="editable || widget.type === 'Sitemap'" key="sitemap-widget-buttons-edit-mode" class="widget-details-footer">
       <!-- <f7-button v-if="!editMode && !createMode" color="blue" @click="editMode = true" icon-ios="material:expand_more" icon-md="material:expand_more" icon-aurora="material:expand_more">Edit</f7-button> -->
       <f7-segmented v-if="editable && widget.type !== 'Sitemap'">
-        <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" />
-        <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down" />
+        <f7-button
+          v-if="widget.type === 'Button'"
+          color="blue"
+          @click="$emit('sortbuttons', widget.parent)"
+          icon-f7="sort_down"
+          tooltip="Sort Buttons" />
+        <f7-button color="blue" @click="$emit('moveup', widget)" icon-f7="chevron_up" tooltip="Move Up" />
+        <f7-button color="blue" @click="$emit('movedown', widget)" icon-f7="chevron_down" tooltip="Move Down" />
       </f7-segmented>
       <f7-button v-if="editable || widget.type === 'Sitemap'" color="blue" @click="$emit('duplicate', widget)"> Duplicate </f7-button>
       <f7-button v-if="editable && widget.type !== 'Sitemap'" color="red" @click="$emit('remove', widget)"> Remove </f7-button>
@@ -335,7 +350,7 @@ export default {
     editable: Boolean,
     createMode: Boolean
   },
-  emits: ['moveup', 'movedown', 'duplicate', 'remove'],
+  emits: ['sortbuttons', 'moveup', 'movedown', 'duplicate', 'remove'],
   data() {
     return {
       iconInputId: '',
@@ -380,6 +395,22 @@ export default {
         this.widget[parameter] = false
       } else {
         delete this.widget[parameter]
+      }
+    },
+    updateItemFormat(event) {
+      if (event === null || event === undefined || event.length === 0) {
+        delete this.widget.format
+      } else {
+        this.widget.format = event
+      }
+    },
+    toggleItemFormatOverride(event) {
+      if (!this.widget.format?.length) {
+        if (event) {
+          this.widget.itemFormatOverride = true
+        } else {
+          delete this.widget.itemFormatOverride
+        }
       }
     },
     remove() {
