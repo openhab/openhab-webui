@@ -13,13 +13,14 @@
       :pattern="pattern"
       :error-message="errorMessage"
       :autocomplete="options ? 'off' : ''"
-      :clear-button="true"
+      :clear-button="!readOnly && !configDescription.readOnly"
+      :readonly="readOnly || configDescription.readOnly"
       @input:clear="removeValueIdx(idx)"
       @input="updateValueIdx(idx, $event)"
       @focus="gotFocus"
       :value="v" />
     <f7-list-input
-      v-if="!configDescription.readOnly"
+      v-if="!readOnly && !configDescription.readOnly"
       ref="input"
       :type="controlType"
       :pattern="pattern"
@@ -231,6 +232,7 @@ export default {
       }
     },
     updateValueIdx(idx, event) {
+      if (this.readOnly || this.configDescription.readOnly) return
       if (!this.multiple || idx < 0 || !this.values || idx >= this.values.length) return
       const newValues = [...this.values]
       newValues[idx] = event.target.value
@@ -238,6 +240,7 @@ export default {
       this.emitValues()
     },
     addValue(event) {
+      if (this.readOnly || this.configDescription.readOnly) return
       if (this.suspendEvents || !this.multiple || !event) {
         return
       }
@@ -270,6 +273,7 @@ export default {
       })
     },
     removeValueIdx(idx) {
+      if (this.readOnly || this.configDescription.readOnly) return
       if (this.suspendEvents || !this.multiple || idx < 0 || !this.values || idx >= this.values.length) return
       let newValues = [...this.values]
       newValues.splice(idx, 1)
