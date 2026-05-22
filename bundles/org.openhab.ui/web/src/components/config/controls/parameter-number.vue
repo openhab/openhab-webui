@@ -1,5 +1,8 @@
 <template>
-  <ul>
+  <ul v-if="readOnly || configDescription.readOnly">
+    <f7-list-item :title="configDescription.label" :after="displayValue" />
+  </ul>
+  <ul v-else>
     <f7-list-input
       :name="configDescription.name"
       :label="configDescription.label"
@@ -12,7 +15,6 @@
       :required="configDescription.required"
       validate
       :clear-button="false"
-      :readonly="readOnly || configDescription.readOnly"
       type="number" />
   </ul>
 </template>
@@ -31,6 +33,11 @@ export default {
     return { theme }
   },
   computed: {
+    displayValue() {
+      if (this.value === null || this.value === undefined || this.value === '') return 'N/A'
+
+      return this.value.toString()
+    },
     actualValue() {
       return this.configDescription.type === 'DECIMAL' ? parseFloat(this.value) : parseInt(this.value)
     },
