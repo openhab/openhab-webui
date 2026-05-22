@@ -148,7 +148,7 @@
                 <f7-icon v-if="page.editable === false" f7="lock_fill" size="1rem" color="gray" />
               </template>
               <template #media>
-                <oh-icon :color="page.config?.sidebar || 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
+                <oh-icon :color="page.config?.sidebar ? '' : 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
               </template>
             </f7-list-item>
           </f7-list-group>

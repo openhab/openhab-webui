@@ -519,7 +519,7 @@ export default {
 
         if (!updatedPage.slots) {
           // maintain compatibility with older versions of the page schema
-          // where equipment, location, and property were directly on the page object instead of in a slots property
+          // where equipment, locations, and properties were directly on the page object instead of in a slots property
           // so that users can paste older YAML code without having to adjust the structure
           updatedPage.slots = {
             equipment: updatedPage.equipment || [],
