@@ -91,29 +91,35 @@
                   <f7-list-item
                     v-for="(card, idx) in cardGroups(currentModelTab, page).flat()"
                     media-item
-                    :link="isEditable && !showCardControls ? '' : undefined"
-                    @click="(ev) => (isEditable ? cardClicked(ev, card, idx) : null)"
+                    :link="showCardControls ? undefined : ''"
+                    @click="(ev) => cardClicked(ev, card, idx)"
                     :key="idx"
                     :title="card.separator || card.defaultTitle"
                     :footer="card.separator ? '(separator)' : card.key">
                     <template #content-start>
-                      <f7-menu v-if="isEditable" class="configure-layout-menu">
+                      <f7-menu class="configure-layout-menu">
                         <f7-menu-item icon-f7="list_bullet" dropdown>
                           <f7-menu-dropdown>
                             <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Card Settings" />
-                            <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
-                            <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
-                            <f7-menu-dropdown-item divider />
                             <f7-menu-dropdown-item
                               v-if="!card.separator"
-                              @click="addCardSeparator(idx)"
+                              @click="editCardCode(card)"
                               href="#"
-                              text="Add Separator Before" />
-                            <f7-menu-dropdown-item
-                              v-if="card.separator"
-                              @click="removeCardSeparator(idx)"
-                              href="#"
-                              text="Remove Separator" />
+                              :text="isEditable ? 'Edit YAML' : 'View YAML'" />
+                            <template v-if="isEditable">
+                              <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
+                              <f7-menu-dropdown-item divider />
+                              <f7-menu-dropdown-item
+                                v-if="!card.separator"
+                                @click="addCardSeparator(idx)"
+                                href="#"
+                                text="Add Separator Before" />
+                              <f7-menu-dropdown-item
+                                v-if="card.separator"
+                                @click="removeCardSeparator(idx)"
+                                href="#"
+                                text="Remove Separator" />
+                            </template>
                           </f7-menu-dropdown>
                         </f7-menu-item>
                       </f7-menu>
@@ -134,7 +140,7 @@
                 <config-sheet
                   :parameterGroups="locationsTabParameters.props.parameterGroups || []"
                   :parameters="locationsTabParameters.props.parameters || []"
-                  :configuration="modelTabConfig('locations')"
+                  :configuration="page.slots.locations[0].config"
                   :f7router
                   :read-only="!isEditable"
                   @updated="dirty = true" />
@@ -144,7 +150,7 @@
                 <config-sheet
                   :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
                   :parameters="equipmentTabParameters.props.parameters || []"
-                  :configuration="modelTabConfig('equipment')"
+                  :configuration="page.slots.equipment[0].config"
                   :f7router
                   :read-only="!isEditable"
                   @updated="dirty = true" />
@@ -154,7 +160,7 @@
                 <config-sheet
                   :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
                   :parameters="propertiesTabParameters.props.parameters || []"
-                  :configuration="modelTabConfig('properties')"
+                  :configuration="page.slots.properties[0].config"
                   :f7router
                   :read-only="!isEditable"
                   @updated="dirty = true" />
@@ -224,7 +230,6 @@ import { f7 } from 'framework7-vue'
 
 import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import PageDesigner from '../pagedesigner-mixin'
-import { resolveDefaultProps } from '../defaultProps'
 import HomeCards from '../../../home/homecards-mixin'
 
 import YAML from 'yaml'
@@ -251,6 +256,12 @@ const ConfigurableWidgets = {
   'oh-location-card': OhLocationCardParameters,
   'oh-equipment-card': OhEquipmentCardParameters,
   'oh-property-card': OhPropertyCardParameters
+}
+
+const ModelTabComponents = {
+  locations: 'oh-locations-tab',
+  equipment: 'oh-equipment-tab',
+  properties: 'oh-properties-tab'
 }
 
 export default {
@@ -307,6 +318,7 @@ export default {
           { value: 'equipment', label: this.$t('home.equipment.tab') },
           { value: 'properties', label: this.$t('home.properties.tab') }
         ]
+        this.normalizePageSlots()
       }
     }
   },
@@ -331,52 +343,9 @@ export default {
     getWidgetDefinition(componentType) {
       return ConfigurableWidgets[componentType] ? ConfigurableWidgets[componentType]() : null
     },
-    modelTabComponentName(type) {
-      if (type === 'locations') return 'oh-locations-tab'
-      if (type === 'equipment') return 'oh-equipment-tab'
-      if (type === 'properties') return 'oh-properties-tab'
-      return null
-    },
-    modelTabComponent(type, createIfMissing = this.isEditable) {
-      if (!this.page) return null
-      if (!this.page.slots) {
-        if (!createIfMissing) return null
-        this.page.slots = {}
-      }
-
-      const componentName = this.modelTabComponentName(type)
-      if (!componentName) return null
-
-      const slotComponents = this.page.slots[type]
-      let tabComponent = Array.isArray(slotComponents)
-        ? slotComponents.find((component) => component?.component === componentName) || slotComponents[0]
-        : null
-
-      if (!tabComponent && createIfMissing) {
-        tabComponent = { component: componentName, config: {}, slots: {} }
-        this.page.slots[type] = [tabComponent]
-      }
-
-      if (!tabComponent) return null
-
-      if (!tabComponent.config) {
-        if (!createIfMissing) return null
-        tabComponent.config = {}
-      }
-      if (!tabComponent.slots && createIfMissing) {
-        tabComponent.slots = {}
-      }
-
-      return tabComponent
-    },
-    modelTabConfig(type) {
-      return this.modelTabComponent(type)?.config || {}
-    },
     ensureCardComponentExists(card) {
-      const tabComponent = this.modelTabComponent(this.currentModelTab)
-      if (!tabComponent) return
-      if (!tabComponent.slots[card.key]) {
-        tabComponent.slots[card.key] = [
+      if (!this.page.slots[this.currentModelTab][0].slots[card.key]) {
+        this.page.slots[this.currentModelTab][0].slots[card.key] = [
           {
             component:
               this.currentModelTab === 'locations'
@@ -390,32 +359,38 @@ export default {
       }
     },
     configureCard(card) {
-      if (!this.isEditable || !card.key) return
-      const tabComponent = this.modelTabComponent(this.currentModelTab, false)
-      if (!tabComponent?.slots) return
+      if (!card.key) return
+      if (
+        !this.page.slots[this.currentModelTab] ||
+        !this.page.slots[this.currentModelTab][0] ||
+        !this.page.slots[this.currentModelTab][0].slots
+      )
+        return
       this.ensureCardComponentExists(card)
-      return this.configureWidget(tabComponent.slots[card.key][0])
+      return this.configureWidget(this.page.slots[this.currentModelTab][0].slots[card.key][0])
     },
     editCardCode(card) {
-      if (!this.isEditable || !card.key) return
-      const tabComponent = this.modelTabComponent(this.currentModelTab, false)
-      if (!tabComponent?.slots) return
+      if (!card.key) return
+      if (
+        !this.page.slots[this.currentModelTab] ||
+        !this.page.slots[this.currentModelTab][0] ||
+        !this.page.slots[this.currentModelTab][0].slots
+      )
+        return
       this.ensureCardComponentExists(card)
-      return this.editWidgetCode(tabComponent.slots[card.key][0])
+      return this.editWidgetCode(this.page.slots[this.currentModelTab][0].slots[card.key][0])
     },
     addCardSeparator(idx) {
       if (!this.isEditable) return
-      const tabConfig = this.modelTabConfig(this.currentModelTab)
       const orderedCards = this.cardGroups(this.currentModelTab, this.page)
         .flat()
         .map((e) => (e.separator ? e : e.key))
       orderedCards.splice(idx, 0, { separator: 'New Section' })
-      tabConfig.cardOrder = orderedCards
+      this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
       this.renameCardSeparator(idx)
     },
     renameCardSeparator(idx) {
       if (!this.isEditable) return
-      const tabConfig = this.modelTabConfig(this.currentModelTab)
       const orderedCards = this.cardGroups(this.currentModelTab, this.page)
         .flat()
         .map((e) => (e.separator ? e : e.key))
@@ -425,7 +400,7 @@ export default {
           null,
           (title) => {
             orderedCards[idx].separator = title
-            tabConfig.cardOrder = orderedCards
+            this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
           },
           null,
           orderedCards[idx].separator
@@ -434,15 +409,13 @@ export default {
     },
     removeCardSeparator(idx) {
       if (!this.isEditable) return
-      const tabConfig = this.modelTabConfig(this.currentModelTab)
       const orderedCards = this.cardGroups(this.currentModelTab, this.page)
         .flat()
         .map((e) => (e.separator ? e : e.key))
       orderedCards.splice(idx, 1)
-      tabConfig.cardOrder = orderedCards
+      this.page.slots[this.currentModelTab][0].config.cardOrder = orderedCards
     },
     cardClicked(ev, card, idx) {
-      if (!this.isEditable) return
       ev.cancelBubble = true
       let el = ev.target
       if (el.classList.contains('icon-checkbox')) {
@@ -460,13 +433,12 @@ export default {
     },
     reorderCard(ev) {
       if (!this.isEditable) return
-      const tabConfig = this.modelTabConfig(this.currentModelTab)
       const orderedCards = this.cardGroups(this.currentModelTab, this.page)
         .flat()
         .map((e) => (e.separator ? e : e.key))
       const newOrder = [...orderedCards]
       newOrder.splice(ev.to, 0, newOrder.splice(ev.from, 1)[0])
-      tabConfig.cardOrder = newOrder
+      this.page.slots[this.currentModelTab][0].config.cardOrder = newOrder
       this.cardListId = null
       this.showCardControls = false
       nextTick(() => {
@@ -510,6 +482,34 @@ export default {
         this.page.slots[type][0].config.excludedCards.splice(excludedIdx, 1)
       }
     },
+    normalizePageSlots() {
+      // ensure page.slots has the expected structure with equipment, locations, and properties arrays for v-model bindings, even if the YAML doesn't include them
+      if (!this.page.slots) {
+        this.page.slots = {}
+      }
+
+      ;['equipment', 'locations', 'properties'].forEach((slot) => {
+        if (!Array.isArray(this.page.slots[slot])) {
+          this.page.slots[slot] = []
+        }
+
+        if (this.page.slots[slot].length === 0) {
+          this.page.slots[slot].push({})
+        }
+
+        if (!this.page.slots[slot][0].component !== ModelTabComponents[slot]) {
+          this.page.slots[slot][0].component = ModelTabComponents[slot]
+        }
+
+        if (!this.page.slots[slot][0].config) {
+          this.page.slots[slot][0].config = {}
+        }
+
+        if (!this.page.slots[slot][0].slots) {
+          this.page.slots[slot][0].slots = {}
+        }
+      })
+    },
     toYaml() {
       this.pageYaml = toFileYAMLSyntax('pages', this.page)
     },
@@ -530,7 +530,6 @@ export default {
 
         this.page.config = updatedPage.config
         this.page.tags = updatedPage.tags || []
-        this.page.props = resolveDefaultProps(updatedPage.props)
         this.page.slots = updatedPage.slots
 
         this.forceUpdate()
