@@ -11,7 +11,7 @@
 
   <groupId>org.openhab.ui</groupId>
   <artifactId>org.openhab.ui.reactor</artifactId>
-  <version>5.2.0-SNAPSHOT</version>
+  <version>6.0.0-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 
@@ -70,7 +70,7 @@
     <jackson.annotations.version>2.20</jackson.annotations.version>
     <karaf.version>4.5.0-SNAPSHOT</karaf.version>
     <karaf.maven.plugin.version>4.5.0-SNAPSHOT</karaf.maven.plugin.version>
-    <ohc.version>5.2.0-SNAPSHOT</ohc.version>
+    <ohc.version>6.0.0-SNAPSHOT</ohc.version>
     <sat.version>0.18.0</sat.version>
     <spotless.version>2.44.3</spotless.version>
     <!-- Eclipse Java formatter version 4.26+ does not check test files -->
