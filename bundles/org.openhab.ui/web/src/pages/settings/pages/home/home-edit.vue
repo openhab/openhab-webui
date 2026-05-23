@@ -343,20 +343,26 @@ export default {
     getWidgetDefinition(componentType) {
       return ConfigurableWidgets[componentType] ? ConfigurableWidgets[componentType]() : null
     },
-    ensureCardComponentExists(card) {
-      if (!this.page.slots[this.currentModelTab][0].slots[card.key]) {
-        this.page.slots[this.currentModelTab][0].slots[card.key] = [
-          {
-            component:
-              this.currentModelTab === 'locations'
-                ? 'oh-location-card'
-                : this.currentModelTab === 'equipment'
-                  ? 'oh-equipment-card'
-                  : 'oh-property-card',
-            config: {}
-          }
-        ]
+    getCardComponent(modelComponent, card) {
+      const defaultCardComponent = {
+        component:
+          modelComponent.component === 'oh-locations-tab'
+            ? 'oh-location-card'
+            : modelComponent.component === 'oh-equipment-tab'
+              ? 'oh-equipment-card'
+              : 'oh-property-card',
+        config: {}
       }
+
+      if (!Array.isArray(modelComponent.slots[card.key]) || modelComponent.slots[card.key].length === 0) {
+        if (!this.isEditable) {
+          // if not editable, return a default config for preview purposes without modifying the actual page data
+          return defaultCardComponent
+        } else {
+          modelComponent.slots[card.key] = [defaultCardComponent]
+        }
+      }
+      return modelComponent.slots[card.key][0]
     },
     configureCard(card) {
       if (!card.key) return
@@ -366,8 +372,9 @@ export default {
         !this.page.slots[this.currentModelTab][0].slots
       )
         return
-      this.ensureCardComponentExists(card)
-      return this.configureWidget(this.page.slots[this.currentModelTab][0].slots[card.key][0])
+
+      const cardComponent = this.getCardComponent(this.page.slots[this.currentModelTab][0], card)
+      return this.configureWidget(cardComponent)
     },
     editCardCode(card) {
       if (!card.key) return
@@ -377,8 +384,8 @@ export default {
         !this.page.slots[this.currentModelTab][0].slots
       )
         return
-      this.ensureCardComponentExists(card)
-      return this.editWidgetCode(this.page.slots[this.currentModelTab][0].slots[card.key][0])
+      const cardComponent = this.getCardComponent(this.page.slots[this.currentModelTab][0], card)
+      return this.editWidgetCode(cardComponent)
     },
     addCardSeparator(idx) {
       if (!this.isEditable) return
@@ -497,7 +504,7 @@ export default {
           this.page.slots[slot].push({})
         }
 
-        if (!this.page.slots[slot][0].component !== ModelTabComponents[slot]) {
+        if (this.page.slots[slot][0].component !== ModelTabComponents[slot]) {
           this.page.slots[slot][0].component = ModelTabComponents[slot]
         }
 
@@ -531,6 +538,7 @@ export default {
         this.page.config = updatedPage.config
         this.page.tags = updatedPage.tags || []
         this.page.slots = updatedPage.slots
+        this.normalizePageSlots()
 
         this.forceUpdate()
         return true
