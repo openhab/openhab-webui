@@ -232,8 +232,6 @@ import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import PageDesigner from '../pagedesigner-mixin'
 import HomeCards from '../../../home/homecards-mixin'
 
-import YAML from 'yaml'
-
 import { useDirty } from '@/pages/useDirty'
 import { useTabs } from '@/pages/useTabs'
 
