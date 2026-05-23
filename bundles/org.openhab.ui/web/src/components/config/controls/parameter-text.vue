@@ -13,14 +13,13 @@
       :pattern="pattern"
       :error-message="errorMessage"
       :autocomplete="options ? 'off' : ''"
-      :clear-button="!readOnly && !configDescription.readOnly"
-      :readonly="readOnly || configDescription.readOnly"
+      :clear-button="true"
       @input:clear="removeValueIdx(idx)"
       @input="updateValueIdx(idx, $event)"
       @focus="gotFocus"
       :value="v" />
     <f7-list-input
-      v-if="!readOnly && !configDescription.readOnly"
+      v-if="!configDescription.readOnly"
       ref="input"
       :type="controlType"
       :pattern="pattern"
@@ -46,7 +45,7 @@
       :required="configDescription.required"
       :validate="configDescription.context !== 'network-address'"
       :validate-on-blur="false"
-      :clear-button="!configDescription.required && configDescription.context !== 'password' && !readOnly && !configDescription.readOnly"
+      :clear-button="!configDescription.required && configDescription.context !== 'password'"
       @input="updateValue"
       @change="updateValue"
       @focus="onFocus"
@@ -232,7 +231,6 @@ export default {
       }
     },
     updateValueIdx(idx, event) {
-      if (this.readOnly || this.configDescription.readOnly) return
       if (!this.multiple || idx < 0 || !this.values || idx >= this.values.length) return
       const newValues = [...this.values]
       newValues[idx] = event.target.value
@@ -240,7 +238,6 @@ export default {
       this.emitValues()
     },
     addValue(event) {
-      if (this.readOnly || this.configDescription.readOnly) return
       if (this.suspendEvents || !this.multiple || !event) {
         return
       }
@@ -273,7 +270,6 @@ export default {
       })
     },
     removeValueIdx(idx) {
-      if (this.readOnly || this.configDescription.readOnly) return
       if (this.suspendEvents || !this.multiple || idx < 0 || !this.values || idx >= this.values.length) return
       let newValues = [...this.values]
       newValues.splice(idx, 1)

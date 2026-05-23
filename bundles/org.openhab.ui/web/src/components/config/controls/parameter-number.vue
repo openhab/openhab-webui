@@ -1,8 +1,5 @@
 <template>
-  <ul v-if="readOnly || configDescription.readOnly">
-    <f7-list-item :title="configDescription.label" :after="displayValue" />
-  </ul>
-  <ul v-else>
+  <ul>
     <f7-list-input
       :name="configDescription.name"
       :label="configDescription.label"
@@ -25,19 +22,13 @@ import { theme } from 'framework7-vue'
 export default {
   props: {
     configDescription: Object,
-    value: [String, Number],
-    readOnly: Boolean
+    value: [String, Number]
   },
   emits: ['input'],
   setup() {
     return { theme }
   },
   computed: {
-    displayValue() {
-      if (this.value === null || this.value === undefined || this.value === '') return 'N/A'
-
-      return this.value.toString()
-    },
     actualValue() {
       return this.configDescription.type === 'DECIMAL' ? parseFloat(this.value) : parseInt(this.value)
     },
@@ -48,7 +39,6 @@ export default {
   },
   methods: {
     updateValue(event) {
-      if (this.readOnly || this.configDescription.readOnly) return
       const value = this.configDescription.type === 'DECIMAL' ? parseFloat(event.target.value) : parseInt(event.target.value)
       this.$emit('input', value)
     }

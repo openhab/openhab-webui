@@ -2,7 +2,7 @@
   <ul>
     <f7-list-item :title="configDescription.label">
       <template #after>
-        <f7-toggle :name="configDescription.name" :checked="actualValue ? true : null" :disabled="readOnly" @toggle:change="updateValue" />
+        <f7-toggle :name="configDescription.name" :checked="actualValue ? true : null" @toggle:change="updateValue" />
       </template>
     </f7-list-item>
   </ul>
@@ -12,8 +12,7 @@
 export default {
   props: {
     configDescription: Object,
-    value: [String, Boolean],
-    readOnly: Boolean
+    value: [String, Boolean]
   },
   emits: ['input'],
   computed: {
@@ -26,7 +25,6 @@ export default {
   },
   methods: {
     updateValue(value) {
-      if (this.readOnly) return
       this.$emit('input', value)
     }
   }
