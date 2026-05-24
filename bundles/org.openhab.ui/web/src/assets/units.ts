@@ -92,7 +92,7 @@ export const Units: Unit[] = [
   },
   {
     dimension: 'Density',
-    units: ['g/l', 'g/m³', 'kg/m³'],
+    units: ['g/l', 'µg/m³', 'g/m³', 'kg/m³'],
     baseUnits: ['lb/in³', 'gr/ft³'],
     baseUnitsMetric: ['g/m³', 'g/mm³', 'g/cm³', 'g/dm³', 'g/ml', 'g/cl', 'g/dl', 'g/l']
   },
