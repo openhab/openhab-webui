@@ -67,7 +67,7 @@
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-
+        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
         <f7-list v-if="sitemaps.length > 0 && filteredSitemaps.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
@@ -135,9 +135,15 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
 
 import * as api from '@/api'
+
+const ITEM_KINDS = {
+  editable: 'Editable',
+  readonly: 'Non-editable'
+}
 
 export default {
   mixins: [FileDefinition],
@@ -145,7 +151,8 @@ export default {
     f7router: Object
   },
   components: {
-    EmptyStatePlaceholder
+    EmptyStatePlaceholder,
+    ListFilter
   },
   setup() {
     const runtimeStore = useRuntimeStore()
@@ -163,6 +170,13 @@ export default {
       initSearchbar: false,
       loading: false,
       sitemaps: [],
+      filteredItems: [],
+      filters: {
+        kinds: {
+          label: 'Kind',
+          options: { ...ITEM_KINDS }
+        }
+      },
       selectedItems: [],
       showCheckboxes: false,
       searchQuery: ''
@@ -170,8 +184,8 @@ export default {
   },
   computed: {
     filteredSitemaps() {
-      if (!this.searchQuery.length) return this.sitemaps
-      return this.sitemaps.filter((sitemap) => this.sitemapMatchesSearch(sitemap, this.searchQuery))
+      if (!this.searchQuery.length) return this.filteredItems
+      return this.filteredItems.filter((sitemap) => this.sitemapMatchesSearch(sitemap, this.searchQuery))
     },
     filteredSitemapsCount() {
       return this.filteredSitemaps.length
@@ -193,7 +207,7 @@ export default {
     },
     listTitle() {
       let title = this.filteredSitemapsCount
-      if (this.searchQuery.length) {
+      if (this.searchQuery.length || this.$refs.filters?.filtered) {
         title += ` of ${this.sitemaps.length} sitemaps found`
       } else {
         title += ' sitemaps'
@@ -240,6 +254,7 @@ export default {
           this.sitemaps = data.sort((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
           this.initSearchbar = true
           this.ready = true
+          this.updateFilteredItems()
 
           nextTick(() => {
             if (this.$refs.listIndex) this.$refs.listIndex.update()
@@ -256,6 +271,23 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    updateFilteredItems() {
+      const filters = this.$refs.filters
+      if (!filters || !filters.filtered) {
+        this.filteredItems = this.sitemaps
+        return
+      }
+
+      const selected = filters.selected
+      this.filteredItems = this.sitemaps.filter((sitemap) => {
+        const kind = sitemap.editable ? 'editable' : 'readonly'
+        const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
+
+        return kindMatch
+      })
+
+      if (this.$refs.listIndex) this.$refs.listIndex.update()
     },
     toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
