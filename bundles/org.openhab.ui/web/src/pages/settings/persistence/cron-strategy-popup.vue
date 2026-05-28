@@ -79,7 +79,7 @@ const cronExpressionConfigDescription = {
   required: true
 }
 
-const createMode = computed(() => !cronStrategy.value )
+const createMode = computed(() => !cronStrategy.value)
 const isDuplicateName = computed(() => createMode.value && props.cronNameList.includes(localCronStrategy.value.name))
 const nameErrorMessage = computed(() =>
   isDuplicateName.value ? 'A (cron) strategy with the same name already exists!' : 'Required. Use only letters, numbers, and _.'
