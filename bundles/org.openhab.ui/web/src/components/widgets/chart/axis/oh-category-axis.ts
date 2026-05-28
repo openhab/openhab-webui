@@ -85,6 +85,7 @@ export function getCategoryAxisData(config: OhCategoryAxis.Config, startTime: Da
       }
       break
     case OhCategoryAxis.CategoryType.values:
+      data.push(...(config.data || []))
       break
     default:
       const exhaustiveCheck: never = config.categoryType
