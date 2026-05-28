@@ -39,7 +39,8 @@
               required
               validate
               pattern="[A-Za-z0-9_]+"
-              error-message="Required. Use only letters, numbers, and _." />
+              :error-message="nameErrorMessage"
+              :error-message-force="createMode && isDuplicateName" />
           </f7-list>
         </f7-col>
         <f7-col>
@@ -79,14 +80,12 @@ const filter = defineModel<Filter | null>('filter', { required: true })
 const emits = defineEmits<{
   (e: 'add:filter', filter: Filter): void
 }>()
+const props = defineProps<{ filterNameList: string[] }>()
 
 // Local variables
 const filterTypesMatrix = createFilterTypesMatrix()
 
 // Refs and reactive data
-// Non-null assertion: this popup is only rendered within persistence-edit which always provides the key
-const persistence = inject(persistenceKey)!
-
 const configSheetRef = useTemplateRef('config-sheet')
 const localFilter = ref<Filter>({ filter: { name: '' } } as Filter) // props.filter will be copied to this localFilter on open
 
@@ -96,6 +95,10 @@ const filterConfigDescriptionParameters = computed(() => filterType.value?.confi
 const filterTypeLabel = computed(() => filterType.value?.label?.toLowerCase() || '')
 const filterType = computed(() => (localFilter.value.filterTypeName ? FilterTypes[localFilter.value.filterTypeName] : null))
 const title = computed(() => (localFilter.value.filterTypeName ? `Configure ${filterTypeLabel.value} filter` : 'Select Filter Type'))
+const isDuplicateName = computed(() => createMode.value && props.filterNameList.includes(localFilter.value.filter.name))
+const nameErrorMessage = computed(() =>
+  isDuplicateName.value ? 'A filter with the same name already exists!' : 'Required. Use only letters, numbers, and _.'
+)
 
 // methods
 function createFilterTypesMatrix() {
@@ -153,8 +156,7 @@ function onDone() {
     }
   }
 
-  const existingIndex = persistence.value[localFilter.value.filterTypeName].findIndex((f) => f.name === localFilter.value.filter.name)
-  if (createMode.value && existingIndex !== -1) {
+  if (isDuplicateName.value) {
     f7.dialog.alert('A filter with the same name already exists!')
     return
   }

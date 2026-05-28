@@ -36,7 +36,11 @@
     </f7-page>
   </f7-popup>
 
-  <cron-strategy-popup v-model:opened="cronStrategyPopupOpen" :cron-strategy="null" @add:cron-strategy="addCronStrategy" />
+  <cron-strategy-popup
+    v-model:opened="cronStrategyPopupOpen"
+    :cron-strategy="null"
+    :cronNameList="allStrategies.map((cs) => cs.name)"
+    @add:cron-strategy="addCronStrategy" />
 </template>
 
 <script setup lang="ts">
@@ -45,7 +49,7 @@ import { computed, ref, watch, useAttrs } from 'vue'
 import CronStrategyPopup from '@/pages/settings/persistence/cron-strategy-popup.vue'
 import { PredefinedStrategies } from '@/assets/definitions/persistence'
 
-import * as api from '@/api'
+import type * as api from '@/api'
 
 // Props and emits
 const cronStrategies = defineModel<api.PersistenceCronStrategy[]>('cron-strategies', { required: true })
@@ -83,7 +87,6 @@ function updateSelectedStrategies(event: Event, strategyName: string) {
 // Events
 function addCronStrategy(cronStrategy: api.PersistenceCronStrategy) {
   localCronStrategies.value = [...localCronStrategies.value, cronStrategy]
-  cronStrategies.value = [...localCronStrategies.value]
   if (!localSelected.value.includes(cronStrategy.name)) {
     localSelected.value = [...localSelected.value, cronStrategy.name]
   }

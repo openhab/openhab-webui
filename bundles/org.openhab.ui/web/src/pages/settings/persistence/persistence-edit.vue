@@ -34,44 +34,6 @@
             </div>
           </f7-col>
         </f7-block>
-        <!-- Skeletons for not ready -->
-        <f7-block v-if="!ready" class="block-narrow">
-          <f7-col class="modules">
-            <f7-block>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configurations </f7-block-title>
-              <f7-block-header style="padding-right: 16px"> Items to persist with strategies to use. </f7-block-header>
-              <f7-list class="skeleton-text skeleton-effect-blink">
-                <f7-list-item />
-              </f7-list>
-            </f7-block>
-            <f7-block>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Strategies </f7-block-title>
-              <f7-list class="skeleton-text skeleton-effect-blink">
-                <f7-list-item />
-              </f7-list>
-              <!-- Default Strategies -->
-              <strategy-picker class="skeleton-text skeleton-effect-blink" :cron-strategies="[]" :selected-strategies="[]" />
-            </f7-block>
-            <f7-block>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
-              <div v-for="ft in FilterTypes" :key="ft.name">
-                <f7-block-title>
-                  {{ ft.label }}
-                </f7-block-title>
-                <f7-list class="skeleton-text skeleton-effect-blink">
-                  <f7-list-item />
-                </f7-list>
-              </div>
-            </f7-block>
-            <f7-block>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Aliases </f7-block-title>
-              <f7-block-header style="padding-right: 16px">Item names mapped to aliases used in persistence store.</f7-block-header>
-              <f7-list class="skeleton-text skeleton-effect-blink">
-                <f7-list-item />
-              </f7-list>
-            </f7-block>
-          </f7-col>
-        </f7-block>
 
         <f7-block v-if="ready" class="block-narrow">
           <not-editable-notice v-if="!editable" subject="persistence configuration" />
@@ -125,7 +87,7 @@
                   no-chevron
                   media-item
                   subtitle="Add configuration"
-                  @click="(ev: MouseEvent) => editConfiguration(ev, null, null)">
+                  @click="(ev: MouseEvent) => editConfiguration(ev, -1, null)">
                   <template #media>
                     <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                   </template>
@@ -310,7 +272,7 @@
 </style>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref, computed, onMounted, provide, type Ref } from 'vue'
+import { defineAsyncComponent, ref, computed, onMounted, type Ref } from 'vue'
 import type { Router } from 'framework7'
 import { f7 } from 'framework7-vue'
 
@@ -320,7 +282,6 @@ import { useDirty } from '../../useDirty'
 import { useTabs } from '@/pages/useTabs'
 import { CommonCronStrategies, FilterTypeName, persistenceKey, FilterTypes } from '@/assets/definitions/persistence'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
-import StrategyPicker from '@/pages/settings/persistence/strategy-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import DefinitionsPopup from '@/pages/settings/persistence/definitions-popup.vue'
@@ -356,11 +317,8 @@ const configurationPopupOpen = ref<boolean>(false)
 const definitionsPopupOpen = ref<boolean>(false)
 
 // props to pass to popups when opening
-const currentConfiguration = ref<null | any>(null)
-
-// provide access to the persistence object for duplicate checks in popups without prop drilling
-// Cast: popups are only reachable after persistence is loaded and non-null
-provide(persistenceKey, persistence as Ref<api.PersistenceServiceConfiguration>)
+const currentConfiguration = ref<api.PersistenceItemConfiguration | null>(null)
+let currentConfigurationIndex = -1
 
 // Watches
 setupDirtyWatch(persistence)
@@ -399,11 +357,6 @@ async function load() {
     return
   }
 
-  // Success or new persistence - initialize if needed
-  if (createMode.value) {
-    initializeNewPersistence()
-  }
-
   dirty.value = false
   ready.value = true
 }
@@ -412,23 +365,20 @@ async function loadPersistence(serviceId: string): Promise<boolean> {
   if (loading) return false
   loading = true
 
-  // Load suggestions in parallel (don't await, failure is OK)
-  suggestedStrategies.value =
-    (await api
-      .getPersistenceServiceStrategySuggestions({ serviceId })
-      .then((suggestions) => {
-        return suggestions || []
-      })
-      .catch(() => {
-        console.log('Getting persistence strategy suggestions failed for serviceId:', serviceId, '- default to no suggestions')
-      })) || []
+  try {
+    suggestedStrategies.value = (await api.getPersistenceServiceStrategySuggestions({ serviceId })) ?? []
+  } catch {
+    suggestedStrategies.value = []
+    console.log('Getting persistence strategy suggestions failed for serviceId:', serviceId, '- default to no suggestions')
+  }
 
   try {
     createMode.value = false
-    persistence.value = (await api.getPersistenceServiceConfiguration({ serviceId })) || null
+    persistence.value = (await api.getPersistenceServiceConfiguration({ serviceId })) ?? null
     if (!persistence.value || Object.keys(persistence.value).length === 0) {
       // Empty object would be because of a 204
       console.log('Persistence configuration not found (204) for serviceId:', serviceId, '- creating new configuration')
+      initializeNewPersistence()
       createMode.value = true
     }
     loading = false
@@ -437,6 +387,7 @@ async function loadPersistence(serviceId: string): Promise<boolean> {
     // Only handle 404 from persistence endpoint as "new persistence"
     if (err instanceof ApiError && err.response.status === 404) {
       console.log('Persistence configuration not found (404) for serviceId:', serviceId, '- creating new configuration')
+      initializeNewPersistence()
       createMode.value = true
       loading = false
       return true
@@ -563,10 +514,11 @@ const configurationFiltersTitle = computed(() => (filters: string[]) => {
   return 'filters: ' + filters.join(', ')
 })
 
-function editConfiguration(ev: MouseEvent, index: number | null, configuration: api.PersistenceItemConfiguration | null) {
+function editConfiguration(ev: MouseEvent, index: number, configuration: api.PersistenceItemConfiguration | null) {
   if (!editable.value) return
 
   currentConfiguration.value = configuration
+  currentConfigurationIndex = index
   configurationPopupOpen.value = true
 }
 
@@ -588,15 +540,17 @@ function addItemConfiguration(itemConfiguration: api.PersistenceItemConfiguratio
     f7.dialog.alert('A configuration for this/these Item(s) already exists!')
     return
   }
+
   persistence.value.configs.push(itemConfiguration)
+  configurationPopupOpen.value = false
 }
 
 function updateItemConfiguration(itemConfiguration: api.PersistenceItemConfiguration | null) {
-  if (!editable.value || !persistence.value || !itemConfiguration) return
-  const idx = persistence.value.configs.findIndex((cfg) => cfg.items.join() === itemConfiguration.items.join())
-  if (idx !== -1) {
-    persistence.value.configs[idx] = itemConfiguration
-  }
+  if (!editable.value || !persistence.value || !itemConfiguration || currentConfigurationIndex == -1) return
+
+  persistence.value.configs[currentConfigurationIndex] = itemConfiguration
+  configurationPopupOpen.value = false
+  currentConfigurationIndex = -1
 }
 
 function updateAliasItems(items: string[]) {

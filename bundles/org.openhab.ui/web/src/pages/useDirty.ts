@@ -92,7 +92,8 @@ export function useDirty(pageRefOrName: string | Ref<PageRef> | null) {
    * Sets up change tracking for a reactive data object.
    *
    * Monitors the provided ref for deep changes and updates the dirty flag accordingly.
-   * Captures the initial data state as the "pristine" baseline. When data changes from
+   * Captures the initial data state as the "pristine" baseline when the watched value changes from null/undefined
+   * to a real value (subsequent changes from null also update the pristine value). When data changes from
    * the pristine state, dirty is set to true. When `dirty` is explicitly set to false
    * (e.g., after saving), the current data state becomes the new pristine baseline.
    *
@@ -113,7 +114,7 @@ export function useDirty(pageRefOrName: string | Ref<PageRef> | null) {
     watch(
       value,
       (newValue, oldValue) => {
-        if (newValue && !oldValue) {
+        if (newValue && oldValue == null) {
           // First time real data is loaded, capture it as pristine baseline
           pristineValue = cloneDeep(newValue)
           dirty.value = false

@@ -26,7 +26,8 @@
               required
               validate
               pattern="[A-Za-z0-9_]+"
-              error-message="Required. Use only letters, numbers, and _." />
+              :error-message="nameErrorMessage"
+              :error-message-force="createMode && isDuplicateName" />
           </f7-list>
         </f7-col>
         <f7-col>
@@ -46,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, useTemplateRef, inject } from 'vue'
+import { ref, computed, useTemplateRef } from 'vue'
 import { f7 } from 'framework7-vue'
 import ParameterCronexpression from '@/components/config/controls/parameter-cronexpression.vue'
 
@@ -56,7 +57,6 @@ import { persistenceKey } from '@/assets/definitions/persistence'
 const nameRef = useTemplateRef('name')
 const cronExpressionRef = useTemplateRef('cronExpression')
 // Non-null assertion: this popup is only rendered within persistence-edit which always provides the key
-const persistence = inject(persistenceKey)!
 
 // Props and emits
 const opened = defineModel<boolean>('opened')
@@ -64,6 +64,7 @@ const cronStrategy = defineModel<api.PersistenceCronStrategy | null>('cronStrate
 const emits = defineEmits<{
   (e: 'add:cronStrategy', cronStrategy: api.PersistenceCronStrategy): void
 }>()
+const props = defineProps<{ cronNameList: string[] }>()
 
 const newCronStrategy = {
   name: '',
@@ -78,9 +79,11 @@ const cronExpressionConfigDescription = {
   required: true
 }
 
-const createMode = computed(() => {
-  return !cronStrategy.value
-})
+const createMode = computed(() => !cronStrategy.value )
+const isDuplicateName = computed(() => createMode.value && props.cronNameList.includes(localCronStrategy.value.name))
+const nameErrorMessage = computed(() =>
+  isDuplicateName.value ? 'A (cron) strategy with the same name already exists!' : 'Required. Use only letters, numbers, and _.'
+)
 
 function onOpened() {
   localCronStrategy.value = cronStrategy.value ? { ...cronStrategy.value } : { ...newCronStrategy }
@@ -97,8 +100,7 @@ function onDone() {
   }
 
   // Check for duplicates (unless editing existing)
-  const existingIndex = persistence.value.cronStrategies.findIndex((cs) => cs.name === localCronStrategy.value.name)
-  if (createMode.value && existingIndex !== -1) {
+  if (!isDuplicateName.value) {
     f7.dialog.alert('A (cron) strategy with the same name already exists!')
     return
   }

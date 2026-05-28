@@ -279,7 +279,5 @@ function onDone() {
   } else {
     itemConfiguration.value = cloneDeep(localItemConfiguration.value)
   }
-
-  closePopup()
 }
 </script>

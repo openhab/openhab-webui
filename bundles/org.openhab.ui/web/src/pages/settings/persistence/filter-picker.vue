@@ -19,12 +19,12 @@
       </f7-navbar>
       <f7-list class="module-picker-container popup-list">
         <f7-list-item
-          v-for="f in allFilters"
-          :key="f.name"
+          v-for="fn in allFilterNames"
+          :key="fn"
           checkbox
-          :checked="localSelected.includes(f.name)"
-          @change="updateSelectedFilters($event, f.name)">
-          {{ f.name }}
+          :checked="localSelected.includes(fn)"
+          @change="updateSelectedFilters($event, fn)">
+          {{ fn }}
         </f7-list-item>
         <f7-list-item link no-chevron media-item subtitle="Add filter definition" @click="openFilterPopup">
           <template #media>
@@ -35,13 +35,13 @@
     </f7-page>
   </f7-popup>
 
-  <filter-popup v-model:opened="filterPopupOpen" :filter="null" @add:filter="addFilter" />
+  <filter-popup v-model:opened="filterPopupOpen" :filter="null" :filter-name-list="allFilterNames" @add:filter="addFilter" />
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import FilterPopup from '@/pages/settings/persistence/filter-popup.vue'
-import { type Filter, type FiltersDefinition } from '@/assets/definitions/persistence'
+import { type Filter, type FiltersDefinition, FilterTypeName } from '@/assets/definitions/persistence'
 import cloneDeep from 'lodash/cloneDeep'
 
 // Props and emits
@@ -53,13 +53,25 @@ const popupOpened = ref<boolean>(false)
 const filterPopupOpen = ref<boolean>(false)
 
 const localFiltersDefinitions = ref<FiltersDefinition>({} as FiltersDefinition)
-const localSelected = ref<string[]>([])
+const localSelected = ref<string[]>([...selected.value])
 
 const definitionsDirty = ref<boolean>(false)
 
+watch(
+  selected,
+  (newSelected) => {
+    if (!popupOpened.value) {
+      localSelected.value = [...newSelected]
+    }
+  },
+  { deep: true }
+)
+
 // Computed
-const allFilters = computed(() => {
-  return Object.values(localFiltersDefinitions.value).flat()
+const allFilterNames = computed(() => {
+  return [FilterTypeName.EqualsFilters, FilterTypeName.IncludeFilters, FilterTypeName.ThresholdFilters, FilterTypeName.TimeFilters]
+    .flatMap((ft) => localFiltersDefinitions?.value[ft] || [])
+    .map((f) => f.name)
 })
 
 // Methods
@@ -85,6 +97,9 @@ function closePopup() {
 
 // Event handlers
 function addFilter(filter: Filter) {
+  if (!localFiltersDefinitions.value[filter.filterTypeName]) {
+    localFiltersDefinitions.value[filter.filterTypeName] = []
+  }
   localFiltersDefinitions.value[filter.filterTypeName].push(filter.filter)
   // Add the new filter to the list of selected filters
   if (!localSelected.value.includes(filter.filter.name)) {
