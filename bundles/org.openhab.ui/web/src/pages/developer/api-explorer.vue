@@ -133,6 +133,7 @@ function onPageAfterIn() {
     dom_id: '#swaggerUi',
     deepLinking: false,
     defaultModelsExpandDepth: 0,
+    tryItOutEnabled: true,
     tagsSorter: 'alpha',
     operationsSorter: 'alpha',
     filter: true,
