@@ -57,48 +57,8 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-toolbar bottom>
-      <f7-link
-        icon-f7="cloud_download"
-        tooltip="Download filtered log as CSV"
-        :class="{ 'disabled-link': logViewerCore?.filterCount == 0 }"
-        @click="logViewerCore?.downloadCSV" />
-      <f7-link
-        icon-f7="rectangle_on_rectangle"
-        tooltip="Copy filtered log to clipboard"
-        :class="{ 'disabled-link': logViewerCore?.filterCount == 0 }"
-        @click="logViewerCore?.copyTableToClipboard" />
-      <f7-link
-        icon-f7="trash"
-        tooltip="Clear the log buffer"
-        :class="{ 'disabled-link': logViewerCore?.tableData.length == 0 }"
-        @click="logViewerCore?.clearLog" />
-      <f7-link @click="logViewerCore?.toggleErrorDisplay" tooltip="Always show error level logs">
-        <f7-icon v-if="logViewerCore?.showErrors" f7="exclamationmark_triangle_fill" />
-        <f7-icon v-else f7="exclamationmark_triangle" />
-      </f7-link>
-      <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".log-highlights-popup" class="popup-open" />
-      <f7-segmented>
-        <f7-button
-          outline
-          small
-          :active="!logViewerCore?.textMode"
-          icon-f7="table"
-          :icon-size="theme.aurora ? 20 : 22"
-          class="no-ripple"
-          @click="logViewerCore?.setTextMode(false)"
-          tooltip="Show logs in a table" />
-        <f7-button
-          outline
-          small
-          :active="logViewerCore?.textMode"
-          icon-f7="text_justifyleft"
-          :icon-size="theme.aurora ? 20 : 22"
-          class="no-ripple"
-          @click="logViewerCore?.setTextMode(true)"
-          tooltip="Show logs as plain text" />
-      </f7-segmented>
-      <f7-link icon-f7="gear" tooltip="Configure logging" data-popup=".log-settings-popup" class="popup-open" />
+    <f7-toolbar bottom class="log-viewer-toolbar">
+      <log-viewer-toolbar :log-viewer-core="logViewerCore" />
     </f7-toolbar>
 
     <log-viewer-core ref="logViewerCore" />
@@ -132,8 +92,8 @@
 <script setup lang="ts">
 import { useTemplateRef } from 'vue'
 import { type Router, getDevice } from 'framework7'
-import { theme } from 'framework7-vue'
 import LogViewerCore from './log-viewer-core.vue'
+import LogViewerToolbar from './log-viewer-toolbar.vue'
 
 // Constants
 const device = getDevice()
