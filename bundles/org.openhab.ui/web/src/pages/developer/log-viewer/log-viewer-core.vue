@@ -597,10 +597,14 @@ function clearCache() {
   tableData.value.forEach((entry) => delete entry.el)
 }
 
-watch(activeHighlightFilters, () => {
-  clearCache()
-  updateFilter()
-}, { deep: true })
+watch(
+  activeHighlightFilters,
+  () => {
+    clearCache()
+    updateFilter()
+  },
+  { deep: true }
+)
 
 // Methods
 async function load() {
