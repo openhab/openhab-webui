@@ -27,7 +27,7 @@
           {{ s.name }}
           <template v-if="'cronExpression' in s" #subtitle>{{ s.cronExpression }}</template>
         </f7-list-item>
-        <f7-list-item link no-chevron media-item color="auto-dark" subtitle="Add cron strategy definition" @click="openCronPopup">
+        <f7-list-item link no-chevron media-item class="color-auto-dark" subtitle="Add cron strategy definition" @click="openCronPopup">
           <template #media>
             <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
           </template>

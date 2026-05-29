@@ -1,7 +1,4 @@
-import type { InjectionKey, Ref } from 'vue'
 import * as api from '@/api'
-
-export const persistenceKey: InjectionKey<Ref<api.PersistenceServiceConfiguration>> = Symbol('persistence')
 
 export const PredefinedStrategies: api.PersistenceStrategy[] = [
   { name: 'everyChange' },

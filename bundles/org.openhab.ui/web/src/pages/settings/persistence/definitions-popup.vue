@@ -79,7 +79,7 @@
             </f7-list-item>
           </f7-list>
           <f7-list v-if="editable">
-            <f7-list-item link no-chevron media-item class="auto-dark-text" subtitle="Add filter" @click="openFilter(null)">
+            <f7-list-item link no-chevron media-item class="color-auto-dark" subtitle="Add filter" @click="openFilter(null)">
               <template #media>
                 <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
               </template>

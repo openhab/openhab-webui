@@ -66,12 +66,11 @@
 </style>
 
 <script setup lang="ts">
-import { ref, computed, useTemplateRef, inject } from 'vue'
+import { ref, computed, useTemplateRef } from 'vue'
 import { f7 } from 'framework7-vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
-import { FilterTypeName, FilterTypes, persistenceKey, type Filter } from '@/assets/definitions/persistence'
+import { FilterTypeName, FilterTypes, type Filter } from '@/assets/definitions/persistence'
 
-import * as api from '@/api'
 import cloneDeep from 'lodash/cloneDeep'
 
 // Props and emits

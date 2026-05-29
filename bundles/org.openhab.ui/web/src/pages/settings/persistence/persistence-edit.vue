@@ -272,7 +272,7 @@
 </style>
 
 <script setup lang="ts">
-import { defineAsyncComponent, ref, computed, onMounted, type Ref } from 'vue'
+import { defineAsyncComponent, ref, computed, onMounted } from 'vue'
 import type { Router } from 'framework7'
 import { f7 } from 'framework7-vue'
 
@@ -280,7 +280,7 @@ import YAML from 'yaml'
 
 import { useDirty } from '../../useDirty'
 import { useTabs } from '@/pages/useTabs'
-import { CommonCronStrategies, FilterTypeName, persistenceKey, FilterTypes } from '@/assets/definitions/persistence'
+import { CommonCronStrategies, FilterTypeName } from '@/assets/definitions/persistence'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import ConfigurationPopup from '@/pages/settings/persistence/configuration-popup.vue'
 import NotEditableNotice from '@/components/util/not-editable-notice.vue'

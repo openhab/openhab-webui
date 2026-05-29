@@ -51,8 +51,7 @@ import { ref, computed, useTemplateRef } from 'vue'
 import { f7 } from 'framework7-vue'
 import ParameterCronexpression from '@/components/config/controls/parameter-cronexpression.vue'
 
-import * as api from '@/api'
-import { persistenceKey } from '@/assets/definitions/persistence'
+import type * as api from '@/api'
 
 const nameRef = useTemplateRef('name')
 const cronExpressionRef = useTemplateRef('cronExpression')
@@ -100,7 +99,7 @@ function onDone() {
   }
 
   // Check for duplicates (unless editing existing)
-  if (!isDuplicateName.value) {
+  if (isDuplicateName.value) {
     f7.dialog.alert('A (cron) strategy with the same name already exists!')
     return
   }
