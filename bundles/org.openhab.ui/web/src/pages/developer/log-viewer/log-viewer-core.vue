@@ -381,7 +381,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, useTemplateRef, shallowRef, triggerRef } from 'vue'
+import { ref, computed, nextTick, useTemplateRef, shallowRef, triggerRef, watch } from 'vue'
 import { f7 } from 'framework7-vue'
 import { useDraggable } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
@@ -411,6 +411,7 @@ interface EnrichedLogEntry extends LogEntry {
   milliseconds: string
   visible: boolean
   time: string
+  el?: HTMLTableRowElement
 }
 
 enum LEVEL_ICONS {
@@ -518,6 +519,7 @@ const currentHighlightColorItemIndex = ref<number | null>(null)
 const currentHighlightColor = ref('#FF5252')
 const lastSequence = ref(0)
 const selectedId = ref<number>(0)
+let lastFirstIndex = -1
 
 // Column definitions (table mode only)
 const COLUMN_WIDTHS_KEY = 'openhab.ui:logviewer.columnWidths'
@@ -590,6 +592,15 @@ const isConnecting = computed(() => stateConnecting.value)
 
 const filterTextLowerCase = computed(() => filterText.value.toLowerCase())
 const activeHighlightFilters = computed(() => highlightFilters.value.filter((filter) => filter.active && filter.text.trim() !== ''))
+
+function clearCache() {
+  tableData.value.forEach((entry) => delete entry.el)
+}
+
+watch(activeHighlightFilters, () => {
+  clearCache()
+  updateFilter()
+}, { deep: true })
 
 // Methods
 async function load() {
@@ -758,6 +769,7 @@ function socketClose() {
 }
 
 function renderEntry(entry: EnrichedLogEntry) {
+  if (entry.el) return entry.el
   let tr = document.createElement('tr')
   let icon = LEVEL_ICONS[entry.level as keyof typeof LEVEL_ICONS] || LEVEL_ICONS.DEFAULT
   const levelLowerCased = entry.level.toLowerCase()
@@ -779,6 +791,7 @@ function renderEntry(entry: EnrichedLogEntry) {
   }
   // mark row for delegated click handling
   tr.dataset.id = String(entry.id)
+  entry.el = tr
   return tr
 }
 
@@ -840,6 +853,7 @@ function addLogEntry(logEntry: LogEntry) {
         }
 
         if (tableData.value.length > maxEntries) {
+          lastFirstIndex = -1 // Force redraw as indices shifted
           const removedElement = tableData.value.shift()
           if (removedElement) {
             logStart.value = removedElement.time
@@ -917,7 +931,9 @@ function scrollToBottom() {
     // Delay manual scroll detection to avoid autoscrolling being defeated when new logs arrive
     scrollTime = Date.now() + 250
   }
-  redrawPartOfTable()
+  if (textMode.value || !wrapMessages.value) {
+    redrawPartOfTable()
+  }
 }
 
 function handleScroll() {
@@ -930,7 +946,9 @@ function handleScroll() {
   const isAtBottom = tableContainer.scrollHeight - tableContainer.scrollTop < tableContainer.clientHeight + 20
   autoScroll.value = isAtBottom
 
-  redrawPartOfTable()
+  if (textMode.value || !wrapMessages.value) {
+    redrawPartOfTable()
+  }
 }
 
 function redrawPartOfTable() {
@@ -958,6 +976,15 @@ function redrawPartOfTable() {
   const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
   const lastIndexToRedraw = Math.min(currentIndexAtTop + nbVisibleLines + 50, filteredItemsCount - 1)
   // console.debug(`Should redraw ${firstIndexToRedraw}/${lastIndexToRedraw}`)
+
+  if (firstIndexToRedraw === lastFirstIndex) {
+    // Check if the last visible element is already in the table (happens when new logs arrive)
+    const lastRow = tableBody.lastElementChild as HTMLElement | null
+    if (!lastRow || lastRow.classList.contains('padder') || Number(lastRow.dataset.id) === filteredTableData.value[lastIndexToRedraw]?.id) {
+      return
+    }
+  }
+  lastFirstIndex = firstIndexToRedraw
 
   tableBody.innerHTML = ''
   if (firstIndexToRedraw > 0) {
@@ -1022,6 +1049,7 @@ function updateFilter() {
     }
   }
   filterCount.value = cnt
+  lastFirstIndex = -1
   redrawPartOfTable()
 }
 
@@ -1143,10 +1171,13 @@ function setTextMode(textModeEnabled: boolean) {
   if (textModeEnabled) {
     getResizableTable()?.clearResizeHoverState()
   }
+  clearCache()
+  lastFirstIndex = -1
   updateFilter()
 }
 
 function saveHighlighters() {
+  clearCache()
   updateFilter()
 }
 
@@ -1183,6 +1214,7 @@ function toggleErrorDisplay() {
 function toggleWrapMessages() {
   wrapMessages.value = !wrapMessages.value
   localStorage.setItem('openhab.ui:logviewer.wrapMessages', wrapMessages.value.toString())
+  lastFirstIndex = -1
   updateFilter()
 }
 
