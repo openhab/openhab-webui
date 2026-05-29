@@ -425,14 +425,7 @@ enum LEVEL_ICONS {
 const maxEntries = 2000
 const lineHeight = 31
 
-type ResizableTableExposed = {
-  getTableBody: () => HTMLTableSectionElement | null
-  getTableElement: () => HTMLTableElement | null
-  getContainerElement: () => HTMLDivElement | null
-  resetColumnWidths: () => void
-  setColumnWidth: (colIndex: number, width: number) => void
-  clearResizeHoverState: () => void
-}
+type ResizableTableExposed = InstanceType<typeof ResizableTable>
 
 const resizableTableRef = useTemplateRef('resizableTable')
 const logDetailsPopupRef = useTemplateRef('logDetailsPopup')

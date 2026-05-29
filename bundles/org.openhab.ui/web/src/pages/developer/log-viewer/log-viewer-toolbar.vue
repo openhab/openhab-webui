@@ -135,24 +135,10 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue'
 import { getDevice } from 'framework7'
 import { theme } from 'framework7-vue'
-
-interface LogViewerToolbarTarget {
-  filterCount: number
-  tableData: unknown[]
-  textMode: boolean
-  showErrors: boolean
-  wrapMessages: boolean
-  downloadCSV: () => void
-  copyTableToClipboard: () => void
-  clearLog: () => void
-  toggleErrorDisplay: () => void
-  setTextMode: (enabled: boolean) => void
-  resetColumnWidths: () => void
-  toggleWrapMessages: () => void
-}
+import type LogViewerCore from '@/pages/developer/log-viewer/log-viewer-core.vue'
 
 defineProps<{
-  logViewerCore: LogViewerToolbarTarget | null
+  logViewerCore: InstanceType<typeof LogViewerCore> | null
 }>()
 
 const device = getDevice()
