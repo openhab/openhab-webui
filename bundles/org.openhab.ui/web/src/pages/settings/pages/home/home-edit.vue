@@ -3,6 +3,7 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="'Edit Home Page' + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -37,6 +38,7 @@
 
         <div v-else-if="!previewMode">
           <f7-block class="block-narrow no-padding">
+            <not-editable-notice v-if="!isEditable" />
             <f7-col>
               <f7-block-title>Page Configuration</f7-block-title>
               <config-sheet
@@ -44,6 +46,7 @@
                 :parameters="pageWidgetDefinition.props.parameters || []"
                 :configuration="page.config"
                 :f7router
+                :read-only="!isEditable"
                 @updated="dirty = true" />
             </f7-col>
           </f7-block>
@@ -63,6 +66,7 @@
               <div class="cards-title-row">
                 <f7-block-title class="no-margin-bottom">Cards</f7-block-title>
                 <f7-button
+                  v-if="isEditable"
                   @click="showCardControls = !showCardControls"
                   small
                   outline
@@ -81,7 +85,7 @@
                 <f7-list
                   media-list
                   class="homecards-list"
-                  sortable
+                  :sortable="isEditable"
                   :key="'cards-' + currentModelTab + cardListId"
                   @sortable:sort="reorderCard">
                   <f7-list-item
@@ -97,25 +101,31 @@
                         <f7-menu-item icon-f7="list_bullet" dropdown>
                           <f7-menu-dropdown>
                             <f7-menu-dropdown-item v-if="!card.separator" @click="configureCard(card)" href="#" text="Card Settings" />
-                            <f7-menu-dropdown-item v-if="!card.separator" @click="editCardCode(card)" href="#" text="Edit YAML" />
-                            <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
-                            <f7-menu-dropdown-item divider />
                             <f7-menu-dropdown-item
                               v-if="!card.separator"
-                              @click="addCardSeparator(idx)"
+                              @click="editCardCode(card)"
                               href="#"
-                              text="Add Separator Before" />
-                            <f7-menu-dropdown-item
-                              v-if="card.separator"
-                              @click="removeCardSeparator(idx)"
-                              href="#"
-                              text="Remove Separator" />
+                              :text="isEditable ? 'Edit YAML' : 'View YAML'" />
+                            <template v-if="isEditable">
+                              <f7-menu-dropdown-item v-if="card.separator" @click="renameCardSeparator(idx)" href="#" text="Rename" />
+                              <f7-menu-dropdown-item divider />
+                              <f7-menu-dropdown-item
+                                v-if="!card.separator"
+                                @click="addCardSeparator(idx)"
+                                href="#"
+                                text="Add Separator Before" />
+                              <f7-menu-dropdown-item
+                                v-if="card.separator"
+                                @click="removeCardSeparator(idx)"
+                                href="#"
+                                text="Remove Separator" />
+                            </template>
                           </f7-menu-dropdown>
                         </f7-menu-item>
                       </f7-menu>
                       <f7-checkbox
                         :checked="!isCardExcluded(card) ? true : null"
-                        :disabled="card.separator !== undefined ? true : null"
+                        :disabled="!isEditable || card.separator !== undefined ? true : null"
                         class="margin-right" />
                     </template>
                   </f7-list-item>
@@ -132,6 +142,7 @@
                   :parameters="locationsTabParameters.props.parameters || []"
                   :configuration="page.slots.locations[0].config"
                   :f7router
+                  :read-only="!isEditable"
                   @updated="dirty = true" />
               </div>
 
@@ -141,6 +152,7 @@
                   :parameters="equipmentTabParameters.props.parameters || []"
                   :configuration="page.slots.equipment[0].config"
                   :f7router
+                  :read-only="!isEditable"
                   @updated="dirty = true" />
               </div>
 
@@ -149,6 +161,8 @@
                   :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
                   :parameters="propertiesTabParameters.props.parameters || []"
                   :configuration="page.slots.properties[0].config"
+                  :f7router
+                  :read-only="!isEditable"
                   @updated="dirty = true" />
               </div>
             </f7-col>
@@ -167,6 +181,7 @@
           class="page-code-editor"
           mode="application/vnd.openhab.uicomponent+yaml;type=home"
           :value="pageYaml"
+          :readOnly="!isEditable"
           @input="onEditorInput"
           @save="save()" />
         <!-- <pre class="yaml-message padding-horizontal" :class="[yamlError === 'OK' ? 'text-color-green' : 'text-color-red']">{{yamlError}}</pre> -->
@@ -213,10 +228,9 @@
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import PageDesigner from '../pagedesigner-mixin'
 import HomeCards from '../../../home/homecards-mixin'
-
-import YAML from 'yaml'
 
 import { useDirty } from '@/pages/useDirty'
 import { useTabs } from '@/pages/useTabs'
@@ -234,6 +248,7 @@ import {
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import ModelTab from '@/pages/home/model-tab.vue'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
+import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 const ConfigurableWidgets = {
   'oh-location-card': OhLocationCardParameters,
@@ -241,12 +256,19 @@ const ConfigurableWidgets = {
   'oh-property-card': OhPropertyCardParameters
 }
 
+const ModelTabComponents = {
+  locations: 'oh-locations-tab',
+  equipment: 'oh-equipment-tab',
+  properties: 'oh-properties-tab'
+}
+
 export default {
   mixins: [PageDesigner, HomeCards],
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     ConfigSheet,
-    ModelTab
+    ModelTab,
+    NotEditableNotice
   },
   props: {
     createMode: Boolean,
@@ -294,11 +316,13 @@ export default {
           { value: 'equipment', label: this.$t('home.equipment.tab') },
           { value: 'properties', label: this.$t('home.properties.tab') }
         ]
+        this.normalizePageSlots()
       }
     }
   },
   methods: {
     addWidget(component, widgetType, parentContext, slot) {
+      if (!this.isEditable) return
       if (!slot) slot = 'default'
       if (!component.slots) component.slots = {}
       if (!component.slots[slot]) component.slots[slot] = []
@@ -317,20 +341,26 @@ export default {
     getWidgetDefinition(componentType) {
       return ConfigurableWidgets[componentType] ? ConfigurableWidgets[componentType]() : null
     },
-    ensureCardComponentExists(card) {
-      if (!this.page.slots[this.currentModelTab][0].slots[card.key]) {
-        this.page.slots[this.currentModelTab][0].slots[card.key] = [
-          {
-            component:
-              this.currentModelTab === 'locations'
-                ? 'oh-location-card'
-                : this.currentModelTab === 'equipment'
-                  ? 'oh-equipment-card'
-                  : 'oh-property-card',
-            config: {}
-          }
-        ]
+    getCardComponent(modelComponent, card) {
+      const defaultCardComponent = {
+        component:
+          modelComponent.component === 'oh-locations-tab'
+            ? 'oh-location-card'
+            : modelComponent.component === 'oh-equipment-tab'
+              ? 'oh-equipment-card'
+              : 'oh-property-card',
+        config: {}
       }
+
+      if (!Array.isArray(modelComponent.slots[card.key]) || modelComponent.slots[card.key].length === 0) {
+        if (!this.isEditable) {
+          // if not editable, return a default config for preview purposes without modifying the actual page data
+          return defaultCardComponent
+        } else {
+          modelComponent.slots[card.key] = [defaultCardComponent]
+        }
+      }
+      return modelComponent.slots[card.key][0]
     },
     configureCard(card) {
       if (!card.key) return
@@ -340,8 +370,9 @@ export default {
         !this.page.slots[this.currentModelTab][0].slots
       )
         return
-      this.ensureCardComponentExists(card)
-      return this.configureWidget(this.page.slots[this.currentModelTab][0].slots[card.key][0])
+
+      const cardComponent = this.getCardComponent(this.page.slots[this.currentModelTab][0], card)
+      return this.configureWidget(cardComponent)
     },
     editCardCode(card) {
       if (!card.key) return
@@ -351,10 +382,11 @@ export default {
         !this.page.slots[this.currentModelTab][0].slots
       )
         return
-      this.ensureCardComponentExists(card)
-      return this.editWidgetCode(this.page.slots[this.currentModelTab][0].slots[card.key][0])
+      const cardComponent = this.getCardComponent(this.page.slots[this.currentModelTab][0], card)
+      return this.editWidgetCode(cardComponent)
     },
     addCardSeparator(idx) {
+      if (!this.isEditable) return
       const orderedCards = this.cardGroups(this.currentModelTab, this.page)
         .flat()
         .map((e) => (e.separator ? e : e.key))
@@ -363,6 +395,7 @@ export default {
       this.renameCardSeparator(idx)
     },
     renameCardSeparator(idx) {
+      if (!this.isEditable) return
       const orderedCards = this.cardGroups(this.currentModelTab, this.page)
         .flat()
         .map((e) => (e.separator ? e : e.key))
@@ -380,6 +413,7 @@ export default {
       }
     },
     removeCardSeparator(idx) {
+      if (!this.isEditable) return
       const orderedCards = this.cardGroups(this.currentModelTab, this.page)
         .flat()
         .map((e) => (e.separator ? e : e.key))
@@ -403,6 +437,7 @@ export default {
       this.configureCard(card)
     },
     reorderCard(ev) {
+      if (!this.isEditable) return
       const orderedCards = this.cardGroups(this.currentModelTab, this.page)
         .flat()
         .map((e) => (e.separator ? e : e.key))
@@ -433,6 +468,7 @@ export default {
     },
     toggleCardDisplay(card) {
       if (!card.key) return
+      if (!this.isEditable) return
       const page = this.page
       const type = this.currentModelTab
       const excludedCards =
@@ -451,15 +487,57 @@ export default {
         this.page.slots[type][0].config.excludedCards.splice(excludedIdx, 1)
       }
     },
+    normalizePageSlots() {
+      // ensure page.slots has the expected structure with equipment, locations, and properties arrays for v-model bindings, even if the YAML doesn't include them
+      if (!this.page.slots) {
+        this.page.slots = {}
+      }
+
+      ;['equipment', 'locations', 'properties'].forEach((slot) => {
+        if (!Array.isArray(this.page.slots[slot])) {
+          this.page.slots[slot] = []
+        }
+
+        if (this.page.slots[slot].length === 0) {
+          this.page.slots[slot].push({})
+        }
+
+        if (this.page.slots[slot][0].component !== ModelTabComponents[slot]) {
+          this.page.slots[slot][0].component = ModelTabComponents[slot]
+        }
+
+        if (!this.page.slots[slot][0].config) {
+          this.page.slots[slot][0].config = {}
+        }
+
+        if (!this.page.slots[slot][0].slots) {
+          this.page.slots[slot][0].slots = {}
+        }
+      })
+    },
     toYaml() {
-      this.pageYaml = YAML.stringify(Object.assign({ config: this.page.config }, this.page.slots))
+      this.pageYaml = toFileYAMLSyntax('pages', this.page)
     },
     fromYaml() {
       try {
-        const updatedTabs = YAML.parse(this.pageYaml)
-        this.page.slots = updatedTabs
-        this.page.config = this.page.slots.config
-        delete this.page.slots.config
+        const updatedPage = fromFileYAMLSyntax('pages', this.pageYaml, this.page.uid)
+
+        if (!updatedPage.slots) {
+          // maintain compatibility with older versions of the page schema
+          // where equipment, locations, and properties were directly on the page object instead of in a slots property
+          // so that users can paste older YAML code without having to adjust the structure
+          updatedPage.slots = {
+            equipment: updatedPage.equipment || [],
+            locations: updatedPage.locations || [],
+            properties: updatedPage.properties || []
+          }
+        }
+
+        this.page.config = updatedPage.config
+        this.page.tags = updatedPage.tags || []
+        this.page.slots = updatedPage.slots
+        this.normalizePageSlots()
+
         this.forceUpdate()
         return true
       } catch (e) {
