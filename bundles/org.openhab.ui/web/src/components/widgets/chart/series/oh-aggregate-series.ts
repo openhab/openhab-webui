@@ -159,14 +159,13 @@ const aggregateSeries: SeriesComponent = {
         return [
           dimensionFromDate(chartType, startTime, endTime, arr[0], axisX),
           dimensionFromDate(chartType, startTime, endTime, arr[0], axisY, true),
-          formatter.format(value),
-          itemSeries?.unit
+          formatter.format(value)
         ]
       } else {
         if (series.transpose) {
-          return [formatter.format(value), dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1, true), itemSeries?.unit]
+          return [formatter.format(value), dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1, true)]
         } else {
-          return [dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1), formatter.format(value), itemSeries?.unit]
+          return [dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1), formatter.format(value)]
         }
       }
     })
@@ -176,13 +175,12 @@ const aggregateSeries: SeriesComponent = {
     if (series.type === OhAggregateSeries.Type.scatter) {
       const scatterSeries = series as ScatterSeriesOption & { scatterSymbolSizeFactor?: number }
       scatterSeries.symbolSize = (v: number[]) => {
-        const state = v[v.length - 2] // second-last element, last element is the unit
-        return state * (scatterSeries.scatterSymbolSizeFactor ?? 1)
+        return v.pop()! * (scatterSeries.scatterSymbolSizeFactor ?? 1)
       }
     }
 
     if (series.item) {
-      series.id = `oh-aggregate-series#${series.item}#${f7.utils.id()}`
+      series.id = `oh-aggregate-series#${series.item}#${itemSeries?.unit ?? ''}#${f7.utils.id()}`
     }
 
     series.data = data

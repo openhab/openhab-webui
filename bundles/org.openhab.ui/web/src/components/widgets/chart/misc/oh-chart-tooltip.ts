@@ -28,13 +28,13 @@ const chartTooltip: MiscChartComponent = {
         let tooltip = ''
         if (!Array.isArray(params)) {
           if (!params.seriesId) return ''
+          const [_seriesType, _itemName, unit, _id] = params.seriesId.split('#')
           // tooltip for aggregate & calendar series:
           // - header: series name
           // - content: category label and formatted value
           if (params.componentType === 'series') {
             if (!Array.isArray(params.data)) return ''
             let state = context.numberFormatter!.format(params.data[1] as number)
-            const unit = params.data[params.data.length - 1] as string | undefined
             if (unit) state += ' ' + unit
             tooltip += `<div>${params.seriesName}</div>`
             if (params.name) {
@@ -76,8 +76,7 @@ const chartTooltip: MiscChartComponent = {
           }
           params.forEach((p) => {
             if (p.seriesId) {
-              const [seriesType, _itemName, _id, markArea] = p.seriesId.split('#')
-              const unit = Array.isArray(p.value) ? (p.value[p.value.length - 1] as string) : undefined
+              const [seriesType, _itemName, unit, _id, markArea] = p.seriesId.split('#')
               if ((seriesType === 'oh-time-series' && !markArea) || seriesType !== 'oh-time-series') {
                 let state = context.numberFormatter!.format((p.data as number[])[1])
                 if (unit) state += ' ' + unit
