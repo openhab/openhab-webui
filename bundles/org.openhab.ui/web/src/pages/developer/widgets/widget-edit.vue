@@ -91,7 +91,7 @@
   top 0
   height calc(100%)
   .code-editor-fit
-    height calc(100% - var(--f7-grid-gap))
+    height 100%
   .row
     height 100%
     .widget-preview
@@ -110,7 +110,7 @@
   &.horizontal
     .row
       height 50%
-    .vue-codemirror
+    .code-editor-fit
       height calc(100% - var(--f7-grid-gap))
 </style>
 
