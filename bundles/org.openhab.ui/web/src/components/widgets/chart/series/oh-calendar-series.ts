@@ -43,7 +43,7 @@ const calendarSeries: SeriesComponent = {
     const data = groups.map((arr, idx, days) => {
       const aggregationFunction = series.aggregationFunction || OhCalendarSeries.AggregationFunction.average
       let value = aggregate(aggregationFunction, arr, idx, days)
-      return [arr[0].toDate(), parseFloat(formatter.format(value)), itemSeries?.unit]
+      return [arr[0].toDate(), parseFloat(formatter.format(value))]
     })
 
     if (!series.type) (series.type as unknown as string) = OhCalendarSeries.Type.heatmap
@@ -52,13 +52,12 @@ const calendarSeries: SeriesComponent = {
     if (series.type === OhCalendarSeries.Type.scatter) {
       const scatterSeries = series as ScatterSeriesOption & { scatterSymbolSizeFactor?: number }
       scatterSeries.symbolSize = (v: number[]) => {
-        const state = v[v.length - 2] // second-last element, last element is the unit
-        return state * (scatterSeries.scatterSymbolSizeFactor ?? 1)
+        return v.pop()! * (scatterSeries.scatterSymbolSizeFactor ?? 1)
       }
     }
 
     if (series.item) {
-      series.id = `oh-calendar-series#${series.item}#${f7.utils.id()}`
+      series.id = `oh-calendar-series#${series.item}#${itemSeries?.unit ?? ''}#${f7.utils.id()}`
     }
 
     series.data = data

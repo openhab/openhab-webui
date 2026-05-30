@@ -34,9 +34,9 @@ const timeSeries: SeriesComponent = {
 
       const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
       series.data = itemPoints.map((p) => {
-        return [new Date(p.time), formatter.format(Number(p.state)), itemSeries?.unit]
+        return [new Date(p.time), formatter.format(Number(p.state))]
       })
-      series.id = `oh-time-series#${series.item}#${f7.utils.id()}`
+      series.id = `oh-time-series#${series.item}#${itemSeries?.unit ?? ''}#${f7.utils.id()}`
     }
 
     // other things
