@@ -1357,7 +1357,7 @@ export default {
   beforeUnmount() {
     if (window) {
       window.removeEventListener('keydown', this.keyDown)
-      window.addEventListener('resize', this.avoidLogDockOverflow)
+      window.removeEventListener('resize', this.avoidLogDockOverflow)
       if (this._logDockResizeHandlers) {
         const { onMove, onUp, onCancel } = this._logDockResizeHandlers
         window.removeEventListener('pointermove', onMove)
