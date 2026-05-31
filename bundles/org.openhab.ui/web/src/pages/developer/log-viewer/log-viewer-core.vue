@@ -116,17 +116,15 @@
       </f7-navbar>
       <f7-toolbar bottom class="toolbar-details">
         <div class="display-flex justify-content-center" style="width: 100%">
-          <f7-link class="display-flex flex-direction-row margin-right" @click="selectedId = selectedId > 0 ? selectedId - 1 : 0">
+          <f7-link class="display-flex flex-direction-row margin-right" @click="selectPrevious()">
             <f7-icon f7="backward_fill" />
             &nbsp; Previous
           </f7-link>
-          <f7-link
-            class="display-flex flex-direction-row margin-right"
-            @click="selectedId = selectedId < tableData.length - 1 ? selectedId + 1 : tableData.length - 1">
+          <f7-link class="display-flex flex-direction-row margin-right" @click="selectNext()">
             Next &nbsp;
             <f7-icon f7="forward_fill" />
           </f7-link>
-          <f7-link class="display-flex flex-direction-row" @click="selectedId = tableData.length - 1">
+          <f7-link class="display-flex flex-direction-row" @click="selectLatest()">
             <f7-icon f7="forward_end_fill" />
           </f7-link>
         </div>
@@ -518,7 +516,8 @@ const logEnd = ref('--:--:--')
 const currentHighlightColorItemIndex = ref<number | null>(null)
 const currentHighlightColor = ref('#FF5252')
 const lastSequence = ref(0)
-const selectedId = ref<number>(0)
+const selectedId = ref<number>(-1)
+const selectedLog = ref<EnrichedLogEntry | null>(null)
 let lastFirstIndex = -1
 
 // Column definitions (table mode only)
@@ -573,9 +572,7 @@ const countersBadgeColor = computed(() => {
   return 'green'
 })
 
-const selectedLog = computed<EnrichedLogEntry | null>(() => {
-  return tableData.value.find((entry) => entry.id === selectedId.value) || null
-})
+const selectedIndex = computed(() => tableData.value.findIndex((e) => e.id === selectedId.value))
 
 const periodRangeColor = computed(() => {
   if (!stateConnected.value) return 'red'
@@ -593,9 +590,11 @@ const isConnecting = computed(() => stateConnecting.value)
 const filterTextLowerCase = computed(() => filterText.value.toLowerCase())
 const activeHighlightFilters = computed(() => highlightFilters.value.filter((filter) => filter.active && filter.text.trim() !== ''))
 
-function clearCache() {
-  tableData.value.forEach((entry) => delete entry.el)
-}
+// Watchers
+watch(selectedId, (newId) => {
+  const log = tableData.value.find((e) => e.id === newId)
+  if (log) selectedLog.value = { ...log }
+})
 
 watch(
   activeHighlightFilters,
@@ -607,6 +606,10 @@ watch(
 )
 
 // Methods
+function clearCache() {
+  tableData.value.forEach((entry) => delete entry.el)
+}
+
 async function load() {
   loggerPackages.value = []
   loadingLoggers.value = true
@@ -800,8 +803,36 @@ function renderEntry(entry: EnrichedLogEntry) {
 }
 
 function onRowClick(entityId: number) {
-  selectedId.value = entityId
-  f7.popup.open('#logdetails-popup')
+  const index = tableData.value.findIndex((e) => e.id === entityId)
+  if (index !== -1) {
+    selectedId.value = index
+    selectedLog.value = { ...tableData.value[index] }
+    f7.popup.open('#logdetails-popup')
+  }
+}
+
+function selectPrevious() {
+  const idx = selectedIndex.value
+  if (idx > 0) {
+    selectedId.value = tableData.value[idx - 1].id
+  }
+}
+
+function selectNext() {
+  const idx = selectedIndex.value
+  if (idx === -1) {
+    if (tableData.value.length > 0) {
+      selectedId.value = tableData.value[0].id
+    }
+  } else if (idx < tableData.value.length - 1) {
+    selectedId.value = tableData.value[idx + 1].id
+  }
+}
+
+function selectLatest() {
+  if (tableData.value.length > 0) {
+    selectedId.value = tableData.value[tableData.value.length - 1].id
+  }
 }
 
 function addLogEntry(logEntry: LogEntry) {
@@ -918,6 +949,10 @@ function clearLog() {
   filterCount.value = 0
   logStart.value = '--:--:--'
   logEnd.value = '--:--:--'
+  selectedId.value = -1
+  selectedLog.value = null
+  nextId = 0
+  batchLogs.length = 0
   const tableBody = getTableBody()
   if (tableBody) tableBody.innerHTML = ''
 }
