@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-// import pluginDynamicImportVars from '@rollup/plugin-dynamic-import-vars'
-import pluginDynamicImport from 'vite-plugin-dynamic-import'
 import vitePluginTopLevelAwait from 'vite-plugin-top-level-await'
 import { compression } from 'vite-plugin-compression2'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -56,13 +54,6 @@ export default defineConfig({
         ]
       }
     },
-    pluginDynamicImport({
-      filter (id) {
-        if (id.includes('/node_modules/')) {
-          return true
-        }
-      }
-    }),
     vitePluginTopLevelAwait(),
     VitePWA({
       registerType: 'autoUpdate',
@@ -96,6 +87,10 @@ export default defineConfig({
   ],
   define: {
     // __VUE_I18N_LEGACY_API__: false // tree-shake legacy mode
+  },
+  optimizeDeps: {
+    // ensure these alre always pre-bundled, including esbuild in the dev server
+    include: ['echarts', 'vue-echarts', 'dayjs']
   },
   server: {
     port: 8081,
@@ -154,7 +149,7 @@ export default defineConfig({
   build: {
     outDir: resolve(outPath),
     emptyOutDir: true,
-    target: ['chrome107', 'edge107', 'firefox104', 'safari11.1'],
+    target: ['chrome111', 'edge111', 'firefox114', 'safari15.4'],
     sourcemap: sourceMaps ? 'hidden' : false,
     rolldownOptions: {
       output: {

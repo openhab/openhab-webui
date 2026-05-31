@@ -597,6 +597,8 @@ import { useModelStore } from '@/js/stores/useModelStore'
 
 import { getRoot } from '@/api'
 
+const dayjsLocalesGlob = import.meta.glob('../node_modules/dayjs/esm/locale/*.js', { import: 'default' })
+
 export default {
   mixins: [auth, connectionHealth, sseEvents],
   components: {
@@ -910,14 +912,11 @@ export default {
             // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
             if (dayjsLocale?.key === 'no') dayjsLocale = dayjsLocales.find((l) => l.key === 'nb')
 
-            dayjsLocalePromise = dayjsLocale
-              ? import(`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`)
-                  .then((data) => {
-                    return data.default
-                  })
-                  .catch((error) => {
-                    console.error('Error fetching dayjs: ', error, dayjsLocale)
-                  })
+            const dayjsLoader = dayjsLocalesGlob[`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`]
+            dayjsLocalePromise = dayjsLoader
+              ? dayjsLoader().catch((error) => {
+                  console.error('Error fetching dayjs: ', error, dayjsLocale)
+                })
               : Promise.resolve(null)
           }
           return Promise.all([useComponentsStore().loadPagesAndWidgets(), dayjsLocalePromise])

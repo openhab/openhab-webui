@@ -7,13 +7,15 @@
  * - Global translations are accessible through $t or this.$t in any component without additional setup in the component
  * - For local translations, dereference and use the mergeLocaleMessages and t from the useI18n composable in the setup function with the useScope: 'local'
  * - the mergeLocaleMessages function should be passed to the loadLocaleMessages as a parameter
- * - Message files are bundled into the build with the "vite-plugin-dynamic-import" plugin
+ * - Message files are bundled into the build with Vite's import.meta.glob
  */
 import { createI18n, type I18n } from 'vue-i18n'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 const fallbackLocale = import.meta.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en'
+
+const localeFilesGlob = import.meta.glob('../assets/i18n/**/*.json', { import: 'default' })
 
 /**
  * Load locale messages for a specific path and set them in the i18n instance.
@@ -33,15 +35,22 @@ export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (local
   const localeFilesArray = Array.from(localeFiles)
 
   const results = await Promise.allSettled(
-    localeFilesArray.map(async (locale): Promise<unknown> => import(`../assets/i18n/${dir}/${locale}.json`))
+    localeFilesArray.map(async (locale): Promise<unknown> => {
+      const path = `../assets/i18n/${dir}/${locale}.json`
+      const loader = localeFilesGlob[path]
+      if (loader) {
+        return loader()
+      } else {
+        throw new Error(`Locale file not found: ${path}`)
+      }
+    })
   )
 
   results.forEach((result, index) => {
     const locale = localeFilesArray[index]
     if (locale !== undefined && result.status === 'fulfilled') {
-      const mod = result.value
-      if (mod && typeof mod === 'object' && 'default' in mod) {
-        const messages = (mod as { default: unknown }).default
+      const messages = result.value
+      if (messages && typeof messages === 'object') {
         mergeLocaleMessage(locale, { ...(messages as Record<string, unknown>) })
       }
     }
