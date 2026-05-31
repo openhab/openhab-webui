@@ -26,6 +26,7 @@
   "scripts": {
     "generate-build-info": "node build/generate-build-info.mjs",
     "generate-widget-component-ts": "node build/generate-widget-component-ts.mjs",
+    "generate-widget-catalog": "node build/generate-widget-catalog.mjs",
     "generate-rest-client": "node build/generate-rest-client.mjs",
     "predev": "npm run generate-build-info",
     "dev": "vite",
@@ -35,7 +36,7 @@
     "lint:fix": "npx eslint --fix src",
     "typescript:check": "vue-tsc -b",
     "dependency-analyzer": "npx depcruise --config .dependency-cruiser.cjs src",
-    "prebuild": "npm run generate-build-info && npm run generate-widget-component-ts && npm run generate-rest-client",
+    "prebuild": "npm run generate-build-info && npm run generate-widget-component-ts && npm run generate-widget-catalog && npm run generate-rest-client",
     "build": "cross-env NODE_ENV=production vite build",
     "build:mvn": "cross-env NODE_ENV=production cross-env MAVEN=true node ./build/build.mjs",
     "bundle-analyzer": "npm run generate-build-info && cross-env NODE_ENV=production cross-env STATS=true vite build",
