@@ -15,7 +15,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 const fallbackLocale = import.meta.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en'
 
-const localeFilesGlob = import.meta.glob('../assets/i18n/**/*.json')
+const localeFilesGlob = import.meta.glob('../assets/i18n/**/*.json', { import: 'default' })
 
 /**
  * Load locale messages for a specific path and set them in the i18n instance.
@@ -49,9 +49,8 @@ export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (local
   results.forEach((result, index) => {
     const locale = localeFilesArray[index]
     if (locale !== undefined && result.status === 'fulfilled') {
-      const mod = result.value
-      if (mod && typeof mod === 'object' && 'default' in mod) {
-        const messages = (mod as { default: unknown }).default
+      const messages = result.value
+      if (messages && typeof messages === 'object') {
         mergeLocaleMessage(locale, { ...(messages as Record<string, unknown>) })
       }
     }

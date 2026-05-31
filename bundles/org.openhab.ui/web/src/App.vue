@@ -597,7 +597,7 @@ import { useModelStore } from '@/js/stores/useModelStore'
 
 import { getRoot } from '@/api'
 
-const dayjsLocalesGlob = import.meta.glob('../node_modules/dayjs/esm/locale/*.js')
+const dayjsLocalesGlob = import.meta.glob('../node_modules/dayjs/esm/locale/*.js', { import: 'default' })
 
 export default {
   mixins: [auth, connectionHealth, sseEvents],
@@ -914,13 +914,9 @@ export default {
 
             const dayjsLoader = dayjsLocalesGlob[`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`]
             dayjsLocalePromise = dayjsLoader
-              ? dayjsLoader()
-                  .then((data) => {
-                    return data.default
-                  })
-                  .catch((error) => {
-                    console.error('Error fetching dayjs: ', error, dayjsLocale)
-                  })
+              ? dayjsLoader().catch((error) => {
+                  console.error('Error fetching dayjs: ', error, dayjsLocale)
+                })
               : Promise.resolve(null)
           }
           return Promise.all([useComponentsStore().loadPagesAndWidgets(), dayjsLocalePromise])

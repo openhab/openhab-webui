@@ -126,7 +126,7 @@ use([
   LabelLayout
 ])
 
-const echartsLocalesGlob = import.meta.glob('../../../../node_modules/echarts/lib/i18n/lang*.js')
+const echartsLocalesGlob = import.meta.glob('../../../../node_modules/echarts/lib/i18n/lang*.js', { import: 'default' })
 
 const props = defineProps<{
   context: WidgetContext
@@ -211,7 +211,7 @@ onMounted(() => {
     if (echartsLoader) {
       echartsLoader()
         .then((lang: any) => {
-          registerLocale(echartsLocale, lang.default)
+          registerLocale(echartsLocale, lang)
           console.log('echart localisation loaded: ', echartsLocale)
         })
         .catch(() => {
