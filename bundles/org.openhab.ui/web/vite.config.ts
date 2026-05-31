@@ -88,6 +88,10 @@ export default defineConfig({
   define: {
     // __VUE_I18N_LEGACY_API__: false // tree-shake legacy mode
   },
+  optimizeDeps: {
+    // ensure these alre always pre-bundled, including esbuild in the dev server
+    include: ['echarts', 'vue-echarts', 'dayjs']
+  },
   server: {
     port: 8081,
     host: '0.0.0.0',
