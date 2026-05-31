@@ -126,6 +126,8 @@ use([
   LabelLayout
 ])
 
+const echartsLocalesGlob = import.meta.glob('../../../../node_modules/echarts/lib/i18n/lang*.js')
+
 const props = defineProps<{
   context: WidgetContext
 }>()
@@ -205,17 +207,22 @@ onMounted(() => {
   if (['EN', 'ZH'].includes(echartsLocale)) {
     ready.value = true
   } else {
-    import(`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`)
-      .then((lang) => {
-        registerLocale(echartsLocale, lang.default)
-        console.log('echart localisation loaded: ', echartsLocale)
-      })
-      .catch(() => {
-        console.log('echart localisation loading failed: ', echartsLocale)
-      })
-      .finally(() => {
-        ready.value = true
-      })
+    const echartsLoader = echartsLocalesGlob[`../../../../node_modules/echarts/lib/i18n/lang${echartsLocale}.js`]
+    if (echartsLoader) {
+      echartsLoader()
+        .then((lang: any) => {
+          registerLocale(echartsLocale, lang.default)
+          console.log('echart localisation loaded: ', echartsLocale)
+        })
+        .catch(() => {
+          console.log('echart localisation loading failed: ', echartsLocale)
+        })
+        .finally(() => {
+          ready.value = true
+        })
+    } else {
+      ready.value = true
+    }
   }
 })
 
