@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-// import pluginDynamicImportVars from '@rollup/plugin-dynamic-import-vars'
-import pluginDynamicImport from 'vite-plugin-dynamic-import'
 import vitePluginTopLevelAwait from 'vite-plugin-top-level-await'
 import { compression } from 'vite-plugin-compression2'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -56,13 +54,6 @@ export default defineConfig({
         ]
       }
     },
-    pluginDynamicImport({
-      filter (id) {
-        if (id.includes('/node_modules/')) {
-          return true
-        }
-      }
-    }),
     vitePluginTopLevelAwait(),
     VitePWA({
       registerType: 'autoUpdate',
