@@ -169,23 +169,6 @@ export default {
     }
   },
   computed: {
-    editmode() {
-      return {
-        isEditable: this.isEditable,
-        addWidget: this.noopEditmodeAction,
-        configureWidget: this.noopEditmodeAction,
-        configureSlot: this.noopEditmodeAction,
-        editWidgetCode: this.noopEditmodeAction,
-        cutWidget: this.noopEditmodeAction,
-        copyWidget: this.noopEditmodeAction,
-        pasteWidget: this.noopEditmodeAction,
-        moveWidgetUp: this.noopEditmodeAction,
-        moveWidgetDown: this.noopEditmodeAction,
-        sendWidgetToBack: this.noopEditmodeAction,
-        bringWidgetToFront: this.noopEditmodeAction,
-        removeWidget: this.noopEditmodeAction
-      }
-    },
     context() {
       return {
         component:
@@ -207,7 +190,7 @@ export default {
         props: this.props,
         vars: this.vars,
         ctxVars: this.ctxVars,
-        editmode: this.editmode
+        noExpressionCache: true
       }
     },
     isEditable() {
@@ -224,7 +207,6 @@ export default {
     }
   },
   methods: {
-    noopEditmodeAction() {},
     onPageAfterIn() {
       if (window) {
         window.addEventListener('keydown', this.keyDown)

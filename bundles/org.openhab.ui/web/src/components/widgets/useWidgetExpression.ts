@@ -163,7 +163,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
       try {
         // we cache the parsed abstract tree to prevent it from being parsed again at runtime
         // if we are in edit-mode according to the context, do not cache because the expression is subject to change
-        if (!exprAst[key] || ctx.editmode) {
+        if (!exprAst[key] || ctx.editmode || ctx.noExpressionCache) {
           exprAst[key] = parse(value.substring(1))
         }
         return evaluate(exprAst[key], {
