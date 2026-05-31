@@ -145,10 +145,12 @@ function linterExtension(mode: string): Extension | null {
         languageOptions: {
           globals: {
             ...globals.node,
-            // context:
+            // rule context:
             ctx: 'readonly',
             event: 'readonly',
             ruleUID: 'readonly',
+            // transformation context:
+            input: 'readonly',
             // openhab-js namespaces:
             Java: 'readonly',
             actions: 'readonly',
