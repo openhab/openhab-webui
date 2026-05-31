@@ -1007,6 +1007,19 @@ export default {
     toggleLogDockFullscreen() {
       if (!useRuntimeStore().showLogDock) this.setLogDockVisible(true)
       this.logDockFullscreen = !this.logDockFullscreen
+      if (!this.logDockFullscreen) {
+        this.$nextTick(() => this.avoidLogDockOverflow())
+      }
+    },
+    avoidLogDockOverflow() {
+      if (this.logDockFullscreen || !useRuntimeStore().showLogDock) return
+
+      const maxHeight = window.innerHeight
+      const currentHeight =
+        this.logDockHeight || parseInt(getComputedStyle(document.documentElement).getPropertyValue('--log-dock-height')) || 300
+      if (currentHeight > maxHeight) {
+        this.logDockHeight = Math.round(maxHeight)
+      }
     },
     startDockResize(ev) {
       const startY = ev.clientY
@@ -1324,6 +1337,7 @@ export default {
 
       if (window) {
         window.addEventListener('keydown', this.keyDown)
+        window.addEventListener('resize', this.avoidLogDockOverflow)
       }
 
       this._panelLayoutListener = () => {
@@ -1343,6 +1357,7 @@ export default {
   beforeUnmount() {
     if (window) {
       window.removeEventListener('keydown', this.keyDown)
+      window.removeEventListener('resize', this.avoidLogDockOverflow)
       if (this._logDockResizeHandlers) {
         const { onMove, onUp, onCancel } = this._logDockResizeHandlers
         window.removeEventListener('pointermove', onMove)
