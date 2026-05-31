@@ -134,6 +134,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
       config: context.value.config,
       editmode: context.value.editmode,
       clipboardtype: context.value.clipboardtype,
+      noExpressionCache: context.value.noExpressionCache,
       parent: context.value.parent
     } satisfies WidgetContext
   })
@@ -157,6 +158,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
       config: context.value.config,
       editmode: context.value.editmode,
       clipboardtype: context.value.clipboardtype,
+      noExpressionCache: context.value.noExpressionCache,
       parent: context.value
     }
   }

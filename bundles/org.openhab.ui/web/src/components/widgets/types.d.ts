@@ -65,6 +65,11 @@ export interface WidgetContext {
    * Whether the widget is displayed in a tab.
    */
   tab?: boolean
+  /**
+   * Disables the widget expression AST-cache.
+   * Useful when expressions change, but `editmode` is not intended.
+   */
+  noExpressionCache?: boolean
 
   parent?: WidgetContext
 }
