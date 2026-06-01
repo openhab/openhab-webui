@@ -51,7 +51,7 @@ export const OhLabelCardDefinition = () =>
       pt(
         'icon',
         'Icon',
-        'Use <code>oh:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-blue" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)'
+        'Use <code>oh:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://www.openhab.org/link/icons">openHAB icon</a>), <code>f7:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>), <code>material:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://jossef.github.io/material-design-icons-iconfont/">Material icon</a>) or <code>iconify:iconSet:iconName</code> (<a class="external text-color-theme-alt" target="_blank" href="https://icon-sets.iconify.design">Iconify icon</a>, requires being online if not in cache)'
       ),
       pt('iconColor', 'Icon Color', 'Not applicable to openHAB icons').a(),
       pn('iconSize', 'Icon Size', 'Size of the icon in px').a(),
@@ -120,7 +120,7 @@ export const OhGaugeCardDefinition = () =>
       pg(
         'gauge',
         'Gauge',
-        'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://framework7.io/vue/gauge.html#gauge-properties">gauge</a>'
+        'Parameters are passed to the underlying <a target="_blank" class="external text-color-theme-alt" href="https://framework7.io/vue/gauge.html#gauge-properties">gauge</a>'
       ),
       GaugeParameters()
     )
@@ -139,7 +139,7 @@ export const OhKnobCardDefinition = () =>
       pg(
         'knob',
         'Knob & Rounded Slider',
-        'Parameters are passed to the underlying <a target="_blank" class="external text-color-blue" href="https://github.com/Artem9989/vue-three-round-slider?tab=readme-ov-file#props">round-slider control</a>'
+        'Parameters are passed to the underlying <a target="_blank" class="external text-color-theme-alt" href="https://github.com/Artem9989/vue-three-round-slider?tab=readme-ov-file#props">round-slider control</a>'
       ),
       KnobParameters()
     )

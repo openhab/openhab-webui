@@ -190,7 +190,7 @@
                     <f7-badge
                       v-if="advancedThingActionsCount"
                       style="margin-left: 2px"
-                      color="blue"
+                      color="theme-alt"
                       class="count-badge"
                       tooltip="Advanced/Expert Thing actions">
                       {{ advancedThingActionsCount }}
@@ -242,7 +242,7 @@
               <f7-list>
                 <f7-list-button
                   v-for="action in actionGroup.actions"
-                  :color="action.verify ? 'yellow' : 'blue'"
+                  :color="action.verify ? 'yellow' : 'theme-alt'"
                   :key="action.name"
                   :title="action.label"
                   @click="action.execute()" />
@@ -254,11 +254,11 @@
         <f7-block v-if="ready" class="block-narrow no-margin-top">
           <f7-col>
             <f7-list>
-              <f7-list-button v-if="offerInstallBinding" color="blue" title="Install Binding" @click="installBinding" />
-              <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
+              <f7-list-button v-if="offerInstallBinding" color="theme-alt" title="Install Binding" @click="installBinding" />
+              <f7-list-button v-if="!error" color="theme-alt" title="Duplicate Thing" @click="duplicateThing" />
               <f7-list-button
                 v-if="!error"
-                color="blue"
+                color="theme-alt"
                 title="Copy File Definition"
                 @click="copyFileDefinitionToClipboard(ObjectType.THING, [thingId])" />
               <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
@@ -281,11 +281,11 @@
               <f7-list-button
                 v-if="isExtensible && editable"
                 class="searchbar-ignore"
-                color="blue"
+                color="theme-alt"
                 title="Add Channel"
                 @click="addChannel()" />
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Equipment to Model" @click="addToModel(true)" />
-              <f7-list-button class="searchbar-ignore" color="blue" title="Add Points to Model" @click="addToModel(false)" />
+              <f7-list-button class="searchbar-ignore" color="theme-alt" title="Add Equipment to Model" @click="addToModel(true)" />
+              <f7-list-button class="searchbar-ignore" color="theme-alt" title="Add Points to Model" @click="addToModel(false)" />
               <f7-list-button
                 v-if="hasLinkedItems"
                 class="searchbar-ignore"

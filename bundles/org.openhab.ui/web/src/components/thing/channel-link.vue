@@ -45,17 +45,17 @@
         <template #after-title>
           <f7-icon v-if="!link.item.editable" f7="lock_fill" size="1rem" color="gray" />
         </template>
-        <!-- <f7-button color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
+        <!-- <f7-button color="theme-alt" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
       </f7-list-item>
     </f7-list-group>
-    <f7-list-item class="searchbar-ignore" link color="blue" subtitle="Add Link to Item..." @click="addLink()">
+    <f7-list-item class="searchbar-ignore" link color="theme-alt" subtitle="Add Link to Item..." @click="addLink()">
       <template #media>
         <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
       </template>
     </f7-list-item>
     <f7-list-button
       class="searchbar-ignore"
-      color="blue"
+      color="theme-alt"
       :title="
         thing.editable && (channelType.parameterGroups.length || channelType.parameters.length) ? 'Configure Channel' : 'Channel Details'
       "
@@ -63,7 +63,7 @@
     <f7-list-button
       v-if="extensible && thing.editable"
       class="searchbar-ignore"
-      color="blue"
+      color="theme-alt"
       title="Duplicate Channel"
       @click="duplicateChannel()" />
     <f7-list-button

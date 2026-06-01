@@ -136,7 +136,7 @@ export default {
             },
             {
               text: 'YAML',
-              color: 'blue',
+              color: 'theme-alt',
               onClick: () => {
                 copyOptions.format = 'YAML'
                 copyOptions.mediaType = 'application/yaml'

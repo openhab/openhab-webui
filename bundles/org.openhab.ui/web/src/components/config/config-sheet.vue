@@ -7,7 +7,7 @@
         <f7-badge
           v-if="advancedNonDefaultCount"
           style="margin-left: 2px"
-          color="blue"
+          color="theme-alt"
           class="count-badge"
           tooltip="Non-default advanced parameter">
           {{ advancedNonDefaultCount }}

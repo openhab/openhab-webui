@@ -6,7 +6,7 @@
     :icon-aurora="icon('aurora')"
     :icon-md="icon('md')"
     :textColor="iconColor"
-    :color="model.item.created !== false ? 'blue' : 'orange'"
+    :color="model.item.created !== false ? 'theme-alt' : 'orange'"
     :selected="itemSelected"
     :opened="model.opened"
     :toggle="canHaveChildren"
@@ -55,7 +55,7 @@
         {{ className }}
         <template v-if="includeItemTags">
           <div v-for="tag in getNonSemanticTags(model.item)" class="semantic-class chip" :key="tag" style="height: 16px; margin-left: 4px">
-            <div class="chip-media bg-color-blue" style="height: 16px; width: 16px">
+            <div class="chip-media bg-color-theme-alt" style="height: 16px; width: 16px">
               <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" style="font-size: 8px; height: 16px; line-height: 16px" />
             </div>
             <div class="chip-label" style="height: 16px; line-height: 16px">

@@ -19,7 +19,7 @@
       class="channel-item"
       :subtitle="c.channel.id + ' (' + getItemType(c.channelType) + ')'"
       :badge="getLinkedItems(c.channel).length || ''"
-      badge-color="blue"
+      badge-color="theme-alt"
       @change="$emit('selected', c.channel, c.channelType)"
       @accordion:beforeopen="openedChannel = c.channelType.id"
       @accordion:close="openedChannel = ''"

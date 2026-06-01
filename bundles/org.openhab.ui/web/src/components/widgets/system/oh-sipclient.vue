@@ -438,7 +438,7 @@ export default {
                 .map((key) => {
                   return {
                     text: this.phonebook.get(key) || key,
-                    color: 'blue',
+                    color: 'theme-alt',
                     onClick: () => {
                       this.call(key)
                     }

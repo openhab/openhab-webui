@@ -30,7 +30,7 @@
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" @click="addMetadata"> Add Metadata </f7-button>
+      <f7-button color="theme-alt" @click="addMetadata"> Add Metadata </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>
@@ -108,7 +108,7 @@ export default {
               ...this.metadataNamespaces.map((n) => {
                 return {
                   text: n.label,
-                  color: 'blue',
+                  color: 'theme-alt',
                   onClick: () => {
                     this.f7router.navigate('/settings/items/' + this.item.name + '/metadata/' + n.name)
                   }
@@ -117,7 +117,7 @@ export default {
             ],
             [
               { label: true, text: 'Custom namespaces' },
-              { color: 'blue', text: 'Enter Custom Namespace...', onClick: this.editCustomMetadata }
+              { color: 'theme-alt', text: 'Enter Custom Namespace...', onClick: this.editCustomMetadata }
             ],
             [{ color: 'red', text: 'Cancel', close: true }]
           ]

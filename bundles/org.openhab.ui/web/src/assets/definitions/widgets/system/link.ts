@@ -5,7 +5,7 @@ export default () => [
   pt(
     'iconF7',
     'Icon',
-    'Framework7 icon to display (<a class="external text-color-blue" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'
+    'Framework7 icon to display (<a class="external text-color-theme-alt" target="_blank" href="https://framework7.io/icons/">Framework7 icon</a>)'
   ),
   pt('iconMaterial', 'Icon', 'Material design icon to display'),
   pt('iconColor', 'Icon Color', 'Color of the icon'),

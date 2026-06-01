@@ -138,13 +138,13 @@
       background #232323 !important
 
 .add-button-icon
-  color: #2196f3
+  color: var(--oh-theme-alt-color)
 
 .link-item-icon
   color: #4cd964
 
 .chevron-icon
-  color: #2196f3
+  color: var(--oh-theme-alt-color)
 
 .faq-title .item-title
   white-space: normal !important

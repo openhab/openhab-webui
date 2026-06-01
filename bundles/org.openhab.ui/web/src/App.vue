@@ -228,10 +228,10 @@
         :text="t('error.notReachable.msg') + '<br/><br/>Error: ' + communicationFailureMsg" />
       <f7-col>
         <f7-list>
-          <f7-list-button color="blue" @click="loadData">
+          <f7-list-button color="theme-alt" @click="loadData">
             {{ t('dialogs.retry') }}
           </f7-list-button>
-          <f7-list-button color="blue" @click="reload">
+          <f7-list-button color="theme-alt" @click="reload">
             {{ t('about.reload.reloadApp') }}
           </f7-list-button>
           <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches">
@@ -302,7 +302,7 @@
       .item-inner:before // chevron
         right var(--f7-list-item-padding-horizontal)
   .currentsection
-    background-color var(--f7-color-blue-tint)
+    background-color var(--oh-theme-alt-color-tint)
     color var(--f7-color-white)
     --f7-list-chevron-icon-color var(--f7-color-white)
     .icon
@@ -381,10 +381,19 @@
     .account
       background #232323 !important
     .currentsection
-      background-color var(--f7-color-blue-shade)
+      background-color var(--oh-theme-alt-color-shade)
   .openhab-logo
     .logo-inner
       background #111111 !important
+
+.menu-sublinks
+  color var(--f7-list-item-footer-text-color)
+  padding-left 0
+  margin-bottom var(--f7-list-margin-vertical)
+  background-color red
+  // --f7-list-item-media-margin 24px
+  // --f7-list-item-padding-horizontal 32px
+  // --f7-list-chevron-icon-color var(--oh-theme-alt-color-tint) !important
 
 .section-toggle
   width 36px
@@ -421,7 +430,7 @@
   cursor ns-resize
   z-index 1
   &:hover
-    background var(--f7-color-blue)
+    background var(--oh-theme-alt-color)
     opacity 0.35
 
 .log-dock.fullscreen

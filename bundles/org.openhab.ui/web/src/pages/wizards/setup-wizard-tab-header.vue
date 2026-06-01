@@ -5,7 +5,7 @@
         <img class="intro-logo" :src="image" type="image/svg+xml" />
       </div>
       <div v-else-if="icon" class="compact-padding">
-        <f7-icon size="48" color="blue" :f7="icon" />
+        <f7-icon size="48" color="theme-alt" :f7="icon" />
       </div>
       {{ title }}
     </f7-login-screen-title>
@@ -13,7 +13,7 @@
   <f7-block v-if="header || link" strong>
     <span class="text" v-html="header" />
     <br v-if="link" />
-    <a v-if="link" class="text-color-blue external" target="_blank" :href="link"> {{ t('setupwizard.' + step + '.link') }}</a>
+    <a v-if="link" class="text-color-theme-alt external" target="_blank" :href="link"> {{ t('setupwizard.' + step + '.link') }}</a>
   </f7-block>
 </template>
 

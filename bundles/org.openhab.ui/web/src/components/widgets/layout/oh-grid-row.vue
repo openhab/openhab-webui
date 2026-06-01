@@ -42,7 +42,7 @@
     </f7-row>
     <!-- <f7-row v-if="context.editmode">
       <f7-col class="display-flex justify-content-left">
-        <f7-button color="blue" text="Add column" icon-f7="rectangle_split_3x1" @click="$emit('add-widget', context.component, 'oh-grid-col')"></f7-button>
+        <f7-button color="theme-alt" text="Add column" icon-f7="rectangle_split_3x1" @click="$emit('add-widget', context.component, 'oh-grid-col')"></f7-button>
       </f7-col>
     </f7-row> -->
   </div>

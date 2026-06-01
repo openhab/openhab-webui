@@ -20,7 +20,7 @@
       <!-- fullscreen fab menu -->
       <template v-if="fullscreen">
         <f7-fab-backdrop />
-        <f7-fab v-if="context.editmode" position="right-bottom" color="blue">
+        <f7-fab v-if="context.editmode" position="right-bottom" color="theme-alt">
           <f7-icon f7="menu" />
           <f7-icon ios="f7:xmark" aurora="f7:xmark" md="material:close" />
           <f7-fab-buttons position="top">

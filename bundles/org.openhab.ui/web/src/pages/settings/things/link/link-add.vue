@@ -108,7 +108,7 @@
         <f7-block-title>Profile</f7-block-title>
         <f7-block-footer class="padding-left padding-right">
           Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
-          <f7-link external color="blue" target="_blank" :href="`${runtimeStore.websiteUrl}/link/profiles`">
+          <f7-link external color="theme-alt" target="_blank" :href="`${runtimeStore.websiteUrl}/link/profiles`">
             Learn more about profiles.
           </f7-link>
         </f7-block-footer>
@@ -144,7 +144,9 @@
 
     <div v-if="ready && profileTypes.length" class="if-aurora display-flex justify-content-center padding margin">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save"> Link </f7-button>
+        <f7-button class="padding-left padding-right" style="width: 150px" color="theme-alt" large raised fill @click="save">
+          Link
+        </f7-button>
       </div>
     </div>
   </f7-page>
