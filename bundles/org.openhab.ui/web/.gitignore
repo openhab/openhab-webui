@@ -2,6 +2,8 @@ node_modules
 www
 stats
 node
+
+public/widget-catalog.json
 report.html
 stats.json
 stats.html
