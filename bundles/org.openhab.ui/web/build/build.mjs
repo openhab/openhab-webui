@@ -21,6 +21,9 @@ spinner.start()
 
 exec(`npm run generate-build-info ${process.argv[2]}`)
   .then(() => {
+    return exec('npm run generate-widget-catalog')
+  })
+  .then(() => {
     return rm(outPath)
   })
   .then(() => {
