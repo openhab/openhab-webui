@@ -30,7 +30,7 @@
           Remove {{ selectedItems.length }}
         </f7-link>
         <f7-link
-          color="blue"
+          color="theme-alt"
           class="copy display-flex flex-direction-row"
           @click="copySelectedItemsToClipboard"
           icon-ios="f7:square_on_square"
@@ -85,7 +85,7 @@
             :title="widget.uid">
             <template #subtitle>
               <div>
-                <f7-chip v-for="tag in widget.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                <f7-chip v-for="tag in widget.tags" :key="tag" :text="tag" media-bg-color="theme-alt" style="margin-right: 6px">
                   <template #media>
                     <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                   </template>
@@ -107,7 +107,7 @@
       </f7-col>
     </f7-block>
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue" href="add">
+      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>

@@ -32,7 +32,7 @@
               title="Things"
               :badge="inboxCount > 0 ? inboxCount : undefined"
               :after="inboxCount > 0 ? thingsCount + '+' : thingsCount"
-              :badge-color="inboxCount ? 'red' : 'blue'"
+              :badge-color="inboxCount ? 'red' : 'theme-alt'"
               :footer="objectsSubtitles.things">
               <template #media>
                 <f7-icon f7="lightbulb" color="gray" />
@@ -43,7 +43,7 @@
               media-item
               link="model/"
               title="Model"
-              badge-color="blue"
+              badge-color="theme-alt"
               :footer="objectsSubtitles.model"
               @click="modelSelectedItem = null">
               <template #media>
@@ -56,7 +56,7 @@
               link="items/"
               title="Items"
               :after="itemsCount"
-              badge-color="blue"
+              badge-color="theme-alt"
               :footer="objectsSubtitles.items">
               <template #media>
                 <f7-icon f7="square_on_circle" color="gray" />
@@ -70,13 +70,13 @@
               link="transformations/"
               title="Transformations"
               :after="transformationsCount"
-              badge-color="blue"
+              badge-color="theme-alt"
               :footer="objectsSubtitles.transform">
               <template #media>
                 <f7-icon f7="function" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item media-item link="persistence/" title="Persistence" badge-color="blue" :footer="objectsSubtitles.persistence">
+            <f7-list-item media-item link="persistence/" title="Persistence" badge-color="theme-alt" :footer="objectsSubtitles.persistence">
               <template #media>
                 <f7-icon f7="download_circle" color="gray" />
               </template>
@@ -89,7 +89,7 @@
               link="pages/"
               title="Pages"
               :after="componentsStore.pages().length"
-              badge-color="blue"
+              badge-color="theme-alt"
               :footer="objectsSubtitles.pages">
               <template #media>
                 <f7-icon f7="tv" color="gray" />
@@ -101,7 +101,7 @@
               link="sitemaps/"
               title="Sitemaps"
               :after="sitemapsCount"
-              badge-color="blue"
+              badge-color="theme-alt"
               :footer="objectsSubtitles.sitemaps">
               <template #media>
                 <f7-icon f7="menu" color="gray" />
@@ -110,7 +110,13 @@
           </f7-list>
           <f7-block-title v-if="runtimeStore.apiEndpoint('rules')"> Automation </f7-block-title>
           <f7-list media-list class="search-list">
-            <f7-list-item media-item link="rules/" title="Rules" :after="rulesCount" badge-color="blue" :footer="objectsSubtitles.rules">
+            <f7-list-item
+              media-item
+              link="rules/"
+              title="Rules"
+              :after="rulesCount"
+              badge-color="theme-alt"
+              :footer="objectsSubtitles.rules">
               <template #media>
                 <f7-icon f7="wand_stars" color="gray" />
               </template>
@@ -120,7 +126,7 @@
               link="scenes/"
               title="Scenes"
               :after="scenesCount"
-              badge-color="blue"
+              badge-color="theme-alt"
               :footer="objectsSubtitles.scenes">
               <template #media>
                 <f7-icon f7="film" color="gray" />
@@ -131,13 +137,13 @@
               link="scripts/"
               title="Scripts"
               :after="scriptsCount"
-              badge-color="blue"
+              badge-color="theme-alt"
               :footer="objectsSubtitles.scripts">
               <template #media>
                 <f7-icon f7="doc_plaintext" color="gray" />
               </template>
             </f7-list-item>
-            <f7-list-item media-item link="schedule/" title="Schedule" badge-color="blue" :footer="objectsSubtitles.schedule">
+            <f7-list-item media-item link="schedule/" title="Schedule" badge-color="theme-alt" :footer="objectsSubtitles.schedule">
               <template #media>
                 <f7-icon f7="calendar" color="gray" />
               </template>
@@ -154,7 +160,7 @@
                 :key="service.id"
                 :link="'services/' + service.id"
                 :title="service.label" />
-              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
+              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="theme-alt" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>

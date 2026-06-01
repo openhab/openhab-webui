@@ -19,7 +19,7 @@
           <f7-link
             v-if="defaultSlots.length > 0"
             href="#"
-            class="text-color-blue display-flex flex-direction-column margin-right"
+            class="text-color-theme-alt display-flex flex-direction-column margin-right"
             :popover-close="'.item-popover-' + uid"
             @click="context.editmode.configureWidget(defaultSlots[0], context)"
             icon-f7="square_pencil">
@@ -28,7 +28,7 @@
           <f7-link
             v-if="defaultSlots.length > 0"
             href="#"
-            class="text-color-blue display-flex flex-direction-column margin-right"
+            class="text-color-theme-alt display-flex flex-direction-column margin-right"
             :popover-close="'.item-popover-' + uid"
             @click="context.editmode.editWidgetCode(defaultSlots[0], context)"
             icon-f7="doc_text">

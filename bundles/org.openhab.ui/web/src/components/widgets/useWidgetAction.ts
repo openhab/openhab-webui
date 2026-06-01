@@ -81,7 +81,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
           f7.actions
             .create({
               buttons: [
-                [{ text: confirmConfig.text, color: confirmConfig.color || 'blue', onClick: () => resolve() }],
+                [{ text: confirmConfig.text, color: confirmConfig.color || 'theme-alt', onClick: () => resolve() }],
                 // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
                 [{ text: t('dialogs.cancel'), color: 'red', onClick: () => reject() }]
               ]
@@ -248,7 +248,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
                     }
                     return {
                       text: label || cmd,
-                      color: 'blue',
+                      color: 'theme-alt',
                       onClick: () => {
                         void statesStore.sendCommand(actionCommandOptionsItem, cmd).then(() => showActionFeedback(prefix, actionConfig))
                       }
@@ -262,7 +262,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
                     return item.commandDescription.commandOptions.map((cd) => {
                       return {
                         text: cd.label || cd.command,
-                        color: 'blue',
+                        color: 'theme-alt',
                         onClick: () => {
                           void statesStore
                             .sendCommand(actionCommandOptionsItem, cd.command)

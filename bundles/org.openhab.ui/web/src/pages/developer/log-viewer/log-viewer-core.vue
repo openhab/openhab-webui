@@ -11,7 +11,7 @@
         @scroll="handleScroll"
         @auto-size-column="autoSizeColumn" />
     </f7-card>
-    <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-blue" @click="showLatestLogs()">
+    <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-theme-alt" @click="showLatestLogs()">
       <f7-icon f7="arrow_down_to_line" />
     </button>
   </div>

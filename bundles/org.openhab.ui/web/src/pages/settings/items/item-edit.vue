@@ -30,7 +30,7 @@
               text="Create"
               style="width: 150px"
               class="margin-horizontal"
-              color="blue"
+              color="theme-alt"
               raised
               fill
               @click="save" />
@@ -39,11 +39,11 @@
               text="Save"
               style="width: 150px"
               class="margin-horizontal"
-              color="blue"
+              color="theme-alt"
               raised
               fill
               @click="save" />
-            <f7-button :text="editable ? 'Cancel' : 'Back'" color="blue" @click="f7router.back()" />
+            <f7-button :text="editable ? 'Cancel' : 'Back'" color="theme-alt" @click="f7router.back()" />
           </div>
         </f7-block>
       </f7-tab>

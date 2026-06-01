@@ -141,7 +141,7 @@
         <f7-button
           large
           fill
-          color="blue"
+          color="theme-alt"
           external
           :href="`${runtimeStore.websiteUrl}/link/${type.toLowerCase()}`"
           target="_blank"
@@ -197,7 +197,7 @@
                       <f7-icon ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
                     </template>
                   </f7-chip>
-                  <f7-chip v-for="tag in displayedTags(rule)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                  <f7-chip v-for="tag in displayedTags(rule)" :key="tag" :text="tag" media-bg-color="theme-alt" style="margin-right: 6px">
                     <template #media>
                       <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                     </template>
@@ -215,7 +215,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue" href="add">
+      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>

@@ -33,7 +33,7 @@
           icon-ios="f7:play_round"
           icon-md="f7:play_round"
           icon-aurora="f7:play_round"
-          :color="rule.status.status === 'IDLE' && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
+          :color="rule.status.status === 'IDLE' && isMimeTypeAvailable(mode) ? 'theme-alt' : 'gray'"
           @click="runNow" />
         <f7-link
           v-else
@@ -50,7 +50,7 @@
           icon-ios="f7:play_round"
           icon-md="f7:play_round"
           icon-aurora="f7:play_round"
-          :color="rule.status.status === 'IDLE' && isMimeTypeAvailable(mode) ? 'blue' : 'gray'"
+          :color="rule.status.status === 'IDLE' && isMimeTypeAvailable(mode) ? 'theme-alt' : 'gray'"
           @click="runNow" />
         <f7-chip
           v-if="currentModule && currentModule.configuration.script"
@@ -69,7 +69,7 @@
                 :key="renderer"
                 :title="renderer"
                 style="text-transform: capitalize"
-                color="blue"
+                color="theme-alt"
                 radio
                 :checked="renderer === blocklyRenderer"
                 @click="setBlocklyRenderer(renderer)" />
@@ -77,14 +77,14 @@
               <f7-list-item
                 v-if="!$device.desktop"
                 title="As Labels"
-                color="blue"
+                color="theme-alt"
                 radio
                 :checked="blocklyShowLabels"
                 @click="setBlocklyShowLabels(true)" />
               <f7-list-item
                 v-if="!$device.desktop"
                 title="As Item IDs"
-                color="blue"
+                color="theme-alt"
                 radio
                 :checked="!blocklyShowLabels"
                 @click="setBlocklyShowLabels(false)" />
@@ -146,13 +146,13 @@
         </template>
         <f7-link
           v-if="documentationLink(mode) && !isBlockly"
-          icon-color="blue"
+          icon-color="theme-alt"
           :text="$device.desktop ? 'Open Documentation' : 'Docs'"
           tooltip="Open documentation"
           icon-ios="f7:question_circle"
           icon-md="f7:question_circle"
           icon-aurora="f7:question_circle"
-          color="blue"
+          color="theme-alt"
           :href="runtimeStore.websiteUrl + documentationLink(mode)"
           target="_blank"
           external />
@@ -221,7 +221,7 @@
       </f7-block>
       <div v-if="createMode" class="if-aurora display-flex justify-content-center margin padding">
         <div class="flex-shrink-0">
-          <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="createScript">
+          <f7-button class="padding-left padding-right" style="width: 150px" color="theme-alt" large raised fill @click="createScript">
             Create Script
           </f7-button>
         </div>
@@ -230,7 +230,7 @@
       <f7-fab
         v-show="!createMode && !script && mode === 'application/javascript' && !isBlockly"
         position="center-bottom"
-        color="blue"
+        color="theme-alt"
         @click="convertToBlockly"
         text="Design with Blockly">
         <f7-icon f7="ticket_fill" />
@@ -265,7 +265,7 @@
           <f7-block v-if="editable && isScriptRule" class="block-narrow">
             <f7-col>
               <f7-list>
-                <f7-list-button color="blue" @click="duplicateRule"> Duplicate Script </f7-list-button>
+                <f7-list-button color="theme-alt" @click="duplicateRule"> Duplicate Script </f7-list-button>
                 <f7-list-button color="red" @click="deleteRule"> Remove Script </f7-list-button>
               </f7-list>
             </f7-col>

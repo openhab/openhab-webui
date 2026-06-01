@@ -45,14 +45,14 @@
             <f7-link
               v-if="isPinned('items', item, 'name')"
               @click="$emit('unpin', 'items', item, 'name')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
             <f7-link v-else @click="$emit('pin', 'items', item, 'name')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('items')" color="blue" @click="expandedTypes.items = true"> Show All </f7-list-button>
+        <f7-list-button v-if="!showingAll('items')" color="theme-alt" @click="expandedTypes.items = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
     <!-- Things -->
@@ -78,14 +78,14 @@
             <f7-link
               v-if="isPinned('things', thing, 'UID')"
               @click="$emit('unpin', 'things', thing, 'UID')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
             <f7-link v-else @click="$emit('pin', 'things', thing, 'UID')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('things')" color="blue" @click="expandedTypes.things = true"> Show All </f7-list-button>
+        <f7-list-button v-if="!showingAll('things')" color="theme-alt" @click="expandedTypes.things = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
     <!-- Rules -->
@@ -117,14 +117,14 @@
             <f7-link
               v-if="isPinned('rules', rule, 'uid')"
               @click="$emit('unpin', 'rules', rule, 'uid')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
             <f7-link v-else @click="$emit('pin', 'rules', rule, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('rules')" color="blue" @click="expandedTypes.rules = true"> Show All </f7-list-button>
+        <f7-list-button v-if="!showingAll('rules')" color="theme-alt" @click="expandedTypes.rules = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
     <!-- Scenes -->
@@ -156,14 +156,14 @@
             <f7-link
               v-if="isPinned('scenes', rule, 'uid')"
               @click="$emit('unpin', 'scenes', rule, 'uid')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
             <f7-link v-else @click="$emit('pin', 'scenes', rule, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('rules')" color="blue" @click="expandedTypes.rules = true"> Show All </f7-list-button>
+        <f7-list-button v-if="!showingAll('rules')" color="theme-alt" @click="expandedTypes.rules = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
     <!-- Scripts -->
@@ -195,14 +195,14 @@
             <f7-link
               v-if="isPinned('scripts', rule, 'uid')"
               @click="$emit('unpin', 'scripts', rule, 'uid')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
             <f7-link v-else @click="$emit('pin', 'scripts', rule, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('rules')" color="blue" @click="expandedTypes.rules = true"> Show All </f7-list-button>
+        <f7-list-button v-if="!showingAll('rules')" color="theme-alt" @click="expandedTypes.rules = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
     <!-- Pages -->
@@ -234,14 +234,14 @@
             <f7-link
               v-if="isPinned('pages', page, 'uid')"
               @click="$emit('unpin', 'pages', page, 'uid')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
             <f7-link v-else @click="$emit('pin', 'pages', page, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('pages')" color="blue" @click="expandedTypes.pages = true"> Show All </f7-list-button>
+        <f7-list-button v-if="!showingAll('pages')" color="theme-alt" @click="expandedTypes.pages = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
     <!-- Widgets -->
@@ -272,14 +272,14 @@
             <f7-link
               v-if="isPinned('widgets', widget, 'uid')"
               @click="$emit('unpin', 'widgets', widget, 'uid')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
             <f7-link v-else @click="$emit('pin', 'widgets', widget, 'uid')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('widgets')" color="blue" @click="expandedTypes.widgets = true"> Show All </f7-list-button>
+        <f7-list-button v-if="!showingAll('widgets')" color="theme-alt" @click="expandedTypes.widgets = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
     <!-- Transformations -->
@@ -311,7 +311,7 @@
             <f7-link
               v-if="isPinned('transformations', transformation, 'uid')"
               @click="$emit('unpin', 'transformations', transformation, 'uid')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
@@ -324,7 +324,7 @@
               tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('transformations')" color="blue" @click="expandedTypes.transformations = true">
+        <f7-list-button v-if="!showingAll('transformations')" color="theme-alt" @click="expandedTypes.transformations = true">
           Show All
         </f7-list-button>
       </f7-list>
@@ -358,7 +358,7 @@
             <f7-link
               v-if="isPinned('persistenceConfigs', persistenceConfig, 'serviceId')"
               @click="$emit('unpin', 'persistenceConfigs', persistenceConfig, 'serviceId')"
-              color="blue"
+              color="theme-alt"
               icon-f7="pin_fill"
               icon-size="18"
               tooltip="Unpin" />
@@ -371,7 +371,7 @@
               tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('persistenceConfigs')" color="blue" @click="expandedTypes.persistenceConfigs = true">
+        <f7-list-button v-if="!showingAll('persistenceConfigs')" color="theme-alt" @click="expandedTypes.persistenceConfigs = true">
           Show All
         </f7-list-button>
       </f7-list>

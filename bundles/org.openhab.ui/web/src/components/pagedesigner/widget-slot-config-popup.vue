@@ -33,7 +33,7 @@
             @updated="dirty = true" />
           <f7-block v-else strong> This type of component cannot be configured: {{ slotComponent.component }}. </f7-block>
           <f7-list>
-            <f7-list-button v-if="!readOnly" color="blue" @click="editWidgetCode(slotComponent)"> Edit YAML </f7-list-button>
+            <f7-list-button v-if="!readOnly" color="theme-alt" @click="editWidgetCode(slotComponent)"> Edit YAML </f7-list-button>
             <!-- prettier-ignore  -->
             <f7-list-button
               v-if="!readOnly"

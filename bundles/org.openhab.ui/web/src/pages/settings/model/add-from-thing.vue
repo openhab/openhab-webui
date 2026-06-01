@@ -57,7 +57,7 @@
             <f7-list-group>
               <item-picker
                 :label="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
-                textColor="blue"
+                textcolor="theme-alt"
                 :hideIcon="true"
                 :items="selectableGroups"
                 :multiple="false"
@@ -80,7 +80,7 @@
             class and related property.<br /><br />
             The newly created Points will be linked to their respective channels with the default profile (you will be able to configure the
             links individually later if needed).
-            <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="blue"> Expert Mode </f7-link>
+            <f7-link class="display-block margin-top-half" @click="switchToExpertMode" color="theme-alt"> Expert Mode </f7-link>
           </f7-block-footer>
           <channel-list
             :thing="selectedThing"
@@ -97,7 +97,7 @@
 
     <div v-if="ready && selectedThing.UID" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="add">
+        <f7-button class="padding-left padding-right" style="width: 150px" color="theme-alt" large raised fill @click="add">
           Add to Model
         </f7-button>
       </div>

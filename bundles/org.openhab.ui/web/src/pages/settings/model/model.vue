@@ -76,7 +76,7 @@
           <f7-block v-if="empty">
             <empty-state-placeholder icon="list_bullet_indent" title="model.title" text="model.text" />
             <f7-row class="display-flex justify-content-center">
-              <f7-button color="blue" large raised fill @click="addFromLocationTemplate()"> Add Locations from Template </f7-button>
+              <f7-button color="theme-alt" large raised fill @click="addFromLocationTemplate()"> Add Locations from Template </f7-button>
             </f7-row>
           </f7-block>
 
@@ -123,14 +123,14 @@
                 <f7-list>
                   <f7-list-button
                     v-show="!selectedItem || selectedItem.class.indexOf('Location') === 0"
-                    color="blue"
+                    color="theme-alt"
                     title="Add Location"
                     @click="addSemanticItem('Location')" />
-                  <f7-list-button color="blue" title="Create Equipment from Thing" @click="addFromThing(true)" />
-                  <f7-list-button color="blue" title="Create Points from Thing" @click="addFromThing(false)" />
-                  <f7-list-button color="blue" title="Add Equipment" @click="addSemanticItem('Equipment')" />
-                  <f7-list-button color="blue" title="Add Point" @click="addSemanticItem('Point')" />
-                  <f7-list-button v-if="includeNonSemantic" color="blue" title="Add Item" @click="addNonSemanticItem(false)" />
+                  <f7-list-button color="theme-alt" title="Create Equipment from Thing" @click="addFromThing(true)" />
+                  <f7-list-button color="theme-alt" title="Create Points from Thing" @click="addFromThing(false)" />
+                  <f7-list-button color="theme-alt" title="Add Equipment" @click="addSemanticItem('Equipment')" />
+                  <f7-list-button color="theme-alt" title="Add Point" @click="addSemanticItem('Point')" />
+                  <f7-list-button v-if="includeNonSemantic" color="theme-alt" title="Add Item" @click="addNonSemanticItem(false)" />
                 </f7-list>
               </f7-card-content>
             </f7-card>
@@ -147,7 +147,7 @@
         "
         class="add-to-model-fab"
         position="right-bottom"
-        color="blue">
+        color="theme-alt">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
         <f7-fab-buttons position="top">

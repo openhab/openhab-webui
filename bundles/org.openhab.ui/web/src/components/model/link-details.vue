@@ -25,7 +25,7 @@
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button color="blue" @click="addLink"> Add Link </f7-button>
+      <f7-button color="theme-alt" @click="addLink"> Add Link </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>

@@ -29,7 +29,7 @@
       </f7-col>
     </f7-row>
     <f7-list>
-      <f7-list-button title="Show All" color="blue" @click="$emit('show-advanced')" />
+      <f7-list-button title="Show All" color="theme-alt" @click="$emit('show-advanced')" />
     </f7-list>
   </f7-block>
   <f7-block v-else-if="category === 'item'" class="no-margin no-padding">

@@ -5,7 +5,7 @@
     :label="widgetConfigLabel()"
     :icon-f7="widgetTypeIcon()"
     :textColor="iconColor"
-    :color="'blue'"
+    :color="'theme-alt'"
     :selected="selected && selected === widget ? true : null"
     :opened="!widget.closed"
     :toggle="canHaveChildren"

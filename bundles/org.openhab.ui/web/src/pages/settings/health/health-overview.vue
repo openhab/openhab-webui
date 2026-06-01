@@ -24,7 +24,7 @@
             title="Orphan Links"
             :badge="orphanLinksCount > 0 ? orphanLinksCount : undefined"
             :after="orphanLinksCount > 0 ? undefined : orphanLinksCount"
-            :badge-color="orphanLinksCount ? 'red' : 'blue'"
+            :badge-color="orphanLinksCount ? 'red' : 'theme-alt'"
             :footer="objectsSubtitles.orphanLinks">
             <template #media>
               <f7-icon f7="link" color="gray" />
@@ -37,7 +37,7 @@
             title="Semantic Model Conflicts"
             :badge="semanticsProblemCount > 0 ? semanticsProblemCount : undefined"
             :after="semanticsProblemCount > 0 ? undefined : semanticsProblemCount"
-            :badge-color="semanticsProblemCount ? 'red' : 'blue'"
+            :badge-color="semanticsProblemCount ? 'red' : 'theme-alt'"
             :footer="objectsSubtitles.semanticsProblems">
             <template #media>
               <f7-icon f7="list_bullet_indent" color="gray" />
@@ -55,7 +55,7 @@
             title="Persistence Problems"
             :badge="persistenceProblemsCount > 0 ? persistenceProblemsCount : undefined"
             :after="persistenceProblemsCount > 0 ? undefined : persistenceProblemsCount"
-            :badge-color="persistenceProblemsCount ? 'red' : 'blue'"
+            :badge-color="persistenceProblemsCount ? 'red' : 'theme-alt'"
             :footer="objectsSubtitles.persistenceProblems">
             <template #media>
               <f7-icon f7="link" color="gray" />

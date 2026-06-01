@@ -53,7 +53,7 @@
         <f7-block v-if="!isAnythingPinned" class="no-margin no-padding">
           <p class="padding-horizontal">Use the search box above or the button below to temporarily pin objects here for quick access.</p>
           <p class="padding-horizontal">
-            <f7-button fill color="blue" @click="openModelPicker"> Pin Items from Model </f7-button>
+            <f7-button fill color="theme-alt" @click="openModelPicker"> Pin Items from Model </f7-button>
           </p>
         </f7-block>
         <!-- Pinned Items -->
@@ -93,7 +93,7 @@
                       :animate="false" />
                     <f7-link
                       class="itemlist-actions"
-                      color="blue"
+                      color="theme-alt"
                       icon-f7="pin_fill"
                       icon-size="18"
                       tooltip="Unpin"
@@ -146,7 +146,7 @@
                       tooltip="Edit"
                       :href="'/settings/things/' + thing.UID"
                       :animate="false" />
-                    <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('things', thing, 'UID')" />
+                    <f7-link color="theme-alt" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('things', thing, 'UID')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -188,7 +188,7 @@
                       @click="toggleRuleDisabled(rule)" />
                     <f7-link
                       class="margin-right"
-                      :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
+                      :color="rule.status.status === 'IDLE' ? 'theme-alt' : 'gray'"
                       icon-f7="play"
                       icon-size="18"
                       tooltip="Run"
@@ -201,7 +201,7 @@
                       tooltip="Edit"
                       :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
                       :animate="false" />
-                    <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
+                    <f7-link color="theme-alt" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('rules', rule, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -243,7 +243,7 @@
                       @click="toggleRuleDisabled(rule, 'Scene')" />
                     <f7-link
                       class="margin-right"
-                      :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
+                      :color="rule.status.status === 'IDLE' ? 'theme-alt' : 'gray'"
                       icon-f7="play"
                       icon-size="18"
                       tooltip="Run"
@@ -256,7 +256,7 @@
                       tooltip="Edit"
                       :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
                       :animate="false" />
-                    <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('scenes', rule, 'uid')" />
+                    <f7-link color="theme-alt" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('scenes', rule, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -298,7 +298,7 @@
                       @click="toggleRuleDisabled(rule, 'Script')" />
                     <f7-link
                       class="margin-right"
-                      :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
+                      :color="rule.status.status === 'IDLE' ? 'theme-alt' : 'gray'"
                       icon-f7="play"
                       icon-size="18"
                       tooltip="Run"
@@ -311,7 +311,7 @@
                       tooltip="Edit"
                       :href="'/settings/' + (rule.tags.indexOf('Script') >= 0 ? 'scripts' : 'rules') + '/' + rule.uid"
                       :animate="false" />
-                    <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('scripts', rule, 'uid')" />
+                    <f7-link color="theme-alt" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('scripts', rule, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -339,10 +339,10 @@
                     <f7-link color="gray" class="margin-right">
                       <clipboard-icon :value="page.uid" :size="18" tooltip="Copy Page UID" />
                     </f7-link>
-                    <!-- <f7-link class="margin-right" color="blue" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
+                    <!-- <f7-link class="margin-right" color="theme-alt" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
                     <f7-link
                       class="margin-right"
-                      color="blue"
+                      color="theme-alt"
                       icon-f7="play"
                       icon-size="18"
                       tooltip="View"
@@ -356,7 +356,7 @@
                       tooltip="Edit"
                       :href="'/settings/pages/' + getPageType(page).type + '/' + page.uid"
                       :animate="false" />
-                    <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('pages', page, 'uid')" />
+                    <f7-link color="theme-alt" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('pages', page, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -387,7 +387,7 @@
                       tooltip="Edit"
                       :href="'/developer/widgets/' + widget.uid"
                       :animate="false" />
-                    <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('widgets', widget, 'uid')" />
+                    <f7-link color="theme-alt" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('widgets', widget, 'uid')" />
                   </div>
                 </template>
               </f7-list-item>
@@ -424,7 +424,7 @@
                       :href="'/settings/transformations/' + transformation.uid"
                       :animate="false" />
                     <f7-link
-                      color="blue"
+                      color="theme-alt"
                       icon-f7="pin_fill"
                       icon-size="18"
                       tooltip="Unpin"
@@ -465,7 +465,7 @@
                       :href="'/settings/persistence/' + persistenceConfig.serviceId"
                       :animate="false" />
                     <f7-link
-                      color="blue"
+                      color="theme-alt"
                       icon-f7="pin_fill"
                       icon-size="18"
                       tooltip="Unpin"
@@ -484,7 +484,7 @@
             <span>Event Monitor</span>
             <span style="margin-left: auto">
               <f7-link
-                :color="eventTopicFilter ? 'blue' : 'gray'"
+                :color="eventTopicFilter ? 'theme-alt' : 'gray'"
                 :icon-f7="eventTopicFilter ? 'line_horizontal_3_decrease_circle_fill' : 'line_horizontal_3_decrease_circle'"
                 icon-size="14"
                 tooltip="Filter topics"
@@ -493,7 +493,7 @@
           </f7-block-title>
           <f7-block>
             <p v-if="!sseClient">
-              <f7-button fill color="blue" @click="startSSE"> Stream Events </f7-button>
+              <f7-button fill color="theme-alt" @click="startSSE"> Stream Events </f7-button>
             </p>
             <p v-if="sseClient">
               <f7-button fill color="red" @click="stopSSE"> Stop Streaming </f7-button>
@@ -534,7 +534,7 @@
         <f7-block class="no-margin no-padding">
           <f7-block-title class="padding-horizontal"> Scripting Scratchpad </f7-block-title>
           <f7-list>
-            <f7-list-button @click="openScriptingScratchpad" color="blue"> Open Scratchpad </f7-list-button>
+            <f7-list-button @click="openScriptingScratchpad" color="theme-alt"> Open Scratchpad </f7-list-button>
           </f7-list>
         </f7-block>
       </div>
@@ -546,28 +546,28 @@
         <f7-block class="no-margin no-padding">
           <f7-list>
             <f7-list-item divider title="Things" />
-            <f7-list-button href="/settings/things/add" color="blue" :animate="false"> Add Thing </f7-list-button>
-            <f7-list-button @click="quickAddThing" color="blue"> Add Thing (quick) </f7-list-button>
-            <f7-list-button href="/settings/things/inbox" color="blue" :animate="false"> Inbox </f7-list-button>
+            <f7-list-button href="/settings/things/add" color="theme-alt" :animate="false"> Add Thing </f7-list-button>
+            <f7-list-button @click="quickAddThing" color="theme-alt"> Add Thing (quick) </f7-list-button>
+            <f7-list-button href="/settings/things/inbox" color="theme-alt" :animate="false"> Inbox </f7-list-button>
             <f7-list-item divider title="Items" />
-            <f7-list-button href="/settings/items/add" color="blue" :animate="false"> Create Item </f7-list-button>
-            <f7-list-button href="/settings/items/add-from-textual-definition" color="blue" :animate="false">
+            <f7-list-button href="/settings/items/add" color="theme-alt" :animate="false"> Create Item </f7-list-button>
+            <f7-list-button href="/settings/items/add-from-textual-definition" color="theme-alt" :animate="false">
               Add Items (textual)
             </f7-list-button>
             <f7-list-item divider title="Pages" />
-            <f7-list-button href="/settings/pages/layout/add" color="blue" :animate="false"> Create layout page </f7-list-button>
-            <f7-list-button href="/settings/pages/tabs/add" color="blue" :animate="false"> Create tabbed page </f7-list-button>
-            <f7-list-button href="/settings/pages/map/add" color="blue" :animate="false"> Create map view </f7-list-button>
-            <f7-list-button href="/settings/pages/plan/add" color="blue" :animate="false"> Create floor plan </f7-list-button>
-            <f7-list-button href="/settings/pages/chart/add" color="blue" :animate="false"> Create chart </f7-list-button>
-            <f7-list-button href="/settings/sitemaps/add" color="blue" :animate="false"> Create sitemap </f7-list-button>
+            <f7-list-button href="/settings/pages/layout/add" color="theme-alt" :animate="false"> Create layout page </f7-list-button>
+            <f7-list-button href="/settings/pages/tabs/add" color="theme-alt" :animate="false"> Create tabbed page </f7-list-button>
+            <f7-list-button href="/settings/pages/map/add" color="theme-alt" :animate="false"> Create map view </f7-list-button>
+            <f7-list-button href="/settings/pages/plan/add" color="theme-alt" :animate="false"> Create floor plan </f7-list-button>
+            <f7-list-button href="/settings/pages/chart/add" color="theme-alt" :animate="false"> Create chart </f7-list-button>
+            <f7-list-button href="/settings/sitemaps/add" color="theme-alt" :animate="false"> Create sitemap </f7-list-button>
             <f7-list-item divider title="Automation" />
-            <f7-list-button href="/settings/rules/add" color="blue" :animate="false"> Create rule </f7-list-button>
-            <f7-list-button href="/settings/scripts/add" color="blue" :animate="false"> Create script </f7-list-button>
-            <f7-list-button href="/settings/schedule/add" color="blue" :animate="false"> Create scheduled rule </f7-list-button>
+            <f7-list-button href="/settings/rules/add" color="theme-alt" :animate="false"> Create rule </f7-list-button>
+            <f7-list-button href="/settings/scripts/add" color="theme-alt" :animate="false"> Create script </f7-list-button>
+            <f7-list-button href="/settings/schedule/add" color="theme-alt" :animate="false"> Create scheduled rule </f7-list-button>
             <f7-list-item divider title="Advanced" />
-            <f7-list-button href="/developer/widgets/add" color="blue" :animate="false"> Create widget </f7-list-button>
-            <f7-list-button href="/developer/blocks/add" color="blue" :animate="false"> Create block library </f7-list-button>
+            <f7-list-button href="/developer/widgets/add" color="theme-alt" :animate="false"> Create widget </f7-list-button>
+            <f7-list-button href="/developer/blocks/add" color="theme-alt" :animate="false"> Create block library </f7-list-button>
           </f7-list>
         </f7-block>
       </div>
@@ -1075,7 +1075,7 @@ export default {
                     ...languages.map((l) => {
                       return {
                         text: l.label,
-                        color: 'blue',
+                        color: 'theme-alt',
                         onClick: () => {
                           const scratchpad = {
                             uid: 'scratchpad',

@@ -27,7 +27,7 @@
       @click="copy"
       icon-ios="f7:square_on_square"
       icon-aurora="f7:square_on_square"
-      color="blue"
+      color="theme-alt"
       class="copy display-flex flex-direction-row">
       &nbsp;Copy
     </f7-button>

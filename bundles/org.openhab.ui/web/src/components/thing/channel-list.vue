@@ -69,7 +69,7 @@
                 <item-picker
                   v-if="isChecked(channel) && hasLinks(channel)"
                   :label="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
-                  textColor="blue"
+                  textcolor="theme-alt"
                   :hideIcon="true"
                   :items="items.filter((i) => channel.linkedItems.includes(i.name))"
                   :multiple="false"
@@ -91,10 +91,10 @@
           </f7-col>
         </f7-row>
         <f7-list v-if="multipleLinksMode">
-          <f7-list-button style="padding-left: 0; text-align: left" color="blue" @click="toggleAllChecks(true, $event)">
+          <f7-list-button style="padding-left: 0; text-align: left" color="theme-alt" @click="toggleAllChecks(true, $event)">
             Select All
           </f7-list-button>
-          <f7-list-button color="blue" @click="toggleAllChecks(false, $event)"> Unselect All </f7-list-button>
+          <f7-list-button color="theme-alt" @click="toggleAllChecks(false, $event)"> Unselect All </f7-list-button>
         </f7-list>
       </f7-block>
     </f7-col>

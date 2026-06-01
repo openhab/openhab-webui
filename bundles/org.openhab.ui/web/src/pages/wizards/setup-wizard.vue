@@ -15,7 +15,7 @@
           icon-ios="f7:arrow_left"
           icon-aurora="f7:arrow_left"
           icon-md="material:arrow_back"
-          color="blue"
+          color="theme-alt"
           @click="handler(prev)" />
       </f7-nav-left>
       <f7-nav-title v-if="currentStep !== 'welcome'" class="wizard-progress-title">
@@ -25,7 +25,7 @@
         </f7-link>
       </f7-nav-title>
       <f7-nav-right>
-        <f7-link icon-ios="f7:xmark" icon-aurora="f7:xmark" icon-md="material:close" color="blue" @click="skipSetup" />
+        <f7-link icon-ios="f7:xmark" icon-aurora="f7:xmark" icon-md="material:close" color="theme-alt" @click="skipSetup" />
       </f7-nav-right>
     </f7-navbar>
 
@@ -103,7 +103,7 @@
             v-if="next && firstStepNotDone && firstStepNotDone !== 'intro'"
             large
             fill
-            color="blue"
+            color="theme-alt"
             :text="t('setupwizard.skipToNext')"
             class="margin-bottom"
             @click="toStep(firstStepNotDone)" />
@@ -111,10 +111,10 @@
             v-if="next"
             large
             :fill="!firstStepNotDone || firstStepNotDone === 'intro'"
-            color="blue"
+            color="theme-alt"
             :text="t('setupwizard.beginSetup')"
             @click="handler(next)" />
-          <f7-button large color="blue" :text="t('setupwizard.skipSetup')" @click="skipSetup" />
+          <f7-button large color="theme-alt" :text="t('setupwizard.skipSetup')" @click="skipSetup" />
         </f7-block>
         <f7-list>
           <f7-list-item :title="t('setupwizard.short')">
@@ -162,10 +162,10 @@
             v-if="updatedLocation && next"
             large
             fill
-            color="blue"
+            color="theme-alt"
             :text="t('setupwizard.' + currentStep + '.next')"
             @click="handler(next)" />
-          <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
+          <f7-button v-if="skip" large color="theme-alt" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
         </f7-block>
       </f7-tab>
 
@@ -191,10 +191,10 @@
             v-if="network && next"
             large
             fill
-            color="blue"
+            color="theme-alt"
             :text="t('setupwizard.' + currentStep + '.next')"
             @click="handler(next)" />
-          <f7-button v-if="skip" large color="blue" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
+          <f7-button v-if="skip" large color="theme-alt" :text="t('setupwizard.skip')" class="margin-top" @click="handler(skip)" />
         </f7-block>
       </f7-tab>
 
@@ -206,7 +206,7 @@
           :image="wizardSteps[currentStep].image"
           :link="wizardSteps[currentStep].link" />
         <f7-block class="display-flex flex-direction-column padding">
-          <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.next')" @click="handler(next)" />
+          <f7-button v-if="next" large fill color="theme-alt" :text="t('setupwizard.next')" @click="handler(next)" />
         </f7-block>
       </f7-tab>
 
@@ -261,13 +261,13 @@
               v-if="!installingAddons && addonSuggestionsReady && toInstallAddons.length > 0 && next"
               large
               fill
-              color="blue"
+              color="theme-alt"
               :text="t('setupwizard.' + currentStep + '.next', toInstallAddons.length)"
               @click="handler(next)" />
             <f7-button
               v-if="!installingAddons && skip"
               large
-              color="blue"
+              color="theme-alt"
               :text="t('setupwizard.' + currentStep + '.skip')"
               class="margin-top"
               @click="handler(skip)" />
@@ -275,7 +275,7 @@
               v-if="installingAddons"
               large
               fill
-              color="blue"
+              color="theme-alt"
               :text="t('setupwizard.addons.cancelInstall')"
               class="margin-top"
               @click="cancelInstall" />
@@ -296,11 +296,17 @@
         </f7-block-footer>
         <f7-block class="padding">
           <div>
-            <f7-button v-if="next" large fill color="blue" :text="t('setupwizard.' + currentStep + '.config')" @click="handler(next)" />
+            <f7-button
+              v-if="next"
+              large
+              fill
+              color="theme-alt"
+              :text="t('setupwizard.' + currentStep + '.config')"
+              @click="handler(next)" />
             <f7-button
               v-if="skip"
               large
-              color="blue"
+              color="theme-alt"
               :text="t('setupwizard.' + currentStep + '.configLater')"
               class="margin-top"
               @click="handler(skip)" />
@@ -332,7 +338,7 @@
               v-if="next"
               large
               :fill="!setupWizardStepsDone.modelLinkClicked"
-              color="blue"
+              color="theme-alt"
               :text="t('setupwizard.welcome.modelLink')"
               :class="{ 'margin-bottom': !setupWizardStepsDone.modelLinkClicked }"
               @click="handler({ ...next, link: '/settings/model/' })" />
@@ -340,14 +346,14 @@
               v-if="next && bindingsInstalled"
               large
               :fill="setupWizardStepsDone.modelLinkClicked && !setupWizardStepsDone.inboxLinkClicked"
-              color="blue"
+              color="theme-alt"
               :text="t('setupwizard.welcome.inboxLink')"
               :class="{ 'margin-bottom': setupWizardStepsDone.modelLinkClicked && !setupWizardStepsDone.inboxLinkClicked }"
               @click="handler({ ...next, link: '/settings/things/inbox' })" />
             <f7-button
               v-if="next"
               large
-              color="blue"
+              color="theme-alt"
               :text="t('setupwizard.welcome.getStarted')"
               @click="handler({ ...next, link: '/' })" />
           </div>
