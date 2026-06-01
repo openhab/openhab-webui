@@ -1,9 +1,9 @@
-// note: this script is run at build time (npm prebuild) to produce widget-catalog.json,
+// Note: this script is run at build time (npm prebuild) to produce widget-catalog.json,
 // a manifest of every WidgetDefinition that ships with the Main UI.
 //
 // The file is served as a static asset from the bundle (UIServlet) at
 // http://<server>:8080/widget-catalog.json and consumed by external tools that need a
-// machine readable inventory of available components and their props/slots without
+// machine-readable inventory of available components and their props/slots without
 // having to parse the TypeScript source. The MCP add-on (org.openhab.io.mcp) fetches
 // this at runtime to give AI agents an authoritative schema for page/widget authoring.
 
@@ -39,9 +39,7 @@ const libraries = [
   {
     name: 'chart-pieces',
     category: 'system',
-    mod: Object.fromEntries(
-      Object.entries(ChartWidgetsDefinitions).map(([k, v]) => [k, v])
-    )
+    mod: Object.fromEntries(Object.entries(ChartWidgetsDefinitions).map(([k, v]) => [k, v]))
   }
 ]
 
@@ -58,8 +56,21 @@ const supplementaryPageTypes = [
       { name: 'hideNavbar', type: 'BOOLEAN', label: 'Hide Navbar', description: 'Hide the top navigation bar.', default: false },
       { name: 'hideSidebarIcon', type: 'BOOLEAN', label: 'Hide Sidebar Icon', default: false },
       { name: 'showFullscreenIcon', type: 'BOOLEAN', label: 'Show Fullscreen Icon', default: false },
-      { name: 'layoutType', type: 'TEXT', label: 'Layout Type', description: "'responsive' (default) or 'fixed' with fixedType set.", default: 'responsive', options: ['responsive', 'fixed'] },
-      { name: 'fixedType', type: 'TEXT', label: 'Fixed Type', description: "'grid' or 'canvas' when layoutType='fixed'.", options: ['grid', 'canvas'] },
+      {
+        name: 'layoutType',
+        type: 'TEXT',
+        label: 'Layout Type',
+        description: "'responsive' (default) or 'fixed' with fixedType set.",
+        default: 'responsive',
+        options: ['responsive', 'fixed']
+      },
+      {
+        name: 'fixedType',
+        type: 'TEXT',
+        label: 'Fixed Type',
+        description: "'grid' or 'canvas' when layoutType='fixed'.",
+        options: ['grid', 'canvas']
+      },
       { name: 'colNum', type: 'INTEGER', label: 'Grid Columns', description: 'Number of columns for fixed-grid layout.', default: 16 },
       { name: 'margin', type: 'INTEGER', label: 'Grid Margin (px)' },
       { name: 'verticalCompact', type: 'BOOLEAN', label: 'Vertical Compact' },
@@ -68,7 +79,8 @@ const supplementaryPageTypes = [
       { name: 'scale', type: 'DECIMAL', label: 'Scale' },
       { name: 'imageUrl', type: 'TEXT', label: 'Background Image URL', description: 'For canvas layouts only.' }
     ],
-    notes: 'For dashboards. Default is responsive — children are oh-block containing cards. Switch to fixed + canvas for absolutely-positioned widgets.'
+    notes:
+      'For dashboards. Default is responsive — children are oh-block containing cards. Switch to fixed + canvas for absolutely-positioned widgets.'
   },
   {
     name: 'oh-tabs-page',
@@ -85,14 +97,7 @@ const supplementaryPageTypes = [
 
 // Page types live across a few directories; collect them explicitly to ensure the
 // 'page-type' category is fully populated.
-const pageTypeMarkers = new Set([
-  'oh-layout-page',
-  'oh-home-page',
-  'oh-tabs-page',
-  'oh-chart-page',
-  'oh-map-page',
-  'oh-plan-page'
-])
+const pageTypeMarkers = new Set(['oh-layout-page', 'oh-home-page', 'oh-tabs-page', 'oh-chart-page', 'oh-map-page', 'oh-plan-page'])
 
 function extractDefinition(value) {
   // Definition exports may be functions returning a WidgetDefinition, or the
@@ -150,11 +155,13 @@ function mapDefinition(def, category) {
   const hasTapholdGroup = groups.some((g) => g.name === 'taphold')
   const notes = []
   if (hasActionGroup) {
-    notes.push(hasTapholdGroup
-      ? 'Supports click and tap-hold actions (see manage_ui_component action grammar reference).'
-      : 'Supports click actions (see manage_ui_component action grammar reference).')
+    notes.push(
+      hasTapholdGroup
+        ? 'Supports click and tap-hold actions (see manage_ui_component action grammar reference).'
+        : 'Supports click actions (see manage_ui_component action grammar reference).'
+    )
   }
-  notes.push("Supports `visible` expression and `visibleTo` role/user gating.")
+  notes.push('Supports `visible` expression and `visibleTo` role/user gating.')
   entry.notes = notes.join(' ')
 
   // Slots are not declared in WidgetDefinition
@@ -180,18 +187,10 @@ const slotOverrides = {
     { name: 'legend', description: 'Chart legend widget.' },
     { name: 'tooltip', description: 'Tooltip widget.' }
   ],
-  'oh-tabs-page': [
-    { name: 'default', description: 'Array of oh-tab children.' }
-  ],
-  'oh-map-page': [
-    { name: 'default', description: 'oh-map-marker / oh-map-circle-marker children.' }
-  ],
-  'oh-plan-page': [
-    { name: 'default', description: 'oh-plan-marker children with pixel coordinates.' }
-  ],
-  'oh-block': [
-    { name: 'default', description: 'Card children (oh-toggle-card, oh-label-card, etc.).' }
-  ]
+  'oh-tabs-page': [{ name: 'default', description: 'Array of oh-tab children.' }],
+  'oh-map-page': [{ name: 'default', description: 'oh-map-marker / oh-map-circle-marker children.' }],
+  'oh-plan-page': [{ name: 'default', description: 'oh-plan-marker children with pixel coordinates.' }],
+  'oh-block': [{ name: 'default', description: 'Card children (oh-toggle-card, oh-label-card, etc.).' }]
 }
 
 function applySlotOverrides(entry) {
