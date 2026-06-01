@@ -11,7 +11,7 @@
       @save="$emit('save')" />
   </div>
 
-  <f7-toolbar bottom class="code-editor-toolbar">
+  <f7-toolbar bottom :class="{ 'code-editor-toolbar': true, 'toolbar-narrow': $f7dim.width < 450 }">
     <f7-segmented>
       <f7-button
         v-for="type in Object.keys(mediaTypes)"
@@ -23,13 +23,15 @@
         {{ type }}
       </f7-button>
     </f7-segmented>
+    <slot name="additional-panel-controls" />
     <f7-button
       @click="copy"
       icon-ios="f7:square_on_square"
       icon-aurora="f7:square_on_square"
       color="blue"
+      tooltip="Copy code to clipboard"
       class="copy display-flex flex-direction-row">
-      &nbsp;Copy
+      &nbsp;{{ $f7dim.width < 390 ? '' : 'Copy' }}
     </f7-button>
     <f7-button
       v-if="!readOnly"
@@ -38,8 +40,9 @@
       icon-ios="f7:arrow_2_circlepath"
       icon-aurora="f7:arrow_2_circlepath"
       color="red"
+      tooltip="Revert local changes to the code"
       class="reset display-flex flex-direction-row">
-      &nbsp;Revert
+      &nbsp;{{ $f7dim.width < 390 ? '' : 'Revert' }}
     </f7-button>
   </f7-toolbar>
 
@@ -75,9 +78,36 @@
   position absolute
   .toolbar-inner
     padding-left 8px
+    .toolbar-options
+      align-items center
+      gap 8px
+      .opt-show-all
+        flex-wrap nowrap
+        align-items center
+        flex-direction row
+        span
+          white-space nowrap
+          padding-left 4px
   .segmented
     .button
       width 5em
+
+.code-editor-toolbar.toolbar-narrow
+  --f7-toolbar-height var(--f7-tabbar-labels-height);
+  font-size var(--f7-tabbar-label-font-size)
+  .toolbar-inner
+    padding-left 5px
+    .toolbar-options
+      gap 6px
+      .opt-show-all
+        flex-wrap nowrap
+        align-items center
+        flex-direction column
+        span
+          padding-left 0
+  .segmented
+    .button
+      width auto
 
 .code-editor-errors
   .item-title
@@ -120,7 +150,6 @@ export default {
     return {
       code: null,
       originalCode: null,
-      displayCodeSwitcher: false,
       dirty: false,
       errors: null
     }
@@ -147,18 +176,21 @@ export default {
      *
      * @param {string} codeType - Optional. The type of code to generate (e.g. YAML, DSL)
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been generated
-     * @param {object} sourceObject - Optional. The object to generate code from. Defaults to the current prop value.
      */
-    generateCode(codeType, onSuccessCallback, sourceObject = this.object) {
+    generateCode(codeType, onSuccessCallback) {
       codeType ||= this.uiOptionsStore.codeEditorType
       if (!this.mediaTypes[codeType]) {
         codeType = Object.keys(this.mediaTypes)[0]
       }
       const sourceMediaType = MediaType.JSON
       let targetMediaType = this.mediaTypes[codeType]
-      targetMediaType = targetMediaType.split('+')[0] // remove the +thing or +item suffix, if present
+      targetMediaType = targetMediaType.split('+')[0] // remove the +tag, +thing or +item suffix, if present
       const payload = {}
-      payload[this.objectType] = [sourceObject]
+      if (Array.isArray(this.object)) {
+        payload[this.objectType] = this.object
+      } else {
+        payload[this.objectType] = [this.object]
+      }
       this.$oh.api
         .postPlain('/rest/file-format/create', JSON.stringify(payload), null, sourceMediaType, { accept: targetMediaType })
         .then((code) => {
@@ -184,10 +216,11 @@ export default {
      *
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed. Receives the parsed object.
      * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
+     * @param {boolean} parseAll - Optional. If true, all parsed objects will be returned as an array. By default, only the first object is returned for backward compatibility with existing code that expects a single object.
      */
-    parseCode(onSuccessCallback, onFailureCallback) {
+    parseCode(onSuccessCallback, onFailureCallback, parseAll = false) {
       let sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
-      sourceMediaType = sourceMediaType.split('+')[0] // remove the +thing or +item suffix, if present
+      sourceMediaType = sourceMediaType.split('+')[0] // remove the +tag, +thing or +item suffix, if present
       const targetMediaType = MediaType.JSON
       this.$oh.api
         .request({
@@ -206,9 +239,16 @@ export default {
           }
           object = object[this.objectType]
           if (object?.length > 0) {
-            this.$emit('parsed', object[0])
-            if (onSuccessCallback) {
-              onSuccessCallback(object[0])
+            if (parseAll) {
+              this.$emit('parsed', object)
+              if (onSuccessCallback) {
+                onSuccessCallback(object)
+              }
+            } else {
+              this.$emit('parsed', object[0])
+              if (onSuccessCallback) {
+                onSuccessCallback(object[0])
+              }
             }
           } else {
             if (onFailureCallback) {
@@ -257,11 +297,13 @@ export default {
     switchCodeType(type) {
       if (this.uiOptionsStore.codeEditorType === type) return
 
-      if (this.readOnly || !this.dirty) {
+      if (!this.dirty) {
         this.generateCode(type)
       } else {
-        this.parseCode((parsedObject) => {
-          this.generateCode(type, null, parsedObject)
+        this.parseCode(() => {
+          this.$nextTick(() => {
+            this.generateCode(type)
+          })
         })
       }
     },
