@@ -38,7 +38,7 @@
       </div>
     </f7-toolbar>
     <f7-tabs class="semantics-editor-tabs">
-      <f7-tab class="design" id="tree" :tab-active="currentTab === 'tree' ? true : null">
+      <f7-tab class="design" id="tree" :tab-active="currentTab === 'tree'">
         <f7-block v-if="!ready" class="text-align-center">
           <f7-preloader />
           <div>Loading...</div>
@@ -168,7 +168,7 @@
           </f7-row>
         </f7-block>
       </f7-tab>
-      <f7-tab id="code" :tab-active="currentTab === 'code' ? true : null">
+      <f7-tab id="code" :tab-active="currentTab === 'code'">
         <code-editor
           v-if="ready"
           ref="codeEditor"
@@ -183,7 +183,8 @@
           "
           :object="codeEditorTags"
           @parsed="update"
-          @changed="onCodeChanged">
+          @changed="onCodeChanged"
+          @save="save">
           <template #additional-panel-controls>
             <f7-segmented>
               <f7-button
@@ -426,7 +427,7 @@ export default {
   data() {
     return {
       semanticTags: [],
-      selectedTag: null,
+      selectedTagUid: null,
       expandedTags: {},
       newSynonym: '',
       detailsTab: 'tag',
@@ -444,6 +445,9 @@ export default {
   },
   computed: {
     ...mapStores(useSemanticsStore),
+    selectedTag() {
+      return this.semanticTags.find((t) => t.uid === this.selectedTagUid) || null
+    },
     editableTags() {
       return this.semanticTags.filter((t) => t.editable).sort((a, b) => a.uid.localeCompare(b.uid))
     },
@@ -494,6 +498,7 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
+      this.setupDirtyWatch(() => this.editableTags)
     },
     onPageBeforeOut() {
       if (window) {
@@ -504,6 +509,13 @@ export default {
     onPageAfterOut() {
       if (this.dirty) {
         useSemanticsStore().loadSemantics(i18n)
+      }
+    },
+    keyDown(ev) {
+      if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
+        this.save()
+        ev.stopPropagation()
+        ev.preventDefault()
       }
     },
     async switchTabTree() {
@@ -569,19 +581,33 @@ export default {
       })
       this.semanticTags = tags
       this.$nextTick(() => {
-        this.setupDirtyWatch(() => this.editableTags)
+        this.dirty = false
         this.loading = false
         this.ready = true
       })
     },
     async save() {
-      if (!this.dirty) return
-      if (this.currentTab === 'code') {
-        if (!this.fromYaml()) {
-          f7.dialog.alert('Error parsing YAML, cannot save')
+      if (this.currentTab === 'code' && this.codeDirty) {
+        const parsedSuccessfully = await new Promise((resolve) => {
+          this.$refs.codeEditor.parseCode(
+            () => {
+              resolve(true)
+            },
+            () => {
+              f7.dialog.alert('Error parsing YAML, cannot save')
+              resolve(false)
+            },
+            true
+          )
+        })
+
+        if (!parsedSuccessfully) {
           return
         }
+
+        await this.$nextTick()
       }
+      if (!this.dirty) return
 
       const addedTags = this.editableTags.filter((t) => !useSemanticsStore().Tags.find((c) => c.uid === t.uid))
       const modifiedTags = this.editableTags.filter((t) => useSemanticsStore().Tags.find((c) => c.uid === t.uid && !fastDeepEqual(c, t)))
@@ -630,11 +656,8 @@ export default {
           console.debug('Successfully modified tags')
           showToast((changeTasks.length === 1 ? 'Tag' : 'Tags') + ' modified')
         }
-        useSemanticsStore()
-          .loadSemantics(i18n)
-          .then(() => {
-            this.load()
-          })
+        await useSemanticsStore().loadSemantics(i18n)
+        this.load()
       } catch (error) {
         console.error(error)
         f7.dialog.alert('Error saving: ' + error)
@@ -672,14 +695,14 @@ export default {
       }
     },
     selectTag(tag) {
-      if (this.selectedTag === tag) return
-      this.selectedTag = null
+      if (this.selectedTagUid === tag?.uid) return
       if (!tag) {
+        this.selectedTagUid = null
         this.detailsOpened = false
         return
       }
       this.$nextTick(() => {
-        this.selectedTag = tag
+        this.selectedTagUid = tag.uid
         this.detailsTab = 'tag'
         this.$nextTick(() => {
           const detailsLink = this.$refs.detailsLink
@@ -744,7 +767,6 @@ export default {
     update(value) {
       if (this.editorReadOnly) return
 
-      const selectedTagUid = this.selectedTag?.uid
       const tags = [...this.semanticTags].filter((t) => !t.editable)
       const updatedTags = value.map((t) => {
         const tag = t
@@ -756,9 +778,6 @@ export default {
       })
       tags.push(...updatedTags)
       this.semanticTags = tags
-      if (selectedTagUid) {
-        this.selectedTag = this.semanticTags.find((t) => t.uid === selectedTagUid) || null
-      }
       this.codeDirty = false
     },
     onCodeChanged(codeDirty) {
