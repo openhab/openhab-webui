@@ -135,7 +135,7 @@
     "vue-qrcode": "^2.2.2",
     "vue-three-round-slider": "^1.2.7",
     "vue3-clipboard": "^1.0.0",
-    "yaml": "^2.8.3"
+    "yaml": "^2.9.0"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.5",
