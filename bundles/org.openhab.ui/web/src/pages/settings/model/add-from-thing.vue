@@ -57,7 +57,7 @@
             <f7-list-group>
               <item-picker
                 :label="selectedGroup ? 'Change Selected Group' : 'Pick Existing Group'"
-                textcolor="theme-alt"
+                textColor="theme-alt"
                 :hideIcon="true"
                 :items="selectableGroups"
                 :multiple="false"

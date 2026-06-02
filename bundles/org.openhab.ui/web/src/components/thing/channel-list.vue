@@ -69,7 +69,7 @@
                 <item-picker
                   v-if="isChecked(channel) && hasLinks(channel)"
                   :label="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
-                  textcolor="theme-alt"
+                  textColor="theme-alt"
                   :hideIcon="true"
                   :items="items.filter((i) => channel.linkedItems.includes(i.name))"
                   :multiple="false"
