@@ -31,7 +31,7 @@ const calendarAxis: AxisComponent = {
       if (!calendar.monthLabel) calendar.monthLabel = {}
       if (!calendar.monthLabel.color) calendar.monthLabel.color = '#aaa'
       if (!calendar.splitLine) calendar.splitLine = {}
-      if (!calendar.splitLine.lineStyle) calendar.splitLine.lineStyle = ({} as { color: string })!
+      if (!calendar.splitLine.lineStyle) calendar.splitLine.lineStyle = {}!
       if (!calendar.splitLine.lineStyle.color) calendar.splitLine.lineStyle.color = '#aaa'
     }
 

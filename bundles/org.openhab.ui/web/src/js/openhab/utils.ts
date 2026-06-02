@@ -17,12 +17,12 @@ export function normalizeLabelForThingId(label: string) {
     .replace(/^-+/, '')
 }
 export function normalizeInput(id: any) {
-  const inputElement: HTMLInputElement = document.querySelector(id) as unknown as HTMLInputElement
+  const inputElement: HTMLInputElement = document.querySelector(id) as HTMLInputElement
   inputElement.value = normalizeLabel(inputElement.value.trim())
   inputElement.dispatchEvent(new Event('input'))
 }
 export function normalizeInputForThingId(id: any) {
-  const inputElement: HTMLInputElement = document.querySelector(id) as unknown as HTMLInputElement
+  const inputElement: HTMLInputElement = document.querySelector(id) as HTMLInputElement
   inputElement.value = normalizeLabelForThingId(inputElement.value.trim())
   inputElement.dispatchEvent(new Event('input'))
 }

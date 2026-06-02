@@ -53,7 +53,7 @@ function languageExtension(mode: string): StreamLanguage<unknown> | LanguageSupp
       return openHABDsl()
 
     case mode === 'js':
-    case mode.startsWith(MediaType.JAVASCRIPT as string):
+    case mode.startsWith(MediaType.JAVASCRIPT):
       return javascript()
 
     case mode === 'py':
@@ -97,7 +97,7 @@ function autocompletionExtension(mode: string): Extension | null {
   const activateOnCompletion = () => true
 
   switch (true) {
-    case mode.startsWith(MediaType.UI_COMPONENT as string):
+    case mode.startsWith(MediaType.UI_COMPONENT):
       return autocompletion({ activateOnCompletion, override: [componentsHint] })
 
     case mode === (MediaType.RULE_YAML as string):
@@ -110,7 +110,7 @@ function autocompletionExtension(mode: string): Extension | null {
       return autocompletion({ activateOnCompletion, override: [itemsHint] })
 
     case mode === 'js':
-    case mode.startsWith(MediaType.JAVASCRIPT as string):
+    case mode.startsWith(MediaType.JAVASCRIPT):
       return javascriptAutocompletions(mode)
 
     // CodeMirror supports autocompletion for Python and many other languages by default

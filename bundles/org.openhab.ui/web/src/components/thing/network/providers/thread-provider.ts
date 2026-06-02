@@ -293,7 +293,7 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
 
     const parsed = parseInt(valueString, 10)
     if (!isNaN(parsed) && parsed >= 0 && parsed <= 6) {
-      return parsed as RoutingRole
+      return parsed
     }
 
     const strValue = valueString as keyof typeof RoutingRole

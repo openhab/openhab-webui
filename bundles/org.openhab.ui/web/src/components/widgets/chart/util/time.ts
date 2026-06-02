@@ -25,8 +25,7 @@ function mapChartTypeToDayJs(chartType: Exclude<ChartType, ''>): dayjs.Manipulat
     case ChartType.fiveYears:
       return 'year'
     default:
-      const exhaustiveCheck: never = chartType
-      return chartType as unknown as dayjs.ManipulateType
+      return chartType
   }
 }
 

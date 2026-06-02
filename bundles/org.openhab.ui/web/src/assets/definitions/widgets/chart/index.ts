@@ -440,10 +440,10 @@ export const OhChartDatazoomDefinition = new WidgetDefinition('oh-chart-datazoom
     ...positionParameters.map((o) => {
       return {
         ...o,
-        visible: (_value, configuration) => {
+        visible: (_value: unknown, configuration: Record<string, unknown>) => {
           return configuration.type === 'slider'
         }
-      } as WidgetDefinitionParameter
+      }
     })
   ])
 
