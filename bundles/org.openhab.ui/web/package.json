@@ -78,7 +78,7 @@
     "@codemirror/state": "^6.5.3",
     "@codemirror/view": "^6.41.0",
     "@hotdogee/vue3-trend": "^2.0.4",
-    "@iconify/vue": "^5.0.0",
+    "@iconify/vue": "^5.0.1",
     "@jsep-plugin/arrow": "^1.0.5",
     "@jsep-plugin/object": "^1.2.1",
     "@jsep-plugin/regex": "^1.0.3",
