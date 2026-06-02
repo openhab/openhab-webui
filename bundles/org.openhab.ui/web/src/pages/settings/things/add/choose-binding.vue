@@ -53,11 +53,11 @@
     <f7-block v-if="runtimeStore.apiEndpoint('addons')" class="block-narrow">
       <f7-col v-if="bindings.length">
         <f7-list>
-          <f7-list-button color="blue" title="Install More Bindings" @click="installBindings" />
+          <f7-list-button color="theme-alt" title="Install More Bindings" @click="installBindings" />
         </f7-list>
       </f7-col>
       <f7-row v-else-if="ready" class="display-flex justify-content-center">
-        <f7-button large fill color="blue" @click="installBindings"> Install Bindings </f7-button>
+        <f7-button large fill color="theme-alt" @click="installBindings"> Install Bindings </f7-button>
       </f7-row>
     </f7-block>
   </f7-page>

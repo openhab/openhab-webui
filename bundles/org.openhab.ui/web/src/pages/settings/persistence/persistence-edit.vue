@@ -17,7 +17,7 @@
               <f7-block-footer style="padding-left: 16px; padding-right: 16px">
                 Persistence stores data over time, which can be retrieved at a later time, e.g. to restore Item states after startup, or to
                 display graphs in the UI.
-                <f7-link external color="blue" target="_blank" :href="`${runtimeStore.websiteUrl}/link/persistence`">
+                <f7-link external color="theme-alt" target="_blank" :href="`${runtimeStore.websiteUrl}/link/persistence`">
                   Learn more about persistence.
                 </f7-link>
               </f7-block-footer>

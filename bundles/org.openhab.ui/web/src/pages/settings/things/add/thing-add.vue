@@ -32,7 +32,7 @@
 
     <div v-if="ready" class="if-aurora display-flex justify-content-center margin">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save">
+        <f7-button class="padding-left padding-right" style="width: 150px" color="theme-alt" large raised fill @click="save">
           Create Thing
         </f7-button>
       </div>

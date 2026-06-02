@@ -9,7 +9,7 @@
     </f7-navbar>
     <f7-block v-if="type === 'persistence'" class="block-narrow">
       <f7-col>
-        <f7-button large fill color="blue" :href="'/settings/persistence/' + name" class="persistence-button">
+        <f7-button large fill color="theme-alt" :href="'/settings/persistence/' + name" class="persistence-button">
           Configure Persistence Policies
         </f7-button>
       </f7-col>

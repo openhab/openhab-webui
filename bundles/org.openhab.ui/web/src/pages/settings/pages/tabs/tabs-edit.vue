@@ -65,7 +65,7 @@
                   </f7-menu>
                 </template>
               </f7-list-item>
-              <f7-list-button v-if="isEditable" color="blue" title="Add tab" @click="addWidget(page, 'oh-tab')" />
+              <f7-list-button v-if="isEditable" color="theme-alt" title="Add tab" @click="addWidget(page, 'oh-tab')" />
             </f7-list>
           </f7-col>
         </f7-block>

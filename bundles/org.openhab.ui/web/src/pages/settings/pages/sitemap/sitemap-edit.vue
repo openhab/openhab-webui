@@ -119,7 +119,7 @@
                   <f7-card-content>
                     <f7-list>
                       <f7-list-button
-                        color="blue"
+                        color="theme-alt"
                         :title="`Insert Widget Inside ${selectedWidget.type}`"
                         actions-open="#widget-type-selection" />
                     </f7-list>
@@ -131,7 +131,9 @@
                 <f7-card>
                   <f7-card-content>
                     <f7-list>
-                      <f7-list-button color="blue" @click="addWidget('Button')"> Insert Button Widget Inside Buttongrid </f7-list-button>
+                      <f7-list-button color="theme-alt" @click="addWidget('Button')">
+                        Insert Button Widget Inside Buttongrid
+                      </f7-list-button>
                     </f7-list>
                   </f7-card-content>
                 </f7-card>
@@ -173,7 +175,7 @@
         v-if="canAddChildren(selectedWidget) && selectedWidget.type !== 'Buttongrid'"
         class="add-to-sitemap-fab"
         position="right-center"
-        color="blue"
+        color="theme-alt"
         @click="selectWidgetType">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
@@ -182,7 +184,7 @@
         v-if="canAddChildren(selectedWidget) && selectedWidget.type === 'Buttongrid'"
         class="add-to-sitemap-fab"
         position="right-center"
-        color="blue"
+        color="theme-alt"
         @click="addWidget('Button')">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
@@ -334,8 +336,8 @@
       color var(--f7-list-item-footer-text-color)
 .sitemap-details-sheet
   .toolbar
-    --f7-theme-color var(--f7-color-blue)
-    --f7-theme-color-rgb var(--f7-color-blue-rgb)
+    --f7-theme-color var(--oh-theme-alt-color)
+    --f7-theme-color-rgb var(--oh-theme-alt-color-rgb)
     .toolbar-inner
       display flex
       overflow-x auto

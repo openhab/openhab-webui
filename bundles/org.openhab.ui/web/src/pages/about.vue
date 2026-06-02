@@ -52,7 +52,7 @@
                         <f7-progressbar
                           class="margin-top"
                           style="width: 90%"
-                          color="blue"
+                          color="theme-alt"
                           :progress="(systemInfo.freeMemory * 100) / systemInfo.totalMemory" />
                         <small class="margin-bottom text-color-gray">
                           {{
@@ -69,7 +69,7 @@
                       </div>
                     </template>
                   </f7-list-item>
-                  <f7-list-button color="blue" @click="textualSystemInfoOpened = true">
+                  <f7-list-button color="theme-alt" @click="textualSystemInfoOpened = true">
                     {{ t('about.technicalInformation.viewDetails') }}
                   </f7-list-button>
                 </f7-list>
@@ -102,10 +102,10 @@
           <f7-list-button v-if="showCachePurgeOption" color="red" @click="purgeServiceWorkerAndCaches()">
             {{ t('about.reload.purgeCachesAndRefresh') }}
           </f7-list-button>
-          <f7-list-button color="blue" @click="reload">
+          <f7-list-button color="theme-alt" @click="reload">
             {{ t('about.reload.reloadApp') }}
           </f7-list-button>
-          <f7-list-button color="blue" href="/setup-wizard/">
+          <f7-list-button color="theme-alt" href="/setup-wizard/">
             {{ t('about.reload.setupWizard') }}
           </f7-list-button>
         </f7-list>

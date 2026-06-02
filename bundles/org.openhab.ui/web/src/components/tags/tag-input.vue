@@ -5,7 +5,7 @@
       <f7-list-item v-if="tags.length > 0">
         <template #inner>
           <div>
-            <f7-chip v-for="tag in tags" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="blue">
+            <f7-chip v-for="tag in tags" :key="tag" :text="tag" :deleteable="!disabled" @delete="deleteTag" media-bg-color="theme-alt">
               <template #media>
                 <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
               </template>

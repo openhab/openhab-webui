@@ -15,7 +15,7 @@
       <f7-link class="right controls-link padding-right" ref="detailsLink" @click="openControls">
         {{ t('analyzer.controls') }}&nbsp;<f7-icon f7="chevron_up" />
       </f7-link>
-      <f7-link v-if="'orientation' in coordSettings" color="blue" icon-f7="crop_rotate" @click="toggleOrientation" />
+      <f7-link v-if="'orientation' in coordSettings" color="theme-alt" icon-f7="crop_rotate" @click="toggleOrientation" />
       <span v-else />
     </f7-toolbar>
 
@@ -355,9 +355,9 @@
 
 <style lang="stylus">
 .analyzer-controls
-  --f7-theme-color var(--f7-color-blue)
-  --f7-theme-color-rgb var(--f7-color-blue-rgb)
-  --f7-theme-color-tint var(--f7-color-blue-tint)
+  --f7-theme-color var(--oh-theme-alt-color)
+  --f7-theme-color-rgb var(--oh-theme-alt-color-rgb)
+  --f7-theme-color-tint var(--oh-theme-alt-color-tint)
   --f7-block-margin-vertical 16px
   z-index 11000
   .tabs .tab
@@ -632,7 +632,7 @@ export default {
       const actions = Object.values(Marker).map((m) => {
         return {
           text: m,
-          color: 'blue',
+          color: 'theme-alt',
           onClick: () => {
             seriesOptions.marker = m
           }
@@ -651,7 +651,7 @@ export default {
       const actions = Object.values(AggregationFunction).map((a) => {
         return {
           text: this.t('analyzer.aggregations.' + a),
-          color: 'blue',
+          color: 'theme-alt',
           onClick: () => {
             seriesOptions.aggregation = AggregationFunction[a as keyof typeof AggregationFunction]
           }
@@ -670,7 +670,7 @@ export default {
       const actions = Object.values(ValueAxisSplitOptions).map((value) => {
         return {
           text: value,
-          color: 'blue',
+          color: 'theme-alt',
           onClick: () => {
             axis.split = value as ValueAxisSplitOptions
           }

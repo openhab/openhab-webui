@@ -38,7 +38,7 @@
         <!-- Execute Button -->
         <f7-col v-if="!executing">
           <f7-list>
-            <f7-list-button color="blue" title="Execute Action" @click="execute" />
+            <f7-list-button color="theme-alt" title="Execute Action" @click="execute" />
           </f7-list>
         </f7-col>
         <!-- Action Outputs -->

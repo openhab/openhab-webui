@@ -37,7 +37,7 @@
       type="sent"
       class="habot-query margin-bottom"
       :text="query"
-      color="blue"
+      color="theme-alt"
       first
       tail />
     <f7-message
@@ -51,7 +51,7 @@
     <generic-widget-component v-if="cardContext && !focused && !interimSpeechResult" :context="cardContext" />
     <div v-if="query && !focused && answer && !busy && !interimSpeechResult" class="display-flex justify-content-space-between padding">
       <span />
-      <f7-button outline round color="blue" @click="endSession">
+      <f7-button outline round color="theme-alt" @click="endSession">
         {{ t('habot.dismiss') }}
       </f7-button>
     </div>

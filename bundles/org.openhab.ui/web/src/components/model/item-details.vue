@@ -4,7 +4,7 @@
       <f7-list media-list accordion-list>
         <ul>
           <item v-if="!createMode" :item="model.item" :link="'/settings/items/' + model.item.name" :context="context" :no-tags="editMode" />
-          <!-- <f7-list-button v-if="!editMode && !createMode" color="blue" title="Edit Item" @click="editMode = true">Edit Item</f7-list-button> -->
+          <!-- <f7-list-button v-if="!editMode && !createMode" color="theme-alt" title="Edit Item" @click="editMode = true">Edit Item</f7-list-button> -->
         </ul>
       </f7-list>
 
@@ -16,12 +16,12 @@
       </div>
     </f7-card-content>
     <f7-card-footer v-if="createMode || editMode" key="item-card-buttons">
-      <f7-button v-if="createMode" color="blue" fill raised @click="create"> Create </f7-button>
-      <f7-button v-else v-show="model.item.editable" color="blue" fill raised @click="save"> Save </f7-button>
-      <f7-button v-if="model.item.editable" color="blue" @click="cancel"> Cancel </f7-button>
+      <f7-button v-if="createMode" color="theme-alt" fill raised @click="create"> Create </f7-button>
+      <f7-button v-else v-show="model.item.editable" color="theme-alt" fill raised @click="save"> Save </f7-button>
+      <f7-button v-if="model.item.editable" color="theme-alt" @click="cancel"> Cancel </f7-button>
       <f7-button
         v-else
-        color="blue"
+        color="theme-alt"
         @click="cancel"
         icon-ios="material:expand_less"
         icon-md="material:expand_less"
@@ -32,7 +32,7 @@
     <f7-card-footer v-else key="item-card-buttons-edit-mode">
       <f7-button
         v-if="model.item.editable"
-        color="blue"
+        color="theme-alt"
         @click="edit"
         icon-ios="material:expand_more"
         icon-md="material:expand_more"
@@ -42,7 +42,7 @@
       <f7-button v-if="model.item.editable" color="red" @click="remove"> Remove </f7-button>
       <f7-button
         v-else
-        color="blue"
+        color="theme-alt"
         @click="edit"
         icon-ios="material:expand_more"
         icon-md="material:expand_more"

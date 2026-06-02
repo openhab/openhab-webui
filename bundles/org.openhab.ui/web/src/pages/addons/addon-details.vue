@@ -16,14 +16,14 @@
               </div>
               <div v-if="addon.verifiedAuthor" class="addon-header-subtitle">
                 {{ addon.author }}
-                <f7-icon :color="uiOptionsStore.darkMode === 'dark' ? 'white' : 'blue'" f7="checkmark_seal_fill" />
+                <f7-icon :color="uiOptionsStore.darkMode === 'dark' ? 'white' : 'theme-alt'" f7="checkmark_seal_fill" />
               </div>
               <div v-else-if="addon.properties && addon.properties.views" class="addon-header-subtitle">
                 <addon-stats-line :addon="addon" :iconSize="15" />
               </div>
               <div class="addon-header-actions">
                 <div v-if="showInstallActions">
-                  <f7-preloader v-if="isPending(addon)" color="blue" />
+                  <f7-preloader v-if="isPending(addon)" color="theme-alt" />
                   <f7-button
                     v-else-if="addon.installed"
                     class="install-button"
@@ -37,7 +37,7 @@
                     v-else
                     class="install-button"
                     :text="installableAddon(addon) ? 'Install' : 'Add'"
-                    color="blue"
+                    color="theme-alt"
                     round
                     small
                     fill
@@ -47,7 +47,7 @@
                   v-if="showConfig"
                   icon-f7="gears"
                   tooltip="Configure add-on"
-                  color="blue"
+                  color="theme-alt"
                   :href="'/settings/addons/' + addonId"
                   round
                   small />
@@ -171,7 +171,7 @@
   .addon-description
     --f7-block-strong-bg-color transparent
     width calc(100%)
-    --f7-theme-color var(--f7-color-blue)
+    --f7-theme-color var(--oh-theme-alt-color)
   .addon-description-text
     overflow-x clip
     .emoji

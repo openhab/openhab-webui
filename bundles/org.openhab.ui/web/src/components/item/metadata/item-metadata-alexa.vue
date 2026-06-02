@@ -65,7 +65,7 @@
       </f7-block-footer>
     </f7-block>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" :href="docLink"> Alexa Integration Documentation </f7-link>
+      <f7-link color="theme-alt" external target="_blank" :href="docLink"> Alexa Integration Documentation </f7-link>
     </p>
   </div>
   <div v-else class="text-align-center">
@@ -163,7 +163,7 @@ export default {
     },
     groupLinks() {
       return this.item.groups
-        .map((g) => `<a class="text-color-blue" href="/settings/items/${g.name}/metadata/alexa">${g.label || g.name}</a>`)
+        .map((g) => `<a class="text-color-theme-alt" href="/settings/items/${g.name}/metadata/alexa">${g.label || g.name}</a>`)
         .join(', ')
     },
     isPartOfGroupEndpoint() {

@@ -127,7 +127,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     po(
       paramPrefix + 'actionPageTransition',
       'Transition Effect',
-      'Use a specific <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>',
+      'Use a specific <a class="external text-color-theme-alt" target="_blank" href="https://framework7.io/docs/view.html#custom-page-transitions">page transition animation</a>',
       [
         { value: 'f7-circle', label: 'Circle' },
         { value: 'f7-cover', label: 'Cover' },
@@ -158,14 +158,14 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     pt(
       paramPrefix + 'actionPhotos',
       'Images to show',
-      'Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML, e.g.<br /><code><pre>- item: ImageItem1<br />  caption: Camera</pre></code>or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.'
+      'Array of URLs or objects representing the images. Auto-refresh is not supported.<br />Edit in YAML, e.g.<br /><code><pre>- item: ImageItem1<br />  caption: Camera</pre></code>or provide a JSON array, e.g.<br /><code>[ "url1", { "item": "ImageItem1", "caption": "Camera" } ]</code><br />Objects are in the <a class="external text-color-theme-alt" target="_blank" href="https://framework7.io/docs/photo-browser.html#photos-array">photos array format</a> with an additional <code>item</code> property to specify an item to view.'
     ).v((_value, configuration) => {
       return actionSelected(configuration, 'photos')
     }),
     pt(
       paramPrefix + 'actionPhotoBrowserConfig',
       'Photo browser configuration',
-      'Configuration for the photo browser.<br />Edit in YAML or provide a JSON object, e.g.<br /><code>{ "exposition": false, "type": "popup", "theme": "dark" }</code><br /> See <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/photo-browser.html#photo-browser-parameters">photo browser parameters</a> (not all are supported).'
+      'Configuration for the photo browser.<br />Edit in YAML or provide a JSON object, e.g.<br /><code>{ "exposition": false, "type": "popup", "theme": "dark" }</code><br /> See <a class="external text-color-theme-alt" target="_blank" href="https://framework7.io/docs/photo-browser.html#photo-browser-parameters">photo browser parameters</a> (not all are supported).'
     ).v((_value, configuration) => {
       return actionSelected(configuration, 'photos')
     }),
@@ -222,7 +222,7 @@ export const actionParams = (paramPrefix?: string, groupName?: string) => {
     pt(
       paramPrefix + 'actionFeedback',
       'Action Feedback',
-      'Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-blue" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a>'
+      'Shows a toast popup when the action has been executed. Can either be a text to show or a JSON object including some of the <a class="external text-color-theme-alt" target="_blank" href="https://framework7.io/docs/toast.html#toast-parameters">supported parameters</a>'
     )
       .a()
       .v((_value, configuration) => {

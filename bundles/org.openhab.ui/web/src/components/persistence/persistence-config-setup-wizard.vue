@@ -75,7 +75,7 @@
               <f7-list-item>
                 {{ this.t('setupwizard.persistence-config.services.advancedConfig') }}
               </f7-list-item>
-              <f7-list-button color="blue" @click="resetConfiguration(service.id)">
+              <f7-list-button color="theme-alt" @click="resetConfiguration(service.id)">
                 {{ this.t('setupwizard.persistence-config.services.resetConfig') }}
               </f7-list-button>
             </f7-list>

@@ -77,7 +77,7 @@
                   </template>
                   <template #header>
                     <div style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
-                      <f7-toggle color="blue" :checked="runtimeStore.showDeveloperDock ? true : null" />
+                      <f7-toggle color="theme-alt" :checked="runtimeStore.showDeveloperDock ? true : null" />
                     </div>
                   </template>
                 </f7-list-item>
@@ -118,7 +118,7 @@
                   </template>
                   <template #header>
                     <div style="height: 100%; height: 32px" class="display-flex float-right flex-direction-column justify-content-center">
-                      <f7-toggle color="blue" v-model:checked="uiOptionsStore.codeMirrorSettings.vimMode" />
+                      <f7-toggle color="theme-alt" v-model:checked="uiOptionsStore.codeMirrorSettings.vimMode" />
                     </div>
                   </template>
                 </f7-list-item>

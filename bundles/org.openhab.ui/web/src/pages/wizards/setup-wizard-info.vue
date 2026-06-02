@@ -8,7 +8,7 @@
   <f7-block>
     {{ body }}
     <br /><br />
-    <a class="text-color-blue external" target="_blank" :href="link"> {{ t('setupwizard.documentationLink') }}</a>
+    <a class="text-color-theme-alt external" target="_blank" :href="link"> {{ t('setupwizard.documentationLink') }}</a>
     <br />
   </f7-block>
 </template>

@@ -37,7 +37,7 @@ export default () => [
   pt(
     'inputmode',
     'Input Mode',
-    'Type of data that might be entered (see <a class="external text-color-blue" target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode">MDN docs</a>)'
+    'Type of data that might be entered (see <a class="external text-color-theme-alt" target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/inputmode">MDN docs</a>)'
   ),
   pt('placeholder', 'Placeholder', 'Placeholder text'),
   pb('sendButton', 'Send button', 'Display Send button to update the state with a command (needs a configured item)'),

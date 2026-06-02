@@ -32,7 +32,7 @@
         </f7-link>
         <f7-link
           v-show="selectedItems.length"
-          color="blue"
+          color="theme-alt"
           class="copy display-flex flex-direction-row"
           icon-ios="f7:square_on_square"
           icon-aurora="f7:square_on_square"
@@ -124,10 +124,15 @@
               <template #after-title>
                 <f7-icon v-if="!item.editable" f7="lock_fill" size="1rem" color="gray" />
               </template>
-              <!-- <f7-button color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
+              <!-- <f7-button color="theme-alt" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
               <template #subtitle>
                 <div>
-                  <f7-chip v-for="tag in getNonSemanticTags(item)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                  <f7-chip
+                    v-for="tag in getNonSemanticTags(item)"
+                    :key="tag"
+                    :text="tag"
+                    media-bg-color="theme-alt"
+                    style="margin-right: 6px">
                     <template #media>
                       <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                     </template>
@@ -146,7 +151,7 @@
         <f7-button
           large
           fill
-          color="blue"
+          color="theme-alt"
           external
           :href="`${runtimeStore.websiteUrl}/link/items`"
           target="_blank"
@@ -155,10 +160,10 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" color="blue" @click="load()">
+      <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" color="theme-alt" @click="load()">
         <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
       </f7-fab>
-      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="blue" href="add">
+      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
     </template>

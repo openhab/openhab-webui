@@ -6,7 +6,7 @@
         <f7-icon
           v-if="addon.verifiedAuthor"
           size="15"
-          :color="uiOptionsStore.darkMode === 'dark' ? 'white' : 'blue'"
+          :color="uiOptionsStore.darkMode === 'dark' ? 'white' : 'theme-alt'"
           f7="checkmark_seal_fill"
           style="margin-top: -3px" />
       </div>
@@ -19,12 +19,12 @@
     </template>
     <template #after>
       <div v-if="showInstallActions">
-        <f7-preloader v-if="'pending' in addon && addon.pending" color="blue" />
+        <f7-preloader v-if="'pending' in addon && addon.pending" color="theme-alt" />
         <f7-button
           v-else
           class="install-button prevent-active-state-propagation"
           :text="addon.installed ? 'Remove' : installActionText || 'Install'"
-          :color="addon.installed ? 'red' : 'blue'"
+          :color="addon.installed ? 'red' : 'theme-alt'"
           round
           small
           @click="buttonClicked" />

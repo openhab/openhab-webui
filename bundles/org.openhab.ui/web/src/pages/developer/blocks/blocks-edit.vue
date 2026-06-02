@@ -74,10 +74,10 @@
           :value="previewGeneratedCode"
           :read-only="true" />
         <template #fixed>
-          <f7-fab v-show="previewMode === 'blockly'" position="right-bottom" color="blue" @click="togglePreviewMode('code')">
+          <f7-fab v-show="previewMode === 'blockly'" position="right-bottom" color="theme-alt" @click="togglePreviewMode('code')">
             <f7-icon f7="doc_text" />
           </f7-fab>
-          <f7-fab v-show="previewMode === 'code'" position="right-bottom" color="blue" @click="togglePreviewMode('blockly')">
+          <f7-fab v-show="previewMode === 'code'" position="right-bottom" color="theme-alt" @click="togglePreviewMode('blockly')">
             <f7-icon f7="ticket" />
           </f7-fab>
         </template>

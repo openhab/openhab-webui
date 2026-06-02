@@ -51,13 +51,13 @@
         <f7-button
           large
           fill
-          color="blue"
+          color="theme-alt"
           external
           :href="`${runtimeStore.websiteUrl}/link/persistence`"
           target="_blank"
           :text="$t('home.overview.button.documentation')" />
         <span style="width: 8px" />
-        <f7-button large fill color="blue" href="/addons/persistence/"> Install a persistence add-on </f7-button>
+        <f7-button large fill color="theme-alt" href="/addons/persistence/"> Install a persistence add-on </f7-button>
       </f7-row>
     </f7-block>
   </f7-page>
