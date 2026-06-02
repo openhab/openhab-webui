@@ -901,21 +901,22 @@ export default {
           }
         })
         .then(() => {
-          const locale = useRuntimeStore().locale.toLocaleLowerCase()
+          let locale = useRuntimeStore().locale.toLocaleLowerCase()
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
           if (locale) {
-            let dayjsLocale = dayjsLocales.find((l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0])
             // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
-            if (dayjsLocale?.key === 'en') dayjsLocale = dayjsLocales.find((l) => l.key === 'en-gb')
-
+            if (locale === 'en') locale = 'en-gb'
             // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
-            if (dayjsLocale?.key === 'no') dayjsLocale = dayjsLocales.find((l) => l.key === 'nb')
+            if (locale === 'no' || locale === 'no-no') locale = 'nb'
 
-            const dayjsLoader = dayjsLocalesGlob[`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`]
+            const dayjsLocale = dayjsLocales.find(
+              (l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0]
+            )
+            const dayjsLoader = dayjsLocale ? dayjsLocalesGlob[`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`] : null
             dayjsLocalePromise = dayjsLoader
               ? dayjsLoader().catch((error) => {
-                  console.error('Error fetching dayjs: ', error, dayjsLocale)
+                  console.error('Error fetching Day.js locale: ', error, dayjsLocale)
                 })
               : Promise.resolve(null)
           }
@@ -934,7 +935,7 @@ export default {
 
           if (data[1]) {
             dayjs.locale(data[1], null, false)
-            console.log('dayjs locale set to', dayjs.locale())
+            console.log('Day.js locale set to', dayjs.locale())
           }
           // load & build the semantic model
           useModelStore().loadSemanticModel()
