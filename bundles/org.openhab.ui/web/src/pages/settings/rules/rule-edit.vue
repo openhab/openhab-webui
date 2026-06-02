@@ -3,7 +3,6 @@
     <f7-navbar no-hairline>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
-        :subtitle="hasOpaqueModule ? opaqueModulesTypeText : undefined"
         :editable="isEditable"
         :disable-save-link="!(uidValid && labelValid)"
         :save-link="
@@ -1381,17 +1380,6 @@ export default {
     },
     hasOpaqueModule() {
       return this.opaqueModules.length > 0
-    },
-    opaqueModulesTypeText() {
-      const result = this.opaqueModulesType
-      return result ? AUTOMATION_LANGUAGES[result]?.name || result : result
-    },
-    opaqueModulesType() {
-      const modules = this.opaqueModules
-      if (!modules || !modules.length) return undefined
-      // "Opaque modules" implies that the rule is created programmatically.
-      // The assumption is therefore that all opaque module types are of the same type/scripting language.
-      return modules.find((m) => m.configuration?.type)?.configuration?.type
     },
     opaqueModules() {
       if (!this.rule) return []
