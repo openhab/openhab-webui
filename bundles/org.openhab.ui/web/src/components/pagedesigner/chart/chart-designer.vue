@@ -85,9 +85,11 @@
                   </div>
                 </template>
               </f7-list-item>
-              <f7-list-button color="theme-alt" @click="addSeries('oh-time-series', gridIdx)"> Add Time Series </f7-list-button>
-              <f7-list-button color="theme-alt" @click="addSeries('oh-aggregate-series', gridIdx)"> Add Aggregate Series </f7-list-button>
-              <f7-list-button color="theme-alt" @click="addSeries('oh-state-series', gridIdx)"> Add State Series </f7-list-button>
+              <template v-if="context.editmode?.isEditable">
+                <f7-list-button color="theme-alt" @click="addSeries('oh-time-series', gridIdx)"> Add Time Series </f7-list-button>
+                <f7-list-button color="theme-alt" @click="addSeries('oh-aggregate-series', gridIdx)"> Add Aggregate Series </f7-list-button>
+                <f7-list-button color="theme-alt" @click="addSeries('oh-state-series', gridIdx)"> Add State Series </f7-list-button>
+              </template>
             </f7-list>
           </f7-card>
         </div>
