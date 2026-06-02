@@ -157,7 +157,7 @@ export function useChart(
 
   const chartContext = computed<ChartContext>(() => ({
     chart: {
-      ...(context.value.component as api.UiComponent),
+      ...context.value.component,
       config: config.value
     },
     evaluateExpression: chartComponentEvaluateExpression,

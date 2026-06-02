@@ -139,15 +139,13 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
 
     let processedPrefix = processPrefix(prefix)
     const actionPropsParameterGroup = cfg[`${processedPrefix}actionPropsParameterGroup`]
-    const evalActionConfig = actionPropsParameterGroup
-      ? evaluateExpression<ActionConfig>('$props', ctx.props as unknown as ActionConfig, ctx, ctx.props)
-      : null
+    const evalActionConfig = actionPropsParameterGroup ? evaluateExpression<ActionConfig>('$props', ctx.props, ctx, ctx.props) : null
     const actionConfig = evalActionConfig instanceof Error ? cfg : (evalActionConfig ?? cfg)
     prefix = actionPropsParameterGroup ? actionPropsParameterGroup.replace(/action/gi, '') : prefix
     prefix = prefix ? (prefix += '_') : ''
     processedPrefix = processPrefix(prefix)
     const actionValue = actionConfig[`${processedPrefix}action`]
-    const actionList = normalizeActionList(actionValue as string | string[] | undefined) as Action[]
+    const actionList = normalizeActionList(actionValue) as Action[]
     if (!actionList.length) return false
     if (ctx.editmode) {
       showActionFeedback(prefix, actionConfig, `Action '${actionList.join(', ')}' not performed while in edit mode`)

@@ -8,7 +8,7 @@ const valueAxis: AxisComponent = {
     const axis = context.evaluateExpression<OhValueAxisOption>(ComponentId.get(component)!, component.config, OhValueAxisDefinition)
     axis.type = 'value'
 
-    if (!axis.axisLabel) axis.axisLabel = ({} as ValueAxisBaseOption['axisLabel'])!
+    if (!axis.axisLabel) axis.axisLabel = {}!
     if (!(axis.axisLabel as ValueAxisBaseOption['axisLabel'])!.formatter && context.numberFormatter) {
       ;(axis.axisLabel as ValueAxisBaseOption['axisLabel'])!.formatter = (value: number) => context.numberFormatter!.format(value)
     }
