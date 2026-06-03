@@ -11,7 +11,7 @@
       @save="$emit('save')" />
   </div>
 
-  <f7-toolbar bottom :class="{ 'code-editor-toolbar': true, 'toolbar-narrow': $f7dim.width < 450 }">
+  <f7-toolbar bottom class="code-editor-toolbar">
     <f7-segmented>
       <f7-button
         v-for="type in Object.keys(mediaTypes)"
@@ -31,7 +31,7 @@
       color="blue"
       tooltip="Copy code to clipboard"
       class="copy display-flex flex-direction-row">
-      &nbsp;{{ $f7dim.width < 390 ? '' : 'Copy' }}
+      <span class="button-label">Copy</span>
     </f7-button>
     <f7-button
       v-if="!readOnly"
@@ -42,7 +42,7 @@
       color="red"
       tooltip="Revert local changes to the code"
       class="reset display-flex flex-direction-row">
-      &nbsp;{{ $f7dim.width < 390 ? '' : 'Revert' }}
+      <span class="button-label">Revert</span>
     </f7-button>
   </f7-toolbar>
 
@@ -90,24 +90,26 @@
           padding-left 4px
   .segmented
     .button
-      width 5em
-
-.code-editor-toolbar.toolbar-narrow
-  --f7-toolbar-height var(--f7-tabbar-labels-height);
-  font-size var(--f7-tabbar-label-font-size)
-  .toolbar-inner
-    padding-left 5px
-    .toolbar-options
-      gap 6px
-      .opt-show-all
-        flex-wrap nowrap
-        align-items center
-        flex-direction column
-        span
-          padding-left 0
-  .segmented
-    .button
       width auto
+  .button-label
+    margin-left 4px
+
+@media (max-width: 475px)
+  .code-editor-toolbar
+    --f7-toolbar-height var(--f7-tabbar-labels-height)
+    font-size var(--f7-tabbar-label-font-size)
+    .button-label
+      display none
+    .toolbar-inner
+      padding-left 5px
+      .toolbar-options
+        gap 6px
+        .opt-show-all
+          flex-wrap nowrap
+          align-items center
+          flex-direction column
+          span
+            padding-left 0
 
 .code-editor-errors
   .item-title
