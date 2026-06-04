@@ -9,9 +9,19 @@
         @save="save()"
         :f7router />
     </f7-navbar>
-    <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('tree', switchTabTree)" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
-      <f7-link @click="switchTab('code', switchTabCode)" :tab-link-active="currentTab === 'code'"> Code </f7-link>
+    <f7-toolbar tabbar position="top" class="semantics-editor-tabbar">
+      <f7-link
+        @click="switchTab('tree', switchTabTree)"
+        :tab-link-active="currentTab === 'tree'"
+        :class="{ 'semantics-tab-active': currentTab === 'tree' }">
+        Design
+      </f7-link>
+      <f7-link
+        @click="switchTab('code', switchTabCode)"
+        :tab-link-active="currentTab === 'code'"
+        :class="{ 'semantics-tab-active': currentTab === 'code' }">
+        Code
+      </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedTag == null }" @click="selectTag(null)"> Clear </f7-link>
@@ -315,6 +325,12 @@
   .design
     --f7-grid-gap 0px
     overflow auto
+
+.semantics-editor-tabbar
+  .link
+    border-bottom 2px solid transparent
+  .link.semantics-tab-active
+    border-bottom-color var(--f7-tabbar-link-active-border-color)
 
 .semantics-tree-wrapper
   padding 0
