@@ -9,9 +9,9 @@
         @save="save()"
         :f7router />
     </f7-navbar>
-    <f7-toolbar tabbar position="top">
-      <f7-link @click="switchTab('tree')" :tab-link-active="currentTab === 'tree'" tab-link="#tree"> Design </f7-link>
-      <f7-link @click="switchTab('code')" :tab-link-active="currentTab === 'code'" tab-link="#code"> Code </f7-link>
+    <f7-toolbar tabbar position="top" class="semantics-editor-tabbar">
+      <f7-link @click="switchTab('tree', switchTabTree)" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
+      <f7-link @click="switchTab('code', switchTabCode)" :tab-link-active="currentTab === 'code'"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedTag == null }" @click="selectTag(null)"> Clear </f7-link>
@@ -139,7 +139,7 @@
                         :disabled="!selectedTag.editable"
                         :clear-button="selectedTag.editable"
                         placeholder="synonym"
-                        @change="updateSynonyms($event, index)" />
+                        @change="updateSynonym($event, index)" />
                       <f7-list-input
                         :value="newSynonym"
                         :disabled="!selectedTag.editable"
@@ -151,7 +151,7 @@
                   </f7-card-content>
                 </f7-card>
               </f7-block>
-              <f7-block v-if="selectedTag">
+              <f7-block v-if="selectedTag && (selectedTag.editable || selectedTag.defaultTag)">
                 <div><f7-block-title>Add Child Tag</f7-block-title></div>
                 <f7-card>
                   <f7-card-content>
@@ -169,13 +169,51 @@
         </f7-block>
       </f7-tab>
       <f7-tab id="code" :tab-active="currentTab === 'code'">
-        <editor
+        <code-editor
           v-if="ready"
-          class="semantic-tag-code-editor"
-          mode="application/vnd.openhab.tag+yaml"
-          :value="editingTagsYaml"
-          @input="onEditorInput"
-          @save="save()" />
+          ref="codeEditor"
+          object-type="tags"
+          :read-only="editorReadOnly"
+          :read-only-msg="
+            showCodeTags === 'custom'
+              ? 'Showing non-editable tags, switch to editable to edit'
+              : showCodeTags === 'all'
+                ? 'Showing default tags, switch to editable to edit'
+                : ''
+          "
+          :object="codeEditorTags"
+          @parsed="update"
+          @changed="onCodeChanged"
+          @save="save">
+          <template #additional-panel-controls>
+            <f7-segmented>
+              <f7-button
+                outline
+                small
+                :active="showCodeTags === 'editable'"
+                tooltip="Show all editable tags"
+                @click="switchCodeTags('editable')">
+                Editable
+              </f7-button>
+              <f7-button
+                outline
+                small
+                :active="showCodeTags === 'custom'"
+                tooltip="Show all user defined tags"
+                @click="switchCodeTags('custom')">
+                Custom
+              </f7-button>
+              <f7-button
+                outline
+                small
+                :active="showCodeTags === 'all'"
+                tooltip="Show all tags, including default tags"
+                @click="switchCodeTags('all')">
+                All
+              </f7-button>
+            </f7-segmented>
+          </template>
+        </code-editor>
       </f7-tab>
     </f7-tabs>
 
@@ -245,7 +283,7 @@
               :disabled="!selectedTag.editable ? true : null"
               :clear-button="selectedTag.editable"
               placeholder="synonym"
-              @change="updateSynonyms($event, index)" />
+              @change="updateSynonym($event, index)" />
             <f7-list-input
               :value="newSynonym"
               :disabled="!selectedTag.editable ? true : null"
@@ -278,6 +316,12 @@
     --f7-grid-gap 0px
     overflow auto
 
+.semantics-editor-tabbar
+  .link
+    border-bottom 2px solid transparent
+  .link.tab-link-active
+    border-bottom-color var(--f7-tabbar-link-active-border-color)
+
 .semantics-tree-wrapper
   padding 0
   margin-bottom 0
@@ -288,7 +332,6 @@
 
 .semantics-tree
   padding 0
-  border-right 1px solid var(--f7-block-strong-border-color)
   --f7-theme-color var(--f7-color-blue)
   --f7-theme-color-rgb var(--f7-color-blue-rgb)
   .treeview
@@ -317,6 +360,7 @@
         width 50% /* manually set column width because of https://github.com/openhab/openhab-webui/issues/2574 */
         height 100%
         overflow auto
+        border-right 1px solid var(--f7-block-strong-border-color)
         .semantics-tree
           margin 0
           height auto
@@ -350,45 +394,48 @@
 </style>
 
 <script>
-import { defineAsyncComponent } from 'vue'
+import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import YAML from 'yaml'
 import fastDeepEqual from 'fast-deep-equal/es6'
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
 import TagMixin from '@/components/tags/tag-mixin'
 import { useDirty } from '@/pages/useDirty'
+import { useTabs } from '@/pages/useTabs'
 
 import { i18n } from '@/js/i18n'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
-import { showToast } from '@/js/dialog-promises'
+import { showToast, showAlertDialog } from '@/js/dialog-promises'
 
 export default {
   mixins: [TagMixin],
   components: {
     SemanticsTreeview,
-    editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue'))
+    CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
   },
   props: {
     f7router: Object
   },
   setup() {
-    const { dirty, dirtyIndicator } = useDirty('semantic-tags-edit-page')
+    const { currentTab, switchTab } = useTabs('tree')
+    const { dirty, dirtyIndicator, setupDirtyWatch } = useDirty('semantic-tags-edit-page')
     return {
       theme,
       dirty,
-      dirtyIndicator
+      dirtyIndicator,
+      setupDirtyWatch,
+      currentTab,
+      switchTab
     }
   },
   data() {
     return {
       semanticTags: [],
-      selectedTag: null,
-      expandedTags: [],
+      selectedTagUid: null,
+      expandedTags: {},
       newSynonym: '',
-      currentTab: 'tree',
       detailsTab: 'tag',
       detailsOpened: false,
       loading: false,
@@ -397,24 +444,48 @@ export default {
       expanded: false,
       filtering: false,
       expandedBeforeFiltering: false,
-      editableSemanticTagsYaml: null,
-      editingTagsYaml: null,
-      nonCodeDirty: false, // When editing code, keeps track if it was already dirty before switching to code tab
-      ready: false
+      ready: false,
+      tagsDirty: false,
+      codeDirty: false,
+      showCodeTags: 'editable'
     }
   },
   computed: {
-    ...mapStores(useSemanticsStore)
+    ...mapStores(useSemanticsStore),
+    selectedTag() {
+      return this.semanticTags.find((t) => t.uid === this.selectedTagUid) || null
+    },
+    editableTags() {
+      return this.semanticTags.filter((t) => t.editable).sort((a, b) => a.uid.localeCompare(b.uid))
+    },
+    customTags() {
+      return this.semanticTags.filter((t) => !t.defaultTag)
+    },
+    codeTagsToShow() {
+      if (this.showCodeTags === 'all') return this.semanticTags
+      if (this.showCodeTags === 'custom') return this.customTags
+      if (this.showCodeTags === 'editable') return this.editableTags
+      return []
+    },
+    codeEditorTags() {
+      return this.codeTagsToShow
+        .map((t) => {
+          const uid = (t.parent ? t.parent + '_' : '') + t.name
+          return {
+            uid: uid,
+            label: t.label,
+            description: t.description,
+            synonyms: [...t.synonyms]
+          }
+        })
+        .sort((a, b) => a.uid.localeCompare(b.uid))
+    },
+    editorReadOnly() {
+      if (this.showCodeTags === 'editable') return false
+      return this.codeTagsToShow.some((t) => !t.editable)
+    }
   },
   watch: {
-    semanticTags: {
-      handler: function () {
-        if (!this.loading) {
-          this.dirty = true
-        }
-      },
-      deep: true
-    },
     'semanticsStore.ready': {
       handler: function (newValue, oldValue) {
         if (newValue) {
@@ -422,6 +493,11 @@ export default {
         }
       },
       immediate: true
+    },
+    currentTab(newTab, oldTab) {
+      if (oldTab === 'tree') {
+        this.$refs.detailsSheet?.$el?.f7Modal?.close?.()
+      }
     }
   },
   methods: {
@@ -429,6 +505,7 @@ export default {
       if (window) {
         window.addEventListener('keydown', this.keyDown)
       }
+      this.setupDirtyWatch(() => this.editableTags)
     },
     onPageBeforeOut() {
       if (window) {
@@ -441,40 +518,56 @@ export default {
         useSemanticsStore().loadSemantics(i18n)
       }
     },
-    onEditorInput(value) {
-      if (value !== this.editableSemanticTagsYaml) {
-        this.dirty = this.nonCodeDirty || true
-      } else {
-        this.dirty = this.nonCodeDirty || false
-      }
-      this.editingTagsYaml = value
-    },
-    switchTab(tab) {
-      if (this.currentTab === tab) return
-      // avoid error with existing details sheet when switching tabs
-      const sheet = this.$refs['details-sheet']?.$el.f7Modal
-      if (sheet?.opened) {
-        sheet.close()
-      }
-      if (tab === 'code') {
-        this.currentTab = tab
-        this.nonCodeDirty = this.dirty
-        this.selectTag(null)
-        this.editableSemanticTagsYaml = this.toYaml()
-        this.editingTagsYaml = this.editableSemanticTagsYaml
-      } else {
-        if (!this.fromYaml()) {
-          f7.dialog.alert('Error parsing YAML')
-          return
-        }
-        this.currentTab = tab
-      }
-    },
     keyDown(ev) {
       if (ev.keyCode === 83 && (ev.ctrlKey || ev.metaKey) && !(ev.altKey || ev.shiftKey)) {
         this.save()
         ev.stopPropagation()
         ev.preventDefault()
+      }
+    },
+    async switchTabTree() {
+      if (!this.codeDirty) return true
+
+      // Delay switching to the tree tab until parsing succeeds.
+      return new Promise((resolve) => {
+        this.$refs.codeEditor.parseCode(
+          () => {
+            resolve(true)
+          },
+          () => {
+            resolve(false)
+          },
+          true
+        )
+      })
+    },
+    switchTabCode() {
+      // Switching to code tab: set immediately, then generate
+      this.codeDirty = false
+      nextTick(() => {
+        this.$refs.codeEditor?.generateCode?.()
+      })
+    },
+    switchCodeTags(showCodeTags) {
+      if (this.showCodeTags === showCodeTags) return
+
+      if (!this.codeDirty) {
+        this.showCodeTags = showCodeTags
+        this.$nextTick(() => {
+          this.$refs.codeEditor?.generateCode?.()
+        })
+      } else {
+        this.codeDirty = false
+        this.$refs.codeEditor?.parseCode(
+          () => {
+            this.showCodeTags = showCodeTags
+            this.$nextTick(() => {
+              this.$refs.codeEditor?.generateCode?.()
+            })
+          },
+          undefined,
+          true
+        )
       }
     },
     load() {
@@ -487,41 +580,56 @@ export default {
           name: t.name,
           label: useSemanticsStore().Labels[t.name],
           description: t.description,
-          synonyms: useSemanticsStore().Synonyms[t.name],
+          synonyms: [...useSemanticsStore().Synonyms[t.name]],
           editable: t.editable,
+          defaultTag: !!t.defaultTag,
           parent: t.parent
         }
       })
       this.semanticTags = tags
       this.$nextTick(() => {
+        this.tagsDirty = this.codeDirty = false
         this.dirty = false
         this.loading = false
         this.ready = true
       })
     },
     async save() {
-      if (!this.dirty) return
-      if (this.currentTab === 'code') {
-        if (!this.fromYaml()) {
-          f7.dialog.alert('Error parsing YAML, cannot save')
+      if (this.currentTab === 'code' && this.codeDirty) {
+        const parsedSuccessfully = await new Promise((resolve) => {
+          this.$refs.codeEditor.parseCode(
+            () => {
+              resolve(true)
+            },
+            () => {
+              showAlertDialog('Error parsing YAML, cannot save')
+              resolve(false)
+            },
+            true
+          )
+        })
+
+        if (!parsedSuccessfully) {
           return
         }
-      }
 
-      const editableTags = this.semanticTags.filter((t) => t.editable)
-      const addedTags = editableTags.filter((t) => !useSemanticsStore().Tags.find((c) => c.uid === t.uid))
-      const modifiedTags = editableTags.filter((t) => useSemanticsStore().Tags.find((c) => c.uid === t.uid && !fastDeepEqual(c, t)))
+        await this.$nextTick()
+      }
+      if (!this.dirty) return
+
+      const addedTags = this.editableTags.filter((t) => !useSemanticsStore().Tags.find((c) => c.uid === t.uid))
+      const modifiedTags = this.editableTags.filter((t) => useSemanticsStore().Tags.find((c) => c.uid === t.uid && !fastDeepEqual(c, t)))
       const removedTags = useSemanticsStore().Tags.filter((c) => !this.semanticTags.find((t) => t.uid === c.uid))
       console.debug('Added: ', addedTags, 'Removed: ', removedTags, 'Modified: ', modifiedTags)
 
       if (
         addedTags.some((t) => {
           if (!t.name || !t.label || modifiedTags.some((t) => !t.name || !t.label)) {
-            f7.dialog.alert(`${t.name}: Tag name and label required`)
+            showAlertDialog(`${t.name}: Tag name and label required`)
             return true
           }
           if (useSemanticsStore().Tags.find((c) => c.name === t.name) && !removedTags.find((r) => r.name === t.name)) {
-            f7.dialog.alert(`${t.name}: Tag names must be unique`)
+            showAlertDialog(`${t.name}: Tag names must be unique`)
             return true
           }
           return false
@@ -534,6 +642,7 @@ export default {
       const changeTasks = modifiedTags.map((t) => () => this.$oh.api.put('/rest/tags/' + t.uid, t))
       const removeTasks = removedTags.map((t) => () => this.$oh.api.delete('/rest/tags/' + t.uid))
       if (addTasks.length <= 0 && changeTasks.length <= 0 && removeTasks.length <= 0) {
+        this.tagsDirty = this.codeDirty = false
         this.dirty = false
         return
       }
@@ -556,15 +665,11 @@ export default {
           console.debug('Successfully modified tags')
           showToast((changeTasks.length === 1 ? 'Tag' : 'Tags') + ' modified')
         }
-        this.dirty = false
-        useSemanticsStore()
-          .loadSemantics(i18n)
-          .then(() => {
-            this.load()
-          })
+        await useSemanticsStore().loadSemantics(i18n)
+        this.load()
       } catch (error) {
         console.error(error)
-        f7.dialog.alert('Error saving: ' + error)
+        showAlertDialog('Error saving: ' + error)
       }
     },
     toggleExpanded() {
@@ -599,14 +704,14 @@ export default {
       }
     },
     selectTag(tag) {
-      if (this.selectedTag === tag) return
-      this.selectedTag = null
+      if (this.selectedTagUid === tag?.uid) return
       if (!tag) {
+        this.selectedTagUid = null
         this.detailsOpened = false
         return
       }
       this.$nextTick(() => {
-        this.selectedTag = tag
+        this.selectedTagUid = tag.uid
         this.detailsTab = 'tag'
         this.$nextTick(() => {
           const detailsLink = this.$refs.detailsLink
@@ -655,7 +760,7 @@ export default {
       }
       this.newSynonym = ''
     },
-    updateSynonyms(event, index) {
+    updateSynonym(event, index) {
       const newValue = event.target.value.trim()
       if (newValue) {
         this.selectedTag.synonyms.splice(index, 1, newValue)
@@ -668,40 +773,24 @@ export default {
         this.selectTag(null)
       }
     },
-    toYaml() {
-      const tags = this.semanticTags
-        .filter((t) => t.editable)
-        .map((t) => {
-          return {
-            name: t.name,
-            label: t.label,
-            description: t.description,
-            synonyms: [...t.synonyms],
-            parent: t.parent
-          }
-        })
-      return YAML.stringify(tags)
-    },
-    fromYaml() {
+    update(value) {
+      if (this.editorReadOnly) return
+
       const tags = [...this.semanticTags].filter((t) => !t.editable)
-      const editableTags = this.semanticTags.filter((t) => t.editable)
-      try {
-        const updatedTags = YAML.parse(this.editingTagsYaml).map((t) => {
-          const tag = t
-          tag.editable = true
-          tag.uid = t.parent + '_' + t.name
-          return tag
-        })
-        if (fastDeepEqual(updatedTags, editableTags)) {
-          return true
-        }
-        tags.push(...updatedTags)
-      } catch (error) {
-        console.warn('Error parsing YAML')
-        return false
-      }
+      const updatedTags = value.map((t) => {
+        const tag = t
+        tag.name = tag.uid.split('_').slice(-1)[0]
+        tag.parent = tag.uid.split('_').slice(0, -1).join('_')
+        tag.editable = true
+        tag.defaultTag = false
+        return tag
+      })
+      tags.push(...updatedTags)
       this.semanticTags = tags
-      return true
+    },
+    onCodeChanged(codeDirty) {
+      this.dirty = this.tagsDirty || codeDirty
+      this.codeDirty = codeDirty
     }
   }
 }

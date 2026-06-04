@@ -5,6 +5,7 @@ export enum MediaType {
   JSON = 'application/json',
   JAVASCRIPT = 'application/javascript',
   // openHAB vendor specific:
+  TAG_YAML = 'application/yaml+tag',
   THING_YAML = 'application/yaml+thing',
   ITEM_YAML = 'application/yaml+item',
   THING_DSL = 'text/vnd.openhab.dsl.thing',
@@ -27,6 +28,9 @@ export const DefaultMediaTypes = {
  * Specific media types supported additionally to the {@link DefaultMediaTypes} for specific configuration.
  */
 export const SupportedMediaTypes = {
+  tags: {
+    YAML: MediaType.TAG_YAML
+  },
   items: {
     YAML: MediaType.ITEM_YAML,
     DSL: MediaType.ITEM_DSL

@@ -1,6 +1,7 @@
 <template>
   <f7-treeview-item
     selectable
+    :class="{ 'invalid-drop-target': canDragDrop && moveState.moving && !canAcceptDrop }"
     :label="tag.label + (showNames && tag.name ? ' (' + tag.name + ')' : '')"
     :icon-ios="icon('ios')"
     :icon-aurora="icon('aurora')"
@@ -8,7 +9,7 @@
     :iconColor="iconColor"
     :textColor="iconColor"
     :selected="!picker && selected"
-    :opened="expandedTags[tag.uid]"
+    :opened="!!expandedTags[tag.uid]"
     :toggle="canHaveChildren"
     @treeview:open="setTagOpened(true)"
     @treeview:close="setTagOpened(false)"
@@ -58,6 +59,11 @@
 <style lang="stylus">
 .semantic-tag-tooltip-badge
   background: transparent
+
+.invalid-drop-target
+  opacity 0.45
+  .treeview-item-content
+    cursor not-allowed
 </style>
 
 <script>
@@ -70,7 +76,7 @@ export default {
   name: 'semantics-treeview-item',
   props: {
     semanticTags: Array,
-    expandedTags: Array,
+    expandedTags: Object,
     tag: Object,
     picker: Boolean,
     showNames: Boolean,
@@ -101,6 +107,9 @@ export default {
     },
     canHaveChildren() {
       return (this.children.length > 0 || this.moveState.moving) === true
+    },
+    canAcceptDrop() {
+      return !!(this.tag.defaultTag || this.tag.editable)
     },
     synonyms() {
       return this.tag?.synonyms?.join(', ') || ''
@@ -138,6 +147,15 @@ export default {
     setTagOpened(opened, uid) {
       const tagUid = uid || this.tag.uid
       this.expandedTags[tagUid] = opened
+      if (!opened && this.selectedTag) {
+        let selectedParentUid = this.selectedTag?.parent
+        while (selectedParentUid) {
+          if (!this.expandedTags[selectedParentUid]) {
+            this.$emit('selected', null)
+          }
+          selectedParentUid = this.semanticTags.find((tag) => tag.uid === selectedParentUid)?.parent
+        }
+      }
     },
     onDragStart(event) {
       console.debug('Drag start event:', event)
@@ -161,17 +179,30 @@ export default {
     },
     onDragMove(event) {
       console.debug('Drag move - event:', event)
+      const moveTarget = event.relatedContext?.element
+      if (!moveTarget) return true
+
+      const canAcceptDrop = moveTarget.editable || moveTarget.defaultTag
+      if (!canAcceptDrop) {
+        clearTimeout(this.moveState.moveDelayedOpen)
+        this.moveState.moveDelayedOpen = null
+        this.moveState.moveTarget = null
+        return false
+      }
+
       // Cancel opening previous group we moved over as we moved away from it
-      const movedToSamePlace = event.relatedContext?.element?.uid === this.moveState.moveTarget?.uid
+      const movedToSamePlace = moveTarget.uid === this.moveState.moveTarget?.uid
       if (!movedToSamePlace) {
         clearTimeout(this.moveState.moveDelayedOpen)
         this.moveState.moveDelayedOpen = null
       }
-      this.moveState.moveTarget = event.relatedContext?.element
+      this.moveState.moveTarget = moveTarget
+
       // Open group if not open yet, with a delay so you don't open it if you just drag over it
-      if (this.moveState.moveTarget && !this.moveState.moveTarget.opened) {
+      if (!this.expandedTags[moveTarget.uid] && !this.moveState.moveDelayedOpen) {
         this.moveState.moveDelayedOpen = setTimeout(() => {
-          this.setTagOpened(true, this.moveState.moveTarget.uid)
+          this.setTagOpened(true, moveTarget.uid)
+          this.moveState.moveDelayedOpen = null
         }, 1000)
       }
       return true

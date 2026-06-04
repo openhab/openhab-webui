@@ -1,4 +1,4 @@
-import { ref, computed, type Ref, watch, onMounted, useTemplateRef } from 'vue'
+import { ref, computed, type Ref, type WatchSource, watch, onMounted, useTemplateRef } from 'vue'
 import type { Router } from 'framework7'
 import { showConfirmDialog } from '@/js/dialog-promises'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -99,13 +99,14 @@ export function useDirty(pageRefOrName: string | Ref<PageRef> | null) {
    * @param value - The ref to watch for changes (typically your data model)
    * @param dirtyRef - Optional, currently unused (kept for API compatibility)
    */
-  function setupDirtyWatch(value: Ref<unknown>, dirtyRef?: Ref<boolean>) {
-    let pristineValue = cloneDeep(value.value)
+  function setupDirtyWatch(value: WatchSource<unknown>, dirtyRef?: Ref<boolean>) {
+    const getCurrentValue = () => (typeof value === 'function' ? value() : value.value)
+    let pristineValue = cloneDeep(getCurrentValue())
 
     watch(dirty, (newValue) => {
       if (!newValue) {
         // Update the pristine value when dirty is set to false, e.g. after saving
-        pristineValue = cloneDeep(value.value)
+        pristineValue = cloneDeep(getCurrentValue())
       }
     })
 
