@@ -150,7 +150,7 @@ import { computed, nextTick } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import embeddedSvgMixin from '@/components/widgets/layout/oh-canvas-embedded-svg-mixin'
+import embeddedSvgMixin from '@/components/widgets/svg/oh-embedded-svg-mixin'
 import OhCanvasLayer from './oh-canvas-layer.vue'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 import { showToast } from '@/js/dialog-promises'
