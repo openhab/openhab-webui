@@ -439,6 +439,7 @@ export default {
       filtering: false,
       expandedBeforeFiltering: false,
       ready: false,
+      tagsDirty: false,
       codeDirty: false,
       showCodeTags: 'editable'
     }
@@ -581,6 +582,7 @@ export default {
       })
       this.semanticTags = tags
       this.$nextTick(() => {
+        this.tagsDirty = this.codeDirty = false
         this.dirty = false
         this.loading = false
         this.ready = true
@@ -634,6 +636,7 @@ export default {
       const changeTasks = modifiedTags.map((t) => () => this.$oh.api.put('/rest/tags/' + t.uid, t))
       const removeTasks = removedTags.map((t) => () => this.$oh.api.delete('/rest/tags/' + t.uid))
       if (addTasks.length <= 0 && changeTasks.length <= 0 && removeTasks.length <= 0) {
+        this.tagsDirty = this.codeDirty = false
         this.dirty = false
         return
       }
@@ -778,10 +781,9 @@ export default {
       })
       tags.push(...updatedTags)
       this.semanticTags = tags
-      this.codeDirty = false
     },
     onCodeChanged(codeDirty) {
-      this.dirty = this.dirty || codeDirty
+      this.dirty = this.tagsDirty || codeDirty
       this.codeDirty = codeDirty
     }
   }

@@ -28,7 +28,7 @@ export const DefaultMediaTypes = {
  * Specific media types supported additionally to the {@link DefaultMediaTypes} for specific configuration.
  */
 export const SupportedMediaTypes = {
-  semanticTags: {
+  tags: {
     YAML: MediaType.TAG_YAML
   },
   items: {

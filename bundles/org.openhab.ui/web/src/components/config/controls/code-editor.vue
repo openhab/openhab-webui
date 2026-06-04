@@ -134,7 +134,7 @@ export default {
     Editor
   },
   props: {
-    object: Object,
+    object: [Object, Array],
     objectType: String, // the type of the object, e.g. 'items', 'things' which corresponds to the yaml element name.
     objectId: String,
     hintContext: Object,
