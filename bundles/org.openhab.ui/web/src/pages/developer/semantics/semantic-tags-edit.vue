@@ -10,16 +10,8 @@
         :f7router />
     </f7-navbar>
     <f7-toolbar tabbar position="top" class="semantics-editor-tabbar">
-      <f7-link
-        @click="switchTab('tree', switchTabTree)"
-        :tab-link-active="currentTab === 'tree'">
-        Design
-      </f7-link>
-      <f7-link
-        @click="switchTab('code', switchTabCode)"
-        :tab-link-active="currentTab === 'code'">
-        Code
-      </f7-link>
+      <f7-link @click="switchTab('tree', switchTabTree)" :tab-link-active="currentTab === 'tree'"> Design </f7-link>
+      <f7-link @click="switchTab('code', switchTabCode)" :tab-link-active="currentTab === 'code'"> Code </f7-link>
     </f7-toolbar>
     <f7-toolbar v-if="currentTab === 'tree'" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedTag == null }" @click="selectTag(null)"> Clear </f7-link>
@@ -415,7 +407,7 @@ import { useTabs } from '@/pages/useTabs'
 import { i18n } from '@/js/i18n'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
-import { showToast } from '@/js/dialog-promises'
+import { showToast, showAlertDialog } from '@/js/dialog-promises'
 
 export default {
   mixins: [TagMixin],
@@ -610,7 +602,7 @@ export default {
               resolve(true)
             },
             () => {
-              f7.dialog.alert('Error parsing YAML, cannot save')
+              showAlertDialog('Error parsing YAML, cannot save')
               resolve(false)
             },
             true
@@ -633,11 +625,11 @@ export default {
       if (
         addedTags.some((t) => {
           if (!t.name || !t.label || modifiedTags.some((t) => !t.name || !t.label)) {
-            f7.dialog.alert(`${t.name}: Tag name and label required`)
+            showAlertDialog(`${t.name}: Tag name and label required`)
             return true
           }
           if (useSemanticsStore().Tags.find((c) => c.name === t.name) && !removedTags.find((r) => r.name === t.name)) {
-            f7.dialog.alert(`${t.name}: Tag names must be unique`)
+            showAlertDialog(`${t.name}: Tag names must be unique`)
             return true
           }
           return false
@@ -677,7 +669,7 @@ export default {
         this.load()
       } catch (error) {
         console.error(error)
-        f7.dialog.alert('Error saving: ' + error)
+        showAlertDialog('Error saving: ' + error)
       }
     },
     toggleExpanded() {
