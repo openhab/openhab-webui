@@ -284,12 +284,7 @@
             </select>
           </f7-list-item>
           <ul v-if="supports('name')" style="padding-left: 0" class="widget-nested-sitemap">
-            <sitemap-picker
-              style="padding-left: 0"
-              title="Sitemap"
-              :value="widget.name"
-              :disabled="!editable"
-              @input="(value) => (widget.name = value)" />
+            <sitemap-picker style="padding-left: 0" title="Sitemap" :disabled="!editable" v-model="widget.name" />
             <f7-link v-if="widget.name" @click="navigateNestedSitemap(widget.name)"> <a>Edit Sitemap</a></f7-link>
             <f7-link v-else-if="!widget.item" @click="navigateNestedSitemap()"> <a>Add Sitemap</a></f7-link>
           </ul>

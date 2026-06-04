@@ -43,7 +43,7 @@ export default {
     openOnReady: Boolean,
     disabled: Boolean
   },
-  emits: ['sitemapPicked', 'input'],
+  emits: ['input', 'update:value'],
   data() {
     return {
       ready: false,
@@ -93,13 +93,10 @@ export default {
       })
   },
   methods: {
-    open() {
-      this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
-    },
     select(e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
-      this.$emit('input', e.target.value)
-      f7.emit('sitemapPicked', e.target.value)
+      const selectedValue = e.target.value || ''
+      this.$emit('update:value', selectedValue)
     }
   }
 }
