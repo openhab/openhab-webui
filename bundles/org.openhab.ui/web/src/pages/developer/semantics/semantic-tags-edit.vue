@@ -12,14 +12,12 @@
     <f7-toolbar tabbar position="top" class="semantics-editor-tabbar">
       <f7-link
         @click="switchTab('tree', switchTabTree)"
-        :tab-link-active="currentTab === 'tree'"
-        :class="{ 'semantics-tab-active': currentTab === 'tree' }">
+        :tab-link-active="currentTab === 'tree'">
         Design
       </f7-link>
       <f7-link
         @click="switchTab('code', switchTabCode)"
-        :tab-link-active="currentTab === 'code'"
-        :class="{ 'semantics-tab-active': currentTab === 'code' }">
+        :tab-link-active="currentTab === 'code'">
         Code
       </f7-link>
     </f7-toolbar>
@@ -329,7 +327,7 @@
 .semantics-editor-tabbar
   .link
     border-bottom 2px solid transparent
-  .link.semantics-tab-active
+  .link.tab-link-active
     border-bottom-color var(--f7-tabbar-link-active-border-color)
 
 .semantics-tree-wrapper
