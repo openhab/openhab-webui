@@ -4,52 +4,68 @@ import { WidgetDefinition, pt, pi, pg, pb, pn, po, pd } from '../helpers.ts'
 import { actionGroup, actionParams } from '../actions.ts'
 
 export const OhPlanPageDefinition = () =>
-  new WidgetDefinition('oh-plan-page', 'Floor plan', 'Displays markers on an image overlay').params([
-    pt('imageUrl', 'Image URL', 'The URL of the image to display as background').c('url'),
-    pn(
-      'imageWidth',
-      'Image Width',
-      'The width of the image (by default 1000 pixels). Please specify if the image is not square to compute the aspect ratio'
-    ),
-    pn(
-      'imageHeight',
-      'Image Height',
-      'The height of the image (by default 1000 pixels). Please specify if the image is not square to compute the aspect ratio'
-    ),
-    pb('noZoomOrDrag', 'Disable Zooming & Dragging', 'Disable the ability to zoom and drag'),
-    pb(
-      'noZoomAnimation',
-      'No Zoom Animation',
-      'Change zoom levels without animation, can also avoid graphic glitches with persistent tooltips'
-    ),
-    pb('noMarkerZoomAnimation', 'Hide Markers during Zoom Animation', '').a(),
-    po(
-      'backgroundColor',
-      'Background Color',
-      'Color outside the bounds of the image. "Black or White" means it will be black in dark mode and white in light mode',
+  new WidgetDefinition('oh-plan-page', 'Floor plan', 'Displays markers on an image overlay')
+    .params([
+      pt('imageUrl', 'Image URL', 'The URL of the image to display as background').c('url'),
+      pn(
+        'imageWidth',
+        'Image Width',
+        'The width of the image (by default 1000 pixels). Please specify if the image is not square to compute the aspect ratio'
+      ),
+      pn(
+        'imageHeight',
+        'Image Height',
+        'The height of the image (by default 1000 pixels). Please specify if the image is not square to compute the aspect ratio'
+      ),
+      pb('noZoomOrDrag', 'Disable Zooming & Dragging', 'Disable the ability to zoom and drag'),
+      pb(
+        'noZoomAnimation',
+        'No Zoom Animation',
+        'Change zoom levels without animation, can also avoid graphic glitches with persistent tooltips'
+      ),
+      pb('noMarkerZoomAnimation', 'Hide Markers during Zoom Animation', '').a(),
+      po(
+        'backgroundColor',
+        'Background Color',
+        'Color outside the bounds of the image. "Black or White" means it will be black in dark mode and white in light mode',
+        [
+          { value: '', label: 'Default' },
+          { value: 'white', label: 'Always White' },
+          { value: 'black', label: 'Always Black' },
+          { value: 'blackwhite', label: 'Black or White' }
+        ]
+      ),
+      pb(
+        'darkModeInvert',
+        'Invert Image in Dark Mode',
+        'Apply an invert filter to the image in dark mode - use with images in black & white or grayscale for best results'
+      ),
+      po(
+        'tooltipColor',
+        'Tooltip Color',
+        'Color of the tooltip. "Black or White" means it will be black in dark mode and white in light mode',
+        [
+          { value: 'white', label: 'White' },
+          { value: 'black', label: 'Black' },
+          { value: 'blackwhite', label: 'Black or White' }
+        ]
+      )
+    ])
+    .paramGroup(
+      pg(
+        'svgEmbedding',
+        'SVG Embedding',
+        'When the Image URL points to an SVG file, it can be embedded directly into the plan so its elements can reflect Item states and trigger actions. Elements must have an <code>id</code> and an <code>openhab</code> attribute to become interactive.'
+      ),
       [
-        { value: '', label: 'Default' },
-        { value: 'white', label: 'Always White' },
-        { value: 'black', label: 'Always Black' },
-        { value: 'blackwhite', label: 'Black or White' }
-      ]
-    ),
-    pb(
-      'darkModeInvert',
-      'Invert Image in Dark Mode',
-      'Apply an invert filter to the image in dark mode - use with images in black & white or grayscale for best results'
-    ),
-    po(
-      'tooltipColor',
-      'Tooltip Color',
-      'Color of the tooltip. "Black or White" means it will be black in dark mode and white in light mode',
-      [
-        { value: 'white', label: 'White' },
-        { value: 'black', label: 'Black' },
-        { value: 'blackwhite', label: 'Black or White' }
+        pb(
+          'embedSvg',
+          'Embed SVG',
+          'Embed the SVG image (from Image URL) directly into the plan so its elements can reflect Item states and trigger actions (default false)'
+        ),
+        pb('embedSvgFlashing', 'Embed SVG Flashing in Run-Mode', 'Flash SVG elements on hover in run-mode as well (default false)')
       ]
     )
-  ])
 
 export const OhPlanMarkerDefinition = () =>
   new WidgetDefinition('oh-plan-marker', 'Floor Plan Marker', 'A marker on a floor plan', 'map_pin')
