@@ -62,7 +62,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
       const parsed = JSON.parse(_storedSidebarSubmenuSelections) as Record<string, unknown>
       return Object.fromEntries(
         Object.entries(parsed).filter(([, value]) => Array.isArray(value) && value.every((item) => typeof item === 'string'))
-      ) as SidebarSubmenuSelections
+      )
     } catch {
       return {}
     }
