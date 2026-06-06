@@ -6,6 +6,7 @@ import { actionGroup, actionParams } from '@/assets/definitions/widgets/actions'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { watch } from 'vue'
 import { showToast } from '@/js/dialog-promises'
+import * as api from '@/api'
 
 export default {
   props: {
@@ -160,12 +161,14 @@ export default {
       if (!svg) return
       const subElements = svg.querySelectorAll('[openhab]')
 
+      const boundItems = new Set()
       for (const subElement of subElements) {
         const stateItems = this.config.embeddedSvgActions[subElement.id]?.stateItems
         const actionItem = this.config.embeddedSvgActions[subElement.id]?.actionItem
         const items = stateItems || (actionItem ? [actionItem] : [])
         if (items.length === 0) continue
         for (const item of items) {
+          boundItems.add(item)
           if (!useStatesStore().isItemTracked(item)) useStatesStore().addToTrackingList(item)
 
           // immediate: seed styling from the already-cached state on (re)mount - on SPA navigation the
@@ -184,6 +187,11 @@ export default {
       }
 
       useStatesStore().updateTrackingList()
+      // The states SSE only snapshots the item list present when it connects. Items bound to a
+      // late-loaded SVG are registered afterwards, so they may never receive a fresh state and the
+      // retained cache can be stale across SPA navigation. Fetch authoritative state once on (re)mount
+      // so styling reflects the current Item state regardless of cache/SSE timing.
+      this.refreshEmbeddedSvgItemStates(boundItems)
       console.info('Successfully setup embedded SVG state tracking.')
     },
     /**
@@ -194,6 +202,59 @@ export default {
         unsubscribe()
       }
       console.info('Unsubscribed from embedded SVG state tracking.')
+    },
+    /**
+     * Fetches the authoritative current state of each bound Item from the REST API and pushes it into
+     * the states store. This updates the cache (firing the state watchers) so the embedded SVG reflects
+     * the live Item state on (re)mount, even when the SSE has not re-snapshotted these late-added Items.
+     *
+     * @param {Set<string>} items the Item names bound to embedded SVG elements
+     */
+    refreshEmbeddedSvgItemStates(items) {
+      const store = useStatesStore()
+      for (const item of items) {
+        api
+          .getItemByName({ itemName: item })
+          .then((data) => {
+            if (!data || data.state === undefined || data.state === null) return
+            // prefer the accurate state type from a previous SSE update; fall back to the Item type
+            const cachedType = store.itemStates.get(item)?.type
+            store.setItemState(item, {
+              state: data.state,
+              displayState: data.transformedState ?? data.state,
+              type: cachedType && cachedType !== '-' ? cachedType : this.stateTypeForItemType(data.type)
+            })
+          })
+          .catch((error) => {
+            console.warn(`Failed to refresh state for embedded SVG Item ${item}:`, error)
+          })
+      }
+    },
+    /**
+     * Maps an openHAB Item type (e.g. Contact, Dimmer, Number:Temperature) to the corresponding state
+     * type used by {@link isStateOn}. Used as a fallback when no SSE state type is cached yet.
+     *
+     * @param {string} itemType the Item type
+     * @returns {string} the state type
+     */
+    stateTypeForItemType(itemType) {
+      switch ((itemType || '').split(':')[0]) {
+        case 'Switch':
+          return 'OnOff'
+        case 'Contact':
+          return 'OpenClosed'
+        case 'Dimmer':
+        case 'Rollershutter':
+          return 'Percent'
+        case 'Color':
+          return 'HSB'
+        case 'Player':
+          return 'PlayPause'
+        case 'Number':
+          return 'Decimal'
+        default:
+          return 'String'
+      }
     },
     /**
      * Subscribes to the mouseover and click events for the embedded SVG elements with the `openhab` attribute.
@@ -397,7 +458,8 @@ export default {
         }
         default:
           if (stateOnSubstitute) return state === 'ON'
-          return state !== undefined && state !== null && state !== '' && state !== 'OFF' && state !== 'NULL' && state !== 'UNDEF'
+          // String / Group / unknown types: treat unambiguous "off" states as off, anything else as on
+          return ![undefined, null, '', 'OFF', 'CLOSED', 'DOWN', 'PAUSE', 'NULL', 'UNDEF'].includes(state)
       }
     },
     /**
