@@ -85,7 +85,7 @@
 </style>
 
 <script setup lang="ts">
-import { computed, type DeepReadonly, defineAsyncComponent, ref, useTemplateRef } from 'vue'
+import { computed, type DeepReadonly, defineAsyncComponent, ref, useTemplateRef, watch } from 'vue'
 import type { Router } from 'framework7'
 import { f7 } from 'framework7-vue'
 import { api as fullscreen } from 'vue-fullscreen'
@@ -167,8 +167,7 @@ const showBackButton = computed(() => props.deep && !page.value?.config?.sidebar
 const page = computed(() => componentStore.page(props.uid))
 const context = computed(() => ({
   component: page.value,
-  // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-  vars: Object.assign(vars.value, page.value?.config?.defineVars ?? {}, props.defineVars ?? {}),
+  vars: vars.value,
   store: statesStore.trackedItems
 }))
 const pageType = computed(() => getPageType(page.value).type)
@@ -179,6 +178,14 @@ const fullscreenIcon = computed(() => {
     return isFullscreen.value ? 'rectangle_arrow_up_right_arrow_down_left_slash' : 'rectangle_arrow_up_right_arrow_down_left'
   }
   return null
+})
+
+// watchers
+watch(page, (newPage) => {
+  if (newPage?.config?.defineVars) vars.value = Object.assign(vars.value, newPage.config.defineVars)
+})
+watch(props, (newProps) => {
+  if (newProps.defineVars) vars.value = Object.assign(vars.value, newProps.defineVars)
 })
 
 // methods
