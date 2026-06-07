@@ -196,8 +196,8 @@ const fixedPeriodLabel = computed(() => {
         return exhaustiveCheck
     }
   } catch (e) {
-    console.error('Error formatting fixed period label: ', e)
-    return startTime.value
+    console.warn('Failed to format fixed period label: ', startTime, e)
+    return startTime.value.toString()
   }
 })
 
