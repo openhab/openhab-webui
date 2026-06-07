@@ -9,84 +9,84 @@
           <f7-link v-if="dirty" @click="onDone"> Done </f7-link>
         </f7-nav-right>
       </f7-navbar>
-      <f7-block class="no-margin no-padding">
-        <f7-col>
-          <f7-block-title medium class="padding-bottom"> Definitions </f7-block-title>
-          <f7-block-header> Cron strategy and filter definitions used in a persistence configuration. </f7-block-header>
-          <!-- Cron Strategies -->
-          <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Cron Strategies </f7-block-title>
-          <f7-list media-list swipeout>
-            <f7-list-item
-              v-for="(cs, index) in localPersistence.cronStrategies || []"
-              :key="cs.name"
-              :title="cs.name"
-              :footer="cs.cronExpression"
-              :link="editable"
-              @click="openCronStrategy(cs)"
-              swipeout>
-              <template #media>
-                <f7-link
-                  v-if="editable"
-                  icon-color="red"
-                  icon-aurora="f7:minus_circle_filled"
-                  icon-ios="f7:minus_circle_filled"
-                  icon-md="material:remove_circle_outline"
-                  @click.stop="showSwipeout" />
-              </template>
-              <f7-swipeout-actions v-if="editable" right>
-                <f7-swipeout-button
-                  @click.stop="(ev: MouseEvent) => deleteFilterOrStrategy(ev, 'cronStrategies', index)"
-                  style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                  Delete
-                </f7-swipeout-button>
-              </f7-swipeout-actions>
-            </f7-list-item>
-          </f7-list>
-          <f7-list v-if="editable">
-            <f7-list-item link no-chevron media-item subtitle="Add cron strategy" @click="openCronStrategy(null)">
-              <template #media>
-                <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-              </template>
-            </f7-list-item>
-          </f7-list>
-          <!-- Filters -->
-          <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
-          <f7-list v-for="ft in Object.values(FilterTypes)" :key="ft.name" :media-list="editable" swipeout>
-            <f7-list-item
-              v-for="(f, index) in localPersistence[ft.name as FilterTypeName]"
-              :key="f.name"
-              :title="f.name"
-              :footer="typeof ft.footerFn === 'function' ? ft.footerFn(f) : ''"
-              :link="editable"
-              @click="openFilter({ filterTypeName: ft.name as FilterTypeName, filter: f })"
-              swipeout>
-              <template #media>
-                <f7-link
-                  v-if="editable"
-                  icon-color="red"
-                  icon-aurora="f7:minus_circle_filled"
-                  icon-ios="f7:minus_circle_filled"
-                  icon-md="material:remove_circle_outline"
-                  @click.stop="showSwipeout" />
-              </template>
-              <f7-swipeout-actions v-if="editable" right>
-                <f7-swipeout-button
-                  @click.stop="(ev: MouseEvent) => deleteFilterOrStrategy(ev, ft.name as FilterTypeName, index)"
-                  style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                  Delete
-                </f7-swipeout-button>
-              </f7-swipeout-actions>
-            </f7-list-item>
-          </f7-list>
-          <f7-list v-if="editable">
-            <f7-list-item link no-chevron media-item class="color-auto-dark" subtitle="Add filter" @click="openFilter(null)">
-              <template #media>
-                <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-              </template>
-            </f7-list-item>
-          </f7-list>
-        </f7-col>
-      </f7-block>
+      <f7-col>
+        <f7-block>
+          <f7-block-title medium>Definitions</f7-block-title>
+          <f7-block-header>Cron strategy and filter definitions used in a persistence configuration.</f7-block-header>
+        </f7-block>
+        <!-- Cron Strategies -->
+        <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Cron Strategies </f7-block-title>
+        <f7-list media-list swipeout>
+          <f7-list-item
+            v-for="(cs, index) in localPersistence.cronStrategies || []"
+            :key="cs.name"
+            :title="cs.name"
+            :footer="cs.cronExpression"
+            :link="editable"
+            @click="openCronStrategy(cs)"
+            swipeout>
+            <template #media>
+              <f7-link
+                v-if="editable"
+                icon-color="red"
+                icon-aurora="f7:minus_circle_filled"
+                icon-ios="f7:minus_circle_filled"
+                icon-md="material:remove_circle_outline"
+                @click.stop="showSwipeout" />
+            </template>
+            <f7-swipeout-actions v-if="editable" right>
+              <f7-swipeout-button
+                @click.stop="(ev: MouseEvent) => deleteFilterOrStrategy(ev, 'cronStrategies', index)"
+                style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                Delete
+              </f7-swipeout-button>
+            </f7-swipeout-actions>
+          </f7-list-item>
+        </f7-list>
+        <f7-list v-if="editable">
+          <f7-list-item link no-chevron media-item subtitle="Add cron strategy" @click="openCronStrategy(null)">
+            <template #media>
+              <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+            </template>
+          </f7-list-item>
+        </f7-list>
+        <!-- Filters -->
+        <f7-block-title small style="margin-bottom: var(--f7-list-margin-vertical)"> Filters </f7-block-title>
+        <f7-list v-for="ft in Object.values(FilterTypes)" :key="ft.name" :media-list="editable" swipeout>
+          <f7-list-item
+            v-for="(f, index) in localPersistence[ft.name as FilterTypeName]"
+            :key="f.name"
+            :title="f.name"
+            :footer="typeof ft.footerFn === 'function' ? ft.footerFn(f) : ''"
+            :link="editable"
+            @click="openFilter({ filterTypeName: ft.name as FilterTypeName, filter: f })"
+            swipeout>
+            <template #media>
+              <f7-link
+                v-if="editable"
+                icon-color="red"
+                icon-aurora="f7:minus_circle_filled"
+                icon-ios="f7:minus_circle_filled"
+                icon-md="material:remove_circle_outline"
+                @click.stop="showSwipeout" />
+            </template>
+            <f7-swipeout-actions v-if="editable" right>
+              <f7-swipeout-button
+                @click.stop="(ev: MouseEvent) => deleteFilterOrStrategy(ev, ft.name as FilterTypeName, index)"
+                style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                Delete
+              </f7-swipeout-button>
+            </f7-swipeout-actions>
+          </f7-list-item>
+        </f7-list>
+        <f7-list v-if="editable">
+          <f7-list-item link no-chevron media-item class="color-auto-dark" subtitle="Add filter" @click="openFilter(null)">
+            <template #media>
+              <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+            </template>
+          </f7-list-item>
+        </f7-list>
+      </f7-col>
     </f7-page>
   </f7-popup>
 

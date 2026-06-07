@@ -44,7 +44,7 @@
           </f7-list>
         </f7-col>
         <f7-col>
-          <f7-block-title medium> Configuration </f7-block-title>
+          <f7-block-title medium>Configuration</f7-block-title>
           <config-sheet
             ref="config-sheet"
             :parameter-groups="[]"
@@ -93,7 +93,7 @@ const createMode = computed(() => !filter.value)
 const filterConfigDescriptionParameters = computed(() => filterType.value?.configDescriptionParameters || [])
 const filterTypeLabel = computed(() => filterType.value?.label?.toLowerCase() || '')
 const filterType = computed(() => (localFilter.value.filterTypeName ? FilterTypes[localFilter.value.filterTypeName] : null))
-const title = computed(() => (localFilter.value.filterTypeName ? `Configure ${filterTypeLabel.value} filter` : 'Select Filter Type'))
+const title = computed(() => (localFilter.value.filterTypeName ? `Configure ${filterTypeLabel.value} Filter` : 'Select Filter Type'))
 const isDuplicateName = computed(() => createMode.value && props.filterNameList.includes(localFilter.value.filter.name))
 const nameErrorMessage = computed(() =>
   isDuplicateName.value ? 'A filter with the same name already exists!' : 'Required. Use only letters, numbers, and _.'

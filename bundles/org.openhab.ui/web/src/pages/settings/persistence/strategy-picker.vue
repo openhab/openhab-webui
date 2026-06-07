@@ -62,11 +62,6 @@ const cronStrategyPopupOpen = ref<boolean>(false)
 const localCronStrategies = ref<api.PersistenceCronStrategy[]>([])
 const localSelected = ref<string[]>([...selected.value])
 
-// Watchers
-watch(selected, (newVal) => {
-  localSelected.value = [...newVal]
-})
-
 // Computed
 const allStrategies = computed(() => {
   return [...PredefinedStrategies, ...localCronStrategies.value]
@@ -83,6 +78,11 @@ function updateSelectedStrategies(event: Event, strategyName: string) {
     }
   }
 }
+
+// Watchers
+watch(selected, (newVal) => {
+  localSelected.value = [...newVal]
+})
 
 // Events
 function addCronStrategy(cronStrategy: api.PersistenceCronStrategy) {

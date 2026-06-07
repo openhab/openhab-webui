@@ -18,7 +18,13 @@
   </ul>
   <ul v-else>
     <f7-block-header class="no-margin">
-      <div class="margin-horizontal item-label" style="padding-top: var(--f7-list-item-padding-vertical); color: var(--f7-text-color)">
+      <div
+        class="margin-horizontal item-label"
+        style="
+          padding-top: var(--f7-list-item-padding-vertical);
+          color: var(--f7-text-color);
+          width: calc(100% - 2 * var(--f7-typography-margin));
+        ">
         {{ configDescription.label }}
       </div>
       <f7-link

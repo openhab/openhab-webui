@@ -1,9 +1,7 @@
 <template>
   <f7-page
     ref="pagePersistenceSettings"
-    class="persistence-settings-page"
-    @keydown.stop.prevent.exact.ctrl.s="save()"
-    @keydown.stop.prevent.exact.meta.s="save()">
+    class="persistence-settings-page">
     <f7-navbar>
       <oh-nav-content
         :title="'Persistence Settings' + dirtyIndicator"
@@ -81,6 +79,8 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
+import { f7 } from 'framework7-vue'
+import { onKeyStroke } from '@vueuse/core'
 
 // Page element ref for dirty tracking
 const pagePersistenceSettings = ref<HTMLElement | null>(null)
@@ -94,6 +94,7 @@ const serviceId = 'org.openhab.persistence'
 defineProps<{
   f7router: Router.Router
 }>()
+
 // Local state
 const loading = ref<boolean>(false)
 const ready = ref<boolean>(false)
@@ -108,6 +109,15 @@ setupDirtyWatch(config)
 onMounted(() => {
   void load()
 })
+
+if (f7.device.desktop) {
+  onKeyStroke(['s', 'S'], (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
+      save()
+    }
+  })
+}
 
 // Methods
 async function load() {

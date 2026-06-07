@@ -31,8 +31,8 @@
           </f7-list>
         </f7-col>
         <f7-col>
-          <f7-block-title medium class="padding-bottom"> Configuration </f7-block-title>
-          <f7-list>
+          <f7-block-title medium class="padding-bottom">Configuration</f7-block-title>
+          <f7-list style="--f7-list-in-list-padding-left: 0">
             <f7-list-group>
               <parameter-cronexpression
                 ref="cronExpression"

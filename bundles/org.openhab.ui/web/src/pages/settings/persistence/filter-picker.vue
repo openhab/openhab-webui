@@ -57,6 +57,14 @@ const localSelected = ref<string[]>([...selected.value])
 
 const definitionsDirty = ref<boolean>(false)
 
+// Computed
+const allFilterNames = computed(() => {
+  return [FilterTypeName.EqualsFilters, FilterTypeName.IncludeFilters, FilterTypeName.ThresholdFilters, FilterTypeName.TimeFilters]
+    .flatMap((ft) => localFiltersDefinitions?.value[ft] || [])
+    .map((f) => f.name)
+})
+
+// Watchers
 watch(
   selected,
   (newSelected) => {
@@ -66,13 +74,6 @@ watch(
   },
   { deep: true }
 )
-
-// Computed
-const allFilterNames = computed(() => {
-  return [FilterTypeName.EqualsFilters, FilterTypeName.IncludeFilters, FilterTypeName.ThresholdFilters, FilterTypeName.TimeFilters]
-    .flatMap((ft) => localFiltersDefinitions?.value[ft] || [])
-    .map((f) => f.name)
-})
 
 // Methods
 function updateSelectedFilters(event: Event, filter: string) {

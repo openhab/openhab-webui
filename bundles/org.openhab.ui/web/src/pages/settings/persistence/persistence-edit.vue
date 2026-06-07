@@ -1,14 +1,10 @@
 <template>
-  <f7-page
-    ref="pagePersistenceEdit"
-    class="persistence-edit-page"
-    @keydown.stop.prevent.exact.ctrl.s="save"
-    @keydown.stop.prevent.exact.meta.s="save">
+  <f7-page ref="pagePersistenceEdit" class="persistence-edit-page">
     <f7-navbar>
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
         :editable
-        :save-link="dirty ? 'Save' : null"
+        :save-link="editable ? 'Save (Ctrl-S)' : null"
         back-link-url="/settings/persistence/"
         @save="save()"
         :f7router />
@@ -40,8 +36,8 @@
           <f7-col class="modules">
             <!-- Configuration -->
             <f7-block>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configurations </f7-block-title>
-              <f7-block-header style="padding-right: 16px"> Items to persist with strategies to use. </f7-block-header>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">Configurations</f7-block-title>
+              <f7-block-header style="padding-right: 16px">Items to persist with strategies to use.</f7-block-header>
               <f7-list v-if="editable || persistence!.configs.length > 0" :media-list="editable" swipeout>
                 <f7-list-item
                   v-for="(cfg, index) in persistence!.configs"
@@ -79,7 +75,7 @@
                 </f7-list-item>
               </f7-list>
               <f7-list v-else-if="!editable">
-                <f7-list-item> No configurations defined </f7-list-item>
+                <f7-list-item>No configurations defined</f7-list-item>
               </f7-list>
               <f7-list v-if="editable">
                 <f7-list-item
@@ -94,9 +90,9 @@
                 </f7-list-item>
               </f7-list>
             </f7-block>
-            <f7-block>
+            <f7-block class="padding-top">
               <!-- Aliases -->
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Aliases </f7-block-title>
+              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">Aliases</f7-block-title>
               <f7-block-header style="padding-right: 16px">Item names mapped to aliases used in persistence store.</f7-block-header>
               <f7-list v-if="editable || currentItemsWithAlias.length > 0" :media-list="editable" swipeout no-swipeout-opened>
                 <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
@@ -266,7 +262,7 @@
 .persistence-config-links
   margin-top: 2.5rem
 
-.persistence-code-editor
+.persistence-code-editor.code-editor-fit
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
 </style>
@@ -291,6 +287,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 import * as api from '@/api'
 import { ApiError } from '@/js/hey-api'
+import { onKeyStroke } from '@vueuse/core'
 
 const { dirty, dirtyIndicator, setupDirtyWatch } = useDirty('pagePersistenceEdit')
 const { currentTab, switchTab } = useTabs()
@@ -347,6 +344,15 @@ const editable = computed(() => {
 onMounted(() => {
   void load()
 })
+
+if (f7.device.desktop) {
+  onKeyStroke(['s', 'S'], (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault()
+      save()
+    }
+  })
+}
 
 // Methods
 async function load() {
