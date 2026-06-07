@@ -65,19 +65,6 @@
   </f7-page>
 </template>
 
-<style lang="stylus">
-.item-code-editor.v-codemirror
-  position absolute
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
-  width 100%
-.yaml-message
-  display block
-  position absolute
-  top 80%
-  white-space pre-wrap
-</style>
-
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'

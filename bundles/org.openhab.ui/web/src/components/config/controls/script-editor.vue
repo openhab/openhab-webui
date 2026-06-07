@@ -27,10 +27,6 @@
     z-index 4000
     user-select none
 
-  .v-codemirror
-    flex 1
-    min-width 0
-
   .cm-editor
     height 100%
     width 100%

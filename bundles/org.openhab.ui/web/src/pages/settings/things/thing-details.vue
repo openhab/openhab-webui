@@ -393,12 +393,6 @@ p.action-description
     .advanced-actions-label
       cursor pointer
 
-.thing-code-editor.v-codemirror
-  position absolute
-  top calc(var(--f7-navbar-height) + var(--f7-tabbar-height))
-  height calc(100% - var(--f7-navbar-height, 56px) - var(--f7-tabbar-height, 48px))
-  width 100%
-
 .dialog.wide-property-dialog
   --f7-dialog-width: 560px
 

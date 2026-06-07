@@ -95,7 +95,7 @@
   top 0
   height calc(100%)
   .code-editor-fit
-    height calc(100% - var(--f7-grid-gap))
+    height 100%
   .row
     height 100%
     .block-preview-pane
@@ -103,16 +103,13 @@
       overflow auto
     .blocks-code
       height 100%
-  .v-codemirror
-    top 0
-    height 100%
   &.vertical
     .block-preview-pane
       z-index auto !important
   &.horizontal
     .row
       height 50%
-    .v-codemirror
+    .code-editor-fit
       height calc(100% - var(--f7-grid-gap))
 .blocklyDropDownDiv
   z-index 11001 !important
