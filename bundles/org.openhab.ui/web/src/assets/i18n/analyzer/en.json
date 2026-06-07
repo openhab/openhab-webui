@@ -22,7 +22,7 @@
   "analyzer.coords.period.fixed": "Fixed",
   "analyzer.coords.period.day": "Day",
   "analyzer.coords.period.isoWeek": "Week (Mon)",
-  "analyzer.coords.period.week": "Week (Sun)",
+  "analyzer.coords.period.week": "Week",
   "analyzer.coords.period.month": "Month",
   "analyzer.coords.period.year": "Year",
   "analyzer.coords.coordSystem": "Coordinate System",
