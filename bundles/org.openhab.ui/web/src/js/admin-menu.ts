@@ -4,7 +4,7 @@ type AdminMenuPageGroupId = 'configuration' | 'ui' | 'automation' | 'advanced' |
 type AdminMenuPageColumn = 'primary' | 'secondary'
 
 type RuntimeStoreLike = {
-  apiEndpoint?: (endpoint: string) => boolean
+  apiEndpoint?: (endpoint: string) => unknown
 }
 
 type VisibilityCheck = (runtimeStore: RuntimeStoreLike) => boolean
@@ -61,7 +61,7 @@ interface AdminMenuPageGroup {
 }
 
 const hasEndpoint = (runtimeStore: RuntimeStoreLike, endpoint: string) => {
-  return typeof runtimeStore?.apiEndpoint === 'function' ? runtimeStore.apiEndpoint(endpoint) : false
+  return typeof runtimeStore?.apiEndpoint === 'function' ? Boolean(runtimeStore.apiEndpoint(endpoint)) : false
 }
 
 const adminMenuPageGroups: Record<AdminMenuSection, AdminMenuPageGroup[]> = {

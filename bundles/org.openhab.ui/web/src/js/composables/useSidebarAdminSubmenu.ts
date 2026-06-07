@@ -12,22 +12,19 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 export function useSidebarAdminSubmenu(section: AdminMenuSection) {
   const runtimeStore = useRuntimeStore()
   const uiOptionsStore = useUIOptionsStore()
-  const runtimeStoreLike = {
-    apiEndpoint: (endpoint: string) => Boolean(runtimeStore.apiEndpoint(endpoint))
-  }
 
   const draftSelectedIds = ref<string[]>([])
   const expandedState = ref(false)
 
   const items = computed<AdminMenuLinkItemDefinition[]>(() => {
     if (expanded.value) {
-      return getAdminSidebarCandidates(section, runtimeStoreLike)
+      return getAdminSidebarCandidates(section, runtimeStore)
     }
-    return getEffectiveAdminSidebarItems(section, runtimeStoreLike, uiOptionsStore.sidebarSubmenuSelections[section])
+    return getEffectiveAdminSidebarItems(section, runtimeStore, uiOptionsStore.sidebarSubmenuSelections[section])
   })
 
   const candidates = computed<AdminMenuLinkItemDefinition[]>(() => {
-    return getAdminSidebarCandidates(section, runtimeStoreLike)
+    return getAdminSidebarCandidates(section, runtimeStore)
   })
 
   const customizing = computed(() => uiOptionsStore.sidebarSubmenuCustomizationSection === section)
@@ -77,13 +74,13 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
   }
 
   const isCustomized = computed(() => {
-    const defaultIds = getDefaultAdminSidebarIds(section, runtimeStoreLike)
+    const defaultIds = getDefaultAdminSidebarIds(section, runtimeStore)
     const selectedIds = draftSelectedIds.value
     return defaultIds.length !== selectedIds.length || !defaultIds.every((id) => selectedIds.includes(id))
   })
 
   const resetCustomization = () => {
-    draftSelectedIds.value = getDefaultAdminSidebarIds(section, runtimeStoreLike)
+    draftSelectedIds.value = getDefaultAdminSidebarIds(section, runtimeStore)
   }
 
   const cancelCustomization = () => {
