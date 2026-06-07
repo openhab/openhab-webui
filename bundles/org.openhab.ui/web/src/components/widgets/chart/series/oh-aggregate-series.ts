@@ -178,26 +178,28 @@ const aggregateSeries: SeriesComponent = {
     console.debug('oh-aggregate-series: groups', groups)
 
     const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
-    const data = groups.map((arr, idx, groups) => {
-      const aggregationFunction = series.aggregationFunction || AggregationFunction.average
-      let value: number = aggregate(aggregationFunction, arr, idx, groups)
-      if (value.toFixed) value = parseFloat(value.toFixed(3))
-      if (dimension2) {
-        const axisX = series.transpose ? dimension2 : dimension1
-        const axisY = series.transpose ? dimension1 : dimension2
-        return [
-          dimensionFromDate(chartType, startTime, endTime, arr[0], axisX),
-          dimensionFromDate(chartType, startTime, endTime, arr[0], axisY, true),
-          formatter.format(value)
-        ]
-      } else {
-        if (series.transpose) {
-          return [formatter.format(value), dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1, true)]
+    const data = groups
+      .map((arr, idx, groups) => {
+        const aggregationFunction = series.aggregationFunction || AggregationFunction.average
+        let value: number = aggregate(aggregationFunction, arr, idx, groups)
+        if (value.toFixed) value = parseFloat(value.toFixed(3))
+        if (dimension2) {
+          const axisX = series.transpose ? dimension2 : dimension1
+          const axisY = series.transpose ? dimension1 : dimension2
+          return [
+            dimensionFromDate(chartType, startTime, endTime, arr[0], axisX),
+            dimensionFromDate(chartType, startTime, endTime, arr[0], axisY, true),
+            formatter.format(value)
+          ]
         } else {
-          return [dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1), formatter.format(value)]
+          if (series.transpose) {
+            return [formatter.format(value), dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1, true)]
+          } else {
+            return [dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1), formatter.format(value)]
+          }
         }
-      }
-    }).filter((_d, idx) => !groups[idx][0].isBefore(startTime))
+      })
+      .filter((_d, idx) => !groups[idx][0].isBefore(startTime))
 
     if (!series.type) (series.type as unknown as string) = OhAggregateSeries.Type.heatmap
 
