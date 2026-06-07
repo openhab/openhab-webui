@@ -662,7 +662,7 @@ function toYaml(): boolean {
 
 function fromYaml() {
   if (!editable.value || !persistence.value) return true
-  const updatedPersistence: unknown = YAML.parse(persistenceYaml.value)
+  const updatedPersistence: Record<string, unknown> = YAML.parse(persistenceYaml.value)
 
   if (typeof updatedPersistence !== 'object' || updatedPersistence === null) {
     throw new Error('Invalid YAML format: expected an object at the root level.')
