@@ -320,6 +320,10 @@ const adminMenuItems: Record<AdminMenuSection, AdminMenuItemDefinition[]> = {
   ]
 }
 
+export function isAdminMenuSection(section: string): section is AdminMenuSection {
+  return Object.prototype.hasOwnProperty.call(adminMenuItems, section)
+}
+
 function isSidebarLinkItem(item: AdminMenuItemDefinition): item is AdminMenuLinkItemDefinition {
   return item.kind === 'link' && item.sidebarEligible !== false
 }

@@ -3,7 +3,7 @@ import { computed, reactive, ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
-import type { AdminMenuSection } from '@/js/admin-menu.ts'
+import { isAdminMenuSection, type AdminMenuSection } from '@/js/admin-menu.ts'
 
 type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
@@ -61,7 +61,9 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     try {
       const parsed = JSON.parse(_storedSidebarSubmenuSelections) as Record<string, unknown>
       return Object.fromEntries(
-        Object.entries(parsed).filter(([, value]) => Array.isArray(value) && value.every((item) => typeof item === 'string'))
+        Object.entries(parsed).filter(
+          ([key, value]) => isAdminMenuSection(key) && Array.isArray(value) && value.every((item) => typeof item === 'string')
+        )
       )
     } catch {
       return {}
