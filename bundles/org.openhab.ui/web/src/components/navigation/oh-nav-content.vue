@@ -2,7 +2,7 @@
   <f7-nav-left class="oh-nav-content">
     <f7-link v-if="menuIcon" class="menu-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
     <f7-link v-if="!theme.md && backLink" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
-      {{ backLink }}
+      {{ $f7dim.width > 500 ? backLink : null }}
     </f7-link>
     <f7-link v-else icon-f7="arrow_left_md" :href="backLinkUrl" @click="back" />
   </f7-nav-left>
