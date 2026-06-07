@@ -69,7 +69,7 @@
     </ul>
 
     <div v-if="customizing" class="submenu-customizer" data-sidebar-ignore-collapse>
-      <div class="submenu-customizer-help">Select the entries to show here, then apply, cancel, or reset the draft below.</div>
+      <div class="submenu-customizer-help">{{ $t('sidebar.submenu.customizer-help') }}</div>
       <f7-list class="menu-sublinks-customize">
         <f7-list-item
           v-for="item in candidates"

@@ -55,6 +55,7 @@
   "sidebar.helpAbout": "Help & About",
   "sidebar.unlockAdmin": "Unlock Administration",
   "sidebar.tip.signIn": "Sign in as an administrator to access settings",
+  "sidebar.submenu.customizer-help": "Select the entries to show here, then apply, cancel, or reset the draft below.",
   "sidebar.submenu.show-all": "show all",
   "sidebar.submenu.show-less": "show less",
   "sidebar.submenu.edit-submenu": "Edit submenu",
