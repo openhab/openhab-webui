@@ -293,7 +293,6 @@ export default {
       if (!this.embeddedSvgReady && !this.embeddedSvgOverlay) return
       this.unsubscribeEmbeddedSvgListeners()
       this.unsubscribeEmbeddedSvgStateTracking()
-      this.embeddedSvgStateTrackingUnsubscribes = []
       if (this.embeddedSvgOverlay) {
         this.embeddedSvgOverlay.remove()
         this.embeddedSvgOverlay = null
