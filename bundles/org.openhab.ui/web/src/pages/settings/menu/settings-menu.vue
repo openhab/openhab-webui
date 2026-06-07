@@ -31,7 +31,7 @@
                 :key="item.id"
                 media-item
                 :title="$t(item.titleKey)"
-                :footer="$t(item.footerKey)"
+                :footer="item.footerKey ? $t(item.footerKey) : undefined"
                 :link="item.link"
                 :badge="settingsMenuBadge(item)"
                 :after="settingsMenuAfter(item)"
