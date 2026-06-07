@@ -1,9 +1,18 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import dayjs from 'dayjs'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import Weekday from 'dayjs/plugin/weekday'
-import { dimensionFromDate } from './oh-aggregate-series'
-import { ChartType, OhAggregateSeries } from '@/types/components/widgets'
+import aggregateSeries, { dimensionFromDate } from './oh-aggregate-series'
+import { AggregationFunction, ChartType, OhAggregateSeries } from '@/types/components/widgets'
+import type { ChartContext } from '../types'
+
+vi.mock('framework7-vue', () => ({
+  f7: {
+    utils: {
+      id: () => 'mock-id'
+    }
+  }
+}))
 
 dayjs.extend(IsoWeek)
 dayjs.extend(Weekday)
@@ -106,6 +115,99 @@ describe('dimensionFromDate', () => {
 
       const result = dimensionFromDate(chartType, start, endTime, target, OhAggregateSeries.Dimension.year)
       expect(result).toBe(3)
+    })
+  })
+})
+
+describe('aggregateSeries', () => {
+  const startTime = dayjs('2026-05-12T00:00:00')
+  const endTime = dayjs('2026-05-12T23:59:59')
+  const context = {
+    chart: {
+      config: {
+        chartType: ChartType.day
+      }
+    },
+    evaluateExpression: (_key, value) => value,
+    chartContext: {}
+  } as unknown as ChartContext
+
+  describe('adjustedStartTime', () => {
+    it('should return same startTime for average aggregation', () => {
+      const component = {
+        config: {
+          aggregationFunction: AggregationFunction.average
+        }
+      } as any
+      expect(aggregateSeries.adjustedStartTime!(context, component, startTime).toISOString()).toBe(startTime.toISOString())
+    })
+
+    describe('Difference aggregations (diffLast, diffFirst)', () => {
+      it.each([
+        { func: AggregationFunction.diffLast, label: 'diffLast' },
+        { func: AggregationFunction.diffFirst, label: 'diffFirst' }
+      ])('should return subtracted startTime for $label', ({ func }) => {
+        const component = {
+          config: {
+            aggregationFunction: func
+          }
+        } as any
+        const expected = startTime.subtract(1, 'hour')
+        expect(aggregateSeries.adjustedStartTime!(context, component, startTime).toISOString()).toBe(expected.toISOString())
+      })
+
+      it('should subtract 1 day if groupStart resolves to day (e.g. for week chart)', () => {
+        const contextWeek = {
+          chart: {
+            config: {
+              chartType: ChartType.week
+            }
+          }
+        } as any
+        const component = {
+          config: {
+            aggregationFunction: AggregationFunction.diffLast
+          }
+        } as any
+        // ChartType.week => default dimension = weekday => groupStart = 'day'
+        const expected = startTime.subtract(1, 'day')
+        expect(aggregateSeries.adjustedStartTime!(contextWeek, component, startTime).toISOString()).toBe(expected.toISOString())
+      })
+    })
+  })
+
+  describe('get', () => {
+    it('should group data correctly and calculate diffLast', () => {
+      const component = {
+        config: {
+          item: 'TestItem',
+          aggregationFunction: AggregationFunction.diffLast
+        }
+      } as any
+      const points = [
+        {
+          name: 'TestItem',
+          data: [
+            { time: startTime.subtract(1, 'hour').valueOf(), state: '100' }, // Look-back point
+            { time: startTime.valueOf(), state: '100.7' }, // Hour 0
+            { time: startTime.add(1, 'hour').valueOf(), state: '102' } // Hour 1
+          ]
+        }
+      ] as any
+
+      const result = aggregateSeries.get(context, component, points, startTime, endTime)
+
+      // result.data should have 2 entries (look-back point should be filtered out)
+      expect(result.data).toHaveLength(2)
+      // First group (Hour 0) should be 100.7 - 100 = 0.7
+      expect(result.data[0][1]).toBe('0.7')
+      // Second group (Hour 1) should be 102 - 100.7 = 1.3
+      expect(result.data[1][1]).toBe('1.3')
+
+      // Axis positioning (X-axis)
+      // dimensionFromDate for Hour 0 should return 0
+      expect(result.data[0][0]).toBe(0)
+      expect(result.data[1][0]).toBe(1)
     })
   })
 })
