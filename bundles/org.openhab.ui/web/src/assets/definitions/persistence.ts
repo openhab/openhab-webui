@@ -183,7 +183,7 @@ export const FilterTypes: Record<FilterTypeName, FilterType> = {
   }
 }
 
-export const emptyPersistenceServiceConfig = {
+export const emptyPersistenceServiceConfig = Object.freeze({
   serviceId: '',
   configs: [],
   aliases: {},
@@ -194,4 +194,4 @@ export const emptyPersistenceServiceConfig = {
   thresholdFilters: [],
   includeFilters: [],
   editable: true
-} satisfies api.PersistenceServiceConfiguration
+}) satisfies api.PersistenceServiceConfiguration

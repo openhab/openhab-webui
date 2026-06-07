@@ -117,6 +117,7 @@ const localItemConfiguration = ref<api.PersistenceItemConfiguration>(createNewIt
 const localPersistence = ref<api.PersistenceServiceConfiguration>(cloneDeep(emptyPersistenceServiceConfig))
 const definitionsDirty = ref<boolean>(false)
 
+// Computed properties
 const createMode = computed(() => {
   return itemConfiguration.value === null
 })

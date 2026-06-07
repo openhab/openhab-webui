@@ -78,18 +78,16 @@ const cronExpressionConfigDescription = {
   required: true
 }
 
+// Computed properties
 const createMode = computed(() => !cronStrategy.value)
 const isDuplicateName = computed(() => createMode.value && props.cronNameList.includes(localCronStrategy.value.name))
 const nameErrorMessage = computed(() =>
   isDuplicateName.value ? 'A (cron) strategy with the same name already exists!' : 'Required. Use only letters, numbers, and _.'
 )
 
+// Event handlers
 function onOpened() {
   localCronStrategy.value = cronStrategy.value ? { ...cronStrategy.value } : { ...newCronStrategy }
-}
-
-function closePopup() {
-  opened.value = false
 }
 
 function onDone() {
@@ -110,5 +108,10 @@ function onDone() {
     cronStrategy.value = { ...localCronStrategy.value }
   }
   closePopup()
+}
+
+// Methods
+function closePopup() {
+  opened.value = false
 }
 </script>

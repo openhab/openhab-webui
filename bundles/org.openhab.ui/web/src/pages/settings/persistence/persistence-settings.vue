@@ -1,7 +1,5 @@
 <template>
-  <f7-page
-    ref="pagePersistenceSettings"
-    class="persistence-settings-page">
+  <f7-page ref="pagePersistenceSettings" class="persistence-settings-page">
     <f7-navbar>
       <oh-nav-content
         :title="'Persistence Settings' + dirtyIndicator"
