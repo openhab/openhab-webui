@@ -192,7 +192,7 @@ export default {
       // retained cache can be stale across SPA navigation. Fetch authoritative state once on (re)mount
       // so styling reflects the current Item state regardless of cache/SSE timing.
       this.refreshEmbeddedSvgItemStates(boundItems)
-      console.info('Successfully setup embedded SVG state tracking.')
+      console.debug('Successfully setup embedded SVG state tracking.')
     },
     /**
      * Unsubscribes from the state tracking for the Items linked to embedded SVG elements.
@@ -201,7 +201,8 @@ export default {
       for (const unsubscribe of this.embeddedSvgStateTrackingUnsubscribes) {
         unsubscribe()
       }
-      console.info('Unsubscribed from embedded SVG state tracking.')
+      this.embeddedSvgStateTrackingUnsubscribes = []
+      console.debug('Unsubscribed from embedded SVG state tracking.')
     },
     /**
      * Fetches the authoritative current state of each bound Item from the REST API and pushes it into
@@ -360,7 +361,7 @@ export default {
      */
     svgOnClick(el) {
       // if state = ON, use fill or flash file to highlight element (see mouseover)
-      console.log(`Element ${el.id} with openhab attribute clicked!`)
+      console.debug(`Element ${el.id} with openhab attribute clicked!`)
 
       if (this.context.editmode) {
         this.openSvgSettingsPopup(el.id)
@@ -519,7 +520,7 @@ export default {
       }
 
       const isOn = this.isStateOn(state, stateType, stateOnSubstitute)
-      console.info(`Update ${svgElement.id} due to ${item} changing to ${state} (${stateType}, on=${isOn})`)
+      console.debug(`Update ${svgElement.id} due to ${item} changing to ${state} (${stateType}, on=${isOn})`)
       const tagName = svgElement.tagName
       const stateOnColorRgbStyle = this.toRGBStyle(svgElementConfig.stateOnColor)
       const stateOffColorRgbStyle = this.toRGBStyle(svgElementConfig.stateOffColor)
