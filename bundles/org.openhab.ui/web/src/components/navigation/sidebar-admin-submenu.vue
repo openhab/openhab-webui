@@ -1,72 +1,70 @@
 <template>
   <div class="sidebar-admin-submenu">
-    <ul v-if="!customizing" class="menu-sublinks">
-      <transition-group name="list-expand" tag="div">
-        <f7-list-item
-          v-for="item in items"
-          :key="item.id"
-          :link="item.link"
-          :title="$t(item.titleKey)"
-          view=".view-main"
-          panel-close
-          :animate="false"
-          no-chevron
-          :class="{ currentsection: isItemActive(item.id) }"
-          @click="emit('navigate', item)">
-          <template #media>
-            <f7-icon :f7="item.icon" color="gray" />
-          </template>
-        </f7-list-item>
-        <f7-list-item
-          v-if="customizeAvailable"
-          class="submenu-customize-entry"
-          :title="$t('sidebar.submenu.edit-submenu')"
-          link="#"
-          no-chevron
-          data-sidebar-ignore-collapse
-          @click="startCustomization">
-          <template #media>
-            <f7-icon f7="slider_horizontal_3" color="gray" />
-          </template>
-        </f7-list-item>
-        <f7-list-item
-          v-if="customizeAvailable"
-          class="submenu-customize-entry"
-          :title="$t('sidebar.submenu.hide-submenu-editor')"
-          link="#"
-          no-chevron
-          data-sidebar-ignore-collapse
-          @click="hideSubmenuEditor">
-          <template #media>
-            <f7-icon f7="xmark" color="gray" />
-          </template>
-        </f7-list-item>
-        <f7-list-item
-          v-else-if="!expanded"
-          :title="$t('sidebar.submenu.show-all')"
-          class="submenu-expand-entry"
-          link="#"
-          no-chevron
-          data-sidebar-ignore-collapse
-          @click="showAllSubmenuEntries">
-          <template #media>
-            <f7-icon f7="chevron_down" color="gray" />
-          </template>
-        </f7-list-item>
-        <f7-list-item
-          v-else
-          :title="$t('sidebar.submenu.show-less')"
-          class="submenu-collapse-entry"
-          link="#"
-          no-chevron
-          data-sidebar-ignore-collapse
-          @click="collapseSubmenuEntries">
-          <template #media>
-            <f7-icon f7="chevron_up" color="gray" />
-          </template>
-        </f7-list-item>
-      </transition-group>
-    </ul>
+    <transition-group v-if="!customizing" class="menu-sublinks" name="list-expand" tag="ul">
+      <f7-list-item
+        v-for="item in items"
+        :key="item.id"
+        :link="item.link"
+        :title="$t(item.titleKey)"
+        view=".view-main"
+        panel-close
+        :animate="false"
+        no-chevron
+        :class="{ currentsection: isItemActive(item.id) }"
+        @click="emit('navigate', item)">
+        <template #media>
+          <f7-icon :f7="item.icon" color="gray" />
+        </template>
+      </f7-list-item>
+      <f7-list-item
+        v-if="customizeAvailable"
+        class="submenu-customize-entry"
+        :title="$t('sidebar.submenu.edit-submenu')"
+        link="#"
+        no-chevron
+        data-sidebar-ignore-collapse
+        @click="startCustomization">
+        <template #media>
+          <f7-icon f7="slider_horizontal_3" color="gray" />
+        </template>
+      </f7-list-item>
+      <f7-list-item
+        v-if="customizeAvailable"
+        class="submenu-customize-entry"
+        :title="$t('sidebar.submenu.hide-submenu-editor')"
+        link="#"
+        no-chevron
+        data-sidebar-ignore-collapse
+        @click="hideSubmenuEditor">
+        <template #media>
+          <f7-icon f7="xmark" color="gray" />
+        </template>
+      </f7-list-item>
+      <f7-list-item
+        v-else-if="!expanded"
+        :title="$t('sidebar.submenu.show-all')"
+        class="submenu-expand-entry"
+        link="#"
+        no-chevron
+        data-sidebar-ignore-collapse
+        @click="showAllSubmenuEntries">
+        <template #media>
+          <f7-icon f7="chevron_down" color="gray" />
+        </template>
+      </f7-list-item>
+      <f7-list-item
+        v-else
+        :title="$t('sidebar.submenu.show-less')"
+        class="submenu-collapse-entry"
+        link="#"
+        no-chevron
+        data-sidebar-ignore-collapse
+        @click="collapseSubmenuEntries">
+        <template #media>
+          <f7-icon f7="chevron_up" color="gray" />
+        </template>
+      </f7-list-item>
+    </transition-group>
 
     <div v-if="customizing" class="submenu-customizer" data-sidebar-ignore-collapse>
       <div class="submenu-customizer-help">{{ $t('sidebar.submenu.customizer-help') }}</div>
