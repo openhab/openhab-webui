@@ -193,6 +193,7 @@
                 :active="showCodeTags === 'editable'"
                 tooltip="Show all editable tags"
                 icon-f7="pencil"
+                icon-md="material:edit"
                 @click="switchCodeTags('editable')">
                 <span class="button-label">Editable</span>
               </f7-button>
@@ -202,6 +203,7 @@
                 :active="showCodeTags === 'custom'"
                 tooltip="Show all user defined tags"
                 icon-f7="ellipsis"
+                icon-md="material:more_horiz"
                 @click="switchCodeTags('custom')">
                 <span class="button-label">Custom</span>
               </f7-button>
@@ -211,6 +213,7 @@
                 :active="showCodeTags === 'all'"
                 tooltip="Show all tags, including default tags"
                 icon-f7="arrow_left_right"
+                icon-md="f7:arrow_left_right"
                 @click="switchCodeTags('all')">
                 <span class="button-label">All</span>
               </f7-button>

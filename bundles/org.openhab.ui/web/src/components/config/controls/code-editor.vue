@@ -28,6 +28,7 @@
       @click="copy"
       icon-ios="f7:square_on_square"
       icon-aurora="f7:square_on_square"
+      icon-md="material:content_copy"
       color="blue"
       tooltip="Copy code to clipboard"
       class="copy display-flex flex-direction-row">
@@ -39,6 +40,7 @@
       :disabled="!dirty"
       icon-ios="f7:arrow_2_circlepath"
       icon-aurora="f7:arrow_2_circlepath"
+      icon-md="material:undo"
       color="red"
       tooltip="Revert local changes to the code"
       class="reset display-flex flex-direction-row">
