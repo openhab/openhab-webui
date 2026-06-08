@@ -186,30 +186,33 @@
           @changed="onCodeChanged"
           @save="save">
           <template #additional-panel-controls>
-            <f7-segmented>
+            <f7-segmented class="code-editor-tag-filter">
               <f7-button
                 outline
                 small
                 :active="showCodeTags === 'editable'"
                 tooltip="Show all editable tags"
+                icon-f7="pencil"
                 @click="switchCodeTags('editable')">
-                Editable
+                <span class="button-label">Editable</span>
               </f7-button>
               <f7-button
                 outline
                 small
                 :active="showCodeTags === 'custom'"
                 tooltip="Show all user defined tags"
+                icon-f7="ellipsis"
                 @click="switchCodeTags('custom')">
-                Custom
+                <span class="button-label">Custom</span>
               </f7-button>
               <f7-button
                 outline
                 small
                 :active="showCodeTags === 'all'"
                 tooltip="Show all tags, including default tags"
+                icon-f7="arrow_left_right"
                 @click="switchCodeTags('all')">
-                All
+                <span class="button-label">All</span>
               </f7-button>
             </f7-segmented>
           </template>
@@ -383,6 +386,15 @@
     margin-bottom var(--f7-sheet-height)
   .semantics-details-sheet
     height calc(0.8*var(--f7-sheet-height))
+
+@media (min-width: 476px)
+  .code-editor-toolbar .code-editor-tag-filter
+    .button .icon
+      display none
+@media (min-width: 768px)
+  .code-editor-toolbar .code-editor-tag-filter
+    .button .icon
+      display inherit
 
 .expand-button
   height unset
