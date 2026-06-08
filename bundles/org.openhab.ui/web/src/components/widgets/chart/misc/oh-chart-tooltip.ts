@@ -49,7 +49,7 @@ const chartTooltip: MiscChartComponent = {
           }
           // mark area tooltip:
           // - header: time range (start time to end time) in 'dd DD.MM.YYYY HH:mm - HH:mm'
-          // - content: marker colour, series name and value (if available)
+          // - content: marker color, series name and value (if available)
           if (params.componentType === 'markArea') {
             const [_seriesType, itemName, _id] = params.seriesId.split('#')
             const item = context.items?.[itemName]
@@ -58,7 +58,16 @@ const chartTooltip: MiscChartComponent = {
               : (params.value as string)
 
             // @ts-expect-error data access
-            tooltip += `<div>${dayjs((params.data.coord as unknown[][])[0][0]).format('llll')} - ${dayjs((params.data.coord as unknown[][])[1][0]).format('HH:mm')}</div>`
+            const time = dayjs((params.data.coord as unknown[][])[0][0])
+            let timestamp
+            try {
+              timestamp = time.format('llll')
+            } catch (e) {
+              console.warn('Failed to format timestamp: ', time, e)
+              timestamp = time.format('DD/MM/YYYY HH:mm')
+            }
+            // @ts-expect-error data access
+            tooltip += `<div>${timestamp} - ${dayjs((params.data.coord as unknown[][])[1][0]).format('HH:mm')}</div>`
             tooltip += params.marker as string
             tooltip += params.name
             if (state) tooltip += `<span style="float: right; margin-left: 20px"><b style="text-align: right;">${state}</b></span><br/>`
@@ -72,7 +81,15 @@ const chartTooltip: MiscChartComponent = {
           const param = params[0]
           if (!param || !('axisType' in param)) return ''
           if (param.axisType === 'xAxis.time' && 'axisValue' in param) {
-            tooltip += `<div>${dayjs(param.axisValue as string).format('llll')}</div>`
+            const time = dayjs(param.axisValue as string)
+            let timestamp
+            try {
+              timestamp = time.format('llll')
+            } catch (e) {
+              console.warn('Failed to format timestamp: ', time, e)
+              timestamp = time.format('DD/MM/YYYY HH:mm')
+            }
+            tooltip += `<div>${timestamp}</div>`
           }
           params.forEach((p) => {
             if (p.seriesId) {
