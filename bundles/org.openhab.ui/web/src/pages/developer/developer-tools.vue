@@ -78,9 +78,7 @@
                       <template #media>
                         <f7-icon :f7="item.icon" color="gray" />
                       </template>
-                      <select
-                        :value="developerSelectValue(item.controlId)"
-                        @change="updateDeveloperSelectValue(item.controlId, $event.target.value)">
+                      <select :value="developerSelectValue(item.controlId)" @change="onDeveloperSelectChange(item.controlId, $event)">
                         <option v-for="option in item.options" :key="option.value" :value="option.value">{{ option.label }}</option>
                       </select>
                     </f7-list-item>
@@ -146,7 +144,7 @@
                     label="Icon"
                     type="text"
                     :value="icon"
-                    @change="icon = $event.target.value"
+                    @change="onIconInputChange($event)"
                     placeholder="e.g. lightbulb, qualityofservice-2"
                     :info="iconUrl"
                     clear-button>
@@ -253,12 +251,21 @@ export default {
           return ''
       }
     },
-    updateDeveloperSelectValue(controlId, value) {
-      switch (controlId) {
-        case 'ui-logging':
-          this.logLevel = value
-          this.onLogLevelChange()
-          break
+    onDeveloperSelectChange(controlId, event) {
+      const target = event.currentTarget
+      if (target instanceof HTMLSelectElement) {
+        switch (controlId) {
+          case 'ui-logging':
+            this.logLevel = target.value
+            this.onLogLevelChange()
+            break
+        }
+      }
+    },
+    onIconInputChange(event) {
+      const target = event.currentTarget
+      if (target instanceof HTMLInputElement) {
+        this.icon = target.value
       }
     },
     onPageBeforeRemove() {
