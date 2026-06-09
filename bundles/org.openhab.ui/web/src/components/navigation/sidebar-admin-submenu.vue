@@ -83,6 +83,8 @@
 
 <style lang="stylus">
 .sidebar-admin-submenu
+  display flow-root
+
   .menu-sublinks-customize
     margin-bottom 0
     background-color transparent
