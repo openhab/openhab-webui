@@ -26,7 +26,7 @@
                       media-item
                       :class="item.className"
                       :title="$t(item.titleKey)"
-                      :footer="$t(item.footerKey)"
+                      :footer="item.footerKey ? $t(item.footerKey) : undefined"
                       :link="item.link">
                       <template #media>
                         <f7-icon :f7="item.icon" color="gray" />
@@ -37,7 +37,7 @@
                       media-item
                       :class="item.className"
                       :title="$t(item.titleKey)"
-                      :footer="$t(item.footerKey)"
+                      :footer="item.footerKey ? $t(item.footerKey) : undefined"
                       link="#"
                       @click.prevent="runDeveloperMenuAction(item.actionId)">
                       <template #media>
@@ -50,7 +50,7 @@
                       no-chevron
                       :class="item.className"
                       :title="$t(item.titleKey)"
-                      :footer="$t(item.footerKey)"
+                      :footer="item.footerKey ? $t(item.footerKey) : undefined"
                       link="#"
                       @click.prevent="toggleDeveloperMenuControl(item.controlId)">
                       <template #media>
@@ -74,7 +74,7 @@
                       media-item
                       :class="item.className"
                       :title="$t(item.titleKey)"
-                      :footer="$t(item.footerKey)">
+                      :footer="item.footerKey ? $t(item.footerKey) : undefined">
                       <template #media>
                         <f7-icon :f7="item.icon" color="gray" />
                       </template>
