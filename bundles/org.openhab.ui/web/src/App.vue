@@ -85,7 +85,6 @@
               <sidebar-admin-submenu
                 v-show="isOpen('settings')"
                 ref="settingsSubmenu"
-                :key="`settings-${uiOptionsStore.showSidebarSubmenuEditor}`"
                 section="settings"
                 :active-path="currentPath.settings"
                 @navigate="handleSidebarSubmenuNavigate" />
@@ -151,7 +150,6 @@
               <sidebar-admin-submenu
                 v-show="isOpen('developer')"
                 ref="developerSubmenu"
-                :key="`developer-${uiOptionsStore.showSidebarSubmenuEditor}`"
                 section="developer"
                 :active-path="currentPath.developer"
                 @navigate="handleSidebarSubmenuNavigate" />

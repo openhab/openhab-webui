@@ -17,7 +17,7 @@
         </template>
       </f7-list-item>
       <f7-list-item
-        v-if="customizeAvailable"
+        v-if="expanded"
         class="submenu-customize-entry"
         :title="$t('sidebar.submenu.edit-submenu')"
         link="#"
@@ -25,23 +25,11 @@
         data-sidebar-ignore-collapse
         @click="startCustomization">
         <template #media>
-          <f7-icon f7="slider_horizontal_3" color="gray" />
+          <f7-icon f7="pencil_ellipsis_rectangle" color="gray" />
         </template>
       </f7-list-item>
       <f7-list-item
-        v-if="customizeAvailable"
-        class="submenu-customize-entry"
-        :title="$t('sidebar.submenu.hide-submenu-editor')"
-        link="#"
-        no-chevron
-        data-sidebar-ignore-collapse
-        @click="hideSubmenuEditor">
-        <template #media>
-          <f7-icon f7="xmark" color="gray" />
-        </template>
-      </f7-list-item>
-      <f7-list-item
-        v-else-if="!expanded"
+        v-if="!expanded"
         :title="$t('sidebar.submenu.show-all')"
         class="submenu-expand-entry"
         link="#"
@@ -193,11 +181,9 @@ const {
   candidates,
   expanded,
   customizing,
-  customizeAvailable,
   draftSelectedIds,
   isCustomized,
   startCustomization,
-  hideSubmenuEditor,
   toggleDraft,
   applyCustomization,
   resetCustomization,

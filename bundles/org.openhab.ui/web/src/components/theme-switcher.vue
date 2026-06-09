@@ -98,10 +98,6 @@
             <span>{{ t('about.miscellaneous.webaudio.enable') }}</span>
             <f7-toggle v-model:checked="webAudio" />
           </f7-list-item>
-          <f7-list-item v-if="userStore.isAdmin()">
-            <span>{{ t('about.miscellaneous.sidebar.showSubmenuEditor') }}</span>
-            <f7-toggle v-model:checked="showSidebarSubmenuEditor" />
-          </f7-list-item>
           <f7-list-group>
             <item-picker
               :label="t('about.miscellaneous.commandItem.title')"
@@ -228,7 +224,6 @@ export default {
       'hideChatInput',
       'disableExpandableCardAnimation',
       'webAudio',
-      'showSidebarSubmenuEditor',
       'dialogEnabled',
       'dialogIdentifier',
       'dialogListeningItem',

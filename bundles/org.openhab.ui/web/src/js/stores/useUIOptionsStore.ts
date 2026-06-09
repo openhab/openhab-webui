@@ -53,8 +53,6 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
 
-  const showSidebarSubmenuEditor = ref<boolean>(localStorage.getItem('openhab.ui:sidebar.showSubmenuEditor') === 'true')
-
   const _storedSidebarSubmenuSelections = localStorage.getItem('openhab.ui:sidebar.submenuSelections')
   const parseSidebarSubmenuSelections = (): SidebarSubmenuSelections => {
     if (!_storedSidebarSubmenuSelections) return {}
@@ -217,13 +215,6 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', newValue.toString())
   })
 
-  watch(showSidebarSubmenuEditor, (newValue) => {
-    localStorage.setItem('openhab.ui:sidebar.showSubmenuEditor', newValue.toString())
-    if (!newValue) {
-      sidebarSubmenuCustomizationSection.value = null
-    }
-  })
-
   watch(
     sidebarSubmenuSelections,
     (newValue) => {
@@ -377,8 +368,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
       disablePageTransitionAnimation: disablePageTransitionAnimation.value,
       hideChatInput: hideChatInput.value,
       webAudio: webAudio.value,
-      visibleBreakpointDisabled: visibleBreakpointDisabled.value,
-      showSidebarSubmenuEditor: showSidebarSubmenuEditor.value
+      visibleBreakpointDisabled: visibleBreakpointDisabled.value
     }
   }
 
@@ -396,7 +386,6 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     hideChatInput,
     webAudio,
     visibleBreakpointDisabled,
-    showSidebarSubmenuEditor,
     sidebarSubmenuSelections,
     sidebarSubmenuCustomizationSection,
     codeEditorType,

@@ -28,7 +28,6 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
   })
 
   const customizing = computed(() => uiOptionsStore.sidebarSubmenuCustomizationSection === section)
-  const customizeAvailable = computed(() => uiOptionsStore.showSidebarSubmenuEditor && !uiOptionsStore.sidebarSubmenuCustomizationSection)
   const expanded = computed(() => !customizing.value && expandedState.value)
 
   const showAllSubmenuEntries = () => {
@@ -49,10 +48,6 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
 
   const startCustomization = () => {
     uiOptionsStore.sidebarSubmenuCustomizationSection = section
-  }
-
-  const hideSubmenuEditor = () => {
-    uiOptionsStore.showSidebarSubmenuEditor = false
   }
 
   const toggleDraft = (itemId: string) => {
@@ -100,10 +95,8 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
     candidates,
     expanded,
     customizing,
-    customizeAvailable,
     draftSelectedIds,
     startCustomization,
-    hideSubmenuEditor,
     toggleDraft,
     applyCustomization,
     isCustomized,
