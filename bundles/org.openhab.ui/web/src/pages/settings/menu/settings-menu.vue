@@ -127,7 +127,7 @@ import { theme } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
 
 import AddonSection from './addon-section.vue'
-import { getAdminMenuPageSections } from '@/js/admin-menu.ts'
+import { getAdminMenuPageSections } from '@/js/admin-menu'
 
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'

@@ -173,10 +173,10 @@ import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import FileDefinition from '@/pages/settings/file-definition-mixin'
-import { getAdminMenuPageSections } from '@/js/admin-menu.ts'
+import { getAdminMenuPageSections } from '@/js/admin-menu'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   mixins: [FileDefinition],
