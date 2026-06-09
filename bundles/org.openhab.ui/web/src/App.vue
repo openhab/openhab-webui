@@ -322,7 +322,7 @@
     max-height: 0 !important
 
   .submenu-enter-to, .submenu-leave-from
-    max-height: 300px !important
+    max-height: 1000px !important
 
   .account
     z-index 300
