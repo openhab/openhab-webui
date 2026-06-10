@@ -73,9 +73,9 @@
         </f7-list-item>
       </f7-list>
       <div class="submenu-customizer-actions">
-        <f7-button small outline color="red" :disabled="!isCustomized" @click="resetCustomization">Reset</f7-button>
-        <f7-button small color="gray" @click="cancelCustomization">Cancel</f7-button>
-        <f7-button small fill color="blue" @click="applyCustomization">Apply</f7-button>
+        <f7-button small outline color="red" :disabled="!isCustomized" @click="resetCustomization">{{ $t('dialogs.reset') }}</f7-button>
+        <f7-button small color="gray" @click="cancelCustomization">{{ $t('dialogs.cancel') }}</f7-button>
+        <f7-button small fill color="blue" @click="applyCustomization">{{ $t('dialogs.apply') }}</f7-button>
       </div>
     </div>
   </div>

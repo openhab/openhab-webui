@@ -1,4 +1,5 @@
 {
+  "dialogs.apply": "Apply",
   "dialogs.ok": "OK",
   "dialogs.cancel": "Cancel",
   "dialogs.back": "Back",
@@ -12,6 +13,7 @@
   "dialogs.enable": "Enable",
   "dialogs.regenerate": "Regenerate",
   "dialogs.reload": "Reload",
+  "dialogs.reset": "Reset",
   "dialogs.retry": "Try Again",
   "dialogs.showAll": "Show All",
   "dialogs.itemPicker.tooltip.pickFromModel": "Pick from Model",
