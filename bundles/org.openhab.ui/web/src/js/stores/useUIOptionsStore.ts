@@ -58,11 +58,12 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     if (!_storedSidebarSubmenuSelections) return {}
     try {
       const parsed = JSON.parse(_storedSidebarSubmenuSelections) as Record<string, unknown>
-      return Object.fromEntries(
-        Object.entries(parsed).filter(
-          ([key, value]) => isAdminMenuSection(key) && Array.isArray(value) && value.every((item) => typeof item === 'string')
-        )
-      )
+      return Object.entries(parsed).reduce<SidebarSubmenuSelections>((acc, [key, value]) => {
+        if (isAdminMenuSection(key) && Array.isArray(value) && value.every((item) => typeof item === 'string')) {
+          acc[key] = value as string[]
+        }
+        return acc
+      }, {})
     } catch {
       return {}
     }
