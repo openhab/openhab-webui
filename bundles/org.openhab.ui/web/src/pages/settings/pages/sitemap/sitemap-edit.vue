@@ -164,7 +164,8 @@
           :object-id="sitemap.name"
           :read-only="!isEditable"
           @parsed="update"
-          @changed="onCodeChanged" />
+          @changed="onCodeChanged"
+          @save="save()" />
       </f7-tab>
     </f7-tabs>
 
@@ -725,7 +726,7 @@ export default {
           () => {
             this.codeDirty = false
             this.dirty = this.sitemapDirty
-            this.save(stay, true)
+            this.save(stay)
           },
           () => {
             this.currentTab = 'code'
@@ -768,6 +769,11 @@ export default {
           } else {
             showToast('Sitemap updated')
             this.lastCleanSitemap = this.stripClosed(this.sitemap)
+            if (this.currentTab === 'code') {
+              nextTick(() => {
+                this.$refs.codeEditor?.generateCode?.()
+              })
+            }
           }
           f7.emit('sidebarRefresh', null)
         })
