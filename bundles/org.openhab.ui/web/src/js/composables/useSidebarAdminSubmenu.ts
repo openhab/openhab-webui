@@ -61,9 +61,14 @@ export function useSidebarAdminSubmenu(section: AdminMenuSection) {
   }
 
   const applyCustomization = () => {
-    uiOptionsStore.sidebarSubmenuSelections = {
-      ...uiOptionsStore.sidebarSubmenuSelections,
-      [section]: [...(draftSelectedIds.value || [])]
+    if (isCustomized.value) {
+      uiOptionsStore.sidebarSubmenuSelections = {
+        ...uiOptionsStore.sidebarSubmenuSelections,
+        [section]: [...(draftSelectedIds.value || [])]
+      }
+    } else {
+      const { [section]: _removed, ...selections } = uiOptionsStore.sidebarSubmenuSelections
+      uiOptionsStore.sidebarSubmenuSelections = selections
     }
     uiOptionsStore.sidebarSubmenuCustomizationSection = null
   }
