@@ -46,7 +46,9 @@ import fullscreen from 'vue-fullscreen'
 import VueClipboard from 'vue3-clipboard'
 
 import { createPinia } from 'pinia'
+import { piniaPersistencePlugin } from './piniaPersistencePlugin'
 const pinia = createPinia()
+pinia.use(piniaPersistencePlugin)
 
 const app = createApp(App)
 

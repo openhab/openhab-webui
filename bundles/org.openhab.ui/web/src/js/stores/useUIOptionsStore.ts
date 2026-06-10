@@ -12,345 +12,351 @@ export interface LogHighlightFilter {
   active: boolean
 }
 
-export const useUIOptionsStore = defineStore('uiOptions', () => {
-  // States
-  // shared with Basic UI
-  const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark') || 'auto'
-  const storedDarkMode = ref<StoredDarkModeType>(
-    ['auto', 'dark', 'light'].includes(_storedDarkMode) ? (_storedDarkMode as StoredDarkModeType) : 'auto'
-  )
-  const darkModeChange = ref<number>(0) // Used to trigger recomputation of darkMode
+export const useUIOptionsStore = defineStore(
+  'uiOptions',
+  () => {
+    // States
+    // shared with Basic UI
+    const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark') || 'auto'
+    const storedDarkMode = ref<StoredDarkModeType>(
+      ['auto', 'dark', 'light'].includes(_storedDarkMode) ? (_storedDarkMode as StoredDarkModeType) : 'auto'
+    )
+    const darkModeChange = ref<number>(0) // Used to trigger recomputation of darkMode
 
-  const _storedBars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
-  const bars = ref<'light' | 'filled'>(['light', 'filled'].includes(_storedBars) ? (_storedBars as 'light' | 'filled') : 'light')
+    const _storedBars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
+    const bars = ref<'light' | 'filled'>(['light', 'filled'].includes(_storedBars) ? (_storedBars as 'light' | 'filled') : 'light')
 
-  const _storedNavBar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
-  const homeNavBar = ref<'default' | 'simple' | 'large'>(
-    ['default', 'simple', 'large'].includes(_storedNavBar) ? (_storedNavBar as 'default' | 'simple' | 'large') : 'default'
-  )
+    const _storedNavBar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
+    const homeNavBar = ref<'default' | 'simple' | 'large'>(
+      ['default', 'simple', 'large'].includes(_storedNavBar) ? (_storedNavBar as 'default' | 'simple' | 'large') : 'default'
+    )
 
-  const _storedHomeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
-  const homeBackground = ref<'default' | 'standard' | 'white'>(
-    ['default', 'standard', 'white'].includes(_storedHomeBackground)
-      ? (_storedHomeBackground as 'default' | 'standard' | 'white')
-      : 'default'
-  )
+    const _storedHomeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
+    const homeBackground = ref<'default' | 'standard' | 'white'>(
+      ['default', 'standard', 'white'].includes(_storedHomeBackground)
+        ? (_storedHomeBackground as 'default' | 'standard' | 'white')
+        : 'default'
+    )
 
-  const _storedExpandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
-  const disableExpandableCardAnimation = ref<boolean>(_storedExpandableCardAnimation === 'disabled')
+    const _storedExpandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
+    const disableExpandableCardAnimation = ref<boolean>(_storedExpandableCardAnimation === 'disabled')
 
-  const blocklyRenderer = ref<string | null>(localStorage.getItem('openhab.ui:blockly.renderer'))
-  const disablePageTransitionAnimation = ref<boolean>(localStorage.getItem('openhab.ui:theme.disablepagetransition') === 'true')
+    const blocklyRenderer = ref<string | null>(localStorage.getItem('openhab.ui:blockly.renderer'))
+    const disablePageTransitionAnimation = ref<boolean>(localStorage.getItem('openhab.ui:theme.disablepagetransition') === 'true')
 
-  const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
+    const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
 
-  // shared with Basic UI
-  const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
+    // shared with Basic UI
+    const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
 
-  const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
+    const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
 
-  const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
-  const codeEditorType = ref<CodeEditorType>(
-    ['DSL', 'YAML'].includes(_storedCodeEditorType) ? (_storedCodeEditorType as CodeEditorType) : 'YAML'
-  )
+    const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
+    const codeEditorType = ref<CodeEditorType>(
+      ['DSL', 'YAML'].includes(_storedCodeEditorType) ? (_storedCodeEditorType as CodeEditorType) : 'YAML'
+    )
 
-  const modelPickerShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemName') === 'true')
-  const modelPickerShowItemTags = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemTags') === 'true')
-  const modelPickerShowNonSemantic = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showNonSemantic') === 'true')
+    const modelPickerShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemName') === 'true')
+    const modelPickerShowItemTags = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemTags') === 'true')
+    const modelPickerShowNonSemantic = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showNonSemantic') === 'true')
 
-  const sitemapShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true')
+    const sitemapShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true')
 
-  const logDockHeight = ref<number | null>(parseInt(localStorage.getItem('openhab.ui:logDock.height') || '') || null)
-  const logViewerTextMode = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.textMode') === 'true')
-  const _storedLogViewerHighlightFilters = localStorage.getItem('openhab.ui:logviewer.logHighlightFilters')
-  const parseLogViewerHighlightFilters = (): LogHighlightFilter[] => {
-    if (!_storedLogViewerHighlightFilters) return []
-    try {
-      return JSON.parse(_storedLogViewerHighlightFilters) as LogHighlightFilter[]
-    } catch {
-      // ignore malformed data
-      return []
+    const logDockHeight = ref<number | null>(parseInt(localStorage.getItem('openhab.ui:logDock.height') || '') || null)
+    const logViewerTextMode = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.textMode') === 'true')
+    const _storedLogViewerHighlightFilters = localStorage.getItem('openhab.ui:logviewer.logHighlightFilters')
+    const parseLogViewerHighlightFilters = (): LogHighlightFilter[] => {
+      if (!_storedLogViewerHighlightFilters) return []
+      try {
+        return JSON.parse(_storedLogViewerHighlightFilters) as LogHighlightFilter[]
+      } catch {
+        // ignore malformed data
+        return []
+      }
     }
-  }
-  const logViewerHighlightFilters = ref<LogHighlightFilter[]>(parseLogViewerHighlightFilters())
-  const logViewerFilterText = ref<string>(localStorage.getItem('openhab.ui:logviewer.logFilterText') || '')
-  const logViewerShowErrors = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.logShowErrors') === 'true')
-  const logViewerEmbeddedCollapsed = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.embedded.collapsedToolbar') !== 'false')
+    const logViewerHighlightFilters = ref<LogHighlightFilter[]>(parseLogViewerHighlightFilters())
+    const logViewerFilterText = ref<string>(localStorage.getItem('openhab.ui:logviewer.logFilterText') || '')
+    const logViewerShowErrors = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.logShowErrors') === 'true')
+    const logViewerEmbeddedCollapsed = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.embedded.collapsedToolbar') !== 'false')
 
-  const dialogEnabled = ref<boolean>(localStorage.getItem('openhab.ui:dialog.enabled') === 'true')
-  const dialogIdentifier = ref<string>(localStorage.getItem('openhab.ui:dialog.id') || '')
-  const dialogListeningItem = ref<string>(localStorage.getItem('openhab.ui:dialog.listeningItem') || '')
-  const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
-  const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
-  const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
+    const dialogEnabled = ref<boolean>(localStorage.getItem('openhab.ui:dialog.enabled') === 'true')
+    const dialogIdentifier = ref<string>(localStorage.getItem('openhab.ui:dialog.id') || '')
+    const dialogListeningItem = ref<string>(localStorage.getItem('openhab.ui:dialog.listeningItem') || '')
+    const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
+    const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
+    const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
 
-  const codeMirrorSettings = reactive({
-    vimMode: localStorage.getItem('openhab.ui:codeMirror.vimMode') === 'true'
-  })
-  const setupWizardShort = ref<boolean>(localStorage.getItem('openhab.ui:setupWizard.short') === 'true')
-  const _storedWizardStepsDone = localStorage.getItem('openhab.ui:setupWizard.stepsDone')
-  const parseSetupWizardStepsDone = (): Record<string, boolean> => {
-    if (!_storedWizardStepsDone) return {}
-    try {
-      return JSON.parse(_storedWizardStepsDone) as Record<string, boolean>
-    } catch {
-      // ignore malformed data
-      return {}
+    const codeMirrorSettings = reactive({
+      vimMode: localStorage.getItem('openhab.ui:codeMirror.vimMode') === 'true'
+    })
+    const setupWizardShort = ref<boolean>(localStorage.getItem('openhab.ui:setupWizard.short') === 'true')
+    const _storedWizardStepsDone = localStorage.getItem('openhab.ui:setupWizard.stepsDone')
+    const parseSetupWizardStepsDone = (): Record<string, boolean> => {
+      if (!_storedWizardStepsDone) return {}
+      try {
+        return JSON.parse(_storedWizardStepsDone) as Record<string, boolean>
+      } catch {
+        // ignore malformed data
+        return {}
+      }
     }
-  }
-  const setupWizardStepsDone = ref<Record<string, boolean>>(parseSetupWizardStepsDone())
+    const setupWizardStepsDone = ref<Record<string, boolean>>(parseSetupWizardStepsDone())
 
-  const darkMode = computed({
-    get: (): 'dark' | 'light' => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      darkModeChange.value // darkModeChange to force re-computation
-      if (storedDarkMode.value === 'auto') {
-        if (typeof window.OHApp?.preferDarkMode === 'function') {
-          return window.OHApp.preferDarkMode() == 'dark' ? 'dark' : 'light'
+    const darkMode = computed({
+      get: (): 'dark' | 'light' => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        darkModeChange.value // darkModeChange to force re-computation
+        if (storedDarkMode.value === 'auto') {
+          if (typeof window.OHApp?.preferDarkMode === 'function') {
+            return window.OHApp.preferDarkMode() == 'dark' ? 'dark' : 'light'
+          }
+          return f7.darkMode ? 'dark' : 'light'
         }
-        return f7.darkMode ? 'dark' : 'light'
-      }
-      return storedDarkMode.value
-    },
-    set: (value: StoredDarkModeType) => {
-      storedDarkMode.value = value
-      if (value === 'auto') {
-        f7.enableAutoDarkMode()
-        localStorage.removeItem('openhab.ui:theme.dark')
-      } else {
-        f7.disableAutoDarkMode()
-        localStorage.setItem('openhab.ui:theme.dark', value)
-      }
+        return storedDarkMode.value
+      },
+      set: (value: StoredDarkModeType) => {
+        storedDarkMode.value = value
+        if (value === 'auto') {
+          f7.enableAutoDarkMode()
+          localStorage.removeItem('openhab.ui:theme.dark')
+        } else {
+          f7.disableAutoDarkMode()
+          localStorage.setItem('openhab.ui:theme.dark', value)
+        }
 
-      bars.value = 'light' // Reset bars to light when dark mode changes
+        bars.value = 'light' // Reset bars to light when dark mode changes
+        updateClasses()
+      }
+    })
+
+    f7ready(() => {
+      darkModeChange.value++ // trigger computed darkMode now f7 is ready
       updateClasses()
-    }
-  })
+      f7.on('darkModeChange', () => {
+        darkModeChange.value++
+        updateClasses()
+      })
+    })
 
-  f7ready(() => {
-    darkModeChange.value++ // trigger computed darkMode now f7 is ready
-    updateClasses()
-    f7.on('darkModeChange', () => {
-      darkModeChange.value++
+    // Getters
+    function isAutoDarkMode() {
+      return storedDarkMode.value === 'auto'
+    }
+
+    watch(bars, (newValue) => {
+      localStorage.setItem('openhab.ui:theme.bars', newValue)
       updateClasses()
     })
-  })
 
-  // Getters
-  function isAutoDarkMode() {
-    return storedDarkMode.value === 'auto'
-  }
+    watch(disablePageTransitionAnimation, (newValue) => {
+      localStorage.setItem('openhab.ui:theme.disablepagetransition', newValue.toString())
+      updateClasses()
+    })
 
-  watch(bars, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.bars', newValue)
-    updateClasses()
-  })
+    watch(homeNavBar, (newValue) => {
+      localStorage.setItem('openhab.ui:theme.home.navbar', newValue)
+    })
 
-  watch(disablePageTransitionAnimation, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.disablepagetransition', newValue.toString())
-    updateClasses()
-  })
+    watch(disableExpandableCardAnimation, (newValue) => {
+      localStorage.setItem('openhab.ui:theme.home.cardanimation', newValue ? 'disabled' : 'default')
+    })
 
-  watch(homeNavBar, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.home.navbar', newValue)
-  })
+    watch(homeBackground, (newValue) => {
+      localStorage.setItem('openhab.ui:theme.home.background', newValue)
+    })
 
-  watch(disableExpandableCardAnimation, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.home.cardanimation', newValue ? 'disabled' : 'default')
-  })
+    watch(blocklyRenderer, (newValue) => {
+      if (newValue === null) {
+        localStorage.removeItem('openhab.ui:blockly.renderer')
+      } else {
+        localStorage.setItem('openhab.ui:blockly.renderer', newValue)
+      }
+    })
 
-  watch(homeBackground, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.home.background', newValue)
-  })
+    watch(hideChatInput, (newValue) => {
+      localStorage.setItem('openhab.ui:theme.home.hidechatinput', newValue.toString())
+    })
 
-  watch(blocklyRenderer, (newValue) => {
-    if (newValue === null) {
-      localStorage.removeItem('openhab.ui:blockly.renderer')
-    } else {
-      localStorage.setItem('openhab.ui:blockly.renderer', newValue)
+    watch(webAudio, (newValue) => {
+      localStorage.setItem('openhab.ui:webaudio.enable', newValue ? 'true' : 'false')
+    })
+
+    watch(visibleBreakpointDisabled, (newValue) => {
+      localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', newValue.toString())
+    })
+
+    watch(codeEditorType, (newValue) => {
+      localStorage.setItem('openhab.ui:codeEditor.type', newValue)
+    })
+
+    watch(modelPickerShowItemName, (newValue) => {
+      localStorage.setItem('openhab.ui:modelPicker.showItemName', newValue?.toString())
+    })
+    watch(modelPickerShowItemTags, (newValue) => {
+      localStorage.setItem('openhab.ui:modelPicker.showItemTags', newValue?.toString())
+    })
+    watch(modelPickerShowNonSemantic, (newValue) => {
+      localStorage.setItem('openhab.ui:modelPicker.showNonSemantic', newValue?.toString())
+    })
+
+    watch(sitemapShowItemName, (newValue) => {
+      localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
+    })
+
+    watch(logDockHeight, (newValue) => {
+      if (newValue === null) {
+        localStorage.removeItem('openhab.ui:logDock.height')
+      } else {
+        localStorage.setItem('openhab.ui:logDock.height', newValue.toString())
+      }
+    })
+
+    watch(logViewerTextMode, (newValue) => {
+      localStorage.setItem('openhab.ui:logviewer.textMode', newValue.toString())
+    })
+
+    watch(
+      logViewerHighlightFilters,
+      (newValue) => {
+        localStorage.setItem('openhab.ui:logviewer.logHighlightFilters', JSON.stringify(newValue))
+      },
+      { deep: true }
+    )
+
+    watch(logViewerFilterText, (newValue) => {
+      if (!newValue) {
+        localStorage.removeItem('openhab.ui:logviewer.logFilterText')
+      } else {
+        localStorage.setItem('openhab.ui:logviewer.logFilterText', newValue)
+      }
+    })
+
+    watch(logViewerShowErrors, (newValue) => {
+      localStorage.setItem('openhab.ui:logviewer.logShowErrors', newValue.toString())
+    })
+
+    watch(logViewerEmbeddedCollapsed, (newValue) => {
+      localStorage.setItem('openhab.ui:logviewer.embedded.collapsedToolbar', newValue.toString())
+    })
+
+    watch(dialogEnabled, (newValue) => {
+      localStorage.setItem('openhab.ui:dialog.enabled', newValue ? 'true' : 'false')
+      setTimeout(() => {
+        location.reload()
+      }, 50)
+    })
+
+    watch(dialogIdentifier, (newValue) => {
+      localStorage.setItem('openhab.ui:dialog.id', newValue)
+    })
+    if (!dialogIdentifier.value.length) {
+      dialogIdentifier.value = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
     }
-  })
 
-  watch(hideChatInput, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.home.hidechatinput', newValue.toString())
-  })
+    watch(dialogListeningItem, (newValue) => {
+      localStorage.setItem('openhab.ui:dialog.listeningItem', newValue)
+    })
 
-  watch(webAudio, (newValue) => {
-    localStorage.setItem('openhab.ui:webaudio.enable', newValue ? 'true' : 'false')
-  })
+    watch(dialogLocationItem, (newValue) => {
+      localStorage.setItem('openhab.ui:dialog.locationItem', newValue)
+    })
 
-  watch(visibleBreakpointDisabled, (newValue) => {
-    localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', newValue.toString())
-  })
+    watch(dialogConnectOnWindowEvent, (newValue) => {
+      localStorage.setItem('openhab.ui:dialog.connectOnWindowEvent', newValue ? 'true' : 'false')
+    })
 
-  watch(codeEditorType, (newValue) => {
-    localStorage.setItem('openhab.ui:codeEditor.type', newValue)
-  })
+    watch(dialogTriggerOnConnect, (newValue) => {
+      localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
+    })
 
-  watch(modelPickerShowItemName, (newValue) => {
-    localStorage.setItem('openhab.ui:modelPicker.showItemName', newValue?.toString())
-  })
-  watch(modelPickerShowItemTags, (newValue) => {
-    localStorage.setItem('openhab.ui:modelPicker.showItemTags', newValue?.toString())
-  })
-  watch(modelPickerShowNonSemantic, (newValue) => {
-    localStorage.setItem('openhab.ui:modelPicker.showNonSemantic', newValue?.toString())
-  })
+    watch(codeMirrorSettings, (newValue) => {
+      localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
+    })
+    watch(setupWizardShort, (newValue) => {
+      localStorage.setItem('openhab.ui:setupWizard.short', newValue?.toString())
+    })
+    watch(
+      setupWizardStepsDone,
+      (newValue) => {
+        localStorage.setItem('openhab.ui:setupWizard.stepsDone', JSON.stringify(newValue || {}))
+      },
+      { deep: true }
+    )
 
-  watch(sitemapShowItemName, (newValue) => {
-    localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
-  })
-
-  watch(logDockHeight, (newValue) => {
-    if (newValue === null) {
-      localStorage.removeItem('openhab.ui:logDock.height')
-    } else {
-      localStorage.setItem('openhab.ui:logDock.height', newValue.toString())
+    function updateClasses() {
+      if (darkMode.value === 'dark') {
+        Dom7('html').addClass('dark')
+      } else {
+        Dom7('html').removeClass('dark')
+      }
+      if (bars.value === 'filled') {
+        Dom7('html').addClass('theme-filled')
+      } else {
+        Dom7('html').removeClass('theme-filled')
+      }
+      if (disablePageTransitionAnimation.value) {
+        Dom7('html').addClass('no-page-transitions')
+      } else {
+        Dom7('html').removeClass('no-page-transitions')
+      }
     }
-  })
 
-  watch(logViewerTextMode, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.textMode', newValue.toString())
-  })
-
-  watch(
-    logViewerHighlightFilters,
-    (newValue) => {
-      localStorage.setItem('openhab.ui:logviewer.logHighlightFilters', JSON.stringify(newValue))
-    },
-    { deep: true }
-  )
-
-  watch(logViewerFilterText, (newValue) => {
-    if (!newValue) {
-      localStorage.removeItem('openhab.ui:logviewer.logFilterText')
-    } else {
-      localStorage.setItem('openhab.ui:logviewer.logFilterText', newValue)
+    function themeOptions() {
+      return {
+        dark: darkMode.value,
+        autoDarkMode: isAutoDarkMode(),
+        bars: bars.value,
+        homeNavBar: homeNavBar.value,
+        homeBackground: homeBackground.value,
+        disableExpandableCardAnimation: disableExpandableCardAnimation.value,
+        blocklyRenderer: blocklyRenderer.value,
+        disablePageTransitionAnimation: disablePageTransitionAnimation.value,
+        hideChatInput: hideChatInput.value,
+        webAudio: webAudio.value,
+        visibleBreakpointDisabled: visibleBreakpointDisabled.value
+      }
     }
-  })
 
-  watch(logViewerShowErrors, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.logShowErrors', newValue.toString())
-  })
-
-  watch(logViewerEmbeddedCollapsed, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.embedded.collapsedToolbar', newValue.toString())
-  })
-
-  watch(dialogEnabled, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.enabled', newValue ? 'true' : 'false')
-    setTimeout(() => {
-      location.reload()
-    }, 50)
-  })
-
-  watch(dialogIdentifier, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.id', newValue)
-  })
-  if (!dialogIdentifier.value.length) {
-    dialogIdentifier.value = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
-  }
-
-  watch(dialogListeningItem, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.listeningItem', newValue)
-  })
-
-  watch(dialogLocationItem, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.locationItem', newValue)
-  })
-
-  watch(dialogConnectOnWindowEvent, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.connectOnWindowEvent', newValue ? 'true' : 'false')
-  })
-
-  watch(dialogTriggerOnConnect, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
-  })
-
-  watch(codeMirrorSettings, (newValue) => {
-    localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
-  })
-  watch(setupWizardShort, (newValue) => {
-    localStorage.setItem('openhab.ui:setupWizard.short', newValue?.toString())
-  })
-  watch(
-    setupWizardStepsDone,
-    (newValue) => {
-      localStorage.setItem('openhab.ui:setupWizard.stepsDone', JSON.stringify(newValue || {}))
-    },
-    { deep: true }
-  )
-
-  function updateClasses() {
-    if (darkMode.value === 'dark') {
-      Dom7('html').addClass('dark')
-    } else {
-      Dom7('html').removeClass('dark')
-    }
-    if (bars.value === 'filled') {
-      Dom7('html').addClass('theme-filled')
-    } else {
-      Dom7('html').removeClass('theme-filled')
-    }
-    if (disablePageTransitionAnimation.value) {
-      Dom7('html').addClass('no-page-transitions')
-    } else {
-      Dom7('html').removeClass('no-page-transitions')
-    }
-  }
-
-  function themeOptions() {
     return {
-      dark: darkMode.value,
-      autoDarkMode: isAutoDarkMode(),
-      bars: bars.value,
-      homeNavBar: homeNavBar.value,
-      homeBackground: homeBackground.value,
-      disableExpandableCardAnimation: disableExpandableCardAnimation.value,
-      blocklyRenderer: blocklyRenderer.value,
-      disablePageTransitionAnimation: disablePageTransitionAnimation.value,
-      hideChatInput: hideChatInput.value,
-      webAudio: webAudio.value,
-      visibleBreakpointDisabled: visibleBreakpointDisabled.value
+      storedDarkMode,
+      darkMode,
+      isAutoDarkMode,
+      bars,
+      homeNavBar,
+      homeBackground,
+      disableExpandableCardAnimation,
+      blocklyRenderer,
+      disablePageTransitionAnimation,
+      hideChatInput,
+      webAudio,
+      visibleBreakpointDisabled,
+      codeEditorType,
+      modelPickerShowItemName,
+      modelPickerShowItemTags,
+      modelPickerShowNonSemantic,
+      sitemapShowItemName,
+      logDockHeight,
+      logViewerTextMode,
+      logViewerHighlightFilters,
+      logViewerFilterText,
+      logViewerShowErrors,
+      logViewerEmbeddedCollapsed,
+      dialogEnabled,
+      dialogIdentifier,
+      dialogListeningItem,
+      dialogLocationItem,
+      dialogConnectOnWindowEvent,
+      dialogTriggerOnConnect,
+
+      codeMirrorSettings,
+      setupWizardShort,
+      setupWizardStepsDone,
+
+      updateClasses,
+      themeOptions
     }
+  },
+  {
+    persistTo: 'local'
   }
-
-  return {
-    storedDarkMode,
-    darkMode,
-    isAutoDarkMode,
-    bars,
-    homeNavBar,
-    homeBackground,
-    disableExpandableCardAnimation,
-    blocklyRenderer,
-    disablePageTransitionAnimation,
-    hideChatInput,
-    webAudio,
-    visibleBreakpointDisabled,
-    codeEditorType,
-    modelPickerShowItemName,
-    modelPickerShowItemTags,
-    modelPickerShowNonSemantic,
-    sitemapShowItemName,
-    logDockHeight,
-    logViewerTextMode,
-    logViewerHighlightFilters,
-    logViewerFilterText,
-    logViewerShowErrors,
-    logViewerEmbeddedCollapsed,
-    dialogEnabled,
-    dialogIdentifier,
-    dialogListeningItem,
-    dialogLocationItem,
-    dialogConnectOnWindowEvent,
-    dialogTriggerOnConnect,
-
-    codeMirrorSettings,
-    setupWizardShort,
-    setupWizardStepsDone,
-
-    updateClasses,
-    themeOptions
-  }
-})
+)
