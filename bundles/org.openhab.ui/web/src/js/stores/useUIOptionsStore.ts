@@ -54,13 +54,16 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
 
   const _storedSidebarSubmenuSelections = localStorage.getItem('openhab.ui:sidebar.submenuSelections')
+  const isStringArray = (value: unknown): value is string[] =>
+    Array.isArray(value) && value.every((item) => typeof item === 'string')
+
   const parseSidebarSubmenuSelections = (): SidebarSubmenuSelections => {
     if (!_storedSidebarSubmenuSelections) return {}
     try {
       const parsed = JSON.parse(_storedSidebarSubmenuSelections) as Record<string, unknown>
       return Object.entries(parsed).reduce<SidebarSubmenuSelections>((acc, [key, value]) => {
-        if (isAdminMenuSection(key) && Array.isArray(value) && value.every((item) => typeof item === 'string')) {
-          acc[key] = value as string[]
+        if (isAdminMenuSection(key) && isStringArray(value)) {
+          acc[key] = value
         }
         return acc
       }, {})
