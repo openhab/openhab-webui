@@ -2,7 +2,7 @@
 
 import { buildClientParams, type Client, type Options as Options2, type TDataShape, urlSearchParamsBodySerializer } from './client';
 import { client } from './client.gen';
-import type { AddMemberToGroupItemErrors, AddMemberToGroupItemResponses, AddMetadataToItemErrors, AddMetadataToItemResponses, AddOrUpdateItemInRegistryErrors, AddOrUpdateItemInRegistryResponses, AddOrUpdateItemsInRegistryErrors, AddOrUpdateItemsInRegistryResponses, AddOrUpdateSitemapInRegistryErrors, AddOrUpdateSitemapInRegistryResponses, AddTagToItemErrors, AddTagToItemResponses, AddUiComponentToNamespaceResponses, ApproveInboxItemByIdErrors, ApproveInboxItemByIdResponses, CreateErrors, CreateFileFormatForItemsErrors, CreateFileFormatForItemsResponses, CreateFileFormatForSitemapsErrors, CreateFileFormatForSitemapsResponses, CreateFileFormatForThingsErrors, CreateFileFormatForThingsResponses, CreateResponses, CreateRuleErrors, CreateRuleResponses, CreateSemanticTagErrors, CreateSemanticTagResponses, CreateSitemapEventSubscriptionErrors, CreateSitemapEventSubscriptionResponses, CreateThingInRegistryErrors, CreateThingInRegistryResponses, DeleteItemFromPersistenceServiceErrors, DeleteItemFromPersistenceServiceResponses, DeletePersistenceServiceConfigurationErrors, DeletePersistenceServiceConfigurationResponses, DeleteRuleErrors, DeleteRuleResponses, DeleteServiceConfigErrors, DeleteServiceConfigResponses, DeleteSessionErrors, DeleteSessionResponses, DeleteTransformationErrors, DeleteTransformationResponses, EnableRuleErrors, EnableRuleResponses, EnableThingErrors, EnableThingResponses, EnrichedSemanticTag, ExecuteThingActionErrors, ExecuteThingActionResponses, FileFormat, FlagInboxItemAsIgnoredResponses, GetAddonByIdErrors, GetAddonByIdResponses, GetAddonConfigurationErrors, GetAddonConfigurationResponses, GetAddonsErrors, GetAddonServicesErrors, GetAddonServicesResponses, GetAddonsResponses, GetAddonTypesResponses, GetApiTokensErrors, GetApiTokensResponses, GetAudioDefaultSinkErrors, GetAudioDefaultSinkResponses, GetAudioDefaultSourceErrors, GetAudioDefaultSourceResponses, GetAudioSinksResponses, GetAudioSourcesResponses, GetAvailableActionsForThingResponses, GetAvailableFirmwaresForThingResponses, GetBindingsWithDiscoverySupportResponses, GetChannelTypeByUidErrors, GetChannelTypeByUidResponses, GetChannelTypesResponses, GetConfigDescriptionByUriErrors, GetConfigDescriptionByUriResponses, GetConfigDescriptionsResponses, GetDefaultVoiceErrors, GetDefaultVoiceResponses, GetDiscoveredInboxItemsResponses, GetDiscoveryServicesInfoErrors, GetDiscoveryServicesInfoResponses, GetEventsErrors, GetEventsResponses, GetIconSetsResponses, GetItemByNameErrors, GetItemByNameResponses, GetItemDataFromPersistenceServiceErrors, GetItemDataFromPersistenceServiceResponses, GetItemLinkErrors, GetItemLinkResponses, GetItemLinksResponses, GetItemNamespacesErrors, GetItemNamespacesResponses, GetItemsForPersistenceServiceErrors, GetItemsForPersistenceServiceResponses, GetItemsResponses, GetItemState1Errors, GetItemState1Responses, GetLinkableItemTypesByChannelTypeUidErrors, GetLinkableItemTypesByChannelTypeUidResponses, GetLogger1Responses, GetLoggerResponses, GetModuleTypeByIdErrors, GetModuleTypeByIdResponses, GetModuleTypesResponses, GetOAuthTokenErrors, GetOAuthTokenResponses, GetOrphanLinksResponses, GetPersistenceHealthResponses, GetPersistenceServiceConfigurationErrors, GetPersistenceServiceConfigurationResponses, GetPersistenceServicesResponses, GetPersistenceServiceStrategySuggestionsErrors, GetPersistenceServiceStrategySuggestionsResponses, GetProfileTypesResponses, GetRegisteredUiComponentsInNamespaceResponses, GetRootResponses, GetRuleActionsErrors, GetRuleActionsResponses, GetRuleByIdErrors, GetRuleByIdResponses, GetRuleConditionsErrors, GetRuleConditionsResponses, GetRuleConfigurationErrors, GetRuleConfigurationResponses, GetRuleModuleByIdErrors, GetRuleModuleByIdResponses, GetRuleModuleConfigErrors, GetRuleModuleConfigParameterErrors, GetRuleModuleConfigParameterResponses, GetRuleModuleConfigResponses, GetRulesResponses, GetRuleTriggersErrors, GetRuleTriggersResponses, GetScheduleRuleSimulationsErrors, GetScheduleRuleSimulationsResponses, GetSemanticItemErrors, GetSemanticItemResponses, GetSemanticsHealthErrors, GetSemanticsHealthResponses, GetSemanticTagAndSubTagsErrors, GetSemanticTagAndSubTagsResponses, GetSemanticTagsResponses, GetServiceConfigErrors, GetServiceConfigResponses, GetServiceContextResponses, GetServicesByIdErrors, GetServicesByIdResponses, GetServicesResponses, GetSessionsForCurrentUserErrors, GetSessionsForCurrentUserResponses, GetSitemapByNameResponses, GetSitemapDefinitionByNameErrors, GetSitemapDefinitionByNameResponses, GetSitemapDefinitionsResponses, GetSitemapEvents1Errors, GetSitemapEvents1Responses, GetSitemapEventsErrors, GetSitemapEventsResponses, GetSitemapsResponses, GetSuggestedAddonsResponses, GetSystemInformationResponses, GetTemplateByIdErrors, GetTemplateByIdResponses, GetTemplatesResponses, GetThingByIdErrors, GetThingByIdResponses, GetThingConfigStatusErrors, GetThingConfigStatusResponses, GetThingFirmwareStatusResponses, GetThingsResponses, GetThingStatusErrors, GetThingStatusResponses, GetThingTypeByIdErrors, GetThingTypeByIdResponses, GetThingTypesResponses, GetTransformationErrors, GetTransformationResponses, GetTransformationServicesResponses, GetTransformationsResponses, GetUiComponentInNamespaceErrors, GetUiComponentInNamespaceResponses, GetUiTilesResponses, GetUoMInformationResponses, GetUuidResponses, GetVoiceInterpreterByUidErrors, GetVoiceInterpreterByUidResponses, GetVoiceInterpretersResponses, GetVoicesResponses, GroupItem, InitNewStateTackerResponses, InstallAddonByIdErrors, InstallAddonByIdResponses, InstallAddonFromUrlErrors, InstallAddonFromUrlResponses, InterpretTextByDefaultInterpreterErrors, InterpretTextByDefaultInterpreterResponses, InterpretTextErrors, InterpretTextResponses, ItemChannelLink, LinkItemToChannelErrors, LinkItemToChannelResponses, ListenAndAnswerErrors, ListenAndAnswerResponses, LoggerInfo, Metadata, ParseErrors, ParseResponses, PersistenceServiceConfiguration, PollDataForPageErrors, PollDataForPageResponses, PollDataForSitemapErrors, PollDataForSitemapResponses, PurgeDatabase1Responses, PurgeDatabaseResponses, PutLoggerErrors, PutLoggerResponses, PutPersistenceServiceConfigurationErrors, PutPersistenceServiceConfigurationResponses, PutTransformationErrors, PutTransformationResponses, RegenerateRuleErrors, RegenerateRuleResponses, RemoveAllLinksForObjectResponses, RemoveAllMetadataFromItemErrors, RemoveAllMetadataFromItemResponses, RemoveApiTokenErrors, RemoveApiTokenResponses, RemoveIgnoreFlagOnInboxItemResponses, RemoveItemFromInboxErrors, RemoveItemFromInboxResponses, RemoveItemFromRegistryErrors, RemoveItemFromRegistryResponses, RemoveLoggerResponses, RemoveMemberFromGroupItemErrors, RemoveMemberFromGroupItemResponses, RemoveMetadataFromItemErrors, RemoveMetadataFromItemResponses, RemoveSemanticTagErrors, RemoveSemanticTagResponses, RemoveSitemapFromRegistryErrors, RemoveSitemapFromRegistryResponses, RemoveTagFromItemErrors, RemoveTagFromItemResponses, RemoveThingByIdErrors, RemoveThingByIdResponses, RemoveUiComponentFromNamespaceErrors, RemoveUiComponentFromNamespaceResponses, RootUiComponent, Rule, RunRuleNow1Errors, RunRuleNow1Responses, ScanErrors, ScanResponses, SendItemCommandErrors, SendItemCommandResponses, SetRuleModuleConfigParameterErrors, SetRuleModuleConfigParameterResponses, SitemapDefinition, StartDialogErrors, StartDialogResponses, StopDialogErrors, StopDialogResponses, StoreItemDataInPersistenceServiceErrors, StoreItemDataInPersistenceServiceResponses, TextToSpeechResponses, Thing, Transformation, UninstallAddonErrors, UninstallAddonResponses, UnlinkItemFromChannelErrors, UnlinkItemFromChannelResponses, UpdateAddonConfigurationErrors, UpdateAddonConfigurationResponses, UpdateItemListForStateUpdatesErrors, UpdateItemListForStateUpdatesResponses, UpdateItemStateErrors, UpdateItemStateResponses, UpdateRuleConfigurationErrors, UpdateRuleConfigurationResponses, UpdateRuleErrors, UpdateRuleResponses, UpdateSemanticTagErrors, UpdateSemanticTagResponses, UpdateServiceConfigErrors, UpdateServiceConfigResponses, UpdateThingConfigErrors, UpdateThingConfigResponses, UpdateThingErrors, UpdateThingFirmwareErrors, UpdateThingFirmwareResponses, UpdateThingResponses, UpdateUiComponentInNamespaceErrors, UpdateUiComponentInNamespaceResponses } from './types.gen';
+import type { AddMemberToGroupItemErrors, AddMemberToGroupItemResponses, AddMetadataToItemErrors, AddMetadataToItemResponses, AddOrUpdateItemInRegistryErrors, AddOrUpdateItemInRegistryResponses, AddOrUpdateItemsInRegistryErrors, AddOrUpdateItemsInRegistryResponses, AddOrUpdateSitemapInRegistryErrors, AddOrUpdateSitemapInRegistryResponses, AddTagToItemErrors, AddTagToItemResponses, AddUiComponentToNamespaceResponses, ApproveInboxItemByIdErrors, ApproveInboxItemByIdResponses, CanSerializeRulesErrors, CanSerializeRulesResponses, CreateErrors, CreateFileFormatForItemsErrors, CreateFileFormatForItemsResponses, CreateFileFormatForRulesErrors, CreateFileFormatForRulesResponses, CreateFileFormatForRuleTemplatesErrors, CreateFileFormatForRuleTemplatesResponses, CreateFileFormatForSemanticTagsErrors, CreateFileFormatForSemanticTagsResponses, CreateFileFormatForSitemapsErrors, CreateFileFormatForSitemapsResponses, CreateFileFormatForThingsErrors, CreateFileFormatForThingsResponses, CreateResponses, CreateRuleErrors, CreateRuleResponses, CreateSemanticTagErrors, CreateSemanticTagResponses, CreateSitemapEventSubscriptionErrors, CreateSitemapEventSubscriptionResponses, CreateThingInRegistryErrors, CreateThingInRegistryResponses, DeleteConversationByIdErrors, DeleteConversationByIdResponses, DeleteItemFromPersistenceServiceErrors, DeleteItemFromPersistenceServiceResponses, DeletePersistenceServiceConfigurationErrors, DeletePersistenceServiceConfigurationResponses, DeleteRuleErrors, DeleteRuleResponses, DeleteServiceConfigErrors, DeleteServiceConfigResponses, DeleteSessionErrors, DeleteSessionResponses, DeleteTransformationErrors, DeleteTransformationResponses, EnableRuleErrors, EnableRuleResponses, EnableThingErrors, EnableThingResponses, EnrichedSemanticTag, ExecuteThingActionErrors, ExecuteThingActionResponses, FileFormat, FlagInboxItemAsIgnoredResponses, GetAddonByIdErrors, GetAddonByIdResponses, GetAddonConfigurationErrors, GetAddonConfigurationResponses, GetAddonsErrors, GetAddonServicesErrors, GetAddonServicesResponses, GetAddonsResponses, GetAddonTypesResponses, GetApiTokensErrors, GetApiTokensResponses, GetAudioDefaultSinkErrors, GetAudioDefaultSinkResponses, GetAudioDefaultSourceErrors, GetAudioDefaultSourceResponses, GetAudioSinksResponses, GetAudioSourcesResponses, GetAvailableActionsForThingResponses, GetAvailableFirmwaresForThingResponses, GetBindingsWithDiscoverySupportResponses, GetChannelTypeByUidErrors, GetChannelTypeByUidResponses, GetChannelTypesResponses, GetConfigDescriptionByUriErrors, GetConfigDescriptionByUriResponses, GetConfigDescriptionsResponses, GetConversationByIdErrors, GetConversationByIdResponses, GetDefaultVoiceErrors, GetDefaultVoiceResponses, GetDiscoveredInboxItemsResponses, GetDiscoveryServicesInfoErrors, GetDiscoveryServicesInfoResponses, GetEventsErrors, GetEventsResponses, GetIconSetsResponses, GetItemByNameErrors, GetItemByNameResponses, GetItemDataFromPersistenceServiceErrors, GetItemDataFromPersistenceServiceResponses, GetItemLinkErrors, GetItemLinkResponses, GetItemLinksResponses, GetItemNamespacesErrors, GetItemNamespacesResponses, GetItemsForPersistenceServiceErrors, GetItemsForPersistenceServiceResponses, GetItemsResponses, GetItemState1Errors, GetItemState1Responses, GetLinkableItemTypesByChannelTypeUidErrors, GetLinkableItemTypesByChannelTypeUidResponses, GetLogger1Responses, GetLoggerResponses, GetModuleTypeByIdErrors, GetModuleTypeByIdResponses, GetModuleTypesResponses, GetOAuthTokenErrors, GetOAuthTokenResponses, GetOrphanLinksResponses, GetPersistenceHealthResponses, GetPersistenceServiceConfigurationErrors, GetPersistenceServiceConfigurationResponses, GetPersistenceServicesResponses, GetPersistenceServiceStrategySuggestionsErrors, GetPersistenceServiceStrategySuggestionsResponses, GetProfileTypesResponses, GetRegisteredUiComponentsInNamespaceResponses, GetRootResponses, GetRuleActionsErrors, GetRuleActionsResponses, GetRuleByIdErrors, GetRuleByIdResponses, GetRuleConditionsErrors, GetRuleConditionsResponses, GetRuleConfigurationErrors, GetRuleConfigurationResponses, GetRuleModuleByIdErrors, GetRuleModuleByIdResponses, GetRuleModuleConfigErrors, GetRuleModuleConfigParameterErrors, GetRuleModuleConfigParameterResponses, GetRuleModuleConfigResponses, GetRulesResponses, GetRuleTriggersErrors, GetRuleTriggersResponses, GetScheduleRuleSimulationsErrors, GetScheduleRuleSimulationsResponses, GetSemanticItemErrors, GetSemanticItemResponses, GetSemanticsHealthErrors, GetSemanticsHealthResponses, GetSemanticTagAndSubTagsErrors, GetSemanticTagAndSubTagsResponses, GetSemanticTagsResponses, GetServiceConfigErrors, GetServiceConfigResponses, GetServiceContextResponses, GetServicesByIdErrors, GetServicesByIdResponses, GetServicesResponses, GetSessionsForCurrentUserErrors, GetSessionsForCurrentUserResponses, GetSitemapByNameResponses, GetSitemapDefinitionByNameErrors, GetSitemapDefinitionByNameResponses, GetSitemapDefinitionsResponses, GetSitemapEvents1Errors, GetSitemapEvents1Responses, GetSitemapEventsErrors, GetSitemapEventsResponses, GetSitemapsResponses, GetSuggestedAddonsResponses, GetSystemInformationResponses, GetTemplateByIdErrors, GetTemplateByIdResponses, GetTemplatesResponses, GetThingByIdErrors, GetThingByIdResponses, GetThingConfigStatusErrors, GetThingConfigStatusResponses, GetThingFirmwareStatusResponses, GetThingsResponses, GetThingStatusErrors, GetThingStatusResponses, GetThingTypeByIdErrors, GetThingTypeByIdResponses, GetThingTypesResponses, GetTransformationErrors, GetTransformationResponses, GetTransformationServicesResponses, GetTransformationsResponses, GetUiComponentInNamespaceErrors, GetUiComponentInNamespaceResponses, GetUiTilesResponses, GetUoMInformationResponses, GetUuidResponses, GetVoiceInterpreterByUidErrors, GetVoiceInterpreterByUidResponses, GetVoiceInterpretersResponses, GetVoicesResponses, GroupItem, InitNewStateTackerResponses, InstallAddonByIdErrors, InstallAddonByIdResponses, InstallAddonFromUrlErrors, InstallAddonFromUrlResponses, InterpretTextByDefaultInterpreterErrors, InterpretTextByDefaultInterpreterResponses, InterpretTextErrors, InterpretTextResponses, ItemChannelLink, LinkItemToChannelErrors, LinkItemToChannelResponses, ListConversationsResponses, ListenAndAnswerErrors, ListenAndAnswerResponses, LoggerInfo, Metadata, ParseErrors, ParseResponses, PersistenceServiceConfiguration, PollDataForPageErrors, PollDataForPageResponses, PollDataForSitemapErrors, PollDataForSitemapResponses, PurgeDatabase1Responses, PurgeDatabaseResponses, PutLoggerErrors, PutLoggerResponses, PutPersistenceServiceConfigurationErrors, PutPersistenceServiceConfigurationResponses, PutTransformationErrors, PutTransformationResponses, RegenerateRuleErrors, RegenerateRuleResponses, RemoveAllLinksForObjectResponses, RemoveAllMetadataFromItemErrors, RemoveAllMetadataFromItemResponses, RemoveApiTokenErrors, RemoveApiTokenResponses, RemoveIgnoreFlagOnInboxItemResponses, RemoveItemFromInboxErrors, RemoveItemFromInboxResponses, RemoveItemFromRegistryErrors, RemoveItemFromRegistryResponses, RemoveLoggerResponses, RemoveMemberFromGroupItemErrors, RemoveMemberFromGroupItemResponses, RemoveMetadataFromItemErrors, RemoveMetadataFromItemResponses, RemoveSemanticTagErrors, RemoveSemanticTagResponses, RemoveSitemapFromRegistryErrors, RemoveSitemapFromRegistryResponses, RemoveTagFromItemErrors, RemoveTagFromItemResponses, RemoveThingByIdErrors, RemoveThingByIdResponses, RemoveUiComponentFromNamespaceErrors, RemoveUiComponentFromNamespaceResponses, RootUiComponent, Rule, RunRuleNow1Errors, RunRuleNow1Responses, ScanErrors, ScanResponses, SendItemCommandErrors, SendItemCommandResponses, SetRuleModuleConfigParameterErrors, SetRuleModuleConfigParameterResponses, SitemapDefinition, StartDialogErrors, StartDialogResponses, StopDialogErrors, StopDialogResponses, StoreItemDataInPersistenceServiceErrors, StoreItemDataInPersistenceServiceResponses, StringList, TextToSpeechResponses, Thing, Transformation, UninstallAddonErrors, UninstallAddonResponses, UnlinkItemFromChannelErrors, UnlinkItemFromChannelResponses, UpdateAddonConfigurationErrors, UpdateAddonConfigurationResponses, UpdateItemListForStateUpdatesErrors, UpdateItemListForStateUpdatesResponses, UpdateItemStateErrors, UpdateItemStateResponses, UpdateRuleConfigurationErrors, UpdateRuleConfigurationResponses, UpdateRuleErrors, UpdateRuleResponses, UpdateSemanticTagErrors, UpdateSemanticTagResponses, UpdateServiceConfigErrors, UpdateServiceConfigResponses, UpdateThingConfigErrors, UpdateThingConfigResponses, UpdateThingErrors, UpdateThingFirmwareErrors, UpdateThingFirmwareResponses, UpdateThingResponses, UpdateUiComponentInNamespaceErrors, UpdateUiComponentInNamespaceResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -1075,18 +1075,42 @@ export const removeIgnoreFlagOnInboxItem = <ThrowOnError extends boolean = false
 };
 
 /**
+ * Checks if the specified rule(s) can be serialized to the target format.
+ */
+export const canSerializeRules = <ThrowOnError extends boolean = false>(parameters?: {
+    targetFormat?: 'application/vnd.openhab.dsl.rule' | 'application/yaml';
+    body?: StringList | FileFormat;
+}, options?: Options<never, ThrowOnError>) => {
+    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'targetFormat' }, { key: 'body', map: 'body' }] }]);
+    return (options?.client ?? client).post<CanSerializeRulesResponses, CanSerializeRulesErrors, ThrowOnError, 'data'>({
+        responseStyle: 'data',
+        security: [{ scheme: 'bearer', type: 'http' }],
+        url: '/file-format/rules/check',
+        ...options,
+        ...params,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers,
+            ...params.headers
+        }
+    });
+};
+
+/**
  * Create file format.
  */
 export const create = <ThrowOnError extends boolean = false>(parameters: {
     hideDefaultParameters?: boolean;
     hideDefaultChannels?: boolean;
     hideChannelLinksAndMetadata?: boolean;
+    ruleSerializationOption?: 'Normal' | 'Include all' | 'Stub only' | 'Strip template';
     fileFormat: FileFormat;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'query', key: 'hideDefaultParameters' },
                 { in: 'query', key: 'hideDefaultChannels' },
                 { in: 'query', key: 'hideChannelLinksAndMetadata' },
+                { in: 'query', key: 'ruleSerializationOption' },
                 { key: 'fileFormat', map: 'body' }
             ] }]);
     return (options?.client ?? client).post<CreateResponses, CreateErrors, ThrowOnError, 'data'>({
@@ -1115,6 +1139,77 @@ export const createFileFormatForItems = <ThrowOnError extends boolean = false>(p
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
         url: '/file-format/items',
+        ...options,
+        ...params,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers,
+            ...params.headers
+        }
+    });
+};
+
+/**
+ * Create file format for a list of rule templates in the registry.
+ */
+export const createFileFormatForRuleTemplates = <ThrowOnError extends boolean = false>(parameters?: {
+    serializationOption?: 'Normal' | 'Include all';
+    body?: Array<string>;
+}, options?: Options<never, ThrowOnError>) => {
+    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'serializationOption' }, { key: 'body', map: 'body' }] }]);
+    return (options?.client ?? client).post<CreateFileFormatForRuleTemplatesResponses, CreateFileFormatForRuleTemplatesErrors, ThrowOnError, 'data'>({
+        responseStyle: 'data',
+        security: [{ scheme: 'bearer', type: 'http' }],
+        url: '/file-format/ruletemplates',
+        ...options,
+        ...params,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers,
+            ...params.headers
+        }
+    });
+};
+
+/**
+ * Create file format for a list of rules in the registry.
+ */
+export const createFileFormatForRules = <ThrowOnError extends boolean = false>(parameters?: {
+    serializationOption?: 'Normal' | 'Include all' | 'Stub only' | 'Strip template';
+    body?: Array<string>;
+}, options?: Options<never, ThrowOnError>) => {
+    const params = buildClientParams([parameters], [{ args: [{ in: 'query', key: 'serializationOption' }, { key: 'body', map: 'body' }] }]);
+    return (options?.client ?? client).post<CreateFileFormatForRulesResponses, CreateFileFormatForRulesErrors, ThrowOnError, 'data'>({
+        responseStyle: 'data',
+        security: [{ scheme: 'bearer', type: 'http' }],
+        url: '/file-format/rules',
+        ...options,
+        ...params,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options?.headers,
+            ...params.headers
+        }
+    });
+};
+
+/**
+ * Create file format for a list of semantic tags in registry.
+ */
+export const createFileFormatForSemanticTags = <ThrowOnError extends boolean = false>(parameters?: {
+    hideNonEditableTags?: boolean;
+    hideDefaultTags?: boolean;
+    body?: Array<string>;
+}, options?: Options<never, ThrowOnError>) => {
+    const params = buildClientParams([parameters], [{ args: [
+                { in: 'query', key: 'hideNonEditableTags' },
+                { in: 'query', key: 'hideDefaultTags' },
+                { key: 'body', map: 'body' }
+            ] }]);
+    return (options?.client ?? client).post<CreateFileFormatForSemanticTagsResponses, CreateFileFormatForSemanticTagsErrors, ThrowOnError, 'data'>({
+        responseStyle: 'data',
+        security: [{ scheme: 'bearer', type: 'http' }],
+        url: '/file-format/tags',
         ...options,
         ...params,
         headers: {
@@ -1176,14 +1271,13 @@ export const parse = <ThrowOnError extends boolean = false>(parameters: {
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [{ key: 'body', map: 'body' }] }]);
     return (options?.client ?? client).post<ParseResponses, ParseErrors, ThrowOnError, 'data'>({
-        bodySerializer: null,
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],
         url: '/file-format/parse',
         ...options,
         ...params,
         headers: {
-            'Content-Type': 'text/vnd.openhab.dsl.thing',
+            'Content-Type': 'application/yaml',
             ...options?.headers,
             ...params.headers
         }
@@ -2841,6 +2935,37 @@ export const getUiTiles = <ThrowOnError extends boolean = false>(options?: Optio
 });
 
 /**
+ * Deletes a full conversation or its messages since a given message id.
+ */
+export const deleteConversationById = <ThrowOnError extends boolean = false>(parameters: {
+    id: string;
+    messageId?: number;
+}, options?: Options<never, ThrowOnError>) => {
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'id' }, { in: 'query', key: 'messageId' }] }]);
+    return (options?.client ?? client).delete<DeleteConversationByIdResponses, DeleteConversationByIdErrors, ThrowOnError, 'data'>({
+        responseStyle: 'data',
+        url: '/voice/conversations/{id}',
+        ...options,
+        ...params
+    });
+};
+
+/**
+ * Get a conversation.
+ */
+export const getConversationById = <ThrowOnError extends boolean = false>(parameters: {
+    id: string;
+}, options?: Options<never, ThrowOnError>) => {
+    const params = buildClientParams([parameters], [{ args: [{ in: 'path', key: 'id' }] }]);
+    return (options?.client ?? client).get<GetConversationByIdResponses, GetConversationByIdErrors, ThrowOnError, 'data'>({
+        responseStyle: 'data',
+        url: '/voice/conversations/{id}',
+        ...options,
+        ...params
+    });
+};
+
+/**
  * Gets the default voice.
  */
 export const getDefaultVoice = <ThrowOnError extends boolean = false>(options?: Options<never, ThrowOnError>) => (options?.client ?? client).get<GetDefaultVoiceResponses, GetDefaultVoiceErrors, ThrowOnError, 'data'>({
@@ -2885,9 +3010,18 @@ export const getVoiceInterpreters = <ThrowOnError extends boolean = false>(param
  */
 export const interpretTextByDefaultInterpreter = <ThrowOnError extends boolean = false>(parameters: {
     'Accept-Language'?: string;
+    conversation?: string;
+    llmTools?: Array<string>;
+    locationItem?: string;
     body: string;
 }, options?: Options<never, ThrowOnError>) => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'headers', key: 'Accept-Language' }, { key: 'body', map: 'body' }] }]);
+    const params = buildClientParams([parameters], [{ args: [
+                { in: 'headers', key: 'Accept-Language' },
+                { in: 'query', key: 'conversation' },
+                { in: 'query', key: 'llmTools' },
+                { in: 'query', key: 'locationItem' },
+                { key: 'body', map: 'body' }
+            ] }]);
     return (options?.client ?? client).post<InterpretTextByDefaultInterpreterResponses, InterpretTextByDefaultInterpreterErrors, ThrowOnError, 'data'>({
         bodySerializer: null,
         responseStyle: 'data',
@@ -2917,11 +3051,17 @@ export const getVoices = <ThrowOnError extends boolean = false>(options?: Option
 export const interpretText = <ThrowOnError extends boolean = false>(parameters: {
     'Accept-Language'?: string;
     ids: Array<string>;
+    conversation?: string;
+    llmTools?: Array<string>;
+    locationItem?: string;
     body: string;
 }, options?: Options<never, ThrowOnError>) => {
     const params = buildClientParams([parameters], [{ args: [
                 { in: 'headers', key: 'Accept-Language' },
                 { in: 'path', key: 'ids' },
+                { in: 'query', key: 'conversation' },
+                { in: 'query', key: 'llmTools' },
+                { in: 'query', key: 'locationItem' },
                 { key: 'body', map: 'body' }
             ] }]);
     return (options?.client ?? client).post<InterpretTextResponses, InterpretTextErrors, ThrowOnError, 'data'>({
@@ -2937,6 +3077,15 @@ export const interpretText = <ThrowOnError extends boolean = false>(parameters: 
         }
     });
 };
+
+/**
+ * Get the metadata of all conversations.
+ */
+export const listConversations = <ThrowOnError extends boolean = false>(options?: Options<never, ThrowOnError>) => (options?.client ?? client).get<ListConversationsResponses, unknown, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/voice/conversations',
+    ...options
+});
 
 /**
  * Executes a simple dialog sequence without keyword spotting for a given audio source.

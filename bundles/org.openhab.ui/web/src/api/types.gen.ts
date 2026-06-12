@@ -140,8 +140,8 @@ export type Module = {
     typeUID: string;
     description: string;
     label: string;
-    configuration: Configuration;
     id: string;
+    configuration: Configuration;
 };
 
 export type Configuration = {
@@ -157,12 +157,16 @@ export type RuleExecution = {
     rule: Rule;
 };
 
-export type Template = {
-    tags: Array<string>;
-    uid: string;
-    visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
-    description: string;
+export type RuleTemplateDto = {
     label: string;
+    uid: string;
+    tags: Array<string>;
+    description: string;
+    visibility: 'VISIBLE' | 'HIDDEN' | 'EXPERT';
+    configDescriptions: Array<ConfigDescriptionParameter>;
+    triggers: Array<Trigger>;
+    conditions: Array<Condition>;
+    actions: Array<Action>;
 };
 
 export type Input = {
@@ -368,6 +372,138 @@ export type DiscoveryResult = {
     thingTypeUID?: string;
 };
 
+export type SerializabilityResultString = {
+    uid: string;
+    ok: boolean;
+    failureReason: string;
+};
+
+export type SerializabilityResults = {
+    results: Array<SerializabilityResultString>;
+};
+
+export type JsonArray = {
+    asNumber: number;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asBigDecimal: number;
+    asBigInteger: number;
+    asShort: number;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asString: string;
+    asBoolean: boolean;
+    empty: boolean;
+    jsonNull: boolean;
+    asJsonObject: JsonObject;
+    jsonObject: boolean;
+    jsonArray: boolean;
+    jsonPrimitive: boolean;
+    asJsonPrimitive: JsonPrimitive;
+    asJsonNull: JsonNull;
+    asJsonArray: JsonArray;
+};
+
+export type JsonElement = {
+    jsonNull: boolean;
+    asJsonObject: JsonObject;
+    jsonObject: boolean;
+    jsonArray: boolean;
+    jsonPrimitive: boolean;
+    asJsonPrimitive: JsonPrimitive;
+    asJsonNull: JsonNull;
+    asNumber: number;
+    asJsonArray: JsonArray;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asBigDecimal: number;
+    asBigInteger: number;
+    asShort: number;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asString: string;
+    asBoolean: boolean;
+};
+
+export type JsonNull = {
+    jsonNull: boolean;
+    asJsonObject: JsonObject;
+    jsonObject: boolean;
+    jsonArray: boolean;
+    jsonPrimitive: boolean;
+    asJsonPrimitive: JsonPrimitive;
+    asJsonNull: JsonNull;
+    asNumber: number;
+    asJsonArray: JsonArray;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asBigDecimal: number;
+    asBigInteger: number;
+    asShort: number;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asString: string;
+    asBoolean: boolean;
+};
+
+export type JsonObject = {
+    empty: boolean;
+    jsonNull: boolean;
+    asJsonObject: JsonObject;
+    jsonObject: boolean;
+    jsonArray: boolean;
+    jsonPrimitive: boolean;
+    asJsonPrimitive: JsonPrimitive;
+    asJsonNull: JsonNull;
+    asNumber: number;
+    asJsonArray: JsonArray;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asBigDecimal: number;
+    asBigInteger: number;
+    asShort: number;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asString: string;
+    asBoolean: boolean;
+};
+
+export type JsonPrimitive = {
+    asNumber: number;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asBigDecimal: number;
+    asBigInteger: number;
+    asShort: number;
+    string: boolean;
+    number: boolean;
+    boolean: boolean;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    asString: string;
+    asBoolean: boolean;
+    jsonNull: boolean;
+    asJsonObject: JsonObject;
+    jsonObject: boolean;
+    jsonArray: boolean;
+    jsonPrimitive: boolean;
+    asJsonPrimitive: JsonPrimitive;
+    asJsonNull: JsonNull;
+    asJsonArray: JsonArray;
+};
+
+export type StringList = Array<string>;
+
 export type Channel = {
     uid: string;
     id: string;
@@ -389,9 +525,12 @@ export type Channel = {
 };
 
 export type FileFormat = {
+    tags: Array<SemanticTagDto>;
     items: Array<FileFormatItem>;
     things: Array<Thing>;
     sitemaps: Array<SitemapDefinition>;
+    rules: Array<Rule>;
+    ruleTemplates: Array<RuleTemplateDto>;
 };
 
 export type FileFormatChannelLink = {
@@ -434,6 +573,13 @@ export type Metadata = {
     editable: boolean;
 };
 
+export type SemanticTagDto = {
+    uid: string;
+    label: string;
+    description: string;
+    synonyms: Array<string>;
+};
+
 export type SitemapCondition = {
     item: string;
     condition: string;
@@ -466,7 +612,6 @@ export type SitemapWidgetDefinition = {
     label: string;
     icon: string;
     staticIcon: boolean;
-    mappings: Array<SitemapMapping>;
     switchSupport: boolean;
     releaseOnly: boolean;
     refresh: number;
@@ -489,6 +634,7 @@ export type SitemapWidgetDefinition = {
     releaseCommand: string;
     stateless: boolean;
     item: string;
+    mappings: Array<SitemapMapping>;
     visibilityRules: Array<SitemapRule>;
     iconRules: Array<SitemapRule>;
     labelColorRules: Array<SitemapRule>;
@@ -515,9 +661,12 @@ export type Thing = {
 };
 
 export type ExtendedFileFormat = {
+    tags: Array<SemanticTagDto>;
     items: Array<FileFormatItem>;
     things: Array<Thing>;
     sitemaps: Array<SitemapDefinition>;
+    rules: Array<Rule>;
+    ruleTemplates: Array<RuleTemplateDto>;
     warnings: Array<string>;
 };
 
@@ -722,6 +871,7 @@ export type EnrichedSemanticTag = {
     description: string;
     synonyms: Array<string>;
     editable: boolean;
+    defaultTag: boolean;
 };
 
 export type EnrichedChannel = {
@@ -915,7 +1065,6 @@ export type SitemapWidget = {
     label: string;
     icon: string;
     staticIcon: boolean;
-    mappings: Array<SitemapMapping>;
     switchSupport: boolean;
     releaseOnly: boolean;
     refresh: number;
@@ -948,6 +1097,7 @@ export type SitemapWidget = {
     state: string;
     item: EnrichedItem;
     linkedPage: SitemapPage;
+    mappings: Array<SitemapMapping>;
 };
 
 export type Sitemap = {
@@ -1025,6 +1175,19 @@ export type Tile = {
     imageUrl: string;
 };
 
+export type Conversation = {
+    id: string;
+    created: string;
+    lastUpdated: string;
+    messages: Array<Message>;
+};
+
+export type Message = {
+    id: number;
+    role: 'USER' | 'OPENHAB' | 'THINKING' | 'TOOL_CALL' | 'TOOL_RETURN';
+    content: string;
+};
+
 export type Voice = {
     id: string;
     label: string;
@@ -1035,6 +1198,12 @@ export type HumanLanguageInterpreter = {
     id: string;
     label: string;
     locales?: Array<string>;
+};
+
+export type ConversationInfo = {
+    id: string;
+    created: string;
+    lastUpdated: string;
 };
 
 export type LoggerInfo = {
@@ -1695,7 +1864,7 @@ export type GetTemplatesResponses = {
     /**
      * OK
      */
-    200: Array<Template>;
+    200: Array<RuleTemplateDto>;
 };
 
 export type GetTemplatesResponse = GetTemplatesResponses[keyof GetTemplatesResponses];
@@ -1729,7 +1898,7 @@ export type GetTemplateByIdResponses = {
     /**
      * OK
      */
-    200: Template;
+    200: RuleTemplateDto;
 };
 
 export type GetTemplateByIdResponse = GetTemplateByIdResponses[keyof GetTemplateByIdResponses];
@@ -2788,6 +2957,45 @@ export type RemoveIgnoreFlagOnInboxItemResponses = {
     200: unknown;
 };
 
+export type CanSerializeRulesData = {
+    /**
+     * JSON rule data
+     */
+    body?: StringList | FileFormat;
+    path?: never;
+    query?: {
+        /**
+         * Target format
+         */
+        targetFormat?: 'application/vnd.openhab.dsl.rule' | 'application/yaml';
+    };
+    url: '/file-format/rules/check';
+};
+
+export type CanSerializeRulesErrors = {
+    /**
+     * No rule specified.
+     */
+    400: unknown;
+    /**
+     * One or more rules not found in the registry.
+     */
+    404: unknown;
+    /**
+     * Unsupported media type.
+     */
+    415: unknown;
+};
+
+export type CanSerializeRulesResponses = {
+    /**
+     * OK
+     */
+    200: SerializabilityResults;
+};
+
+export type CanSerializeRulesResponse = CanSerializeRulesResponses[keyof CanSerializeRulesResponses];
+
 export type CreateData = {
     /**
      * JSON data
@@ -2796,17 +3004,21 @@ export type CreateData = {
     path?: never;
     query?: {
         /**
-         * hide the configuration parameters having the default value
+         * if true, exclude the configuration parameters having the default value from the result.
          */
         hideDefaultParameters?: boolean;
         /**
-         * hide the non extensible channels having a default configuration
+         * if true, exclude the non extensible channels having a default configuration from the result.
          */
         hideDefaultChannels?: boolean;
         /**
-         * hide the channel links and metadata for items
+         * if true, exclude the channel links and metadata for items from the result.
          */
         hideChannelLinksAndMetadata?: boolean;
+        /**
+         * Decides what to include in serialized rules and rule templates
+         */
+        ruleSerializationOption?: 'Normal' | 'Include all' | 'Stub only' | 'Strip template';
     };
     url: '/file-format/create';
 };
@@ -2820,6 +3032,10 @@ export type CreateErrors = {
      * Unsupported media type.
      */
     415: unknown;
+    /**
+     * Unable to serialize entity.
+     */
+    422: unknown;
 };
 
 export type CreateResponses = {
@@ -2839,7 +3055,7 @@ export type CreateFileFormatForItemsData = {
     path?: never;
     query?: {
         /**
-         * hide the configuration parameters having the default value
+         * if true, exclude the configuration parameters having the default value from the result.
          */
         hideDefaultParameters?: boolean;
     };
@@ -2865,6 +3081,123 @@ export type CreateFileFormatForItemsResponses = {
 };
 
 export type CreateFileFormatForItemsResponse = CreateFileFormatForItemsResponses[keyof CreateFileFormatForItemsResponses];
+
+export type CreateFileFormatForRuleTemplatesData = {
+    /**
+     * Array of rule template UIDs. If empty or omitted, return all rule templates.
+     */
+    body?: Array<string>;
+    path?: never;
+    query?: {
+        /**
+         * Decides what to include in serialized rule templates
+         */
+        serializationOption?: 'Normal' | 'Include all';
+    };
+    url: '/file-format/ruletemplates';
+};
+
+export type CreateFileFormatForRuleTemplatesErrors = {
+    /**
+     * One or more rule templates not found in the registry.
+     */
+    404: unknown;
+    /**
+     * Unsupported media type.
+     */
+    415: unknown;
+    /**
+     * Unable to serialize rule template.
+     */
+    422: unknown;
+};
+
+export type CreateFileFormatForRuleTemplatesResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type CreateFileFormatForRuleTemplatesResponse = CreateFileFormatForRuleTemplatesResponses[keyof CreateFileFormatForRuleTemplatesResponses];
+
+export type CreateFileFormatForRulesData = {
+    /**
+     * Array of rule UIDs. If empty or omitted, return all rules.
+     */
+    body?: Array<string>;
+    path?: never;
+    query?: {
+        /**
+         * Decides what to include in serialized rules
+         */
+        serializationOption?: 'Normal' | 'Include all' | 'Stub only' | 'Strip template';
+    };
+    url: '/file-format/rules';
+};
+
+export type CreateFileFormatForRulesErrors = {
+    /**
+     * One or more rules not found in the registry.
+     */
+    404: unknown;
+    /**
+     * Unsupported media type.
+     */
+    415: unknown;
+    /**
+     * Unable to serialize rule.
+     */
+    422: unknown;
+};
+
+export type CreateFileFormatForRulesResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type CreateFileFormatForRulesResponse = CreateFileFormatForRulesResponses[keyof CreateFileFormatForRulesResponses];
+
+export type CreateFileFormatForSemanticTagsData = {
+    /**
+     * Array of semantic tag UIDs. If empty or omitted, return all custom semantic tags from the Registry.
+     */
+    body?: Array<string>;
+    path?: never;
+    query?: {
+        /**
+         * if true, exclude the non editable semantic tags from the result.
+         */
+        hideNonEditableTags?: boolean;
+        /**
+         * if true, exclude the default semantic tags from the result.
+         */
+        hideDefaultTags?: boolean;
+    };
+    url: '/file-format/tags';
+};
+
+export type CreateFileFormatForSemanticTagsErrors = {
+    /**
+     * One or more semantic tags not found in registry.
+     */
+    404: unknown;
+    /**
+     * Unsupported media type.
+     */
+    415: unknown;
+};
+
+export type CreateFileFormatForSemanticTagsResponses = {
+    /**
+     * OK
+     */
+    200: string;
+};
+
+export type CreateFileFormatForSemanticTagsResponse = CreateFileFormatForSemanticTagsResponses[keyof CreateFileFormatForSemanticTagsResponses];
 
 export type CreateFileFormatForSitemapsData = {
     /**
@@ -2904,7 +3237,7 @@ export type CreateFileFormatForThingsData = {
     path?: never;
     query?: {
         /**
-         * hide the configuration parameters having the default value
+         * if true, exclude the configuration parameters having the default value from the result.
          */
         hideDefaultParameters?: boolean;
     };
@@ -5798,6 +6131,65 @@ export type GetUiTilesResponses = {
 
 export type GetUiTilesResponse = GetUiTilesResponses[keyof GetUiTilesResponses];
 
+export type DeleteConversationByIdData = {
+    body?: never;
+    path: {
+        /**
+         * conversation id
+         */
+        id: string;
+    };
+    query?: {
+        /**
+         * Optional message ID
+         */
+        messageId?: number;
+    };
+    url: '/voice/conversations/{id}';
+};
+
+export type DeleteConversationByIdErrors = {
+    /**
+     * Conversation or message not found
+     */
+    404: unknown;
+};
+
+export type DeleteConversationByIdResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetConversationByIdData = {
+    body?: never;
+    path: {
+        /**
+         * conversation id
+         */
+        id: string;
+    };
+    query?: never;
+    url: '/voice/conversations/{id}';
+};
+
+export type GetConversationByIdErrors = {
+    /**
+     * Conversation not found
+     */
+    404: unknown;
+};
+
+export type GetConversationByIdResponses = {
+    /**
+     * OK
+     */
+    200: Conversation;
+};
+
+export type GetConversationByIdResponse = GetConversationByIdResponses[keyof GetConversationByIdResponses];
+
 export type GetDefaultVoiceData = {
     body?: never;
     path?: never;
@@ -5889,7 +6281,20 @@ export type InterpretTextByDefaultInterpreterData = {
         'Accept-Language'?: string;
     };
     path?: never;
-    query?: never;
+    query?: {
+        /**
+         * Conversation id
+         */
+        conversation?: string;
+        /**
+         * Comma separated list of llm-tool ids
+         */
+        llmTools?: Array<string>;
+        /**
+         * Location item id to contextualize the command
+         */
+        locationItem?: string;
+    };
     url: '/voice/interpreters';
 };
 
@@ -5946,7 +6351,20 @@ export type InterpretTextData = {
          */
         ids: Array<string>;
     };
-    query?: never;
+    query?: {
+        /**
+         * Conversation id
+         */
+        conversation?: string;
+        /**
+         * Comma separated list of llm-tool ids
+         */
+        llmTools?: Array<string>;
+        /**
+         * Location item id to contextualize the command
+         */
+        locationItem?: string;
+    };
     url: '/voice/interpreters/{ids}';
 };
 
@@ -5969,6 +6387,22 @@ export type InterpretTextResponses = {
 };
 
 export type InterpretTextResponse = InterpretTextResponses[keyof InterpretTextResponses];
+
+export type ListConversationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/voice/conversations';
+};
+
+export type ListConversationsResponses = {
+    /**
+     * OK
+     */
+    200: Array<ConversationInfo>;
+};
+
+export type ListConversationsResponse = ListConversationsResponses[keyof ListConversationsResponses];
 
 export type ListenAndAnswerData = {
     body?: never;
