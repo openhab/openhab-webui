@@ -19,7 +19,7 @@
             :value="attr.value"
             :disabled="disabled"
             @change="updateAttribute($event, idx, attr)" />
-          <div v-else-if="hasArrayFields" style="flex: 1">
+          <div v-else-if="hasArrayFields" style="flex: 1; min-width: 0">
             <div
               v-if="disabled || !isArrayEditing(idx)"
               style="display: flex; align-items: center; width: 100%; min-height: 32px; cursor: pointer"
@@ -69,7 +69,7 @@
               </div>
             </div>
           </div>
-          <div v-else style="flex: 1">
+          <div v-else style="flex: 1; min-width: 0">
             <div
               v-if="disabled || !isArrayEditing(idx)"
               style="display: flex; align-items: center; width: 100%; min-height: 32px; cursor: pointer"
