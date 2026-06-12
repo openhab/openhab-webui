@@ -35,18 +35,23 @@ export default {
      * @returns {Promise<string>}
      */
     async fetchEmbeddedSvgText() {
-      // Load the real SVG content, in editmode we add a random number to the URL to prevent caching
-      const svgUrl = this.context.editmode ? this.config.imageUrl + `?rnd=${Math.random()}` : this.config.imageUrl
+      let imageUrl = this.config.imageUrl
+      // in editmode we add a random number to the URL to always load the latest SVG (avoid caching)
+      if (this.context.editmode) {
+        imageUrl += (imageUrl.includes('?') ? '&' : '?') + `rnd=${Math.random()}`
+      }
+      const svgUrl = await this.$oh.media.getImage(imageUrl)
       return fetch(svgUrl).then((response) => {
-        if (response.status !== 200) {
+        if (!response.ok) {
           return Promise.reject(
             new Error(`Failed to load from ${this.config.imageUrl}. Status: ${response.status} (${response.statusText})`)
           )
-        } else if (response.headers.get('Content-Type') !== 'image/svg+xml') {
-          return Promise.reject(new Error(`${this.config.imageUrl} is not an SVG file`))
-        } else {
-          return response.text()
         }
+        const contentType = (response.headers.get('Content-Type') || '').toLowerCase()
+        if (!contentType.includes('image/svg+xml')) {
+          return Promise.reject(new Error(`${this.config.imageUrl} is not an SVG file`))
+        }
+        return response.text()
       })
     },
     /**
@@ -133,9 +138,7 @@ export default {
               ])
               .paramGroup(actionGroup(), actionParams()),
             component: {
-              config: this.config.embeddedSvgActions
-                ? this.context.component.config.embeddedSvgActions[id] || defaultActionConfig
-                : defaultActionConfig
+              config: this.context.component.config?.embeddedSvgActions?.[id] || defaultActionConfig
             }
           }
         }
@@ -269,13 +272,14 @@ export default {
         subElement.setAttribute('cursor', 'pointer')
         // make the whole element clickable, including the interior of fill:none outline shapes
         subElement.style.pointerEvents = 'all'
-        subElement.addEventListener('mouseover', () => {
-          this.svgOnMouseOver(subElement)
-        })
-
-        subElement.addEventListener('click', () => {
-          return this.svgOnClick(subElement)
-        })
+        // keep the bound handler references so they can actually be removed again on unsubscribe
+        const handlers = {
+          mouseover: () => this.svgOnMouseOver(subElement),
+          click: () => this.svgOnClick(subElement)
+        }
+        subElement._ohSvgHandlers = handlers
+        subElement.addEventListener('mouseover', handlers.mouseover)
+        subElement.addEventListener('click', handlers.click)
       }
     },
     /**
@@ -287,13 +291,11 @@ export default {
       const subElements = svg.querySelectorAll('[openhab]')
 
       for (const subElement of subElements) {
-        subElement.removeEventListener('mouseover', () => {
-          this.svgOnMouseOver(subElement)
-        })
-
-        subElement.removeEventListener('click', () => {
-          return this.svgOnClick(subElement)
-        })
+        const handlers = subElement._ohSvgHandlers
+        if (!handlers) continue
+        subElement.removeEventListener('mouseover', handlers.mouseover)
+        subElement.removeEventListener('click', handlers.click)
+        delete subElement._ohSvgHandlers
       }
     },
     /**
@@ -529,7 +531,8 @@ export default {
       const proportional = ['Percent', 'Dimmer', 'Decimal', 'Quantity', 'Number'].includes(stateType)
 
       if (tagName === 'tspan') {
-        svgElement.innerHTML = state
+        // textContent (not innerHTML) so an Item state containing markup is rendered as plain text
+        svgElement.textContent = state
       }
 
       // style classes are independent of the color/opacity representation and run for every state type
