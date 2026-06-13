@@ -552,7 +552,7 @@ export default {
           () => {
             resolve(false)
           },
-          true
+          { emitAll: true }
         )
       })
     },
@@ -581,7 +581,7 @@ export default {
             })
           },
           undefined,
-          true
+          { emitAll: true }
         )
       }
     },
@@ -620,7 +620,7 @@ export default {
               showAlertDialog('Error parsing YAML, cannot save')
               resolve(false)
             },
-            true
+            { emitAll: true }
           )
         })
 

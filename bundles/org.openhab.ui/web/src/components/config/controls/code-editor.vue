@@ -282,11 +282,10 @@ export default {
      *
      * @param {function} onSuccessCallback - Optional. A callback function to call when the code has been parsed. Receives the parsed object.
      * @param {function} onFailureCallback - Optional. A callback function to call when parsing fails or no object is found
-     * @param {boolean} parseAll - Optional. If true, all parsed objects will be returned as an array. By default, only the first object is returned for backward compatibility with existing code that expects a single object.
      * @param {Object} params - Optional. Additional parameters for the parsing request
      * @returns A Promise
      */
-    parseCode(onSuccessCallback, onFailureCallback, parseAll = false, params = {}) {
+    parseCode(onSuccessCallback, onFailureCallback, params = {}) {
       let sourceMediaType = this.mediaTypes[this.uiOptionsStore.codeEditorType]
       sourceMediaType = sourceMediaType.split('+')[0] // remove the +tag, +thing, +item or +rule suffix, if present
       const targetMediaType = MediaType.JSON
@@ -307,7 +306,7 @@ export default {
           }
           object = object[this.objectType]
           if (object?.length > 0) {
-            if (parseAll) {
+            if (params?.emitAll) {
               this.$emit('parsed', object, params)
               if (onSuccessCallback) {
                 onSuccessCallback(object)
