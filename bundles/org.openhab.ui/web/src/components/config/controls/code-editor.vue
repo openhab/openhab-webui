@@ -370,11 +370,6 @@ export default {
       if (!this.dirty) {
         this.generateCode(type)
       } else {
-        //this.parseCode(() => {
-        //  this.$nextTick(() => {
-        //    this.generateCode(type)
-        //  })
-        //})
         this.parseCode(
           () => {
             if (this.postParseCallback) {
@@ -392,10 +387,14 @@ export default {
                   console.warn(`The current object isn't compatible with ${type} format. Aborting switch.`)
                   return
                 }
-                this.generateCode(type)
+                this.$nextTick(() => {
+                  this.generateCode(type)
+                })
               }
             } else {
-              this.generateCode(type)
+              this.$nextTick(() => {
+                this.generateCode(type)
+              })
             }
           },
           undefined,
