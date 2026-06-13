@@ -376,7 +376,7 @@ export default {
         //  })
         //})
         this.parseCode(
-          (parsedObject) => {
+          () => {
             if (this.postParseCallback) {
               const result = this.postParseCallback()
               if (result instanceof Promise) {
@@ -385,17 +385,17 @@ export default {
                     f7.dialog.alert(`The current object isn't compatible with ${type} format.`).open()
                     return
                   }
-                  this.generateCode(type, null, parsedObject)
+                  this.generateCode(type)
                 })
               } else {
                 if (!this.mediaTypes[type]) {
                   console.warn(`The current object isn't compatible with ${type} format. Aborting switch.`)
                   return
                 }
-                this.generateCode(type, null, parsedObject)
+                this.generateCode(type)
               }
             } else {
-              this.generateCode(type, null, parsedObject)
+              this.generateCode(type)
             }
           },
           undefined,
@@ -408,11 +408,11 @@ export default {
         this.generateCode(this.uiOptionsStore.codeEditorType)
       } else {
         this.parseCode(
-          (parsedObject) => {
+          () => {
             if (this.postParseCallback) {
               this.postParseCallback()
             }
-            this.generateCode(this.uiOptionsStore.codeEditorType, null, parsedObject)
+            this.generateCode(this.uiOptionsStore.codeEditorType)
           },
           undefined,
           { editorType: this.uiOptionsStore.codeEditorType, showAll: !checked }
