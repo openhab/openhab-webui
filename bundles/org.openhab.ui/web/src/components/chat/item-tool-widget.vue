@@ -15,7 +15,7 @@
   padding 20px 0
 
 .tool-widget-card-wrapper
-  margin 0 22px var(--f7-message-margin)
+  margin 16px 16px 0 16px
   box-sizing border-box
   --f7-card-margin-horizontal 0
   --f7-card-margin-vertical 0
