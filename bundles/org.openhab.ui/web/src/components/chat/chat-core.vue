@@ -64,7 +64,33 @@
         :resize-page="false">
         <template #inner-end>
           <f7-link
+            id="chat-settings-button"
+            icon-size="22"
+            icon-color="gray"
+            icon-ios="f7:gear_alt_fill"
+            icon-aurora="f7:gear_alt_fill"
+            icon-md="material:settings"
+            popover-open="#chat-settings-popover">
+            <!-- Settings Popover -->
+            <f7-popover id="chat-settings-popover" class="chat-settings-popover">
+              <f7-list dividers>
+                <f7-list-item :title="t('settingsTitle')" />
+                <f7-list-item group-title :title="t('llmTools')" />
+                <f7-list-item
+                  v-for="tool in llmTools"
+                  :key="tool.id"
+                  checkbox
+                  :title="tool.label || tool.id"
+                  :subtitle="tool.description"
+                  :checked="selectedLlmTools.includes(tool.id)"
+                  @change="toggleTool(tool.id)" />
+              </f7-list>
+            </f7-popover>
+          </f7-link>
+          <f7-link
+            id="chat-send-button"
             :class="{ disabled: !messageText.trim() || busy }"
+            icon-size="22"
             icon-ios="f7:arrow_up_circle_fill"
             icon-aurora="f7:arrow_up_circle_fill"
             icon-md="material:send"
@@ -75,7 +101,7 @@
   </div>
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .chat-core-wrapper
   display flex
   flex-direction column
@@ -87,6 +113,15 @@
     bottom 0
     textarea
       overflow-y hidden
+    .link
+      height var(--f7-messagebar-height)
+      padding 8px 0
+      display flex
+      flex-direction column
+      justify-content flex-end
+      flex 1
+      &:not(:last-child)
+        margin-right 6px
 
   .chat-messages-container
     display flex
@@ -174,10 +209,12 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, wa
 import { onKeyStroke } from '@vueuse/core'
 import { f7 } from 'framework7-vue'
 import { useI18n } from 'vue-i18n'
+import { storeToRefs } from 'pinia'
 
 import * as api from '@/api'
 import { ApiError } from '@/js/hey-api.ts'
-import sse from '@/js/openhab/sse'
+import sse, { type KeepaliveEventSource } from '@/js/openhab/sse'
+import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 
 import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { loadLocaleMessages } from '@/js/i18n'
@@ -186,16 +223,26 @@ import ChatToolCall from '@/components/chat/chat-tool-call.vue'
 import ChatToolReturn from '@/components/chat/chat-tool-return.vue'
 import ChatWelcome from '@/components/chat/chat-welcome.vue'
 
+const uiOptionsStore = useUIOptionsStore()
+
 // Props
 const props = defineProps<{
   conversationId: string
 }>()
+
+// Composables
+const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
 
 // State
 const loading = ref(false)
 const busy = ref(false)
 const messages = ref<api.Message[]>([])
 const messageText = ref('')
+const settingsOpened = ref(false)
+const llmTools = ref<api.LlmTool[]>([])
+const { selectedLlmTools } = storeToRefs(uiOptionsStore)
+
+let sseConnection: KeepaliveEventSource | null = null
 
 // Computed
 const suggestions = computed(() => [
@@ -209,20 +256,10 @@ const suggestions = computed(() => [
 const messagesListRef = useTemplateRef<any>('messagesList')
 const textareaRef = useTemplateRef<any>('messagebar')
 
-// Settings state
-const settingsOpened = ref(false)
-const hliList = ref<api.HumanLanguageInterpreter[]>([])
-const selectedHli = ref('default')
-
-const sseConnection = ref<any>(null)
-
-const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
-
 // Lifecycle
 onMounted(async () => {
   await loadLocaleMessages('chat', mergeLocaleMessage)
-  await loadConversation()
-  await loadHLIs()
+  await Promise.all([loadConversation(), loadLlmTools()])
   startSSE()
 
   if (f7.device.desktop) {
@@ -305,7 +342,7 @@ function startSSE() {
   const path = `/rest/events?topics=${topic}`
 
   console.debug(`Connecting to SSE topic: ${topic}`)
-  sseConnection.value = sse.connect(
+  sseConnection = sse.connect(
     path,
     [],
     (event: any) => {
@@ -332,10 +369,10 @@ function startSSE() {
 }
 
 function stopSSE() {
-  if (sseConnection.value) {
+  if (sseConnection) {
     console.debug('Closing chat SSE connection')
-    sse.close(sseConnection.value)
-    sseConnection.value = null
+    sse.close(sseConnection)
+    sseConnection = null
   }
 }
 
@@ -344,18 +381,21 @@ function stopSSE() {
  */
 function openSettings() {
   settingsOpened.value = true
-  void loadHLIs()
 }
 
 /**
- * Load available Human Language Interpreters.
+ * Load available LLM tools.
  */
-async function loadHLIs() {
+async function loadLlmTools() {
   try {
-    const list = await api.getVoiceInterpreters()
-    hliList.value = list ?? []
+    const list = await api.getLlmTools()
+    llmTools.value = list ?? []
+
+    if (selectedLlmTools.value === null) {
+      selectedLlmTools.value = list?.map((t) => t.id) ?? []
+    }
   } catch (err) {
-    console.error('Failed to load human language interpreters:', err)
+    console.error('Failed to load LLM tools:', err)
   }
 }
 
@@ -387,6 +427,16 @@ async function loadConversation() {
   }
 }
 
+function toggleTool(id: string) {
+  if (selectedLlmTools.value === null) selectedLlmTools.value = []
+  const idx = selectedLlmTools.value.indexOf(id)
+  if (idx >= 0) {
+    selectedLlmTools.value.splice(idx, 1)
+  } else {
+    selectedLlmTools.value.push(id)
+  }
+}
+
 /**
  * Sends a message to the server for human language interpretation.
  */
@@ -403,39 +453,21 @@ async function sendMessage() {
   scrollToBottom()
   busy.value = true
 
-  // TODO: Retrieve available tools and make them selectable
-  const toolsParam = ['get-date-time', 'item-get-state', 'item-send-command']
+  // Use selected LLM tools (default all selected)
+  const toolsParam = selectedLlmTools.value ?? []
 
   try {
-    // TODO: Check why/whether we need parseAs: text
-    if (selectedHli.value === 'default') {
-      // Send the message to the default voice interpreter
-      await api.interpretTextByDefaultInterpreter(
-        {
-          body: text,
-          conversation: props.conversationId,
-          llmTools: toolsParam
-        },
-        { parseAs: 'text' }
-      )
-    } else {
-      // Send the message to the selected voice interpreter
-      await api.interpretText(
-        {
-          ids: [selectedHli.value],
-          body: text,
-          conversation: props.conversationId,
-          llmTools: toolsParam
-        },
-        { parseAs: 'text' }
-      )
-    }
-
-    // Tool calls/returns and openHAB response are received through the event bus
+    await api.interpretTextByDefaultInterpreter(
+      {
+        body: text,
+        conversation: props.conversationId,
+        llmTools: toolsParam
+      },
+      { parseAs: 'text' }
+    )
   } catch (err) {
     void showToast(t('errorMessage'))
     console.error('Failed to send text to interpreter:', err)
-    // Reload on error to ensure the state is in sync with the server
     await loadConversation()
   } finally {
     await nextTick()

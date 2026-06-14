@@ -83,6 +83,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
   const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
   const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
+  const selectedLlmTools = ref<string[] | null>(localStorage.getItem('openhab.ui:hli.llmtools.selected')?.split(',') ?? null)
 
   const codeMirrorSettings = reactive({
     vimMode: localStorage.getItem('openhab.ui:codeMirror.vimMode') === 'true'
@@ -267,6 +268,15 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
   })
 
+  watch(
+    selectedLlmTools,
+    (v) => {
+      if (!v) return
+      localStorage.setItem('openhab.ui:hli.llmtools.selected', v.filter((s) => s.length).join(','))
+    },
+    { deep: true }
+  )
+
   watch(codeMirrorSettings, (newValue) => {
     localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
   })
@@ -345,6 +355,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     dialogLocationItem,
     dialogConnectOnWindowEvent,
     dialogTriggerOnConnect,
+    selectedLlmTools,
 
     codeMirrorSettings,
     setupWizardShort,

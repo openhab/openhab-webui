@@ -14,17 +14,7 @@
   "clearChat": "Clear Conversation",
   "clearConfirm": "Are you sure you want to clear this conversation? This will delete all messages on the server.",
   "clearSuccess": "Conversation cleared successfully.",
-  "deleteError": "Failed to clear the conversation on the server.",
+  "deleteError": "Failed to clear the conversation history.",
   "settingsTitle": "Chat Settings",
-  "hliLabel": "Voice Interpreter (HLI)",
-  "defaultHli": "Default System Interpreter",
-  "toolsLabel": "LLM Tools Selection",
-  "allTools": "Enable all configured tools",
-  "customTools": "Custom tool selection",
-  "addCustomTool": "Add custom tool ID",
-  "toolItemControl": "Device Control (builtin:item-control)",
-  "toolRuleExecution": "Rule Execution (builtin:rule-execution)",
-  "toolBias": "System Bias (builtin:bias)",
-  "toolItemRegistry": "Search Devices (builtin:item-registry)",
-  "close": "Close"
+  "llmTools": "Tools Selection"
 }
