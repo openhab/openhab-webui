@@ -45,10 +45,11 @@
             </f7-message>
 
             <!-- Tool Call -->
+            <chat-tool-widget v-else-if="msg.role === 'TOOL_CALL' && isSpecialToolCall(msg.content)" :content="msg.content" />
             <chat-tool-call v-else-if="msg.role === 'TOOL_CALL'" :content="msg.content" />
 
             <!-- Tool Return -->
-            <chat-tool-return v-else-if="msg.role === 'TOOL_RETURN'" :content="msg.content" />
+            <chat-tool-return v-else-if="msg.role === 'TOOL_RETURN' && !isSpecialToolReturn(idx)" :content="msg.content" />
           </template>
 
           <!-- Typing/Thinking Indicator -->
@@ -101,7 +102,7 @@
   </div>
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .chat-core-wrapper
   display flex
   flex-direction column
@@ -159,7 +160,7 @@
       margin-left 16px
 
   /* System Tool Messages */
-  .system-message
+  :deep(.system-message)
     display flex
     align-items flex-start
     gap 10px
@@ -215,11 +216,13 @@ import * as api from '@/api'
 import { ApiError } from '@/js/hey-api.ts'
 import sse, { type KeepaliveEventSource } from '@/js/openhab/sse'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
+import { useStatesStore } from '@/js/stores/useStatesStore.ts'
 
 import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { loadLocaleMessages } from '@/js/i18n'
 
 import ChatToolCall from '@/components/chat/chat-tool-call.vue'
+import ChatToolWidget from '@/components/chat/item-tool-widget.vue'
 import ChatToolReturn from '@/components/chat/chat-tool-return.vue'
 import ChatWelcome from '@/components/chat/chat-welcome.vue'
 
@@ -261,6 +264,7 @@ onMounted(async () => {
   await loadLocaleMessages('chat', mergeLocaleMessage)
   await Promise.all([loadConversation(), loadLlmTools()])
   startSSE()
+  useStatesStore().startTrackingStates()
 
   if (f7.device.desktop) {
     await nextTick()
@@ -288,6 +292,7 @@ onKeyStroke(
 
 onBeforeUnmount(() => {
   stopSSE()
+  useStatesStore().stopTrackingStates()
 })
 
 // Watch conversationId changes
@@ -540,6 +545,28 @@ function isTail(roleGroup: RoleGroup, idx: number) {
   if (idx === messages.value.length - 1) return true
   const msgIdOfRoleGroups = messages.value.filter((m) => m.role === roleGroup).map((m) => m.id)
   return idx === msgIdOfRoleGroups[msgIdOfRoleGroups.length - 1]
+}
+
+function isSpecialToolCall(content?: string): boolean {
+  if (!content) return false
+  try {
+    const parsed = JSON.parse(content)
+    return (
+      parsed &&
+      (parsed.tool === 'item-send-command' || parsed.tool === 'item-get-state') &&
+      parsed.params &&
+      typeof parsed.params.itemName === 'string'
+    )
+  } catch (e) {
+    // Ignore JSON parsing errors
+  }
+  return false
+}
+
+function isSpecialToolReturn(idx: number): boolean {
+  if (idx <= 0) return false
+  const prevMsg = messages.value[idx - 1]
+  return prevMsg && prevMsg.role === 'TOOL_CALL' && isSpecialToolCall(prevMsg.content)
 }
 
 // Exposes
