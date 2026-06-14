@@ -172,6 +172,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { onKeyStroke } from '@vueuse/core'
+import { f7 } from 'framework7-vue'
 import { useI18n } from 'vue-i18n'
 
 import * as api from '@/api'
@@ -206,7 +207,7 @@ const suggestions = computed(() => [
 
 // Refs
 const messagesListRef = useTemplateRef<any>('messagesList')
-const textareaRef = useTemplateRef<HTMLTextAreaElement>('messagebar')
+const textareaRef = useTemplateRef<any>('messagebar')
 
 // Settings state
 const settingsOpened = ref(false)
@@ -223,6 +224,18 @@ onMounted(async () => {
   await loadConversation()
   await loadHLIs()
   startSSE()
+
+  if (f7.device.desktop) {
+    await nextTick()
+    if (textareaRef.value) {
+      if (typeof (textareaRef.value as any).focus === 'function') {
+        ;(textareaRef.value as any).focus()
+      } else if (textareaRef.value.$el?.querySelector) {
+        const textarea = textareaRef.value.$el.querySelector('textarea')
+        textarea?.focus()
+      }
+    }
+  }
 })
 
 onKeyStroke(
