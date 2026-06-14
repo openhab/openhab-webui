@@ -82,7 +82,7 @@
                   checkbox
                   :title="tool.label || tool.id"
                   :subtitle="tool.description"
-                  :checked="selectedLlmTools.includes(tool.id)"
+                  :checked="(selectedLlmTools ?? []).includes(tool.id)"
                   @change="toggleTool(tool.id)" />
               </f7-list>
             </f7-popover>
@@ -101,7 +101,7 @@
   </div>
 </template>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .chat-core-wrapper
   display flex
   flex-direction column
@@ -133,75 +133,75 @@
     flex 1
     overflow-y auto
 
-/* Loading indicator style**/
-.chat-loading-container
-  display flex
-  flex-direction column
-  justify-content center
-  align-items center
-  flex 1
-
-/* Welcome Screen */
-.welcome-container
-  display flex
-  flex-direction column
-  align-items center
-  justify-content center
-  padding 24px
-  max-width 600px
-  margin 0 auto
-  box-sizing border-box
-  flex 1
-
-/* Chat Messages */
-.chat-messages
-  .chat-message
-    margin-left 16px
-
-/* System Tool Messages */
-.system-message
-  display flex
-  align-items flex-start
-  gap 10px
-  margin 0 16px
-  padding 10px 14px
-  border-radius 8px
-  font-size 13px
-  font-family monospace
-  border 1px solid var(--f7-list-border-color)
-  background-color var(--f7-block-strong-bg-color, rgba(0,0,0,0.02))
-  box-shadow 0 1px 3px rgba(0,0,0,0.02)
-
-  &.tool-call
-    margin-top var(--f7-message-margin)
-    border-left 3px solid var(--f7-theme-color)
-    color var(--f7-text-color)
-    .icon
-      color var(--f7-theme-color)
-
-  &.tool-return
-    margin-top calc(0.5 * var(--f7-message-margin))
-    border-left 3px solid var(--f7-color-green, #4cd964)
-    color var(--f7-text-color)
-    .icon
-      color var(--f7-color-green, #4cd964)
-
-  .system-details
+  /* Loading indicator style**/
+  .chat-loading-container
     display flex
     flex-direction column
-    gap 2px
+    justify-content center
+    align-items center
+    flex 1
 
-  .system-label
-    font-weight 700
-    text-transform uppercase
-    font-size 10px
-    letter-spacing 0.5px
-    opacity 0.65
+  /* Welcome Screen */
+  .welcome-container
+    display flex
+    flex-direction column
+    align-items center
+    justify-content center
+    padding 24px
+    max-width 600px
+    margin 0 auto
+    box-sizing border-box
+    flex 1
 
-  .system-content
-    word-break break-all
-    opacity 0.9
-    line-height 1.4
+  /* Chat Messages */
+  .chat-messages
+    .chat-message
+      margin-left 16px
+
+  /* System Tool Messages */
+  .system-message
+    display flex
+    align-items flex-start
+    gap 10px
+    margin 0 16px
+    padding 10px 14px
+    border-radius 8px
+    font-size 13px
+    font-family monospace
+    border 1px solid var(--f7-list-border-color)
+    background-color var(--f7-block-strong-bg-color, rgba(0,0,0,0.02))
+    box-shadow 0 1px 3px rgba(0,0,0,0.02)
+
+    &.tool-call
+      margin-top var(--f7-message-margin)
+      border-left 3px solid var(--f7-theme-color)
+      color var(--f7-text-color)
+      .icon
+        color var(--f7-theme-color)
+
+    &.tool-return
+      margin-top calc(0.5 * var(--f7-message-margin))
+      border-left 3px solid var(--f7-color-green, #4cd964)
+      color var(--f7-text-color)
+      .icon
+        color var(--f7-color-green, #4cd964)
+
+    .system-details
+      display flex
+      flex-direction column
+      gap 2px
+
+    .system-label
+      font-weight 700
+      text-transform uppercase
+      font-size 10px
+      letter-spacing 0.5px
+      opacity 0.65
+
+    .system-content
+      word-break break-all
+      opacity 0.9
+      line-height 1.4
 </style>
 
 <script setup lang="ts">
