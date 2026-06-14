@@ -25,18 +25,22 @@ import ChatCore from '@/components/chat/chat-core.vue'
 import { loadLocaleMessages } from '@/js/i18n'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
+const uiOptionsStore = useUIOptionsStore()
+const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+
 // Props
 defineProps<{
   f7router: Router.Router
 }>()
 
-const uiOptionsStore = useUIOptionsStore()
-const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
-const conversationId = computed(() => uiOptionsStore.dialogIdentifier)
+// State
 const chatCoreRef = ref<InstanceType<typeof ChatCore> | null>(null)
 const pageRef = ref<any>(null)
 
-// Initialize translations
+// Computed
+const conversationId = computed(() => uiOptionsStore.dialogIdentifier)
+
+// Lifecycle
 onMounted(async () => {
   await loadLocaleMessages('chat', mergeLocaleMessage)
 })

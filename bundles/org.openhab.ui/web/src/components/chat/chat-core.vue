@@ -75,7 +75,19 @@
             <!-- Settings Popover -->
             <f7-popover id="chat-settings-popover" class="chat-settings-popover">
               <f7-list dividers>
-                <f7-list-item :title="t('settingsTitle')" />
+                <f7-list-item :title="t('settingsTitle')">
+                  <template #after>
+                    <f7-link
+                      v-if="conversationId"
+                      id="chat-clear-button"
+                      icon-ios="f7:trash"
+                      icon-aurora="f7:trash"
+                      icon-md="material:delete"
+                      icon-only
+                      :tooltip="t('clearChat')"
+                      @click="clearConversation" />
+                  </template>
+                </f7-list-item>
                 <f7-list-item group-title :title="t('llmTools')" />
                 <f7-list-item
                   v-for="tool in llmTools"
