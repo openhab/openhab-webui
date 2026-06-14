@@ -121,6 +121,27 @@
   flex 1
   min-height 0
 
+  /* Loading indicator style**/
+  .chat-loading-container
+    display flex
+    flex-direction column
+    justify-content center
+    align-items center
+    flex 1
+
+  /* Welcome Screen */
+  .welcome-container
+    display flex
+    flex-direction column
+    align-items center
+    justify-content center
+    padding 24px
+    max-width 600px
+    margin 0 auto
+    box-sizing border-box
+    flex 1
+
+  /* Chat Messages */
   .chat-messagebar
     position relative
     bottom 0
@@ -145,31 +166,7 @@
   .chat-messages-list
     flex 1
     overflow-y auto
-
-  /* Loading indicator style**/
-  .chat-loading-container
-    display flex
-    flex-direction column
-    justify-content center
-    align-items center
-    flex 1
-
-  /* Welcome Screen */
-  .welcome-container
-    display flex
-    flex-direction column
-    align-items center
-    justify-content center
-    padding 24px
-    max-width 600px
-    margin 0 auto
-    box-sizing border-box
-    flex 1
-
-  /* Chat Messages */
-  .chat-messages
-    .chat-message
-      margin-left 16px
+    justify-content flex-end
 
   /* System Tool Messages */
   :deep(.system-message)
