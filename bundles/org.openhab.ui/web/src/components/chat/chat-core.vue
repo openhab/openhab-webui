@@ -20,14 +20,25 @@
         <f7-messages v-else ref="messagesList" class="chat-messages-list">
           <template v-for="(msg, idx) in messages" :key="msg.id || idx">
             <!-- User Message -->
-            <f7-message v-if="msg.role === 'USER'" type="sent" color="blue" :first="isFirst(idx)" :last="isLast(idx)" :tail="isLast(idx)">
+            <f7-message
+              v-if="msg.role === 'USER'"
+              type="sent"
+              color="blue"
+              :first="isFirst(idx)"
+              :last="isLast(idx)"
+              :tail="isTail('USER', idx)">
               <template v-if="msg.content" #text>
                 <span v-html="msg.content"></span>
               </template>
             </f7-message>
 
             <!-- openHAB Response -->
-            <f7-message v-else-if="msg.role === 'OPENHAB'" type="received" :first="isFirst(idx)" :last="isLast(idx)" :tail="isLast(idx)">
+            <f7-message
+              v-else-if="msg.role === 'OPENHAB'"
+              type="received"
+              :first="isFirst(idx)"
+              :last="isLast(idx)"
+              :tail="isTail('OPENHAB', idx)">
               <template v-if="msg.content" #text>
                 <span v-html="msg.content"></span>
               </template>
@@ -419,14 +430,33 @@ function scrollToBottom() {
 }
 
 // Contiguous grouping helpers
+type RoleGroup = 'OPENHAB' | 'USER'
+
+function getRoleGroup(role: api.Message['role']): RoleGroup {
+  if (role === 'OPENHAB' || role === 'TOOL_CALL' || role === 'TOOL_RETURN') {
+    return 'OPENHAB'
+  }
+  return 'USER'
+}
+
 function isFirst(idx: number): boolean {
   if (idx === 0) return true
-  return messages.value[idx - 1].role !== messages.value[idx].role
+  const roleGroup = getRoleGroup(messages.value[idx].role)
+  const prevRoleGroup = getRoleGroup(messages.value[idx - 1].role)
+  return roleGroup !== prevRoleGroup
 }
 
 function isLast(idx: number): boolean {
   if (idx === messages.value.length - 1) return true
-  return messages.value[idx + 1].role !== messages.value[idx].role
+  const roleGroup = getRoleGroup(messages.value[idx].role)
+  const nextRoleGroup = getRoleGroup(messages.value[idx + 1].role)
+  return roleGroup !== nextRoleGroup
+}
+
+function isTail(roleGroup: RoleGroup, idx: number) {
+  if (idx === messages.value.length - 1) return true
+  const msgIdOfRoleGroups = messages.value.filter((m) => m.role === roleGroup).map((m) => m.id)
+  return idx === msgIdOfRoleGroups[msgIdOfRoleGroups.length - 1]
 }
 
 // Exposes
