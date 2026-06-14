@@ -52,11 +52,16 @@
           </template>
 
           <!-- Typing/Thinking Indicator -->
-          <f7-message v-if="!busy" type="received" :typing="true" :first="true" :last="true" :tail="true" />
+          <f7-message v-if="busy" type="received" :typing="true" :first="true" :last="true" :tail="true" />
         </f7-messages>
       </div>
 
-      <f7-messagebar ref="messagebar" class="chat-messagebar" v-model:value="messageText" :placeholder="t('inputPlaceholder')">
+      <f7-messagebar
+        ref="messagebar"
+        class="chat-messagebar"
+        v-model:value="messageText"
+        :placeholder="t('inputPlaceholder')"
+        :resize-page="false">
         <template #inner-end>
           <f7-link
             :class="{ disabled: !messageText.trim() || busy }"
@@ -71,28 +76,59 @@
 </template>
 
 <style lang="stylus">
+.chat-core-wrapper
+  display flex
+  flex-direction column
+  flex 1
+  min-height 0
+
+  .chat-messagebar
+    position relative
+    bottom 0
+    textarea
+      overflow-y hidden
+
+  .chat-messages-container
+    display flex
+    flex-direction column
+    flex 1
+    min-height 0
+
+  .chat-messages-list
+    flex 1
+    overflow-y auto
+
 /* Loading indicator style**/
 .chat-loading-container
   display flex
   flex-direction column
+  justify-content center
   align-items center
+  flex 1
 
 /* Welcome Screen */
 .welcome-container
   display flex
   flex-direction column
   align-items center
+  justify-content center
   padding 24px
   max-width 600px
   margin 0 auto
   box-sizing border-box
+  flex 1
+
+/* Chat Messages */
+.chat-messages
+  .chat-message
+    margin-left 16px
 
 /* System Tool Messages */
 .system-message
   display flex
   align-items flex-start
   gap 10px
-  margin 12px 16px
+  margin 0 16px
   padding 10px 14px
   border-radius 8px
   font-size 13px
@@ -102,12 +138,14 @@
   box-shadow 0 1px 3px rgba(0,0,0,0.02)
 
   &.tool-call
+    margin-top var(--f7-message-margin)
     border-left 3px solid var(--f7-theme-color)
     color var(--f7-text-color)
     .icon
       color var(--f7-theme-color)
 
   &.tool-return
+    margin-top calc(0.5 * var(--f7-message-margin))
     border-left 3px solid var(--f7-color-green, #4cd964)
     color var(--f7-text-color)
     .icon
@@ -132,7 +170,7 @@
 </style>
 
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { onKeyStroke } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 
@@ -167,8 +205,8 @@ const suggestions = computed(() => [
 ])
 
 // Refs
-const messagesListRef = ref<HTMLElement | null>(null)
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const messagesListRef = useTemplateRef<any>('messagesList')
+const textareaRef = useTemplateRef<HTMLTextAreaElement>('messagebar')
 
 // Settings state
 const settingsOpened = ref(false)
@@ -387,7 +425,6 @@ async function sendMessage() {
     // Reload on error to ensure the state is in sync with the server
     await loadConversation()
   } finally {
-    busy.value = false
     await nextTick()
     scrollToBottom()
   }
@@ -424,8 +461,9 @@ function sendSuggestion(text: string) {
  * Scroll the chat messages list to its bottom.
  */
 function scrollToBottom() {
-  if (messagesListRef.value) {
-    messagesListRef.value.scrollTop = messagesListRef.value.scrollHeight
+  const el = messagesListRef.value?.$el || messagesListRef.value
+  if (el) {
+    el.scrollTop = el.scrollHeight
   }
 }
 
