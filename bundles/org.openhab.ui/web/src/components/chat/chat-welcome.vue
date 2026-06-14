@@ -64,11 +64,12 @@
   box-shadow var(--f7-card-box-shadow, 0 4px 12px rgba(0, 0, 0, 0.05))
   text-align left
 
-  &:hover
-    transform translateY(-2px)
-    background var(--f7-list-link-hover-bg-color, rgba(255, 119, 0, 0.08))
-    border-color var(--f7-theme-color)
-    box-shadow 0 6px 16px rgba(255, 119, 0, 0.15)
+  @media (hover: hover)
+    &:hover
+      transform translateY(-2px)
+      background var(--f7-list-link-hover-bg-color, rgba(255, 119, 0, 0.08))
+      border-color var(--f7-theme-color)
+      box-shadow 0 6px 16px rgba(255, 119, 0, 0.15)
 
   .card-icon-wrapper
     display flex
