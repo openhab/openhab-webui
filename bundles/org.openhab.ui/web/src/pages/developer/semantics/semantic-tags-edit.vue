@@ -762,10 +762,12 @@ export default {
     },
     updateName(ev) {
       const name = ev.target.value
-      this.selectedTag.name = name
-      const oldUid = this.selectedTag.uid
-      const newUid = this.selectedTag.parent + '_' + name
-      this.selectedTag.uid = newUid
+      const tag = this.selectedTag
+      tag.name = name
+      const oldUid = tag.uid
+      const newUid = tag.parent + '_' + name
+      tag.uid = newUid
+      this.selectedTagUid = newUid
       this.expandedTags[newUid] = this.expandedTags[oldUid]
     },
     addSynonym(event) {
