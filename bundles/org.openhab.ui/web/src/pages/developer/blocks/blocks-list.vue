@@ -20,20 +20,30 @@
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <f7-link
-        v-if="!theme.md"
-        v-show="selectedItems.length"
-        color="red"
-        class="delete"
-        icon-ios="f7:trash"
-        icon-aurora="f7:trash"
-        @click="removeSelected">
-        Remove {{ selectedItems.length }}
-      </f7-link>
+      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
+        <f7-link
+          v-if="!theme.md && deletableSelectedItems.length"
+          color="red"
+          class="delete display-flex flex-direction-row margin-right"
+          icon-ios="f7:trash"
+          icon-aurora="f7:trash"
+          @click="removeSelected">
+          Remove {{ deletableSelectedItems.length }}
+        </f7-link>
+        <f7-link
+          color="blue"
+          class="copy display-flex flex-direction-row"
+          icon-ios="f7:square_on_square"
+          icon-aurora="f7:square_on_square"
+          @click="copySelectedItemsToClipboard">
+          &nbsp;Copy {{ selectedItems.length }}
+        </f7-link>
+      </div>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
       <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
-      <div v-if="theme.md" class="right">
-        <f7-link v-show="selectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+      <div v-if="theme.md && selectedItems.length" class="right">
+        <f7-link v-show="deletableSelectedItems.length" icon-md="material:delete" icon-color="white" @click="removeSelected" />
+        <f7-link tooltip="Copy selected" icon-md="material:content_copy" icon-color="white" @click="copySelectedItemsToClipboard" />
       </div>
     </f7-toolbar>
 
@@ -41,8 +51,8 @@
       <f7-list-item title="Nothing found" />
     </f7-list>
 
-    <!-- skeleton for not ready -->
     <f7-block v-show="!nowidgetEngine" class="block-narrow">
+      <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
@@ -52,7 +62,7 @@
               media-item
               :key="n"
               :class="`skeleton-text skeleton-effect-blink`"
-              title="Title of the widget"
+              title="Title of the block library"
               subtitle="Tag1, Tag2, Tag3..." />
           </f7-list-group>
         </f7-list>
@@ -85,6 +95,13 @@
             <template #media>
               <span class="item-initial">{{ b.uid[0].toUpperCase() }}</span>
             </template>
+            <template #after>
+              <!-- This is here to push the after-title icon so it would appear immediately after the title
+                    for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
+            </template>
+            <template #after-title>
+              <f7-icon v-if="b.editable === false" f7="lock_fill" color="gray" />
+            </template>
           </f7-list-item>
         </f7-list>
       </f7-col>
@@ -103,6 +120,9 @@ import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { showToast } from '@/js/dialog-promises'
 
+import copyToClipboard from '@/js/clipboard'
+import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
+
 export default {
   props: {
     f7router: Object
@@ -120,6 +140,11 @@ export default {
       selectedItems: [],
       showCheckboxes: false,
       eventSource: null
+    }
+  },
+  computed: {
+    deletableSelectedItems() {
+      return this.selectedItems.filter((i) => this.blocks.find((b) => b.uid === i)?.editable !== false)
     }
   },
   methods: {
@@ -173,14 +198,18 @@ export default {
     removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected block libraries?`, 'Remove block libraries', () => {
-        vm.doRemoveSelected()
-      })
+      f7.dialog.confirm(
+        `Remove ${this.deletableSelectedItems.length} selected block librar${this.deletableSelectedItems.length === 1 ? 'y' : 'ies'}?`,
+        'Remove block libraries',
+        () => {
+          vm.doRemoveSelected()
+        }
+      )
     },
     doRemoveSelected() {
       let dialog = f7.dialog.progress('Deleting block libraries...')
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/ui/components/ui:blocks/' + i))
+      const promises = this.deletableSelectedItems.map((i) => this.$oh.api.delete('/rest/ui/components/ui:blocks/' + i))
       Promise.all(promises)
         .then((data) => {
           showToast('Block library removed')
@@ -196,6 +225,14 @@ export default {
           f7.dialog.alert('An error occurred while deleting: ' + err)
           f7.emit('sidebarRefresh', null)
         })
+    },
+    copySelectedItemsToClipboard() {
+      const itemsToCopy = this.blocks.filter((block) => this.selectedItems.includes(block.uid))
+      const yaml = toFileYAMLSyntax('blocks', itemsToCopy)
+      copyToClipboard(yaml, {
+        onSuccess: () => showToast(`${itemsToCopy.length} block library definitions copied to clipboard`),
+        onError: () => showToast('Failed to copy block library definitions to clipboard')
+      })
     }
   }
 }
