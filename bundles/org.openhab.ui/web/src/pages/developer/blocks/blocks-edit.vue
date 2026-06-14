@@ -3,6 +3,7 @@
     <f7-navbar>
       <oh-nav-content
         :title="(createMode ? 'Create Block Library' : 'Block Library: ' + blocks.uid) + dirtyIndicator"
+        :editable="isEditable"
         :save-link="`Save${$device.desktop ? ' (Ctrl-S)' : ''}`"
         @save="save()"
         :f7router />
@@ -16,35 +17,39 @@
       <f7-link @click="refreshBlocks"> Refresh<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
     <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="blocks-editor horizontal">
+      <not-editable-notice v-if="ready && !isEditable" subject="block library" />
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="blocks-code">
           <editor
             class="blocks-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=blocks"
             :value="blocksDefinition"
+            :readOnly="!isEditable"
             @input="onEditorInput"
             @save="save()" />
         </f7-col>
       </f7-row>
       <f7-row v-if="ready" resizable>
         <f7-col style="min-width: 20px" class="block-preview-pane margin-horizontal margin-bottom">
-          <block-preview :blocks-definition="blocks" :key="previewKey" />
+          <block-preview :blocks-definition="blocks" :read-only="!isEditable" :key="previewKey" />
           <!-- <generic-widget-component :key="widgetKey" :context="context" /> -->
         </f7-col>
       </f7-row>
     </f7-block>
     <f7-block v-else :key="blockKey + 'b'" class="blocks-editor vertical">
+      <not-editable-notice v-if="ready && !isEditable" subject="block library" />
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="blocks-code">
           <editor
             class="blocks-component-editor"
             mode="application/vnd.openhab.uicomponent+yaml;type=blocks"
             :value="blocksDefinition"
+            :readOnly="!isEditable"
             @input="onEditorInput"
             @save="save()" />
         </f7-col>
         <f7-col v-if="ready" resizable style="min-width: 20px" class="block-preview-pane padding-right margin-bottom">
-          <block-preview :blocks-definition="blocks" :key="previewKey" />
+          <block-preview :blocks-definition="blocks" :read-only="!isEditable" :key="previewKey" />
           <!-- <generic-widget-component :key="widgetKey" :context="context" /> -->
         </f7-col>
       </f7-row>
@@ -66,6 +71,7 @@
           ref="blocklyPreviewEditor"
           :blocks="previewBlockSource"
           :library-definitions="[blocks]"
+          :read-only="!isEditable"
           @change="dirty = true" />
         <editor
           v-else-if="previewMode === 'code'"
@@ -103,6 +109,10 @@
       overflow auto
     .blocks-code
       height 100%
+      position relative
+      .v-codemirror
+        position absolute
+        inset 0
   &.vertical
     .block-preview-pane
       z-index auto !important
@@ -119,12 +129,12 @@
 import { f7 } from 'framework7-vue'
 import { nextTick, defineAsyncComponent } from 'vue'
 
-import YAML from 'yaml'
-
 import BlocklyEditor from '@/components/config/controls/blockly-editor.vue'
 import BlockPreview from './block-preview.vue'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
+import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
 
@@ -132,7 +142,8 @@ export default {
   components: {
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
     BlocklyEditor, // 'blockly-editor': () => import(/* webpackChunkName: "blockly-editor" */ '@/components/config/controls/blockly-editor.vue'),
-    BlockPreview // 'block-preview': () => import(/* webpackChunkName: "blockly-editor" */ './block-preview.vue')
+    BlockPreview, // 'block-preview': () => import(/* webpackChunkName: "blockly-editor" */ './block-preview.vue')
+    NotEditableNotice
   },
   props: {
     uid: String,
@@ -147,6 +158,7 @@ export default {
   data() {
     return {
       blocksDefinition: null,
+      blocksEditable: true,
       items: [],
       ready: false,
       split: 'vertical',
@@ -165,10 +177,14 @@ export default {
     blocks() {
       try {
         if (!this.blocksDefinition) return {}
-        return YAML.parse(this.blocksDefinition, { prettyErrors: true, toStringOptions })
+        const uid = this.createMode ? null : this.uid
+        return fromFileYAMLSyntax('blocks', this.blocksDefinition, uid)
       } catch (e) {
         return { component: 'Error', config: { error: e.message } }
       }
+    },
+    isEditable() {
+      return this.createMode || this.blocksEditable
     }
   },
   methods: {
@@ -243,76 +259,75 @@ export default {
       this.loading = true
       if (this.createMode) {
         const uid = f7.utils.id()
-        this.blocksDefinition = YAML.stringify(
-          {
-            uid: 'blocklibrary_' + uid,
-            tags: [],
-            component: 'BlockLibrary',
-            config: {
-              name: 'Block Library ' + uid
-            },
-            slots: {
-              blocks: [
-                {
-                  component: 'BlockType',
-                  config: {
-                    type: 'block1',
-                    message0: 'Do %1 with %2 and %3 then %4',
-                    args0: [
-                      {
-                        type: 'field_dropdown',
-                        name: 'OPTION1',
-                        options: [
-                          ['something', 'option1'],
-                          ['something else', 'option2']
-                        ]
-                      },
-                      {
-                        type: 'field_input',
-                        name: 'TEXT1',
-                        text: 'some text'
-                      },
-                      {
-                        type: 'input_value',
-                        name: 'NAME'
-                      },
-                      {
-                        type: 'input_statement',
-                        name: 'NAME'
-                      }
-                    ],
-                    previousStatement: null,
-                    nextStatement: null,
-                    colour: 90,
-                    tooltip: '',
-                    helpUrl: ''
-                  },
-                  slots: {
-                    code: [
-                      {
-                        component: 'BlockCodeTemplate',
-                        config: {
-                          template:
-                            '/* Incomplete example skeleton, check out\n' +
-                            '   https://openhab.org/link/blocklib-tutorial\n' +
-                            '   to learn how to build block libraries */\n'
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
+        this.blocksDefinition = toFileYAMLSyntax('blocks', {
+          uid: 'blocklibrary_' + uid,
+          tags: [],
+          component: 'BlockLibrary',
+          config: {
+            name: 'Block Library ' + uid
           },
-          { toStringOptions }
-        )
+          slots: {
+            blocks: [
+              {
+                component: 'BlockType',
+                config: {
+                  type: 'block1',
+                  message0: 'Do %1 with %2 and %3 then %4',
+                  args0: [
+                    {
+                      type: 'field_dropdown',
+                      name: 'OPTION1',
+                      options: [
+                        ['something', 'option1'],
+                        ['something else', 'option2']
+                      ]
+                    },
+                    {
+                      type: 'field_input',
+                      name: 'TEXT1',
+                      text: 'some text'
+                    },
+                    {
+                      type: 'input_value',
+                      name: 'NAME'
+                    },
+                    {
+                      type: 'input_statement',
+                      name: 'NAME'
+                    }
+                  ],
+                  previousStatement: null,
+                  nextStatement: null,
+                  colour: 90,
+                  tooltip: '',
+                  helpUrl: ''
+                },
+                slots: {
+                  code: [
+                    {
+                      component: 'BlockCodeTemplate',
+                      config: {
+                        template:
+                          '/* Incomplete example skeleton, check out\n' +
+                          '   https://openhab.org/link/blocklib-tutorial\n' +
+                          '   to learn how to build block libraries */\n'
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        })
         nextTick(() => {
           this.loading = false
           this.ready = true
         })
       } else {
         this.$oh.api.get('/rest/ui/components/ui:blocks/' + this.uid).then((data) => {
-          this.blocksDefinition = YAML.stringify(data, { toStringOptions })
+          this.blocksEditable = data.editable ?? true
+          delete data.editable
+          this.blocksDefinition = toFileYAMLSyntax('blocks', data)
           nextTick(() => {
             this.loading = false
             this.ready = true
@@ -321,6 +336,7 @@ export default {
       }
     },
     save(stay) {
+      if (!this.isEditable) return
       if (!this.blocks.uid) {
         f7.dialog.alert('Please give an ID to the block library')
         return

@@ -1181,7 +1181,11 @@ Blockly.ContextMenuItems.registerCommentOptions()
 export default {
   props: {
     blocks: String,
-    libraryDefinitions: Array
+    libraryDefinitions: Array,
+    readOnly: {
+      type: Boolean,
+      default: false
+    }
   },
   emits: ['mounted', 'ready', 'change'],
   data() {
@@ -1281,7 +1285,7 @@ export default {
       this.addLibraryToToolbox(libraryDefinitions || [])
 
       const options = {
-        toolbox: this.$refs.toolbox,
+        toolbox: this.readOnly ? null : this.$refs.toolbox,
         horizontalLayout: !this.$device.desktop,
         theme: useUIOptionsStore().darkMode === 'dark' ? DarkTheme : undefined,
         zoom: {
@@ -1299,6 +1303,7 @@ export default {
         },
         trashcan: false,
         showLabels: false,
+        readOnly: this.readOnly,
 
         // Multi-select-options
         multiselectCopyPaste: {
@@ -1314,7 +1319,50 @@ export default {
       }
 
       workspace = Blockly.inject(this.$refs.blocklyEditor, options)
-      workspace.addChangeListener(shadowBlockConversionChangeListener)
+      if (this.readOnly && libraryDefinitions) {
+        try {
+          const blocksRoot = libraryDefinitions.blocks || libraryDefinitions
+          let blockTypesToRender = []
+
+          if (blocksRoot && typeof blocksRoot === 'object') {
+            Object.keys(blocksRoot).forEach((libraryKey) => {
+              const libraryItem = blocksRoot[libraryKey]
+              if (libraryItem.slots && Array.isArray(libraryItem.slots.blocks)) {
+                libraryItem.slots.blocks.forEach((blockComponent) => {
+                  if (blockComponent.config && blockComponent.config.type) {
+                    blockTypesToRender.push(blockComponent.config.type)
+                  }
+                })
+              } else if (libraryItem.config && libraryItem.config.type) {
+                blockTypesToRender.push(libraryItem.config.type)
+              }
+            })
+          }
+
+          blockTypesToRender.forEach((blockType, index) => {
+            if (Blockly.Blocks[blockType]) {
+              const newBlock = workspace.newBlock(blockType)
+
+              // Move and stagger the blocks vertically so they don't overlap
+              newBlock.initSvg()
+              newBlock.render()
+              newBlock.moveBy(50, 50 + index * 160)
+            } else {
+              console.warn(`Block type "${blockType}" was defined in blocklibrary but not registered in Blockly.Blocks`)
+            }
+          })
+
+          setTimeout(() => {
+            if (workspace) {
+              workspace.zoomToFit()
+            }
+          }, 50)
+        } catch (e) {
+          console.error('Failed to render block library definitions in read-only layout:', e)
+        }
+      } else {
+        workspace.addChangeListener(shadowBlockConversionChangeListener)
+      }
       const workspaceSearch = new WorkspaceSearch(workspace)
       workspaceSearch.init()
 

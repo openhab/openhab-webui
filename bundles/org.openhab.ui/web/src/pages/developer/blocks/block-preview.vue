@@ -56,7 +56,11 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
   props: {
-    blocksDefinition: Object
+    blocksDefinition: Object,
+    readOnly: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -82,7 +86,7 @@ export default {
       this.workspace = Blockly.inject(this.$refs.blockPreview, {
         theme: useUIOptionsStore().darkMode === 'dark' ? 'dark' : undefined,
         trashcan: false,
-        readOnly: false
+        readOnly: this.readOnly
       })
     },
     defineBlocks() {
