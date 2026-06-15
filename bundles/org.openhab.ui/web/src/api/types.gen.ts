@@ -138,8 +138,8 @@ export type RuleStatusInfo = {
 
 export type Module = {
     typeUID: string;
-    description: string;
     label: string;
+    description: string;
     id: string;
     configuration: Configuration;
 };
@@ -390,12 +390,12 @@ export type JsonArray = {
     asBigDecimal: number;
     asBigInteger: number;
     asShort: number;
-    asDouble: number;
-    asInt: number;
-    asLong: number;
     asString: string;
     asBoolean: boolean;
     empty: boolean;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
     jsonNull: boolean;
     asJsonObject: JsonObject;
     jsonObject: boolean;
@@ -422,11 +422,11 @@ export type JsonElement = {
     asBigDecimal: number;
     asBigInteger: number;
     asShort: number;
+    asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asString: string;
-    asBoolean: boolean;
 };
 
 export type JsonNull = {
@@ -445,11 +445,11 @@ export type JsonNull = {
     asBigDecimal: number;
     asBigInteger: number;
     asShort: number;
+    asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asString: string;
-    asBoolean: boolean;
 };
 
 export type JsonObject = {
@@ -469,11 +469,11 @@ export type JsonObject = {
     asBigDecimal: number;
     asBigInteger: number;
     asShort: number;
+    asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asString: string;
-    asBoolean: boolean;
 };
 
 export type JsonPrimitive = {
@@ -487,11 +487,11 @@ export type JsonPrimitive = {
     string: boolean;
     number: boolean;
     boolean: boolean;
+    asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asString: string;
-    asBoolean: boolean;
     jsonNull: boolean;
     asJsonObject: JsonObject;
     jsonObject: boolean;
@@ -1198,6 +1198,12 @@ export type HumanLanguageInterpreter = {
     id: string;
     label: string;
     locales?: Array<string>;
+};
+
+export type LlmTool = {
+    id: string;
+    label: string;
+    description?: string;
 };
 
 export type ConversationInfo = {
@@ -6317,6 +6323,28 @@ export type InterpretTextByDefaultInterpreterResponses = {
 };
 
 export type InterpretTextByDefaultInterpreterResponse = InterpretTextByDefaultInterpreterResponses[keyof InterpretTextByDefaultInterpreterResponses];
+
+export type GetLlmToolsData = {
+    body?: never;
+    headers?: {
+        /**
+         * language
+         */
+        'Accept-Language'?: string;
+    };
+    path?: never;
+    query?: never;
+    url: '/voice/llmtools';
+};
+
+export type GetLlmToolsResponses = {
+    /**
+     * OK
+     */
+    200: Array<LlmTool>;
+};
+
+export type GetLlmToolsResponse = GetLlmToolsResponses[keyof GetLlmToolsResponses];
 
 export type GetVoicesData = {
     body?: never;
