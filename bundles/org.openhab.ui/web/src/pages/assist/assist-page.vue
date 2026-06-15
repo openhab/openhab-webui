@@ -1,7 +1,7 @@
 <template>
   <f7-page ref="pageRef" name="chat" class="chat-page">
     <f7-navbar>
-      <oh-nav-content :title="t('title')" :f7router />
+      <oh-nav-content :title="t('assist.title')" :f7router />
     </f7-navbar>
 
     <assist-core v-if="conversationId" ref="chatCoreRef" :conversation-id="conversationId" />

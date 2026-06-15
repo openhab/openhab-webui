@@ -10,9 +10,9 @@
         <!-- Welcome Screen (when no messages exist) -->
         <assist-welcome
           v-if="messages.length === 0"
-          :title="t('welcomeTitle')"
-          :subtitle="t('welcomeSubtitle')"
-          :suggestion-header="t('suggestionHeader')"
+          :title="t('assist.welcomeTitle')"
+          :subtitle="t('assist.welcomeSubtitle')"
+          :suggestion-header="t('assist.suggestionHeader')"
           :suggestions="suggestions"
           @select="sendSuggestion" />
 
@@ -63,7 +63,7 @@
         ref="messagebar"
         class="chat-messagebar"
         v-model:value="messageText"
-        :placeholder="t('inputPlaceholder')"
+        :placeholder="t('assist.inputPlaceholder')"
         :resize-page="false">
         <template #inner-end>
           <f7-link
@@ -77,7 +77,7 @@
             <!-- Settings Popover -->
             <f7-popover id="chat-settings-popover" class="chat-settings-popover">
               <f7-list dividers>
-                <f7-list-item :title="t('settingsTitle')">
+                <f7-list-item :title="t('assist.settingsTitle')">
                   <template #after>
                     <f7-link
                       v-if="conversationId"
@@ -86,16 +86,16 @@
                       icon-aurora="f7:trash"
                       icon-md="material:delete"
                       icon-only
-                      :tooltip="t('clearChat')"
+                      :tooltip="t('assist.clearChat')"
                       @click="clearConversation" />
                   </template>
                 </f7-list-item>
-                <f7-list-item :title="t('showGenericToolVisualisation')">
+                <f7-list-item :title="t('assist.showGenericToolVisualisation')">
                   <template #after>
                     <f7-toggle v-model:checked="assistShowGenericToolVisualisation" />
                   </template>
                 </f7-list-item>
-                <f7-list-item group-title :title="t('llmTools')" />
+                <f7-list-item group-title :title="t('assist.llmTools')" />
                 <f7-list-item
                   v-for="tool in llmTools"
                   :key="tool.id"
@@ -266,10 +266,10 @@ let sseConnection: KeepaliveEventSource | null = null
 
 // Computed
 const suggestions = computed(() => [
-  { text: t('suggestion1'), icon: 'lightbulb_fill', color: 'orange' },
-  { text: t('suggestion2'), icon: 'thermometer', color: 'blue' },
-  { text: t('suggestion3'), icon: 'lightbulb_slash_fill', color: 'red' },
-  { text: t('suggestion4'), icon: 'sun_max_fill', color: 'yellow' }
+  { text: t('assist.suggestion1'), icon: 'lightbulb_fill', color: 'orange' },
+  { text: t('assist.suggestion2'), icon: 'thermometer', color: 'blue' },
+  { text: t('assist.suggestion3'), icon: 'lightbulb_slash_fill', color: 'red' },
+  { text: t('assist.suggestion4'), icon: 'sun_max_fill', color: 'yellow' }
 ])
 
 // Refs
@@ -438,7 +438,7 @@ async function loadConversation() {
     if (err instanceof ApiError && err.response.status === 404) {
       messages.value = []
     } else {
-      void showToast(t('loadError'))
+      void showToast(t('assist.loadError'))
       console.error('Failed to load conversation:', err)
     }
   } finally {
@@ -487,7 +487,7 @@ async function sendMessage() {
       { parseAs: 'text' }
     )
   } catch (err) {
-    void showToast(t('errorMessage'))
+    void showToast(t('assist.errorMessage'))
     console.error('Failed to send text to interpreter:', err)
     await loadConversation()
   } finally {
@@ -500,16 +500,16 @@ async function sendMessage() {
  * Clears the conversation.
  */
 async function clearConversation() {
-  const confirmed = await showConfirmDialog(t('clearConfirm'), t('clearChat'))
+  const confirmed = await showConfirmDialog(t('assist.clearConfirm'), t('assist.clearChat'))
   if (!confirmed) return
 
   try {
     await api.deleteConversationById({ id: props.conversationId })
     messages.value = []
     settingsOpened.value = false
-    void showToast(t('clearSuccess'))
+    void showToast(t('assist.clearSuccess'))
   } catch (err) {
-    void showToast(t('deleteError'))
+    void showToast(t('assist.deleteError'))
     console.error('Failed to clear conversation:', err)
   }
 }
