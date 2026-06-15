@@ -1044,13 +1044,13 @@ export default {
       return widget.label ?? (widget.item ? 'for item ' + widget.item : 'without label')
     },
     validateMapping(mapping) {
-      return this.isNonEmptyValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
+      return this.isDefinedValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
     },
     validateRule(attr, rule) {
       if (attr !== 'visibilityRules') {
         return this.isNonEmptyValue(rule.argument)
       }
-      if (rule.conditions?.some((condition) => !this.isNonEmptyValue(condition.value))) {
+      if (rule.conditions?.some((condition) => !this.isDefinedValue(condition.value))) {
         return false
       }
       return true
@@ -1059,6 +1059,9 @@ export default {
       if (typeof value === 'string') {
         return value !== ''
       }
+      return this.isDefinedValue(value)
+    },
+    isDefinedValue(value) {
       return value !== null && value !== undefined
     },
     sanitizeRuleCondition(condition) {
@@ -1067,7 +1070,7 @@ export default {
       }
       const sanitizedCondition = {}
       ;['item', 'condition', 'value'].forEach((key) => {
-        if (this.isNonEmptyValue(condition[key])) {
+        if (this.isDefinedValue(condition[key])) {
           sanitizedCondition[key] = condition[key]
         }
       })
@@ -1107,7 +1110,7 @@ export default {
       }
       const sanitizedMapping = {}
       Object.keys(mapping).forEach((key) => {
-        if (this.isNonEmptyValue(mapping[key])) {
+        if (this.isDefinedValue(mapping[key])) {
           sanitizedMapping[key] = mapping[key]
         }
       })
