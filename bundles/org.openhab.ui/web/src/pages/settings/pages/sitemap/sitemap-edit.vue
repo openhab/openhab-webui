@@ -1064,8 +1064,11 @@ export default {
     isDefinedValue(value) {
       return value !== null && value !== undefined
     },
-    sanitizeRuleCondition(condition) {
+    sanitizeRuleCondition(condition, visibilityRule) {
       if (!condition || typeof condition !== 'object' || Array.isArray(condition)) {
+        return null
+      }
+      if (visibilityRule && !this.isDefinedValue(condition.value)) {
         return null
       }
       const sanitizedCondition = {}
@@ -1076,19 +1079,24 @@ export default {
       })
       return Object.keys(sanitizedCondition).length ? sanitizedCondition : null
     },
-    sanitizeRuleEntry(rule) {
+    sanitizeRuleEntry(rule, visibilityRule) {
       if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
         return null
       }
       const sanitizedRule = {}
       if (Array.isArray(rule.conditions)) {
-        const sanitizedConditions = rule.conditions.map((condition) => this.sanitizeRuleCondition(condition)).filter(Boolean)
+        const sanitizedConditions = rule.conditions
+          .map((condition) => this.sanitizeRuleCondition(condition, visibilityRule))
+          .filter(Boolean)
         if (sanitizedConditions.length) {
           sanitizedRule.conditions = sanitizedConditions
         }
       }
       if (this.isNonEmptyValue(rule.argument)) {
         sanitizedRule.argument = rule.argument
+      }
+      if (!visibilityRule && !sanitizedRule.argument) {
+        return null
       }
       return Object.keys(sanitizedRule).length ? sanitizedRule : null
     },
@@ -1098,7 +1106,9 @@ export default {
         if (!Array.isArray(widget[ruleAttribute])) {
           return
         }
-        widget[ruleAttribute] = widget[ruleAttribute].map((rule) => this.sanitizeRuleEntry(rule)).filter(Boolean)
+        widget[ruleAttribute] = widget[ruleAttribute]
+          .map((rule) => this.sanitizeRuleEntry(rule, ruleAttribute === 'visibilityRules'))
+          .filter(Boolean)
         if (!widget[ruleAttribute].length) {
           delete widget[ruleAttribute]
         }

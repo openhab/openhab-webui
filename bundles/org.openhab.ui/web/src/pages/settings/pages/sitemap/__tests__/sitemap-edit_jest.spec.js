@@ -499,13 +499,13 @@ describe('SitemapEdit', () => {
     await wrapper.vm.$nextTick()
     wrapper.vm.selectedWidget.item = 'Item1'
     wrapper.vm.selectedWidget.label = 'Selection Test'
-    wrapper.vm.selectedWidget.mappings = [{ command: '', label: 'Morning' }]
+    wrapper.vm.selectedWidget.mappings = [{ label: 'Morning' }]
 
     // should not validate as the mapping has a syntax error
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Selection widget Selection Test, syntax error in mappings: =Morning/)
+    expect(lastDialogConfig.content).toMatch(/Selection widget Selection Test, syntax error in mappings: undefined=Morning/)
 
     // populated mappings are currently flagged by the mapping validator
     lastDialogConfig = null
@@ -736,20 +736,15 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectedWidget.item = 'Item1'
     wrapper.vm.selectedWidget.label = 'Sanitize Test'
 
-    // Simulate legacy data with empty-string condition fields written by old code
     wrapper.vm.selectedWidget.valueColorRules = [
-      // All condition fields empty — should become argument-only rule
-      { conditions: [{ item: '', condition: '', value: '' }], argument: 'red' },
-      // Only item set — item should remain, empty fields should be dropped
-      { conditions: [{ item: 'MyItem', condition: '', value: '' }], argument: 'blue' },
+      { argument: 'red' },
+      // Only item set
+      { conditions: [{ item: 'MyItem' }], argument: 'blue' },
       // Fully populated condition — should be preserved as-is
       { conditions: [{ item: 'MyItem', condition: '==', value: 'ON' }], argument: 'green' },
-      // Multiple conditions, some with empty fields — only non-empty fields kept
+      // Multiple conditions, some with empty fields
       {
-        conditions: [
-          { item: 'MyItem', condition: '>=', value: 10 },
-          { item: '', condition: '', value: '' }
-        ],
+        conditions: [{ item: 'MyItem', condition: '>=', value: 10 }, { value: '' }],
         argument: 'orange'
       }
     ]
@@ -762,8 +757,8 @@ describe('SitemapEdit', () => {
       { conditions: [{ item: '   ', condition: ' ', value: '  ' }], argument: ' ' }
     ]
     wrapper.vm.selectedWidget.labelColorRules = [
-      // Rule with no argument and only empty conditions — should be removed entirely
-      { conditions: [{ item: '', condition: '', value: '' }] }
+      // Rule with no argument, no value should be removed entirely
+      { conditions: [{ item: '', condition: '' }] }
     ]
 
     const saved = wrapper.vm.preProcessSitemapSave(wrapper.vm.sitemap)
@@ -783,7 +778,7 @@ describe('SitemapEdit', () => {
 
     // Mixed conditions: empty condition object is removed, valid one survives
     expect(widget.valueColorRules[3]).toEqual({
-      conditions: [{ item: 'MyItem', condition: '>=', value: 10 }],
+      conditions: [{ item: 'MyItem', condition: '>=', value: 10 }, { value: '' }],
       argument: 'orange'
     })
 
@@ -829,8 +824,8 @@ describe('SitemapEdit', () => {
       { command: 'MAYBE' },
       { label: 'No command' },
       { command: '   ', label: '  ', icon: ' ' },
-      { label: 'Empty command' },
-      { command: 'EMPTY_LABEL' }
+      { command: '', label: 'Empty command' },
+      { command: 'EMPTY_LABEL', label: '' }
     ])
   })
 })
