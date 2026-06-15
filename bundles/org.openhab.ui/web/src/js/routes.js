@@ -9,6 +9,7 @@ import { AddonTitles } from '@/assets/addon-store.ts'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
 const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '@/pages/profile.vue')
+const AssistPage = () => import(/* webpackChunkName: "assist" */ '@/pages/assist/assist-page.vue')
 
 const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/settings/menu/settings-menu.vue')
 const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/settings/services/service-settings.vue')
@@ -205,6 +206,14 @@ export default [
   {
     path: '/page/:uid',
     component: PageViewPage
+  },
+  {
+    path: '/assist/',
+    async: loadAsync(AssistPage)
+  },
+  {
+    path: '/assist',
+    redirect: '/assist/'
   },
   {
     path: '/about/',

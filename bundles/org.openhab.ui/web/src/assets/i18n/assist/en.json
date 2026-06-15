@@ -1,0 +1,21 @@
+{
+  "assist.title": "HABAssist",
+  "assist.inputPlaceholder": "Ask openHAB something...",
+  "assist.welcomeTitle": "Chat with openHAB",
+  "assist.welcomeSubtitle": "Control your smart home using natural language.",
+  "assist.suggestion1": "Turn on the living room light",
+  "assist.suggestion2": "What is the temperature outside?",
+  "assist.suggestion3": "Turn off all lights",
+  "assist.suggestion4": "Good morning!",
+  "assist.suggestionHeader": "Try asking:",
+  "assist.errorMessage": "An error occurred while sending the message.",
+  "assist.loadError": "Could not load conversation history.",
+  "assist.thinking": "openHAB is thinking...",
+  "assist.clearChat": "Clear Conversation",
+  "assist.clearConfirm": "Are you sure you want to clear this conversation? This will delete all messages on the server.",
+  "assist.clearSuccess": "Conversation cleared successfully.",
+  "assist.deleteError": "Failed to clear the conversation history.",
+  "assist.settingsTitle": "HABAssist Settings",
+  "assist.llmTools": "Tools Selection",
+  "assist.showGenericToolVisualisation": "Show all tool calls"
+}

@@ -25,6 +25,7 @@
           :icon-ios="runtimeStore.voiceIcon"
           :icon-md="runtimeStore.voiceIcon"
           :tooltip="$t('home.triggerVoice')"
+          style="margin-right: 8px"
           @click="triggerDialog" />
         <developer-dock-icon />
         <f7-link

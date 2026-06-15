@@ -5,7 +5,7 @@ import type { ItemState } from '../stores/useStatesStore'
 /**
  * An EventSource that is extended with a keepalive/heartbeat mechanism.
  */
-interface KeepaliveEventSource extends EventSource {
+export interface KeepaliveEventSource extends EventSource {
   keepaliveTimer?: number
   setKeepalive: (seconds?: number) => void
   clearKeepalive: () => void

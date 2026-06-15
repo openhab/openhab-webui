@@ -8,6 +8,7 @@
     <!-- Left Panel -->
     <f7-panel v-show="ready" left :cover="showSidebar ? true : null" class="sidebar" :visible-breakpoint="960">
       <f7-page>
+        <!-- openHAB Logo -->
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close @click.capture="handleSidebarClick">
           <div class="logo-inner">
             <img v-if="uiOptionsStore.darkMode === 'dark'" src="@/images/openhab-logo-white.svg" type="image/svg+xml" width="196px" />
@@ -18,6 +19,7 @@
           <f7-icon size="14" :f7="uiOptionsStore.visibleBreakpointDisabled ? 'pin' : 'pin_filled'" color="gray" />
         </f7-link>
 
+        <!-- Pages -->
         <f7-list v-if="ready" @click.capture="handleSidebarClick">
           <f7-list-item v-if="runtimeStore.apiEndpoint('ui') && (!pages || !pages.length)">
             <span
@@ -39,9 +41,21 @@
             </template>
           </f7-list-item>
         </f7-list>
+
+        <!-- Assistant -->
+        <f7-list class="admin-links">
+          <f7-list-item link="/assist" title="HABAssist" no-chevron panel-close :class="{ currentsection: currentPath.assist }">
+            <template #media>
+              <f7-icon ios="f7:chat_bubble_2" aurora="f7:chat_bubble_2" md="material:chat" />
+            </template>
+          </f7-list-item>
+        </f7-list>
+
+        <!-- Administration Section Header -->
         <f7-block-title v-if="userStore.isAdmin()">
           {{ t('sidebar.administration') }}
         </f7-block-title>
+
         <!-- Settings -->
         <f7-list v-if="userStore.isAdmin()" class="admin-links" @click.capture="handleSidebarClick">
           <f7-list-item
@@ -293,6 +307,7 @@
           </li>
         </f7-list>
 
+        <!-- Help & About -->
         <f7-list class="admin-links" @click.capture="handleSidebarClick">
           <f7-list-item
             no-chevron
