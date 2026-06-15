@@ -32,5 +32,7 @@
   "page.unavailable.title": "Seite nicht verfügbar",
   "page.unavailable.text": "Aufgrund von Sichtbarkeitseinschränkungen ist es dir nicht erlaubt, diese Seite anzusehen.",
   "persistence.title": "Noch kein Persistence Add-on installiert",
-  "persistence.text": "Mit Hilfe von Persistence kannst du Item-Zustände im Zeitverlauf archivieren, sowohl für die Vergangenheit als für die Zukunft. Um Persistence zu konfigurieren, installiere mindestens ein Persistence Add-on."
+  "persistence.text": "Mit Hilfe von Persistence kannst du Item-Zustände im Zeitverlauf archivieren, sowohl für die Vergangenheit als für die Zukunft. Um Persistence zu konfigurieren, installiere mindestens ein Persistence Add-on.",
+  "sitemaps.title": "Noch keine Sitemaps",
+  "sitemaps.text": "Sitemaps sind eine deklarative Methode, die Struktur einer Benutzeroberfläche für unterstützte UIs (Basic UI, mobile Apps...) zu definieren. Sie bestehen aus Widgets, die Item-Zustände anzeigen oder Befehle an Items senden.<br><br>Verwende die +-Schaltfläche, um deine erste Sitemap zu erstellen."
 }
