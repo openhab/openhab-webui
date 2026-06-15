@@ -46,10 +46,12 @@
 
             <!-- Tool Call -->
             <chat-tool-widget v-else-if="msg.role === 'TOOL_CALL' && isSpecialToolCall(msg.content)" :content="msg.content" />
-            <chat-tool-call v-else-if="msg.role === 'TOOL_CALL'" :content="msg.content" />
+            <chat-tool-call v-else-if="msg.role === 'TOOL_CALL' && assistShowGenericToolVisualisation" :content="msg.content" />
 
             <!-- Tool Return -->
-            <chat-tool-return v-else-if="msg.role === 'TOOL_RETURN' && !isSpecialToolReturn(idx)" :content="msg.content" />
+            <chat-tool-return
+              v-else-if="msg.role === 'TOOL_RETURN' && !isSpecialToolReturn(idx) && assistShowGenericToolVisualisation"
+              :content="msg.content" />
           </template>
 
           <!-- Typing/Thinking Indicator -->
@@ -88,6 +90,11 @@
                       @click="clearConversation" />
                   </template>
                 </f7-list-item>
+                <f7-list-item :title="t('showGenericToolVisualisation')">
+                  <template #after>
+                    <f7-toggle v-model:checked="assistShowGenericToolVisualisation" />
+                  </template>
+                </f7-list-item>
                 <f7-list-item group-title :title="t('llmTools')" />
                 <f7-list-item
                   v-for="tool in llmTools"
@@ -95,7 +102,7 @@
                   checkbox
                   :title="tool.label || tool.id"
                   :subtitle="tool.description"
-                  :checked="(selectedLlmTools ?? []).includes(tool.id)"
+                  :checked="(assistSelectedLlmTools ?? []).includes(tool.id)"
                   @change="toggleTool(tool.id)" />
               </f7-list>
             </f7-popover>
@@ -252,7 +259,7 @@ const messages = ref<api.Message[]>([])
 const messageText = ref('')
 const settingsOpened = ref(false)
 const llmTools = ref<api.LlmTool[]>([])
-const { selectedLlmTools } = storeToRefs(uiOptionsStore)
+const { assistSelectedLlmTools, assistShowGenericToolVisualisation } = storeToRefs(uiOptionsStore)
 
 let sseConnection: KeepaliveEventSource | null = null
 
@@ -405,8 +412,8 @@ async function loadLlmTools() {
     const list = await api.getLlmTools()
     llmTools.value = list ?? []
 
-    if (selectedLlmTools.value === null) {
-      selectedLlmTools.value = list?.map((t) => t.id) ?? []
+    if (assistSelectedLlmTools.value === null) {
+      assistSelectedLlmTools.value = list?.map((t) => t.id) ?? []
     }
   } catch (err) {
     console.error('Failed to load LLM tools:', err)
@@ -442,12 +449,12 @@ async function loadConversation() {
 }
 
 function toggleTool(id: string) {
-  if (selectedLlmTools.value === null) selectedLlmTools.value = []
-  const idx = selectedLlmTools.value.indexOf(id)
+  if (assistSelectedLlmTools.value === null) assistSelectedLlmTools.value = []
+  const idx = assistSelectedLlmTools.value.indexOf(id)
   if (idx >= 0) {
-    selectedLlmTools.value.splice(idx, 1)
+    assistSelectedLlmTools.value.splice(idx, 1)
   } else {
-    selectedLlmTools.value.push(id)
+    assistSelectedLlmTools.value.push(id)
   }
 }
 
@@ -468,7 +475,7 @@ async function sendMessage() {
   busy.value = true
 
   // Use selected LLM tools (default all selected)
-  const toolsParam = selectedLlmTools.value ?? []
+  const toolsParam = assistSelectedLlmTools.value ?? []
 
   try {
     await api.interpretTextByDefaultInterpreter(

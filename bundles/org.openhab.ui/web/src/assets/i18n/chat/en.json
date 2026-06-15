@@ -15,6 +15,7 @@
   "clearConfirm": "Are you sure you want to clear this conversation? This will delete all messages on the server.",
   "clearSuccess": "Conversation cleared successfully.",
   "deleteError": "Failed to clear the conversation history.",
-  "settingsTitle": "Chat Settings",
-  "llmTools": "Tools Selection"
+  "settingsTitle": "HABAssist Settings",
+  "llmTools": "Tools Selection",
+  "showGenericToolVisualisation": "Show all tool calls"
 }
