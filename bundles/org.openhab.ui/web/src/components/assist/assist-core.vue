@@ -18,7 +18,11 @@
 
         <!-- Messages Feed -->
         <f7-messages v-else ref="messagesList" class="chat-messages-list">
-          <template v-for="(msg, idx) in messages" :key="msg.id || idx">
+          <!-- Typing/Thinking Indicator -->
+          <f7-message v-if="busy" type="received" :typing="true" :first="true" :last="true" :tail="true" />
+
+          <!-- Render in reverse order (with flex-direction: column-reverse) so most recent message is rendered first -->
+          <template v-for="(msg, idx) in messages" :key="msg.id">
             <!-- User Message -->
             <f7-message
               v-if="msg.role === 'USER'"
@@ -53,9 +57,6 @@
               v-else-if="msg.role === 'TOOL_RETURN' && !isSpecialToolReturn(idx) && assistShowGenericToolVisualisation"
               :content="msg.content" />
           </template>
-
-          <!-- Typing/Thinking Indicator -->
-          <f7-message v-if="busy" type="received" :typing="true" :first="true" :last="true" :tail="true" />
         </f7-messages>
       </div>
 
@@ -172,13 +173,13 @@
 
   .chat-messages-list
     flex 1
+    flex-direction column-reverse
     overflow-y scroll
-    align-content end
 
     .message
       margin-top 0
       margin-bottom var(--f7-message-margin)
-      &:first-child
+      &:last-child
         margin-top var(--f7-message-margin)
 
   /* System Tool Messages */
@@ -336,7 +337,7 @@ function handleSSEMessage(payload: { messageId: number; role: string; text: stri
 
   const typedRole = role as api.Message['role']
 
-  // Update existing message if the id already exists
+  // Update the existing message if the id already exists
   const existingIndex = messages.value.findIndex((m) => m.id === messageId)
   if (existingIndex !== -1) {
     // Update existing message
@@ -347,11 +348,14 @@ function handleSSEMessage(payload: { messageId: number; role: string; text: stri
   }
 
   // Otherwise, append the new message
-  messages.value.push({
-    id: messageId,
-    role: typedRole,
-    content: text
-  })
+  messages.value = [
+    {
+      id: messageId,
+      role: typedRole,
+      content: text
+    },
+    ...messages.value
+  ]
 
   // Set busy to false as we've received a HLI response
   if (typedRole === 'OPENHAB') {
@@ -435,7 +439,7 @@ async function loadConversation() {
   try {
     const res = await api.getConversationById({ id: props.conversationId })
     if (res && res.messages) {
-      messages.value = res.messages
+      messages.value = res.messages.reverse()
     } else {
       messages.value = []
     }
@@ -449,8 +453,6 @@ async function loadConversation() {
     }
   } finally {
     loading.value = false
-    await nextTick()
-    scrollToBottom()
   }
 }
 
@@ -476,8 +478,6 @@ async function sendMessage() {
 
   // Don't add the message to the messages state, we'll immediately receive it through the event bus
 
-  await nextTick()
-  scrollToBottom()
   busy.value = true
 
   // Use selected LLM tools (default all selected)
@@ -550,21 +550,21 @@ function getRoleGroup(role: api.Message['role']): RoleGroup {
 }
 
 function isFirst(idx: number): boolean {
-  if (idx === 0) return true
+  if (idx >= messages.value.length - 1) return true
   const roleGroup = getRoleGroup(messages.value[idx].role)
-  const prevRoleGroup = getRoleGroup(messages.value[idx - 1].role)
+  const prevRoleGroup = getRoleGroup(messages.value[idx + 1].role)
   return roleGroup !== prevRoleGroup
 }
 
 function isLast(idx: number): boolean {
-  if (idx === messages.value.length - 1) return true
+  if (idx <= 0) return true
   const roleGroup = getRoleGroup(messages.value[idx].role)
-  const nextRoleGroup = getRoleGroup(messages.value[idx + 1].role)
+  const nextRoleGroup = getRoleGroup(messages.value[idx - 1].role)
   return roleGroup !== nextRoleGroup
 }
 
 function isTail(roleGroup: RoleGroup, idx: number) {
-  if (idx === messages.value.length - 1) return true
+  if (idx <= 0) return true
   const msgIdOfRoleGroups = messages.value.filter((m) => m.role === roleGroup).map((m) => m.id)
   return idx === msgIdOfRoleGroups[msgIdOfRoleGroups.length - 1]
 }
@@ -586,8 +586,8 @@ function isSpecialToolCall(content?: string): boolean {
 }
 
 function isSpecialToolReturn(idx: number): boolean {
-  if (idx <= 0) return false
-  const prevMsg = messages.value[idx - 1]
+  if (idx >= messages.value.length) return false
+  const prevMsg = messages.value[idx + 1]
   return prevMsg && prevMsg.role === 'TOOL_CALL' && isSpecialToolCall(prevMsg.content)
 }
 
