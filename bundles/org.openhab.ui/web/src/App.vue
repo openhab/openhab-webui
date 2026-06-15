@@ -44,7 +44,7 @@
 
         <!-- Assistant -->
         <f7-list class="admin-links">
-          <f7-list-item link="/chat" title="HABAssist" no-chevron panel-close :class="{ currentsection: currentPath.chat }">
+          <f7-list-item link="/assist" title="HABAssist" no-chevron panel-close :class="{ currentsection: currentPath.assist }">
             <template #media>
               <f7-icon ios="f7:chat_bubble_2" aurora="f7:chat_bubble_2" md="material:chat" />
             </template>

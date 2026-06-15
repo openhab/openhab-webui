@@ -4,7 +4,7 @@
       <oh-nav-content :title="t('title')" :f7router />
     </f7-navbar>
 
-    <chat-core v-if="conversationId" ref="chatCoreRef" :conversation-id="conversationId" />
+    <assist-core v-if="conversationId" ref="chatCoreRef" :conversation-id="conversationId" />
   </f7-page>
 </template>
 
@@ -21,7 +21,7 @@ import { type Router } from 'framework7'
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import ChatCore from '@/components/chat/chat-core.vue'
+import AssistCore from '@/components/assist/assist-core.vue'
 import { loadLocaleMessages } from '@/js/i18n'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
@@ -34,7 +34,7 @@ defineProps<{
 }>()
 
 // State
-const chatCoreRef = ref<InstanceType<typeof ChatCore> | null>(null)
+const chatCoreRef = ref<InstanceType<typeof AssistCore> | null>(null)
 const pageRef = ref<any>(null)
 
 // Computed
@@ -42,6 +42,6 @@ const conversationId = computed(() => uiOptionsStore.dialogIdentifier)
 
 // Lifecycle
 onMounted(async () => {
-  await loadLocaleMessages('chat', mergeLocaleMessage)
+  await loadLocaleMessages('assist', mergeLocaleMessage)
 })
 </script>

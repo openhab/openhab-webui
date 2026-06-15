@@ -9,7 +9,7 @@ import { AddonTitles } from '@/assets/addon-store.ts'
 
 const AboutPage = () => import(/* webpackChunkName: "about-page" */ '@/pages/about.vue')
 const UserProfilePage = () => import(/* webpackChunkName: "profile-page" */ '@/pages/profile.vue')
-const ChatPage = () => import(/* webpackChunkName: "chat" */ '@/pages/chat/chat-page.vue')
+const AssistPage = () => import(/* webpackChunkName: "assist" */ '@/pages/assist/assist-page.vue')
 
 const SettingsMenuPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/settings/menu/settings-menu.vue')
 const ServiceSettingsPage = () => import(/* webpackChunkName: "admin-base" */ '@/pages/settings/services/service-settings.vue')
@@ -208,12 +208,12 @@ export default [
     component: PageViewPage
   },
   {
-    path: '/chat/',
-    async: loadAsync(ChatPage)
+    path: '/assist/',
+    async: loadAsync(AssistPage)
   },
   {
-    path: '/chat',
-    redirect: '/chat/'
+    path: '/assist',
+    redirect: '/assist/'
   },
   {
     path: '/about/',

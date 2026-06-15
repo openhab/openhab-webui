@@ -8,7 +8,7 @@
     <template v-else>
       <div class="chat-messages-container">
         <!-- Welcome Screen (when no messages exist) -->
-        <chat-welcome
+        <assist-welcome
           v-if="messages.length === 0"
           :title="t('welcomeTitle')"
           :subtitle="t('welcomeSubtitle')"
@@ -45,11 +45,11 @@
             </f7-message>
 
             <!-- Tool Call -->
-            <chat-tool-widget v-else-if="msg.role === 'TOOL_CALL' && isSpecialToolCall(msg.content)" :content="msg.content" />
-            <chat-tool-call v-else-if="msg.role === 'TOOL_CALL' && assistShowGenericToolVisualisation" :content="msg.content" />
+            <assist-tool-widget v-else-if="msg.role === 'TOOL_CALL' && isSpecialToolCall(msg.content)" :content="msg.content" />
+            <assist-tool-call v-else-if="msg.role === 'TOOL_CALL' && assistShowGenericToolVisualisation" :content="msg.content" />
 
             <!-- Tool Return -->
-            <chat-tool-return
+            <assist-tool-return
               v-else-if="msg.role === 'TOOL_RETURN' && !isSpecialToolReturn(idx) && assistShowGenericToolVisualisation"
               :content="msg.content" />
           </template>
@@ -237,10 +237,10 @@ import { useStatesStore } from '@/js/stores/useStatesStore.ts'
 import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { loadLocaleMessages } from '@/js/i18n'
 
-import ChatToolCall from '@/components/chat/chat-tool-call.vue'
-import ChatToolWidget from '@/components/chat/item-tool-widget.vue'
-import ChatToolReturn from '@/components/chat/chat-tool-return.vue'
-import ChatWelcome from '@/components/chat/chat-welcome.vue'
+import AssistToolCall from '@/components/assist/assist-tool-call.vue'
+import AssistToolWidget from '@/components/assist/assist-tool-widget.vue'
+import AssistToolReturn from '@/components/assist/assist-tool-return.vue'
+import AssistWelcome from '@/components/assist/assist-welcome.vue'
 
 const uiOptionsStore = useUIOptionsStore()
 
@@ -251,6 +251,7 @@ const props = defineProps<{
 
 // Composables
 const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
+loadLocaleMessages('assist', mergeLocaleMessage)
 
 // State
 const loading = ref(false)
@@ -277,7 +278,6 @@ const textareaRef = useTemplateRef<any>('messagebar')
 
 // Lifecycle
 onMounted(async () => {
-  await loadLocaleMessages('chat', mergeLocaleMessage)
   await Promise.all([loadConversation(), loadLlmTools()])
   startSSE()
   useStatesStore().startTrackingStates()
@@ -368,7 +368,7 @@ function startSSE() {
     [],
     (event: any) => {
       try {
-        console.debug('Received chat SSE event:', event)
+        console.debug('Received conversation SSE event:', event)
         if (event && event.payload) {
           const payload = JSON.parse(event.payload)
           if (payload && typeof payload.messageId === 'number') {
@@ -380,18 +380,18 @@ function startSSE() {
           }
         }
       } catch (err) {
-        console.error('Error handling chat SSE event:', err)
+        console.error('Error handling conversation SSE event:', err)
       }
     },
     () => {
-      console.warn('SSE connection error for chat')
+      console.warn('SSE connection error for conversation')
     }
   )
 }
 
 function stopSSE() {
   if (sseConnection) {
-    console.debug('Closing chat SSE connection')
+    console.debug('Closing conversation SSE connection')
     sse.close(sseConnection)
     sseConnection = null
   }
@@ -524,7 +524,7 @@ function sendSuggestion(text: string) {
 }
 
 /**
- * Scroll the chat messages list to its bottom.
+ * Scroll the assist messages list to its bottom.
  */
 function scrollToBottom() {
   const el = messagesListRef.value?.$el || messagesListRef.value
