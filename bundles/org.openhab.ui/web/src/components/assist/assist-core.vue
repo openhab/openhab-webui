@@ -172,8 +172,14 @@
 
   .chat-messages-list
     flex 1
-    overflow-y auto
-    justify-content flex-end
+    overflow-y scroll
+    align-content end
+
+    .message
+      margin-top 0
+      margin-bottom var(--f7-message-margin)
+      &:first-child
+        margin-top var(--f7-message-margin)
 
   /* System Tool Messages */
   :deep(.system-message)
@@ -190,7 +196,6 @@
     box-shadow 0 1px 3px rgba(0,0,0,0.02)
 
     &.tool-call
-      margin-top var(--f7-message-margin)
       border-left 3px solid var(--f7-theme-color)
       color var(--f7-text-color)
       .icon
@@ -198,6 +203,7 @@
 
     &.tool-return
       margin-top calc(0.5 * var(--f7-message-margin))
+      margin-bottom var(--f7-message-margin)
       border-left 3px solid var(--f7-color-green, #4cd964)
       color var(--f7-text-color)
       .icon
