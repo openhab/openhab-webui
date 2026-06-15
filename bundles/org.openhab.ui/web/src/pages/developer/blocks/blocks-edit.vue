@@ -70,9 +70,7 @@
           v-if="previewMode === 'blockly'"
           ref="blocklyPreviewEditor"
           :blocks="previewBlockSource"
-          :library-definitions="[blocks]"
-          :read-only="!isEditable"
-          @change="dirty = true" />
+          :library-definitions="[blocks]" />
         <editor
           v-else-if="previewMode === 'code'"
           class="blocks-preview-code"

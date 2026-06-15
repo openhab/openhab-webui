@@ -47,6 +47,7 @@
 </style>
 
 <script>
+import { markRaw } from 'vue'
 import { mapStores } from 'pinia'
 import * as Blockly from 'blockly'
 
@@ -83,11 +84,12 @@ export default {
   },
   methods: {
     initWorkspace() {
-      this.workspace = Blockly.inject(this.$refs.blockPreview, {
+      const injectedWorkspace = Blockly.inject(this.$refs.blockPreview, {
         theme: useUIOptionsStore().darkMode === 'dark' ? 'dark' : undefined,
         trashcan: false,
         readOnly: this.readOnly
       })
+      this.workspace = markRaw(injectedWorkspace)
     },
     defineBlocks() {
       try {
