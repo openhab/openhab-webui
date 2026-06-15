@@ -73,6 +73,18 @@ onMounted(async () => {
         metadata: 'semantics,widget'
       })
       if (data) {
+        if (!data.metadata) {
+          data.metadata = {}
+        }
+        if (!data.metadata.widget) {
+          data.metadata.widget = { value: '', config: {} }
+        }
+        const widgetMetadata = data.metadata.widget as any
+        if (!widgetMetadata.config) {
+          widgetMetadata.config = {}
+        }
+        // Set the item label / name as the widget title
+        widgetMetadata.config.title = data.label || data.name
         item.value = data
       }
     } catch (e) {
