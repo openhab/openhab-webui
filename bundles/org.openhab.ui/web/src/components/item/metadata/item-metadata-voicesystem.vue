@@ -41,6 +41,27 @@ export default {
   data: () => {
     return {
       ruleOptionParameters: [
+        {
+          type: 'STRING',
+          name: 'permission',
+          label: 'Permission',
+          description: 'Control whether and how this Item is accessible by the voice system. Leave empty to inherit from parent.',
+          limitToOptions: true,
+          options: [
+            {
+              label: 'No Access',
+              value: 'NO_ACCESS'
+            },
+            {
+              label: 'Read Only',
+              value: 'READ_ONLY'
+            },
+            {
+              label: 'Read & Write',
+              value: 'READ_WRITE'
+            }
+          ]
+        },
         { type: 'BOOLEAN', name: 'isForced', label: 'Is Forced', description: 'Send command without check current Item state' },
         { type: 'BOOLEAN', name: 'isSilent', label: 'Is Silent', description: 'Disable success confirmation message' },
         { type: 'BOOLEAN', name: 'isTemplate', label: 'Is Template', description: 'Target similar Items instead of the current one' }
