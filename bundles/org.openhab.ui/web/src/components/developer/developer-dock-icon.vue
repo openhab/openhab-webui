@@ -53,9 +53,9 @@ const isOnLogViewerPage = computed(() => {
 })
 </script>
 
-<style scoped>
-.dev-dock-icons {
-  display: inline-flex;
-  margin-right: 8px;
-}
+<style scoped lang="stylus">
+.dev-dock-icons
+  display inline-flex
+  &:not(:last-child)
+    margin-right 8px
 </style>

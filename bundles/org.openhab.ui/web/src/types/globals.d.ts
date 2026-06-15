@@ -6,6 +6,10 @@ declare module '@vue/runtime-core' {
     $device: Device
     $t: Composer['t']
     $fullscreen: typeof import('vue-fullscreen').api
+    $f7dim: {
+      width: number
+      height: number
+    }
   }
 }
 

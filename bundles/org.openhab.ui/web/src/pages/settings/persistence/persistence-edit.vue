@@ -4,7 +4,7 @@
       <oh-nav-content
         :title="pageTitle + dirtyIndicator"
         :editable
-        :save-link="editable ? 'Save (Ctrl-S)' : null"
+        :save-link="editable ? `Save${$device.desktop ? ' (Ctrl-S)' : ''}` : null"
         back-link-url="/settings/persistence/"
         @save="save()"
         :f7router />
