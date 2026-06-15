@@ -84,9 +84,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
   const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
   const assistSelectedLlmTools = ref<string[] | null>(localStorage.getItem('openhab.ui:assist.llmtools.selected')?.split(',') ?? null)
-  const assistShowGenericToolVisualisation = ref<boolean>(
-    localStorage.getItem('openhab.ui:assist.assistShowGenericToolVisualisation') === 'true'
-  )
+  const assistShowGenericToolVisualisation = ref<boolean>(localStorage.getItem('openhab.ui:assist.showGenericToolVisualisation') === 'true')
 
   const codeMirrorSettings = reactive({
     vimMode: localStorage.getItem('openhab.ui:codeMirror.vimMode') === 'true'
@@ -275,13 +273,13 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     assistSelectedLlmTools,
     (v) => {
       if (!v) return
-      localStorage.setItem('openhab.ui:hli.llmtools.selected', v.filter((s) => s.length).join(','))
+      localStorage.setItem('openhab.ui:assist.llmtools.selected', v.filter((s) => s.length).join(','))
     },
     { deep: true }
   )
 
   watch(assistShowGenericToolVisualisation, (newValue) => {
-    localStorage.setItem('openhab.ui:hli.assistShowGenericToolVisualisation', newValue.toString())
+    localStorage.setItem('openhab.ui:assist.showGenericToolVisualisation', newValue.toString())
   })
 
   watch(codeMirrorSettings, (newValue) => {
