@@ -100,10 +100,6 @@
     .widget-code
       height 100%
       position relative
-      .v-codemirror
-        position absolute
-        inset 0
-        height auto
   &.vertical
     .block
       z-index auto !important

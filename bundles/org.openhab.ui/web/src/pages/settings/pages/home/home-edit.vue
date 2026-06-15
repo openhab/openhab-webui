@@ -200,7 +200,7 @@
     align-items: center
     justify-content: space-between
     margin-bottom: 0.5rem
-  .page-code-editor.v-codemirror
+  .page-code-editor
     position absolute
     height calc(100% - var(--f7-navbar-height) - 2*var(--f7-toolbar-height))
   .yaml-message

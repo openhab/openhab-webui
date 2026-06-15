@@ -143,7 +143,7 @@
   .items-parser
     height 50%
     width 100%
-    .editor.v-codemirror
+    .editor
       position absolute
       height calc(100% - var(--f7-grid-gap))
   .items-results
