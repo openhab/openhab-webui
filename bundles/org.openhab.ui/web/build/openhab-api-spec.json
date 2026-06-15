@@ -7317,6 +7317,38 @@
         }
       }
     },
+    "/voice/llmtools": {
+      "get": {
+        "tags": ["voice"],
+        "summary": "Get the list of all LLM tools.",
+        "operationId": "getLLMTools",
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "description": "language",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LLMTool"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/voice/voices": {
       "get": {
         "tags": ["voice"],
@@ -8273,10 +8305,10 @@
           "typeUID": {
             "type": "string"
           },
-          "description": {
+          "label": {
             "type": "string"
           },
-          "label": {
+          "description": {
             "type": "string"
           },
           "id": {
@@ -8993,6 +9025,15 @@
             "type": "integer",
             "format": "int32"
           },
+          "asString": {
+            "type": "string"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
+          "empty": {
+            "type": "boolean"
+          },
           "asDouble": {
             "type": "number",
             "format": "double"
@@ -9004,15 +9045,6 @@
           "asLong": {
             "type": "integer",
             "format": "int64"
-          },
-          "asString": {
-            "type": "string"
-          },
-          "asBoolean": {
-            "type": "boolean"
-          },
-          "empty": {
-            "type": "boolean"
           },
           "jsonNull": {
             "type": "boolean"
@@ -9091,6 +9123,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "asString": {
+            "type": "string"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
           "asDouble": {
             "type": "number",
             "format": "double"
@@ -9102,12 +9140,6 @@
           "asLong": {
             "type": "integer",
             "format": "int64"
-          },
-          "asString": {
-            "type": "string"
-          },
-          "asBoolean": {
-            "type": "boolean"
           }
         }
       },
@@ -9162,6 +9194,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "asString": {
+            "type": "string"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
           "asDouble": {
             "type": "number",
             "format": "double"
@@ -9173,12 +9211,6 @@
           "asLong": {
             "type": "integer",
             "format": "int64"
-          },
-          "asString": {
-            "type": "string"
-          },
-          "asBoolean": {
-            "type": "boolean"
           }
         }
       },
@@ -9236,6 +9268,12 @@
             "type": "integer",
             "format": "int32"
           },
+          "asString": {
+            "type": "string"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
           "asDouble": {
             "type": "number",
             "format": "double"
@@ -9247,12 +9285,6 @@
           "asLong": {
             "type": "integer",
             "format": "int64"
-          },
-          "asString": {
-            "type": "string"
-          },
-          "asBoolean": {
-            "type": "boolean"
           }
         }
       },
@@ -9292,6 +9324,12 @@
           "boolean": {
             "type": "boolean"
           },
+          "asString": {
+            "type": "string"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
           "asDouble": {
             "type": "number",
             "format": "double"
@@ -9303,12 +9341,6 @@
           "asLong": {
             "type": "integer",
             "format": "int64"
-          },
-          "asString": {
-            "type": "string"
-          },
-          "asBoolean": {
-            "type": "boolean"
           },
           "jsonNull": {
             "type": "boolean"
@@ -11339,6 +11371,21 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "LLMTool": {
+        "required": ["id", "label"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
           }
         }
       },
