@@ -653,7 +653,7 @@ export default {
           text: this.t('analyzer.aggregations.' + a),
           color: 'blue',
           onClick: () => {
-            seriesOptions.aggregation = a as AggregationFunction
+            seriesOptions.aggregation = a
           }
         }
       })
