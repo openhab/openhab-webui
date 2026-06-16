@@ -81,9 +81,6 @@
     padding 0
   .item-inner:after
     display none
-  .item-picker-empty
-    .item-title
-      color var(--f7-input-placeholder-color, var(--f7-list-item-footer-text-color))
   .item-picker:focus-within .item-content
     outline 2px solid var(--f7-theme-color)
     outline-offset -2px
