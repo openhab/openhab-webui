@@ -38,11 +38,7 @@ export async function loadLocaleMessages(dir: string, mergeLocaleMessage: (local
     localeFilesArray.map(async (locale): Promise<unknown> => {
       const path = `../assets/i18n/${dir}/${locale}.json`
       const loader = localeFilesGlob[path]
-      if (loader) {
-        return loader()
-      } else {
-        throw new Error(`Locale file not found: ${path}`)
-      }
+      return loader ? loader() : Promise.resolve({}) // return empty object if no loader is found for the locale
     })
   )
 
