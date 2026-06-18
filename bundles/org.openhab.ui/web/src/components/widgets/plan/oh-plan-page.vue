@@ -12,7 +12,7 @@
       :max-bounds="bounds"
       :key="mapKey"
       class="oh-plan-page-lmap"
-      @ready="fitMapBounds"
+      @ready="onMapReady"
       :class="{
         'with-tabbar': context.tab,
         'oh-plan-white-background': config.backgroundColor === 'white',
@@ -24,7 +24,7 @@
       }"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
-      <l-image-overlay v-if="backgroundImageUrl" :url="backgroundImageUrl" :bounds="bounds" />
+      <l-image-overlay v-if="!config.embedSvg && backgroundImageUrl" :url="backgroundImageUrl" :bounds="bounds" />
       <l-feature-group v-if="context.component.slots" ref="featureGroup">
         <template v-for="(marker, idx) in defaultSlots" :key="idx">
           <component
@@ -102,6 +102,13 @@ dark-tooltip()
 // Make tooltips non-interactive so touch events pass through to markers on mobile
 .oh-plan-page-lmap .leaflet-tooltip
   pointer-events none
+
+// Map drag/zoom works over the SVG; interactive [openhab] elements re-enable pointer events
+// inline (see subscribeEmbeddedSvgListeners) so the interior of fill:none shapes stays clickable
+.oh-plan-page-lmap .oh-plan-embedded-svg
+  pointer-events none
+  [openhab]
+    cursor pointer
 </style>
 
 <script>
@@ -109,10 +116,12 @@ import { nextTick, computed } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { Icon, CRS } from 'leaflet'
+import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
+import { Icon, CRS, SVGOverlay } from 'leaflet'
 import { LMap, LImageOverlay, LFeatureGroup, LControl } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
+import embeddedSvgMixin from '@/components/widgets/svg/oh-embedded-svg-mixin'
 import OhPlanMarker from './oh-plan-marker.vue'
 import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
 
@@ -125,6 +134,7 @@ Icon.Default.mergeOptions({
 })
 
 export default {
+  mixins: [embeddedSvgMixin],
   props: {
     context: Object
   },
@@ -136,8 +146,11 @@ export default {
   },
   widget: OhPlanPageDefinition,
   setup(props) {
-    const { config, scopedCssUid, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
-    return { config, scopedCssUid, childContext, defaultSlots }
+    const context = computed(() => props.context)
+    const { config, scopedCssUid, childContext, defaultSlots, evaluateExpression } = useWidgetContext(context)
+    // aliased so it doesn't clobber the performAction() method below, which the SVG mixin calls
+    const { performAction: runWidgetAction } = useWidgetAction(context, config, evaluateExpression)
+    return { config, scopedCssUid, childContext, defaultSlots, runWidgetAction }
   },
   data() {
     return {
@@ -147,7 +160,10 @@ export default {
       zoom: -0.5,
       crs: CRS.Simple,
       showMap: false,
-      mapKey: f7.utils.id()
+      mapKey: f7.utils.id(),
+      embeddedSvgElement: null,
+      embeddedSvgOverlay: null,
+      embeddedSvgToken: 0
     }
   },
   computed: {
@@ -186,10 +202,16 @@ export default {
     'config.noZoomOrDrag': function (val) {
       this.refreshMap()
     },
+    'config.embedSvg': function () {
+      this.refreshMap()
+    },
     backgroundImageUrl(val) {
       this.showMap = true
       this.refreshMap()
     }
+  },
+  beforeUnmount() {
+    this.removePlanSvg()
   },
   methods: {
     markerComponent(marker) {
@@ -210,16 +232,73 @@ export default {
       this.currentCenter = center
     },
     onMarkerUpdate() {},
+    onMapReady() {
+      this.fitMapBounds()
+      if (this.config.embedSvg && this.config.imageUrl) {
+        this.embedPlanSvg()
+      }
+    },
     fitMapBounds() {
       if (this.$refs.map) {
         this.$refs.map.leafletObject?.fitBounds(this.bounds)
       }
     },
     refreshMap() {
+      this.removePlanSvg()
       this.mapKey = f7.utils.id()
       nextTick(() => {
         this.fitMapBounds()
       })
+    },
+    // Mixin overrides: the SVG lives in the Leaflet overlay rather than a canvas container,
+    // and the plan page is the top-level widget so it runs SVG actions itself instead of emitting them.
+    embeddedSvgRoot() {
+      return this.embeddedSvgElement
+    },
+    performAction(evt, prefix, config, context) {
+      this.runWidgetAction(evt, prefix || '', context, config)
+    },
+    embedPlanSvg() {
+      this.removePlanSvg()
+      const map = this.$refs.map?.leafletObject
+      if (!map) return
+      // invalidation token: an unmount or re-embed bumps it so a stale in-flight fetch is discarded
+      const token = ++this.embeddedSvgToken
+      this.fetchEmbeddedSvgText()
+        .then((svgCode) => {
+          // bail if this embed was superseded or the map was torn down while the SVG was loading
+          if (token !== this.embeddedSvgToken || !this.$refs.map?.leafletObject) return
+          const svgEl = new DOMParser().parseFromString(svgCode, 'image/svg+xml').documentElement
+          if (!svgEl || svgEl.tagName.toLowerCase() !== 'svg') {
+            return Promise.reject(new Error(`${this.config.imageUrl} did not parse to a valid SVG element`))
+          }
+          svgEl.classList.add('oh-plan-embedded-svg', 'disable-user-drag')
+          this.embeddedSvgElement = svgEl
+          // interactive:false stops Leaflet capturing pointer events for the whole SVG; CSS re-enables them per [openhab] element
+          this.embeddedSvgOverlay = new SVGOverlay(svgEl, this.bounds, { interactive: false })
+          this.embeddedSvgOverlay.addTo(map)
+          this.subscribeEmbeddedSvgListeners()
+          this.setupEmbeddedSvgStateTracking()
+          this.embeddedSvgReady = true
+        })
+        .catch((err) => {
+          nextTick(() => {
+            f7.toast.create({ text: 'Failed to embed SVG: ' + err, closeTimeout: 3000 }).open()
+          })
+        })
+    },
+    removePlanSvg() {
+      // invalidate any in-flight embed even when nothing is mounted yet
+      this.embeddedSvgToken++
+      if (!this.embeddedSvgReady && !this.embeddedSvgOverlay) return
+      this.unsubscribeEmbeddedSvgListeners()
+      this.unsubscribeEmbeddedSvgStateTracking()
+      if (this.embeddedSvgOverlay) {
+        this.embeddedSvgOverlay.remove()
+        this.embeddedSvgOverlay = null
+      }
+      this.embeddedSvgElement = null
+      this.embeddedSvgReady = false
     }
   }
 }

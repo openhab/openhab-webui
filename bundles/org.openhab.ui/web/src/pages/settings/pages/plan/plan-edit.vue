@@ -88,7 +88,8 @@
             <f7-block-footer v-if="isEditable" class="param-description">
               You can also
               <f7-link style="z-index: inherit" href="#" @click="previewMode = true"> switch to Run mode </f7-link>
-              to add markers and position them on the plan.
+              to add markers and position them on the plan. When SVG Embedding is enabled, click an interactive SVG element (one with an
+              <code>openhab</code> attribute) in Run mode to configure its state and action.
             </f7-block-footer>
           </f7-col>
         </f7-block>
@@ -108,7 +109,7 @@
       </f7-tab>
     </f7-tabs>
 
-    <oh-plan-page v-if="ready && previewMode" class="plan-page" :context="context" :key="pageKey" />
+    <oh-plan-page v-if="ready && previewMode" class="plan-page" :context="context" :f7router :key="pageKey" />
   </f7-page>
 </template>
 
@@ -179,6 +180,12 @@ export default {
 
     return { evaluateExpression, dirty, dirtyIndicator, currentTab, switchTab }
   },
+  created() {
+    f7.on('svgOnclickConfigUpdate', this.onSvgOnClickConfigUpdate)
+  },
+  beforeUnmount() {
+    f7.off('svgOnclickConfigUpdate', this.onSvgOnClickConfigUpdate)
+  },
   data() {
     return {
       pageWidgetDefinition: OhPlanPage.widget(),
@@ -193,6 +200,13 @@ export default {
     }
   },
   methods: {
+    onSvgOnClickConfigUpdate(event) {
+      if (!this.page.config.embeddedSvgActions) {
+        this.page.config.embeddedSvgActions = {}
+      }
+      this.page.config.embeddedSvgActions[event.id] = event.config
+      this.dirty = true
+    },
     markerIcon(marker) {
       if (!marker?.config?.icon) return null
       const key = marker.component + '-' + marker.config.coords + ':icon'

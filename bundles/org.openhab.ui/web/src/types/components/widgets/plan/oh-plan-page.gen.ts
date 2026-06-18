@@ -23,4 +23,6 @@ export interface Config {
   backgroundColor?: BackgroundColor
   darkModeInvert?: boolean
   tooltipColor?: TooltipColor
+  embedSvg?: boolean
+  embedSvgFlashing?: boolean
 }
