@@ -72,7 +72,7 @@ export default {
       this.pendingTag = ''
       // Block adding of Scene or Script tags in the wrong editor
       // Adding them would otherwise lead to a situation where the rule/scene/script is not visible in the UI
-      if ((!this.inScriptEditor && newTag === 'Script') || (!this.inSceneEditor && newTag === 'Scene')) {
+      if ((this.inSceneEditor && newTag === 'Script') || (!this.inSceneEditor && newTag === 'Scene')) {
         return
       }
       if (newTag && this.item.tags.indexOf(newTag) === -1) {
