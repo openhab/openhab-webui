@@ -307,10 +307,9 @@ export default {
      * @param {HTMLElement} el
      */
     svgOnMouseOver(el) {
-      const self = this
-      function flashElement(el, fillColor) {
+      const flashElement = (el, fillColor) => {
         if (el && !el.flashing) {
-          const attributeName = self.svgColorTarget(el)
+          const attributeName = this.svgColorTarget(el)
           const oldFill = el.style.getPropertyValue(attributeName)
           const oldOpacity = el.style.opacity
           el.style.setProperty(attributeName, fillColor)
@@ -330,7 +329,7 @@ export default {
         const fillColor = this.config.embeddedSvgActions && this.config.embeddedSvgActions[el.id] ? 'rgb(0, 255, 0)' : 'rgb(255, 0, 0)'
         if (tagName !== 'g' && !el.flashing) {
           // sometimes instead of fill, stroke colors are used, so if fill = none, then we use stroke instead
-          const attributeName = self.svgColorTarget(el)
+          const attributeName = this.svgColorTarget(el)
           const oldFill = el.style.getPropertyValue(attributeName)
           el.style.setProperty(attributeName, fillColor)
           el.flashing = true

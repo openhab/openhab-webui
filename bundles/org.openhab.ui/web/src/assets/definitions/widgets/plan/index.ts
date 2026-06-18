@@ -6,7 +6,7 @@ import { actionGroup, actionParams } from '../actions.ts'
 export const OhPlanPageDefinition = () =>
   new WidgetDefinition('oh-plan-page', 'Floor plan', 'Displays markers on an image overlay')
     .params([
-      pt('imageUrl', 'Image URL', 'The URL of the image to display as background').c('url'),
+      pt('imageUrl', 'Image URL', 'The URL or path of the image to display as background'),
       pn(
         'imageWidth',
         'Image Width',
