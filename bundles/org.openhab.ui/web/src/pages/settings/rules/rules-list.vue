@@ -977,12 +977,12 @@ export default {
       } else {
         this.dslCopyOk = []
         this.dslCopyErrors = []
-        console.warn('Failed to check DSL serialization support:', yamlResult.reason)
+        console.warn('Failed to check DSL serialization support:', dslResult.reason)
       }
 
       this.copyPopupOpened = true
       console.debug("Can't serialize to YAML:", this.yamlCopyErrors)
-      console.debug("Can't serialize to DSL:", this.dslCopyFailures)
+      console.debug("Can't serialize to DSL:", this.dslCopyErrors)
     },
     deselectIncompatibleDsl() {
       if (!this.selectedItems || !this.selectedItems.length) {
@@ -1051,7 +1051,7 @@ export default {
         })
         .catch((error) => {
           progressDialog.close()
-          console.error(`Failed to generate rule definiton${this.selectedItems.length === 1 ? '' : 's'}`, error)
+          console.error(`Failed to generate rule definition${this.selectedItems.length === 1 ? '' : 's'}`, error)
           f7.dialog.alert(`Error loading rule ${type || 'YAML'} definition${this.selectedItems.length === 1 ? '' : 's'}: ${error}`, 'Error')
           this.copyPopupOpened = false
         })

@@ -397,7 +397,7 @@
                 v-if="rule.templateUID && rule.templateState === 'instantiated'"
                 fill
                 color="blue"
-                tooltip="Copy YAML, where the template and the configured parameters are removed, resulting in an indentical but fully independent rule, to clipboard"
+                tooltip="Copy YAML, where the template and the configured parameters are removed, resulting in an identical but fully independent rule, to clipboard"
                 @click="copyRuleDefinitionToClipboard('YAML', serializationOptions.STRIPPED)">
                 Stripped Of Template
               </f7-button>
@@ -1295,7 +1295,7 @@ export default {
       const progressDialog = f7.dialog.progress(`Loading '${this.rule.name}' ${type || 'YAML'} definition...`)
       create(
         {
-          serializationOption: serializationOption || undefined,
+          ruleSerializationOption: serializationOption || undefined,
           fileFormat: {
             rules: [this.rule]
           }
@@ -1323,7 +1323,7 @@ export default {
         })
         .catch((error) => {
           progressDialog.close()
-          console.error('Failed to generate rule definiton', error)
+          console.error('Failed to generate rule definition', error)
           f7.dialog.alert(`Error loading rule ${type || 'YAML'} definition: ${error}`, 'Error')
           this.copyPopupOpened = false
         })
@@ -1383,14 +1383,16 @@ export default {
     },
     opaqueModules() {
       if (!this.rule) return []
-      return [...(this.rule.actions || []), this.rule.triggers || [], this.rule.conditions || []].filter((m) => this.isOpaqueModule(m))
+      return [...(this.rule.actions || []), ...(this.rule.triggers || []), ...(this.rule.conditions || [])].filter((m) =>
+        this.isOpaqueModule(m)
+      )
     },
     hasSharedContextModule() {
       return this.sharedContextModules.length > 0
     },
     sharedContextModules() {
       if (!this.rule) return []
-      return [...(this.rule.actions || []), this.rule.triggers || [], this.rule.conditions || []].filter((m) =>
+      return [...(this.rule.actions || []), ...(this.rule.triggers || []), ...(this.rule.conditions || [])].filter((m) =>
         this.moduleHasSharedContext(m)
       )
     },
