@@ -1044,13 +1044,13 @@ export default {
       return widget.label ?? (widget.item ? 'for item ' + widget.item : 'without label')
     },
     validateMapping(mapping) {
-      return this.isNonEmptyValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
+      return this.isDefinedValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
     },
     validateRule(attr, rule) {
       if (attr !== 'visibilityRules') {
         return this.isNonEmptyValue(rule.argument)
       }
-      if (rule.conditions?.some((condition) => !this.isNonEmptyValue(condition.value))) {
+      if (rule.conditions?.some((condition) => !this.isDefinedValue(condition.value))) {
         return false
       }
       return true
@@ -1059,33 +1059,44 @@ export default {
       if (typeof value === 'string') {
         return value !== ''
       }
+      return this.isDefinedValue(value)
+    },
+    isDefinedValue(value) {
       return value !== null && value !== undefined
     },
-    sanitizeRuleCondition(condition) {
+    sanitizeRuleCondition(condition, visibilityRule) {
       if (!condition || typeof condition !== 'object' || Array.isArray(condition)) {
+        return null
+      }
+      if (visibilityRule && !this.isDefinedValue(condition.value)) {
         return null
       }
       const sanitizedCondition = {}
       ;['item', 'condition', 'value'].forEach((key) => {
-        if (this.isNonEmptyValue(condition[key])) {
+        if (this.isDefinedValue(condition[key])) {
           sanitizedCondition[key] = condition[key]
         }
       })
       return Object.keys(sanitizedCondition).length ? sanitizedCondition : null
     },
-    sanitizeRuleEntry(rule) {
+    sanitizeRuleEntry(rule, visibilityRule) {
       if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
         return null
       }
       const sanitizedRule = {}
       if (Array.isArray(rule.conditions)) {
-        const sanitizedConditions = rule.conditions.map((condition) => this.sanitizeRuleCondition(condition)).filter(Boolean)
+        const sanitizedConditions = rule.conditions
+          .map((condition) => this.sanitizeRuleCondition(condition, visibilityRule))
+          .filter(Boolean)
         if (sanitizedConditions.length) {
           sanitizedRule.conditions = sanitizedConditions
         }
       }
       if (this.isNonEmptyValue(rule.argument)) {
         sanitizedRule.argument = rule.argument
+      }
+      if (!visibilityRule && !sanitizedRule.argument) {
+        return null
       }
       return Object.keys(sanitizedRule).length ? sanitizedRule : null
     },
@@ -1095,7 +1106,9 @@ export default {
         if (!Array.isArray(widget[ruleAttribute])) {
           return
         }
-        widget[ruleAttribute] = widget[ruleAttribute].map((rule) => this.sanitizeRuleEntry(rule)).filter(Boolean)
+        widget[ruleAttribute] = widget[ruleAttribute]
+          .map((rule) => this.sanitizeRuleEntry(rule, ruleAttribute === 'visibilityRules'))
+          .filter(Boolean)
         if (!widget[ruleAttribute].length) {
           delete widget[ruleAttribute]
         }
@@ -1107,7 +1120,7 @@ export default {
       }
       const sanitizedMapping = {}
       Object.keys(mapping).forEach((key) => {
-        if (this.isNonEmptyValue(mapping[key])) {
+        if (this.isDefinedValue(mapping[key])) {
           sanitizedMapping[key] = mapping[key]
         }
       })
