@@ -390,7 +390,7 @@
   .semantics-details-sheet
     height calc(0.8*var(--f7-sheet-height))
 
-@media (min-width: 476px)
+@media (min-width: 450px)
   .code-editor-toolbar .code-editor-tag-filter
     .button .icon
       display none
@@ -552,7 +552,7 @@ export default {
           () => {
             resolve(false)
           },
-          true
+          { emitAll: true }
         )
       })
     },
@@ -581,7 +581,7 @@ export default {
             })
           },
           undefined,
-          true
+          { emitAll: true }
         )
       }
     },
@@ -620,7 +620,7 @@ export default {
               showAlertDialog('Error parsing YAML, cannot save')
               resolve(false)
             },
-            true
+            { emitAll: true }
           )
         })
 

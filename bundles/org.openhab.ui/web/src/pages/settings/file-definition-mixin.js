@@ -41,16 +41,17 @@ export default {
     this.ObjectType = Object.freeze({
       THING: 'thing',
       ITEM: 'item',
-      SITEMAP: 'sitemap'
+      SITEMAP: 'sitemap',
+      RULE: 'rule'
     })
   },
   methods: {
     /**
      * Copies the file definitions of the given list of thingUIDs, item names, or sitemap names to the clipboard.
      *
-     * @param {string} objectType - The type of the objects (`thing`, `item`, or `sitemap`). Use {ObjectType} enum for clarity.
+     * @param {string} objectType - The type of the objects (`thing`, `item`, `sitemap` or `rule`). Use {ObjectType} enum for clarity.
      * @param {Array} objectIds - The list of object ids to copy. For Things, this should be an array of Thing UIDs.
-     *                            For Items, this should be an array of Item names.
+     *                            For Items, this should be an array of Item names. For Rules, this should be an array of Rule UIDs.
      *                            For Sitemaps, this should be an array of Sitemap names.
      *                            When `null`, all objects of the given type will be copied.
      */
@@ -74,6 +75,7 @@ export default {
         .create({
           title: `Copy ${copyOptions.label} File Definition`,
           text: `Select the file format to copy ${copyOptions.objectName} to clipboard`,
+          closeByBackdropClick: true,
           buttons: [
             {
               text: 'Cancel',
@@ -84,7 +86,7 @@ export default {
               color: 'teal',
               onClick: () => {
                 copyOptions.format = 'DSL'
-                copyOptions.mediaType = `text/vnd.openhab.dsl.${objectType}`
+                copyOptions.mediaType = objectType === 'rule' ? 'application/vnd.openhab.dsl.rule' : `text/vnd.openhab.dsl.${objectType}`
                 executeFileDefinitionCopy(this, copyOptions)
               }
             },

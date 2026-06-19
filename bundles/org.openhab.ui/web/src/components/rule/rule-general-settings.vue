@@ -8,7 +8,7 @@
             :label="`${type} UID`"
             type="text"
             :placeholder="`A unique identifier for the ${type.toLowerCase()}`"
-            v-model:value="rule.uid"
+            :value="rule.uid || ''"
             required
             :validate="editable"
             :disabled="!createMode ? true : null"
@@ -16,6 +16,7 @@
             input-id="input"
             :pattern="uidPattern"
             error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
+            @input="rule.uid = $event.target.value || undefined"
             :clear-button="createMode">
             <template #inner>
               <f7-link
@@ -32,16 +33,18 @@
             type="text"
             :placeholder="`${type} label for display purposes`"
             :info="createMode ? 'Required' : ''"
-            v-model:value="rule.name"
+            :value="rule.name || ''"
             required
             validate
             :disabled="!editable ? true : null"
+            @input="rule.name = $event.target.value || undefined"
             :clear-button="editable" />
           <f7-list-input
             label="Description"
             type="text"
-            v-model:value="rule.description"
+            :value="rule.description || ''"
             :disabled="!editable ? true : null"
+            @input="rule.description = $event.target.value || undefined"
             :clear-button="editable" />
         </f7-list>
         <f7-list inline-labels no-hairlines-md>
@@ -64,7 +67,7 @@
       <f7-col class="skeleton-text skeleton-effect-blink">
         <f7-list inline-labels no-hairlines-md>
           <f7-list-input
-            label="Rule UID"
+            :label="`${type} UID`"
             type="text"
             placeholder="Required"
             value="_______"
