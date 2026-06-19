@@ -904,12 +904,13 @@ export default {
         const editor = this.$refs.codeEditor
         try {
           await editor.parseCode(undefined, undefined, { editorType: this.uiOptionsStore.codeEditorType, showAll: editor.isShowAll })
+          this.codeDirty = false
+          this.$refs.codeEditor.generateCode()
         } catch (e) {
           this.currentTab = 'code'
           f7.tab.show('#code')
           throw e
         }
-        this.codeDirty = false
       }
       if (!this.rule.uid) {
         f7.dialog.alert('Please provide a unique rule UID.', 'UID required').open()
