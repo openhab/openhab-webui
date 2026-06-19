@@ -310,7 +310,7 @@
                 v-if="yamlCopyCanStrip"
                 fill
                 color="blue"
-                tooltip="Copy YAML, where templates and configured parameters are removed, resulting in indentical but fully independent rules, to clipboard"
+                tooltip="Copy YAML, where templates and configured parameters are removed, resulting in identical but fully independent rules, to clipboard"
                 @click="copyRuleDefinitionsToClipboard('YAML', serializationOptions.STRIPPED)">
                 Stripped Of Template
               </f7-button>
