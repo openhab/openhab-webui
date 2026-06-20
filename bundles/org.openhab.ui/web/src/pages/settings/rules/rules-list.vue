@@ -689,8 +689,6 @@ export default {
           case 'state':
             const uid = topicParts[2]
             const newStatus = JSON.parse(event.payload)
-            // skip status updates for RUNNING for performance reasons (can be easily skipped as it was never really shown due to the short execution time of rules)
-            if (newStatus.status === 'RUNNING') return
 
             if (!this.ruleStatuses[uid]) this.ruleStatuses[uid] = {}
             this.ruleStatuses[uid].status = newStatus.status
