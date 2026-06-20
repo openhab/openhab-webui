@@ -2,7 +2,7 @@
 
 @skip { space | newline }
 
-RuleKeyword { @specialize[@name=RuleKeyword]<Identifier, "rule" | "when" | "then" | "end"> }
+RuleKeyword { @specialize[@name=RuleKeyword]<Identifier, "rule" | "when" | "then" | "end"> | ButOnlyIf }
 SectionKeyword { @specialize[@name=SectionKeyword]<Identifier, "Bridge" | "Thing" | "Type" | "sitemap"> }
 ControlKeyword {
   @specialize[@name=ControlKeyword]<Identifier, "if" | "else" | "switch" | "case" | "default" | "for" | "while" | "try" | "catch" | "finally" | "return" | "break" | "continue" | "AND">
@@ -94,6 +94,7 @@ Value {
   @precedence {
     LineComment,
     BlockComment,
+    ButOnlyIf,
     String,
     Number,
     Identifier,
@@ -137,6 +138,7 @@ Value {
   QuestionMark[@export] { "?" }
   Hash[@export] { "#" }
   AtSign[@export] { "@" }
+  ButOnlyIf { "but only if" }
 
   Unknown { ![ \t\n\r] }
 }
