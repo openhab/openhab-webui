@@ -337,7 +337,7 @@
     </f7-tabs>
 
     <f7-popup v-model:opened="copyPopupOpened" class="copy-definition-popup" backdrop closeOnEscape>
-      <div class="popup-content-wrapper">
+      <div class="popup-content-wrapper page-content">
         <f7-block-title>Copy Rule File Definition</f7-block-title>
         <f7-block>
           <p>Select the format to copy to clipboard</p>
