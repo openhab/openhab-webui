@@ -1,5 +1,5 @@
 {
-  "assist.title": "HABAssist",
+  "assist.title": "Chat",
   "assist.inputPlaceholder": "Ask openHAB something...",
   "assist.welcomeTitle": "Chat with openHAB",
   "assist.welcomeSubtitle": "Control your smart home using natural language.",
@@ -15,7 +15,7 @@
   "assist.clearConfirm": "Are you sure you want to clear this conversation? This will delete all messages on the server.",
   "assist.clearSuccess": "Conversation cleared successfully.",
   "assist.deleteError": "Failed to clear the conversation history.",
-  "assist.settingsTitle": "HABAssist Settings",
+  "assist.settingsTitle": "Chat Settings",
   "assist.llmTools": "Tools Selection",
   "assist.showGenericToolVisualisation": "Show all tool calls"
 }
