@@ -8,7 +8,7 @@ export const openHABDslLanguage = LRLanguage.define({
   parser: parser.configure({
     props: [
       styleTags({
-        'RuleKeyword SectionKeyword ControlKeyword DeclarationKeyword': tags.keyword,
+        'RuleKeyword SectionKeyword ControlKeyword DeclarationKeyword ButOnlyIf': tags.keyword,
         'EventKeyword CommandKeyword BooleanLiteral NullLiteral': tags.atom,
         'PrimitiveType BuiltinType WidgetType': tags.typeName,
         Identifier: tags.variableName,
