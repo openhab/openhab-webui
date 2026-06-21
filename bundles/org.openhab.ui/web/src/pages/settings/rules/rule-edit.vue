@@ -636,6 +636,16 @@ export default {
           this.loading = false
           if (!this.createMode && !this.stubMode && this.hasOpaqueModule && this.hasSource) {
             this.switchTab('source')
+          } else if (this.currentTab === 'code') {
+            this.resolveEditorTypes().then(() => {
+              if (!this.hasCode) {
+                showToast('This rule cannot be shown in code form because it contains elements that cannot be serialized to YAML or DSL.')
+                this.currentTab = 'design'
+                f7.tab.show('#design')
+              } else {
+                this.$refs.codeEditor.generateCode()
+              }
+            })
           }
         })
       }
