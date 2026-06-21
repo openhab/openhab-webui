@@ -8,11 +8,11 @@
     <template v-else>
       <div class="chat-messages-container">
         <!-- Welcome Screen (when no messages exist) -->
-        <assist-welcome
+        <chat-welcome
           v-if="messages.length === 0"
-          :title="t('assist.welcomeTitle')"
-          :subtitle="t('assist.welcomeSubtitle')"
-          :suggestion-header="t('assist.suggestionHeader')"
+          :title="t('chat.welcomeTitle')"
+          :subtitle="t('chat.welcomeSubtitle')"
+          :suggestion-header="t('chat.suggestionHeader')"
           :suggestions="suggestions"
           @select="sendSuggestion" />
 
@@ -49,11 +49,11 @@
             </f7-message>
 
             <!-- Tool Call -->
-            <assist-tool-widget v-else-if="msg.role === 'TOOL_CALL' && isSpecialToolCall(msg.content)" :content="msg.content" />
-            <assist-tool-call v-else-if="msg.role === 'TOOL_CALL' && assistShowGenericToolVisualisation" :content="msg.content" />
+            <chat-tool-widget v-else-if="msg.role === 'TOOL_CALL' && isSpecialToolCall(msg.content)" :content="msg.content" />
+            <chat-tool-call v-else-if="msg.role === 'TOOL_CALL' && assistShowGenericToolVisualisation" :content="msg.content" />
 
             <!-- Tool Return -->
-            <assist-tool-return
+            <chat-tool-return
               v-else-if="msg.role === 'TOOL_RETURN' && !isSpecialToolReturn(idx) && assistShowGenericToolVisualisation"
               :content="msg.content" />
           </template>
@@ -64,7 +64,7 @@
         ref="messagebar"
         class="chat-messagebar"
         v-model:value="messageText"
-        :placeholder="t('assist.inputPlaceholder')"
+        :placeholder="t('chat.inputPlaceholder')"
         :resize-page="false">
         <template #inner-end>
           <f7-link
@@ -78,7 +78,7 @@
             <!-- Settings Popover -->
             <f7-popover id="chat-settings-popover" class="chat-settings-popover">
               <f7-list dividers>
-                <f7-list-item :title="t('assist.settingsTitle')">
+                <f7-list-item :title="t('chat.settingsTitle')">
                   <template #after>
                     <f7-link
                       v-if="conversationId"
@@ -87,16 +87,16 @@
                       icon-aurora="f7:trash"
                       icon-md="material:delete"
                       icon-only
-                      :tooltip="t('assist.clearChat')"
+                      :tooltip="t('chat.clearChat')"
                       @click="clearConversation" />
                   </template>
                 </f7-list-item>
-                <f7-list-item :title="t('assist.showGenericToolVisualisation')">
+                <f7-list-item :title="t('chat.showGenericToolVisualisation')">
                   <template #after>
                     <f7-toggle v-model:checked="assistShowGenericToolVisualisation" />
                   </template>
                 </f7-list-item>
-                <f7-list-item group-title :title="t('assist.llmTools')" />
+                <f7-list-item group-title :title="t('chat.llmTools')" />
                 <f7-list-item
                   v-for="tool in llmTools"
                   :key="tool.id"
@@ -244,10 +244,10 @@ import { useStatesStore } from '@/js/stores/useStatesStore.ts'
 import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { loadLocaleMessages } from '@/js/i18n'
 
-import AssistToolCall from '@/components/assist/assist-tool-call.vue'
-import AssistToolWidget from '@/components/assist/assist-tool-widget.vue'
-import AssistToolReturn from '@/components/assist/assist-tool-return.vue'
-import AssistWelcome from '@/components/assist/assist-welcome.vue'
+import ChatToolCall from '@/components/chat/chat-tool-call.vue'
+import ChatToolWidget from '@/components/chat/chat-tool-widget.vue'
+import ChatToolReturn from '@/components/chat/chat-tool-return.vue'
+import ChatWelcome from '@/components/chat/chat-welcome.vue'
 
 const uiOptionsStore = useUIOptionsStore()
 
@@ -258,7 +258,7 @@ const props = defineProps<{
 
 // Composables
 const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
-loadLocaleMessages('assist', mergeLocaleMessage)
+loadLocaleMessages('chat', mergeLocaleMessage)
 
 // State
 const loading = ref(false)
@@ -273,10 +273,10 @@ let sseConnection: KeepaliveEventSource | null = null
 
 // Computed
 const suggestions = computed(() => [
-  { text: t('assist.suggestion1'), icon: 'lightbulb_fill', color: 'orange' },
-  { text: t('assist.suggestion2'), icon: 'thermometer', color: 'blue' },
-  { text: t('assist.suggestion3'), icon: 'lightbulb_slash_fill', color: 'red' },
-  { text: t('assist.suggestion4'), icon: 'sun_max_fill', color: 'yellow' }
+  { text: t('chat.suggestion1'), icon: 'lightbulb_fill', color: 'orange' },
+  { text: t('chat.suggestion2'), icon: 'thermometer', color: 'blue' },
+  { text: t('chat.suggestion3'), icon: 'lightbulb_slash_fill', color: 'red' },
+  { text: t('chat.suggestion4'), icon: 'sun_max_fill', color: 'yellow' }
 ])
 
 // Refs
@@ -448,7 +448,7 @@ async function loadConversation() {
     if (err instanceof ApiError && err.response.status === 404) {
       messages.value = []
     } else {
-      void showToast(t('assist.loadError'))
+      void showToast(t('chat.loadError'))
       console.error('Failed to load conversation:', err)
     }
   } finally {
@@ -493,7 +493,7 @@ async function sendMessage() {
       { parseAs: 'text' }
     )
   } catch (err) {
-    void showToast(t('assist.errorMessage'))
+    void showToast(t('chat.errorMessage'))
     console.error('Failed to send text to interpreter:', err)
     await loadConversation()
   } finally {
@@ -506,16 +506,16 @@ async function sendMessage() {
  * Clears the conversation.
  */
 async function clearConversation() {
-  const confirmed = await showConfirmDialog(t('assist.clearConfirm'), t('assist.clearChat'))
+  const confirmed = await showConfirmDialog(t('chat.clearConfirm'), t('chat.clearChat'))
   if (!confirmed) return
 
   try {
     await api.deleteConversationById({ id: props.conversationId })
     messages.value = []
     settingsOpened.value = false
-    void showToast(t('assist.clearSuccess'))
+    void showToast(t('chat.clearSuccess'))
   } catch (err) {
-    void showToast(t('assist.deleteError'))
+    void showToast(t('chat.deleteError'))
     console.error('Failed to clear conversation:', err)
   }
 }
@@ -530,7 +530,7 @@ function sendSuggestion(text: string) {
 }
 
 /**
- * Scroll the assist messages list to its bottom.
+ * Scroll the chat messages list to its bottom.
  */
 function scrollToBottom() {
   const el = messagesListRef.value?.$el || messagesListRef.value

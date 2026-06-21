@@ -1,0 +1,21 @@
+{
+  "chat.title": "Chat",
+  "chat.inputPlaceholder": "Ask openHAB something...",
+  "chat.welcomeTitle": "Chat with openHAB",
+  "chat.welcomeSubtitle": "Control your smart home using natural language.",
+  "chat.suggestion1": "Turn on the living room light",
+  "chat.suggestion2": "What is the temperature outside?",
+  "chat.suggestion3": "Turn off all lights",
+  "chat.suggestion4": "Good morning!",
+  "chat.suggestionHeader": "Try asking:",
+  "chat.errorMessage": "An error occurred while sending the message.",
+  "chat.loadError": "Could not load conversation history.",
+  "chat.thinking": "openHAB is thinking...",
+  "chat.clearChat": "Clear Conversation",
+  "chat.clearConfirm": "Are you sure you want to clear this conversation? This will delete all messages on the server.",
+  "chat.clearSuccess": "Conversation cleared successfully.",
+  "chat.deleteError": "Failed to clear the conversation history.",
+  "chat.settingsTitle": "Chat Settings",
+  "chat.llmTools": "Tools Selection",
+  "chat.showGenericToolVisualisation": "Show all tool calls"
+}

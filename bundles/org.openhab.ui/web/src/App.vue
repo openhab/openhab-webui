@@ -42,9 +42,9 @@
           </f7-list-item>
         </f7-list>
 
-        <!-- Assistant -->
+        <!-- Chat -->
         <f7-list class="admin-links">
-          <f7-list-item link="/assist" title="HABAssist" no-chevron panel-close :class="{ currentsection: currentPath.assist }">
+          <f7-list-item link="/chat" :title="t('chat.title')" no-chevron panel-close :class="{ currentsection: currentPath.chat }">
             <template #media>
               <f7-icon ios="f7:chat_bubble_2" aurora="f7:chat_bubble_2" md="material:chat" />
             </template>
@@ -629,6 +629,7 @@ export default {
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
     loadLocaleMessages('about', localMergeLocaleMessage)
+    loadLocaleMessages('chat', localMergeLocaleMessage)
     loadLocaleMessages('empty-states', localMergeLocaleMessage)
 
     return {
