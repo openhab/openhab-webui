@@ -129,8 +129,13 @@ const theme = f7.theme
 useViewArea()
 const { evaluateExpression } = useWidgetExpression()
 
+function normalizeTabIndex(value: unknown): number {
+  const idx = Math.trunc(Number(value))
+  return Number.isFinite(idx) && idx >= 0 ? idx : 0
+}
+
 // data (state)
-const currentTab = ref(props.initialTab ? Number(props.initialTab) : 0)
+const currentTab = ref(normalizeTabIndex(props.initialTab))
 const isFullscreen = ref(fullscreen.isFullscreen)
 const vars = ref({})
 const root = useTemplateRef<{ $el: HTMLElement }>('root')
@@ -184,9 +189,12 @@ const fullscreenIcon = computed(() => {
 // methods
 const onPageAfterIn = () => {
   statesStore.startTrackingStates()
-  // make sure to set the current tab
-  // fixes an issue where a tabbed subpage was opened and navigated around, when returning back to original page, tab was rendered empty
-  onTabChange(currentTab.value)
+  // Reactivate the current tab from state (F7 can lose the `tab-active` class across transitions, rendering the tab empty)
+  if (pageType.value === 'tabs') {
+    vars.value = {}
+    const tabEl = root.value?.$el.querySelector<HTMLElement>('#tab-' + currentTab.value)
+    if (tabEl) f7.tab.show(tabEl, false)
+  }
 }
 const onPageBeforeOut = () => {
   statesStore.stopTrackingStates()
