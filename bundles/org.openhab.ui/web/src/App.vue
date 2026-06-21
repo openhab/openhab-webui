@@ -44,7 +44,7 @@
 
         <!-- Chat -->
         <f7-list class="admin-links">
-          <f7-list-item link="/assist" title="Chat" no-chevron panel-close :class="{ currentsection: currentPath.assist }">
+          <f7-list-item link="/assist" :title="t('assist.title')" no-chevron panel-close :class="{ currentsection: currentPath.assist }">
             <template #media>
               <f7-icon ios="f7:chat_bubble_2" aurora="f7:chat_bubble_2" md="material:chat" />
             </template>
@@ -629,6 +629,7 @@ export default {
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
     loadLocaleMessages('about', localMergeLocaleMessage)
+    loadLocaleMessages('assist', localMergeLocaleMessage)
     loadLocaleMessages('empty-states', localMergeLocaleMessage)
 
     return {
