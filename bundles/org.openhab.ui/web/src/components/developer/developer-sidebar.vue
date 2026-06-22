@@ -502,7 +502,7 @@
           <f7-list media-list>
             <f7-list-item
               v-for="event in sseEvents"
-              :key="event.time.getTime()"
+              :key="event.sequenceId"
               :title="event.topic"
               :subtitle="event.type"
               :footer="event.payload" />
@@ -1184,6 +1184,7 @@ export default {
         '',
         (event) => {
           event.time = new Date()
+          event.sequenceId = this.sseEvents.length > 0 ? this.sseEvents[0].sequenceId + 1 : 1
           this.sseEvents.unshift(...[event])
           this.sseEvents.splice(20)
         }

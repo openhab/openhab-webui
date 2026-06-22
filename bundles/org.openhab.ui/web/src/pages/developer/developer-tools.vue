@@ -142,7 +142,7 @@
                 <f7-list media-list>
                   <f7-list-item
                     v-for="event in sseEvents"
-                    :key="event.time.getTime() + '#' + f7.utils.id()"
+                    :key="event.sequenceId"
                     :title="event.topic"
                     :subtitle="event.payload"
                     :after="event.type" />
@@ -162,7 +162,7 @@
                 <f7-list media-list>
                   <f7-list-item
                     v-for="event in wsEvents"
-                    :key="event.time.getTime() + '#' + f7.utils.id()"
+                    :key="event.sequenceId"
                     :title="event.topic"
                     :subtitle="event.payload"
                     :after="event.type" />
@@ -247,6 +247,7 @@ export default {
     startSSE() {
       this.sseClient = this.$oh.sse.connect('/rest/events', '', (event) => {
         event.time = new Date()
+        event.sequenceId = this.sseEvents.length > 0 ? this.sseEvents[0].sequenceId + 1 : 1
         this.sseEvents.unshift(...[event])
         this.sseEvents.splice(5)
       })
@@ -259,6 +260,7 @@ export default {
     startWS() {
       this.wsClient = this.$oh.ws.events([], (event) => {
         event.time = new Date()
+        event.sequenceId = this.wsEvents.length > 0 ? this.wsEvents[0].sequenceId + 1 : 1
         this.wsEvents.unshift(...[event])
         this.wsEvents.splice(5)
       })
