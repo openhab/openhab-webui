@@ -130,14 +130,14 @@ html
   justify-content center !important
   .left
     position absolute
-    left var(--f7-navbar-inner-padding-left)
+    left calc(var(--f7-navbar-inner-padding-left) + var(--f7-safe-area-left))
   .title
     left 0 !important
     right 0 !important
-    max-width calc(100% - var(--f7-navbar-inner-padding-left) - 140px - var(--f7-navbar-inner-padding-right))
+    max-width calc(100% - var(--f7-navbar-inner-padding-left) - var(--f7-safe-area-left) - 140px - var(--f7-navbar-inner-padding-right) - var(--f7-safe-area-right))
   .right
     position absolute
-    right var(--f7-navbar-inner-padding-right)
+    right calc(var(--f7-navbar-inner-padding-right) + var(--f7-safe-area-right))
 
 .no-page-transitions
   .smart-select-popup.popup.modal-in, .smart-select-popup.popup.modal-out
