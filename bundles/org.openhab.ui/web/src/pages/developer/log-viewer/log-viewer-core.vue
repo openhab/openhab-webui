@@ -188,8 +188,8 @@
     align-items center
     justify-content center
 
-/* Ensure the card takes full width and removes padding */
-.log-viewer-card
+  /* Ensure the card takes full width and removes padding */
+  .log-viewer-card
     margin 0
     padding 0
     width 100%
