@@ -16,7 +16,11 @@
         @click="split = split === 'horizontal' ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
       <f7-link @click="refreshBlocks"> Refresh<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
-    <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="blocks-editor horizontal" :class="{ 'not-editable': !isEditable }">
+    <f7-block
+      v-if="split === 'horizontal'"
+      :key="blockKey + '-h'"
+      class="blocks-editor horizontal"
+      :class="{ 'not-editable': !isEditable }">
       <not-editable-notice v-if="ready && !isEditable" subject="block library" />
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="blocks-code">
