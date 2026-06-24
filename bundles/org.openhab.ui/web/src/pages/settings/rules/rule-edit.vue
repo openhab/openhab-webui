@@ -641,7 +641,6 @@ export default {
               if (!this.hasCode) {
                 showToast('This rule cannot be shown in code form because it contains elements that cannot be serialized to YAML or DSL.')
                 this.currentTab = 'design'
-                f7.tab.show('#design')
               } else {
                 this.$refs.codeEditor.generateCode()
               }
@@ -828,7 +827,6 @@ export default {
           if (!this.hasCode) {
             showToast('This rule cannot be shown in code form because it contains elements that cannot be serialized to YAML or DSL.')
             this.currentTab = 'design'
-            f7.tab.show('#design')
           } else {
             this.$refs.codeEditor.generateCode()
           }
@@ -840,7 +838,6 @@ export default {
           },
           () => {
             this.currentTab = 'code'
-            f7.tab.show('#code')
           },
           { editorType: this.uiOptionsStore.codeEditorType, showAll: editor.isShowAll }
         )
@@ -918,7 +915,6 @@ export default {
           this.$refs.codeEditor.generateCode()
         } catch (e) {
           this.currentTab = 'code'
-          f7.tab.show('#code')
           throw e
         }
       }
