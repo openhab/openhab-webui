@@ -225,8 +225,9 @@
 
 <style lang="stylus">
 .semantic-tree-wrapper
-  user-select: none
-  padding 0
+  user-select none
+  margin-left var(--f7-safe-area-left)
+  margin-right var(--f7-safe-area-right)
   .row
     height 100%
     .col-100
@@ -255,6 +256,8 @@
     height calc(100% - var(--f7-toolbar-height))
     .row
       .details-pane
+        --f7-safe-area-left 0px
+        --f7-safe-area-right 0px
         padding-top 0
         .block
           margin-top 0
