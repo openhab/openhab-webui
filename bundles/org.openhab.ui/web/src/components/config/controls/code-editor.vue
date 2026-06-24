@@ -82,14 +82,15 @@
 <style lang="stylus">
 .code-editor
   position absolute
-  top calc(var(--f7-navbar-height) + var(--f7-toolbar-height))
+  top calc(var(--f7-navbar-height) + var(--f7-toolbar-height) + var(--f7-safe-area-top))
   bottom calc(var(--f7-toolbar-height))
-  width 100%
+  left var(--f7-safe-area-left)
+  right var(--f7-safe-area-right)
 
 .code-editor-toolbar
   position absolute
   .toolbar-inner
-    padding-left 8px
+    padding-left calc(8px + var(--f7-safe-area-left))
     .toolbar-options
       align-items center
       gap 8px
