@@ -28,7 +28,7 @@ export const actionGroup = (groupPrefix?: string, label?: string, description?: 
   }
 }
 
-export const actionParams = (paramPrefix?: string, groupName?: string) => {
+export const actionParams = (groupName?: string, paramPrefix?: string) => {
   paramPrefix = paramPrefix ? (paramPrefix += '_') : ''
   if (!groupName) groupName = 'actions'
   const actionKey = paramPrefix + 'action'
