@@ -202,6 +202,13 @@ export default {
       }
     }
   },
+  watch: {
+    'widget.config.defineVars'(newVal) {
+      if (newVal) {
+        this.vars = Object.assign(this.vars, newVal)
+      }
+    }
+  },
   methods: {
     onPageAfterIn() {
       if (window) {
@@ -332,6 +339,7 @@ export default {
         })
     },
     redrawWidget() {
+      this.vars = {}
       this.ctxVars = {}
       this.widgetKey = f7.utils.id()
     },
