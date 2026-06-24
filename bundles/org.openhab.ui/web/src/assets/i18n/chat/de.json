@@ -12,7 +12,7 @@
   "chat.loadError": "Gesprächsverlauf konnte nicht geladen werden.",
   "chat.thinking": "openHAB denkt...",
   "chat.clearChat": "Lösche Gesprächsverlauf",
-  "chat.clearConfirm": "Bist du sicher den Gesprächsverlauf zu löschen? Dies wird alle Nachrichten auf dem Server löschen.",
+  "chat.clearConfirm": "Bist du sicher dass du den Gesprächsverlauf löschen willst? Dies wird alle Nachrichten auf dem Server löschen.",
   "chat.clearSuccess": "Gesprächsverlauf erfolgreich gelöscht.",
   "chat.deleteError": "Der Gesprächsverlauf konnte nicht gelöscht werden.",
   "chat.settingsTitle": "Chat-Einstellungen",
