@@ -55,7 +55,7 @@
                   search-in=".treeview-item-label"
                   :disable-button="!theme.aurora"
                   @input="showFiltered($event.target.value)" />
-                <div class="expand-button">
+                <div class="model-expand-button">
                   <f7-button
                     v-if="!expanded"
                     icon-size="24"
@@ -398,14 +398,6 @@
   .code-editor-toolbar .code-editor-tag-filter
     .button .icon
       display inherit
-
-.expand-button
-  height unset
-  margin-right 8px
-  text-overflow unset
-  align-items center
-  .icon
-    margin-bottom 2.75px !important
 </style>
 
 <script>

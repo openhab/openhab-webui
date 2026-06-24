@@ -6,12 +6,13 @@
         <f7-searchbar
           v-if="initSearchbar"
           ref="searchbar"
+          class="model-searchbar"
           search-container=".semantic-tree"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
           :placeholder="searchPlaceholder"
           :disable-button="!theme.aurora" />
-        <div class="expand-button">
+        <div class="model-expand-button">
           <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
           <f7-button
             v-else
@@ -286,13 +287,6 @@
     background-color var(--f7-searchbar-bg-color, var(--f7-bars-bg-color))
     .button, .link
       color var(--f7-toolbar-link-color, var(--f7-bars-link-color, var(--f7-theme-color)))
-  .expand-button
-    height unset
-    margin-right 8px
-    text-overflow unset
-    align-self center
-    .icon
-      margin-bottom 2.75px !important
 </style>
 
 <script>

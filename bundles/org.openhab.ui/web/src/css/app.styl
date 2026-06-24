@@ -123,7 +123,7 @@ html
   --f7-card-margin-vertical 10px
   --f7-card-margin-horizontal 10px
 
-/* Fixes for navbar title positioning */
+/* Fixes for navbar title positioning (force title to center) */
 .navbar-inner.navbar-inner-centered-title
 .ios & .navbar-inner.sliding
   display flex
@@ -138,6 +138,18 @@ html
   .right
     position absolute
     right calc(var(--f7-navbar-inner-padding-right) + var(--f7-safe-area-right))
+
+/* Semantic Model related searchbar and expand treeview button */
+.model-searchbar
+  .searchbar-inner
+    padding-right var(--f7-searchbar-inner-padding-right)
+.model-expand-button
+  height unset
+  margin-right calc(8px + var(--f7-safe-area-right))
+  text-overflow unset
+  align-self center
+  .icon
+    margin-bottom 2.75px !important
 
 .no-page-transitions
   .smart-select-popup.popup.modal-in, .smart-select-popup.popup.modal-out
