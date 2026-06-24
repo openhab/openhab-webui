@@ -136,8 +136,7 @@ import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
-
-const toStringOptions = { toStringDefaults: { lineWidth: 0 } }
+import { useThrottleFn } from '@vueuse/core'
 
 export default {
   components: {
@@ -200,12 +199,17 @@ export default {
         window.removeEventListener('keydown', this.keyDown)
       }
     },
-    onEditorInput(value) {
-      this.blocksDefinition = value
-      if (!this.loading) {
-        this.dirty = true
-      }
-    },
+    onEditorInput: useThrottleFn(
+      function (value) {
+        this.blocksDefinition = value
+        if (!this.loading) {
+          this.dirty = true
+          this.refreshBlocks()
+        }
+      },
+      300,
+      true
+    ),
     refreshBlocks() {
       this.previewKey = f7.utils.id()
     },
