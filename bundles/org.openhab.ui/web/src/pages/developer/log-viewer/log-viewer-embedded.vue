@@ -78,7 +78,9 @@
 <style lang="stylus">
 .log-viewer-embedded
   position relative
-  width 100%
+  // -f7-safe-area-* variables are set to 0px in nomini.css
+  padding-left env(safe-area-inset-left)
+  padding-right env(safe-area-inset-right)
   height 100%
   min-height 0
   display flex
