@@ -16,7 +16,7 @@
         @click="split = split === 'horizontal' ? 'vertical' : 'horizontal'; blockKey = f7.utils.id()" />
       <f7-link @click="refreshBlocks"> Refresh<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span> </f7-link>
     </f7-toolbar>
-    <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="blocks-editor horizontal">
+    <f7-block v-if="split === 'horizontal'" :key="blockKey + '-h'" class="blocks-editor horizontal" :class="{ 'not-editable': !isEditable }">
       <not-editable-notice v-if="ready && !isEditable" subject="block library" />
       <f7-row resizable>
         <f7-col style="min-width: 20px" class="blocks-code">
@@ -36,7 +36,7 @@
         </f7-col>
       </f7-row>
     </f7-block>
-    <f7-block v-else :key="blockKey + 'b'" class="blocks-editor vertical">
+    <f7-block v-else :key="blockKey + 'b'" class="blocks-editor vertical" :class="{ 'not-editable': !isEditable }">
       <not-editable-notice v-if="ready && !isEditable" subject="block library" />
       <f7-row resizable>
         <f7-col resizable style="min-width: 20px" class="blocks-code">
@@ -98,19 +98,18 @@
   z-index auto !important
   top 0
   height calc(100%)
+  &.not-editable
+    height calc(100% - 2 * var(--f7-block-margin-vertical))
   .code-editor-fit
     height 100%
   .row
     height 100%
     .block-preview-pane
-      height 100%
+      height calc(100% - var(--f7-grid-gap))
       overflow auto
     .blocks-code
       height 100%
       position relative
-      .v-codemirror
-        position absolute
-        inset 0
   &.vertical
     .block-preview-pane
       z-index auto !important
