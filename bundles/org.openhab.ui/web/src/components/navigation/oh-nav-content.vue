@@ -1,8 +1,8 @@
 <template>
   <f7-nav-left class="oh-nav-content">
     <f7-link v-if="menuIcon" class="menu-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
-    <f7-link v-if="!theme.md && backLink" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
-      {{ $f7dim.width > 500 ? backLink : null }}
+    <f7-link v-if="!theme.md" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
+      {{ $f7dim.width > 500 ? backLink || t('dialogs.back') : null }}
     </f7-link>
     <f7-link v-else icon-f7="arrow_left_md" :href="backLinkUrl" @click="back" />
   </f7-nav-left>
@@ -60,6 +60,7 @@
 import { f7, theme } from 'framework7-vue'
 import type { Router } from 'framework7'
 import DeveloperDockIcon from '@/components/developer/developer-dock-icon.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = withDefaults(
   defineProps<{
@@ -77,7 +78,6 @@ const props = withDefaults(
   }>(),
   {
     menuIcon: true,
-    backLink: 'Back',
     editable: undefined,
     large: false,
     disableSaveLink: false
@@ -90,6 +90,8 @@ defineSlots<{
   right: void
   after: void
 }>()
+
+const { t } = useI18n({ useScope: 'local' })
 
 function back() {
   if (props.backLinkUrl) return
