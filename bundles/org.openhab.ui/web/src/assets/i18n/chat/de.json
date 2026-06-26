@@ -17,5 +17,9 @@
   "chat.deleteError": "Der Gesprächsverlauf konnte nicht gelöscht werden.",
   "chat.settingsTitle": "Chat-Einstellungen",
   "chat.llmTools": "Tool-Auswahl",
-  "chat.showGenericToolVisualisation": "Alle Tool-Aufrufe anzeigen"
+  "chat.showGenericToolVisualisation": "Alle Tool-Aufrufe anzeigen",
+  "chat.noLlmInterpreterTitle": "LLM-basierter Sprachinterpreter erforderlich",
+  "chat.noLlmInterpreterText": "Die Chat-Funktion erfordert einen Sprachmodel (LLM)-basierten Sprachinterpreter.",
+  "chat.noLlmInterpreterHint": "Installiere das Gemini Binding aus dem Add-on Store, um loszulegen. Konfiguriere Gemini nach der Installation als Standard-Sprachinterpreter! Unterstützung für weitere LLM-Anbieter wird in Zukunft hinzugefügt.",
+  "chat.installGeminiBinding": "Gemini Bindung installieren"
 }
