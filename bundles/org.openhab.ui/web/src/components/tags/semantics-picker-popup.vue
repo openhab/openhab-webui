@@ -8,12 +8,13 @@
       </f7-navbar>
       <f7-subnavbar :inner="false">
         <f7-searchbar
+          class="model-searchbar"
           search-container=".semantics-treeview"
           search-item=".treeview-item"
           search-in=".treeview-item-label"
           :disable-button="!theme.aurora"
           @input="showFiltered($event.target.value)" />
-        <div class="expand-button">
+        <div class="model-expand-button">
           <f7-button v-if="!expanded" icon-size="24" tooltip="Expand" icon-f7="rectangle_expand_vertical" @click="toggleExpanded()" />
           <f7-button
             v-else
@@ -61,15 +62,6 @@
     </f7-page>
   </f7-popup>
 </template>
-
-<style lang="stylus">
-.expand-button
-  margin-right 8px
-  text-overflow unset
-  align-self center
-  .icon
-    margin-bottom 2.75px !important
-</style>
 
 <script>
 import { f7, theme } from 'framework7-vue'

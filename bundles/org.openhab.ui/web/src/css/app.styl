@@ -123,21 +123,33 @@ html
   --f7-card-margin-vertical 10px
   --f7-card-margin-horizontal 10px
 
-/* Fixes for navbar title positioning */
+/* Fixes for navbar title positioning (force title to center) */
 .navbar-inner.navbar-inner-centered-title
 .ios & .navbar-inner.sliding
   display flex
   justify-content center !important
   .left
     position absolute
-    left var(--f7-navbar-inner-padding-left)
+    left calc(var(--f7-navbar-inner-padding-left) + var(--f7-safe-area-left))
   .title
     left 0 !important
     right 0 !important
-    max-width calc(100% - var(--f7-navbar-inner-padding-left) - 140px - var(--f7-navbar-inner-padding-right))
+    max-width calc(100% - var(--f7-navbar-inner-padding-left) - var(--f7-safe-area-left) - 140px - var(--f7-navbar-inner-padding-right) - var(--f7-safe-area-right))
   .right
     position absolute
-    right var(--f7-navbar-inner-padding-right)
+    right calc(var(--f7-navbar-inner-padding-right) + var(--f7-safe-area-right))
+
+/* Semantic Model related searchbar and expand treeview button */
+.model-searchbar
+  .searchbar-inner
+    padding-right var(--f7-searchbar-inner-padding-right)
+.model-expand-button
+  height unset
+  margin-right calc(8px + var(--f7-safe-area-right))
+  text-overflow unset
+  align-self center
+  .icon
+    margin-bottom 2.75px !important
 
 .no-page-transitions
   .smart-select-popup.popup.modal-in, .smart-select-popup.popup.modal-out

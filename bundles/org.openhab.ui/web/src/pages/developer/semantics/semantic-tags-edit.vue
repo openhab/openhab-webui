@@ -55,7 +55,7 @@
                   search-in=".treeview-item-label"
                   :disable-button="!theme.aurora"
                   @input="showFiltered($event.target.value)" />
-                <div class="expand-button">
+                <div class="model-expand-button">
                   <f7-button
                     v-if="!expanded"
                     icon-size="24"
@@ -316,11 +316,15 @@
   height calc(100%)
   overflow hidden
   --f7-page-navbar-offset 0
+  margin-left var(--f7-safe-area-left)
+  margin-right var(--f7-safe-area-right)
   .tab
     height 100%
   .design
     --f7-grid-gap 0px
     overflow auto
+    --f7-safe-area-left 0
+    --f7-safe-area-right 0
 
 .semantics-editor-tabbar
   .link
@@ -331,8 +335,6 @@
 .semantics-tree-wrapper
   padding 0
   margin-bottom 0
-  .col
-    width 100% /* manually set column width because of https://github.com/openhab/openhab-webui/issues/2574 */
   .subnavbar
     height unset
 
@@ -398,14 +400,6 @@
   .code-editor-toolbar .code-editor-tag-filter
     .button .icon
       display inherit
-
-.expand-button
-  height unset
-  margin-right 8px
-  text-overflow unset
-  align-items center
-  .icon
-    margin-bottom 2.75px !important
 </style>
 
 <script>
