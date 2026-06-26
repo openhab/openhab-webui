@@ -73,7 +73,11 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
     const confirmText = text || actionConfig[`${processPrefix(prefix)}actionConfirmation`]
     if (!confirmText) return
     let confirmConfig: ActionConfirmationConfig | null = null
-    if (confirmText.startsWith('{')) confirmConfig = JSON.parse(confirmText) as ActionConfirmationConfig
+    if (typeof confirmText === 'object') {
+      confirmConfig = confirmText
+    } else if (typeof confirmText === 'string' && confirmText.startsWith('{')) {
+      confirmConfig = JSON.parse(confirmText) as ActionConfirmationConfig
+    }
 
     if (confirmConfig) {
       if (confirmConfig.type === 'sheet') {
@@ -83,7 +87,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
               buttons: [
                 [{ text: confirmConfig.text, color: confirmConfig.color || 'blue', onClick: () => resolve() }],
                 // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-                [{ text: t('dialogs.cancel'), color: 'red', onClick: () => reject() }]
+                [{ text: t('dialogs.cancel'), color: 'red', onClick: () => reject('action confirmation rejected') }]
               ]
             })
             .open()
@@ -97,7 +101,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
             confirmConfig.title || 'openHAB',
             () => resolve(),
             // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-            () => reject()
+            () => reject('action confirmation rejected')
           )
           .open()
       })
@@ -108,7 +112,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
           confirmText,
           () => resolve(),
           // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-          () => reject()
+          () => reject('action confirmation rejected')
         )
         .open()
     })
@@ -465,7 +469,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
         return true
       })
       .catch((e) => {
-        console.error('Failed to perform action', e)
+        console.error('Failed to perform action:', e)
         return false
       })
     return true
