@@ -14,8 +14,8 @@
       <f7-link
         v-for="section in Object.keys(AddonTitles)"
         :key="section"
-        tab-link="#section"
-        :tab-link-active="runtimeStore.pagePath === `/addons/${section}/`"
+        :tab-link="'#' + section"
+        :tab-link-active="runtimeStore.pagePath?.startsWith(`/addons/${section}`)"
         :href="`/addons/${section}`"
         :icon-ios="`f7:${AddonIcons[section]}`"
         :icon-aurora="`f7:${AddonIcons[section]}`"
