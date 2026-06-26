@@ -34,9 +34,12 @@
       <f7-block-title>
         {{ service.label }}
       </f7-block-title>
-      <f7-row v-if="isBasicConfig(configuration[service.id])" no-gap style="margin-top: 0rem; margin-bottom: 0">
+      <f7-row v-if="isBasicConfig(configuration[service.id])" no-gap style="margin-top: 0; margin-bottom: 0">
         <div class="service">
-          <addon-logo class="logo-square" :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)" size="54" />
+          <addon-logo
+            class="logo-square no-margin-top"
+            :addon="addons.find((addon) => addon.uid === 'persistence-' + service.id)"
+            size="54" />
           <span class="config">
             <f7-list v-if="servicesLoaded" form>
               <f7-list-item title="Items" smart-select :smart-select-params="{ openIn: 'popup', closeOnSelect: true }">
@@ -273,7 +276,7 @@ export default {
       const suggested = this.suggestedStrategies[service.id] || []
       const configured = this.configuredStrategies[service.id] || []
       const common = this.CommonCronStrategies.map((strategy) => strategy.name)
-      const strategies = [...new Set([...suggested, ...configured, ...PredefinedStrategies, ...common])]
+      const strategies = [...new Set([...suggested, ...configured, ...PredefinedStrategies.map((s) => s.name), ...common])]
       if (service.id === 'inmemory') {
         const index = strategies.indexOf('restoreOnStartup')
         if (index >= 0) {
