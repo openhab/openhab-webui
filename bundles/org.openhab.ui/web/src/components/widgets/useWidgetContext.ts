@@ -113,9 +113,9 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
       console.warn('widget not found, cannot render: ' + componentType.value)
       return null
     }
-    if (context.value.vars) {
-      for (const varKey in context.value.vars) {
-        widgetVars.value[varKey] = context.value.vars[varKey]
+    if (vars.value) {
+      for (const varKey in vars.value) {
+        widgetVars.value[varKey] = vars.value[varKey]
       }
     }
     const extendedWidget =
@@ -129,7 +129,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
       const: context.value.const,
       vars: widgetVars.value,
       varScope: varScope.value || context.value.varScope,
-      ctxVars: context.value.ctxVars,
+      ctxVars: ctxVars.value,
       store: context.value.store,
       config: context.value.config,
       editmode: context.value.editmode,
@@ -150,9 +150,9 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
       props: props.value,
       fn: context.value.fn,
       const: context.value.const,
-      vars: context.value.vars,
+      vars: vars.value,
       varScope: varScope.value || context.value.varScope,
-      ctxVars: context.value.ctxVars,
+      ctxVars: ctxVars.value,
       loop: context.value.loop,
       store: context.value.store,
       config: context.value.config,
