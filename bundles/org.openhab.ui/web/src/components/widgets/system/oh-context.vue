@@ -20,13 +20,9 @@ export default {
   },
   widget: OhContextDefinition,
   setup(props) {
-    const { childContext, evaluateExpression, defaultSlots } = useWidgetContext(computed(() => props.context))
-    return { childContext, evaluateExpression, defaultSlots }
-  },
-  data() {
-    return {
-      varScope: (this.context.varScope || 'varScope') + '-' + f7.utils.id()
-    }
+    const { varScope, childContext, evaluateExpression, defaultSlots } = useWidgetContext(computed(() => props.context))
+    varScope.value = (props.context.varScope || 'varScope') + '-' + f7.utils.id()
+    return { varScope, childContext, evaluateExpression, defaultSlots }
   },
   computed: {
     fn() {
@@ -64,7 +60,7 @@ export default {
       ctx.const = ctxConstants
 
       if (typeof ctx.ctxVars !== 'object') ctx.ctxVars = {}
-      ctx.ctxVars[this.varScope] = this.ctxVars
+      ctx.ctxVars[this.varScope] = this.localCtxVars
 
       return ctx
     }
@@ -82,12 +78,12 @@ export default {
         }
       }
 
-      this.ctxVars = {}
+      this.localCtxVars = {}
       const sourceCtxVars = this.context.component.config.variables || {}
       if (sourceCtxVars) {
         if (typeof sourceCtxVars !== 'object') return
         for (const key in sourceCtxVars) {
-          this.ctxVars[key] = this.evaluateExpression(key, sourceCtxVars[key])
+          this.localCtxVars[key] = this.evaluateExpression(key, sourceCtxVars[key])
         }
       }
     }
