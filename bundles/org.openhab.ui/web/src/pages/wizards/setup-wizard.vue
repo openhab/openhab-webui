@@ -100,20 +100,21 @@
         </f7-list>
         <f7-block class="display-flex flex-direction-column padding">
           <f7-button
-            v-if="next && firstStepNotDone && firstStepNotDone !== 'intro'"
-            large
-            fill
-            color="blue"
-            :text="t('setupwizard.skipToNext')"
-            class="margin-bottom"
-            @click="toStep(firstStepNotDone)" />
-          <f7-button
             v-if="next"
             large
             :fill="!firstStepNotDone || firstStepNotDone === 'intro'"
             color="blue"
-            :text="t('setupwizard.beginSetup')"
+            :text="firstStepNotDone && firstStepNotDone !== 'intro' ? t('setupwizard.restartSetup') : t('setupwizard.beginSetup')"
+            class="margin-bottom"
             @click="handler(next)" />
+          <f7-button
+            v-if="next && firstStepNotDone && firstStepNotDone !== 'intro'"
+            large
+            fill
+            color="blue"
+            :text="t('setupwizard.resumeSetup')"
+            class="margin-bottom"
+            @click="toStep(firstStepNotDone)" />
           <f7-button large color="blue" :text="t('setupwizard.skipSetup')" @click="skipSetup" />
         </f7-block>
         <f7-list>
