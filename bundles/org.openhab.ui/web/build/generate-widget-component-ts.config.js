@@ -71,5 +71,8 @@ export default {
     _All: {
       modifier: (e) => e.replace('data?: string', 'data?: string[]') // Fix array type
     }
+  },
+  OhCanvasLayout: {
+    configValidator: `(config) => 'layoutType' in config && config.layoutType === 'fixed' && 'fixedType' in config && config.fixedType === 'canvas'`
   }
 }

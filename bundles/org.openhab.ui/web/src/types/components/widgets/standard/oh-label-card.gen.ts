@@ -95,6 +95,20 @@ export interface Config {
   trendGradientDirection?: TrendGradientDirection
   trendSampling?: number
 }
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
+export interface Component {
+  component: 'oh-label-card'
+  config: Config
+}
+
+export const isConfig = (config: unknown): config is Config => {
+  return guardConfig<Config>(config)
+}
+
+export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
+  return guardComponent<Component, Config>('oh-label-card', component as Component, isConfig, defaultConfig)
+}
 
 export {
   Action,

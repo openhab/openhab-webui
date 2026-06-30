@@ -13,6 +13,20 @@ export interface Config {
   backgroundImage?: string
   invertText?: boolean
 }
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
+export interface Component {
+  component: 'oh-equipment-card'
+  config: Config
+}
+
+export const isConfig = (config: unknown): config is Config => {
+  return guardConfig<Config>(config)
+}
+
+export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
+  return guardComponent<Component, Config>('oh-equipment-card', component as Component, isConfig, defaultConfig)
+}
 
 export {
   Item,
