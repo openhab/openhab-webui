@@ -1,3 +1,5 @@
+import { OhSvgElement } from '@/types/components/widgets'
+
 // note: this file is generated and should not be edited by hand
 
 import { guardConfig, guardComponent } from '@/types/widget-ts-template'

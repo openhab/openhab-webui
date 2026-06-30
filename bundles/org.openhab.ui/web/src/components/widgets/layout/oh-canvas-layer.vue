@@ -29,6 +29,7 @@ import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCanvasItem from './oh-canvas-item.vue'
 import { OhCanvasLayerDefinition } from '@/assets/definitions/widgets/layout'
+import { OhCanvasLayer as OhCanvasLayerType } from '@/types/components/widgets'
 import type { WidgetContext } from '@/components/widgets/types'
 import type { UiComponent } from '@/api'
 import type { OhCanvasItemEmits } from '@/components/widgets/layout/oh-canvas-item.vue'
@@ -48,6 +49,11 @@ const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
 const { config, defaultSlots, childContext, visible } = useWidgetContext(computed(() => props.context))
+
+let configValue = config.value
+if (!OhCanvasLayerType.isConfig(configValue)) {
+  throw new Error('Invalid config for oh-canvas-layer')
+}
 
 // computed
 const layerPreload = computed(() => config.value?.preload === true)

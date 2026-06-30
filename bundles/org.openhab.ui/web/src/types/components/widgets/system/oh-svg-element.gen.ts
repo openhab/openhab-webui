@@ -1,6 +1,5 @@
 // note: this file is generated and should not be edited by hand
 
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Action,
   ActionHttpMethod,
@@ -10,8 +9,25 @@ import {
   ActionAnalyzerAggregation
 } from '../common.gen.ts'
 
+export enum ColorProperty {
+  none = '',
+  fill = 'fill',
+  stroke = 'stroke'
+}
 
 export interface Config {
+  stateItems?: string
+  useProxyElementForState?: boolean
+  stateOnColor?: string
+  stateOffColor?: string
+  colorProperty?: ColorProperty
+  stateOnSubstitute?: string
+  stateAsOpacity?: boolean
+  stateMinOpacity?: string
+  invertStateOpacity?: boolean
+  stateOnAsStyleClass?: string
+  stateOffAsStyleClass?: string
+  useDisplayState?: boolean
   action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -40,16 +56,11 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
-  item?: string
-  url?: string
-  lazy?: boolean
-  lazyFadeIn?: boolean
-  refreshInterval?: number
-  embedSvg?: boolean
-  embedSvgFlashing?: boolean
 }
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export interface Component {
-  component: 'oh-image'
+  component: 'oh-svg-element'
   config: Config
 }
 
@@ -58,7 +69,7 @@ export const isConfig = (config: unknown): config is Config => {
 }
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>('oh-image', component as Component, isConfig, defaultConfig)
+  return guardComponent<Component, Config>('oh-svg-element', component as Component, isConfig, defaultConfig)
 }
 
 export {

@@ -1,3 +1,5 @@
+import { OhSvgElement } from '@/types/components/widgets'
+
 // note: this file is generated and should not be edited by hand
 
 import { guardConfig, guardComponent } from '@/types/widget-ts-template'
@@ -11,9 +13,13 @@ export interface Config {
   imageSrcSet?: string
   embedSvg?: boolean
   embedSvgFlashing?: boolean
+embeddedSvgActions?: Record<string, OhSvgElement.Config>
+style?: Record<string, unknown>
   hideNavbar?: boolean
   hideSidebarIcon?: boolean
   showFullscreenIcon?: boolean
+  gridEnable?: boolean
+  activeIdx?: number
   boxShadow?: string
   textShadow?: string
   filterShadow?: string

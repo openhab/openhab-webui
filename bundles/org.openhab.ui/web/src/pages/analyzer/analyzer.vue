@@ -390,8 +390,6 @@ import ChartCalendar from './chart-calendar'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 
-import type { Framework7Events } from '@/types/framework7-extensions'
-
 import * as api from '@/api'
 
 import { useI18n } from 'vue-i18n'
@@ -410,6 +408,7 @@ import { AggregationFunction, ChartType, Orient, OhChartVisualmap } from '@/type
 import type { TimeCoordSettings, TimeSeriesOptions } from './chart-time'
 import type { CalendarSeriesOptions } from './chart-calendar'
 import { showToast } from '@/js/dialog-promises'
+import type { Framework7Events } from '@/types/framework7-extensions'
 
 enum CoordSystemsName {
   time = 'time',

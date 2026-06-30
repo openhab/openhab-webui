@@ -73,6 +73,21 @@ export default {
     }
   },
   OhCanvasLayout: {
+    _All: {
+      modifier: (e) =>
+        `import { OhSvgElement } from '@/types/components/widgets'\n\n${e}`.replace(
+          'embedSvgFlashing?: boolean',
+          'embedSvgFlashing?: boolean\n' + 'embeddedSvgActions?: Record<string, OhSvgElement.Config>\n' + 'style?: Record<string, unknown>'
+        ) // add embeddedSvgActions to type
+    },
     configValidator: `(config) => 'layoutType' in config && config.layoutType === 'fixed' && 'fixedType' in config && config.fixedType === 'canvas'`
+  },
+  OhPlanPage: {
+    _All: {
+      modifier: (e) =>
+        `import { OhSvgElement } from '@/types/components/widgets'\n\n${e}`.replace(
+          'embedSvgFlashing?: boolean\n' + 'embeddedSvgActions?: Record<string, OhSvgElement.Config>\n'
+        ) // add embeddedSvgActions to type
+    }
   }
 }

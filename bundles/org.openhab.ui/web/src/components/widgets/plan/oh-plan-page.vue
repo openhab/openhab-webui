@@ -25,7 +25,7 @@
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate">
       <l-image-overlay v-if="!config.embedSvg && backgroundImageUrl" :url="backgroundImageUrl" :bounds="bounds" />
-      <l-feature-group v-if="context.component.slots" ref="featureGroup">
+      <l-feature-group v-if="'slots' in context.component" ref="featureGroup">
         <template v-for="(marker, idx) in defaultSlots" :key="idx">
           <component
             :is="markerComponent(marker)"
@@ -111,21 +111,32 @@ dark-tooltip()
     cursor pointer
 </style>
 
-<script>
-import { nextTick, computed } from 'vue'
+<script setup lang="ts">
+import { nextTick, computed, ref, watch, onBeforeUnmount, useTemplateRef, type Ref, toRef } from 'vue'
+import { type Router } from 'framework7'
 import { f7 } from 'framework7-vue'
+import { computedAsync } from '@vueuse/core'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
-import { Icon, CRS, SVGOverlay } from 'leaflet'
+import { useSvgEmbedded } from '@/components/widgets/svg/useSvgEmbedded'
+import media from '@/js/openhab/media'
+import * as api from '@/api'
+
+import { Icon, CRS, SVGOverlay, type BoundsLiteral } from 'leaflet'
 import { LMap, LImageOverlay, LFeatureGroup, LControl } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 
-import embeddedSvgMixin from '@/components/widgets/svg/oh-embedded-svg-mixin'
 import OhPlanMarker from './oh-plan-marker.vue'
+import { OhPlanMarker as OhPlanMarkerType } from '@/types/components/widgets'
 import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
+import type { WidgetContext } from '../types'
+
+import { showToast } from '@/js/dialog-promises'
+import type { Framework7Events } from '@/types/framework7-extensions'
 
 // Do NOT remove: required for Leaflet to render in prod build
+// @ts-expect-error-next-line
 delete Icon.Default.prototype._getIconUrl
 Icon.Default.mergeOptions({
   iconRetinaUrl: import('leaflet/dist/images/marker-icon-2x.png'),
@@ -133,173 +144,204 @@ Icon.Default.mergeOptions({
   shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
-export default {
-  mixins: [embeddedSvgMixin],
-  props: {
-    context: Object
+// Defines
+const props = defineProps<{
+  context: WidgetContext
+  f7router: Router.Router
+}>()
+
+defineOptions({
+  widget: OhPlanPageDefinition
+})
+
+// Composables
+const context = computed(() => props.context)
+const { config, scopedCssUid, childContext, defaultSlots, evaluateExpression } = useWidgetContext(context)
+const { performAction } = useWidgetAction(context, config, evaluateExpression)
+
+const { embeddedSvgReady, loadAndEmbedSvg, removeEmbeddedSvg } = useSvgEmbedded({
+  editmode: computed(() => Boolean(context.value.editmode)),
+  embeddedSvgActions: toRef(config.value.embeddedSvgActions || {}),
+  embedSvgFlashing: toRef(config.value.embedSvgFlashing || false),
+  performAction: (evt, prefix, config) => {
+    performAction(evt ?? undefined, prefix || '', context.value, config)
   },
-  components: {
-    LMap,
-    LImageOverlay,
-    LControl,
-    LFeatureGroup
-  },
-  widget: OhPlanPageDefinition,
-  setup(props) {
-    const context = computed(() => props.context)
-    const { config, scopedCssUid, childContext, defaultSlots, evaluateExpression } = useWidgetContext(context)
-    // aliased so it doesn't clobber the performAction() method below, which the SVG mixin calls
-    const { performAction: runWidgetAction } = useWidgetAction(context, config, evaluateExpression)
-    return { config, scopedCssUid, childContext, defaultSlots, runWidgetAction }
-  },
-  data() {
-    return {
-      currentZoom: 13,
-      currentCenter: null,
-      minZoom: -2,
-      zoom: -0.5,
-      crs: CRS.Simple,
-      showMap: false,
-      mapKey: f7.utils.id(),
-      embeddedSvgElement: null,
-      embeddedSvgOverlay: null,
-      embeddedSvgToken: 0
+  f7router: props.f7router,
+  updateSvgElementConfig: (id, config) => {
+    f7.emit('svgOnclickConfigUpdate' as Framework7Events, { id, config })
+  }
+})
+
+// States & Data
+const mapRef = useTemplateRef<typeof LMap>('map')
+const currentZoom = ref(13)
+const currentCenter = ref<[number, number] | null>(null)
+const zoom = ref(-0.5)
+const showMap = ref(false)
+const mapKey = ref(f7.utils.id())
+
+const minZoom = -2
+const crs = CRS.Simple
+
+let embeddedSvgOverlay: SVGOverlay | null = null
+let embeddedSvgToken = 0
+
+// Computed
+const bounds = computed<BoundsLiteral>(() => {
+  const lat = config.value.imageHeight || 1000
+  const lng = config.value.imageWidth || 1000
+  return [
+    [0, 0],
+    [lat, lng]
+  ]
+})
+
+const mapOptions = computed(() => {
+  return Object.assign(
+    {
+      zoomSnap: 0.1,
+      tap: false
+    },
+    config.value.noZoomOrDrag
+      ? {
+          dragging: false,
+          touchZoom: false,
+          doubleClickZoom: false,
+          scrollWheelZoom: false,
+          zoomControl: false
+        }
+      : {}
+  )
+})
+
+const backgroundImageUrl = computedAsync(async () => {
+  return media.getImage(config.value.imageUrl)
+})
+
+// Watchers
+watch(
+  () => config.value.noZoomOrDrag,
+  () => {
+    refreshMap()
+  }
+)
+
+watch(
+  () => config.value.embedSvg,
+  () => {
+    refreshMap()
+  }
+)
+
+watch(backgroundImageUrl, () => {
+  showMap.value = true
+  refreshMap()
+})
+
+// Lifecycle
+onBeforeUnmount(() => {
+  removeEmbeddedSvg(removePlanSvg)
+})
+
+// Methods
+function markerComponent(marker: api.UiComponent) {
+  return OhPlanMarker
+}
+
+function isMarkerVisible(marker: api.UiComponent) {
+  if (context.value.editmode) return true
+
+  const markerConfig = marker.config as OhPlanMarkerType.Config
+
+  const zoomVisibilityMin =
+    typeof markerConfig.zoomVisibilityMin === 'number' ? markerConfig.zoomVisibilityMin : parseFloat(String(markerConfig.zoomVisibilityMin))
+  const zoomVisibilityMax =
+    typeof markerConfig.zoomVisibilityMax === 'number' ? markerConfig.zoomVisibilityMax : parseFloat(String(markerConfig.zoomVisibilityMax))
+  const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < currentZoom.value
+  const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > currentZoom.value
+  return isVisibleMin && isVisibleMax
+}
+
+function zoomUpdate(zoom: number) {
+  currentZoom.value = zoom
+}
+
+function centerUpdate(center: [number, number]) {
+  currentCenter.value = center
+}
+
+function onMarkerUpdate() {}
+
+async function onMapReady() {
+  fitMapBounds()
+  if (config.value.embedSvg && config.value.imageUrl) {
+    try {
+      await loadAndEmbedSvg(config.value.imageUrl, undefined, embedPlanSvg)
+    } catch (err) {
+      console.error('Failed to embed SVG:', err)
+      showToast('Failed to embed SVG: ' + err)
     }
-  },
-  computed: {
-    bounds() {
-      const lat = this.config.imageHeight || 1000
-      const lng = this.config.imageWidth || 1000
-      return [
-        [0, 0],
-        [lat, lng]
-      ]
-    },
-    mapOptions() {
-      return Object.assign(
-        {
-          zoomSnap: 0.1,
-          tap: false
-        },
-        this.config.noZoomOrDrag
-          ? {
-              dragging: false,
-              touchZoom: false,
-              doubleClickZoom: false,
-              scrollWheelZoom: false,
-              zoomControl: false
-            }
-          : {}
-      )
+  }
+}
+
+function fitMapBounds() {
+  if (mapRef.value) {
+    mapRef.value.leafletObject?.fitBounds(bounds.value)
+  }
+}
+
+function refreshMap() {
+  removeEmbeddedSvg(removePlanSvg)
+  mapKey.value = f7.utils.id()
+  nextTick(() => {
+    fitMapBounds()
+  })
+}
+
+/**
+ * Callback function to embed the SVG into the Leaflet map; called by useSvgEmbedded after the SVG file is loaded.
+ * @param svgCode The SVG markup text to embed.
+ * @returns The embedded SVG element, or null if embedding failed or was canceled.
+ */
+function embedPlanSvg(svgCode: string): SVGSVGElement | null {
+  removeEmbeddedSvg(removePlanSvg)
+  const map = mapRef.value?.leafletObject
+  if (!map) return null
+  // invalidation token: an unmount or re-embed bumps it so a stale in-flight fetch is discarded
+  const token = ++embeddedSvgToken
+  try {
+    // bail if this embed was superseded or the map was torn down while the SVG was loading
+    if (token !== embeddedSvgToken || !mapRef.value?.leafletObject) return null
+    const parsedRoot = new DOMParser().parseFromString(svgCode, 'image/svg+xml').documentElement
+    if (!(parsedRoot instanceof SVGSVGElement) || parsedRoot.tagName.toLowerCase() !== 'svg') {
+      throw new Error(`${config.value.imageUrl} did not parse to a valid SVG element`)
     }
-  },
-  asyncComputed: {
-    backgroundImageUrl() {
-      return this.$oh.media.getImage(this.config.imageUrl)
-    }
-  },
-  watch: {
-    'config.noZoomOrDrag': function (val) {
-      this.refreshMap()
-    },
-    'config.embedSvg': function () {
-      this.refreshMap()
-    },
-    backgroundImageUrl(val) {
-      this.showMap = true
-      this.refreshMap()
-    }
-  },
-  beforeUnmount() {
-    this.removePlanSvg()
-  },
-  methods: {
-    markerComponent(marker) {
-      return OhPlanMarker
-    },
-    isMarkerVisible(marker) {
-      if (this.context.editmode) return true
-      const zoomVisibilityMin = parseFloat(marker.config.zoomVisibilityMin)
-      const zoomVisibilityMax = parseFloat(marker.config.zoomVisibilityMax)
-      const isVisibleMin = isNaN(zoomVisibilityMin) || zoomVisibilityMin < this.currentZoom
-      const isVisibleMax = isNaN(zoomVisibilityMax) || zoomVisibilityMax > this.currentZoom
-      return isVisibleMin && isVisibleMax
-    },
-    zoomUpdate(zoom) {
-      this.currentZoom = zoom
-    },
-    centerUpdate(center) {
-      this.currentCenter = center
-    },
-    onMarkerUpdate() {},
-    onMapReady() {
-      this.fitMapBounds()
-      if (this.config.embedSvg && this.config.imageUrl) {
-        this.embedPlanSvg()
-      }
-    },
-    fitMapBounds() {
-      if (this.$refs.map) {
-        this.$refs.map.leafletObject?.fitBounds(this.bounds)
-      }
-    },
-    refreshMap() {
-      this.removePlanSvg()
-      this.mapKey = f7.utils.id()
-      nextTick(() => {
-        this.fitMapBounds()
-      })
-    },
-    // Mixin overrides: the SVG lives in the Leaflet overlay rather than a canvas container,
-    // and the plan page is the top-level widget so it runs SVG actions itself instead of emitting them.
-    embeddedSvgRoot() {
-      return this.embeddedSvgElement
-    },
-    performAction(evt, prefix, config, context) {
-      this.runWidgetAction(evt, prefix || '', context, config)
-    },
-    embedPlanSvg() {
-      this.removePlanSvg()
-      const map = this.$refs.map?.leafletObject
-      if (!map) return
-      // invalidation token: an unmount or re-embed bumps it so a stale in-flight fetch is discarded
-      const token = ++this.embeddedSvgToken
-      this.fetchEmbeddedSvgText()
-        .then((svgCode) => {
-          // bail if this embed was superseded or the map was torn down while the SVG was loading
-          if (token !== this.embeddedSvgToken || !this.$refs.map?.leafletObject) return
-          const svgEl = new DOMParser().parseFromString(svgCode, 'image/svg+xml').documentElement
-          if (!svgEl || svgEl.tagName.toLowerCase() !== 'svg') {
-            return Promise.reject(new Error(`${this.config.imageUrl} did not parse to a valid SVG element`))
-          }
-          svgEl.classList.add('oh-plan-embedded-svg', 'disable-user-drag')
-          this.embeddedSvgElement = svgEl
-          // interactive:false stops Leaflet capturing pointer events for the whole SVG; CSS re-enables them per [openhab] element
-          this.embeddedSvgOverlay = new SVGOverlay(svgEl, this.bounds, { interactive: false })
-          this.embeddedSvgOverlay.addTo(map)
-          this.subscribeEmbeddedSvgListeners()
-          this.setupEmbeddedSvgStateTracking()
-          this.embeddedSvgReady = true
-        })
-        .catch((err) => {
-          nextTick(() => {
-            f7.toast.create({ text: 'Failed to embed SVG: ' + err, closeTimeout: 3000 }).open()
-          })
-        })
-    },
-    removePlanSvg() {
-      // invalidate any in-flight embed even when nothing is mounted yet
-      this.embeddedSvgToken++
-      if (!this.embeddedSvgReady && !this.embeddedSvgOverlay) return
-      this.unsubscribeEmbeddedSvgListeners()
-      this.unsubscribeEmbeddedSvgStateTracking()
-      if (this.embeddedSvgOverlay) {
-        this.embeddedSvgOverlay.remove()
-        this.embeddedSvgOverlay = null
-      }
-      this.embeddedSvgElement = null
-      this.embeddedSvgReady = false
-    }
+    const svgEl = parsedRoot
+    svgEl.classList.add('oh-plan-embedded-svg', 'disable-user-drag')
+    // interactive:false stops Leaflet capturing pointer events for the whole SVG; CSS re-enables them per [openhab] element
+    embeddedSvgOverlay = new SVGOverlay(svgEl, bounds.value, { interactive: false })
+    embeddedSvgOverlay.addTo(map)
+    return svgEl
+  } catch (err) {
+    nextTick(() => {
+      showToast('Failed to embed SVG: ' + err)
+    })
+    return null
+  }
+}
+
+/**
+ * Callback function to remove the embedded SVG from the Leaflet map; called by useSvgEmbedded when the SVG is unloaded or the component is unmounted.
+ *
+ * @param svgRoot The root SVG element to remove.
+ */
+function removePlanSvg(svgRoot: Ref<SVGSVGElement | null>) {
+  // invalidate any in-flight embed even when nothing is mounted yet
+  embeddedSvgToken++
+  if (!embeddedSvgReady && !embeddedSvgOverlay) return
+  if (embeddedSvgOverlay) {
+    embeddedSvgOverlay.remove()
+    embeddedSvgOverlay = null
   }
 }
 </script>
