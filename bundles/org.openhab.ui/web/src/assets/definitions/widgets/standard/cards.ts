@@ -27,7 +27,7 @@ export const OhCardDefinition = () =>
     .paramGroup(actionGroup(), actionParams())
     .paramGroup(
       actionGroup('taphold', 'Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)'),
-      actionParams('taphold'),
+      actionParams(undefined, 'taphold'),
       true
     )
 
@@ -39,7 +39,7 @@ export const OhLabelCardDefinition = () =>
     .paramGroup(actionGroup(), actionParams())
     .paramGroup(
       actionGroup('taphold', 'Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)'),
-      actionParams('taphold'),
+      actionParams(undefined, 'taphold'),
       true
     )
     .paramGroup(pg('label', 'Label', 'Parameters of the label'), [

@@ -24,7 +24,7 @@ export const OhButtonDefinition = () =>
     .paramGroup(actionGroup(), actionParams())
     .paramGroup(
       actionGroup('taphold', 'Tap Hold', 'Action performed when tapping and holding card (or calling contextual menu on desktop)'),
-      actionParams('taphold'),
+      actionParams(undefined, 'taphold'),
       true
     )
     .params([...ButtonParameters(), VariableParameter, VariableKeyParameter, ClearVariableParameter, ClearVariableKeyParameter])
