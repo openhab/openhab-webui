@@ -1,0 +1,39 @@
+{
+  "required": ["component", "config", "uid", "tags", "props", "timestamp"],
+  "type": "object",
+  "properties": {
+    "component": {
+      "type": "string"
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "slots": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UIComponent"
+        }
+      }
+    },
+    "uid": {
+      "type": "string"
+    },
+    "tags": {
+      "uniqueItems": true,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "props": {
+      "$ref": "#/components/schemas/ConfigDescription"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

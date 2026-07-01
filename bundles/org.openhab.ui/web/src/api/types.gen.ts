@@ -138,10 +138,10 @@ export type RuleStatusInfo = {
 
 export type Module = {
     typeUID: string;
+    configuration: Configuration;
+    id: string;
     label: string;
     description: string;
-    id: string;
-    configuration: Configuration;
 };
 
 export type Configuration = {
@@ -387,93 +387,93 @@ export type JsonArray = {
     asFloat: number;
     asByte: string;
     asCharacter: string;
+    asShort: number;
     asBigDecimal: number;
     asBigInteger: number;
-    asShort: number;
-    asString: string;
-    asBoolean: boolean;
     empty: boolean;
+    asString: string;
     asDouble: number;
     asInt: number;
     asLong: number;
-    jsonNull: boolean;
-    asJsonObject: JsonObject;
+    asBoolean: boolean;
     jsonObject: boolean;
     jsonArray: boolean;
-    jsonPrimitive: boolean;
-    asJsonPrimitive: JsonPrimitive;
-    asJsonNull: JsonNull;
+    jsonNull: boolean;
     asJsonArray: JsonArray;
+    asJsonNull: JsonNull;
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
 };
 
 export type JsonElement = {
-    jsonNull: boolean;
-    asJsonObject: JsonObject;
     jsonObject: boolean;
     jsonArray: boolean;
-    jsonPrimitive: boolean;
-    asJsonPrimitive: JsonPrimitive;
+    jsonNull: boolean;
+    asJsonArray: JsonArray;
     asJsonNull: JsonNull;
     asNumber: number;
-    asJsonArray: JsonArray;
     asFloat: number;
     asByte: string;
     asCharacter: string;
+    asShort: number;
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
-    asShort: number;
     asString: string;
-    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
+    asBoolean: boolean;
 };
 
 export type JsonNull = {
-    jsonNull: boolean;
-    asJsonObject: JsonObject;
     jsonObject: boolean;
     jsonArray: boolean;
-    jsonPrimitive: boolean;
-    asJsonPrimitive: JsonPrimitive;
+    jsonNull: boolean;
+    asJsonArray: JsonArray;
     asJsonNull: JsonNull;
     asNumber: number;
-    asJsonArray: JsonArray;
     asFloat: number;
     asByte: string;
     asCharacter: string;
+    asShort: number;
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
-    asShort: number;
     asString: string;
-    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
+    asBoolean: boolean;
 };
 
 export type JsonObject = {
     empty: boolean;
-    jsonNull: boolean;
-    asJsonObject: JsonObject;
     jsonObject: boolean;
     jsonArray: boolean;
-    jsonPrimitive: boolean;
-    asJsonPrimitive: JsonPrimitive;
+    jsonNull: boolean;
+    asJsonArray: JsonArray;
     asJsonNull: JsonNull;
     asNumber: number;
-    asJsonArray: JsonArray;
     asFloat: number;
     asByte: string;
     asCharacter: string;
+    asShort: number;
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
-    asShort: number;
     asString: string;
-    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
+    asBoolean: boolean;
 };
 
 export type JsonPrimitive = {
@@ -481,25 +481,25 @@ export type JsonPrimitive = {
     asFloat: number;
     asByte: string;
     asCharacter: string;
-    asBigDecimal: number;
-    asBigInteger: number;
     asShort: number;
     string: boolean;
     number: boolean;
     boolean: boolean;
+    asBigDecimal: number;
+    asBigInteger: number;
     asString: string;
-    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
-    jsonNull: boolean;
-    asJsonObject: JsonObject;
+    asBoolean: boolean;
     jsonObject: boolean;
     jsonArray: boolean;
-    jsonPrimitive: boolean;
-    asJsonPrimitive: JsonPrimitive;
-    asJsonNull: JsonNull;
+    jsonNull: boolean;
     asJsonArray: JsonArray;
+    asJsonNull: JsonNull;
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
 };
 
 export type StringList = Array<string>;
@@ -1152,6 +1152,9 @@ export type UiComponent = {
     config: {
         [key: string]: unknown;
     };
+    slots?: {
+        [key: string]: Array<UiComponent>;
+    };
 };
 
 export type RootUiComponent = {
@@ -1159,7 +1162,7 @@ export type RootUiComponent = {
     config: {
         [key: string]: unknown;
     };
-    slots: {
+    slots?: {
         [key: string]: Array<UiComponent>;
     };
     uid: string;
