@@ -18,7 +18,7 @@ import {
 } from '../src/assets/definitions/widgets/home/index.ts'
 import { actionParams } from '../src/assets/definitions/widgets/actions.ts'
 
-const ActionParams = [...actionParams(), ...actionParams('taphold')]
+const ActionParams = [...actionParams(), ...actionParams(undefined, 'taphold')]
 
 const widgetLibraries = {
   SystemWidgets,
