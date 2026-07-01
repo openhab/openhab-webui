@@ -36,6 +36,28 @@ if (url) {
   process.stdout.write('DONE\n')
 
   try {
+    // temporary fix for UIComponent schema in OpenAPI spec - see https://github.com/openhab/openhab-core/issues/5686
+    process.stdout.write(`Updating UIComponent in ${file} ... `)
+    execSync(`jq '.components.schemas.UIComponent = input' ${file} ./build/UIComponent.json > tmp.json &&  mv tmp.json ${file}`, {
+      stdio: 'ignore'
+    })
+    process.stdout.write('DONE\n')
+  } catch (updateError) {
+    process.stderr.write('ERROR updating UIComponent:', updateError)
+  }
+
+  try {
+    // temporary fix for RootUIComponent schema in OpenAPI spec - see https://github.com/openhab/openhab-core/issues/5686
+    process.stdout.write(`Updating RootUIComponent in ${file} ... `)
+    execSync(`jq '.components.schemas.RootUIComponent = input' ${file} ./build/RootUIComponent.json > tmp.json &&  mv tmp.json ${file}`, {
+      stdio: 'ignore'
+    })
+    process.stdout.write('DONE\n')
+  } catch (updateError) {
+    process.stderr.write('ERROR updating RootUIComponent:', updateError)
+  }
+
+  try {
     process.stdout.write(`Applying oxfmt to ${file} ... `)
     execSync(`oxfmt ${file}`, { stdio: 'ignore' })
     process.stdout.write('DONE\n')
@@ -44,17 +66,15 @@ if (url) {
   }
 }
 
-if (file && !openApi) {
-  process.stdout.write(`Reading OpenAPI spec from file ${file} ... `)
-  try {
-    const data = fs.readFileSync(file, 'utf8')
-    openApi = JSON.parse(data)
-  } catch (error) {
-    process.stderr.write('ERROR reading OpenAPI spec from file:', error)
-    process.exit(1)
-  }
-  process.stdout.write('DONE\n')
+process.stdout.write(`Reading OpenAPI spec from file ${file} ... `)
+try {
+  const data = fs.readFileSync(file, 'utf8')
+  openApi = JSON.parse(data)
+} catch (error) {
+  process.stderr.write('ERROR reading OpenAPI spec from file:', error)
+  process.exit(1)
 }
+process.stdout.write('DONE\n')
 
 try {
   await createClient({
