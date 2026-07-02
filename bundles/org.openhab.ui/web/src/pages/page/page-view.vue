@@ -186,12 +186,20 @@ const fullscreenIcon = computed(() => {
 })
 
 // watchers
-watch(page, (newPage) => {
-  if (newPage?.config?.defineVars) vars.value = Object.assign(vars.value, newPage.config.defineVars)
-})
-watch(props, (newProps) => {
-  if (newProps.defineVars) vars.value = Object.assign(vars.value, newProps.defineVars)
-})
+watch(
+  page,
+  (newPage) => {
+    if (newPage?.config?.defineVars) vars.value = Object.assign(vars.value, newPage.config.defineVars)
+  },
+  { immediate: true }
+)
+watch(
+  props,
+  (newProps) => {
+    if (newProps.defineVars) vars.value = Object.assign(vars.value, newProps.defineVars)
+  },
+  { immediate: true }
+)
 
 // methods
 const onPageAfterIn = () => {
