@@ -17,10 +17,10 @@ const ipv6Addr = `(?:(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|(?:[A-Fa-f0-9]{1,4
 const hostLabel = `[A-Za-z0-9](?:[A-Za-z0-9\\-]{0,61}[A-Za-z0-9])?`
 const hostIpv4 = `(?:${hostLabel}(?:\\.${hostLabel})*)`
 const host = `(?:${hostIpv4}|\\[${ipv6Addr}\\])`
-const http = `[Hh][Tt][Tt][Pp][Ss]?:\\/\\/`
+const protocol = `[A-Za-z]+:\\/\\/`
 const port = `(?::(?:6553[0-5]|655[0-2]\\d|65[0-4]\\d{2}|6[0-4]\\d{3}|[1-5]\\d{4}|\\d{1,4}))?`
 const rest = `(?:\\/[^\\s]*)?`
-const fullUrl = `${http}${host}${port}${rest}`
+const fullUrl = `${protocol}${host}${port}${rest}`
 const hostWithPort = `${host}${port}`
 
 /**
