@@ -246,7 +246,10 @@ const parseItems = () => {
         headers: {
           'Content-Type': serverMediaType,
           accept: 'application/json'
-        }
+        },
+        // Hey API bugs with all the different content types and tries to serialize the body as JSON
+        // This invalidates the content, and deserialization on the other end fails, causing the method to return 400
+        bodySerializer: (body) => body
       }
     )
     .then((data) => {
