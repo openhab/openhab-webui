@@ -97,7 +97,7 @@ export default {
   methods: {
     onPageAfterIn() {
       this.loading = true
-      this.$oh.api.get('/rest/addons?serviceId=all').then((data) => {
+      this.$oh.api.get('/rest/addons?serviceId=all&installedOnly=true').then((data) => {
         let installedBindings = data.filter((addon) => addon.type === 'binding' && addon.installed === true)
         this.bindings = installedBindings.sort((a, b) => a.label.localeCompare(b.label))
         this.loading = false
