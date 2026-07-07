@@ -41,12 +41,18 @@
             :key="binding.uid"
             :link="binding.id"
             :title="binding.label"
-            :header="binding.uid"
             :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id).length || undefined"
             badge-color="red"
             :footer="
               binding.description && binding.description.indexOf('<br>') >= 0 ? binding.description.split('<br>')[0] : binding.description
-            " />
+            ">
+            <template #media>
+              <addon-logo class="logo-square" :addon="binding" size="64" />
+            </template>
+            <template #after>
+              <f7-icon f7="info_circle" style="margin-left: 4px" :tooltip="binding.uid" />
+            </template>
+          </f7-list-item>
         </f7-list>
       </f7-col>
     </f7-block>
@@ -63,17 +69,36 @@
   </f7-page>
 </template>
 
+<style lang="stylus">
+.binding-list
+  .logo-square
+    background white
+    border-radius 10%
+    width 64px
+    height 64px
+    margin-left 3px
+    display flex
+    justify-content center
+    align-items center
+    .logo
+      margin-left 0
+      max-height 54px
+      max-width 54px
+</style>
+
 <script>
 import { nextTick } from 'vue'
 import { theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import AddonLogo from '@/components/addons/addon-logo.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 export default {
   components: {
+    AddonLogo,
     EmptyStatePlaceholder
   },
   props: {
