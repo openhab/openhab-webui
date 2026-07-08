@@ -54,7 +54,10 @@ export function dimensionFromDate(
 }
 
 function includeBoundaryAndItemStateFor(config: OhAggregateSeries.Config) {
-  return config.aggregationFunction === OhAggregateSeries.AggregationFunction.diffLast ? true : null
+  return config.aggregationFunction === OhAggregateSeries.AggregationFunction.diffLast ||
+    config.aggregationFunction === OhAggregateSeries.AggregationFunction.diffFirst
+    ? true
+    : null
 }
 
 /**
@@ -101,22 +104,25 @@ const aggregateSeries: SeriesComponent = {
     return includeBoundaryAndItemStateFor(component.config)
   },
   adjustedStartTime(context, component, startTime) {
-    if (
-      component.config.aggregationFunction !== AggregationFunction.diffLast &&
-      component.config.aggregationFunction !== AggregationFunction.diffFirst
-    ) {
+    const series = context.evaluateExpression<OhAggregateSeriesOption>(
+      ComponentId.get(component)!,
+      component.config,
+      OhAggregateSeriesDefinition
+    )
+
+    if (series.aggregationFunction !== AggregationFunction.diffLast && series.aggregationFunction !== AggregationFunction.diffFirst) {
       return startTime
     }
 
     const chartType = context.chart.config.chartType
-    let dimension1 = component.config.dimension1 as OhAggregateSeries.Dimension | undefined
+    let dimension1 = series.dimension1
     if (!dimension1 && chartType) {
       dimension1 = defaultDimension(chartType)
     }
     if (!dimension1) {
       dimension1 = chartType as unknown as OhAggregateSeries.Dimension
     }
-    const dimension2 = component.config.dimension2 as OhAggregateSeries.Dimension | undefined
+    const dimension2 = series.dimension2
     let groupStart: OhAggregateSeries.Dimension | 'day' = dimension2 || dimension1
     if (groupStart === OhAggregateSeries.Dimension.weekday || groupStart === OhAggregateSeries.Dimension.isoWeekday || !groupStart) {
       groupStart = 'day'

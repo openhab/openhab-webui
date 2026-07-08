@@ -6,7 +6,6 @@ import { AggregationFunction } from '@/types/components/widgets'
 describe('aggregators', () => {
   const t0 = dayjs('2026-05-12T00:00:00Z')
   const t1 = dayjs('2026-05-12T01:00:00Z')
-  const t2 = dayjs('2026-05-12T02:00:00Z')
 
   describe('diffLast', () => {
     it('should return NaN for the first group (idx < 1)', () => {
