@@ -72,4 +72,5 @@ export interface SeriesComponent {
   get(context: ChartContext, component: api.UiComponent, points: api.ItemHistory[], startTime: Dayjs, endTime: Dayjs): OhSeriesOption
   includeBoundary?(context: ChartContext, component: api.UiComponent): boolean | null
   includeItemState?(context: ChartContext, component: api.UiComponent): boolean | null
+  adjustedStartTime?(context: ChartContext, component: api.UiComponent, startTime: Dayjs): Dayjs
 }
