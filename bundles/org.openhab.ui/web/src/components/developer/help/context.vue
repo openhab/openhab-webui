@@ -60,7 +60,7 @@ export default {
         return
       }
       console.debug('Sidebar Help: Docs not found in cache, loading from GitHub ...')
-      fetch(useRuntimeStore().docSrcUrl + '/mainui' + this.path + '.md')
+      fetch(useRuntimeStore().docSrcUrl + '/docs/mainui' + this.path + '.md')
         .then((response) => {
           if (response.status === 404) {
             this.parsedDocs =

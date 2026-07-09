@@ -318,12 +318,10 @@ export default {
     },
     async processDescription() {
       if (this.addon.author === 'openHAB') {
-        // assuming the add-on is an official one (distribution), try to fetch the documentation from GitHub
-        let addonTypeFolder = '_addons_' + this.addon.type
-        if (this.addon.type === 'misc') addonTypeFolder = '_addons_io'
-        if (this.addon.type !== 'automation') addonTypeFolder += 's'
-        const docSrcUrl = `${useRuntimeStore().docSrcUrl}/${addonTypeFolder}/${this.addon.id}`
-
+        // assuming the add-on is official (distribution), try to fetch the documentation from GitHub
+        let addonType = this.addon.type
+        if (addonType === 'misc') addonType = 'integration'
+        const docSrcUrl = `${useRuntimeStore().docSrcUrl}/addons/${addonType}/${this.addon.id}`
         fetch(docSrcUrl + '/readme.md')
           .then(async (readme) => {
             let text = await readme.text()
