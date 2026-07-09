@@ -481,7 +481,7 @@
   .list
     margin-top 0
 .rule-code-editor
-.rule-source-viewer
+.rule-source-viewer.code-editor-fit
   position absolute
   height calc(100% - var(--f7-navbar-height) - var(--f7-toolbar-height))
   width 100%
