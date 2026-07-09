@@ -304,6 +304,9 @@ export function useChart(
     const combinedPromises = neededItems.map(async (neededItem) => {
       let seriesStartTime = startTime.value
       let seriesEndTime = endTime.value
+      if (seriesComponents[component.component].adjustedStartTime) {
+        seriesStartTime = seriesComponents[component.component].adjustedStartTime!(chartContext.value, component, seriesStartTime)
+      }
       if ('offsetAmount' in config && config.offsetAmount && config.offsetUnit) {
         seriesStartTime = seriesStartTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
         seriesEndTime = seriesEndTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
