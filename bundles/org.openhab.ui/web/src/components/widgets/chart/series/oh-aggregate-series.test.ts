@@ -163,7 +163,7 @@ describe('aggregateSeries', () => {
               chartType: ChartType.week
             }
           },
-          evaluateExpression: (_key, value) => value,
+          evaluateExpression: (_key, value) => value
         } as any
         const component = {
           config: {
