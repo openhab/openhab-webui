@@ -1275,6 +1275,9 @@ export default {
           if (page.route.url.includes('/log-viewer/')) {
             this.logViewerPageActive = true
           }
+          if (page.route.query.hideLeftPanel === 'true') {
+            f7.panel.get('left').disableVisibleBreakpoint()
+          }
         }
       })
 
