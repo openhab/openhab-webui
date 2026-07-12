@@ -3,7 +3,7 @@
     <f7-navbar large class="store-nav">
       <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :large="true" :back-link-url="backLinkUrl" :f7router />
     </f7-navbar>
-    <f7-toolbar v-show="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
+    <f7-toolbar v-if="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
       <f7-link
         tab-link="#main"
         :tab-link-active="runtimeStore.pagePath === '/addons/'"
@@ -272,6 +272,12 @@
       @closed="addonPopupOpened = false"
       @install="installAddon"
       @uninstall="uninstallAddon" />
+
+    <template #fixed>
+      <f7-fab v-show="ready" position="right-bottom" color="blue" @click="load(true)">
+        <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
+      </f7-fab>
+    </template>
   </f7-page>
 </template>
 
@@ -375,7 +381,8 @@ export default {
     updateLeftPanelVisibility() {
       this.leftPanelOpened = f7.panel.get('left').opened
     },
-    load() {
+    load(refresh = false) {
+      this.ready = false
       if (this.searchFor) {
         // Show this in the searchbar while the page is loading
         this.$refs.storeSearchbar.$el.f7Searchbar.$inputEl.val(this.searchFor)
@@ -394,7 +401,8 @@ export default {
       })
       this.$oh.api.get('/rest/addons/services').then((data) => {
         this.services = data
-        Promise.all(this.services.map((s) => this.$oh.api.get('/rest/addons?serviceId=' + s.id))).then((data2) => {
+        const refreshParam = refresh ? '&refresh=true' : ''
+        Promise.all(this.services.map((s) => this.$oh.api.get('/rest/addons?serviceId=' + s.id + refreshParam))).then((data2) => {
           data2.forEach((addons, idx) => {
             this.addons[data[idx].id] = data2[idx]
           })
