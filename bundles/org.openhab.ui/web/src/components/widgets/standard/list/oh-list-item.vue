@@ -182,7 +182,8 @@ export default {
       return this.context.parent.component.config.accordionEquipment && this.accordionSlots.length > 0
     },
     isRegularAccordion() {
-      return this.context.parent.component.config.accordionList && this.accordionSlots.length > 0
+      if (this.config?.accordionItem === false) return false
+      return (this.config?.accordionItem === true || this.context.parent.component.config.accordionList) && this.accordionSlots.length > 0
     },
     accordionSlots() {
       if (!this.context.component.slots?.accordion?.length) return []
