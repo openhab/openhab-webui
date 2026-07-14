@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut" ref="addondetails" class="page-addon-details">
     <f7-navbar :transparent="true" class="addon-details-nav">
-      <oh-nav-content :title="addon?.label" back-link="Add-on Store" :back-link-url="`/addons/${addonId.split('-')[0]}`" :f7router />
+      <oh-nav-content :title="addon?.label" :back-link="backLinkTitle" :back-link-url="'/addons/' + addon?.type" :f7router />
     </f7-navbar>
     <f7-block v-if="ready && addon" class="block-narrow addon-details">
       <f7-row>
@@ -200,6 +200,7 @@ import AddonStoreMixin from './addon-store-mixin'
 import AddonStatsLine from '@/components/addons/addon-stats-line.vue'
 import AddonInfoTable from '@/components/addons/addon-info-table.vue'
 import AddonLogo from '@/components/addons/addon-logo.vue'
+import { AddonTitles } from '@/assets/addon-store.ts'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
@@ -227,6 +228,9 @@ export default {
     }
   },
   computed: {
+    backLinkTitle() {
+      return AddonTitles[this.addon?.type] || 'Add-on Store'
+    },
     showConfig() {
       return this.addon && this.addon.installed && (this.addon.configDescriptionURI || this.addon.loggerPackages.length > 0)
     },
