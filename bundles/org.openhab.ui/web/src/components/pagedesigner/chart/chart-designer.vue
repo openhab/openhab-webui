@@ -594,6 +594,14 @@ export default {
       }
 
       if (automaticAxisCreated) {
+        if (type === 'oh-aggregate-series') {
+          if (!this.context.component.config) {
+            this.context.component.config = {}
+          }
+          if (!this.context.component.config.chartType) {
+            this.context.component.config.chartType = 'day'
+          }
+        }
         showToast('Missing axes have been created automatically.')
       }
 
