@@ -2,6 +2,7 @@ import { WidgetDefinition, pt, pi, pg, pb, pn } from '../helpers.ts'
 
 export const OhHomePageDefinition = () =>
   new WidgetDefinition('oh-home-page', 'Home page', '').params([
+    pb('hideNavbar', 'Hide Navbar', 'Hide the Navigation bar on the home page'),
     pb('simpleNavbarMobileDefault', 'Default to Simple Navbar on Mobile', 'Use the simple navbar by default on mobile devices'),
     pb('simpleNavbarDesktopDefault', 'Default to Simple Navbar on Desktop', 'Use the simple navbar by default on desktop devices'),
     pb(

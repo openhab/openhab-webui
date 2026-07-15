@@ -7,7 +7,7 @@
     @page:beforein="onPageBeforeIn"
     @page:afterin="onPageAfterIn"
     @page:beforeout="onPageBeforeOut">
-    <f7-navbar :large="!simpleNavbar" :transparent="!simpleNavbar" class="home-nav disable-user-select" ref="navbar">
+    <f7-navbar v-if="!hideNavbar" :large="!simpleNavbar" :transparent="!simpleNavbar" class="home-nav disable-user-select" ref="navbar">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
@@ -192,6 +192,11 @@ export default {
       return {
         store: useStatesStore().trackedItems
       }
+    },
+    hideNavbar() {
+      const homeNavBar = useUIOptionsStore().homeNavBar
+      if (homeNavBar === 'hidden') return true
+      return this.homePageComponent?.config?.hideNavbar === true
     },
     simpleNavbar() {
       const homeNavBar = useUIOptionsStore().homeNavBar

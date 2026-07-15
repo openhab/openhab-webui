@@ -25,8 +25,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const bars = ref<'light' | 'filled'>(['light', 'filled'].includes(_storedBars) ? (_storedBars as 'light' | 'filled') : 'light')
 
   const _storedNavBar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
-  const homeNavBar = ref<'default' | 'simple' | 'large'>(
-    ['default', 'simple', 'large'].includes(_storedNavBar) ? (_storedNavBar as 'default' | 'simple' | 'large') : 'default'
+  const homeNavBar = ref<'default' | 'simple' | 'large' | 'hidden'>(
+    ['default', 'simple', 'large', 'hidden'].includes(_storedNavBar)
+      ? (_storedNavBar as 'default' | 'simple' | 'large' | 'hidden')
+      : 'default'
   )
 
   const _storedHomeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'

@@ -56,7 +56,7 @@
             <span>{{ t('about.miscellaneous.home.navbar') }}</span>
             <f7-segmented class="home-navbar-selection">
               <f7-button
-                v-for="navbarstyle in ['default', 'simple', 'large']"
+                v-for="navbarstyle in ['default', 'simple', 'large', 'hidden']"
                 outline
                 small
                 :active="homeNavBar === navbarstyle"
