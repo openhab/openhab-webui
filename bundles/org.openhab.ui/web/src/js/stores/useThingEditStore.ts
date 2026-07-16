@@ -25,6 +25,8 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
   const thingActions = ref<api.ThingAction[] | null>(null)
   const configStatusInfo = ref<api.ConfigStatusMessage[] | null>(null)
   const firmwares = ref<api.Firmware[] | null>(null)
+  const offerInstallBinding = ref<boolean | null>(null)
+  const bindingHasErrors = ref<boolean | null>(null)
 
   // watch
   watch(
@@ -47,6 +49,18 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
         delete savedThingClone.statusInfo
         delete savedThingClone.configuration
         thingDirty.value = !fastDeepEqual(thingClone, savedThingClone)
+
+        offerInstallBinding.value = false
+        bindingHasErrors.value = false
+        if (thing.value?.statusInfo?.statusDetail === 'HANDLER_MISSING_ERROR') {
+          const bindingId = thing.value.UID.split(':')[0]
+          if (bindingId) {
+            void api.getAddonById({ addonId: 'binding-' + bindingId }).then((binding) => {
+              offerInstallBinding.value = !binding || !binding.installed
+              bindingHasErrors.value = !offerInstallBinding.value
+            })
+          }
+        }
       }
     },
     { deep: true }
@@ -231,6 +245,8 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     editable,
     isExtensible,
     hasLinkedItems,
+    offerInstallBinding,
+    bindingHasErrors,
 
     load,
     save
