@@ -532,9 +532,10 @@ export default {
       if (this.regionReady) {
         if (this.regionType === 'exclude_other') {
           isInRegionFilter =
-            addon.countries.length > 0 ? addon.countries.map((c) => c.toUpperCase()).includes(this.region.toUpperCase()) : true
+            addon.countries?.length > 0 ? addon.countries.map((c) => c.toUpperCase()).includes(this.region.toUpperCase()) : true
         } else if (this.regionType === 'only_region') {
-          isInRegionFilter = addon.countries.map((c) => c.toUpperCase()).includes(this.region.toUpperCase())
+          isInRegionFilter =
+            addon.countries?.length > 0 ? addon.countries.map((c) => c.toUpperCase()).includes(this.region.toUpperCase()) : false
         }
       }
       return isInConnectionFilter && isInRegionFilter
