@@ -151,6 +151,7 @@ const adminMenuItems: Record<AdminMenuSection, AdminMenuItemDefinition[]> = {
       link: '/settings/sitemaps/',
       icon: 'menu',
       pageGroup: 'ui',
+      sidebarDefault: true,
       isVisible: (runtimeStore) => hasEndpoint(runtimeStore, 'sitemaps')
     },
     {
