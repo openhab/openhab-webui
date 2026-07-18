@@ -40,6 +40,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const disableExpandableCardAnimation = ref<boolean>(_storedExpandableCardAnimation === 'disabled')
 
   const blocklyRenderer = ref<string | null>(localStorage.getItem('openhab.ui:blockly.renderer'))
+  const disableLeftPanelSwipe = ref<boolean>(localStorage.getItem('openhab.ui:theme.disableLeftPanelSwipe') === 'true')
   const disablePageTransitionAnimation = ref<boolean>(localStorage.getItem('openhab.ui:theme.disablepagetransition') === 'true')
 
   const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
@@ -146,6 +147,15 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   watch(bars, (newValue) => {
     localStorage.setItem('openhab.ui:theme.bars', newValue)
     updateClasses()
+  })
+
+  watch(disableLeftPanelSwipe, (newValue) => {
+    localStorage.setItem('openhab.ui:theme.disableLeftPanelSwipe', newValue.toString())
+    if (newValue) {
+      f7.panel.get('left').disableSwipe()
+    } else {
+      f7.panel.get('left').enableSwipe()
+    }
   })
 
   watch(disablePageTransitionAnimation, (newValue) => {
@@ -339,6 +349,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     homeBackground,
     disableExpandableCardAnimation,
     blocklyRenderer,
+    disableLeftPanelSwipe,
     disablePageTransitionAnimation,
     hideChatInput,
     webAudio,
