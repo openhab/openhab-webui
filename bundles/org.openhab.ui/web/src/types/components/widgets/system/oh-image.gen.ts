@@ -38,6 +38,8 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
+  embedSvg?: boolean
+  embedSvgFlashing?: boolean
   item?: string
   url?: string
   lazy?: boolean

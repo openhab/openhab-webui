@@ -20,6 +20,8 @@ export interface Config {
   lazy?: boolean
   lazyFadeIn?: boolean
   refreshInterval?: number
+  embedSvg?: boolean
+  embedSvgFlashing?: boolean
   action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean

@@ -30,12 +30,22 @@ export default {
       return this.$refs.canvasBackground?.querySelector('svg') || null
     },
     /**
+     * Returns the URL of the SVG image to embed. Override when the hosting component configures
+     * the image under a different key (e.g. `url` for oh-image).
+     *
+     * @returns {string|undefined}
+     */
+    embeddedSvgUrl() {
+      return this.config.imageUrl
+    },
+    /**
      * Fetches and validates the SVG markup from the configured Image URL.
      *
      * @returns {Promise<string>}
      */
     async fetchEmbeddedSvgText() {
-      let imageUrl = this.config.imageUrl
+      const configuredUrl = this.embeddedSvgUrl()
+      let imageUrl = configuredUrl
       // in editmode we add a random number to the URL to always load the latest SVG (avoid caching)
       if (this.context.editmode) {
         imageUrl += (imageUrl.includes('?') ? '&' : '?') + `rnd=${Math.random()}`
@@ -43,13 +53,11 @@ export default {
       const svgUrl = await this.$oh.media.getImage(imageUrl)
       return fetch(svgUrl).then((response) => {
         if (!response.ok) {
-          return Promise.reject(
-            new Error(`Failed to load from ${this.config.imageUrl}. Status: ${response.status} (${response.statusText})`)
-          )
+          return Promise.reject(new Error(`Failed to load from ${configuredUrl}. Status: ${response.status} (${response.statusText})`))
         }
         const contentType = (response.headers.get('Content-Type') || '').toLowerCase()
         if (!contentType.includes('image/svg+xml')) {
-          return Promise.reject(new Error(`${this.config.imageUrl} is not an SVG file`))
+          return Promise.reject(new Error(`${configuredUrl} is not an SVG file`))
         }
         return response.text()
       })
@@ -474,13 +482,17 @@ export default {
      * @param {Element} svgElement the source element (used for warnings only)
      */
     applyStyleClasses(svgElementConfig, isOn, svgElement) {
+      // resolve ids within this component's own SVG first, so several instances of the same SVG
+      // on one page (e.g. a personal widget used twice) don't target another instance's elements
+      const svgRoot = this.embeddedSvgRoot()
       const setClasses = (spec, add) => {
         if (!spec) return
         for (const entry of spec.split(',')) {
           const [idPart, classPart] = entry.split(':')
           if (!idPart || !classPart) continue
           const targetId = idPart.trim()
-          const targetElement = document.getElementById(targetId)
+          const idSelector = `[id="${targetId.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"]`
+          const targetElement = svgRoot?.querySelector(idSelector) || document.getElementById(targetId)
           if (!targetElement) {
             console.warn(`Target element ${targetId} not found for style class expression of ${svgElement.id}`)
             continue

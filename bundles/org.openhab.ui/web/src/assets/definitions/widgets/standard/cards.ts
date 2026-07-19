@@ -167,10 +167,12 @@ export const OhToggleCardDefinition = () =>
 
 // OhImageCard
 import ImageParameters from '../system/image.ts'
+import SvgEmbeddingParameters from '../system/svg.ts'
 export const OhImageCardDefinition = () =>
   new WidgetDefinition('oh-image-card', 'Image Card', 'Display an image (URL or Image item ) in a card')
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('image', 'Image'), ImageParameters())
+    .paramGroup(pg('svgEmbedding', 'SVG Embedding'), SvgEmbeddingParameters())
     .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the image is clicked'), actionParams())
 
 // OhVideoCard

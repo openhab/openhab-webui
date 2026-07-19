@@ -1,4 +1,4 @@
-import { WidgetDefinition, pt, pb } from '../helpers.ts'
+import { WidgetDefinition, pg, pt, pb } from '../helpers.ts'
 import { actionGroup, actionParams } from '../actions.ts'
 
 const VariableParameter = pt('variable', 'Variable', 'Name of the variable to set on input change')
@@ -53,9 +53,11 @@ export const OhIconDefinition = () =>
   new WidgetDefinition('oh-icon', 'Icon', 'Display an openHAB icon').paramGroup(actionGroup(), actionParams()).params(IconParameters())
 
 import ImageParameters from './image.ts'
+import SvgEmbeddingParameters from './svg.ts'
 export const OhImageDefinition = () =>
-  new WidgetDefinition('oh-image', 'Image', 'Displays an image from a URL or an item')
+  new WidgetDefinition('oh-image', 'Image', 'Displays an image from a URL or an item, optionally as an embedded interactive SVG')
     .paramGroup(actionGroup(), actionParams())
+    .paramGroup(pg('svgEmbedding', 'SVG Embedding'), SvgEmbeddingParameters())
     .params(ImageParameters())
 
 import VideoParameters from './video.ts'
