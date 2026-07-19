@@ -6,8 +6,19 @@
         Show All
       </f7-link> -->
     </f7-block-title>
-    <f7-block-footer v-if="subtitle">
-      {{ subtitle }}
+    <f7-block-footer v-if="subtitle || sortOptions.length > 0" class="addons-section-footer">
+      <div v-if="subtitle">
+        {{ subtitle }}
+      </div>
+      <div class="addons-section-sort-control">
+        <span>Sort by: {{ currentSortLabel }}</span>
+        <f7-icon f7="chevron_down" size="12px" aria-hidden="true" />
+        <select v-model="sortMode" class="addons-section-sort-select">
+          <option v-for="option in sortOptions" :key="option.value" :value="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
     </f7-block-footer>
     <template v-if="featuredAddons?.length && featuredAddons?.length > 0">
       <addons-swiper
@@ -87,6 +98,40 @@
     font-weight normal
     padding-top 8px
     vertical-align baseline
+  .addons-section-footer
+    display flex
+    align-items center
+    justify-content space-between
+    gap 12px
+    flex-wrap wrap
+  .addons-section-sort-control
+    position relative
+    display inline-flex
+    flex 0 0 auto
+    justify-content flex-end
+    align-items center
+    gap 6px
+    border 1px solid var(--f7-list-item-border-color)
+    border-radius 6px
+    margin-left auto
+    padding 0 8px
+    min-height 28px
+    white-space nowrap
+    font-size 13px
+  .addons-section-sort-select
+    position absolute
+    inset 0
+    margin-left 12px
+    width 100%
+    height 100%
+    cursor pointer
+    opacity 0
+    z-index 2
+  @media (max-width 767px)
+    .addons-section-footer
+      align-items flex-start
+    .addons-section-sort-control
+      margin-left 0
 .addons-table-list
   --f7-list-bg-color transparent
   --f7-list-item-title-white-space normal
@@ -130,12 +175,12 @@
 </style>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { f7 } from 'framework7-vue'
 import AddonListItem from './addon-list-item.vue'
 import AddonCard from './addon-card.vue'
 import AddonsSwiper from '@/components/addons/addons-swiper.vue'
-import { compareAddons } from '@/assets/addon-store.ts'
+import { defaultCompare, alphaCompare, metricCompare } from '@/assets/addon-store.ts'
 import * as api from '@/api'
 
 const device = f7.device
@@ -163,13 +208,56 @@ const props = withDefaults(
 // emits
 const emit = defineEmits<{ (e: 'addon-button-click', addon: api.Addon): void }>()
 
-// data
+// state
 const collapsed = ref(true)
+const sortMode = ref<'default' | 'ascending' | 'descending' | 'likes' | 'views' | 'comments'>('default')
 
 // computed
+const availableSortOptions = computed(() => ({
+  likes: props.addons.some((addon) => typeof addon.properties?.like_count === 'number'),
+  views: props.addons.some((addon) => typeof addon.properties?.views === 'number'),
+  comments: props.addons.some((addon) => typeof addon.properties?.posts_count === 'number')
+}))
+
+const sortOptions = computed(() => {
+  const options: Array<{ value: 'default' | 'ascending' | 'descending' | 'likes' | 'views' | 'comments'; label: string }> = [
+    { value: 'default', label: 'Default' },
+    { value: 'ascending', label: 'Name (A-Z)' },
+    { value: 'descending', label: 'Name (Z-A)' }
+  ]
+
+  if (availableSortOptions.value.likes) options.push({ value: 'likes', label: 'Likes' })
+  if (availableSortOptions.value.views) options.push({ value: 'views', label: 'Views' })
+  if (availableSortOptions.value.comments) options.push({ value: 'comments', label: 'Comments' })
+
+  return options
+})
+
+const currentSortLabel = computed(() => {
+  const selectedOption = sortOptions.value.find((option) => option.value === sortMode.value)
+  return selectedOption ? selectedOption.label : 'Default'
+})
+
+const sortComparator = computed<(a: api.Addon, b: api.Addon) => number>(() => {
+  switch (sortMode.value) {
+    case 'ascending':
+      return alphaCompare
+    case 'descending':
+      return (a, b) => alphaCompare(b, a)
+    case 'likes':
+      return metricCompare('like_count')
+    case 'views':
+      return metricCompare('views')
+    case 'comments':
+      return metricCompare('posts_count')
+    default:
+      return defaultCompare
+  }
+})
+
 const featuredAddons = computed<api.Addon[] | null>(() => {
   if (props.featured) {
-    return props.addons.filter((a) => props.featured.includes(a.uid)).sort(compareAddons)
+    return sortAddons(props.addons.filter((a) => props.featured.includes(a.uid)))
   }
   return null
 })
@@ -178,7 +266,7 @@ const notFeaturedAddons = computed<api.Addon[]>(() => {
   const baseList =
     featuredAddons.value && featuredAddons.value.length ? props.addons.filter((a) => !featuredAddons.value!.includes(a)) : [...props.addons]
 
-  return baseList.sort(compareAddons)
+  return sortAddons(baseList)
 })
 
 const addonCollapsedLimit = computed(() => {
@@ -200,12 +288,26 @@ const canExpand = computed(() => {
   return props.addons.length > addonCollapsedLimit.value
 })
 
+watch(
+  sortOptions,
+  (options) => {
+    if (!options.some((option) => option.value === sortMode.value)) {
+      sortMode.value = 'default'
+    }
+  },
+  { immediate: true }
+)
+
 // lifecycle
 onMounted(() => {
   if (props.showAll) expand()
 })
 
 // methods
+const sortAddons = (addons: api.Addon[]) => {
+  return [...addons].sort(sortComparator.value)
+}
+
 const expand = () => {
   collapsed.value = false
   // Small delay to allow DOM updates before F7 re-scans for lazy images

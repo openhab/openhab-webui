@@ -92,7 +92,7 @@ export const Formats: Record<string, string> = {
   karaf: 'Karaf'
 }
 
-export function compareAddons(a1: api.Addon, a2: api.Addon): number {
+export function defaultCompare(a1: api.Addon, a2: api.Addon): number {
   if (a1.installed && !a2.installed) return -1
   if (a2.installed && !a1.installed) return 1
   if (a1.verifiedAuthor && !a2.verifiedAuthor) return -1
@@ -114,4 +114,25 @@ export function compareAddons(a1: api.Addon, a2: api.Addon): number {
   const nameOrId1 = a1.label || a1.id
   const nameOrId2 = a2.label || a2.id
   return nameOrId1.localeCompare(nameOrId2)
+}
+
+export function alphaCompare(a1: api.Addon, a2: api.Addon): number {
+  const label1 = a1.label || a1.id
+  const label2 = a2.label || a2.id
+  return label1.localeCompare(label2)
+}
+
+export function metricCompare(metric: 'like_count' | 'views' | 'posts_count') {
+  return (a1: api.Addon, a2: api.Addon) => {
+    const value1 = a1.properties?.[metric]
+    const value2 = a2.properties?.[metric]
+    const number1 = typeof value1 === 'number' ? value1 : undefined
+    const number2 = typeof value2 === 'number' ? value2 : undefined
+
+    if (number1 === undefined && number2 === undefined) return alphaCompare(a1, a2)
+    if (number1 === undefined) return 1
+    if (number2 === undefined) return -1
+    if (number1 !== number2) return number2 - number1
+    return alphaCompare(a1, a2)
+  }
 }
