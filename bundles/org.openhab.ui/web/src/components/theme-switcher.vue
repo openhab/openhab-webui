@@ -87,6 +87,10 @@
             <f7-toggle v-model:checked="disableExpandableCardAnimation" />
           </f7-list-item>
           <f7-list-item>
+            <span>{{ t('about.miscellaneous.theme.disableLeftPanelSwipe') }}</span>
+            <f7-toggle v-model:checked="disableLeftPanelSwipe" />
+          </f7-list-item>
+          <f7-list-item>
             <span>{{ t('about.miscellaneous.theme.disablePageTransition') }}</span>
             <f7-toggle v-model:checked="disablePageTransitionAnimation" />
           </f7-list-item>
@@ -211,6 +215,7 @@ export default {
     },
     ...mapStores(useRuntimeStore, useUIOptionsStore),
     ...mapWritableState(useUIOptionsStore, [
+      'disableLeftPanelSwipe',
       'disablePageTransitionAnimation',
       'bars',
       'homeNavBar',
