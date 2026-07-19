@@ -298,6 +298,8 @@ import { AddonIcons, AddonTitles, AddonSuggestionLabels, AddonConnectionTypes, A
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
+let handledReloadInCurrentDocument = false
+
 export default {
   mixins: [AddonStoreMixin],
   props: {
@@ -381,8 +383,39 @@ export default {
     updateLeftPanelVisibility() {
       this.leftPanelOpened = f7.panel.get('left').opened
     },
+    isBrowserReloadOnAddonStore() {
+      // Detect browser reloads (Cmd+R, F5, etc.) on the /addons page using the PerformanceNavigationTiming API
+      const navigationEntry = performance.getEntriesByType?.('navigation')?.[0]
+      const isReload = navigationEntry?.type === 'reload'
+      if (!isReload) return false
+
+      // Compare against the original document URL to distinguish browser reloads
+      // on /addons from reloads elsewhere followed by in-app navigation.
+      let initialPathname = ''
+      if (navigationEntry?.name) {
+        try {
+          initialPathname = new URL(navigationEntry.name).pathname
+        } catch {
+          initialPathname = ''
+        }
+      }
+
+      if (!initialPathname && typeof window !== 'undefined') {
+        initialPathname = window.location.pathname
+      }
+
+      return initialPathname.startsWith('/addons')
+    },
     load(refresh = false) {
       this.ready = false
+
+      if (!refresh && !handledReloadInCurrentDocument && this.isBrowserReloadOnAddonStore()) {
+        refresh = true
+        // Prevent multiple refreshes on the same document load,
+        // e.g. when the user reloads, then navigates to another page and back to /addons.
+        handledReloadInCurrentDocument = true
+      }
+
       if (this.searchFor) {
         // Show this in the searchbar while the page is loading
         this.$refs.storeSearchbar.$el.f7Searchbar.$inputEl.val(this.searchFor)
