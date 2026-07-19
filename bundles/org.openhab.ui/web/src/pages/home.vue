@@ -7,7 +7,12 @@
     @page:beforein="onPageBeforeIn"
     @page:afterin="onPageAfterIn"
     @page:beforeout="onPageBeforeOut">
-    <f7-navbar :large="!simpleNavbar" :transparent="!simpleNavbar" class="home-nav disable-user-select" ref="navbar">
+    <f7-navbar
+      v-if="homePageComponent?.config?.hideNavbar !== true"
+      :large="!simpleNavbar"
+      :transparent="!simpleNavbar"
+      class="home-nav disable-user-select"
+      ref="navbar">
       <f7-nav-left>
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
