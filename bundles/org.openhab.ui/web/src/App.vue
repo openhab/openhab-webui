@@ -617,6 +617,7 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
 
 import { getRoot } from '@/api'
+import { isUnauthorized } from '@/js/hey-api'
 
 const dayjsLocalesGlob = import.meta.glob('../node_modules/dayjs/esm/locale/*.js', { import: 'default' })
 
@@ -915,7 +916,7 @@ export default {
           return useSemanticsStore().loadSemantics(i18n)
         })
         .catch((err) => {
-          if (err === 'Unauthorized' || err === 401) {
+          if (isUnauthorized(err)) {
             console.info('openHAB REST API implicit user role is disabled. Authorizing ...')
             this.authorize(false) // will redirect to auth page, redirecting back to Main UI triggers new load
           } else {
