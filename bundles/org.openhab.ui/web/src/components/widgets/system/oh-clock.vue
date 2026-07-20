@@ -1,5 +1,5 @@
 <template>
-  <div :class="config.class" :style="config.style" v-text="date" />
+  <div v-text="date" />
 </template>
 
 <script setup lang="ts">
@@ -11,6 +11,8 @@ import { OhClockDefinition } from '@/assets/definitions/widgets/system'
 import utc from 'dayjs/plugin/utc'
 import timezoneDayjs from 'dayjs/plugin/timezone'
 import type { WidgetContext } from '../types'
+
+import { OhClock as OhClockType } from '@/types/components/widgets'
 
 dayjs.extend(utc)
 dayjs.extend(timezoneDayjs)
@@ -27,7 +29,10 @@ const props = defineProps<{
 }>()
 
 // composables
-const { config } = useWidgetContext(computed(() => props.context))
+const { config } = useWidgetContext(
+  computed(() => props.context),
+  OhClockType.isConfig
+)
 
 // data (state)
 let timer: number
@@ -54,6 +59,6 @@ function updateTime() {
     date.value = 'Invalid timezone settings'
     return
   }
-  date.value = dayjsDate.format(props.format || config.value.format || 'LTS')
+  date.value = dayjsDate.format(props.format || config.value.timeFormat || 'LTS')
 }
 </script>

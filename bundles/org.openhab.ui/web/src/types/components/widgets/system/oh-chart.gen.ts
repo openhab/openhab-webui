@@ -13,6 +13,8 @@ export interface Config {
   initialYear?: number
   future?: number
   formatterMaxDecimalPlaces?: number
+  periodVisible?: boolean
+  height?: string
 }
 import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 

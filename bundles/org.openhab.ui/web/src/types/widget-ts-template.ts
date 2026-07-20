@@ -11,7 +11,8 @@
  * @param config - An unverified type structure to check.
  * @returns `true` if the input matches type `T`, otherwise `false`.
  */
-type ConfigGuardFn<T> = (config: Record<string, unknown>) => boolean
+export type ConfigGuardFn<T> = (config: unknown) => config is T
+export type ConfigValidationFn<T> = (config: Record<string, unknown>) => boolean
 
 type Component = {
   component: string
@@ -28,7 +29,7 @@ type Component = {
  * @param validationFn - An optional custom function to perform deeper structural validation.
  * @returns `true` if the input is a valid object and passes validation, narrowing the type to `T`; otherwise `false`.
  */
-export function guardConfig<T>(config: unknown, validationFn?: ConfigGuardFn<T>): config is T {
+export function guardConfig<T>(config: unknown, validationFn?: ConfigValidationFn<T>): config is T {
   if (!config || typeof config !== 'object') return false
   return validationFn ? validationFn(config as Record<string, unknown>) : true
 }
@@ -63,5 +64,5 @@ export function guardComponent<TComponent extends { component: string; config?: 
     candidate.config = defaultConfig
   }
 
-  return isConfig(component.config as Record<string, unknown>)
+  return isConfig(component.config)
 }
