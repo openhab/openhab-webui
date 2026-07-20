@@ -267,7 +267,7 @@ const context = computed(() => props.context)
 const { config, visible, childContext, defaultSlots } = useWidgetContext(context)
 
 const component = computed(() => {
-  const c : unknown = context.value.component
+  const c: unknown = context.value.component
   if (!OhCanvasItemType.isComponent(c)) {
     throw new Error('Invalid config for oh-canvas-item')
   }
@@ -282,19 +282,19 @@ const resizing = ref(false)
 const active = ref(false)
 // run mode only:
 const ready = ref(false)
-let resizeObserver : ResizeObserver | null = null
+let resizeObserver: ResizeObserver | null = null
 
 // computed
 const x = computed<number>({
-  get: () => (component.value.config.x) ?? 20,
-  set: (val : number) => {
+  get: () => component.value.config.x ?? 20,
+  set: (val: number) => {
     component.value.config.x = val
   }
 })
 
 const y = computed({
-  get: () => (component.value.config.y) ?? 20,
-  set: (val : number) => {
+  get: () => component.value.config.y ?? 20,
+  set: (val: number) => {
     component.value.config.y = val
   }
 })

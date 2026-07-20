@@ -13,8 +13,8 @@ export interface Config {
   imageSrcSet?: string
   embedSvg?: boolean
   embedSvgFlashing?: boolean
-embeddedSvgActions?: Record<string, OhSvgElement.Config>
-style?: Record<string, unknown>
+	embeddedSvgActions?: Record<string, OhSvgElement.Config>
+
   hideNavbar?: boolean
   hideSidebarIcon?: boolean
   showFullscreenIcon?: boolean

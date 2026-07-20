@@ -118,7 +118,7 @@ import { f7 } from 'framework7-vue'
 import { computedAsync } from '@vueuse/core'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
+import { useWidgetAction, type WidgetActionConfig } from '@/components/widgets/useWidgetAction.ts'
 import { useSvgEmbedded } from '@/components/widgets/svg/useSvgEmbedded'
 import media from '@/js/openhab/media'
 import * as api from '@/api'
@@ -128,7 +128,7 @@ import { LMap, LImageOverlay, LFeatureGroup, LControl } from '@vue-leaflet/vue-l
 import 'leaflet/dist/leaflet.css'
 
 import OhPlanMarker from './oh-plan-marker.vue'
-import { OhPlanMarker as OhPlanMarkerType } from '@/types/components/widgets'
+import { OhPlanMarker as OhPlanMarkerType, OhPlanPage as OhPlanPageType } from '@/types/components/widgets'
 import { OhPlanPageDefinition } from '@/assets/definitions/widgets/plan'
 import type { WidgetContext } from '../types'
 
@@ -156,8 +156,8 @@ defineOptions({
 
 // Composables
 const context = computed(() => props.context)
-const { config, scopedCssUid, childContext, defaultSlots, evaluateExpression } = useWidgetContext(context)
-const { performAction } = useWidgetAction(context, config, evaluateExpression)
+const { config, scopedCssUid, childContext, defaultSlots, evaluateExpression } = useWidgetContext(context, OhPlanPageType.isConfig)
+const { performAction } = useWidgetAction(context, config as Ref<WidgetActionConfig>, evaluateExpression)
 
 const { embeddedSvgReady, loadAndEmbedSvg, removeEmbeddedSvg } = useSvgEmbedded({
   editmode: computed(() => Boolean(context.value.editmode)),
@@ -215,6 +215,7 @@ const mapOptions = computed(() => {
 })
 
 const backgroundImageUrl = computedAsync(async () => {
+  if (!config.value.imageUrl) return null
   return media.getImage(config.value.imageUrl)
 })
 

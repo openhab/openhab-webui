@@ -29,6 +29,7 @@ export interface Config {
   tooltipColor?: TooltipColor
   embedSvg?: boolean
   embedSvgFlashing?: boolean
+	embeddedSvgActions?: Record<string, OhSvgElement.Config>
 }
 export interface Component {
   component: 'oh-plan-page'

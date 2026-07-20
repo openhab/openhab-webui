@@ -154,7 +154,12 @@ import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { useSvgEmbedded } from '@/components/widgets/svg/useSvgEmbedded'
 import OhCanvasLayer from './oh-canvas-layer.vue'
 import type { OhCanvasItemSelection } from './oh-canvas-item.vue'
-import { OhCanvasLayer as OhCanvasLayerType, OhCanvasLayout as OhCanvasLayoutType, OhSvgElement, OhCanvasItem as OhCanvasItemType } from '@/types/components/widgets'
+import {
+  OhCanvasLayer as OhCanvasLayerType,
+  OhCanvasLayout as OhCanvasLayoutType,
+  OhSvgElement,
+  OhCanvasItem as OhCanvasItemType
+} from '@/types/components/widgets'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 import { showToast } from '@/js/dialog-promises'
 import type { WidgetContext } from '../types'
@@ -188,18 +193,7 @@ defineOptions({
 
 // Composables
 const context = computed(() => props.context)
-const { config: rawConfig, childContext, slots } = useWidgetContext(context)
-
-// config is validated and typed as OhCanvasLayoutType.Config
-const config = computed(() => {
-  const raw : unknown = rawConfig.value
-  if (OhCanvasLayoutType.isConfig(raw)) {
-    return raw
-  }
-  console.log('Invalid config for oh-canvas-layout, using default config')
-
-  return defaultConfig
-})
+const { config, childContext, slots } = useWidgetContext(context, OhCanvasLayoutType.isConfig)
 
 const { loadAndEmbedSvg, removeEmbeddedSvg, embeddedSvgReady, flashEmbeddedSvgComponents } = useSvgEmbedded({
   editmode: computed(() => Boolean(context.value.editmode)),
@@ -259,7 +253,7 @@ const canvasStyle = computed(
       '--oh-canvas-item-box-shadow': config.value.boxShadow ? config.value.boxShadow : '0px 0px 4px 2px #444',
       '--oh-canvas-item-svg-shadow': config.value.filterShadow ? config.value.filterShadow : 'drop-shadow(0px 0px 4px #444)',
       '--oh-canvas-item-text-shadow': config.value.textShadow ? config.value.textShadow : '#444 0px 0px 4px',
-      ...config.value.style
+      ...((config.value as Record<string, unknown>).style as Record<string, unknown>)
     }) as any
 )
 
@@ -495,6 +489,5 @@ function ociDragged(item: string, deltaX: number, deltaY: number) {
   }
 }
 
-function ociDragStop(itemId: string) {
-}
+function ociDragStop(itemId: string) {}
 </script>
