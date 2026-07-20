@@ -195,6 +195,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
           (newState) => {
             const svgElementConfig = embeddedSvgActions.value[svgElement.id]
             if (newState && svgElementConfig) {
+              svgElement.dataset.state = newState.state
               applyStateToSvgElement(item, newState, svgElementConfig, svgElement)
             }
           },
