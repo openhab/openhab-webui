@@ -105,7 +105,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     if (embeddedSvgRoot.value) {
       const svgElements = embeddedSvgRoot.value.querySelectorAll<SVGElementWithHandlers>('[openhab]')
       subscribeEmbeddedSvgListeners(svgElements)
-      await setupEmbeddedSvgStateTracking(svgElements)
+      setupEmbeddedSvgStateTracking(svgElements)
     }
     embeddedSvgReady.value = true
   }

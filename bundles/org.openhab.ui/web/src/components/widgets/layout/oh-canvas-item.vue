@@ -2,7 +2,8 @@
   <template v-if="visible">
     <vue-draggable-resizable
       v-if="context.editmode"
-      v-model:active="active"
+      :active="active"
+      @update:active="onUpdateActive"
       :id="'oh-canvas-item-vdr-' + id"
       :key="reloadKey"
       :x="x"
@@ -234,6 +235,7 @@ import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhCanvasItemDefinition } from '@/assets/definitions/widgets/layout'
 import type { WidgetContext } from '@/components/widgets/types'
 import OhPlaceholderWidget from '@/components/widgets/layout/oh-placeholder-widget.vue'
+import { OhCanvasItem as OhCanvasItemType } from '@/types/components/widgets'
 
 defineOptions({ widget: OhCanvasItemDefinition })
 
@@ -247,16 +249,30 @@ const props = defineProps<{
 }>()
 
 export interface OhCanvasItemEmits {
-  (e: 'oci-selected', id: string): void
+  (e: 'oci-selected', item: OhCanvasItemSelection): void
   (e: 'oci-deselected', id: string): void
   (e: 'oci-drag-stop', id: string): void
   (e: 'oci-dragged', id: string, x: number, y: number): void
 }
 
+export interface OhCanvasItemSelection {
+  id: string
+  component: OhCanvasItemType.Component
+}
+
 const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
-const { config, visible, childContext, defaultSlots } = useWidgetContext(computed(() => props.context))
+const context = computed(() => props.context)
+const { config, visible, childContext, defaultSlots } = useWidgetContext(context)
+
+const component = computed(() => {
+  const c : unknown = context.value.component
+  if (!OhCanvasItemType.isComponent(c)) {
+    throw new Error('Invalid config for oh-canvas-item')
+  }
+  return c
+})
 
 // data (state)
 const root = ref<VNodeRef | null>(null)
@@ -266,47 +282,45 @@ const resizing = ref(false)
 const active = ref(false)
 // run mode only:
 const ready = ref(false)
-const resizeObserver = ref<ResizeObserver | null>(null)
+let resizeObserver : ResizeObserver | null = null
 
 // computed
-// note: direct mutation of props is intentional, parents handle this
-
-const x = computed({
-  get: () => (config.value?.x as number) ?? 20,
-  set: (val) => {
-    props.context.component.config.x = val
+const x = computed<number>({
+  get: () => (component.value.config.x) ?? 20,
+  set: (val : number) => {
+    component.value.config.x = val
   }
 })
 
 const y = computed({
-  get: () => (config.value?.y as number) ?? 20,
-  set: (val) => {
-    props.context.component.config.y = val
+  get: () => (component.value.config.y) ?? 20,
+  set: (val : number) => {
+    component.value.config.y = val
   }
 })
 
 const w = computed<number | 'auto'>({
-  get: () => (config.value?.w as number | string as 'auto') ?? 100,
+  get: () => (component.value.config.w as number | string as 'auto') ?? 100,
   set: (val: number | 'auto') => {
-    props.context.component.config.w = val
+    component.value.config.w = val
   }
 })
 
 const h = computed<number | 'auto'>({
   get: () => (config.value?.h as number | string as 'auto') ?? 100,
   set: (val: number | 'auto') => {
-    props.context.component.config.h = val
+    component.value.config.h = val
   }
 })
 
 const shadow = computed({
   get: () => config.value?.noCanvasShadow === false,
   set: (val) => {
-    props.context.component.config.noCanvasShadow = val
+    component.value.config.noCanvasShadow = val
   }
 })
 
-const styled = computed(() => config.value?.notStyled === false)
+const styled = computed(() => component.value.config.notStyled === false)
 
 const autosize = computed(() => w.value === 'auto')
 
@@ -316,49 +330,48 @@ const editMessage = computed(() => {
   return ''
 })
 
-// watchers
-watch(active, (val) => {
-  if (val) {
-    emit('oci-selected', props.id)
-  } else {
-    emit('oci-deselected', props.id)
-  }
-})
-
 // lifecycle
 onMounted(() => {
   // In Edit Mode: No need to wait for the root element to have actual dimensions
-  if (props.context.editmode) {
+  if (context.value.editmode) {
     ready.value = true
     return
   }
 
   // In Run Mode: Wait for the element to have actual dimensions
-  resizeObserver.value = new ResizeObserver((entries) => {
+  resizeObserver = new ResizeObserver((entries) => {
     for (const entry of entries) {
       // Once width/height is non-zero, the layout is stable enough for f7-swiper
       if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
         ready.value = true
-        resizeObserver.value?.disconnect()
+        resizeObserver?.disconnect()
       }
     }
   })
 
   // Start observing the root element of this component
   if (root.value) {
-    resizeObserver.value.observe(root.value)
+    resizeObserver.observe(root.value)
   } else {
     ready.value = true
   }
 })
 
 onBeforeUnmount(() => {
-  if (resizeObserver.value) {
-    resizeObserver.value.disconnect()
-  }
+  resizeObserver?.disconnect()
+  resizeObserver = null
 })
 
 // methods
+function onUpdateActive(newActive: boolean) {
+  active.value = newActive
+  if (newActive) {
+    emit('oci-selected', { id: props.id, component: component.value })
+  } else {
+    emit('oci-deselected', props.id)
+  }
+}
+
 const toggleAutoSize = () => {
   if (w.value === 'auto') {
     const elem = document.getElementById('oh-canvas-item-vdr-' + props.id)
@@ -386,10 +399,6 @@ const onResize = (newX: number, newY: number, width: number, height: number) => 
 
 const onDrag = (newX: number, newY: number) => {
   emit('oci-dragged', props.id, newX - x.value, newY - y.value)
-  moveTo(newX, newY)
-}
-
-const moveTo = (newX: number, newY: number) => {
   x.value = newX
   y.value = newY
 }

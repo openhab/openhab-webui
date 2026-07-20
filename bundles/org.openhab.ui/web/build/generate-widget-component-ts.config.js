@@ -89,5 +89,11 @@ export default {
           'embedSvgFlashing?: boolean\n' + 'embeddedSvgActions?: Record<string, OhSvgElement.Config>\n'
         ) // add embeddedSvgActions to type
     }
+  },
+  OhCanvasItem: {
+    _All: {
+      modifier: (e) =>
+        e.replace('w\?: number', 'w?: number | \'auto\'').replace('h\?: number', 'h?: number | \'auto\'') // Fix auto type
+    }
   }
 }

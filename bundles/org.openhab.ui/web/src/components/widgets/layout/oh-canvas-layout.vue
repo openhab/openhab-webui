@@ -3,6 +3,7 @@
     ref="ohCanvasLayout"
     class="oh-canvas-layout disable-user-select"
     :class="context.editmode ? 'margin-top' : ''"
+    tabindex="0"
     @keydown="onKeyDown"
     @keyup="onKeyUp">
     <f7-block v-if="context.editmode">
@@ -128,6 +129,9 @@
     height 100%
     width 100%
     object-fit contain
+
+.oh-canvas-layout.disable-user-select:focus
+  outline none
 </style>
 
 <script setup lang="ts">
@@ -149,7 +153,8 @@ import type { Router } from 'framework7'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { useSvgEmbedded } from '@/components/widgets/svg/useSvgEmbedded'
 import OhCanvasLayer from './oh-canvas-layer.vue'
-import { OhCanvasLayer as OhCanvasLayerType, OhCanvasLayout as OhCanvasLayoutType, OhSvgElement } from '@/types/components/widgets'
+import type { OhCanvasItemSelection } from './oh-canvas-item.vue'
+import { OhCanvasLayer as OhCanvasLayerType, OhCanvasLayout as OhCanvasLayoutType, OhSvgElement, OhCanvasItem as OhCanvasItemType } from '@/types/components/widgets'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 import { showToast } from '@/js/dialog-promises'
 import type { WidgetContext } from '../types'
@@ -187,7 +192,7 @@ const { config: rawConfig, childContext, slots } = useWidgetContext(context)
 
 // config is validated and typed as OhCanvasLayoutType.Config
 const config = computed(() => {
-  const raw = rawConfig.value
+  const raw : unknown = rawConfig.value
   if (OhCanvasLayoutType.isConfig(raw)) {
     return raw
   }
@@ -213,6 +218,9 @@ const { loadAndEmbedSvg, removeEmbeddedSvg, embeddedSvgReady, flashEmbeddedSvgCo
 const canvasBackground = useTemplateRef('canvasBackground')
 const layers = ref<{ item: OhCanvasLayerType.Component; id: string }[]>([])
 
+let nextCanvasLayerRuntimeId = 0
+const canvasLayerRuntimeIds = new WeakMap<api.UiComponent, string>()
+
 const style = reactive({
   width: 0,
   height: 0,
@@ -227,7 +235,7 @@ const grid = reactive({
 const actLyrIdx = ref(0)
 const preventDeactivation = ref(false)
 
-const selectedItems: string[] = []
+const selectedItems = new Map<string, OhCanvasItemType.Component>()
 let windowWidth = 0
 let windowHeight = 0
 let screenWidth = 0
@@ -395,9 +403,14 @@ function computeLayout() {
   if (slots.value.canvas && Array.isArray(slots.value.canvas)) {
     slots.value.canvas.forEach((item: api.UiComponent) => {
       if (OhCanvasLayerType.isComponent(item)) {
+        let layerId = canvasLayerRuntimeIds.get(item)
+        if (!layerId) {
+          layerId = `canvas-layer-${++nextCanvasLayerRuntimeId}`
+          canvasLayerRuntimeIds.set(item, layerId)
+        }
         _layers.push({
           item,
-          id: Math.random().toString(36).substring(2)
+          id: layerId
         })
       } else {
         console.log('Wrong component type in canvas: ' + item.component)
@@ -445,42 +458,43 @@ function onKeyUp(ev: KeyboardEvent) {
   }
 }
 
-//TODO - Fix multiple selection / moveing of items
 function moveSelectedItems(exceptId: string | null, deltaX: number, deltaY: number) {
   let movedSomething = false
-  /*
-  selectedItems.forEach((i) => {
-    if (i.id !== exceptId) {
-      i.moveTo(i.x + deltaX, i.y + deltaY)
+
+  selectedItems.forEach((component, itemId) => {
+    if (itemId !== exceptId) {
+      if (component.component !== 'oh-canvas-item') {
+        return
+      }
+
+      const currentX = typeof component.config.x === 'number' ? component.config.x : 20
+      const currentY = typeof component.config.y === 'number' ? component.config.y : 20
+
+      component.config.x = currentX + deltaX
+      component.config.y = currentY + deltaY
       movedSomething = true
     }
   })
-  */
+
   return movedSomething
 }
 
-function ociSelected(item: string) {
-  selectedItems.push(item)
+function ociSelected(item: OhCanvasItemSelection) {
+  selectedItems.set(item.id, item.component)
 }
 
-function ociDeselected(item: string) {
-  selectedItems.splice(selectedItems.indexOf(item), 1)
+function ociDeselected(itemId: string) {
+  selectedItems.delete(itemId)
 }
 
 function ociDragged(item: string, deltaX: number, deltaY: number) {
   // Move all selected (active) items, except the source one (already moved)
   // if there are several objects selected
-  if (selectedItems.length > 1) {
-    // moveSelectedItems(item.id, deltaX, deltaY)
+  if (selectedItems.size > 1) {
+    moveSelectedItems(item, deltaX, deltaY)
   }
 }
 
 function ociDragStop(itemId: string) {
-  // Notify items of drag end in case of multiple items selection
-  if (selectedItems.length > 1) {
-    selectedItems.forEach((item) => {
-      // item.stopDrag()
-    })
-  }
 }
 </script>

@@ -91,7 +91,11 @@ export function OhCanvasItemDefinition() {
       pb('notStyled', 'Preserve classic style', 'Preserve classic appearance of widgets as in standard layout pages.'),
       pb('noCanvasShadow', 'No elements shadow', 'Do not shadow inner elements of standard widgets').v((_value, configuration) => {
         return configuration.notStyled !== true
-      })
+      }),
+      pn('x', 'X Position', 'X position of the widget on the canvas (default 20)'),
+      pn('y', 'Y Position', 'Y position of the widget on the canvas (default 20)'),
+      pn('w', 'Width', 'Width of the widget on the canvas (default 100)'),
+      pn('h', 'Height', 'Height of the widget on the canvas (default 100)')
     ]
   )
 }

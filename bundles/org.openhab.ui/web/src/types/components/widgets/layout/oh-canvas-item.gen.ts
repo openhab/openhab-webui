@@ -5,6 +5,10 @@ import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 export interface Config {
   notStyled?: boolean
   noCanvasShadow?: boolean
+  x?: number
+  y?: number
+  w?: number | 'auto'
+  h?: number | 'auto'
 }
 export interface Component {
   component: 'oh-canvas-item'
