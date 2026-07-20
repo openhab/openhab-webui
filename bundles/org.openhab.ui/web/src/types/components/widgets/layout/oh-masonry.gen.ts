@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export enum Flavor {
   vueMasonryCss = 'vue-masonry-css',
   cssGrid = 'css-grid'
@@ -8,8 +10,6 @@ export enum Flavor {
 export interface Config {
   flavor?: Flavor
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-masonry'
   config: Config

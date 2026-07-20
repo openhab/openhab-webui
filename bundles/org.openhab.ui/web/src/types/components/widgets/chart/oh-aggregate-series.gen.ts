@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   OffsetUnit,
   Type,
@@ -12,6 +13,7 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
 } from '../common.gen.ts'
+
 
 export enum Markers {
   avg = 'avg',
@@ -79,8 +81,6 @@ export interface Config {
   actionVariableValue?: string
   actionVariableKey?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-aggregate-series'
   config: Config

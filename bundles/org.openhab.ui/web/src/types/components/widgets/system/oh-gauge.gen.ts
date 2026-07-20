@@ -1,8 +1,10 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   GaugeType
 } from '../common.gen.ts'
+
 
 export interface Config {
   item?: string
@@ -24,8 +26,6 @@ export interface Config {
   labelFontSize?: string
   labelFontWeight?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-gauge'
   config: Config

@@ -1,9 +1,11 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   NameLocation,
   Style
 } from '../common.gen.ts'
+
 
 export interface Config {
   name?: string
@@ -13,8 +15,6 @@ export interface Config {
   style?: Style
   gridIndex?: number
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-time-axis'
   config: Config

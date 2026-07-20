@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export interface Config {
   iconSize?: number
   websocketUrl: string
@@ -20,8 +22,6 @@ export interface Config {
   sipStateItem?: string
   enableSIPDebug?: boolean
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-sipclient'
   config: Config

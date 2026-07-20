@@ -1,8 +1,10 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   TrendGradientDirection
 } from '../common.gen.ts'
+
 
 export interface Config {
   trendItem?: string
@@ -12,8 +14,6 @@ export interface Config {
   trendGradientDirection?: TrendGradientDirection
   trendSampling?: number
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-trend'
   config: Config

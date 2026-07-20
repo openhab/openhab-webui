@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export enum SourceType {
   array = 'array',
   range = 'range',
@@ -30,8 +32,6 @@ export interface Config {
   fragment?: boolean
   cacheSource?: boolean
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-repeater'
   config: Config

@@ -1,8 +1,10 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   NameLocation
 } from '../common.gen.ts'
+
 
 export enum Split {
   line = 'line',
@@ -21,8 +23,6 @@ export interface Config {
   split?: Split[]
   gridIndex?: number
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-value-axis'
   config: Config

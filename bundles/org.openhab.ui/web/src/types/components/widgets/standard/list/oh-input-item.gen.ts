@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export interface Config {
   title?: string
   subtitle?: string
@@ -27,8 +29,6 @@ export interface Config {
   variable?: string
   variableKey?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-input-item'
   config: Config

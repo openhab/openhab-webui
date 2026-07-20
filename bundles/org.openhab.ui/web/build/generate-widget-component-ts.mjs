@@ -287,8 +287,6 @@ function generateActionTS(mapCommonOptions) {
 function generateComponentValidation(component, configValidator) {
   let content = ''
 
-  content += `import { guardConfig, guardComponent } from '@/types/widget-ts-template'\n\n`
-
   content += `export interface Component {\n`
   content += `  component: '${component}'\n`
   content += `  config: Config\n`
@@ -383,6 +381,8 @@ function generateComponentTS(mapCommonOptions) {
       content += generateComponentValidation(widgetName, configWidget.configValidator)
 
       let preamble = '// note: this file is generated and should not be edited by hand\n\n'
+      preamble += `import { guardConfig, guardComponent } from '@/types/widget-ts-template'\n`
+
       let postamble = ''
       if (commonComponents.length > 0) {
         preamble += 'import {\n'
@@ -394,6 +394,8 @@ function generateComponentTS(mapCommonOptions) {
         postamble += commonComponents.map((name) => (name === 'Period' ? `  type ${name}` : `  ${name}`)).join(',\n')
         postamble += '\n}\n'
       }
+
+      preamble += '\n'
 
       content = preamble + content + postamble
 

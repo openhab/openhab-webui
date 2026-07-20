@@ -1,9 +1,11 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   NameLocation,
   Style
 } from '../common.gen.ts'
+
 
 export enum CategoryType {
   hour = 'hour',
@@ -38,8 +40,6 @@ export interface Config {
   monthFormat: MonthFormat
   data?: string[]
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-category-axis'
   config: Config

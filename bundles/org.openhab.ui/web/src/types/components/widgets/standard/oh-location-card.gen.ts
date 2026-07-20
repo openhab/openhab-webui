@@ -1,8 +1,10 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   BackgroundColor
 } from '../common.gen.ts'
+
 
 export enum Badges {
   battery = 'battery',
@@ -33,8 +35,6 @@ export interface Config {
   disableBadges?: boolean
   badges?: Badges
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-location-card'
   config: Config

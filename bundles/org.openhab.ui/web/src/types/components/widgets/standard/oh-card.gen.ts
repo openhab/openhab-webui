@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Action,
   ActionHttpMethod,
@@ -14,6 +15,7 @@ import {
   Taphold_actionAnalyzerCoordSystem,
   Taphold_actionAnalyzerAggregation
 } from '../common.gen.ts'
+
 
 export interface Config {
   title?: string
@@ -78,8 +80,6 @@ export interface Config {
   taphold_actionVariableValue?: string
   taphold_actionVariableKey?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-card'
   config: Config

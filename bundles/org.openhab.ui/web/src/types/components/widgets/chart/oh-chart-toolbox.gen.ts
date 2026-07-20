@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export enum PresetFeatures {
   saveAsImage = 'saveAsImage',
   restore = 'restore',
@@ -18,8 +20,6 @@ export interface Config {
   width?: string
   height?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-chart-toolbox'
   config: Config

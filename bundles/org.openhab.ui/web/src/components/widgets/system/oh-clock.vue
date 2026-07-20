@@ -1,5 +1,8 @@
 <template>
-  <div v-text="date" />
+  <div
+    :class="(config as Record<string, unknown>).class as Record<string, boolean>"
+    :style="(config as Record<string, unknown>).style as string"
+    v-text="date" />
 </template>
 
 <script setup lang="ts">

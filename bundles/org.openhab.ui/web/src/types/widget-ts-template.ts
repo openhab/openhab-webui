@@ -30,7 +30,7 @@ type Component = {
  * @returns `true` if the input is a valid object and passes validation, narrowing the type to `T`; otherwise `false`.
  */
 export function guardConfig<T>(config: unknown, validationFn?: ConfigValidationFn<T>): config is T {
-  if (!config || typeof config !== 'object') return false
+  if (!config || typeof config !== 'object' || Array.isArray(config)) return false
   return validationFn ? validationFn(config as Record<string, unknown>) : true
 }
 
@@ -60,7 +60,7 @@ export function guardComponent<TComponent extends { component: string; config?: 
   const candidate = component as Record<string, unknown>
   if (candidate.component !== componentType) return false
 
-  if (!('config' in candidate) && defaultConfig) {
+  if ((!('config' in candidate) || candidate.config === undefined) && defaultConfig) {
     candidate.config = defaultConfig
   }
 

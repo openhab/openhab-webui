@@ -1,9 +1,9 @@
 // note: this file is generated and should not be edited by hand
 
-export interface Config {
-}
 import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 
+export interface Config {
+}
 export interface Component {
   component: 'oh-grid-row'
   config: Config

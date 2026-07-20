@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   LabelPosition,
   Action,
@@ -9,6 +10,7 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
 } from '../common.gen.ts'
+
 
 export enum Type {
   line = 'line',
@@ -54,8 +56,6 @@ export interface Config {
   actionVariableValue?: string
   actionVariableKey?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-data-series'
   config: Config

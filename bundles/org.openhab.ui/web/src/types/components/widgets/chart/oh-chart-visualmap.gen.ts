@@ -1,8 +1,10 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Orient
 } from '../common.gen.ts'
+
 
 export enum Type {
   continuous = 'continuous',
@@ -32,8 +34,6 @@ export interface Config {
   width?: string
   height?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-chart-visualmap'
   config: Config

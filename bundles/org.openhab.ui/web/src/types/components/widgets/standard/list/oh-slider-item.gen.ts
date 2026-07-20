@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export interface Config {
   title?: string
   subtitle?: string
@@ -22,8 +24,6 @@ export interface Config {
   commandInterval?: number
   delayStateDisplay?: number
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-slider-item'
   config: Config

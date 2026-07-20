@@ -1,9 +1,11 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   ChartType,
   type Period
 } from '../common.gen.ts'
+
 
 export interface Config {
   chartType: ChartType
@@ -16,8 +18,6 @@ export interface Config {
   periodVisible?: boolean
   height?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-chart'
   config: Config

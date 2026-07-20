@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export enum VisibleTo {
   role_administrator = 'role:administrator',
   role_user = 'role:user'
@@ -11,8 +13,6 @@ export interface Config {
   visible?: string
   visibleTo?: VisibleTo
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-canvas-layer'
   config: Config

@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   CircleShape,
   LineCap,
@@ -11,6 +12,7 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
 } from '../../common.gen.ts'
+
 
 export interface Config {
   header?: string
@@ -74,8 +76,6 @@ export interface Config {
   actionVariableValue?: string
   actionVariableKey?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-knob-cell'
   config: Config

@@ -57,7 +57,7 @@ export default {
   },
   widget: OhIconDefinition,
   setup(props) {
-    const context = computed(() => props.context ?? { component: 'oh-icon', config: {} })
+    const context = computed(() => props.context ?? { component: { component: 'oh-icon', config: {}, props: {} } })
     const { config, hasAction, evaluateExpression } = useWidgetContext(context)
     const { performAction } = useWidgetAction(context, config, evaluateExpression)
     return { config, hasAction, performAction }

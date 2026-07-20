@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export interface Config {
   initialCenter?: string
   initialZoom?: string
@@ -9,8 +11,6 @@ export interface Config {
   tileLayerProvider?: string
   overlayTileLayerProvider?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-map-page'
   config: Config

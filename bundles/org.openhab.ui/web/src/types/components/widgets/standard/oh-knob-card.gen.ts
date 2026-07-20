@@ -1,10 +1,12 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   CircleShape,
   LineCap,
   HandleShape
 } from '../common.gen.ts'
+
 
 export interface Config {
   title?: string
@@ -38,8 +40,6 @@ export interface Config {
   rangeColor?: string
   tooltipColor?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-knob-card'
   config: Config

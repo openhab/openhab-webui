@@ -1,8 +1,10 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Orient
 } from '../common.gen.ts'
+
 
 export interface Config {
   show?: boolean
@@ -10,8 +12,6 @@ export interface Config {
   confine?: boolean
   smartFormatter?: boolean
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-chart-tooltip'
   config: Config

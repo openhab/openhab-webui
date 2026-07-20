@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Orient,
   Action,
@@ -9,6 +10,7 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
 } from '../common.gen.ts'
+
 
 export interface Config {
   top?: string
@@ -48,8 +50,6 @@ export interface Config {
   actionVariableValue?: string
   actionVariableKey?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-calendar-axis'
   config: Config

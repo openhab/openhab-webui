@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export enum Width {
 
 }
@@ -32,8 +34,6 @@ export interface Config {
   large?: Large
   xlarge?: Xlarge
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-grid-col'
   config: Config

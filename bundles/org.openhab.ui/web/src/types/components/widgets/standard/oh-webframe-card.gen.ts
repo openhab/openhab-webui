@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export interface Config {
   title?: string
   footer?: string
@@ -10,8 +12,6 @@ export interface Config {
   src?: string
   height?: number
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-webframe-card'
   config: Config

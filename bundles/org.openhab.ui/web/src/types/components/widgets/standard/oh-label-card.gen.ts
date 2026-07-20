@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Action,
   ActionHttpMethod,
@@ -15,6 +16,7 @@ import {
   Taphold_actionAnalyzerAggregation,
   TrendGradientDirection
 } from '../common.gen.ts'
+
 
 export interface Config {
   title?: string
@@ -95,8 +97,6 @@ export interface Config {
   trendGradientDirection?: TrendGradientDirection
   trendSampling?: number
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-label-card'
   config: Config

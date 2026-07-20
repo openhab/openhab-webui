@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export interface Config {
   grid?: number
   screenWidth?: number
@@ -16,8 +18,6 @@ export interface Config {
   textShadow?: string
   filterShadow?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-canvas-layout'
   config: Config

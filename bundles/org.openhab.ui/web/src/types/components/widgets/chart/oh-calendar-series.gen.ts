@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   OffsetUnit,
   AggregationFunction,
@@ -10,6 +11,7 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
 } from '../common.gen.ts'
+
 
 export enum Type {
   heatmap = 'heatmap',
@@ -58,8 +60,6 @@ export interface Config {
   actionVariableValue?: string
   actionVariableKey?: string
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-calendar-series'
   config: Config

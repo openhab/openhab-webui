@@ -1,9 +1,11 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Item,
   BackgroundColor
 } from '../common.gen.ts'
+
 
 export interface Config {
   item?: Item
@@ -13,8 +15,6 @@ export interface Config {
   backgroundImage?: string
   invertText?: boolean
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-equipment-card'
   config: Config

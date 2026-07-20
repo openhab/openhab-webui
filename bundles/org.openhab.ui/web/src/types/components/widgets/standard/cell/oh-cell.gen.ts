@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Action,
   ActionHttpMethod,
@@ -9,6 +10,7 @@ import {
   ActionAnalyzerAggregation,
   TrendGradientDirection
 } from '../../common.gen.ts'
+
 
 export interface Config {
   header?: string
@@ -53,8 +55,6 @@ export interface Config {
   trendGradientDirection?: TrendGradientDirection
   trendSampling?: number
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-cell'
   config: Config

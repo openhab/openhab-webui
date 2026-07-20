@@ -43,7 +43,7 @@ if (url) {
     })
     process.stdout.write('DONE\n')
   } catch (updateError) {
-    process.stderr.write('ERROR updating UIComponent:', updateError)
+    process.stderr.write(`ERROR updating UIComponent: ${updateError}\n`)
   }
 
   try {
@@ -54,7 +54,7 @@ if (url) {
     })
     process.stdout.write('DONE\n')
   } catch (updateError) {
-    process.stderr.write('ERROR updating RootUIComponent:', updateError)
+    process.stderr.write(`ERROR updating RootUIComponent: ${updateError}\n`)
   }
 
   try {
@@ -71,7 +71,7 @@ try {
   const data = fs.readFileSync(file, 'utf8')
   openApi = JSON.parse(data)
 } catch (error) {
-  process.stderr.write('ERROR reading OpenAPI spec from file:', error)
+  process.stderr.write(`ERROR reading OpenAPI spec from file: ${error}\n`)
   process.exit(1)
 }
 process.stdout.write('DONE\n')

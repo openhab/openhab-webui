@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export interface Config {
   colNum?: number
   margin?: number
@@ -11,8 +13,6 @@ export interface Config {
   hideSidebarIcon?: boolean
   showFullscreenIcon?: boolean
 }
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
-
 export interface Component {
   component: 'oh-grid-layout'
   config: Config
