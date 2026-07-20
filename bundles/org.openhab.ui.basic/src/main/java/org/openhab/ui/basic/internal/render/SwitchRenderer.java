@@ -120,7 +120,7 @@ public class SwitchRenderer extends AbstractWidgetRenderer {
         State state = itemUIRegistry.getState(w);
 
         snippet = preprocessSnippet(snippet, w);
-        
+
         if (nbButtons == 0) {
             if (OnOffType.ON.equals(state)) {
                 snippet = snippet.replaceAll("%checked%", "checked=true");
