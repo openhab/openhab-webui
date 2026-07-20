@@ -907,7 +907,7 @@ export default {
             return Promise.reject('openHAB REST API connection failed with error: ' + err.message || err.status)
           }
         })
-        .then(res => res.data)
+        .then((res) => res.data)
         .then((rootResponse) => {
           // store the REST API services present on the system
           useRuntimeStore().setRootResource(rootResponse)
