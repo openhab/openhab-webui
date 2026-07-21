@@ -300,7 +300,7 @@ export function useChart(
             return item!
           })
           .catch((error) => {
-            console.error(`Error fetching item ${neededItem}:`)
+            console.error(`Error fetching item ${neededItem}:`, error)
             return null
           })
           .finally(() => {
@@ -338,7 +338,7 @@ export function useChart(
             return result!
           })
           .catch((error) => {
-            console.error(`Error fetching item history for ${neededItem}`)
+            console.error(`Error fetching item history for ${neededItem}`, error)
             return { name: '', datapoints: '', unit: '', data: [] } satisfies api.ItemHistory
           })
       }
