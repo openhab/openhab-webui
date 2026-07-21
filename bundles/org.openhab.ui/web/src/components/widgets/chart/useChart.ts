@@ -252,13 +252,13 @@ export function useChart(
   })
 
   const _items: Record<string, api.EnrichedItem> = {}
-  const _itemPromises: Record<string, Promise<api.EnrichedItem>> = {}
+  const _itemPromises: Record<string, Promise<api.EnrichedItem | null>> = {}
   const _persistencePromises: Record<string, Promise<api.ItemHistory>> = {}
 
   const getSeriesPromises = async (component: api.UiComponent): Promise<OhSeriesOption> => {
     const config = evaluateExpression<OhSeriesConfig>(ComponentId.get(component)!, component.config)
 
-    const getter = (data: [api.EnrichedItem, api.ItemHistory][]): OhSeriesOption =>
+    const getter = (data: [api.EnrichedItem | null, api.ItemHistory][]): OhSeriesOption =>
       transformCustomSeriesOptions(
         seriesComponents[component.component].get(
           chartContext.value,
@@ -293,11 +293,20 @@ export function useChart(
       } else if (_items[neededItem]) {
         _itemPromises[neededItem] = Promise.resolve(_items[neededItem])
       } else {
-        _itemPromises[neededItem] = api.getItemByName({ itemName: neededItem }).then((item) => {
-          _items[neededItem] = item!
-          delete _itemPromises[neededItem]
-          return item!
-        })
+        _itemPromises[neededItem] = api
+          .getItemByName({ itemName: neededItem })
+          .then((item) => {
+            _items[neededItem] = item!
+            return item!
+          })
+          .catch((error) => {
+            console.error(`Error fetching item ${neededItem}:`)
+            return null
+          })
+          .finally(() => {
+            // Ensure that the promise is removed from _itemPromises even if an error occurs
+            delete _itemPromises[neededItem]
+          })
       }
     })
 
@@ -322,10 +331,16 @@ export function useChart(
       }
       const hash = simpleHash(query)
       if (_persistencePromises[hash] === undefined) {
-        _persistencePromises[hash] = api.getItemDataFromPersistenceService(query).then((result) => {
-          delete _persistencePromises[hash]
-          return result!
-        })
+        _persistencePromises[hash] = api
+          .getItemDataFromPersistenceService(query)
+          .then((result) => {
+            delete _persistencePromises[hash]
+            return result!
+          })
+          .catch((error) => {
+            console.error(`Error fetching item history for ${neededItem}`)
+            return { name: '', datapoints: '', unit: '', data: [] } satisfies api.ItemHistory
+          })
       }
 
       return await Promise.all([_itemPromises[neededItem], _persistencePromises[hash]])
