@@ -611,6 +611,8 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
 
 import { getRoot } from '@/api'
+import { isUnauthorized } from '@/js/hey-api'
+import { request } from 'framework7'
 
 const dayjsLocalesGlob = import.meta.glob('../node_modules/dayjs/esm/locale/*.js', { import: 'default' })
 
@@ -827,10 +829,11 @@ export default {
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
         .then(() => {
-          return getRoot()
+          // Use F7 Requests here as error handling below is for XmlHttpRequest (XHR) and not fetch (as used by hey-api)
+          return request.json('/rest/')
         })
         .catch((err) => {
-          if (err.message === 'Unauthorized' || err.status === 401) {
+          if (isUnauthorized(err)) {
             console.info('openHAB REST API connection failed: 401 Unauthorized. Authorizing against reverse proxy ...')
             if (!useCredentials) {
               // try again with credentials
@@ -843,14 +846,13 @@ export default {
                 'openHAB',
                 (username, password) => {
                   this.setBasicCredentials(username, password)
-                  this.$oh.api
-                    .getRoot()
-                    .then((rootResponse) => {
+                  getRoot()
+                    .then(() => {
                       this.storeBasicCredentials()
                       this.loadData()
                     })
                     .catch((err) => {
-                      if (err === 'Unauthorized' || err === 401) {
+                      if (isUnauthorized(err)) {
                         this.clearBasicCredentials()
                         this.loadData()
                         return Promise.reject()
@@ -899,6 +901,7 @@ export default {
             return Promise.reject('openHAB REST API connection failed with error: ' + err.message || err.status)
           }
         })
+        .then((res) => res.data)
         .then((rootResponse) => {
           // store the REST API services present on the system
           useRuntimeStore().setRootResource(rootResponse)
@@ -909,7 +912,7 @@ export default {
           return useSemanticsStore().loadSemantics(i18n)
         })
         .catch((err) => {
-          if (err === 'Unauthorized' || err === 401) {
+          if (isUnauthorized(err)) {
             console.info('openHAB REST API implicit user role is disabled. Authorizing ...')
             this.authorize(false) // will redirect to auth page, redirecting back to Main UI triggers new load
           } else {
