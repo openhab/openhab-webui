@@ -1,5 +1,5 @@
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
-import { getAccessToken, getTokenInCustomHeader, getBasicCredentials, getRequireToken } from './auth'
+import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from './auth'
 import type { ItemState } from '../stores/useStatesStore'
 
 /**
@@ -40,7 +40,7 @@ function newSSEConnection(
     // have already expired when initEventSource() is called again after
     // a connection failure.
     const accessToken = getAccessToken()
-    if (accessToken && getRequireToken()) {
+    if (accessToken) {
       if (getTokenInCustomHeader()) {
         headers['X-OPENHAB-TOKEN'] = accessToken
       } else {

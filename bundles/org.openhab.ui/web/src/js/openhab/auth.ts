@@ -22,11 +22,6 @@ let tokenInCustomHeader: boolean = false
  */
 let basicCredentials: BasicCredentials | null = null
 
-/**
- * Whether the access token is required for all requests, including SSE
- */
-let requireToken: boolean | null = null
-
 export function getAccessToken() {
   return accessToken
 }
@@ -35,9 +30,6 @@ export function getTokenInCustomHeader() {
 }
 export function getBasicCredentials() {
   return basicCredentials
-}
-export function getRequireToken() {
-  return requireToken
 }
 
 if (document.cookie.indexOf('X-OPENHAB-AUTH-HEADER') >= 0) tokenInCustomHeader = true
@@ -109,25 +101,9 @@ export function storeBasicCredentials(): void {
   }
 }
 
-export async function setAccessToken(token: string, api: { get: (path: string) => Promise<any> }): Promise<void> {
-  if (!token || !api) return
-  if (requireToken === null) {
-    // determine whether the token is required for user operations
-    return api
-      .get('/rest/sitemaps')
-      .then(() => {
-        accessToken = token
-        requireToken = false
-      })
-      .catch((err: unknown) => {
-        if (err instanceof ApiError && (err.response.statusText === 'Unauthorized' || err.response.status === 401)) {
-          requireToken = true
-        }
-        accessToken = token
-      })
-  } else {
-    accessToken = token
-  }
+export function setAccessToken(token: string): void {
+  if (!token) return
+  accessToken = token
 }
 
 export function clearAccessToken(): void {
