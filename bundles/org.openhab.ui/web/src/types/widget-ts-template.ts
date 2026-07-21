@@ -51,7 +51,7 @@ export function guardConfig<T>(config: unknown, validationFn?: ConfigValidationF
  */
 export function guardComponent<TComponent extends { component: string; config?: unknown }, TConfig>(
   componentType: string,
-  component: Component,
+  component: unknown,
   isConfig: ConfigGuardFn<TConfig>,
   defaultConfig?: TConfig
 ): component is TComponent & { config: TConfig } {
@@ -64,5 +64,5 @@ export function guardComponent<TComponent extends { component: string; config?: 
     candidate.config = defaultConfig
   }
 
-  return isConfig(component.config)
+  return isConfig(candidate.config)
 }

@@ -47,7 +47,7 @@ export const isConfig = (config: unknown): config is Config => {
 }
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>('oh-knob', component as Component, isConfig, defaultConfig)
+  return guardComponent<Component, Config>('oh-knob', component, isConfig, defaultConfig)
 }
 
 export {
