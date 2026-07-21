@@ -346,7 +346,10 @@ export function useChart(
       return await Promise.all([_itemPromises[neededItem], _persistencePromises[hash]])
     })
 
-    return Promise.all(combinedPromises).then(getter)
+    const results = await Promise.all(combinedPromises)
+    const filteredResults = results.filter((result): result is [api.EnrichedItem, api.ItemHistory] => result !== null)
+
+    return getter(filteredResults)
   }
 
   const series = computedAsync<OhSeriesOption[]>(async () => {
