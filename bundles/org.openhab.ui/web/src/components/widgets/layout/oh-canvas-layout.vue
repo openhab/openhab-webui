@@ -135,18 +135,7 @@
 </style>
 
 <script setup lang="ts">
-import {
-  computed,
-  nextTick,
-  onMounted,
-  onBeforeUnmount,
-  getCurrentInstance,
-  ref,
-  reactive,
-  useTemplateRef,
-  toRef,
-  onBeforeMount
-} from 'vue'
+import { computed, nextTick, onMounted, onBeforeUnmount, getCurrentInstance, ref, reactive, useTemplateRef, onBeforeMount } from 'vue'
 import { f7 } from 'framework7-vue'
 import type { Router } from 'framework7'
 
@@ -197,8 +186,8 @@ const { config, childContext, slots } = useWidgetContext(context, OhCanvasLayout
 
 const { loadAndEmbedSvg, removeEmbeddedSvg, embeddedSvgReady, flashEmbeddedSvgComponents } = useSvgEmbedded({
   editmode: computed(() => Boolean(context.value.editmode)),
-  embeddedSvgActions: toRef(config.value.embeddedSvgActions || {}),
-  embedSvgFlashing: toRef(config.value.embedSvgFlashing || false),
+  embeddedSvgActions: computed(() => config.value.embeddedSvgActions || {}),
+  embedSvgFlashing: computed(() => config.value.embedSvgFlashing || false),
   performAction: (evt, prefix, config) => {
     emits('action', { evt, prefix, config, context: context.value })
   },
@@ -337,7 +326,12 @@ function removeLayer() {
     return
   }
   slots.value.canvas.splice(actLyrIdx.value, 1)
-  setActiveLayer(Math.min(0, actLyrIdx.value--))
+  actLyrIdx.value = Math.max(0, actLyrIdx.value - 1)
+  if (slots.value.canvas.length === 0) {
+    config.value.activeIdx = 0
+    return
+  }
+  setActiveLayer(actLyrIdx.value)
   computeLayout()
 }
 

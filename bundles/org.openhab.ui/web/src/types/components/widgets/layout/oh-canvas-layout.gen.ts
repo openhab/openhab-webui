@@ -13,7 +13,7 @@ export interface Config {
   imageSrcSet?: string
   embedSvg?: boolean
   embedSvgFlashing?: boolean
-	embeddedSvgActions?: Record<string, OhSvgElement.Config>
+  embeddedSvgActions?: Record<string, OhSvgElement.Config>
 
   hideNavbar?: boolean
   hideSidebarIcon?: boolean
@@ -34,5 +34,5 @@ export const isConfig = (config: unknown): config is Config => {
 }
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>('oh-canvas-layout', component as Component, isConfig, defaultConfig)
+  return guardComponent<Component, Config>('oh-canvas-layout', component, isConfig, defaultConfig)
 }

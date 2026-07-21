@@ -69,28 +69,6 @@ if (url) {
   }
 
   try {
-    // temporary fix for UIComponent schema in OpenAPI spec - see https://github.com/openhab/openhab-core/issues/5686
-    process.stdout.write(`Updating UIComponent in ${file} ... `)
-    execSync(`jq '.components.schemas.UIComponent = input' ${file} ./build/UIComponent.json > tmp.json &&  mv tmp.json ${file}`, {
-      stdio: 'ignore'
-    })
-    process.stdout.write('DONE\n')
-  } catch (updateError) {
-    process.stderr.write('ERROR updating UIComponent:', updateError)
-  }
-
-  try {
-    // temporary fix for RootUIComponent schema in OpenAPI spec - see https://github.com/openhab/openhab-core/issues/5686
-    process.stdout.write(`Updating RootUIComponent in ${file} ... `)
-    execSync(`jq '.components.schemas.RootUIComponent = input' ${file} ./build/RootUIComponent.json > tmp.json &&  mv tmp.json ${file}`, {
-      stdio: 'ignore'
-    })
-    process.stdout.write('DONE\n')
-  } catch (updateError) {
-    process.stderr.write(`ERROR updating RootUIComponent: ${updateError}\n`)
-  }
-
-  try {
     process.stdout.write(`Applying oxfmt to ${file} ... `)
     execSync(`oxfmt ${file}`, { stdio: 'ignore' })
     process.stdout.write('DONE\n')

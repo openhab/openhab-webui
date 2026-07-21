@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { ref, watch, nextTick, computed, useTemplateRef, toRef } from 'vue'
+import { nextTick, computed, useTemplateRef } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
@@ -39,8 +39,8 @@ export default {
 
     const { loadAndEmbedSvg, removeEmbeddedSvg } = useSvgEmbedded({
       editmode: computed(() => Boolean(context.value.editmode)),
-      embeddedSvgActions: toRef(config.value.embeddedSvgActions || {}),
-      embedSvgFlashing: toRef(config.value.embedSvgFlashing || false),
+      embeddedSvgActions: computed(() => config.value.embeddedSvgActions || {}),
+      embedSvgFlashing: computed(() => config.value.embedSvgFlashing || false),
       performAction: (event, prefix, config) => performAction(event ?? undefined, prefix, context.value, config)
     })
 

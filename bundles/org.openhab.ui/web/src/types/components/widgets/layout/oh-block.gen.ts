@@ -15,5 +15,5 @@ export const isConfig = (config: unknown): config is Config => {
 }
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>('oh-block', component as Component, isConfig, defaultConfig)
+  return guardComponent<Component, Config>('oh-block', component, isConfig, defaultConfig)
 }

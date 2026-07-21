@@ -4,6 +4,8 @@ import { f7 } from 'framework7-vue'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
 import { OhSVGElementDefinition } from '@/assets/definitions/widgets/system/index.ts'
 
+import createDOMPurify from 'dompurify'
+
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { watch } from 'vue'
 import { showToast } from '@/js/dialog-promises'
@@ -95,7 +97,12 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     if (embedSvg) {
       embeddedSvgRoot.value = embedSvg(svgCode)
     } else if (parentElement) {
-      parentElement.innerHTML = svgCode
+      const cleanSvg = createDOMPurify.sanitize(svgCode, {
+        USE_PROFILES: { svg: true, svgFilters: true },
+        ADD_ATTR: ['style', 'openhab'],
+        ADD_TAGS: ['style']
+      })
+      parentElement.innerHTML = cleanSvg
       embeddedSvgRoot.value = parentElement.querySelector<SVGSVGElement>('svg')
       embeddedSvgRoot.value?.classList.add('oh-canvas-background', 'disable-user-drag')
     } else {

@@ -301,7 +301,7 @@ function generateComponentValidation(component, configValidator) {
   content += `}\n\n`
 
   content += `export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {\n`
-  content += `  return guardComponent<Component, Config>('${component}', component as Component, isConfig, defaultConfig)\n`
+  content += `  return guardComponent<Component, Config>('${component}', component, isConfig, defaultConfig)\n`
   content += `}\n`
 
   return content

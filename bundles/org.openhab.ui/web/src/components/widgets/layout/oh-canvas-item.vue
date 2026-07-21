@@ -93,7 +93,7 @@
             'oh-canvas-item-shadow': styled && shadow
           }" />
         <f7-icon v-if="context.editmode.isEditable" class="drag-handle disable-user-select" f7="move" size="15" color="gray" />
-        <div class="oh-canvas-item-id disable-user-select">{{ config.id }}</div>
+        <div class="oh-canvas-item-id disable-user-select">{{ props.id }}</div>
         <div v-if="active" class="oh-canvas-item-msg disable-user-select">{{ editMessage }}</div>
       </div>
     </vue-draggable-resizable>
@@ -264,14 +264,12 @@ const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
 const context = computed(() => props.context)
-const { config, visible, childContext, defaultSlots } = useWidgetContext(context)
+const { config, visible, childContext, defaultSlots } = useWidgetContext(context, OhCanvasItemType.isConfig)
 
 const component = computed(() => {
-  const c: unknown = context.value.component
-  if (!OhCanvasItemType.isComponent(c)) {
-    throw new Error('Invalid config for oh-canvas-item')
-  }
-  return c
+  const comp = context.value.component as unknown
+  if (OhCanvasItemType.isComponent(comp)) return comp
+  throw new Error('Invalid component type in context')
 })
 
 // data (state)
@@ -286,41 +284,41 @@ let resizeObserver: ResizeObserver | null = null
 
 // computed
 const x = computed<number>({
-  get: () => component.value.config.x ?? 20,
+  get: () => config.value.x ?? 20,
   set: (val: number) => {
-    component.value.config.x = val
+    config.value.x = val
   }
 })
 
 const y = computed({
-  get: () => component.value.config.y ?? 20,
+  get: () => config.value.y ?? 20,
   set: (val: number) => {
-    component.value.config.y = val
+    config.value.y = val
   }
 })
 
 const w = computed<number | 'auto'>({
-  get: () => (component.value.config.w as number | string as 'auto') ?? 100,
+  get: () => (config.value.w as number | string as 'auto') ?? 100,
   set: (val: number | 'auto') => {
-    component.value.config.w = val
+    config.value.w = val
   }
 })
 
 const h = computed<number | 'auto'>({
   get: () => (config.value?.h as number | string as 'auto') ?? 100,
   set: (val: number | 'auto') => {
-    component.value.config.h = val
+    config.value.h = val
   }
 })
 
 const shadow = computed({
   get: () => config.value?.noCanvasShadow === false,
   set: (val) => {
-    component.value.config.noCanvasShadow = val
+    config.value.noCanvasShadow = val
   }
 })
 
-const styled = computed(() => component.value.config.notStyled === false)
+const styled = computed(() => config.value.notStyled === false)
 
 const autosize = computed(() => w.value === 'auto')
 

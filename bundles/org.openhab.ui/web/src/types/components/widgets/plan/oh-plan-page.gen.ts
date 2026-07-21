@@ -29,7 +29,7 @@ export interface Config {
   tooltipColor?: TooltipColor
   embedSvg?: boolean
   embedSvgFlashing?: boolean
-	embeddedSvgActions?: Record<string, OhSvgElement.Config>
+  embeddedSvgActions?: Record<string, OhSvgElement.Config>
 }
 export interface Component {
   component: 'oh-plan-page'
@@ -41,5 +41,5 @@ export const isConfig = (config: unknown): config is Config => {
 }
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>('oh-plan-page', component as Component, isConfig, defaultConfig)
+  return guardComponent<Component, Config>('oh-plan-page', component, isConfig, defaultConfig)
 }

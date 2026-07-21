@@ -77,7 +77,7 @@ export default {
       modifier: (e) =>
         `import { OhSvgElement } from '@/types/components/widgets'\n\n${e}`.replace(
           'embedSvgFlashing?: boolean',
-          'embedSvgFlashing?: boolean\n' + '\tembeddedSvgActions?: Record<string, OhSvgElement.Config>\n'
+          'embedSvgFlashing?: boolean\n' + '  embeddedSvgActions?: Record<string, OhSvgElement.Config>\n'
         ) // add embeddedSvgActions to type
     },
     configValidator: `(config) => 'layoutType' in config && config.layoutType === 'fixed' && 'fixedType' in config && config.fixedType === 'canvas'`
@@ -87,7 +87,7 @@ export default {
       modifier: (e) =>
         `import { OhSvgElement } from '@/types/components/widgets'\n\n${e}`.replace(
           'embedSvgFlashing?: boolean',
-          'embedSvgFlashing?: boolean\n' + '\tembeddedSvgActions?: Record<string, OhSvgElement.Config>'
+          'embedSvgFlashing?: boolean\n' + '  embeddedSvgActions?: Record<string, OhSvgElement.Config>'
         ) // add embeddedSvgActions to type
     }
   },

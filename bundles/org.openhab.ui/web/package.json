@@ -99,6 +99,7 @@
     "debounce": "^3.0.0",
     "diacritic": "^0.0.2",
     "dom7": "^4.0.6",
+    "dompurify": "^3.4.12",
     "echarts": "^5.6.0",
     "eslint-linter-browserify": "^9.39.2",
     "event-source-polyfill": "^1.0.31",

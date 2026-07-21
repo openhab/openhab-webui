@@ -112,7 +112,7 @@ dark-tooltip()
 </style>
 
 <script setup lang="ts">
-import { nextTick, computed, ref, watch, onBeforeUnmount, useTemplateRef, type Ref, toRef } from 'vue'
+import { nextTick, computed, ref, watch, onBeforeUnmount, useTemplateRef, type Ref } from 'vue'
 import { type Router } from 'framework7'
 import { f7 } from 'framework7-vue'
 import { computedAsync } from '@vueuse/core'
@@ -161,8 +161,8 @@ const { performAction } = useWidgetAction(context, config as Ref<WidgetActionCon
 
 const { embeddedSvgReady, loadAndEmbedSvg, removeEmbeddedSvg } = useSvgEmbedded({
   editmode: computed(() => Boolean(context.value.editmode)),
-  embeddedSvgActions: toRef(config.value.embeddedSvgActions || {}),
-  embedSvgFlashing: toRef(config.value.embedSvgFlashing || false),
+  embeddedSvgActions: computed(() => config.value.embeddedSvgActions || {}),
+  embedSvgFlashing: computed(() => config.value.embedSvgFlashing || false),
   performAction: (evt, prefix, config) => {
     performAction(evt ?? undefined, prefix || '', context.value, config)
   },
@@ -339,7 +339,7 @@ function embedPlanSvg(svgCode: string): SVGSVGElement | null {
 function removePlanSvg(svgRoot: Ref<SVGSVGElement | null>) {
   // invalidate any in-flight embed even when nothing is mounted yet
   embeddedSvgToken++
-  if (!embeddedSvgReady && !embeddedSvgOverlay) return
+  if (!embeddedSvgReady.value && !embeddedSvgOverlay) return
   if (embeddedSvgOverlay) {
     embeddedSvgOverlay.remove()
     embeddedSvgOverlay = null
