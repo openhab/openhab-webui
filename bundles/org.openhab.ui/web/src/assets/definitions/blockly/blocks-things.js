@@ -62,6 +62,58 @@ export default function defineOHBlocks(f7) {
     return [code, 0]
   }
 
+  Blockly.Blocks['oh_getthing_isenabled'] = {
+    init: function () {
+      this.appendValueInput('thingUid').appendField('get thing enabled status').setCheck(['String', 'oh_thing', 'oh_thingtype'])
+      this.setInputsInline(false)
+      this.setOutput(true, 'Boolean')
+      this.setColour(0)
+      this.setTooltip('Checks if the given thing is enabled')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#get-thing-enabled-status')
+    }
+  }
+
+  javascriptGenerator.forBlock['oh_getthing_isenabled'] = function (block) {
+    const thingUid = valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
+    const inputType = blockGetCheckedInputType(block, 'thingUid')
+    const code = inputType === 'oh_thingtype' ? `${thingUid}.isEnabled` : `things.getThing(${thingUid}).isEnabled`
+    return [code, 0]
+  }
+
+  Blockly.Blocks['oh_setthing_enabled'] = {
+    init: function () {
+      this.appendValueInput('thingUid').appendField('set thing enabled status').setCheck(['String', 'oh_thing', 'oh_thingtype'])
+      this.appendValueInput('enabledState').appendField('to').setCheck('Boolean')
+      this.setInputsInline(true)
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
+      this.setColour(0)
+      this.setTooltip('Enables or disables the given thing')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-items-things.html#set-thing-enabled-status')
+    },
+
+    onchange: function (event) {
+      if (!this.workspace || this.workspace.isDragging()) {
+        return
+      }
+
+      if (!this.getInputTargetBlock('enabledState')) {
+        this.setWarningText('A True/False value is required here')
+      } else {
+        this.setWarningText(null)
+      }
+    }
+  }
+
+  javascriptGenerator.forBlock['oh_setthing_enabled'] = function (block) {
+    const thingUid = valueToCode(block, 'thingUid', javascriptGenerator.ORDER_ATOMIC)
+    const enabledState = valueToCode(block, 'enabledState', javascriptGenerator.ORDER_ATOMIC) || 'true'
+    const inputType = blockGetCheckedInputType(block, 'thingUid')
+
+    const thing = inputType === 'oh_thingtype' ? thingUid : `things.getThing(${thingUid})`
+    return `${thing}.setEnabled(${enabledState});\n`
+  }
+
   Blockly.Blocks['oh_getthings'] = {
     init: function () {
       this.appendDummyInput().appendField('get things')
