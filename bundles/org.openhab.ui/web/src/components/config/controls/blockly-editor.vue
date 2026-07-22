@@ -1042,7 +1042,7 @@
               </shadow>
             </value>
           </block>
-          <block type="oh_runrule">
+          <block type="oh_runrule_v2">
             <value name="ruleUID">
               <shadow type="text">
                 <field name="TEXT">ruleUID</field>
