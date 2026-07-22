@@ -203,7 +203,6 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
           (newState) => {
             const svgElementConfig = embeddedSvgActions.value[svgElement.id]
             if (newState && svgElementConfig) {
-              svgElement.dataset.state = newState.state
               applyStateToSvgElement(item, newState, svgElementConfig, svgElement)
             }
           },
@@ -546,6 +545,18 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
 
     const isOn = isStateOn(state, stateType, stateOnSubstitute)
     console.debug(`Update ${svgElement.id} due to ${item} changing to ${state} (${stateType}, on=${isOn})`)
+
+    // expose the state on the element so the SVG can style itself with plain CSS
+    svgElement.dataset.state = stateObj.state ?? ''
+    svgElement.dataset.stateOn = String(isOn)
+    const numericState = stateType === StateType.HSB ? parseFloat(String(stateObj.state).split(',')[2]) : parseFloat(stateObj.state ?? '')
+    if (isNaN(numericState)) {
+      //not a number, remove the variable so a stale number from a previous state doesn't linger
+      svgElement.style.removeProperty('--oh-state')
+    } else {
+      //apply a numeric state as a string for css to render vi the property
+      svgElement.style.setProperty('--oh-state', String(numericState))
+    }
     const tagName = svgElement.tagName
     const stateOnColorRgbStyle = toRGBStyle(svgElementConfig.stateOnColor)
     const stateOffColorRgbStyle = toRGBStyle(svgElementConfig.stateOffColor)
