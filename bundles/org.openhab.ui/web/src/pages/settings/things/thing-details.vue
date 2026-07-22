@@ -391,17 +391,6 @@ p.action-description
     font-weight normal
     .advanced-actions-label
       cursor pointer
-
-.dialog.wide-property-dialog
-  --f7-dialog-width: 560px
-
-  @media (max-width: 599px) {
-    --f7-dialog-width: 95vw
-  }
-
-  @media (min-width: 768px) {
-    --f7-dialog-width: 700px
-  }
 </style>
 
 <script>
@@ -1153,7 +1142,7 @@ export default {
       const dialog = f7.dialog.create({
         title: 'Property Details',
         content: dialogContent,
-        cssClass: 'wide-property-dialog',
+        cssClass: 'dialog-wide',
         buttons: [{ text: 'OK' }]
       })
       dialog.open()

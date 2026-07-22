@@ -68,6 +68,32 @@ export function toFileYAMLSyntax(yamlElement: string, obj: YamlObject | YamlObje
 }
 
 /**
+ * Converts a single widget object to a YAML string in the old, Main UI specific format.
+ *
+ * The expected YAML structure looks like this:
+ *
+ * ```yaml
+ * uid: <uid>
+ * tags: []
+ * props:
+ *   parameters: []
+ *   parameterGroups: []
+ * timestamp: <timestamp>
+ * component: <component>
+ * config: {}
+ * slots:
+ *   default: []
+ * ```
+ *
+ * @param widgetObj The widget object to convert
+ * @returns A YAML string representing the object in the expected format.
+ */
+export function toOldWidgetYAMLSyntax(widgetObj: YamlObject) {
+  const { editable, timestamp, ...strippedObj } = widgetObj
+  return YAML.stringify(strippedObj, { lineWidth: 0 })
+}
+
+/**
  * Parses a YAML string in the expected file format and extracts the JavaScript object for a specific `yamlElement` and `uid`.
  *
  * The expected YAML structure is:
@@ -96,7 +122,7 @@ export function fromFileYAMLSyntax<T = unknown>(yamlElement: string, yamlString:
   }
 
   // Allow ingesting old syntax with uid at root-level
-  if ('config' in obj || 'slots' in obj) {
+  if ('config' in obj || 'slots' in obj || 'component' in obj) {
     return obj as T
   }
 
