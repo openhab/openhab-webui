@@ -97,12 +97,13 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     if (embedSvg) {
       embeddedSvgRoot.value = embedSvg(svgCode)
     } else if (parentElement) {
-      const cleanSvg = createDOMPurify.sanitize(svgCode, {
+      const cleanSvgDOM = createDOMPurify.sanitize(svgCode, {
         USE_PROFILES: { svg: true, svgFilters: true },
         ADD_ATTR: ['style', 'openhab'],
-        ADD_TAGS: ['style']
+        ADD_TAGS: ['style'],
+        RETURN_DOM_FRAGMENT: true
       })
-      parentElement.innerHTML = cleanSvg
+      parentElement.replaceChildren(cleanSvgDOM)
       embeddedSvgRoot.value = parentElement.querySelector<SVGSVGElement>('svg')
       embeddedSvgRoot.value?.classList.add('oh-canvas-background', 'disable-user-drag')
     } else {
