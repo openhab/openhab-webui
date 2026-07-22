@@ -42,6 +42,33 @@ export function getErrorMessage(err: unknown, debug: boolean = false): string {
   }
 }
 
+/**
+ * Checks whether the error represents HTTP 401 Unauthorized.
+ *
+ * @param err the error object
+ * @returns {boolean} true if unauthorized
+ */
+export function isUnauthorized(err: unknown): boolean {
+  if (!err) return false
+
+  // $oh.api based on F7 Requests:
+  if (typeof err === 'string') {
+    return err === 'Unauthorized'
+  }
+  if (typeof err === 'number') {
+    return err === 401
+  }
+
+  // hey-api client:
+  if (err instanceof ApiError) {
+    return err.response?.status === 401 || err.response?.statusText === 'Unauthorized'
+  }
+
+  // F7 Requests:
+  const obj = err as Record<string, unknown>
+  return obj.message === 'Unauthorized' || obj.status === 401
+}
+
 client.interceptors.request.use((request, options) => {
   const accessToken = getAccessToken()
   if (accessToken) {

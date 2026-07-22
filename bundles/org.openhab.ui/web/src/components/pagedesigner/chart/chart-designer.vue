@@ -531,15 +531,51 @@ export default {
         }
       })
     },
+    getAutomaticAxisConfig(seriesType, axisName) {
+      if (seriesType === 'oh-time-series') {
+        return axisName === 'xAxis' ? { component: 'oh-time-axis' } : { component: 'oh-value-axis' }
+      }
+      if (seriesType === 'oh-state-series') {
+        return axisName === 'xAxis' ? { component: 'oh-time-axis' } : { component: 'oh-category-axis', config: { categoryType: 'values' } }
+      }
+      if (seriesType === 'oh-aggregate-series') {
+        if (axisName === 'xAxis') {
+          let categoryType = 'day'
+          const chartType = this.context.component.config.chartType
+          if (chartType) {
+            if (chartType === 'isoWeek' || chartType === 'week') {
+              categoryType = 'week'
+            } else if (chartType === 'twoYears' || chartType === 'threeYears' || chartType === 'fiveYears') {
+              categoryType = 'years'
+            } else if (chartType === 'day' || chartType === 'month' || chartType === 'year') {
+              categoryType = chartType
+            }
+          }
+          return { component: 'oh-category-axis', config: { categoryType } }
+        } else {
+          return { component: 'oh-value-axis' }
+        }
+      }
+      return null
+    },
+    addAutomaticAxis(gridIdx, axisType, axisInfo) {
+      if (!this.context.component.slots[axisType]) this.context.component.slots[axisType] = []
+      const newAxis = {
+        component: axisInfo.component,
+        config: Object.assign({ gridIndex: gridIdx }, axisInfo.config || {})
+      }
+      this.context.component.slots[axisType].push(newAxis)
+      return newAxis
+    },
     addSeries(type, gridIdx) {
       if (!this.context.component.slots.series) this.context.component.slots.series = []
       let automaticAxisCreated = false
       let firstXAxis = this.context.component.slots.xAxis.find((a) => a.config.gridIndex === gridIdx)
       let firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
       if (!firstXAxis) {
-        if (type === 'oh-time-series' || type === 'oh-state-series') {
-          this.addAxis(gridIdx, 'xAxis', 'oh-time-axis')
-          firstXAxis = this.context.component.slots.xAxis.find((a) => a.config.gridIndex === gridIdx)
+        const axisInfo = this.getAutomaticAxisConfig(type, 'xAxis')
+        if (axisInfo) {
+          firstXAxis = this.addAutomaticAxis(gridIdx, 'xAxis', axisInfo)
           automaticAxisCreated = true
         } else {
           f7.dialog.alert('Please add at least one X axis and one Y axis')
@@ -547,14 +583,9 @@ export default {
         }
       }
       if (!firstYAxis) {
-        if (type === 'oh-time-series') {
-          this.addAxis(gridIdx, 'yAxis', 'oh-value-axis')
-          firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
-          automaticAxisCreated = true
-        } else if (type === 'oh-state-series') {
-          this.addAxis(gridIdx, 'yAxis', 'oh-category-axis')
-          firstYAxis = this.context.component.slots.yAxis.find((a) => a.config.gridIndex === gridIdx)
-          firstYAxis.config.categoryType = 'values'
+        const axisInfo = this.getAutomaticAxisConfig(type, 'yAxis')
+        if (axisInfo) {
+          firstYAxis = this.addAutomaticAxis(gridIdx, 'yAxis', axisInfo)
           automaticAxisCreated = true
         } else {
           f7.dialog.alert('Please add at least one X axis and one Y axis')
@@ -563,6 +594,14 @@ export default {
       }
 
       if (automaticAxisCreated) {
+        if (type === 'oh-aggregate-series') {
+          if (!this.context.component.config) {
+            this.context.component.config = {}
+          }
+          if (!this.context.component.config.chartType) {
+            this.context.component.config.chartType = 'day'
+          }
+        }
         showToast('Missing axes have been created automatically.')
       }
 

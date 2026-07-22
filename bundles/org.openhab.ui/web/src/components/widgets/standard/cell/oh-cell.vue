@@ -26,6 +26,7 @@
       <div
         v-else
         class="cell-background"
+        :style="config.style"
         :class="[config.color ? 'bg-color-' + config.color : '', { on: isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
     <f7-link
