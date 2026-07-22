@@ -284,6 +284,29 @@ function generateActionTS(mapCommonOptions) {
   fs.writeFileSync(`${outDir}/actions.gen.ts`, content)
 }
 
+function generateComponentValidation(component, configValidator) {
+  let content = ''
+
+  content += `export interface Component {\n`
+  content += `  component: '${component}'\n`
+  content += `  config: Config\n`
+  content += `}\n\n`
+
+  content += `export const isConfig = (config: unknown): config is Config => {\n`
+  if (configValidator) {
+    content += `  return guardConfig<Config>(config, ${configValidator.toString()})\n`
+  } else {
+    content += `  return guardConfig<Config>(config)\n`
+  }
+  content += `}\n\n`
+
+  content += `export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {\n`
+  content += `  return guardComponent<Component, Config>('${component}', component, isConfig, defaultConfig)\n`
+  content += `}\n`
+
+  return content
+}
+
 function generateComponentTS(mapCommonOptions) {
   Object.keys(widgetLibraries).forEach((l) => {
     const library = widgetLibraries[l]
@@ -355,8 +378,11 @@ function generateComponentTS(mapCommonOptions) {
       configStr += '}\n'
 
       content += configStr
+      content += generateComponentValidation(widgetName, configWidget.configValidator)
 
       let preamble = '// note: this file is generated and should not be edited by hand\n\n'
+      preamble += `import { guardConfig, guardComponent } from '@/types/widget-ts-template'\n`
+
       let postamble = ''
       if (commonComponents.length > 0) {
         preamble += 'import {\n'
@@ -368,6 +394,8 @@ function generateComponentTS(mapCommonOptions) {
         postamble += commonComponents.map((name) => (name === 'Period' ? `  type ${name}` : `  ${name}`)).join(',\n')
         postamble += '\n}\n'
       }
+
+      preamble += '\n'
 
       content = preamble + content + postamble
 

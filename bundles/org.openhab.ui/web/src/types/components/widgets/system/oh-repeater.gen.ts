@@ -1,5 +1,7 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+
 export enum SourceType {
   array = 'array',
   range = 'range',
@@ -29,4 +31,16 @@ export interface Config {
   containerStyle?: string
   fragment?: boolean
   cacheSource?: boolean
+}
+export interface Component {
+  component: 'oh-repeater'
+  config: Config
+}
+
+export const isConfig = (config: unknown): config is Config => {
+  return guardConfig<Config>(config)
+}
+
+export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
+  return guardComponent<Component, Config>('oh-repeater', component, isConfig, defaultConfig)
 }
