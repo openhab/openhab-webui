@@ -60,9 +60,9 @@
 
 <script setup lang="ts">
 import { f7 } from 'framework7-vue'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, type Ref } from 'vue'
 
-import { useWidgetAction } from '@/components/widgets/useWidgetAction'
+import { useWidgetAction, type WidgetActionConfig } from '@/components/widgets/useWidgetAction'
 import { useChart } from '../chart/useChart'
 
 import dayjs from 'dayjs'
@@ -98,6 +98,7 @@ import VChart from 'vue-echarts'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { type Calendar } from 'framework7'
 import type { WidgetContext } from '@/components/widgets/types'
+import { OhChart as OhChartType } from '@/types/components/widgets'
 
 dayjs.extend(LocalizedFormat)
 
@@ -144,8 +145,8 @@ let initOptions = echartsLocale
 
 // composables
 const context = computed(() => props.context)
-const { config, slots, evaluateExpression } = useWidgetContext(context)
-const { performAction } = useWidgetAction(context, config, evaluateExpression)
+const { config, slots, evaluateExpression } = useWidgetContext(context, OhChartType.isConfig)
+const { performAction } = useWidgetAction(context, config as Ref<WidgetActionConfig>, evaluateExpression)
 
 const chartComposable = useChart(context, config, slots, evaluateExpression)
 const { startTime, endTime, options, period, earlierPeriod, laterPeriod, setDate, setPeriod } = chartComposable
@@ -157,8 +158,7 @@ const calendarInput = ref<HTMLElement | null>(null)
 
 // computed
 const activeHeight = computed(() => {
-  const cfg = config.value || {}
-  return cfg.height || '300px'
+  return config.value.height || '300px'
 })
 
 const periodVisible = computed(() => {

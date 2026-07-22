@@ -2,7 +2,6 @@
 
 import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
-  GaugeType,
   Action,
   ActionHttpMethod,
   ActionPageTransition,
@@ -12,30 +11,25 @@ import {
 } from '../common.gen.ts'
 
 
+export enum ColorProperty {
+  none = '',
+  fill = 'fill',
+  stroke = 'stroke'
+}
+
 export interface Config {
-  title?: string
-  footer?: string
-  noBorder?: boolean
-  noShadow?: boolean
-  outline?: boolean
-  item?: string
-  min?: number
-  max?: number
-  type?: GaugeType
-  value?: string
-  size?: number
-  bgColor?: string
-  borderBgColor?: string
-  borderColor?: string
-  borderWidth?: string
-  valueText?: string
-  valueTextColor?: string
-  valueFontSize?: string
-  valueFontWeight?: string
-  labelText?: string
-  labelTextColor?: string
-  labelFontSize?: string
-  labelFontWeight?: string
+  stateItems?: string
+  useProxyElementForState?: boolean
+  stateOnColor?: string
+  stateOffColor?: string
+  colorProperty?: ColorProperty
+  stateOnSubstitute?: string
+  stateAsOpacity?: boolean
+  stateMinOpacity?: string
+  invertStateOpacity?: boolean
+  stateOnAsStyleClass?: string
+  stateOffAsStyleClass?: string
+  useDisplayState?: boolean
   action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
@@ -66,7 +60,7 @@ export interface Config {
   actionVariableKey?: string
 }
 export interface Component {
-  component: 'oh-gauge-card'
+  component: 'oh-svg-element'
   config: Config
 }
 
@@ -75,11 +69,10 @@ export const isConfig = (config: unknown): config is Config => {
 }
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>('oh-gauge-card', component, isConfig, defaultConfig)
+  return guardComponent<Component, Config>('oh-svg-element', component, isConfig, defaultConfig)
 }
 
 export {
-  GaugeType,
   Action,
   ActionHttpMethod,
   ActionPageTransition,

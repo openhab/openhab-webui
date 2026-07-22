@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Action,
   ActionHttpMethod,
@@ -8,6 +9,7 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
 } from '../common.gen.ts'
+
 
 export enum TooltipDirection {
   top = 'top',
@@ -69,6 +71,18 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
+}
+export interface Component {
+  component: 'oh-plan-marker'
+  config: Config
+}
+
+export const isConfig = (config: unknown): config is Config => {
+  return guardConfig<Config>(config)
+}
+
+export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
+  return guardComponent<Component, Config>('oh-plan-marker', component, isConfig, defaultConfig)
 }
 
 export {

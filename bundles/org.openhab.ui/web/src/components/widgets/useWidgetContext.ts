@@ -7,9 +7,11 @@ import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, WidgetContext } from './types'
+import { type EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
 import { computed, onBeforeUnmount, onMounted, type Ref, ref } from 'vue'
 import * as api from '@/api'
 import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
+import { type ConfigGuardFn } from '@/types/widget-ts-template'
 
 /**
  * useWidgetContext must be used as a composable in all widget components.
@@ -19,9 +21,10 @@ import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
  *
  * @param context the reactive widget context (use `computed(() => props.context)` to convert the component prop to a reactive ref)
  */
-export function useWidgetContext(context: Ref<WidgetContext>) {
-  /* eslint-disable-next-line @typescript-eslint/no-unsafe-return */
-  if (!context || !context.value) return {} as any
+export function useWidgetContext<T = Record<string, unknown>>(context: Ref<WidgetContext>, isConfig?: ConfigGuardFn<T>) {
+  if (!context || !context.value) {
+    throw new Error('useWidgetContext must be called with a reactive ref to the widget context')
+  }
 
   const widgetExpression = useWidgetExpression()
   const _evaluateExpression = widgetExpression.evaluateExpression
@@ -37,8 +40,9 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
 
   // computed
   const componentType = computed<string | null>(() => {
-    if (!context.value.component?.component) return null
-    return (evaluateExpression('type', context.value.component.component) as string) || null
+    const component = context.value.component.component
+    if (!component) return null
+    return (evaluateExpression('type', component) as string) || null
   })
 
   const childWidgetComponentType = computed<string | null>(() => {
@@ -52,20 +56,23 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
     return widget.component
   })
 
-  const config = computed<Record<string, unknown>>(() => {
-    if (!context.value.component) return {}
+  const config = computed<T>(() => {
+    if (!context.value.component) return {} as T
     let evalConfig: Record<string, unknown> = {}
     // Fallback to modelConfig for oh- components to allow configuring them in modals
     const sourceConfig: Record<string, unknown> =
       context.value.component.config || (componentType.value?.startsWith('oh-') ? context.value.modalConfig : {})
     if (sourceConfig) {
-      if (typeof sourceConfig !== 'object') return {}
+      if (typeof sourceConfig !== 'object') return {} as T
       for (const [key, value] of Object.entries(sourceConfig)) {
         if (key === 'visible' || key === 'visibleTo' || key === 'stylesheet' || key === 'constants') continue
         evalConfig[key] = evaluateExpression(key, value)
       }
     }
-    return evalConfig
+    if (!isConfig || isConfig(evalConfig)) {
+      return evalConfig as T
+    }
+    throw new Error('useWidgetContext: config does not match expected type')
   })
 
   const props = computed<Record<string, unknown>>(() => {
@@ -80,7 +87,8 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
   })
 
   const hasAction = computed<boolean>(() => {
-    return !!(config.value && (config.value.action || config.value.actionPropsParameterGroup))
+    const cfg = config.value as Record<string, unknown>
+    return !!(cfg && (cfg.action || cfg.actionPropsParameterGroup))
   })
 
   const visible = computed<boolean>(() => {
@@ -123,8 +131,8 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
         ? { ...widget, slots: { ...widget.slots, ...context.value.component.slots } }
         : widget
     return {
-      component: extendedWidget,
-      props: config.value,
+      component: extendedWidget as api.RootUiComponent | api.UiComponent,
+      props: config.value as Record<string, unknown>,
       fn: context.value.fn,
       const: context.value.const,
       vars: widgetVars.value,
@@ -140,7 +148,12 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
   })
 
   // methods
-  function evaluateExpression(key: string, value: any, _context?: WidgetContext, _props?: Record<string, unknown>): unknown {
+  const evaluateExpression: EvaluateExpressionFn = <T = unknown>(
+    key: string,
+    value: T,
+    _context?: WidgetContext,
+    _props?: Record<string, unknown>
+  ): T | Error => {
     return _evaluateExpression(key, value, _context ?? context.value, _props ?? props.value)
   }
 
@@ -176,7 +189,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
 
   // lifecycle
   onMounted(() => {
-    const stylesheet = context.value.component?.config?.stylesheet as string | undefined
+    const stylesheet = context.value.component.config?.stylesheet as string | undefined
     if (stylesheet) {
       scopedCssUid.value = 'scoped-' + f7.utils.id()
       let style = document.createElement('style')

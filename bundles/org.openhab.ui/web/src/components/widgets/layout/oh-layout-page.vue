@@ -27,7 +27,10 @@
       <oh-grid-layout :context="context" />
     </template>
     <template v-else-if="config.layoutType === 'fixed' && config.fixedType === 'canvas'">
-      <oh-canvas-layout :context="context" :f7router @action="performAction($event.evt, $event.prefix, $event.context, $event.config)" />
+      <oh-canvas-layout
+        :context="context"
+        :f7router
+        @action="performAction($event.evt ?? undefined, $event.prefix ?? undefined, $event.context, $event.config)" />
     </template>
   </div>
 </template>
@@ -56,5 +59,5 @@ const context = computed(() => props.context)
 const { config, childContext, scopedCssUid, defaultSlots, evaluateExpression } = useWidgetContext(context)
 const { performAction } = useWidgetAction(context, config, evaluateExpression)
 
-const masonrySlots = computed(() => ('slots' in props.context.component && props.context.component.slots.masonry) || [])
+const masonrySlots = computed(() => props.context.component.slots?.masonry ?? [])
 </script>

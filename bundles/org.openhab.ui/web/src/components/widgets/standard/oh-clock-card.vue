@@ -40,12 +40,16 @@ import OhCard from '@/components/widgets/standard/oh-card.vue'
 import OhClock from '../system/oh-clock.vue'
 import { OhClockCardDefinition } from '@/assets/definitions/widgets/standard/cards'
 import type { WidgetContext } from '../types'
+import { OhClockCard as OhClockCardType } from '@/types/components/widgets'
 
 const props = defineProps<{
   context: WidgetContext
 }>()
 
-const { config } = useWidgetContext(computed(() => props.context))
+const { config } = useWidgetContext<OhClockCardType.Config>(
+  computed(() => props.context),
+  OhClockCardType.isConfig
+)
 
 const clockContext: WidgetContext = {
   component: {

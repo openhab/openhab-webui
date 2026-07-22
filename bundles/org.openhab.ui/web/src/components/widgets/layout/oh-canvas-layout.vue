@@ -3,6 +3,7 @@
     ref="ohCanvasLayout"
     class="oh-canvas-layout disable-user-select"
     :class="context.editmode ? 'margin-top' : ''"
+    tabindex="0"
     @keydown="onKeyDown"
     @keyup="onKeyUp">
     <f7-block v-if="context.editmode">
@@ -28,16 +29,16 @@
             <f7-menu-dropdown-item divider />
             <f7-menu-dropdown-item v-if="context.editmode.isEditable" @click="addLayer()" href="#" text="Add Layer" />
             <f7-menu-dropdown-item @click="configureLayer()" href="#" text="Layer Settings" />
-            <template v-if="layerToolsVisible && context.editmode.isEditable">
+            <template v-if="slots.canvas.length > 1 && context.editmode.isEditable">
               <f7-menu-dropdown-item divider />
               <f7-menu-dropdown-item class="justify-content-center" text="Layers" />
               <f7-menu-dropdown-item
-                v-for="(obj, idx) in layout.slice().reverse()"
+                v-for="(obj, idx) in layers.slice().reverse()"
                 :key="idx"
-                @click="setActiveLayer(layout.length - idx - 1)"
+                @click="setActiveLayer(layers.length - idx - 1)"
                 href="#">
-                <span>{{ obj.item.config && obj.item.config.layerName ? obj.item.config.layerName : `Layer ${layout.length - idx}` }}</span>
-                <f7-icon class="margin-left" :f7="layout.length - idx - 1 == actLyrIdx ? 'pencil_circle_fill' : ''" />
+                <span>{{ obj.item.config && obj.item.config.layerName ? obj.item.config.layerName : `Layer ${layers.length - idx}` }}</span>
+                <f7-icon class="margin-left" :f7="layers.length - idx - 1 == actLyrIdx ? 'pencil_circle_fill' : ''" />
                 <f7-icon
                   class="margin-left"
                   :f7="!(obj.item.config && obj.item.config.editVisible === false) ? 'eye_fill' : 'eye_slash_fill'" />
@@ -70,22 +71,7 @@
       </f7-menu>
       <hr />
     </f7-block>
-    <div
-      ref="canvasLayoutContainer"
-      class="oh-canvas-layout-container"
-      :style="{
-        background: context.editmode ? 'var(--f7-page-master-border-color)' : false,
-        width: style.width + 'px',
-        height: style.height + 'px',
-        transform: `scale(${style.scale})`,
-        'text-align': 'center',
-        position: 'relative',
-        overflow: context.editmode ? 'visible' : 'hidden',
-        '--oh-canvas-item-box-shadow': config.boxShadow ? config.boxShadow : '0px 0px 4px 2px #444',
-        '--oh-canvas-item-svg-shadow': config.filterShadow ? config.filterShadow : 'drop-shadow(0px 0px 4px #444)',
-        '--oh-canvas-item-text-shadow': config.textShadow ? config.textShadow : '#444 0px 0px 4px',
-        ...config.style
-      }">
+    <div ref="canvasLayoutContainer" class="oh-canvas-layout-container" :style="canvasStyle">
       <div
         v-if="config.imageUrl || config.imageSrcSet"
         v-show="!config.embedSvg || embeddedSvgReady"
@@ -115,7 +101,7 @@
         /></span>
       </div>
       <oh-canvas-layer
-        v-for="obj in layout"
+        v-for="obj in layers"
         :key="obj.id"
         :id="obj.id"
         :grid-enable="grid.enable"
@@ -143,286 +129,359 @@
     height 100%
     width 100%
     object-fit contain
+
+.oh-canvas-layout.disable-user-select:focus
+  outline none
 </style>
 
-<script>
-import { computed, nextTick } from 'vue'
+<script setup lang="ts">
+import { computed, nextTick, onMounted, onBeforeUnmount, getCurrentInstance, ref, reactive, useTemplateRef, onBeforeMount } from 'vue'
 import { f7 } from 'framework7-vue'
+import type { Router } from 'framework7'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
-import embeddedSvgMixin from '@/components/widgets/svg/oh-embedded-svg-mixin'
+import { useSvgEmbedded } from '@/components/widgets/svg/useSvgEmbedded'
 import OhCanvasLayer from './oh-canvas-layer.vue'
+import type { OhCanvasItemSelection } from './oh-canvas-item.vue'
+import {
+  OhCanvasLayer as OhCanvasLayerType,
+  OhCanvasLayout as OhCanvasLayoutType,
+  OhSvgElement,
+  OhCanvasItem as OhCanvasItemType
+} from '@/types/components/widgets'
 import { OhCanvasLayoutDefinition } from '@/assets/definitions/widgets/layout'
 import { showToast } from '@/js/dialog-promises'
+import type { WidgetContext } from '../types'
 
-export default {
-  mixins: [embeddedSvgMixin],
-  widget: OhCanvasLayoutDefinition,
-  props: {
-    context: Object
-  },
-  components: {
-    OhCanvasLayer
-  },
-  setup(props) {
-    const { config, childContext } = useWidgetContext(computed(() => props.context))
-    return { config, childContext }
-  },
-  data() {
-    return {
-      layout: [],
-      screenWidth: Number,
-      screenHeight: Number,
-      windowWidth: Number,
-      windowHeight: Number,
-      fullscreen: this.$fullscreen.isFullscreen,
-      navbarHidden: false,
-      style: {
-        width: Number,
-        height: Number,
-        scale: 1.0
-      },
-      grid: {
-        pitch: Number,
-        enable: false
-      },
-      actLyrIdx: 0,
-      preventDeactivation: false,
-      selectedItems: []
-    }
-  },
-  computed: {
-    activeLayer() {
-      return this.context.component.slots.canvas[this.actLyrIdx]
-    },
-    layerToolsVisible() {
-      return this.context.component.slots.canvas.length > 1
-    }
-  },
-  created() {
-    if (this.config.layoutType === 'fixed' && this.config.fixedType === 'canvas') {
-      this.style.width = this.screenWidth = this.config.screenWidth || 1280
-      this.style.height = this.screenHeight = this.config.screenHeight || 720
-      this.grid.pitch = this.config.grid || 20
-      this.grid.enable = this.config.gridEnable || false
-      this.actLyrIdx = this.config.activeIdx || 0
+import type { Framework7Events } from '@/types/framework7-extensions'
 
-      if (!this.context.editmode) {
-        window.addEventListener('resize', this.setDimensions)
-      }
-    }
-    this.$fullscreen.isEnabled = true
-    this.canvasLayoutStyle()
-    this.computeLayout()
+import * as api from '@/api'
+
+// Constants / stores / types
+const instance = getCurrentInstance()
+const globalProps = instance?.appContext.config.globalProperties
+
+const defaultConfig = {
+  layoutType: 'fixed',
+  fixedType: 'canvas'
+} as OhCanvasLayoutType.Config
+
+// Defines
+const props = defineProps<{
+  context: WidgetContext
+  f7router: Router.Router
+}>()
+
+const emits = defineEmits<{
+  (e: 'action', payload: { evt: Event | null; prefix: string | null; config: OhSvgElement.Config; context: WidgetContext }): void
+}>()
+
+defineOptions({
+  widget: OhCanvasLayoutDefinition
+})
+
+// Composables
+const context = computed(() => props.context)
+const { config, childContext, slots } = useWidgetContext(context, OhCanvasLayoutType.isConfig)
+
+const { loadAndEmbedSvg, removeEmbeddedSvg, embeddedSvgReady, flashEmbeddedSvgComponents } = useSvgEmbedded({
+  editmode: computed(() => Boolean(context.value.editmode)),
+  embeddedSvgActions: computed(() => config.value.embeddedSvgActions || {}),
+  embedSvgFlashing: computed(() => config.value.embedSvgFlashing || false),
+  performAction: (evt, prefix, config) => {
+    emits('action', { evt, prefix, config, context: context.value })
   },
-  mounted() {
-    // Chrome reports a wrong size in fullscreen, store initial resolution and use non-dynamically.
-    this.windowWidth = window.screen.width
-    this.windowHeight = window.screen.height
-    if (this.config.embedSvg && this.config.imageUrl) {
-      this.embedSvg()
-        .then(() => {
-          this.subscribeEmbeddedSvgListeners()
-          this.setupEmbeddedSvgStateTracking()
-          this.embeddedSvgReady = true
-        })
-        .catch((err) => {
-          nextTick(() => {
-            showToast('Failed to embed SVG: ' + err)
-          })
-        })
-    }
-  },
-  beforeUnmount() {
-    if (!this.context.editmode) {
-      window.removeEventListener('resize', this.setDimensions)
-    }
-    if (this.config.embedSvg && this.embeddedSvgReady) {
-      this.embeddedSvgReady = false
-      this.unsubscribeEmbeddedSvgListeners()
-      this.unsubscribeEmbeddedSvgStateTracking()
-    }
-  },
-  methods: {
-    isRetina() {
-      return window.devicePixelRatio > 1
-    },
-    getCurrentScreenResolution() {
-      return (
-        'Layout Size: ' +
-        this.screenWidth +
-        ' x ' +
-        this.screenHeight +
-        ' (Current Screen: ' +
-        this.windowWidth +
-        ' x ' +
-        this.windowHeight +
-        ')'
-      )
-    },
-    addItem() {
-      if (!this.context.editmode?.isEditable) {
-        return
-      }
-      if (!this.context.component.slots?.canvas[0]) {
-        this.addLayer()
-      }
-      this.context.component.slots.canvas[this.actLyrIdx].slots.default.push({
-        component: 'oh-canvas-item',
-        config: { x: 20, y: 20, h: 150, w: 200 },
-        slots: { default: [] }
+  f7router: props.f7router,
+  updateSvgElementConfig: (id, config) => {
+    f7.emit('svgOnclickConfigUpdate' as Framework7Events, { id, config })
+  }
+})
+
+// State/Data
+const canvasBackground = useTemplateRef('canvasBackground')
+const layers = ref<{ item: OhCanvasLayerType.Component; id: string }[]>([])
+
+let nextCanvasLayerRuntimeId = 0
+const canvasLayerRuntimeIds = new WeakMap<api.UiComponent, string>()
+
+const style = reactive({
+  width: 0,
+  height: 0,
+  scale: 1.0
+})
+
+const grid = reactive({
+  pitch: 0,
+  enable: false
+})
+
+const actLyrIdx = ref(0)
+const preventDeactivation = ref(false)
+
+const selectedItems = new Map<string, OhCanvasItemType.Component>()
+let windowWidth = 0
+let windowHeight = 0
+let screenWidth = 0
+let screenHeight = 0
+
+// Computed
+const activeLayer = computed(() => {
+  return slots.value.canvas[actLyrIdx.value]
+})
+
+const canvasStyle = computed(
+  () =>
+    ({
+      background: context.value.editmode ? 'var(--f7-page-master-border-color)' : false,
+      width: style.width + 'px',
+      height: style.height + 'px',
+      transform: `scale(${style.scale})`,
+      'text-align': 'center',
+      position: 'relative',
+      overflow: context.value.editmode ? 'visible' : 'hidden',
+      '--oh-canvas-item-box-shadow': config.value.boxShadow ? config.value.boxShadow : '0px 0px 4px 2px #444',
+      '--oh-canvas-item-svg-shadow': config.value.filterShadow ? config.value.filterShadow : 'drop-shadow(0px 0px 4px #444)',
+      '--oh-canvas-item-text-shadow': config.value.textShadow ? config.value.textShadow : '#444 0px 0px 4px',
+      ...((config.value as Record<string, unknown>).style as Record<string, unknown>)
+    }) as any
+)
+
+// Lifecycle
+onBeforeMount(() => {
+  style.width = screenWidth = config.value.screenWidth || 1280
+  style.height = screenHeight = config.value.screenHeight || 720
+  grid.pitch = config.value.grid || 20
+  grid.enable = config.value.gridEnable || false
+  actLyrIdx.value = config.value.activeIdx || 0
+
+  if (globalProps) {
+    globalProps.$fullscreen.isEnabled = true
+  }
+
+  canvasLayoutStyle()
+  computeLayout()
+})
+
+onMounted(async () => {
+  // Chrome reports a wrong size in fullscreen, store initial resolution and use non-dynamically.
+  windowWidth = window.screen.width
+  windowHeight = window.screen.height
+  if (config.value.embedSvg && config.value.imageUrl) {
+    try {
+      await loadAndEmbedSvg(config.value.imageUrl, canvasBackground.value)
+    } catch (err) {
+      nextTick(() => {
+        showToast('Failed to embed SVG: ' + err)
       })
-      this.computeLayout()
-    },
-    addLayer() {
-      if (!this.context.editmode?.isEditable) {
-        return
-      }
-      this.context.component.slots.canvas.push({
-        component: 'oh-canvas-layer',
-        config: {},
-        slots: { default: [] }
-      })
-      this.actLyrIdx = this.context.component.slots.canvas.length - 1
-      this.computeLayout()
-    },
-    removeLayer() {
-      if (!this.context.editmode?.isEditable) {
-        return
-      }
-      this.context.component.slots.canvas.splice(this.actLyrIdx, 1)
-      this.setActiveLayer(Math.min(0, this.actLyrIdx--))
-      this.computeLayout()
-    },
-    setActiveLayer(idx) {
-      if (!this.context.editmode?.isEditable) {
-        return this.actLyrIdx
-      }
-      this.actLyrIdx = this.context.component.config.activeIdx = idx
-      this.context.component.slots.canvas[this.actLyrIdx].config = this.context.component.slots.canvas[this.actLyrIdx].config || {}
-      delete this.context.component.slots.canvas[this.actLyrIdx].config.editVisible
-      return this.actLyrIdx
-    },
-    configureLayer() {
-      this.context.editmode.configureWidget(this.context.component.slots.canvas[this.actLyrIdx], this.context.component, 'oh-canvas-layer')
-    },
-    hideOtherLayers() {
-      if (!this.context.editmode?.isEditable) {
-        return
-      }
-      this.context.component.slots.canvas.forEach((layer, idx) => {
-        if (idx !== this.actLyrIdx) {
-          layer.config = layer.config || {}
-          layer.config.editVisible = false
+    }
+  }
+})
+
+onBeforeUnmount(() => {
+  removeEmbeddedSvg()
+})
+
+// methods
+function isRetina() {
+  return window.devicePixelRatio > 1
+}
+
+function getCurrentScreenResolution() {
+  return 'Layout Size: ' + screenWidth + ' x ' + screenHeight + ' (Current Screen: ' + windowWidth + ' x ' + windowHeight + ')'
+}
+
+function addItem() {
+  if (!context.value.editmode?.isEditable) {
+    return
+  }
+  if (!slots.value.canvas[0]) {
+    addLayer()
+  }
+  if (!slots.value.canvas[actLyrIdx.value].slots) {
+    slots.value.canvas[actLyrIdx.value].slots = { default: [] }
+  }
+  slots.value.canvas[actLyrIdx.value].slots!.default.push({
+    component: 'oh-canvas-item',
+    config: { x: 20, y: 20, h: 150, w: 200 },
+    slots: { default: [] }
+  })
+  computeLayout()
+}
+
+function addLayer() {
+  if (!context.value.editmode?.isEditable) {
+    return
+  }
+  slots.value.canvas.push({
+    component: 'oh-canvas-layer',
+    config: {},
+    slots: { default: [] }
+  } as any) //TODO - fix type
+  actLyrIdx.value = slots.value.canvas.length - 1
+  computeLayout()
+}
+
+function removeLayer() {
+  if (!context.value.editmode?.isEditable) {
+    return
+  }
+  slots.value.canvas.splice(actLyrIdx.value, 1)
+  actLyrIdx.value = Math.max(0, actLyrIdx.value - 1)
+  if (slots.value.canvas.length === 0) {
+    config.value.activeIdx = 0
+    return
+  }
+  setActiveLayer(actLyrIdx.value)
+  computeLayout()
+}
+
+function setActiveLayer(idx: number) {
+  if (!context.value.editmode?.isEditable) {
+    return actLyrIdx
+  }
+  actLyrIdx.value = context.value.component.config.activeIdx = idx
+  slots.value.canvas[actLyrIdx.value].config = slots.value.canvas[actLyrIdx.value].config || {}
+  delete slots.value.canvas[actLyrIdx.value].config.editVisible
+  return actLyrIdx
+}
+
+function configureLayer() {
+  context.value.editmode?.configureWidget(slots.value.canvas[actLyrIdx.value], context.value.component, 'oh-canvas-layer')
+}
+
+function hideOtherLayers() {
+  if (!context.value.editmode?.isEditable) {
+    return
+  }
+  slots.value.canvas.forEach((layer: any, idx: number) => {
+    if (idx !== actLyrIdx.value && OhCanvasLayerType.isComponent(layer, {})) {
+      layer.config.editVisible = false
+    }
+  })
+}
+
+function showOtherLayers() {
+  if (!context.value.editmode?.isEditable) {
+    return
+  }
+  slots.value.canvas.forEach((layer: any, idx: number) => {
+    if (idx !== actLyrIdx.value) {
+      layer.config.editVisible = true
+    }
+  })
+}
+
+function toggleGrid() {
+  if (!context.value.editmode?.isEditable) {
+    return
+  }
+  context.value.component.config.gridEnable = grid.enable = !grid.enable
+}
+
+function canvasLayoutStyle() {
+  if (config.value.scale && !context.value.editmode) {
+    style.scale = parent.innerWidth / screenWidth
+  } else {
+    style.scale = 1.0
+  }
+}
+
+function computeLayout() {
+  let _layers: { item: OhCanvasLayerType.Component; id: string }[] = []
+  if (slots.value.canvas && Array.isArray(slots.value.canvas)) {
+    slots.value.canvas.forEach((item: api.UiComponent) => {
+      if (OhCanvasLayerType.isComponent(item)) {
+        let layerId = canvasLayerRuntimeIds.get(item)
+        if (!layerId) {
+          layerId = `canvas-layer-${++nextCanvasLayerRuntimeId}`
+          canvasLayerRuntimeIds.set(item, layerId)
         }
-      })
-    },
-    showOtherLayers() {
-      if (!this.context.editmode?.isEditable) {
-        return
-      }
-      this.context.component.slots.canvas.forEach((layer, idx) => {
-        if (idx !== this.actLyrIdx) {
-          layer.config.editVisible = true
-        }
-      })
-    },
-    toggleGrid() {
-      if (!this.context.editmode?.isEditable) {
-        return
-      }
-      this.context.component.config.gridEnable = this.grid.enable = !this.grid.enable
-    },
-    canvasLayoutStyle() {
-      if (this.config.scale && !this.context.editmode) {
-        this.style.scale = parent.innerWidth / this.screenWidth
+        _layers.push({
+          item,
+          id: layerId
+        })
       } else {
-        this.style.scale = 1.0
+        console.log('Wrong component type in canvas: ' + item.component)
       }
-    },
-    computeLayout() {
-      let layout = []
-      if (this.context.component.slots?.canvas) {
-        this.context.component.slots.canvas.forEach((item) => {
-          if (item.component === 'oh-canvas-layer') {
-            layout.push({
-              item,
-              id: Math.random().toString(36).substring(2)
-            })
-          } else {
-            console.log('Wrong component type in canvas: ' + item.component)
-          }
-        })
-      }
-      this.layout = layout
-    },
-    onKeyDown(ev) {
-      let moveX = 0,
-        moveY = 0
-      switch (ev.key) {
-        case 'Shift':
-          this.preventDeactivation = true
-          break
-        case 'ArrowDown':
-          moveY = 1
-          break
-        case 'ArrowUp':
-          moveY = -1
-          break
-        case 'ArrowRight':
-          moveX = 1
-          break
-        case 'ArrowLeft':
-          moveX = -1
-          break
-      }
-      if (moveX || moveY) {
-        const moveBy = this.grid.enable ? this.grid.pitch : 1
-        const didMove = this.moveSelectedItems(null, moveX * moveBy, moveY * moveBy)
-        if (didMove) {
-          ev.stopPropagation()
-          ev.preventDefault()
-        }
-      }
-    },
-    onKeyUp(ev) {
-      switch (ev.key) {
-        case 'Shift':
-          this.preventDeactivation = false
-          break
-      }
-    },
-    moveSelectedItems(exceptId, deltaX, deltaY) {
-      let movedSomething = false
-      this.selectedItems.forEach((i) => {
-        if (i.id !== exceptId) {
-          i.moveTo(i.x + deltaX, i.y + deltaY)
-          movedSomething = true
-        }
-      })
-      return movedSomething
-    },
-    ociSelected(item) {
-      this.selectedItems.push(item)
-    },
-    ociDeselected(item) {
-      this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
-    },
-    ociDragged(item, deltaX, deltaY) {
-      // Move all selected (active) items, except the source one (already moved)
-      // if there are several objects selected
-      if (this.selectedItems.length > 1) {
-        this.moveSelectedItems(item.id, deltaX, deltaY)
-      }
-    },
-    ociDragStop(itemId) {
-      // Notify items of drag end in case of multiple items selection
-      if (this.selectedItems.length > 1) {
-        this.selectedItems.forEach((item) => {
-          item.stopDrag()
-        })
-      }
+    })
+  }
+  layers.value = _layers
+}
+
+function onKeyDown(ev: KeyboardEvent) {
+  let moveX = 0,
+    moveY = 0
+  switch (ev.key) {
+    case 'Shift':
+      preventDeactivation.value = true
+      break
+    case 'ArrowDown':
+      moveY = 1
+      break
+    case 'ArrowUp':
+      moveY = -1
+      break
+    case 'ArrowRight':
+      moveX = 1
+      break
+    case 'ArrowLeft':
+      moveX = -1
+      break
+  }
+  if (moveX || moveY) {
+    const moveBy = grid.enable ? grid.pitch : 1
+    const didMove = moveSelectedItems(null, moveX * moveBy, moveY * moveBy)
+    if (didMove) {
+      ev.stopPropagation()
+      ev.preventDefault()
     }
   }
 }
+
+function onKeyUp(ev: KeyboardEvent) {
+  switch (ev.key) {
+    case 'Shift':
+      preventDeactivation.value = false
+      break
+  }
+}
+
+function moveSelectedItems(exceptId: string | null, deltaX: number, deltaY: number) {
+  let movedSomething = false
+
+  selectedItems.forEach((component, itemId) => {
+    if (itemId !== exceptId) {
+      if (component.component !== 'oh-canvas-item') {
+        return
+      }
+
+      const currentX = typeof component.config.x === 'number' ? component.config.x : 20
+      const currentY = typeof component.config.y === 'number' ? component.config.y : 20
+
+      component.config.x = currentX + deltaX
+      component.config.y = currentY + deltaY
+      movedSomething = true
+    }
+  })
+
+  return movedSomething
+}
+
+function ociSelected(item: OhCanvasItemSelection) {
+  selectedItems.set(item.id, item.component)
+}
+
+function ociDeselected(itemId: string) {
+  selectedItems.delete(itemId)
+}
+
+function ociDragged(item: string, deltaX: number, deltaY: number) {
+  // Move all selected (active) items, except the source one (already moved)
+  // if there are several objects selected
+  if (selectedItems.size > 1) {
+    moveSelectedItems(item, deltaX, deltaY)
+  }
+}
+
+function ociDragStop(itemId: string) {}
 </script>

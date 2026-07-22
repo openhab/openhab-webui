@@ -1,0 +1,22 @@
+{
+  "required": ["component", "config"],
+  "type": "object",
+  "properties": {
+    "component": {
+      "type": "string"
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "slots": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UIComponent"
+        }
+      }
+    }
+  }
+}
