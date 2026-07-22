@@ -30,7 +30,7 @@ export default function defineOHBlocks_Variables(f7) {
       this.setNextStatement(true, null)
       this.setColour(0)
       this.setTooltip(
-        'stores a value with a variable name that can be retrieved on subsequent runs of this rule/script to the private rule or shared global cache'
+        'stores a value with a variable name that can be retrieved on subsequent runs of this rule/script to the private rule or shared global cache. Vales stored in the shared cache will automatically have `javaify()` applied.'
       )
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#store-value')
     }
@@ -47,30 +47,73 @@ export default function defineOHBlocks_Variables(f7) {
     init: function () {
       this.appendDummyInput().appendField('stored value')
       this.appendValueInput('key')
-      this.appendDummyInput()
-        .appendField('from ')
-        .appendField(
-          new Blockly.FieldDropdown([
-            ['private', '.private'],
-            ['shared', '.shared']
-          ]),
-          'cacheType'
-        )
-        .appendField('cache')
+
+      const cacheDropdown = new Blockly.FieldDropdown(
+        [
+          ['private', '.private'],
+          ['shared', '.shared']
+        ],
+        this.validate.bind(this)
+      )
+
+      this.appendDummyInput('cacheInput').appendField('from ').appendField(cacheDropdown, 'cacheType').appendField('cache')
+
       this.setInputsInline(true)
       this.setOutput(true, null)
       this.setColour(0)
       this.setTooltip(
-        'retrieves the value that was previously stored for that particular script/rule from the private rule or shared global cache'
+        'Retrieves the value that was previously stored for that particular script/rule from the private rule or shared global cache.'
       )
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#get-stored-value')
+    },
+    validate: function (newValue) {
+      const cacheInput = this.getInput('cacheInput')
+      if (!cacheInput) return
+
+      const hasJsify = this.getField('jsifyOpt')
+
+      if (newValue === '.shared') {
+        if (!hasJsify) {
+          cacheInput.appendField(' ', 'jsifySpace')
+
+          const jsifyTooltip =
+            'Automatically converts retrieved Java objects from the shared cache back into standard JavaScript objects for ease of use.'
+          const checkbox = new Blockly.FieldCheckbox('TRUE')
+          checkbox.setTooltip(jsifyTooltip)
+          cacheInput.appendField(checkbox, 'jsifyOpt')
+
+          const label = new Blockly.FieldLabel('jsify value')
+          label.setTooltip(jsifyTooltip)
+          cacheInput.appendField(label, 'jsifyLabel')
+        }
+      } else {
+        if (hasJsify) {
+          cacheInput.removeField('jsifySpace')
+          cacheInput.removeField('jsifyOpt')
+          cacheInput.removeField('jsifyLabel')
+        }
+      }
     }
   }
 
+  /*
+   * Retrieves the value from private or shared cache.
+   * Code part
+   */
   javascriptGenerator.forBlock['oh_get_value'] = function (block) {
     const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = block.getFieldValue('cacheType')
-    return [`cache${cacheType}.get(${key})`, javascriptGenerator.ORDER_NONE]
+    const jsifyOpt = block.getField('jsifyOpt') ? block.getFieldValue('jsifyOpt') === 'TRUE' : true
+
+    let code
+    // To maintain backwards compatibility, we only specify the extra argument if it's different from the default
+    if (cacheType === '.shared' && !jsifyOpt) {
+      code = `cache.shared.get(${key}, null, false)`
+    } else {
+      code = `cache${cacheType}.get(${key})`
+    }
+
+    return [code, javascriptGenerator.ORDER_NONE]
   }
 
   Blockly.Blocks['oh_check_undefined_value'] = {
