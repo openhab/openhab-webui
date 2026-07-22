@@ -1,7 +1,7 @@
 <template>
   <f7-page @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut" ref="addondetails" class="page-addon-details">
     <f7-navbar :transparent="true" class="addon-details-nav">
-      <oh-nav-content :title="addon?.label" :back-link="backLinkTitle" :back-link-url="'/addons/' + addon?.type" :f7router />
+      <oh-nav-content :title="addon?.label ?? ''" :back-link="backLinkTitle" :back-link-url="backLinkUrl" :f7router />
     </f7-navbar>
     <f7-block v-if="ready && addon" class="block-narrow addon-details">
       <f7-row>
@@ -231,8 +231,11 @@ export default {
     backLinkTitle() {
       return AddonTitles[this.addon?.type] || 'Add-on Store'
     },
+    backLinkUrl() {
+      return this.addon ? '/addons/' + this.addon.type : '/addons/'
+    },
     showConfig() {
-      return this.addon && this.addon.installed && (this.addon.configDescriptionURI || this.addon.loggerPackages.length > 0)
+      return this.addon && this.addon.installed && (this.addon.configDescriptionURI || this.addon.loggerPackages?.length > 0)
     },
     realAddonId() {
       if (!this.addon) return null
