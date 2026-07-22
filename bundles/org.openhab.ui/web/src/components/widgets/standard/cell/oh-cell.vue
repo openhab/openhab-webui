@@ -260,9 +260,8 @@ export default {
       return false
     },
     openCell(evt) {
+      if (this.context.editmode || !this.hasExpandedControls) return
       if (evt && evt.preventDefault) evt.preventDefault()
-      if (this.context.editmode) return false
-      if (!this.hasExpandedControls) return false
       f7.card.open(this.$refs.card.$el)
       history.pushState(
         { cardId: this.cardId },
