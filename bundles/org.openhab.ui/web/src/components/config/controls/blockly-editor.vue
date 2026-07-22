@@ -1054,6 +1054,20 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_runrule_v2">
+            <value name="ruleUID">
+              <shadow type="text">
+                <field name="TEXT">ruleUID</field>
+              </shadow>
+            </value>
+            <value name="parameters">
+              <shadow type="dicts_create_with">
+                <mutation items="0" />
+              </shadow>
+            </value>
+          </block>
+          <block type="oh_javaify"></block>
+          <block type="oh_jsify"></block>
           <sep gap="48" />
           <block type="oh_context_info" />
           <block type="oh_context_attribute">
