@@ -1054,6 +1054,8 @@
               </shadow>
             </value>
           </block>
+          <block type="oh_javaify"></block>
+          <block type="oh_jsify"></block>
           <sep gap="48" />
           <block type="oh_context_info" />
           <block type="oh_context_attribute">

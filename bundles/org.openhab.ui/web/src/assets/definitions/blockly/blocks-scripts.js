@@ -68,6 +68,52 @@ export default function defineOHBlocks_Scripts(f7, transformationServices) {
   }
 
   /*
+   * Recursively convert any value, array or object to use Java types. Functions are not supported.
+   * Blockly part
+   */
+  Blockly.Blocks['oh_javaify'] = {
+    init: function () {
+      this.appendValueInput('INPUT_VALUE').appendField('javaify')
+      this.setOutput(true, null)
+      this.setColour(280)
+      this.setTooltip('Recursively convert any value, array or object to use Java types. Functions are not supported.')
+    }
+  }
+
+  /*
+   * Recursively convert any value, array or object to use Java types. Functions are not supported.
+   * Code part
+   */
+  javascriptGenerator.forBlock['oh_javaify'] = function (block) {
+    const inputValue = javascriptGenerator.valueToCode(block, 'INPUT_VALUE', javascriptGenerator.ORDER_NONE) || 'null'
+    const code = `javaify(${inputValue})`
+    return [code, javascriptGenerator.ORDER_NONE]
+  }
+
+  /*
+   * Recursively convert Java Lists, Sets, and Maps and their entries/values to their JS counterparts.
+   * Blockly part
+   */
+  Blockly.Blocks['oh_jsify'] = {
+    init: function () {
+      this.appendValueInput('INPUT_VALUE').appendField('jsify')
+      this.setOutput(true, null)
+      this.setColour(300)
+      this.setTooltip('Recursively convert Java Lists, Sets, and Maps and their entries/values to their JS counterparts.')
+    }
+  }
+
+  /*
+   * Recursively convert Java Lists, Sets, and Maps and their entries/values to their JS counterparts.
+   * Code part
+   */
+  javascriptGenerator.forBlock['oh_jsify'] = function (block) {
+    const inputValue = javascriptGenerator.valueToCode(block, 'INPUT_VALUE', javascriptGenerator.ORDER_NONE) || 'null'
+    const code = `jsify(${inputValue})`
+    return [code, javascriptGenerator.ORDER_NONE]
+  }
+
+  /*
    * Allow transformations via different methods
    * inputs
    *   - value to be transformed
