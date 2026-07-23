@@ -3,7 +3,7 @@
     ref="root"
     @page:afterin="onPageAfterIn"
     @page:beforeout="onPageBeforeOut"
-    hide-bars-on-scroll
+    :hide-bars-on-scroll="!uiOptionsStore.disableHideBarsOnScroll"
     :style="pageStyle"
     class="disable-user-select">
     <f7-navbar
@@ -122,6 +122,7 @@ const props = defineProps<{
 const componentStore = useComponentsStore()
 const statesStore = useStatesStore()
 const userStore = useUserStore()
+const uiOptionsStore = useUIOptionsStore()
 
 const theme = f7.theme
 

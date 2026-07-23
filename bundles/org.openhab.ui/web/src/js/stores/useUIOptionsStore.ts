@@ -45,6 +45,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
 
+  const disableHideBarsOnScroll = ref<boolean>(localStorage.getItem('openhab.ui:theme.disablehidebarsonscroll') === 'true')
+
   // shared with Basic UI
   const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
 
@@ -185,6 +187,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   watch(hideChatInput, (newValue) => {
     localStorage.setItem('openhab.ui:theme.home.hidechatinput', newValue.toString())
+  })
+
+  watch(disableHideBarsOnScroll, (newValue) => {
+    localStorage.setItem('openhab.ui:theme.disablehidebarsonscroll', newValue.toString())
   })
 
   watch(webAudio, (newValue) => {
@@ -335,6 +341,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
       blocklyRenderer: blocklyRenderer.value,
       disablePageTransitionAnimation: disablePageTransitionAnimation.value,
       hideChatInput: hideChatInput.value,
+      disableHideBarsOnScroll: disableHideBarsOnScroll.value,
       webAudio: webAudio.value,
       visibleBreakpointDisabled: visibleBreakpointDisabled.value
     }
@@ -352,6 +359,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     disableLeftPanelSwipe,
     disablePageTransitionAnimation,
     hideChatInput,
+    disableHideBarsOnScroll,
     webAudio,
     visibleBreakpointDisabled,
     codeEditorType,
