@@ -59,7 +59,9 @@
                   :widget="selectedWidget"
                   :createMode="createMode"
                   :editable="isEditable"
+                  :f7router="f7router"
                   @duplicate="duplicateWidget"
+                  @navigate-nested-sitemap="navigateNestedSitemapEditor"
                   @remove="removeWidget"
                   @movedown="moveWidgetDown"
                   @moveup="moveWidgetUp"
@@ -150,7 +152,7 @@
               <template #media>
                 <f7-icon :f7="widgetTypeIcon(widgetType.type)" />
               </template>
-              <span>{{ widgetTypeLabel(widgetType.type) }}</span>
+              <span>{{ this.widgetTypeLabel(widgetType.type) }}</span>
             </f7-actions-button>
           </f7-actions-group>
         </f7-actions>
@@ -251,6 +253,7 @@
             :widget="selectedWidget"
             :createMode="createMode"
             :editable="isEditable"
+            @navigate-nested-sitemap="navigateNestedSitemapEditor"
             @duplicate="duplicateWidget"
             @remove="removeWidget"
             @movedown="moveWidgetDown"
@@ -719,6 +722,13 @@ export default {
           })
       }
     },
+    navigateNestedSitemapEditor(target) {
+      if (!target) {
+        this.f7router.navigate('/settings/sitemaps/add')
+        return
+      }
+      this.f7router.navigate('/settings/sitemaps/' + encodeURIComponent(target))
+    },
     save(stay, force) {
       if (!this.isEditable) return
       if (this.currentTab === 'code' && this.codeDirty) {
@@ -830,7 +840,7 @@ export default {
           .forEach((widget) => {
             if (!widget.widgets?.length) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ' should not be empty')
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ' should not be empty')
             }
           })
         // Check widget has item configured if required
@@ -839,7 +849,7 @@ export default {
           .forEach((widget) => {
             if (!widget.item) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', no item configured')
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', no item configured')
             }
           })
         // Check configured widget item exists in item registry
@@ -848,7 +858,7 @@ export default {
           .forEach((widget) => {
             if (registeredItemNames && !registeredItemNames.has(widget.item)) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', invalid item configured: ' + widget.item)
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid item configured: ' + widget.item)
             }
           })
         // Check Video and Webview widgets have url configured
@@ -857,7 +867,7 @@ export default {
           .forEach((widget) => {
             if (!widget.url) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', no url configured')
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', no url configured')
             }
           })
         // Check Chart widget has valid period and decimal pattern configured
@@ -866,12 +876,18 @@ export default {
           .forEach((widget) => {
             if (!(widget.period && this.REGEX_PERIOD.test(widget.period))) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', invalid period configured: ' + widget.period)
+              validationWarnings.push(
+                this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid period configured: ' + widget.period
+              )
             }
             if (widget.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.yAxisDecimalPattern)) {
               const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(
-                widget.type + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.yAxisDecimalPattern
+                this.widgetTypeLabel(widget.type) +
+                  ' widget ' +
+                  label +
+                  ', invalid Y-axis decimal pattern configured: ' +
+                  widget.yAxisDecimalPattern
               )
             }
           })
@@ -881,7 +897,9 @@ export default {
           .forEach((widget) => {
             if (widget.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.inputHint)) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', invalid inputHint configured: ' + widget.inputHint)
+              validationWarnings.push(
+                this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid inputHint configured: ' + widget.inputHint
+              )
             }
           })
         // Check Slider, Setpoint and Colortemperaturepicker widgets have valid step, minValue and maxValue if configured
@@ -890,7 +908,9 @@ export default {
           .forEach((widget) => {
             const label = scope.widgetErrorLabel(widget)
             if (widget.step !== undefined && widget.step !== null && widget.step !== '' && Number(widget.step) <= 0) {
-              validationWarnings.push(widget.type + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.step)
+              validationWarnings.push(
+                this.widgetTypeLabel(widget.type) + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.step
+              )
             }
             const hasMinValue = widget.minValue !== undefined && widget.minValue !== null && widget.minValue !== ''
             const hasMaxValue = widget.maxValue !== undefined && widget.maxValue !== null && widget.maxValue !== ''
@@ -898,7 +918,13 @@ export default {
             const maxValue = hasMaxValue ? parseFloat(widget.maxValue) : 100
             if (minValue > maxValue) {
               validationWarnings.push(
-                widget.type + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + minValue + ' > ' + maxValue
+                this.widgetTypeLabel(widget.type) +
+                  ' widget ' +
+                  label +
+                  ', minValue must be less than or equal maxValue: ' +
+                  minValue +
+                  ' > ' +
+                  maxValue
               )
             }
           })
@@ -909,7 +935,7 @@ export default {
           .forEach((widget) => {
             const label = scope.widgetErrorLabel(widget)
             if (!widget.widgets?.length) {
-              validationWarnings.push(widget.type + ' widget ' + label + ', no buttons defined')
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', no buttons defined')
             }
             const noVisibilityRulePositions = new Set()
             const visibilityRulePositions = new Set()
@@ -919,7 +945,7 @@ export default {
                 return
               }
               if (child.type !== 'Button') {
-                validationWarnings.push(widget.type + ' widget ' + label + ', Buttongrid must contain only Buttons')
+                validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', Buttongrid must contain only Buttons')
                 invalidChildFound = true
                 return
               }
@@ -981,22 +1007,41 @@ export default {
               return undefined
             })
             if (!(parentWidget?.type === 'Buttongrid')) {
-              validationWarnings.push(widget.type + ' widget ' + label + ', can only be defined inside a Buttongrid widget')
+              validationWarnings.push(
+                this.widgetTypeLabel(widget.type) + ' widget ' + label + ', can only be defined inside a Buttongrid widget'
+              )
               if (!widget.row || isNaN(widget.row) || widget.row <= 0) {
-                validationWarnings.push(widget.type + ' widget ' + label + ', invalid row configured: ' + widget.row)
+                validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid row configured: ' + widget.row)
               }
               if (!widget.column || isNaN(widget.column) || widget.column <= 0) {
-                validationWarnings.push(widget.type + ' widget ' + label + ', invalid column configured: ' + widget.column)
+                validationWarnings.push(
+                  this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid column configured: ' + widget.column
+                )
               }
               if (widget.command === null || widget.command === undefined || widget.command === '') {
-                validationWarnings.push(widget.type + ' widget ' + label + ', no click command defined')
+                validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', no click command defined')
               }
             } else {
               if (widget.column && !isNaN(widget.column) && widget.column > this.MAX_BUTTONGRID_COLUMNS) {
                 validationWarnings.push(
-                  widget.type + ' widget ' + label + ', more than ' + this.MAX_BUTTONGRID_COLUMNS + ' configured: ' + widget.column
+                  this.widgetTypeLabel(widget.type) +
+                    ' widget ' +
+                    label +
+                    ', more than ' +
+                    this.MAX_BUTTONGRID_COLUMNS +
+                    ' configured: ' +
+                    widget.column
                 )
               }
+            }
+          })
+        // Check NestedSitemap widget has name or item configured
+        widgetList
+          .filter((widget) => widget.type === 'NestedSitemap')
+          .forEach((widget) => {
+            const label = scope.widgetErrorLabel(widget)
+            if (!widget.name && !widget.item) {
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', must have either name or item configured')
             }
           })
         widgetList.forEach((widget) => {
@@ -1009,14 +1054,22 @@ export default {
               widget[attr].forEach((param) => {
                 if (attr === 'mappings' && !this.validateMapping(param)) {
                   validationWarnings.push(
-                    widget.type + ' widget ' + label + ', syntax error in ' + attr + ': ' + param.command + '=' + param.label
+                    this.widgetTypeLabel(widget.type) +
+                      ' widget ' +
+                      label +
+                      ', syntax error in ' +
+                      attr +
+                      ': ' +
+                      param.command +
+                      '=' +
+                      param.label
                   )
                 }
                 if (
                   ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr) &&
                   !this.validateRule(attr, param)
                 ) {
-                  validationWarnings.push(widget.type + ' widget ' + label + ', syntax error in ' + attr)
+                  validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', syntax error in ' + attr)
                 }
               })
             })
@@ -1162,6 +1215,9 @@ export default {
       return processed
     },
     preProcessWidgetLoad(widget) {
+      if (widget.type === 'Sitemap') {
+        widget.type = 'NestedSitemap' // avoid conflict with main Sitemap type
+      }
       if (widget.label) {
         const labelMatch = widget.label.match(/^(.*)\s\[(.*?)\]\s*$/)
         if (labelMatch) {
@@ -1190,6 +1246,9 @@ export default {
       return processed
     },
     preProcessWidgetSave(widget) {
+      if (widget.type === 'NestedSitemap') {
+        widget.type = 'Sitemap' // convert back to Sitemap type for NestedSitemap widgets when saving
+      }
       if (widget.itemFormatOverride || widget.format?.length) {
         const label = widget.label?.trim() || ''
         widget.label = label + (label ? ' ' : '') + '[' + (widget.format?.trim() || '') + ']'
