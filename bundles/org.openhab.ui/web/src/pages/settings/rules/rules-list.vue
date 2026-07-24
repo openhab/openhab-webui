@@ -628,7 +628,7 @@ export default {
         if (ruleData.status === 'fulfilled') {
           this.rules = ruleData.value
             .filter((r) => {
-              if (!this.showScripts && r.tags?.includes('Script')) return false
+              if (this.showScenes && r.tags?.includes('Script')) return false
               if (!this.showScenes && r.tags?.includes('Scene')) return false
               return true
             })
@@ -639,7 +639,7 @@ export default {
             this.ruleStatuses[rule.uid] = rule.status
 
             rule.tags.forEach((t) => {
-              if (t === 'Scene' || t === 'Script') return
+              if (t === 'Scene' || (this.showScripts && t === 'Script')) return
               if (t.startsWith('marketplace:')) return
               uniqueTags.add(t)
             })
@@ -856,7 +856,7 @@ export default {
       }
     },
     displayedTags(rule) {
-      return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
+      return rule.tags.filter((t) => t !== 'Scene' && (!this.showScripts || t !== 'Script'))
     },
     updateFilteredItems() {
       const filters = this.$refs.filters
