@@ -52,6 +52,16 @@
                 </f7-list-item>
                 <f7-list-item
                   media-item
+                  title="Widgets File Definitions"
+                  footer="Copy all Widgets' file definitions to clipboard"
+                  link="#"
+                  @click="copyFileDefinitionToClipboard(ObjectType.WIDGET)">
+                  <template #media>
+                    <f7-icon f7="rectangle_on_rectangle_angled" color="gray" />
+                  </template>
+                </f7-list-item>
+                <f7-list-item
+                  media-item
                   title="Add Items from Textual Definition"
                   footer="Create or update items &amp; links in bulk"
                   link="add-items-dsl/">

@@ -10,6 +10,16 @@
     </f7-navbar>
     <f7-toolbar position="bottom">
       <f7-link @click="widgetPropsOpened = true"> Set Props<span v-if="$device.desktop">&nbsp;(Ctrl-P)</span> </f7-link>
+      <f7-button
+        @click="copy"
+        icon-ios="f7:square_on_square"
+        icon-aurora="f7:square_on_square"
+        icon-md="material:content_copy"
+        color="blue"
+        tooltip="Copy code to clipboard"
+        class="copy display-flex flex-direction-row">
+        <span class="button-label">Copy</span>
+      </f7-button>
       <!-- prettier-ignore  -->
       <f7-link
         icon-f7="uiwindow_split_2x1"
@@ -126,8 +136,8 @@ import { useViewArea } from '@/js/composables/useViewArea'
 import { transformParameterDefaults } from '@/components/widgets/helpers.ts'
 import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
-
-import { toFileYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
+import copyToClipboard from '@/js/clipboard'
+import { toFileYAMLSyntax, toOldWidgetYAMLSyntax, fromFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 export default {
   components: {
@@ -348,6 +358,53 @@ export default {
     },
     updateWidgetProps() {
       this.widgetPropsClosed()
+    },
+    copy() {
+      const widgetObj = this.widget
+      if (!widgetObj || !widgetObj.uid) {
+        showToast('No widget definition to export')
+        return
+      }
+      f7.dialog
+        .create({
+          title: 'Copy Widget File Definition',
+          text: `Select the file format to copy <b>${widgetObj.uid}</b> to clipboard`,
+          closeByBackdropClick: true,
+          cssClass: 'dialog-medium',
+          buttons: [
+            {
+              text: 'Cancel',
+              color: 'gray'
+            },
+            {
+              text: 'Legacy',
+              color: 'teal',
+              onClick: () => {
+                const definition = toOldWidgetYAMLSyntax(widgetObj)
+                copyToClipboard(definition, {
+                  dialogTitle: 'Copy Widget File Definition',
+                  dialogText: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
+                  onSuccess: () => showToast(`Widget Legacy definition copied to clipboard:\n<b>${widgetObj.uid}</b>`),
+                  onError: () => f7.dialog.alert('Error copying Widget Legacy definition to clipboard', 'Error')
+                })
+              }
+            },
+            {
+              text: 'File YAML',
+              color: 'blue',
+              onClick: () => {
+                const definition = toFileYAMLSyntax('widgets', widgetObj)
+                copyToClipboard(definition, {
+                  dialogTitle: 'Copy Widget File Definition',
+                  dialogText: 'File definition retrieved successfully. Click OK to copy it to the clipboard.',
+                  onSuccess: () => showToast(`Widget File YAML definition copied to clipboard:\n<b>${widgetObj.uid}</b>`),
+                  onError: () => f7.dialog.alert('Error copying Widget File YAML definition to clipboard', 'Error')
+                })
+              }
+            }
+          ]
+        })
+        .open()
     }
   }
 }
