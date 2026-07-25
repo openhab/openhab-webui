@@ -149,6 +149,10 @@
         line-height 20px
         .header-icon
           margin-right 5px
+    .cell-expanded-contents
+      width 100%
+      > div
+        width 100%
     .cell-expanded-header
       margin-top calc(var(--f7-safe-area-top) + 2rem)
       font-weight 500
