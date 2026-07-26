@@ -11,7 +11,8 @@
         !searchResults.rules.length &&
         !searchResults.pages.length &&
         !searchResults.scenes.length &&
-        !searchResults.scripts.length
+        !searchResults.scripts.length &&
+        !searchResults.sitemaps.length
       "
       class="text-align-center">
       <div>Nothing found</div>
@@ -282,6 +283,45 @@
         <f7-list-button v-if="!showingAll('widgets')" color="blue" @click="expandedTypes.widgets = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
+    <!-- Sitemaps -->
+    <f7-block v-if="searchResults.sitemaps.length" class="no-margin no-padding">
+      <f7-block-title class="padding-left">
+        <f7-icon class="margin-right" f7="square_list" />Sitemaps ({{ searchResults.sitemaps.length }})
+      </f7-block-title>
+      <f7-list media-list>
+        <f7-list-item
+          v-for="sitemap in filteredSearchResults.sitemaps"
+          media-item
+          :key="sitemap.id"
+          :title="sitemap.label"
+          :footer="sitemap.id"
+          link=""
+          no-chevron
+          @click="(evt) => togglePin(evt, 'sitemaps', sitemap, 'id')">
+          <template #after>
+            <f7-link color="gray">
+              <clipboard-icon :value="sitemap.id" tooltip="Copy Sitemap ID" />
+            </f7-link>
+            <f7-link
+              color="gray"
+              icon-f7="pencil"
+              icon-size="18"
+              tooltip="Edit"
+              :href="'/settings/sitemaps/' + sitemap.id"
+              :animate="false" />
+            <f7-link
+              v-if="isPinned('sitemaps', sitemap, 'id')"
+              @click="$emit('unpin', 'sitemaps', sitemap, 'id')"
+              color="blue"
+              icon-f7="pin_fill"
+              icon-size="18"
+              tooltip="Unpin" />
+            <f7-link v-else @click="$emit('pin', 'sitemaps', sitemap, 'id')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
+          </template>
+        </f7-list-item>
+        <f7-list-button v-if="!showingAll('sitemaps')" color="blue" @click="expandedTypes.sitemaps = true"> Show All </f7-list-button>
+      </f7-list>
+    </f7-block>
     <!-- Transformations -->
     <f7-block v-if="searchResults.transformations.length" class="no-margin no-padding">
       <f7-block-title class="padding-left">
@@ -449,6 +489,11 @@ export default {
         : this.searchResults.widgets
           ? this.searchResults.widgets.slice(0, 5)
           : []
+      const sitemaps = this.expandedTypes.sitemaps
+        ? this.searchResults.sitemaps
+        : this.searchResults.sitemaps
+          ? this.searchResults.sitemaps.slice(0, 5)
+          : []
       const transformations = this.expandedTypes.transformations
         ? this.searchResults.transformations
         : this.searchResults.transformations
@@ -459,7 +504,7 @@ export default {
         : this.searchResults.persistenceConfigs
           ? this.searchResults.persistenceConfigs.slice(0, 5)
           : []
-      return { items, things, rules, scenes, scripts, pages, widgets, transformations, persistenceConfigs }
+      return { items, things, rules, scenes, scripts, pages, widgets, sitemaps, transformations, persistenceConfigs }
     }
   },
   watch: {

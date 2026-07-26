@@ -394,6 +394,42 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Sitemaps -->
+        <f7-block v-if="developerStore.pinnedObjects.sitemaps.length" class="no-margin no-padding">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Sitemaps</span>
+            <span style="margin-left: auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('sitemaps')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item
+                v-for="sitemap in developerStore.pinnedObjects.sitemaps"
+                :key="sitemap.id"
+                media-item
+                :title="sitemap.label"
+                :footer="sitemap.id">
+                <template #footer>
+                  <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px">
+                    <f7-link color="gray" class="margin-right">
+                      <clipboard-icon :value="sitemap.id" :size="18" tooltip="Copy Sitemap ID" />
+                    </f7-link>
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/sitemaps/' + sitemap.id"
+                      :animate="false" />
+                    <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('sitemaps', sitemap, 'id')" />
+                  </div>
+                </template>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
         <!-- Pinned Transformations -->
         <f7-block v-if="developerStore.pinnedObjects.transformations.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
@@ -682,6 +718,7 @@ export default {
         scripts: [],
         pages: [],
         widgets: [],
+        sitemaps: [],
         transformations: [],
         persistenceConfigs: []
       },
@@ -751,6 +788,9 @@ export default {
       },
       widgets: {
         keys: ['uid', props, slots]
+      },
+      sitemaps: {
+        keys: ['id', 'label']
       },
       transformations: {
         keys: ['uid', 'label', 'configuration.function']
@@ -866,8 +906,9 @@ export default {
             Promise.resolve(useComponentsStore().pages()), // 3
             this.$oh.api.get('/rest/ui/components/system:sitemap'), // 4
             Promise.resolve(useComponentsStore().widgets()), // 5
-            this.$oh.api.get('/rest/transformations'), // 6
-            this.loadPersistenceConfigs() // 7
+            this.$oh.api.get('/rest/sitemaps'), // 6
+            this.$oh.api.get('/rest/transformations'), // 7
+            this.loadPersistenceConfigs() // 8
           ]
 
       this.searchResultsLoading = true
@@ -881,8 +922,9 @@ export default {
             rules: new Fuse(data[2], this.SEARCH.rules),
             pages: new Fuse([...data[3], ...data[4]], this.SEARCH.pages),
             widgets: new Fuse(data[5], this.SEARCH.widgets),
-            transformations: new Fuse(data[6], this.SEARCH.transformations),
-            persistence: new Fuse(data[7], this.SEARCH.persistence)
+            sitemaps: new Fuse(data[6], this.SEARCH.sitemaps),
+            transformations: new Fuse(data[7], this.SEARCH.transformations),
+            persistence: new Fuse(data[8], this.SEARCH.persistence)
           }
         }
 
@@ -906,6 +948,7 @@ export default {
 
         const pages = this.searchData(this.cachedFuseObjects.pages, query)
         const widgets = this.searchData(this.cachedFuseObjects.widgets, query)
+        const sitemaps = this.searchData(this.cachedFuseObjects.sitemaps, query)
         const transformations = this.searchData(this.cachedFuseObjects.transformations, query)
         const persistenceConfigs = this.searchData(this.cachedFuseObjects.persistence, query)
 
@@ -917,6 +960,7 @@ export default {
           scripts,
           pages,
           widgets,
+          sitemaps,
           transformations,
           persistenceConfigs
         }
@@ -949,6 +993,7 @@ export default {
         scripts: [],
         pages: [],
         widgets: [],
+        sitemaps: [],
         transformations: [],
         persistenceConfigs: []
       }
