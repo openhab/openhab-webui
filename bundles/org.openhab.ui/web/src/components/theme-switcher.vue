@@ -53,6 +53,11 @@
         <f7-block-title>{{ t('about.miscellaneous') }}</f7-block-title>
         <f7-list>
           <f7-list-item>
+            <span>{{ t('about.miscellaneous.sync.settings') }}</span>
+            <f7-toggle v-model:checked="syncSettings" />
+
+          </f7-list-item>
+          <f7-list-item>
             <span>{{ t('about.miscellaneous.home.navbar') }}</span>
             <f7-segmented class="home-navbar-selection">
               <f7-button
@@ -221,6 +226,7 @@ export default {
       'homeNavBar',
       'homeBackground',
       'hideChatInput',
+      'syncSettings',
       'disableExpandableCardAnimation',
       'webAudio',
       'dialogEnabled',

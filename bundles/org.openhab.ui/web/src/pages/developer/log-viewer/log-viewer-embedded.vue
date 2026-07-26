@@ -176,8 +176,8 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useTemplateRef, nextTick, ref, watch } from 'vue'
 import { getDevice } from 'framework7'
-import { storeToRefs } from 'pinia'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useStorageAsync } from '@vueuse/core'
 import LogViewerCore from './log-viewer-core.vue'
 import LogViewerToolbar from './log-viewer-toolbar.vue'
 
@@ -195,8 +195,9 @@ defineProps<{
 }>()
 
 // State/Data
-const uiOptionsStore = useUIOptionsStore()
-const { logViewerEmbeddedCollapsed: collapsed } = storeToRefs(uiOptionsStore)
+const { ohStorage } = useUIOptionsStore()
+const collapsed = useStorageAsync<boolean>('openhab.ui:logviewer.embedded.collapsedToolbar', true, ohStorage)
+
 const logViewerCore = useTemplateRef('logViewerCore')
 const searchbar = useTemplateRef('searchbar')
 

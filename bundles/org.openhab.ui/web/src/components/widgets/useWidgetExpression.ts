@@ -88,6 +88,7 @@ export type EvaluateExpressionFn = <T = unknown>(
 export function useWidgetExpression(properties: { context?: WidgetContext; props?: api.ConfigDescription } = {}) {
   // imports
   const userStore = useUserStore()
+  console.log('useWidgetExpression: useUIOptionsStore() called')
   const uiOptionsStore = useUIOptionsStore()
 
   const instance = getCurrentInstance()

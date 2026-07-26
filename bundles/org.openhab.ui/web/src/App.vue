@@ -634,6 +634,8 @@ export default {
     const { locale, mergeLocaleMessage: globalMergeLocaleMessage } = useI18n({ useScope: 'global' })
     const { t, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
     const { startAudioWebSocket, triggerDialog } = useDialog()
+    const uiOptionsStore = {}
+
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
     loadLocaleMessages('about', localMergeLocaleMessage)
@@ -646,10 +648,12 @@ export default {
       globalMergeLocaleMessage,
       locale,
       startAudioWebSocket,
-      triggerDialog
+      triggerDialog,
+      uiOptionsStore
     }
   },
   data() {
+    console.log("App.vue data() called")
     let theme = localStorage.getItem('openhab.ui:theme')
 
     if ((!theme || theme === 'auto') && typeof window.OHApp?.preferTheme === 'function') {
@@ -674,7 +678,7 @@ export default {
         // theme: (document.documentURI && document.documentURI.indexOf('?theme=ios') > 0) ? 'ios'
         //   : (document.documentURI && document.documentURI.indexOf('?theme=md') > 0) ? 'md'
         //     : 'auto', // Automatic theme detection
-        autoDarkMode: useUIOptionsStore().isAutoDarkMode(),
+        autoDarkMode: this.uiOptionsStore.autoDarkMode,
         // App routes
         routes,
         // Enable panel left visibility breakpoint
@@ -832,6 +836,7 @@ export default {
     },
     loadData(useCredentials) {
       performance.mark('loadDataStart')
+      console.log('loadData')
       const useCredentialsPromise = useCredentials ? this.setBasicCredentials() : Promise.resolve()
       return useCredentialsPromise
         .then(() => {
@@ -945,7 +950,7 @@ export default {
                 })
               : Promise.resolve(null)
           }
-          return Promise.all([useComponentsStore().loadPagesAndWidgets(), dayjsLocalePromise])
+          return Promise.all([useComponentsStore().loadPagesAndWidgets(), dayjsLocalePromise, useUIOptionsStore()])
         })
         .then((data) => {
           this.pages = useComponentsStore()
@@ -962,6 +967,10 @@ export default {
             dayjs.locale(data[1], null, false)
             console.log('Day.js locale set to', dayjs.locale())
           }
+
+          console.log('App: UI Options loaded')
+          this.uiOptionsStore = data[2]
+
           // load & build the semantic model
           useModelStore().loadSemanticModel()
         })
@@ -988,7 +997,7 @@ export default {
     },
     getPageIcon,
     updateThemeOptions() {
-      if (useUIOptionsStore().visibleBreakpointDisabled) {
+      if (this.uiOptionsStore.visibleBreakpointDisabled) {
         nextTick(() => {
           f7.panel.get('left').disableVisibleBreakpoint()
         })
@@ -1019,7 +1028,7 @@ export default {
     },
     toggleVisibleBreakpoint() {
       f7.panel.get('left').toggleVisibleBreakpoint()
-      useUIOptionsStore().visibleBreakpointDisabled = f7.panel.get('left').visibleBreakpointDisabled
+      this.uiOptionsStore.visibleBreakpointDisabled = f7.panel.get('left').visibleBreakpointDisabled
     },
     setLogDockVisible(visible) {
       if (visible && !useUserStore().isAdmin()) return
@@ -1198,7 +1207,7 @@ export default {
       if (ev.target.closest('.list-item a, a[href]')) {
         // avoid flicker (collapse + reopen)
         setTimeout(this.collapseAllSections, 30)
-        if (useUIOptionsStore().visibleBreakpointDisabled) {
+        if (this.uiOptionsStore.visibleBreakpointDisabled) {
           f7.panel.get('left')?.close()
         }
       }
@@ -1239,13 +1248,14 @@ export default {
     }
   },
   mounted() {
+    console.log('App.vue mounted')
     f7ready(async (f7) => {
       this.$f7dim.width = f7.width
       this.$f7dim.height = f7.height
 
       this.updateThemeOptions()
 
-      this.tryExchangeAuthorizationCode()
+      await this.tryExchangeAuthorizationCode()
         .then((user) => {
           this.loggedIn = true
           this.loadData()

@@ -2,106 +2,120 @@ import { defineStore } from 'pinia'
 import { computed, reactive, ref, watch } from 'vue'
 import { Dom7 } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
-import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
+import { useStorage, useStorageAsync, type Serializer } from '@vueuse/core'
+import { OHStorage } from '@/js/openhab/ohStorage'
 
-type StoredDarkModeType = 'auto' | 'dark' | 'light'
+const storedDarkModeOptions = ['auto', 'dark', 'light'] as const
+export type StoredDarkModeOption = (typeof storedDarkModeOptions)[number]
 
-export interface LogHighlightFilter {
-  text: string
-  color: string
-  active: boolean
-}
+const barsOptions = ['light', 'filled'] as const
+export type BarsOption = (typeof barsOptions)[number]
+
+const homeNavBarOptions = ['default', 'simple', 'large'] as const
+export type HomeNavBarOption = (typeof homeNavBarOptions)[number]
+
+const homeBackgroundOptions = ['default', 'standard', 'white'] as const
+export type HomeBackgroundOption = (typeof homeBackgroundOptions)[number]
+
+const codeEditorTypeOptions = ['DSL', 'YAML'] as const
+export type CodeEditorType = (typeof codeEditorTypeOptions)[number]
+
+// Helper serializer to ensure read value is one of the allowed values, otherwise return null
+/*
+export const serializerLimitToValues = (allowedValues: readonly string[]): Serializer<any> => ({
+  read: (raw: any) => {
+    return allowedValues.includes(raw as string)
+      ? (raw as string)
+      : null
+  },
+  // @eslint-disable-next-line
+  write: (value: any) => value
+})
+*/
+
+const syncSettingsStorageKey = 'openhab.ui:syncSettings'
+
+export const serializerLimitToValues = <T extends string>(
+  allowedValues: readonly T[],
+): Serializer<T | null> => ({
+  read: (raw: unknown): T | null => {
+    if (typeof raw !== 'string') return null
+    return allowedValues.includes(raw as T) ? (raw as T) : null
+  },
+  write: (value: T | null): string => value ?? '',
+})
 
 export const useUIOptionsStore = defineStore('uiOptions', () => {
   // States
-  // shared with Basic UI
-  const _storedDarkMode = localStorage.getItem('openhab.ui:theme.dark') || 'auto'
-  const storedDarkMode = ref<StoredDarkModeType>(
-    ['auto', 'dark', 'light'].includes(_storedDarkMode) ? (_storedDarkMode as StoredDarkModeType) : 'auto'
-  )
+  const syncSettings = useStorage<boolean>(syncSettingsStorageKey, false)   // Local
+  const ready = ref(false)
+
+  const ohStorage = new OHStorage(syncSettings.value, 'openhab.ui:', 'ui:')
+
+  const _storedDarkMode = useStorageAsync<StoredDarkModeOption>('theme.dark', 'auto', ohStorage )
+  const bars = useStorageAsync<BarsOption>('theme.bars', 'light', ohStorage )
+  const homeNavBar = useStorageAsync<HomeNavBarOption>('theme.home.navbar', 'default', ohStorage )
+  const homeBackground = useStorageAsync<HomeBackgroundOption>('theme.home.background', 'default', ohStorage )
+  const _storedExpandableCardAnimation = useStorageAsync<string>('theme.home.cardanimation', 'default', ohStorage)
+  const blocklyRenderer = useStorageAsync<string | null>('blockly.renderer', null, ohStorage)
+  const disableLeftPanelSwipe = useStorageAsync<boolean>('theme.disableLeftPanelSwipe', false, ohStorage)
+  const disablePageTransitionAnimation = useStorageAsync<boolean>('theme.disablePageTransition', false, ohStorage)
+  const hideChatInput = useStorageAsync<boolean>('theme.hideChatInput', false, ohStorage)
+  const logDockHeight = useStorageAsync<number>('theme.logDockHeight', 300, ohStorage)
+  const webAudio = useStorageAsync<boolean>('theme.webAudio', true, ohStorage)
+  const visibleBreakpointDisabled = useStorageAsync<boolean>('theme.visibleBreakpointDisabled', false, ohStorage)
+  const codeEditorType = useStorageAsync<CodeEditorType>('codeEditor.type', 'YAML', ohStorage )
+  const dialogIdentifier = useStorageAsync<string>('dialog.id', '', ohStorage)
+  const dialogEnabled = useStorageAsync<boolean>('dialog.enabled', false, ohStorage)
+  const dialogTriggerOnConnect = useStorageAsync<boolean>('dialog.triggerOnLaunch', false, ohStorage)
+  const dialogListeningItem = useStorageAsync<string>('dialog.listeningItem', '', ohStorage)
+  const dialogLocationItem = useStorageAsync<string>('dialog.locationItem', '', ohStorage)
+  const dialogConnectOnWindowEvent = useStorageAsync<boolean>('dialog.connectOnWindowEvent', false, ohStorage)
+
+  const storedDarkMode = computed<StoredDarkModeOption>({
+    get: () => {
+      return _storedDarkMode.value
+    },
+    set: (value: StoredDarkModeOption) => {
+      _storedDarkMode.value = (value === 'auto') ? null : value
+    }
+  })
   const darkModeChange = ref<number>(0) // Used to trigger recomputation of darkMode
 
-  const _storedBars = localStorage.getItem('openhab.ui:theme.bars') || 'light'
-  const bars = ref<'light' | 'filled'>(['light', 'filled'].includes(_storedBars) ? (_storedBars as 'light' | 'filled') : 'light')
-
-  const _storedNavBar = localStorage.getItem('openhab.ui:theme.home.navbar') || 'default'
-  const homeNavBar = ref<'default' | 'simple' | 'large'>(
-    ['default', 'simple', 'large'].includes(_storedNavBar) ? (_storedNavBar as 'default' | 'simple' | 'large') : 'default'
-  )
-
-  const _storedHomeBackground = localStorage.getItem('openhab.ui:theme.home.background') || 'default'
-  const homeBackground = ref<'default' | 'standard' | 'white'>(
-    ['default', 'standard', 'white'].includes(_storedHomeBackground)
-      ? (_storedHomeBackground as 'default' | 'standard' | 'white')
-      : 'default'
-  )
-
-  const _storedExpandableCardAnimation = localStorage.getItem('openhab.ui:theme.home.cardanimation') || 'default'
-  const disableExpandableCardAnimation = ref<boolean>(_storedExpandableCardAnimation === 'disabled')
-
-  const blocklyRenderer = ref<string | null>(localStorage.getItem('openhab.ui:blockly.renderer'))
-  const disableLeftPanelSwipe = ref<boolean>(localStorage.getItem('openhab.ui:theme.disableLeftPanelSwipe') === 'true')
-  const disablePageTransitionAnimation = ref<boolean>(localStorage.getItem('openhab.ui:theme.disablepagetransition') === 'true')
-
-  const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
-
-  // shared with Basic UI
-  const webAudio = ref<boolean>(localStorage.getItem('openhab.ui:webaudio.enable') === 'true')
-
-  const visibleBreakpointDisabled = ref<boolean>(localStorage.getItem('openhab.ui:panel.visibleBreakpointDisabled') === 'true')
-
-  const _storedCodeEditorType = localStorage.getItem('openhab.ui:codeEditor.type') || 'YAML'
-  const codeEditorType = ref<CodeEditorType>(
-    ['DSL', 'YAML'].includes(_storedCodeEditorType) ? (_storedCodeEditorType as CodeEditorType) : 'YAML'
-  )
-
-  const modelPickerShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemName') === 'true')
-  const modelPickerShowItemTags = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showItemTags') === 'true')
-  const modelPickerShowNonSemantic = ref<boolean>(localStorage.getItem('openhab.ui:modelPicker.showNonSemantic') === 'true')
-
-  const sitemapShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true')
-
-  const logDockHeight = ref<number | null>(parseInt(localStorage.getItem('openhab.ui:logDock.height') || '') || null)
-  const logViewerTextMode = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.textMode') === 'true')
-  const _storedLogViewerHighlightFilters = localStorage.getItem('openhab.ui:logviewer.logHighlightFilters')
-  const parseLogViewerHighlightFilters = (): LogHighlightFilter[] => {
-    if (!_storedLogViewerHighlightFilters) return []
-    try {
-      return JSON.parse(_storedLogViewerHighlightFilters) as LogHighlightFilter[]
-    } catch {
-      // ignore malformed data
-      return []
+  // TODO: simplify to just store the boolean value
+  const disableExpandableCardAnimation = computed<boolean>({
+    get: () => {
+      return _storedExpandableCardAnimation.value === 'disabled'
+    },
+    set: (value: boolean) => {
+      _storedExpandableCardAnimation.value = value ? 'disabled' : 'default'
     }
-  }
-  const logViewerHighlightFilters = ref<LogHighlightFilter[]>(parseLogViewerHighlightFilters())
-  const logViewerFilterText = ref<string>(localStorage.getItem('openhab.ui:logviewer.logFilterText') || '')
-  const logViewerShowErrors = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.logShowErrors') === 'true')
-  const logViewerEmbeddedCollapsed = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.embedded.collapsedToolbar') !== 'false')
+  })
 
-  const dialogEnabled = ref<boolean>(localStorage.getItem('openhab.ui:dialog.enabled') === 'true')
-  const dialogIdentifier = ref<string>(localStorage.getItem('openhab.ui:dialog.id') || '')
-  const dialogListeningItem = ref<string>(localStorage.getItem('openhab.ui:dialog.listeningItem') || '')
-  const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
-  const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
-  const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
-  const assistSelectedLlmTools = ref<string[] | null>(localStorage.getItem('openhab.ui:assist.llmtools.selected')?.split(',') ?? null)
-  const assistShowGenericToolVisualisation = ref<boolean>(localStorage.getItem('openhab.ui:assist.showGenericToolVisualisation') === 'true')
+  ready.value = true
+
+  if (!dialogIdentifier.value.length) {
+    dialogIdentifier.value = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
+  }
+
+  const modelPickerShowItemName = useStorageAsync<boolean>('modelPicker.showItemName', false)
+  const modelPickerShowItemTags = useStorageAsync<boolean>('modelPicker.showItemTags', false)
+  const modelPickerShowNonSemantic = useStorageAsync<boolean>('modelPicker.showNonSemantic', false)
+
+  const sitemapShowItemName = useStorageAsync<boolean>('sitemap.showItemName', false)
+
+
+  // TODO: old version used comma separated list, this uses JSON.stringify
+  const assistSelectedLlmTools = useStorageAsync<string[] | null>('assist.llmtools.selected', null)
+  const assistShowGenericToolVisualisation = useStorageAsync<boolean>('assist.showGenericToolVisualisation', false)
 
   const codeMirrorSettings = reactive({
     vimMode: localStorage.getItem('openhab.ui:codeMirror.vimMode') === 'true'
   })
-  const setupWizardShort = ref<boolean>(localStorage.getItem('openhab.ui:setupWizard.short') === 'true')
-  const _storedWizardStepsDone = localStorage.getItem('openhab.ui:setupWizard.stepsDone')
-  const parseSetupWizardStepsDone = (): Record<string, boolean> => {
-    if (!_storedWizardStepsDone) return {}
-    try {
-      return JSON.parse(_storedWizardStepsDone) as Record<string, boolean>
-    } catch {
-      // ignore malformed data
-      return {}
-    }
-  }
-  const setupWizardStepsDone = ref<Record<string, boolean>>(parseSetupWizardStepsDone())
+
+  // TODO: move to setup wizard
+  const setupWizardShort = useStorageAsync<boolean>('setupWizard.short', false)
+  const setupWizardStepsDone = useStorageAsync<Record<string, boolean>>('setupWizard.stepsDone', {})
 
   const darkMode = computed({
     get: (): 'dark' | 'light' => {
@@ -115,20 +129,20 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
       }
       return storedDarkMode.value
     },
-    set: (value: StoredDarkModeType) => {
+    set: (value: StoredDarkModeOption) => {
       storedDarkMode.value = value
       if (value === 'auto') {
         f7.enableAutoDarkMode()
-        localStorage.removeItem('openhab.ui:theme.dark')
       } else {
         f7.disableAutoDarkMode()
-        localStorage.setItem('openhab.ui:theme.dark', value)
       }
 
       bars.value = 'light' // Reset bars to light when dark mode changes
       updateClasses()
     }
   })
+
+  const autoDarkMode = computed(() => storedDarkMode.value === 'auto')
 
   f7ready(() => {
     darkModeChange.value++ // trigger computed darkMode now f7 is ready
@@ -139,18 +153,16 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     })
   })
 
-  // Getters
-  function isAutoDarkMode() {
-    return storedDarkMode.value === 'auto'
-  }
+  // Watchers
+  watch(syncSettings, (newValue) => {
+    ohStorage.setSyncWithServer(newValue)
+  })
 
   watch(bars, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.bars', newValue)
     updateClasses()
   })
 
   watch(disableLeftPanelSwipe, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.disableLeftPanelSwipe', newValue.toString())
     if (newValue) {
       f7.panel.get('left').disableSwipe()
     } else {
@@ -159,152 +171,18 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   })
 
   watch(disablePageTransitionAnimation, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.disablepagetransition', newValue.toString())
     updateClasses()
   })
 
-  watch(homeNavBar, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.home.navbar', newValue)
-  })
-
-  watch(disableExpandableCardAnimation, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.home.cardanimation', newValue ? 'disabled' : 'default')
-  })
-
-  watch(homeBackground, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.home.background', newValue)
-  })
-
-  watch(blocklyRenderer, (newValue) => {
-    if (newValue === null) {
-      localStorage.removeItem('openhab.ui:blockly.renderer')
-    } else {
-      localStorage.setItem('openhab.ui:blockly.renderer', newValue)
-    }
-  })
-
-  watch(hideChatInput, (newValue) => {
-    localStorage.setItem('openhab.ui:theme.home.hidechatinput', newValue.toString())
-  })
-
-  watch(webAudio, (newValue) => {
-    localStorage.setItem('openhab.ui:webaudio.enable', newValue ? 'true' : 'false')
-  })
-
-  watch(visibleBreakpointDisabled, (newValue) => {
-    localStorage.setItem('openhab.ui:panel.visibleBreakpointDisabled', newValue.toString())
-  })
-
-  watch(codeEditorType, (newValue) => {
-    localStorage.setItem('openhab.ui:codeEditor.type', newValue)
-  })
-
-  watch(modelPickerShowItemName, (newValue) => {
-    localStorage.setItem('openhab.ui:modelPicker.showItemName', newValue?.toString())
-  })
-  watch(modelPickerShowItemTags, (newValue) => {
-    localStorage.setItem('openhab.ui:modelPicker.showItemTags', newValue?.toString())
-  })
-  watch(modelPickerShowNonSemantic, (newValue) => {
-    localStorage.setItem('openhab.ui:modelPicker.showNonSemantic', newValue?.toString())
-  })
-
-  watch(sitemapShowItemName, (newValue) => {
-    localStorage.setItem('openhab.ui:sitemap.showItemName', newValue?.toString())
-  })
-
-  watch(logDockHeight, (newValue) => {
-    if (newValue === null) {
-      localStorage.removeItem('openhab.ui:logDock.height')
-    } else {
-      localStorage.setItem('openhab.ui:logDock.height', newValue.toString())
-    }
-  })
-
-  watch(logViewerTextMode, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.textMode', newValue.toString())
-  })
-
-  watch(
-    logViewerHighlightFilters,
-    (newValue) => {
-      localStorage.setItem('openhab.ui:logviewer.logHighlightFilters', JSON.stringify(newValue))
-    },
-    { deep: true }
-  )
-
-  watch(logViewerFilterText, (newValue) => {
-    if (!newValue) {
-      localStorage.removeItem('openhab.ui:logviewer.logFilterText')
-    } else {
-      localStorage.setItem('openhab.ui:logviewer.logFilterText', newValue)
-    }
-  })
-
-  watch(logViewerShowErrors, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.logShowErrors', newValue.toString())
-  })
-
-  watch(logViewerEmbeddedCollapsed, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.embedded.collapsedToolbar', newValue.toString())
-  })
-
   watch(dialogEnabled, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.enabled', newValue ? 'true' : 'false')
     setTimeout(() => {
       location.reload()
     }, 50)
   })
 
-  watch(dialogIdentifier, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.id', newValue)
-  })
-  if (!dialogIdentifier.value.length) {
-    dialogIdentifier.value = `ui-${Math.round(Math.random() * 100)}-${Math.round(Math.random() * 100)}`
-  }
-
-  watch(dialogListeningItem, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.listeningItem', newValue)
-  })
-
-  watch(dialogLocationItem, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.locationItem', newValue)
-  })
-
-  watch(dialogConnectOnWindowEvent, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.connectOnWindowEvent', newValue ? 'true' : 'false')
-  })
-
-  watch(dialogTriggerOnConnect, (newValue) => {
-    localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
-  })
-
-  watch(
-    assistSelectedLlmTools,
-    (v) => {
-      if (!v) return
-      localStorage.setItem('openhab.ui:assist.llmtools.selected', v.filter((s) => s.length).join(','))
-    },
-    { deep: true }
-  )
-
-  watch(assistShowGenericToolVisualisation, (newValue) => {
-    localStorage.setItem('openhab.ui:assist.showGenericToolVisualisation', newValue.toString())
-  })
-
   watch(codeMirrorSettings, (newValue) => {
     localStorage.setItem('openhab.ui:codeMirror.vimMode', newValue.vimMode ? 'true' : 'false')
   })
-  watch(setupWizardShort, (newValue) => {
-    localStorage.setItem('openhab.ui:setupWizard.short', newValue?.toString())
-  })
-  watch(
-    setupWizardStepsDone,
-    (newValue) => {
-      localStorage.setItem('openhab.ui:setupWizard.stepsDone', JSON.stringify(newValue || {}))
-    },
-    { deep: true }
-  )
 
   function updateClasses() {
     if (darkMode.value === 'dark') {
@@ -327,7 +205,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   function themeOptions() {
     return {
       dark: darkMode.value,
-      autoDarkMode: isAutoDarkMode(),
+      autoDarkMode: autoDarkMode.value,
       bars: bars.value,
       homeNavBar: homeNavBar.value,
       homeBackground: homeBackground.value,
@@ -341,9 +219,11 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   }
 
   return {
+    syncSettings,
+    ready,
     storedDarkMode,
     darkMode,
-    isAutoDarkMode,
+    autoDarkMode,
     bars,
     homeNavBar,
     homeBackground,
@@ -360,11 +240,6 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     modelPickerShowNonSemantic,
     sitemapShowItemName,
     logDockHeight,
-    logViewerTextMode,
-    logViewerHighlightFilters,
-    logViewerFilterText,
-    logViewerShowErrors,
-    logViewerEmbeddedCollapsed,
     dialogEnabled,
     dialogIdentifier,
     dialogListeningItem,

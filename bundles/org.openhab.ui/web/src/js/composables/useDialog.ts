@@ -55,7 +55,7 @@ export function useDialog() {
       const ohURL = `${location.protocol}//${location.hostname}${port}`
 
       updatePageIcon(false, false, false)
-      let forceTrigger = dialogTriggerOnConnect
+    let forceTrigger = dialogTriggerOnConnect
       audioMain.value = new AudioMain(ohURL, getAccessToken, {
         onMessage: (message, level) => {
           if (level === 'error') {

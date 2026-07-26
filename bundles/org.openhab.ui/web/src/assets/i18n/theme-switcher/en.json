@@ -7,6 +7,7 @@
   "about.darkMode.dark": "Dark",
   "about.navigationBarsStyle": "Navigation bars style",
   "about.miscellaneous": "Miscellaneous",
+  "about.miscellaneous.sync.settings": "Sync settings across devices",
   "about.miscellaneous.home.navbar": "Home page navigation bar",
   "about.miscellaneous.home.navbar.default": "Default",
   "about.miscellaneous.home.navbar.simple": "Simple",
