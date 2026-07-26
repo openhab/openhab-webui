@@ -322,7 +322,7 @@
             <f7-link v-else @click="$emit('pin', 'sitemaps', sitemap, 'name')" color="gray" icon-f7="unpin" icon-size="18" tooltip="Pin" />
           </template>
         </f7-list-item>
-        <f7-list-button v-if="!showingAll('sitemaps')" color="blue" @click="expandedTypes.sitemaps   = true"> Show All </f7-list-button>
+        <f7-list-button v-if="!showingAll('sitemaps')" color="blue" @click="expandedTypes.sitemaps = true"> Show All </f7-list-button>
       </f7-list>
     </f7-block>
     <!-- Transformations -->
