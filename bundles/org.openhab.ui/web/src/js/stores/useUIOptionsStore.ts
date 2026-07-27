@@ -45,32 +45,54 @@ export const serializerLimitToValues = <T extends string>(
   write: (value: T | null): string => value ?? '',
 })
 
-export const useUIOptionsStore = defineStore('uiOptions', () => {
+export const useUIOptionsStore = defineStore('uiOptions', async () => {
   // States
   const syncSettings = useStorage<boolean>(syncSettingsStorageKey, false)   // Local
   const ready = ref(false)
 
-  const ohStorage = new OHStorage(syncSettings.value, 'openhab.ui:', 'ui:')
+  const ohStorage = new OHStorage(syncSettings, 'openhab.ui:', 'ui:')
 
-  const _storedDarkMode = useStorageAsync<StoredDarkModeOption>('theme.dark', 'auto', ohStorage )
-  const bars = useStorageAsync<BarsOption>('theme.bars', 'light', ohStorage )
-  const homeNavBar = useStorageAsync<HomeNavBarOption>('theme.home.navbar', 'default', ohStorage )
-  const homeBackground = useStorageAsync<HomeBackgroundOption>('theme.home.background', 'default', ohStorage )
-  const _storedExpandableCardAnimation = useStorageAsync<string>('theme.home.cardanimation', 'default', ohStorage)
-  const blocklyRenderer = useStorageAsync<string | null>('blockly.renderer', null, ohStorage)
-  const disableLeftPanelSwipe = useStorageAsync<boolean>('theme.disableLeftPanelSwipe', false, ohStorage)
-  const disablePageTransitionAnimation = useStorageAsync<boolean>('theme.disablePageTransition', false, ohStorage)
-  const hideChatInput = useStorageAsync<boolean>('theme.hideChatInput', false, ohStorage)
-  const logDockHeight = useStorageAsync<number>('theme.logDockHeight', 300, ohStorage)
-  const webAudio = useStorageAsync<boolean>('theme.webAudio', true, ohStorage)
-  const visibleBreakpointDisabled = useStorageAsync<boolean>('theme.visibleBreakpointDisabled', false, ohStorage)
-  const codeEditorType = useStorageAsync<CodeEditorType>('codeEditor.type', 'YAML', ohStorage )
-  const dialogIdentifier = useStorageAsync<string>('dialog.id', '', ohStorage)
-  const dialogEnabled = useStorageAsync<boolean>('dialog.enabled', false, ohStorage)
-  const dialogTriggerOnConnect = useStorageAsync<boolean>('dialog.triggerOnLaunch', false, ohStorage)
-  const dialogListeningItem = useStorageAsync<string>('dialog.listeningItem', '', ohStorage)
-  const dialogLocationItem = useStorageAsync<string>('dialog.locationItem', '', ohStorage)
-  const dialogConnectOnWindowEvent = useStorageAsync<boolean>('dialog.connectOnWindowEvent', false, ohStorage)
+  const [ 
+    _storedDarkMode,
+    bars,
+    homeNavBar,
+    homeBackground,
+    _storedExpandableCardAnimation,
+    blocklyRenderer,
+    disableLeftPanelSwipe,
+    disablePageTransitionAnimation,
+    hideChatInput,
+    logDockHeight,
+    webAudio,
+    visibleBreakpointDisabled,
+    codeEditorType,
+    dialogIdentifier,
+    dialogEnabled,
+    dialogTriggerOnConnect,
+    dialogListeningItem,
+    dialogLocationItem,
+    dialogConnectOnWindowEvent
+  ] = await Promise.all([
+    useStorageAsync<StoredDarkModeOption>('theme.dark', 'auto', ohStorage),
+    useStorageAsync<BarsOption>('theme.bars', 'light', ohStorage),
+    useStorageAsync<HomeNavBarOption>('theme.home.navbar', 'default', ohStorage),
+    useStorageAsync<HomeBackgroundOption>('theme.home.background', 'default', ohStorage),
+    useStorageAsync<string>('theme.home.cardanimation', 'default', ohStorage),
+    useStorageAsync<string | null>('blockly.renderer', null, ohStorage),
+    useStorageAsync<boolean>('theme.disableLeftPanelSwipe', false, ohStorage),
+    useStorageAsync<boolean>('theme.disablePageTransition', false, ohStorage),
+    useStorageAsync<boolean>('theme.hideChatInput', false, ohStorage),
+    useStorageAsync<number>('theme.logDockHeight', 300, ohStorage),
+    useStorageAsync<boolean>('theme.webAudio', true, ohStorage),
+    useStorageAsync<boolean>('theme.visibleBreakpointDisabled', false, ohStorage),
+    useStorageAsync<CodeEditorType>('codeEditor.type', 'YAML', ohStorage),
+    useStorageAsync<string>('dialog.id', '', ohStorage),
+    useStorageAsync<boolean>('dialog.enabled', false, ohStorage),
+    useStorageAsync<boolean>('dialog.triggerOnLaunch', false, ohStorage),
+    useStorageAsync<string>('dialog.listeningItem', '', ohStorage),
+    useStorageAsync<string>('dialog.locationItem', '', ohStorage),
+    useStorageAsync<boolean>('dialog.connectOnWindowEvent', false, ohStorage)
+  ])
 
   const storedDarkMode = computed<StoredDarkModeOption>({
     get: () => {
@@ -155,7 +177,9 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   // Watchers
   watch(syncSettings, (newValue) => {
-    ohStorage.setSyncWithServer(newValue)
+    if (newValue) {
+      window.location.reload()
+    }
   })
 
   watch(bars, (newValue) => {

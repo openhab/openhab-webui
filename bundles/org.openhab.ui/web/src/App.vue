@@ -968,8 +968,8 @@ export default {
             console.log('Day.js locale set to', dayjs.locale())
           }
 
-          console.log('App: UI Options loaded')
           this.uiOptionsStore = data[2]
+          console.log('App: UI Options loaded', this.ready)
 
           // load & build the semantic model
           useModelStore().loadSemanticModel()
@@ -1214,6 +1214,7 @@ export default {
     }
   },
   created() {
+    console.log('App.vue created')
     this.AddonIcons = AddonIcons
     this.AddonTitles = AddonTitles
 
