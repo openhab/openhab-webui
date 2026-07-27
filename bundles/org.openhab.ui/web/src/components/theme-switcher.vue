@@ -169,7 +169,6 @@ import ItemPicker from '@/components/config/controls/item-picker.vue'
 import { loadLocaleMessages } from '@/js/i18n'
 import { useI18n } from 'vue-i18n'
 
-import { useUserStore } from '@/js/stores/useUserStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
@@ -214,7 +213,7 @@ export default {
       const getUserMediaSupported = !!(window.navigator && window.navigator.mediaDevices && window.navigator.mediaDevices.getUserMedia)
       return getUserMediaSupported && !!window.AudioContext && !!window.crypto
     },
-    ...mapStores(useUserStore, useRuntimeStore, useUIOptionsStore),
+    ...mapStores(useRuntimeStore, useUIOptionsStore),
     ...mapWritableState(useUIOptionsStore, [
       'disableLeftPanelSwipe',
       'disablePageTransitionAnimation',
