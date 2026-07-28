@@ -381,8 +381,7 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, useTemplateRef, shallowRef, triggerRef, watch } from 'vue'
 import { f7 } from 'framework7-vue'
-import { useDraggable } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
+import { useDraggable, useStorageAsync } from '@vueuse/core'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import ResizableTable from './resizable-table.vue'
 
@@ -419,6 +418,12 @@ enum LEVEL_ICONS {
   WARN = 'flag',
   ERROR = 'exclamationmark_octagon_fill',
   DEFAULT = 'question_diamond'
+}
+
+interface HighlightFilter {
+  text: string
+  color: string
+  active: boolean
 }
 
 const maxEntries = 2000
@@ -494,13 +499,13 @@ const colors: string[] = [
 
 let scrollTime: number = 0
 
-const uiOptionsStore = useUIOptionsStore()
-const {
-  logViewerTextMode: textMode,
-  logViewerShowErrors: showErrors,
-  logViewerHighlightFilters: highlightFilters,
-  logViewerFilterText: filterText
-} = storeToRefs(uiOptionsStore)
+const { ohStorage } = useUIOptionsStore()
+const textMode = useStorageAsync<boolean>('logviewer.textMode', false, ohStorage)
+const showErrors = useStorageAsync<boolean>('logviewer.showErrors', true, ohStorage)
+const highlightFilters = useStorageAsync<HighlightFilter[]>('logviewer.highlightFilters', [], ohStorage)
+const filterText = useStorageAsync<string>('logviewer.filterText', '', ohStorage)
+
+await Promise.allSettled([textMode, showErrors, filterText])
 
 const loggerPackages = ref<api.LoggerInfo[]>([])
 const stateConnected = ref(false)
