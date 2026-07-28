@@ -3,6 +3,7 @@ import api from '@/js/openhab/api'
 import { showToast } from '@/js/dialog-promises'
 import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
+import { useComponentsStore } from '@/js/stores/useComponentsStore.ts'
 
 /*
  * File Definition Mixin
@@ -62,22 +63,12 @@ function executeWidgetCopy(vueInstance, copyOptions) {
     return
   }
 
-  const apiFetch = vueInstance.$oh?.api
-    ? vueInstance.$oh.api.get('/rest/ui/components/ui:widget')
-    : api.get('/rest/ui/components/ui:widget')
-
-  apiFetch
-    .then((data) => {
-      let selected = data
-      if (copyOptions.objectIds) {
-        selected = data.filter((w) => copyOptions.objectIds.includes(w.uid))
-      }
-      processWidgets(selected)
-    })
-    .catch((error) => {
-      progressDialog.close()
-      f7.dialog.alert(`Error loading ${copyOptions.label} definition: ${error}`, 'Error')
-    })
+  const widgets = useComponentsStore().widgets()
+  let selected = widgets
+  if (copyOptions.objectIds) {
+    selected = widgets.filter((w) => copyOptions.objectIds.includes(w.uid))
+  }
+  processWidgets(selected)
 }
 
 export default {
