@@ -15,7 +15,6 @@ package org.openhab.ui.habot.nlp.internal.skill;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -77,7 +76,7 @@ public class DeactivateObjectSkill extends AbstractItemIntentInterpreter {
             // filter out the items which can't receive an OFF command
             List<Item> filteredItems = matchedItems.stream()
                     .filter(i -> !(i instanceof GroupItem) && i.getAcceptedCommandTypes().contains(OnOffType.class))
-                    .collect(Collectors.toList());
+                    .toList();
 
             interpretation.setCard(cardBuilder.buildCard(intent, filteredItems));
 
