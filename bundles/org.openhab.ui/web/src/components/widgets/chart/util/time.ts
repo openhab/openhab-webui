@@ -120,3 +120,22 @@ export function addOrSubtractPeriod(chartType: ChartType, period: Period | null,
 
   return date
 }
+
+/**
+ * Formats a timestamp as a human-readable string using the current locale.
+ *
+ * If locale-based formatting fails, the timestamp is formatted as `DD/MM/YYYY HH:mm`.
+ *
+ * @param time
+ */
+export function formatTimestamp(time: dayjs.Dayjs): string {
+  if (!time.isValid()) return ''
+  try {
+    const formatted = time.format('llll')
+    if (formatted && formatted !== 'llll') return formatted
+  } catch (e: unknown) {
+    // Ignore Day.js LocalizedFormat lookup error for locales missing LLLL format definition
+    console.warn('Failed to format timestamp: ', time, e)
+  }
+  return time.format('DD/MM/YYYY HH:mm')
+}

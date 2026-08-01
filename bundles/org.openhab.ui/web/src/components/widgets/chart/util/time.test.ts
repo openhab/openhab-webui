@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { startOf, addOrSubtractPeriod } from './time'
+import { startOf, addOrSubtractPeriod, formatTimestamp } from './time'
 import { ChartType, type Period } from '@/types/components/widgets'
 import dayjs from 'dayjs'
 
@@ -208,6 +208,20 @@ describe('Time Utility Tests', () => {
 
         expect(result.format('YYYY-MM-DD')).toBe(expected)
       })
+    })
+  })
+
+  describe('formatTimestamp', () => {
+    it('should format a valid dayjs object correctly', () => {
+      const time = dayjs('2026-08-01T13:50:00.000Z')
+      const result = formatTimestamp(time)
+      expect(result).toBeTruthy()
+      expect(result).not.toContain('Failed to format')
+    })
+
+    it('should return empty string for invalid dayjs date', () => {
+      const invalidTime = dayjs('invalid-date')
+      expect(formatTimestamp(invalidTime)).toBe('')
     })
   })
 })
