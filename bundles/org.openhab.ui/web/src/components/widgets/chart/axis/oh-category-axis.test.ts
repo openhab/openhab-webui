@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import dayjs from 'dayjs'
 import { ChartType, OhCategoryAxis } from '@/types/components/widgets'
-import { getCategoryAxisData } from './oh-category-axis'
+import categoryAxis, { getCategoryAxisData } from './oh-category-axis'
 
 describe('oh-category-axis', () => {
   describe('getCategoryAxisData', () => {
@@ -130,6 +130,101 @@ describe('oh-category-axis', () => {
       } as any
       const result = getCategoryAxisData(config, startTime, endTime)
       expect(result.name).toBeUndefined()
+    })
+  })
+
+  describe('categoryAxis.get', () => {
+    const startTime = dayjs('2026-01-01T00:00:00')
+    const endTime = dayjs('2026-01-02T00:00:00')
+
+    it('should preserve evaluated dynamic data when categoryType is values', () => {
+      const dynamicData = ['2026-07-22T00:00', '2026-07-22T01:00', '2026-07-22T02:00']
+      const context = {
+        chart: { config: {} },
+        evaluateExpression: (_id: string, config: any) => ({
+          ...config,
+          data: dynamicData
+        })
+      } as any
+      const component = {
+        config: {
+          categoryType: OhCategoryAxis.CategoryType.values,
+          data: "=JSON.parse(items['open_meteo_forecast'].state).hourly.time"
+        }
+      } as any
+
+      const result = categoryAxis.get(context, component, startTime, endTime)
+      expect(result.type).toBe('category')
+      expect(result.data).toEqual(dynamicData)
+    })
+
+    it('should preserve static array data when categoryType is values', () => {
+      const staticData = ['Cat A', 'Cat B', 'Cat C']
+      const context = {
+        chart: { config: {} },
+        evaluateExpression: (_id: string, config: any) => ({ ...config })
+      } as any
+      const component = {
+        config: {
+          categoryType: OhCategoryAxis.CategoryType.values,
+          data: staticData
+        }
+      } as any
+
+      const result = categoryAxis.get(context, component, startTime, endTime)
+      expect(result.type).toBe('category')
+      expect(result.data).toEqual(staticData)
+    })
+
+    it('should preserve custom name from config and not overwrite it with default name', () => {
+      const context = {
+        chart: { config: {} },
+        evaluateExpression: (_id: string, config: any) => ({ ...config })
+      } as any
+      const component = {
+        config: {
+          categoryType: OhCategoryAxis.CategoryType.day,
+          name: 'Custom Day Axis'
+        }
+      } as any
+
+      const result = categoryAxis.get(context, component, startTime, endTime)
+      expect(result.name).toBe('Custom Day Axis')
+    })
+
+    it('should set default axis name when no custom name is provided', () => {
+      const context = {
+        chart: { config: {} },
+        evaluateExpression: (_id: string, config: any) => ({ ...config })
+      } as any
+      const component = {
+        config: {
+          categoryType: OhCategoryAxis.CategoryType.day
+        }
+      } as any
+
+      const result = categoryAxis.get(context, component, startTime, endTime)
+      expect(result.name).toBe('h')
+    })
+
+    it('should reverse axis data when inverse is true', () => {
+      const dynamicData = ['A', 'B', 'C']
+      const context = {
+        chart: { config: {} },
+        evaluateExpression: (_id: string, config: any) => ({
+          ...config,
+          data: [...dynamicData]
+        })
+      } as any
+      const component = {
+        config: {
+          categoryType: OhCategoryAxis.CategoryType.values,
+          data: dynamicData
+        }
+      } as any
+
+      const result = categoryAxis.get(context, component, startTime, endTime, true)
+      expect(result.data).toEqual(['C', 'B', 'A'])
     })
   })
 })
