@@ -6,19 +6,9 @@ import type { OhChartTooltip } from '@/types/components/widgets'
 import type { TooltipComponentOption } from 'echarts'
 import type { TopLevelFormatterParams } from 'echarts/types/dist/shared'
 import { OhChartTooltipDefinition } from '@/assets/definitions/widgets/chart'
+import { formatTimestamp } from '@/components/widgets/chart/util/time.ts'
 
 dayjs.extend(LocalizedFormat)
-
-export function formatTimestamp(time: dayjs.Dayjs): string {
-  if (!time.isValid()) return ''
-  try {
-    const formatted = time.format('llll')
-    if (formatted && formatted !== 'llll') return formatted
-  } catch {
-    // Ignore Day.js LocalizedFormat lookup error for locales missing LLLL format definition
-  }
-  return time.format('DD/MM/YYYY HH:mm')
-}
 
 const chartTooltip: MiscChartComponent = {
   get(context, component) {

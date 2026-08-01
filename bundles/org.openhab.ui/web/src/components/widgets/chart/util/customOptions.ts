@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { type OhAxisOption, type OhSeriesOption, type OhTimeSeriesOption } from '@/components/widgets/chart/types.ts'
-import { formatTimestamp } from '@/components/widgets/chart/misc/oh-chart-tooltip'
+import { formatTimestamp } from '@/components/widgets/chart/util/time'
 import { Style } from '@/types/components/widgets'
 import { Markers } from '@/types/components/widgets/chart/oh-time-series.gen.ts'
 import { Split } from '@/types/components/widgets/chart/oh-value-axis.gen.ts'
