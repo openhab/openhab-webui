@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -176,7 +175,7 @@ public class OpenNLPInterpreter implements HumanLanguageInterpreter {
                         return 1;
                     }
                     return o1.getIntentId().compareTo(o2.getIntentId());
-                }).collect(Collectors.toList()), getNameSamples(), this.tokenizerId);
+                }).toList(), getNameSamples(), this.tokenizerId);
                 this.intentTrainer = intentTrainer;
                 currentLocale = locale;
             } catch (Exception e) {
