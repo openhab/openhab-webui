@@ -9,6 +9,17 @@ import { OhChartTooltipDefinition } from '@/assets/definitions/widgets/chart'
 
 dayjs.extend(LocalizedFormat)
 
+export function formatTimestamp(time: dayjs.Dayjs): string {
+  if (!time.isValid()) return ''
+  try {
+    const formatted = time.format('llll')
+    if (formatted && formatted !== 'llll') return formatted
+  } catch {
+    // Ignore Day.js LocalizedFormat lookup error for locales missing LLLL format definition
+  }
+  return time.format('DD/MM/YYYY HH:mm')
+}
+
 const chartTooltip: MiscChartComponent = {
   get(context, component) {
     const options = context.evaluateExpression<OhChartTooltip.Config & TooltipComponentOption>(
@@ -59,13 +70,7 @@ const chartTooltip: MiscChartComponent = {
 
             // @ts-expect-error data access
             const time = dayjs((params.data.coord as unknown[][])[0][0])
-            let timestamp
-            try {
-              timestamp = time.format('llll')
-            } catch (e) {
-              console.warn('Failed to format timestamp: ', time, e)
-              timestamp = time.format('DD/MM/YYYY HH:mm')
-            }
+            const timestamp = formatTimestamp(time)
             // @ts-expect-error data access
             tooltip += `<div>${timestamp} - ${dayjs((params.data.coord as unknown[][])[1][0]).format('HH:mm')}</div>`
             tooltip += params.marker as string
@@ -82,13 +87,7 @@ const chartTooltip: MiscChartComponent = {
           if (!param || !('axisType' in param)) return ''
           if (param.axisType === 'xAxis.time' && 'axisValue' in param) {
             const time = dayjs(param.axisValue as string)
-            let timestamp
-            try {
-              timestamp = time.format('llll')
-            } catch (e) {
-              console.warn('Failed to format timestamp: ', time, e)
-              timestamp = time.format('DD/MM/YYYY HH:mm')
-            }
+            const timestamp = formatTimestamp(time)
             tooltip += `<div>${timestamp}</div>`
           }
           params.forEach((p) => {

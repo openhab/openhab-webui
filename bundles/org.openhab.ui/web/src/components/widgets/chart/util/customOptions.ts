@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import { type OhAxisOption, type OhSeriesOption, type OhTimeSeriesOption } from '@/components/widgets/chart/types.ts'
+import { formatTimestamp } from '@/components/widgets/chart/misc/oh-chart-tooltip'
 import { Style } from '@/types/components/widgets'
 import { Markers } from '@/types/components/widgets/chart/oh-time-series.gen.ts'
 import { Split } from '@/types/components/widgets/chart/oh-value-axis.gen.ts'
@@ -13,7 +14,7 @@ function applyMarkers(series: OhSeriesOption) {
         tooltip: {
           // @ts-expect-error ECharts provides no type def for MarkLineOption::formatter
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          formatter: (params: unknown) => dayjs(params.data.xAxis as string).format('llll')
+          formatter: (params: unknown) => formatTimestamp(dayjs(params.data.xAxis as string))
         }
       }
     }
