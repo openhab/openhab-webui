@@ -1,24 +1,28 @@
 <template>
   <f7-block v-if="thingType" class="channel-list no-margin">
-    <f7-block v-show="thing.channels.length > 0">
-      <f7-col>
-        <f7-searchbar
-          ref="searchbar"
-          :disable-button="false"
-          inline
-          disable-link-text="Cancel"
-          placeholder="Search channels"
-          search-container=".channel-group"
-          search-in=".channel-item .item-title, .channel-item .item-subtitle, .channel-item .item-footer"
-          search-group=".channel-group .row"
-          :clear-button="true" />
-      </f7-col>
-    </f7-block>
-    <div v-if="hasAdvanced" style="text-align: right" class="padding-right">
-      <label class="advanced-label">
-        <f7-checkbox name="channel-advanced" v-model:checked="showAdvanced" />
-        Show advanced</label
-      >
+    <div v-show="showFilterControls" class="channel-filters">
+      <f7-searchbar
+        v-show="thing.channels.length > 0"
+        ref="searchbar"
+        :disable-button="false"
+        inline
+        disable-link-text="Cancel"
+        placeholder="Search channels"
+        search-container=".channel-group"
+        search-in=".channel-item .item-title, .channel-item .item-subtitle, .channel-item .item-footer"
+        search-group=".channel-group .row"
+        :clear-button="true" />
+      <f7-chip
+        v-if="hasAdvanced"
+        media-bg-color="blue"
+        :color="showAdvanced ? 'blue' : ''"
+        class="advanced-chip not-selectable"
+        text="Advanced"
+        @click="showAdvanced = !showAdvanced">
+        <template #media>
+          <f7-icon v-if="showAdvanced" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
+        </template>
+      </f7-chip>
     </div>
     <f7-col v-if="thing.channels.length > 0">
       <f7-block width="100" class="channel-group no-margin no-padding" ref="channelList">
@@ -36,66 +40,71 @@
             </f7-segmented>
           </f7-col>
         </f7-row>
-        <f7-row v-for="group in channelGroups" :key="group.id">
-          <f7-col>
-            <!-- <f7-block-title class="channel-group-title">{{group.label}}</f7-block-title>
+
+        <group-box>
+          <f7-row v-for="group in channelGroups" :key="group.id">
+            <f7-col>
+              <!-- <f7-block-title class="channel-group-title">{{group.label}}</f7-block-title>
             <f7-block-footer class="channel-description param-description" v-if="group.description">
               {{group.description}}
             </f7-block-footer> -->
 
-            <channel-group
-              :group="group"
-              :thing="thing"
-              :picker-mode="pickerMode"
-              :multiple-links-mode="multipleLinksMode"
-              :item-type-filter="itemTypeFilter"
-              :selection="multipleLinksMode ? selectedChannels : selectedChannel"
-              @selected="selectChannel"
-              @channel-opened="channelOpened">
-              <template v-if="!pickerMode && !multipleLinksMode" #default="{ channelId, channelType, channel, extensible }">
-                <channel-link
-                  :opened="openedChannelId === channelId"
-                  :thing="thing"
-                  :thingType="thingType"
-                  :channelId="channelId"
-                  :channelType="channelType"
-                  :channel="channel"
-                  :extensible="extensible"
-                  :context="context"
-                  :f7router
-                  @channel-updated="(e) => $emit('channels-updated', e)" />
-              </template>
-              <template v-else-if="multipleLinksMode" #default="{ channelType, channel }">
-                <item-picker
-                  v-if="isChecked(channel) && hasLinks(channel)"
-                  :label="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
-                  textColor="blue"
-                  :hideIcon="true"
-                  :items="items.filter((i) => channel.linkedItems.includes(i.name))"
-                  :multiple="false"
-                  :noModelPicker="true"
-                  :setValueText="false"
-                  :value="selectedItem(channel)?.name"
-                  @input="selectExistingItem($event, channel, channelType)" />
-                <item-form v-if="selectedItem(channel)" :item="selectedItem(channel)" :items="items" :createMode="false" />
-                <item-form
-                  v-else-if="isChecked(channel)"
-                  :item="newItem(channel)"
-                  :items="items"
-                  :createMode="true"
-                  :unitHint="getUnitHint(channel, channelType)"
-                  :stateDescription="stateDescription(channelType)" />
-              </template>
-              <!-- <channel-link #default="{ channelId }" /> -->
-            </channel-group>
-          </f7-col>
-        </f7-row>
-        <f7-list v-if="multipleLinksMode">
-          <f7-list-button style="padding-left: 0; text-align: left" color="blue" @click="toggleAllChecks(true, $event)">
-            Select All
-          </f7-list-button>
-          <f7-list-button color="blue" @click="toggleAllChecks(false, $event)"> Unselect All </f7-list-button>
-        </f7-list>
+              <channel-group
+                :group="group"
+                :thing="thing"
+                :picker-mode="pickerMode"
+                :multiple-links-mode="multipleLinksMode"
+                :item-type-filter="itemTypeFilter"
+                :selection="multipleLinksMode ? selectedChannels : selectedChannel"
+                @selected="selectChannel"
+                @channel-opened="channelOpened">
+                <template v-if="!pickerMode && !multipleLinksMode" #default="{ channelId, channelType, channel, extensible }">
+                  <channel-link
+                    :opened="openedChannelId === channelId"
+                    :thing="thing"
+                    :thingType="thingType"
+                    :channelId="channelId"
+                    :channelType="channelType"
+                    :channel="channel"
+                    :extensible="extensible"
+                    :context="context"
+                    :f7router
+                    @channel-updated="(e) => $emit('channels-updated', e)" />
+                </template>
+                <template v-else-if="multipleLinksMode" #default="{ channelType, channel }">
+                  <item-picker
+                    v-if="isChecked(channel) && hasLinks(channel)"
+                    :label="selectedItem(channel) ? 'Change Item Selection' : 'Pick Existing Linked Item'"
+                    textColor="blue"
+                    :hideIcon="true"
+                    :items="items.filter((i) => channel.linkedItems.includes(i.name))"
+                    :multiple="false"
+                    :noModelPicker="true"
+                    :setValueText="false"
+                    :value="selectedItem(channel)?.name"
+                    @input="selectExistingItem($event, channel, channelType)" />
+                  <div style="padding: 0 10px 10px 55px">
+                    <item-form v-if="selectedItem(channel)" :item="selectedItem(channel)" :items="items" :createMode="false" />
+                    <item-form
+                      v-else-if="isChecked(channel)"
+                      :item="newItem(channel)"
+                      :items="items"
+                      :createMode="true"
+                      :unitHint="getUnitHint(channel, channelType)"
+                      :stateDescription="stateDescription(channelType)" />
+                  </div>
+                </template>
+                <!-- <channel-link #default="{ channelId }" /> -->
+              </channel-group>
+            </f7-col>
+          </f7-row>
+          <f7-list v-if="multipleLinksMode">
+            <f7-list-button style="padding-left: 0; text-align: left" color="blue" @click="toggleAllChecks(true, $event)">
+              Select All
+            </f7-list-button>
+            <f7-list-button color="blue" @click="toggleAllChecks(false, $event)"> Unselect All </f7-list-button>
+          </f7-list>
+        </group-box>
       </f7-block>
     </f7-col>
     <f7-col v-else>
@@ -111,6 +120,39 @@
 </template>
 
 <style lang="stylus">
+.channel-filters
+  display flex
+  align-items center
+  gap 8px
+  padding 8px var(--f7-block-padding-horizontal)
+
+  .searchbar
+    flex 1 1 auto
+    min-width 0
+    margin 0
+    padding 0
+    background transparent
+    box-shadow none
+
+    &:before, &:after
+      display none !important
+
+  .searchbar-inner
+    padding 0
+
+  .searchbar-input-wrap
+    margin 0
+
+  .advanced-chip
+    margin-left auto
+    cursor pointer
+
+  .not-selectable
+    -webkit-user-select none
+    -moz-user-select none
+    -ms-user-select none
+    user-select none
+
 .channel-list
   margin-left calc(-1*var(--f7-block-padding-horizontal))
   padding-left 0
@@ -224,6 +266,9 @@ export default {
     },
     hasAdvanced() {
       return this.channelGroups && Array.isArray(this.channelGroups) && this.channelGroups?.some((g) => g.hasAdvanced)
+    },
+    showFilterControls() {
+      return this.thing.channels.length > 0 || this.hasAdvanced
     }
   },
   methods: {

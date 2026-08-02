@@ -1,45 +1,41 @@
 <template>
-  <f7-list>
-    <f7-list-item accordion-item>
-      <template #title>
-        Filter
-        <template v-if="filtered">
-          (active)
-          <f7-link @click="resetFilters" text="Reset filters" class="margin-right" href="javascript:void(0)" />
-        </template>
-      </template>
-      <f7-accordion-content>
-        <f7-list class="no-hairlines-between">
-          <div v-for="(filter, type) in filters" :key="type">
-            <f7-list-item group-title style="height: 2em"> Filter by {{ filter.label }} </f7-list-item>
-            <f7-list-item class="padding-bottom">
-              <div v-if="Object.keys(filter.options).length === 0" class="text-color-gray" style="font-size: 0.9em">
-                None of the items have any {{ filter.label.toLowerCase() }} assigned
-              </div>
-              <div v-else class="chip-wrap">
-                <f7-chip
-                  v-for="(label, value) in filter.options"
-                  :key="value"
-                  :text="label"
-                  :color="isFilteredBy(type, value) ? 'blue' : ''"
-                  media-bg-color="blue"
-                  style="margin-right: 6px; cursor: pointer"
-                  @click="toggleFilter(type, value)">
-                  <template #media>
-                    <f7-icon
-                      v-if="isFilteredBy(type, value)"
-                      ios="f7:checkmark_circle_fill"
-                      md="material:check_circle"
-                      aurora="f7:checkmark_circle_fill" />
-                  </template>
-                </f7-chip>
-              </div>
-            </f7-list-item>
+  <group-box class="list-filter" title="Filter" accordion>
+    <template #before-title>
+      <f7-icon f7="slider_horizontal_3" />
+    </template>
+    <template v-if="filtered" #after-title>
+      (active)
+      <f7-link @click.stop="resetFilters" text="Clear filters" class="margin-right" href="javascript:void(0)" />
+    </template>
+    <f7-list class="no-hairlines-between">
+      <div v-for="(filter, type) in filters" :key="type">
+        <f7-list-item group-title style="height: 2em"> Filter by {{ filter.label }} </f7-list-item>
+        <f7-list-item class="padding-bottom">
+          <div v-if="Object.keys(filter.options).length === 0" class="text-color-gray" style="font-size: 0.9em">
+            None of the items have any {{ filter.label.toLowerCase() }} assigned
           </div>
-        </f7-list>
-      </f7-accordion-content>
-    </f7-list-item>
-  </f7-list>
+          <div v-else class="chip-wrap">
+            <f7-chip
+              v-for="(label, value) in filter.options"
+              :key="value"
+              :text="label"
+              :color="isFilteredBy(type, value) ? 'blue' : ''"
+              media-bg-color="blue"
+              style="margin-right: 6px; cursor: pointer"
+              @click="toggleFilter(type, value)">
+              <template #media>
+                <f7-icon
+                  v-if="isFilteredBy(type, value)"
+                  ios="f7:checkmark_circle_fill"
+                  md="material:check_circle"
+                  aurora="f7:checkmark_circle_fill" />
+              </template>
+            </f7-chip>
+          </div>
+        </f7-list-item>
+      </div>
+    </f7-list>
+  </group-box>
 </template>
 
 <style scoped>
