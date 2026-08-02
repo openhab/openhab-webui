@@ -64,7 +64,13 @@
       </f7-col>
 
       <f7-col v-if="ready">
-        <f7-block-title> {{ listTitle }} </f7-block-title>
+        <f7-block-title>
+          <span>{{ listTitle }}</span>
+          <template v-if="showCheckboxes && listedItems.length">
+            -
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
+        </f7-block-title>
         <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
         <f7-list v-if="!listedItems.length && widgets.length" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
@@ -181,6 +187,9 @@ export default {
         title += ' widgets'
       }
       return title
+    },
+    allSelected() {
+      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     }
   },
   methods: {
@@ -245,6 +254,13 @@ export default {
     },
     toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
+    },
+    selectDeselectAll() {
+      if (this.allSelected) {
+        this.selectedItems = []
+      } else {
+        this.selectedItems = this.listedItems.map((widget) => widget.uid)
+      }
     },
     isChecked(item) {
       return this.selectedItems.indexOf(item) >= 0

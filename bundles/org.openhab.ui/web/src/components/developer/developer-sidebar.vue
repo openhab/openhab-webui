@@ -394,6 +394,43 @@
             </ul>
           </f7-list>
         </f7-block>
+        <!-- Pinned Sitemaps -->
+        <f7-block v-if="developerStore.pinnedObjects.sitemaps.length" class="no-margin no-padding">
+          <f7-block-title class="padding-horizontal display-flex">
+            <span>Pinned Sitemaps</span>
+            <span style="margin-left: auto">
+              <f7-link color="gray" icon-f7="multiply" icon-size="14" @click="unpinAll('sitemaps')" />
+            </span>
+          </f7-block-title>
+          <f7-list media-list>
+            <ul>
+              <f7-list-item
+                v-for="sitemap in developerStore.pinnedObjects.sitemaps"
+                :key="sitemap.name"
+                media-item
+                :title="sitemap.label"
+                :footer="sitemap.name">
+                <template #footer>
+                  <div class="display-flex align-items-flex-end justify-content-flex-end" style="margin-top: 3px">
+                    <f7-link color="gray" class="margin-right">
+                      <clipboard-icon :value="sitemap.name" :size="18" tooltip="Copy Sitemap Name" />
+                    </f7-link>
+                    <!-- <f7-link class="margin-right" color="blue" icon-f7="rectangle_on_rectangle" icon-size="18" tooltip="Open in Popup" /> -->
+                    <f7-link
+                      class="margin-right"
+                      color="gray"
+                      icon-f7="pencil"
+                      icon-size="18"
+                      tooltip="Edit"
+                      :href="'/settings/sitemaps/' + sitemap.name"
+                      :animate="false" />
+                    <f7-link color="blue" icon-f7="pin_fill" icon-size="18" tooltip="Unpin" @click="unpin('sitemaps', sitemap, 'name')" />
+                  </div>
+                </template>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </f7-block>
         <!-- Pinned Transformations -->
         <f7-block v-if="developerStore.pinnedObjects.transformations.length" class="no-margin no-padding">
           <f7-block-title class="padding-horizontal display-flex">
@@ -560,6 +597,7 @@
             <f7-list-button href="/settings/pages/map/add" color="blue" :animate="false"> Create map view </f7-list-button>
             <f7-list-button href="/settings/pages/plan/add" color="blue" :animate="false"> Create floor plan </f7-list-button>
             <f7-list-button href="/settings/pages/chart/add" color="blue" :animate="false"> Create chart </f7-list-button>
+            <f7-list-item divider title="Sitemaps" />
             <f7-list-button href="/settings/sitemaps/add" color="blue" :animate="false"> Create sitemap </f7-list-button>
             <f7-list-item divider title="Automation" />
             <f7-list-button href="/settings/rules/add" color="blue" :animate="false"> Create rule </f7-list-button>
@@ -682,6 +720,7 @@ export default {
         scripts: [],
         pages: [],
         widgets: [],
+        sitemaps: [],
         transformations: [],
         persistenceConfigs: []
       },
@@ -713,6 +752,11 @@ export default {
     const metadata = {
       name: 'metadata',
       getFn: (obj) => JSON.stringify(obj.metadata)
+    }
+
+    const sitemapWidgets = {
+      name: 'widgets',
+      getFn: (obj) => JSON.stringify(obj.widgets)
     }
 
     this.SEARCH = {
@@ -751,6 +795,9 @@ export default {
       },
       widgets: {
         keys: ['uid', props, slots]
+      },
+      sitemaps: {
+        keys: ['name', 'label', sitemapWidgets]
       },
       transformations: {
         keys: ['uid', 'label', 'configuration.function']
@@ -864,8 +911,8 @@ export default {
             this.$oh.api.get('/rest/things?summary=true'), // 1
             this.$oh.api.get('/rest/rules?summary=false'), // 2
             Promise.resolve(useComponentsStore().pages()), // 3
-            this.$oh.api.get('/rest/ui/components/system:sitemap'), // 4
-            Promise.resolve(useComponentsStore().widgets()), // 5
+            Promise.resolve(useComponentsStore().widgets()), // 4
+            this.$oh.api.get('/rest/sitemaps/*/definition'), // 5
             this.$oh.api.get('/rest/transformations'), // 6
             this.loadPersistenceConfigs() // 7
           ]
@@ -879,8 +926,9 @@ export default {
             items: new Fuse(data[0], this.SEARCH.items),
             things: new Fuse(data[1], this.SEARCH.things),
             rules: new Fuse(data[2], this.SEARCH.rules),
-            pages: new Fuse([...data[3], ...data[4]], this.SEARCH.pages),
-            widgets: new Fuse(data[5], this.SEARCH.widgets),
+            pages: new Fuse(data[3], this.SEARCH.pages),
+            widgets: new Fuse(data[4], this.SEARCH.widgets),
+            sitemaps: new Fuse(data[5], this.SEARCH.sitemaps),
             transformations: new Fuse(data[6], this.SEARCH.transformations),
             persistence: new Fuse(data[7], this.SEARCH.persistence)
           }
@@ -906,6 +954,7 @@ export default {
 
         const pages = this.searchData(this.cachedFuseObjects.pages, query)
         const widgets = this.searchData(this.cachedFuseObjects.widgets, query)
+        const sitemaps = this.searchData(this.cachedFuseObjects.sitemaps, query)
         const transformations = this.searchData(this.cachedFuseObjects.transformations, query)
         const persistenceConfigs = this.searchData(this.cachedFuseObjects.persistence, query)
 
@@ -917,6 +966,7 @@ export default {
           scripts,
           pages,
           widgets,
+          sitemaps,
           transformations,
           persistenceConfigs
         }
@@ -949,6 +999,7 @@ export default {
         scripts: [],
         pages: [],
         widgets: [],
+        sitemaps: [],
         transformations: [],
         persistenceConfigs: []
       }

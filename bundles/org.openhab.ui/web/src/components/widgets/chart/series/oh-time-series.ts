@@ -10,8 +10,8 @@ import { OhTimeSeriesDefinition } from '@/assets/definitions/widgets/chart'
 const timeSeries: SeriesComponent = {
   neededItems(context, component) {
     let markAreaItems: string[] = []
-    if ('slots' in component && Array.isArray((component as api.RootUiComponent).slots.markArea)) {
-      markAreaItems = (component as api.RootUiComponent).slots.markArea
+    if (Array.isArray(component.slots?.markArea)) {
+      markAreaItems = component.slots.markArea
         .map((a, i) =>
           context.evaluateExpression<string | undefined>(
             ComponentId.get(component)! + '.mitem' + i,
@@ -40,8 +40,8 @@ const timeSeries: SeriesComponent = {
     }
 
     // other things
-    if ('slots' in component && Array.isArray((component as api.RootUiComponent).slots.markArea)) {
-      const markAreaComponent = (component as api.RootUiComponent).slots.markArea[0]
+    if (Array.isArray(component.slots?.markArea)) {
+      const markAreaComponent = component.slots.markArea[0]
       if (markAreaComponent) {
         series.markArea = MarkArea.get(context, markAreaComponent, points, startTime, endTime)
         series.id += '#mark-area'

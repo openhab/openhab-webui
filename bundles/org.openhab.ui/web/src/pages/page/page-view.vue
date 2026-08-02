@@ -38,7 +38,7 @@
     <!-- Tabbed Pages -->
     <f7-toolbar v-if="page && pageType === 'tabs' && visibleToCurrentUser" tabbar labels bottom>
       <f7-link
-        v-for="(tab, idx) in page.slots.default"
+        v-for="(tab, idx) in page.slots?.default"
         :key="idx"
         :tab-link="'#tab-' + idx"
         @click="onTabChange(idx)"
@@ -53,7 +53,7 @@
       </f7-link>
     </f7-toolbar>
     <f7-tabs v-if="page && pageType === 'tabs' && visibleToCurrentUser">
-      <f7-tab v-for="(tab, idx) in page.slots.default" :id="'tab-' + idx" :key="idx" :tab-active="currentTab === idx">
+      <f7-tab v-for="(tab, idx) in page.slots?.default" :id="'tab-' + idx" :key="idx" :tab-active="currentTab === idx">
         <component :is="tabComponent(tab)" v-if="currentTab === idx" :context="tabContext(tab)" :f7router />
       </f7-tab>
     </f7-tabs>
@@ -145,7 +145,7 @@ const pageStyle = computed(() => {
   if (!context.value) return null
   const pageComponent: DeepReadonly<api.RootUiComponent> | string | null =
     pageType.value === 'tabs'
-      ? context.value.component?.slots.default?.[currentTab.value]
+      ? context.value.component?.slots?.default?.[currentTab.value]
         ? // the tabbed page component can be null if this.currentTab is out of bounds
           tabContext(context.value.component!.slots.default![currentTab.value]!).component
         : null
@@ -223,7 +223,7 @@ const onTabChange = (idx: number) => {
   // @ts-expect-error - url is not typed as part of the router
   props.f7router.url = url
 }
-const tabContext = (tab: api.UiComponent) => {
+const tabContext = (tab: DeepReadonly<api.UiComponent>) => {
   const tabPage: DeepReadonly<api.RootUiComponent> | string = tab.config.page
     ? componentStore.page((tab.config.page as string).replace('page:', ''))!
     : tab.component
@@ -259,7 +259,7 @@ const pageComponent = (page: api.RootUiComponent | DeepReadonly<api.RootUiCompon
   }
   return null
 }
-const tabComponent = (tab: string | api.UiComponent) => {
+const tabComponent = (tab: string | DeepReadonly<api.UiComponent>) => {
   switch (tab) {
     case 'oh-locations-tab':
       return OhLocationsTab
@@ -277,7 +277,7 @@ const tabComponent = (tab: string | api.UiComponent) => {
   if (!page) return null
   return pageComponent(page)
 }
-const tabEvaluateExpression = (tab: api.UiComponent, idx: number, key: string) => {
+const tabEvaluateExpression = (tab: DeepReadonly<api.UiComponent>, idx: number, key: string) => {
   const ctx = tabContext(tab)
   return evaluateExpression('tab-' + idx + '-' + key, tab.config[key], ctx as unknown as WidgetContext, ctx.props)
 }
@@ -295,7 +295,7 @@ const editPage = () => {
         {
           text: 'Edit Current Tab',
           onClick: () => {
-            const tabPageUid = (page.value!.slots.default![currentTab.value]!.config.page as string).replace('page:', '')
+            const tabPageUid = (page.value!.slots?.default![currentTab.value]!.config.page as string).replace('page:', '')
             const tabPage = componentStore.page(tabPageUid)!
             const tabPageType = getPageType(tabPage).type
             props.f7router.navigate('/settings/pages/' + tabPageType + '/' + tabPageUid)

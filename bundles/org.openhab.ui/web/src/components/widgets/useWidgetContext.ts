@@ -7,7 +7,7 @@ import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 
 import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, WidgetContext } from './types'
-import { computed, onBeforeUnmount, onMounted, type Ref, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, readonly, type Ref, ref } from 'vue'
 import * as api from '@/api'
 import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 
@@ -37,8 +37,9 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
 
   // computed
   const componentType = computed<string | null>(() => {
-    if (!context.value.component?.component) return null
-    return (evaluateExpression('type', context.value.component.component) as string) || null
+    const component = context.value.component.component
+    if (!component) return null
+    return (evaluateExpression('type', component) as string) || null
   })
 
   const childWidgetComponentType = computed<string | null>(() => {
@@ -123,7 +124,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
         ? { ...widget, slots: { ...widget.slots, ...context.value.component.slots } }
         : widget
     return {
-      component: extendedWidget,
+      component: extendedWidget as api.RootUiComponent | api.UiComponent,
       props: config.value,
       fn: context.value.fn,
       const: context.value.const,
@@ -176,7 +177,7 @@ export function useWidgetContext(context: Ref<WidgetContext>) {
 
   // lifecycle
   onMounted(() => {
-    const stylesheet = context.value.component?.config?.stylesheet as string | undefined
+    const stylesheet = context.value.component.config?.stylesheet as string | undefined
     if (stylesheet) {
       scopedCssUid.value = 'scoped-' + f7.utils.id()
       let style = document.createElement('style')

@@ -32,7 +32,13 @@ export default {
         component: ScriptEditorPopup
       }
 
-      this.f7router.navigate(
+      const router = this.f7router || f7?.views?.main?.router
+      if (!router) {
+        console.error('Framework7 router not available')
+        return
+      }
+
+      router.navigate(
         {
           url: 'script-edit',
           route: {

@@ -6,6 +6,7 @@ import type { OhChartTooltip } from '@/types/components/widgets'
 import type { TooltipComponentOption } from 'echarts'
 import type { TopLevelFormatterParams } from 'echarts/types/dist/shared'
 import { OhChartTooltipDefinition } from '@/assets/definitions/widgets/chart'
+import { formatTimestamp } from '@/components/widgets/chart/util/time.ts'
 
 dayjs.extend(LocalizedFormat)
 
@@ -59,13 +60,7 @@ const chartTooltip: MiscChartComponent = {
 
             // @ts-expect-error data access
             const time = dayjs((params.data.coord as unknown[][])[0][0])
-            let timestamp
-            try {
-              timestamp = time.format('llll')
-            } catch (e) {
-              console.warn('Failed to format timestamp: ', time, e)
-              timestamp = time.format('DD/MM/YYYY HH:mm')
-            }
+            const timestamp = formatTimestamp(time)
             // @ts-expect-error data access
             tooltip += `<div>${timestamp} - ${dayjs((params.data.coord as unknown[][])[1][0]).format('HH:mm')}</div>`
             tooltip += params.marker as string
@@ -82,13 +77,7 @@ const chartTooltip: MiscChartComponent = {
           if (!param || !('axisType' in param)) return ''
           if (param.axisType === 'xAxis.time' && 'axisValue' in param) {
             const time = dayjs(param.axisValue as string)
-            let timestamp
-            try {
-              timestamp = time.format('llll')
-            } catch (e) {
-              console.warn('Failed to format timestamp: ', time, e)
-              timestamp = time.format('DD/MM/YYYY HH:mm')
-            }
+            const timestamp = formatTimestamp(time)
             tooltip += `<div>${timestamp}</div>`
           }
           params.forEach((p) => {
