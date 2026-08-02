@@ -259,6 +259,15 @@ const adminMenuItems: Record<AdminMenuSection, AdminMenuItemDefinition[]> = {
       pageGroup: 'advanced'
     },
     {
+      id: 'widget-file-definitions',
+      kind: 'action',
+      actionId: 'copy-widget-file-definitions',
+      titleKey: 'developer.widgets-file-definitions.title',
+      footerKey: 'developer.widgets-file-definitions.footer',
+      icon: 'square_on_circle',
+      pageGroup: 'advanced'
+    },
+    {
       id: 'developer-sidebar',
       kind: 'toggle',
       controlId: 'developer-sidebar',
