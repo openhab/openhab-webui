@@ -103,6 +103,8 @@
   "developer.things-file-definitions.footer": "Copy all Things' file definitions to clipboard",
   "developer.items-file-definitions.title": "Items File Definitions",
   "developer.items-file-definitions.footer": "Copy all Items' file definitions to clipboard",
+  "developer.widgets-file-definitions.title": "Widgets File Definitions",
+  "developer.widgets-file-definitions.footer": "Copy all Widgets' file definitions to clipboard",
   "developer.developer-sidebar.title": "Developer Sidebar",
   "developer.developer-sidebar.footer": "Show a panel with various tools and help",
   "developer.api-explorer.title": "API Explorer",

@@ -221,6 +221,9 @@ export default {
         case 'copy-item-file-definitions':
           this.copyFileDefinitionToClipboard(this.ObjectType.ITEM)
           break
+        case 'copy-widget-file-definitions':
+          this.copyFileDefinitionToClipboard(this.ObjectType.WIDGET)
+          break
       }
     },
     developerToggleValue(controlId) {
