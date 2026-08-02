@@ -1,41 +1,43 @@
 <template>
   <div>
-    <f7-list>
-      <f7-list-item
-        :key="classSelectKey"
-        title="Google Assistant Class"
-        :disabled="!editable ? true : null"
-        smart-select
-        :smart-select-params="{
-          openIn: 'popup',
-          searchbar: true,
-          closeOnSelect: true,
-          scrollToSelectedItem: true
-        }"
-        ref="classes">
-        <select name="classes" @change="updateClass">
-          <option value="" />
-          <optgroup label="Types">
-            <option
-              v-for="cl in orderedClasses.filter((c) => c.indexOf('type:') === 0)"
-              :value="cl.replace('type:', '')"
-              :key="cl"
-              :selected="isSelected(cl.replace('type:', '')) ? true : null">
-              {{ cl.replace('type:', '') }}
-            </option>
-          </optgroup>
-          <optgroup label="Attributes">
-            <option
-              v-for="cl in orderedClasses.filter((c) => c.indexOf('attribute:') === 0)"
-              :value="cl.replace('attribute:', '')"
-              :key="cl"
-              :selected="isSelected(cl.replace('attribute:', '')) ? true : null">
-              {{ cl.replace('attribute:', '') }}
-            </option>
-          </optgroup>
-        </select>
-      </f7-list-item>
-    </f7-list>
+    <group-box title="Google Assistant Metadata">
+      <f7-list>
+        <f7-list-item
+          :key="classSelectKey"
+          title="Google Assistant Class"
+          :disabled="!editable ? true : null"
+          smart-select
+          :smart-select-params="{
+            openIn: 'popup',
+            searchbar: true,
+            closeOnSelect: true,
+            scrollToSelectedItem: true
+          }"
+          ref="classes">
+          <select name="classes" @change="updateClass">
+            <option value="" />
+            <optgroup label="Types">
+              <option
+                v-for="cl in orderedClasses.filter((c) => c.indexOf('type:') === 0)"
+                :value="cl.replace('type:', '')"
+                :key="cl"
+                :selected="isSelected(cl.replace('type:', '')) ? true : null">
+                {{ cl.replace('type:', '') }}
+              </option>
+            </optgroup>
+            <optgroup label="Attributes">
+              <option
+                v-for="cl in orderedClasses.filter((c) => c.indexOf('attribute:') === 0)"
+                :value="cl.replace('attribute:', '')"
+                :key="cl"
+                :selected="isSelected(cl.replace('attribute:', '')) ? true : null">
+                {{ cl.replace('attribute:', '') }}
+              </option>
+            </optgroup>
+          </select>
+        </f7-list-item>
+      </f7-list>
+    </group-box>
     <div>
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
     </div>

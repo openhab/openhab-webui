@@ -98,21 +98,6 @@
 
     <f7-block class="block-narrow">
       <f7-col v-show="ready">
-        <f7-block-title>
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && listedItems.length">
-            -
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
-          <template v-if="groupBy === 'location'">
-            <div style="text-align: right" class="padding-right">
-              <label class="advanced-label">
-                <f7-checkbox v-model:checked="showNoLocation" />
-                Show no location</label
-              >
-            </div>
-          </template>
-        </f7-block-title>
         <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
       </f7-col>
       <!-- skeleton for not ready -->
@@ -140,56 +125,65 @@
             <f7-button :active="groupBy === 'location'" @click="switchGroupOrder('location')"> By location </f7-button>
           </f7-segmented>
         </div>
-        <f7-list v-if="!listedItems.length">
-          <f7-list-item title="Nothing found" />
-        </f7-list>
-        <f7-list v-show="listedItems.length" class="col things-list" :contacts-list="groupBy === 'alphabetical'">
-          <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
-            <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title media-item />
-            <f7-list-item
-              v-for="(thing, index) in thingsWithInitial"
-              :key="index"
-              media-item
-              class="thinglist-item"
-              :checkbox="showCheckboxes"
-              :checked="isChecked(thing.UID) ? true : null"
-              :value="thing.UID"
-              prevent-router
-              @click.ctrl="ctrlClick($event, thing)"
-              @click.meta="ctrlClick($event, thing)"
-              @click.exact="click($event, thing)"
-              :link="`${encodeURIComponent(thing.UID)}`"
-              :title="thing.label || thing.UID">
-              <template #footer>
-                <div>
-                  {{ thing.UID }}
-                  <clipboard-icon :value="thing.UID" tooltip="Copy UID" />
-                </div>
-              </template>
+        <group-box :title="listTitle">
+          <template #after-title>
+            <f7-link
+              v-if="showCheckboxes && listedItems.length"
+              @click="selectDeselectAll"
+              :text="allSelected ? 'Deselect all' : 'Select all'" />
+            <label v-if="groupBy === 'location'" class="advanced-label">
+              <f7-checkbox v-model:checked="showNoLocation" />
+              Show no location
+            </label>
+          </template>
+          <f7-list v-show="listedItems.length" class="col things-list" :contacts-list="groupBy === 'alphabetical'">
+            <f7-list-group v-for="(thingsWithInitial, initial) in indexedThings" :key="initial">
+              <f7-list-item v-if="thingsWithInitial.length" :title="initial" group-title media-item />
+              <f7-list-item
+                v-for="(thing, index) in thingsWithInitial"
+                :key="index"
+                media-item
+                class="thinglist-item"
+                :checkbox="showCheckboxes"
+                :checked="isChecked(thing.UID) ? true : null"
+                :value="thing.UID"
+                prevent-router
+                @click.ctrl="ctrlClick($event, thing)"
+                @click.meta="ctrlClick($event, thing)"
+                @click.exact="click($event, thing)"
+                :link="`${encodeURIComponent(thing.UID)}`"
+                :title="thing.label || thing.UID">
+                <template #footer>
+                  <div>
+                    {{ thing.UID }}
+                    <clipboard-icon :value="thing.UID" tooltip="Copy UID" />
+                  </div>
+                </template>
 
-              <template #subtitle>
-                <div v-if="thing.location && groupBy !== 'location'">
-                  {{ thing.location }}
-                  <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px" />
-                </div>
-              </template>
-              <template #after>
-                <div class="badge-with-marker">
-                  <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description || null">
-                    {{ thingStatusBadgeText(thing.statusInfo) }}
-                  </f7-badge>
-                  <span
-                    v-if="thing.statusInfo.status === 'ONLINE' && thing.statusInfo.description && thing.statusInfo.description !== ''"
-                    class="badge-marker-dot">
-                  </span>
-                </div>
-              </template>
-              <template #after-title>
-                <f7-icon v-if="!thing.editable" f7="lock_fill" size="1rem" color="gray" />
-              </template>
-            </f7-list-item>
-          </f7-list-group>
-        </f7-list>
+                <template #subtitle>
+                  <div v-if="thing.location && groupBy !== 'location'">
+                    {{ thing.location }}
+                    <f7-icon f7="placemark" color="gray" style="font-size: 16px; width: 16px; height: 16px" />
+                  </div>
+                </template>
+                <template #after>
+                  <div class="badge-with-marker">
+                    <f7-badge :color="thingStatusBadgeColor(thing.statusInfo)" :tooltip="thing.statusInfo.description || null">
+                      {{ thingStatusBadgeText(thing.statusInfo) }}
+                    </f7-badge>
+                    <span
+                      v-if="thing.statusInfo.status === 'ONLINE' && thing.statusInfo.description && thing.statusInfo.description !== ''"
+                      class="badge-marker-dot">
+                    </span>
+                  </div>
+                </template>
+                <template #after-title>
+                  <f7-icon v-if="!thing.editable" f7="lock_fill" size="1rem" color="gray" />
+                </template>
+              </f7-list-item>
+            </f7-list-group>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
 

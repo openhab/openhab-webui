@@ -25,48 +25,49 @@
 
         <f7-block v-if="ready" class="block-narrow no-margin-top" style="padding-bottom: 10rem">
           <f7-col>
-            <f7-block-title>Tabs</f7-block-title>
-            <f7-menu v-if="isEditable && clipboardType === 'oh-tab'">
-              <f7-menu-item style="margin-left: auto" icon-f7="squares_below_rectangle" dropdown>
-                <f7-menu-dropdown right>
-                  <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste" />
-                </f7-menu-dropdown>
-              </f7-menu-item>
-            </f7-menu>
+            <group-box title="Tabs">
+              <f7-menu v-if="isEditable && clipboardType === 'oh-tab'">
+                <f7-menu-item style="margin-left: auto" icon-f7="squares_below_rectangle" dropdown>
+                  <f7-menu-dropdown right>
+                    <f7-menu-dropdown-item @click="pasteWidget(page, null)" href="#" text="Paste" />
+                  </f7-menu-dropdown>
+                </f7-menu-item>
+              </f7-menu>
 
-            <f7-list media-list class="tabs-list">
-              <f7-list-item
-                v-for="(tab, idx) in page.slots.default"
-                media-item
-                :key="idx"
-                :title="tabEvaluateExpression(tab, idx, 'title')"
-                :subtitle="tab.config.page"
-                link="#"
-                @click="(ev) => configureTab(ev, tab, context)">
-                <template #media>
-                  <oh-icon :icon="tabEvaluateExpression(tab, idx, 'icon')" :color="'gray'" :width="32" :height="32" />
-                </template>
-                <template #content-start>
-                  <f7-menu v-if="isEditable" class="configure-tabs-menu">
-                    <f7-menu-item icon-f7="list_bullet" dropdown>
-                      <f7-menu-dropdown>
-                        <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Tab Settings" />
-                        <f7-menu-dropdown-item @click="editWidgetCode(tab, { component: page })" href="#" text="Edit YAML" />
-                        <f7-menu-dropdown-item divider />
-                        <f7-menu-dropdown-item @click="cutWidget(tab, { component: page })" href="#" text="Cut" />
-                        <f7-menu-dropdown-item @click="copyWidget(tab, { component: page })" href="#" text="Copy" />
-                        <f7-menu-dropdown-item divider />
-                        <f7-menu-dropdown-item @click="moveWidgetUp(tab, { component: page })" href="#" text="Move Up" />
-                        <f7-menu-dropdown-item @click="moveWidgetDown(tab, { component: page })" href="#" text="Move Down" />
-                        <f7-menu-dropdown-item divider />
-                        <f7-menu-dropdown-item @click="removeWidget(tab, { component: page })" href="#" text="Remove Tab" />
-                      </f7-menu-dropdown>
-                    </f7-menu-item>
-                  </f7-menu>
-                </template>
-              </f7-list-item>
-              <f7-list-button v-if="isEditable" color="theme-alt" title="Add tab" @click="addWidget(page, 'oh-tab')" />
-            </f7-list>
+              <f7-list media-list class="tabs-list">
+                <f7-list-item
+                  v-for="(tab, idx) in page.slots.default"
+                  media-item
+                  :key="idx"
+                  :title="tabEvaluateExpression(tab, idx, 'title')"
+                  :subtitle="tab.config.page"
+                  link="#"
+                  @click="(ev) => configureTab(ev, tab, context)">
+                  <template #media>
+                    <oh-icon :icon="tabEvaluateExpression(tab, idx, 'icon')" :color="'gray'" :width="32" :height="32" />
+                  </template>
+                  <template #content-start>
+                    <f7-menu v-if="isEditable" class="configure-tabs-menu">
+                      <f7-menu-item icon-f7="list_bullet" dropdown>
+                        <f7-menu-dropdown>
+                          <f7-menu-dropdown-item @click="configureWidget(tab, { component: page })" href="#" text="Tab Settings" />
+                          <f7-menu-dropdown-item @click="editWidgetCode(tab, { component: page })" href="#" text="Edit YAML" />
+                          <f7-menu-dropdown-item divider />
+                          <f7-menu-dropdown-item @click="cutWidget(tab, { component: page })" href="#" text="Cut" />
+                          <f7-menu-dropdown-item @click="copyWidget(tab, { component: page })" href="#" text="Copy" />
+                          <f7-menu-dropdown-item divider />
+                          <f7-menu-dropdown-item @click="moveWidgetUp(tab, { component: page })" href="#" text="Move Up" />
+                          <f7-menu-dropdown-item @click="moveWidgetDown(tab, { component: page })" href="#" text="Move Down" />
+                          <f7-menu-dropdown-item divider />
+                          <f7-menu-dropdown-item @click="removeWidget(tab, { component: page })" href="#" text="Remove Tab" />
+                        </f7-menu-dropdown>
+                      </f7-menu-item>
+                    </f7-menu>
+                  </template>
+                </f7-list-item>
+                <f7-list-button v-if="isEditable" color="theme-alt" title="Add tab" @click="addWidget(page, 'oh-tab')" />
+              </f7-list>
+            </group-box>
           </f7-col>
         </f7-block>
       </f7-tab>

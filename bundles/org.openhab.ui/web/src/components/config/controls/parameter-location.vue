@@ -12,7 +12,7 @@
       @input="(ev) => updateValue(ev.target.value)"
       type="text">
       <template #content-end>
-        <div class="padding-left">
+        <div class="padding-right margin-top">
           <f7-button @click="openMapPicker"> <f7-icon f7="placemark" /> Map </f7-button>
         </div>
       </template>

@@ -93,6 +93,8 @@ defineSlots<{
 
 const { t } = useI18n({ useScope: 'local' })
 
+console.log('nav router', props.f7router)
+
 function back() {
   if (props.backLinkUrl) return
   if (props.backLinkUrl === null) {

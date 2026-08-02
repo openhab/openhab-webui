@@ -1,21 +1,26 @@
 <template>
   <div>
     <f7-block v-if="context.editmode?.isEditable" class="block-narrow margin-bottom" inset>
-      <f7-block-title>Coordinate Systems</f7-block-title>
-      <f7-row class="margin-bottom">
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
-          <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="addGrid">
-            <img src="./gridSimple.svg" width="80px" />
-            Add<br />Grid
-          </f7-link>
-        </f7-col>
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
-          <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="addCalendar">
-            <img src="./calendar.svg" width="80px" />
-            Add<br />Calendar
-          </f7-link>
-        </f7-col>
-      </f7-row>
+      <f7-col>
+        <group-box title="Coordinate Systems">
+          <div style="background: rgba(0, 0, 0, 0.2); padding: 8px">
+            <f7-row>
+              <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="addGrid">
+                  <img src="./gridSimple.svg" width="80px" />
+                  Add<br />Grid
+                </f7-link>
+              </f7-col>
+              <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="50">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="addCalendar">
+                  <img src="./calendar.svg" width="80px" />
+                  Add<br />Calendar
+                </f7-link>
+              </f7-col>
+            </f7-row>
+          </div>
+        </group-box>
+      </f7-col>
     </f7-block>
 
     <!-- Grids -->
@@ -193,65 +198,70 @@
 
     <!-- Other Components -->
     <f7-block class="block-narrow margin-bottom" inset>
-      <f7-block-title>Other Components</f7-block-title>
-      <f7-row class="margin-bottom">
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('tooltip')">
-            <f7-badge v-if="context.component.slots.tooltip" color="theme-alt" class="count-badge">
-              {{ context.component.slots.tooltip.length }}
-            </f7-badge>
-            <img src="./tooltip.svg" width="80px" />
-            Tooltip
-          </f7-link>
-        </f7-col>
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('visualMap')">
-            <f7-badge v-if="context.component.slots.visualMap" color="theme-alt" class="count-badge">
-              {{ context.component.slots.visualMap.length }}
-            </f7-badge>
-            <img src="./visualMap.svg" width="80px" />
-            Visual Map
-          </f7-link>
-        </f7-col>
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlot('dataZoom')">
-            <f7-badge v-if="context.component.slots.dataZoom" color="theme-alt" class="count-badge">
-              {{ context.component.slots.dataZoom.length }}
-            </f7-badge>
-            <img src="./dataZoom.svg" width="80px" />
-            Data Zoom
-          </f7-link>
-        </f7-col>
-      </f7-row>
-      <f7-row class="margin-bottom">
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('legend')">
-            <f7-badge v-if="context.component.slots.legend" color="theme-alt" class="count-badge">
-              {{ context.component.slots.legend.length }}
-            </f7-badge>
-            <img src="./legend.svg" width="80px" />
-            Legend
-          </f7-link>
-        </f7-col>
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('title')">
-            <f7-badge v-if="context.component.slots.title" color="theme-alt" class="count-badge">
-              {{ context.component.slots.title.length }}
-            </f7-badge>
-            <img src="./title.svg" width="80px" />
-            Title
-          </f7-link>
-        </f7-col>
-        <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-          <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('toolbox')">
-            <f7-badge v-if="context.component.slots.toolbox" color="theme-alt" class="count-badge">
-              {{ context.component.slots.toolbox.length }}
-            </f7-badge>
-            <img src="./toolbox.svg" width="80px" />
-            Toolbox
-          </f7-link>
-        </f7-col>
-      </f7-row>
+      <f7-col>
+        <group-box title="Other Components">
+          <div style="background: rgba(0, 0, 0, 0.2); padding: 12px">
+            <f7-row class="margin-bottom">
+              <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('tooltip')">
+                  <f7-badge v-if="context.component.slots.tooltip" color="theme-alt" class="count-badge">
+                    {{ context.component.slots.tooltip.length }}
+                  </f7-badge>
+                  <img src="./tooltip.svg" width="80px" />
+                  Tooltip
+                </f7-link>
+              </f7-col>
+              <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('visualMap')">
+                  <f7-badge v-if="context.component.slots.visualMap" color="theme-alt" class="count-badge">
+                    {{ context.component.slots.visualMap.length }}
+                  </f7-badge>
+                  <img src="./visualMap.svg" width="80px" />
+                  Visual Map
+                </f7-link>
+              </f7-col>
+              <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlot('dataZoom')">
+                  <f7-badge v-if="context.component.slots.dataZoom" color="theme-alt" class="count-badge">
+                    {{ context.component.slots.dataZoom.length }}
+                  </f7-badge>
+                  <img src="./dataZoom.svg" width="80px" />
+                  Data Zoom
+                </f7-link>
+              </f7-col>
+            </f7-row>
+            <f7-row>
+              <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('legend')">
+                  <f7-badge v-if="context.component.slots.legend" color="theme-alt" class="count-badge">
+                    {{ context.component.slots.legend.length }}
+                  </f7-badge>
+                  <img src="./legend.svg" width="80px" />
+                  Legend
+                </f7-link>
+              </f7-col>
+              <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('title')">
+                  <f7-badge v-if="context.component.slots.title" color="theme-alt" class="count-badge">
+                    {{ context.component.slots.title.length }}
+                  </f7-badge>
+                  <img src="./title.svg" width="80px" />
+                  Title
+                </f7-link>
+              </f7-col>
+              <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('toolbox')">
+                  <f7-badge v-if="context.component.slots.toolbox" color="theme-alt" class="count-badge">
+                    {{ context.component.slots.toolbox.length }}
+                  </f7-badge>
+                  <img src="./toolbox.svg" width="80px" />
+                  Toolbox
+                </f7-link>
+              </f7-col>
+            </f7-row>
+          </div>
+        </group-box>
+      </f7-col>
     </f7-block>
   </div>
 </template>
@@ -292,7 +302,7 @@
 </style>
 
 <script>
-import { f7 } from 'framework7-vue'
+import { f7, f7Col } from 'framework7-vue'
 
 import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
