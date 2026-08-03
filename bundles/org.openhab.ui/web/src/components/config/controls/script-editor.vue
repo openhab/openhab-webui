@@ -86,6 +86,14 @@
     // Display the close button in the search form in upper right corner, not full width
     .cm-panel.cm-search [name=close]
       width unset
+
+    .cm-panel.cm-search
+      label:has(input[type="checkbox"])
+        position relative
+        top 2px
+        display inline-flex
+        input[type=checkbox]:focus-visible
+          outline 2px solid black
 </style>
 
 <script setup lang="ts">
