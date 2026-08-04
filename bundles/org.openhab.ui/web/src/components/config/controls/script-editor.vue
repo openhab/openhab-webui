@@ -93,7 +93,7 @@
         vertical-align middle
         display inline-flex
         input[type="checkbox"]:focus-visible
-          outline 2px auto Highlight 
+          outline 2px auto Highlight
           outline 2px solid -webkit-focus-ring-color
           outline-offset 2px
 </style>
