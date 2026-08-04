@@ -90,10 +90,11 @@
     .cm-panel.cm-search
       label:has(input[type="checkbox"])
         position relative
-        top 2px
+        vertical-align middle
         display inline-flex
-        input[type=checkbox]:focus-visible
-          outline 2px solid black
+        input[type="checkbox"]:focus-visible
+          outline 2px solid -webkit-focus-ring-color
+          outline-offset 2px
 </style>
 
 <script setup lang="ts">
