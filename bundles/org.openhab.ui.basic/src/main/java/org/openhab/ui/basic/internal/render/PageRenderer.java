@@ -52,6 +52,7 @@ import com.google.gson.JsonObject;
  * @author Laurent Garnier - primary/secondary colors
  * @author Laurent Garnier - Build of new page for app settings
  * @author Mark Herwege - Implement sitemap registry
+ * @author Mark Herwege - Add support for confirmation dialog for commands
  */
 @Component(service = { PageRenderer.class })
 @NonNullByDefault
@@ -95,6 +96,10 @@ public class PageRenderer extends AbstractWidgetRenderer {
         snippet = snippet.replaceAll("%main.long-polling-mode-msg%", localizeText("@text/main.long-polling-mode-msg"));
         snippet = snippet.replaceAll("%id%", id);
         snippet = snippet.replaceAll("%popup.button.close%", localizeText("@text/popup.button.close"));
+        snippet = snippet.replaceAll("%popup.button.yes%", localizeText("@text/popup.button.yes"));
+        snippet = snippet.replaceAll("%popup.confirm.question%", localizeText("@text/popup.confirm.question"));
+        snippet = snippet.replaceAll("%popup.button.yes%", localizeText("@text/popup.button.yes"));
+        snippet = snippet.replaceAll("%popup.button.no%", localizeText("@text/popup.button.no"));
 
         // if the label contains a value span, we remove this span as
         // the title of a page/layer cannot deal with this
