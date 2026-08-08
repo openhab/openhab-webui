@@ -9,9 +9,20 @@
  *
  * @template T - The target type that this guard validates.
  * @param config - An unverified type structure to check.
- * @returns `true` if the input matches type `T`, otherwise `false`.
+ * @returns `config is T` if the input matches type `T`, otherwise `false`.
  */
 export type ConfigGuardFn<T> = (config: unknown) => config is T
+
+/**
+ * Type of provided validation function inserted by generate-component-ts build file into the `isConfig` function for each component.
+ * It is used to further validate the config object structure beyond basic type checking.
+ * This function is expected to return `true` if the input matches type `T`, otherwise `false`.
+ * The function should be defined in the generate-widget-component-ts-config.js config file.
+ *
+ * @template T - The target type that this guard validates.
+ * @param config - An unverified type structure to check.
+ * @returns `true` if the input matches type `T`, otherwise `false`.
+ */
 export type ConfigValidationFn<T> = (config: Record<string, unknown>) => boolean
 
 type Component = {
@@ -47,7 +58,7 @@ export function guardConfig<T>(config: unknown, validationFn?: ConfigValidationF
  * @param component - The unknown component instance being evaluated.
  * @param isConfig - A type guard function used to structurally validate the component's nested configuration.
  * @param defaultConfig - An optional default configuration object to fall back on if `config` is missing.
- * @returns `true` if the component type matches and the nested config is valid (or successfully defaulted), narrowing the type; otherwise `false`.
+ * @returns component is TComponent & { config: TConfig } if the component matches the expected type and passes validation; otherwise `false`.
  */
 export function guardComponent<TComponent extends { component: string; config?: unknown }, TConfig>(
   componentType: string,
