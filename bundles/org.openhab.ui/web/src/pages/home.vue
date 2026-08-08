@@ -117,7 +117,7 @@
     </f7-block>
     <f7-tabs v-else>
       <f7-tab id="tab-overview" :tab-active="currentTab === 'overview' ? true : null" @tab:show="currentTab = 'overview'">
-        <overview-tab v-if="currentTab === 'overview'" :context="context" :key="overviewPageKey" :allow-chat="allowChat" :f7router />
+        <overview-tab v-if="currentTab === 'overview'" :context="context" :allow-chat="allowChat" :f7router />
       </f7-tab>
       <f7-tab id="tab-locations" :tab-active="currentTab === 'locations' ? true : null" @tab:show="currentTab = 'locations'">
         <model-tab v-if="currentTab === 'locations'" :context="context" type="locations" :page="homePageComponent" />
@@ -185,8 +185,7 @@ export default {
       showCards: false,
       showPinToHome: false,
       showExitToApp: false,
-      currentTab: this.initialTab || 'overview',
-      overviewPageKey: f7.utils.id()
+      currentTab: this.initialTab || 'overview'
     }
   },
   computed: {
@@ -271,9 +270,6 @@ export default {
     }
   },
   methods: {
-    onPageBeforeIn() {
-      this.overviewPageKey = f7.utils.id()
-    },
     onPageAfterIn() {
       if (this.ready) {
         useStatesStore().startTrackingStates()
