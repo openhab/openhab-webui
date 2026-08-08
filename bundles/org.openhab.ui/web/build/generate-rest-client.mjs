@@ -54,7 +54,7 @@ if (url) {
     })
     process.stdout.write('DONE\n')
   } catch (updateError) {
-    process.stderr.write('ERROR updating RootUIComponent:', updateError)
+    process.stderr.write(`ERROR updating RootUIComponent: ${updateError}\n`)
   }
 
   try {
