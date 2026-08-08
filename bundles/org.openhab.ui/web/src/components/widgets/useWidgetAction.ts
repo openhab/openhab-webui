@@ -368,7 +368,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
                       return el
                     }
                   }
-                  throw new Error('Invalid actionPhotos parameter format in ' + ctx.component.component)
+                  throw new Error('Invalid actionPhotos parameter format in ' + (ctx.component as api.RootUiComponent).component)
                 })
 
                 const resolvedPhotos = await Promise.all(promises)

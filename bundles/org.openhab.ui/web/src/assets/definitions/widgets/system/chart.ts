@@ -1,4 +1,4 @@
-import { pd, pn, po, pt } from '../helpers.ts'
+import { pd, pn, po, pt, pb } from '../helpers.ts'
 
 export default () => [
   po(
@@ -63,5 +63,7 @@ export default () => [
       { value: '1', label: '100% - Future only' }
     ])
     .d('0'),
-  pn('formatterMaxDecimalPlaces', 'Max Decimal Places', 'The maximum number of decimal places to show for values.').d('2')
+  pn('formatterMaxDecimalPlaces', 'Max Decimal Places', 'The maximum number of decimal places to show for values.').d('2'),
+  pb('periodVisible', 'Period Visible', 'Whether the period selector should be visible').d('true'),
+  pt('height', 'Height', 'The height of the chart in pixels or CSS units.').d('300px')
 ]

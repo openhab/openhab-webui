@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent } from '@/types/widget-ts-template'
 import {
   Action,
   ActionHttpMethod,
@@ -9,6 +10,7 @@ import {
   ActionAnalyzerAggregation,
   PlayerType
 } from '../common.gen.ts'
+
 
 export interface Config {
   action?: Action | Action[]
@@ -51,6 +53,18 @@ export interface Config {
   stunServer?: string
   candidatesTimeout?: number
   sendAudio?: boolean
+}
+export interface Component {
+  component: 'oh-video'
+  config: Config
+}
+
+export const isConfig = (config: unknown): config is Config => {
+  return guardConfig<Config>(config)
+}
+
+export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
+  return guardComponent<Component, Config>('oh-video', component, isConfig, defaultConfig)
 }
 
 export {
