@@ -162,3 +162,16 @@ index 57e5b19..a137bbf 100644
      }
    });
    watch(() => props.tooltip, value => {
+diff --git a/node_modules/framework7-vue/components/menu-item.js b/node_modules/framework7-vue/components/menu-item.js
+index 7a1a2b3..b82c3d4 100644
+--- a/node_modules/framework7-vue/components/menu-item.js
++++ b/node_modules/framework7-vue/components/menu-item.js
+@@ -84,7 +84,7 @@ export default {
+ 
+     const detachEvents = () => {
+       f7.off('menuOpened', onOpened);
+-      f7.off('menuClosed', onOpened);
++      f7.off('menuClosed', onClosed);
+     };
+ 
+     onMounted(() => attachEvents());
