@@ -2,7 +2,7 @@
   <div class="item-picker-container">
     <f7-list-item
       :title="showTitle ? label || 'Item' : undefined"
-      :after="displayValue"
+      :after="$oh.utils.truncateString(displayValue, 60)"
       link
       :disabled="disabled ? true : null"
       :textColor="textColor"

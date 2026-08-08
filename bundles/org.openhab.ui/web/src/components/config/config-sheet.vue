@@ -1,51 +1,64 @@
 <template>
   <f7-block v-if="parameters" class="config-sheet no-margin" ref="sheet">
-    <div v-if="hasAdvanced" style="text-align: right" class="padding-right padding-bottom">
-      <label class="advanced-label">
-        <f7-checkbox v-model:checked="showAdvanced" />
-        Show advanced
-        <f7-badge
-          v-if="advancedNonDefaultCount"
-          style="margin-left: 2px"
-          color="blue"
-          class="count-badge"
-          tooltip="Non-default advanced parameter">
-          {{ advancedNonDefaultCount }}
-        </f7-badge>
-      </label>
+    <div v-if="showFilterControls" class="config-sheet-filters">
+      <f7-searchbar
+        v-if="showSearchbar"
+        ref="searchbar"
+        custom-search
+        :backdrop="false"
+        placeholder="Search configuration"
+        :disable-button-text="null"
+        @searchbar:search="onSearch"
+        @searchbar:clear="clearSearch" />
+      <f7-chip
+        v-if="hasAdvanced"
+        media-bg-color="blue"
+        :color="showAdvanced ? 'blue' : ''"
+        class="advanced-chip not-selectable"
+        text="Advanced"
+        @click="showAdvanced = !showAdvanced">
+        <template #media>
+          <f7-icon v-if="showAdvanced" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
+        </template>
+      </f7-chip>
+      <f7-badge v-if="advancedNonDefaultCount" color="blue" class="count-badge" tooltip="Non-default advanced parameter">
+        {{ advancedNonDefaultCount }}
+      </f7-badge>
     </div>
-    <f7-col>
+
+    <group-box v-if="searchQuery && !filteredDisplayedParameters.length" class="text-color-gray">
+      <f7-list>
+        <f7-list-item title="No configuration parameters match the current filter." />
+      </f7-list>
+    </group-box>
+
+    <f7-col v-if="ungroupedParametersExists">
       <f7-block width="100" class="parameter-group no-margin no-padding">
-        <f7-row v-if="displayedParameters.some((p) => !p.groupName)">
-          <f7-col>
-            <config-parameter
-              v-for="parameter in displayedParameters.filter((p) => !p.groupName)"
-              :key="parameter.name"
-              :config-description="parameter"
-              :value="configurationWithDefaults[parameter.name]"
-              :parameters="parameters"
-              :configuration="configurationWithDefaults"
-              :read-only="readOnly"
-              :status="parameterStatus(parameter)"
-              :f7router="f7router"
-              @update="(value) => updateParameter(parameter, value)" />
-          </f7-col>
-        </f7-row>
+        <group-box :title :accordion="accordion">
+          <f7-list v-if="!ungroupedDisplayedParameters.length" class="text-color-gray">
+            <f7-list-item v-if="!ungroupedAdvancedParametersExists" title="There are no general configuration parameters for this item." />
+            <f7-list-item v-else title="There are no basic general configuration parameters." />
+          </f7-list>
+          <config-parameter
+            v-for="parameter in ungroupedDisplayedParameters"
+            :key="parameter.name"
+            :config-description="parameter"
+            :value="configurationWithDefaults[parameter.name]"
+            :parameters="parameters"
+            :configuration="configurationWithDefaults"
+            :read-only="readOnly"
+            :status="parameterStatus(parameter)"
+            :f7router="f7router"
+            @update="(value) => updateParameter(parameter, value)" />
+        </group-box>
       </f7-block>
     </f7-col>
-    <f7-col v-if="displayedParameterGroups.length">
-      <f7-block v-for="group in displayedParameterGroups" width="100" class="parameter-group" :key="group.name">
-        <f7-row v-if="displayedParameters.some((p) => p.groupName === group.name)">
-          <f7-col>
-            <f7-block-title class="parameter-group-title">
-              {{ group.label }}
-            </f7-block-title>
-            <f7-block-footer v-if="group.description" class="param-description">
-              <div v-html="group.description" />
-            </f7-block-footer>
-
+    <f7-col v-if="filteredDisplayedParameterGroups.length">
+      <f7-block v-for="group in filteredDisplayedParameterGroups" width="100" class="parameter-group" :key="group.name">
+        <f7-row>
+          <group-box :title="group.label" :description="group.description">
             <config-parameter
-              v-for="parameter in displayedParameters.filter((p) => p.groupName === group.name)"
+              v-for="parameter in filteredDisplayedParameters.filter((p) => p.groupName === group.name)"
               :key="parameter.name"
               :config-description="parameter"
               :value="configurationWithDefaults[parameter.name]"
@@ -55,7 +68,7 @@
               :status="parameterStatus(parameter)"
               :f7router="f7router"
               @update="(value) => updateParameter(parameter, value)" />
-          </f7-col>
+          </group-box>
         </f7-row>
       </f7-block>
     </f7-col>
@@ -67,6 +80,40 @@
   margin-left calc(-1*var(--f7-block-padding-horizontal))
   padding-left 0 !important
   padding-right 0 !important
+
+.config-sheet-filters
+  display flex
+  align-items center
+  gap 8px
+  padding 8px var(--f7-block-padding-horizontal)
+
+  .searchbar
+    flex 1 1 auto
+    min-width 0
+    margin 0
+    padding 0
+    background transparent
+    box-shadow none
+
+    &:before, &:after
+      display none !important
+
+  .searchbar-inner
+    padding 0
+
+  .searchbar-input-wrap
+    margin 0
+
+  .advanced-chip
+    margin-left auto
+    cursor pointer
+
+  .not-selectable
+    -webkit-user-select none
+    -moz-user-select none
+    -ms-user-select none
+    user-select none
+
 .parameter-group
   padding-right 0 !important
   padding-left 0 !important
@@ -75,12 +122,6 @@
   .item-content .item-inner
     overflow-x auto
     overflow-y hidden
-
-.param-description.block-footer h1
-  font-size 1em
-
-.advanced-label
-  cursor pointer
 
 .item-input-info
     white-space normal
@@ -93,6 +134,14 @@ import { f7 } from 'framework7-vue'
 
 export default {
   props: {
+    title: {
+      type: String,
+      default: 'Configuration'
+    },
+    accordion: {
+      type: Boolean,
+      default: false
+    },
     parameterGroups: Array,
     parameters: Array,
     configuration: Object,
@@ -108,7 +157,8 @@ export default {
   },
   data() {
     return {
-      showAdvanced: false
+      showAdvanced: false,
+      searchQuery: ''
     }
   },
   computed: {
@@ -129,6 +179,12 @@ export default {
     },
     hasAdvanced() {
       return this.parameters.length > 0 && this.parameters.some((p) => p.advanced)
+    },
+    showSearchbar() {
+      return this.allParameters.length > 1
+    },
+    showFilterControls() {
+      return this.hasAdvanced || this.showSearchbar
     },
     displayedParameterGroups() {
       if (!this.parameterGroups || !this.parameterGroups.length) return []
@@ -160,9 +216,51 @@ export default {
     displayedParameters() {
       if (this.showAdvanced) return this.allParameters // show all parameters
       return this.baseParameters
+    },
+    filteredDisplayedParameters() {
+      const query = this.searchQuery.trim().toLowerCase()
+      if (!query) return this.displayedParameters
+      return this.displayedParameters.filter((parameter) => this.parameterMatchesSearch(parameter, query))
+    },
+    filteredDisplayedParameterGroups() {
+      const groupNames = new Set(this.filteredDisplayedParameters.map((p) => p.groupName).filter(Boolean))
+      return this.displayedParameterGroups.filter((g) => groupNames.has(g.name))
+    },
+    ungroupedDisplayedParameters() {
+      return this.filteredDisplayedParameters.filter((p) => !p.groupName)
+    },
+    ungroupedParametersExists() {
+      return this.allParameters.some((p) => !p.groupName)
+    },
+    ungroupedAdvancedParametersExists() {
+      return this.advancedParameters.some((p) => !p.groupName)
     }
   },
   methods: {
+    onSearch(searchbar, query) {
+      this.searchQuery = (query || '').trim()
+    },
+    clearSearch() {
+      this.searchQuery = ''
+    },
+    parameterMatchesSearch(parameter, query) {
+      const label = parameter.label || parameter.name || ''
+      const description = parameter.description || ''
+      const value = this.serializeSearchValue(this.configurationWithDefaults[parameter.name])
+      return `${label} ${description} ${value}`.toLowerCase().includes(query)
+    },
+    serializeSearchValue(value) {
+      if (value == null) return ''
+      if (Array.isArray(value)) return value.join(' ')
+      if (typeof value === 'object') {
+        try {
+          return JSON.stringify(value)
+        } catch (e) {
+          return String(value)
+        }
+      }
+      return String(value)
+    },
     isValid() {
       return f7.input.validateInputs(this.$refs.sheet.$el)
     },
@@ -193,14 +291,12 @@ export default {
       return this.status.find((ps) => ps.parameterName === parameter.name)
     },
     isNonDefault(parameter) {
-      function notNullNotUndefined(value) {
-        return value !== null && value !== undefined
-      }
-      return (
-        notNullNotUndefined(parameter.default) &&
-        notNullNotUndefined(this.configuration[parameter.name]) &&
-        this.configuration[parameter.name].toString() !== parameter.default
-      )
+      const configValue = this.configuration[parameter.name]
+      const defaultValue = parameter.default
+
+      // Using != null (instead of !==) to concisely check that neither
+      // value is null or undefined in a single expression.
+      return defaultValue != null && configValue != null && configValue.toString() !== defaultValue
     }
   }
 }

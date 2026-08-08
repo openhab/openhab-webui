@@ -274,10 +274,12 @@
             @new-language="changeLanguage" />
           <f7-block v-if="editable && isScriptRule" class="block-narrow">
             <f7-col>
-              <f7-list>
-                <f7-list-button color="blue" @click="duplicateRule"> Duplicate Script </f7-list-button>
-                <f7-list-button color="red" @click="deleteRule"> Remove Script </f7-list-button>
-              </f7-list>
+              <group-box>
+                <f7-list>
+                  <f7-list-button color="blue" @click="duplicateRule"> Duplicate Script </f7-list-button>
+                  <f7-list-button color="red" @click="deleteRule"> Remove Script </f7-list-button>
+                </f7-list>
+              </group-box>
             </f7-col>
           </f7-block>
         </f7-page>

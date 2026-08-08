@@ -60,47 +60,44 @@
 
     <f7-block class="block-narrow">
       <f7-col v-show="ready">
-        <f7-block-title class="no-margin-top">
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && selectableSitemapNames.length">
-            -
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
-        </f7-block-title>
         <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
         <f7-list v-if="sitemaps.length > 0 && filteredSitemaps.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-
-        <f7-list v-show="filteredSitemaps.length > 0" class="col sitemaps-list" ref="sitemapsList" :contacts-list="true" media-list>
-          <f7-list-group v-for="(sitemapsWithInitial, initial) in indexedSitemaps" :key="initial">
-            <f7-list-item v-if="sitemapsWithInitial.length" :title="initial" group-title />
-            <f7-list-item
-              v-for="sitemap in sitemapsWithInitial"
-              :key="sitemap.name"
-              media-item
-              :checkbox="showCheckboxes"
-              :checked="isChecked(sitemap.name) ? true : null"
-              prevent-router
-              @click.ctrl="ctrlClick($event, sitemap)"
-              @click.meta="ctrlClick($event, sitemap)"
-              @click.exact="click($event, sitemap)"
-              :link="encodeURIComponent(sitemap.name)"
-              :title="sitemap.label || sitemap.name"
-              :footer="sitemap.name">
-              <template #media>
-                <oh-icon :icon="sitemap.icon || 'f7:menu'" :height="32" :width="32" />
-              </template>
-              <template #after>
-                <!-- push the lock icon so it appears immediately after the title,
+        <group-box :title="listTitle">
+          <template v-if="showCheckboxes && selectableSitemapNames.length" #after-title>
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
+          <f7-list v-show="filteredSitemaps.length > 0" class="col sitemaps-list" ref="sitemapsList" :contacts-list="true" media-list>
+            <f7-list-group v-for="(sitemapsWithInitial, initial) in indexedSitemaps" :key="initial">
+              <f7-list-item v-if="sitemapsWithInitial.length" :title="initial" group-title />
+              <f7-list-item
+                v-for="sitemap in sitemapsWithInitial"
+                :key="sitemap.name"
+                media-item
+                :checkbox="showCheckboxes"
+                :checked="isChecked(sitemap.name) ? true : null"
+                prevent-router
+                @click.ctrl="ctrlClick($event, sitemap)"
+                @click.meta="ctrlClick($event, sitemap)"
+                @click.exact="click($event, sitemap)"
+                :link="encodeURIComponent(sitemap.name)"
+                :title="sitemap.label || sitemap.name"
+                :footer="sitemap.name">
+                <template #media>
+                  <oh-icon :icon="sitemap.icon || 'f7:menu'" :height="32" :width="32" />
+                </template>
+                <template #after>
+                  <!-- push the lock icon so it appears immediately after the title,
                  consistent with other list items (Things, Items, etc) -->
-              </template>
-              <template #after-title>
-                <f7-icon v-if="!sitemap.editable" f7="lock_fill" size="1rem" color="gray" />
-              </template>
-            </f7-list-item>
-          </f7-list-group>
-        </f7-list>
+                </template>
+                <template #after-title>
+                  <f7-icon v-if="!sitemap.editable" f7="lock_fill" size="1rem" color="gray" />
+                </template>
+              </f7-list-item>
+            </f7-list-group>
+          </f7-list>
+        </group-box>
 
         <f7-block v-if="!sitemaps.length" class="block-narrow">
           <empty-state-placeholder icon="square_on_circle" title="sitemaps.title" text="sitemaps.text" />

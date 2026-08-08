@@ -1,56 +1,59 @@
 <template>
   <div v-if="ready">
-    <div v-if="itemType !== 'Group' && editable" style="text-align: right" class="padding-right">
-      <label @click="toggleMultiple" style="cursor: pointer">Multiple</label>
-      <f7-checkbox :checked="multiple ? true : null" @change="toggleMultiple" />
-    </div>
-    <f7-list>
-      <f7-list-item
-        :key="classSelectKey"
-        :title="'Alexa Device Type' + (itemType !== 'Group' ? (!multiple ? '/Attribute' : '/Attributes') : '')"
-        :disabled="!editable ? true : null"
-        smart-select
-        :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }"
-        ref="classes">
-        <select v-if="itemType === 'Group'" name="classes" @change="updateClasses">
-          <option value="" />
-          <option v-for="cl in orderedClasses" :value="cl" :key="cl" :selected="isSelected(cl) ? true : null">
-            {{ cl }}
-          </option>
-        </select>
-        <select v-else name="classes" @change="updateClasses" :multiple="multiple">
-          <option v-if="!multiple" value="" />
-          <optgroup v-if="!multiple" label="Default Attributes">
-            <option v-for="cl in defaultClasses" :value="cl" :key="cl" :selected="isSelected(cl) ? true : null">
+    <group-box title="Alexa Metadata">
+      <template v-if="itemType !== 'Group' && editable" #after-title>
+        <label>
+          <f7-checkbox :checked="multiple ? true : null" @change="toggleMultiple" />
+          Multiple
+        </label>
+      </template>
+      <f7-list>
+        <f7-list-item
+          :key="classSelectKey"
+          :title="'Alexa Device Type' + (itemType !== 'Group' ? (!multiple ? '/Attribute' : '/Attributes') : '')"
+          :disabled="!editable ? true : null"
+          smart-select
+          :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }"
+          ref="classes">
+          <select v-if="itemType === 'Group'" name="classes" @change="updateClasses">
+            <option value="" />
+            <option v-for="cl in orderedClasses" :value="cl" :key="cl" :selected="isSelected(cl) ? true : null">
               {{ cl }}
             </option>
-          </optgroup>
-          <optgroup label="Specific Attributes">
-            <option
-              v-for="cl in specificClasses"
-              :value="cl"
-              :key="cl"
-              :selected="isSelected(cl) ? true : null"
-              :disabled="isDefined(cl) ? true : null">
-              {{ cl }}
-            </option>
-          </optgroup>
-          <optgroup label="Generic Attributes">
-            <option v-for="cl in genericClasses" :value="cl" :key="cl" :selected="isSelected(cl) ? true : null">
-              {{ cl }}
-            </option>
-          </optgroup>
-        </select>
-      </f7-list-item>
-      <f7-block-footer v-if="isPartOfGroupEndpoint" class="padding-left no-padding no-margin">
-        <small v-html="`Part of group endpoint${item.groups.length > 1 ? 's' : ''}: ${groupLinks}`" />
-      </f7-block-footer>
-    </f7-list>
+          </select>
+          <select v-else name="classes" @change="updateClasses" :multiple="multiple">
+            <option v-if="!multiple" value="" />
+            <optgroup v-if="!multiple" label="Default Attributes">
+              <option v-for="cl in defaultClasses" :value="cl" :key="cl" :selected="isSelected(cl) ? true : null">
+                {{ cl }}
+              </option>
+            </optgroup>
+            <optgroup label="Specific Attributes">
+              <option
+                v-for="cl in specificClasses"
+                :value="cl"
+                :key="cl"
+                :selected="isSelected(cl) ? true : null"
+                :disabled="isDefined(cl) ? true : null">
+                {{ cl }}
+              </option>
+            </optgroup>
+            <optgroup label="Generic Attributes">
+              <option v-for="cl in genericClasses" :value="cl" :key="cl" :selected="isSelected(cl) ? true : null">
+                {{ cl }}
+              </option>
+            </optgroup>
+          </select>
+        </f7-list-item>
+        <f7-block-footer v-if="isPartOfGroupEndpoint">
+          <small v-html="`Part of group endpoint${item.groups.length > 1 ? 's' : ''}: ${groupLinks}`" />
+        </f7-block-footer>
+      </f7-list>
+    </group-box>
     <div>
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
     </div>
-    <f7-block v-if="itemType === 'Group' && classes.length" class="padding-top no-padding no-margin">
-      <f7-block-title class="padding-left"> Group Endpoint Capabilities </f7-block-title>
+    <group-box v-if="itemType === 'Group' && classes.length" title="Group Endpoint Capabilities">
       <f7-list>
         <f7-list-item
           v-for="cap in groupCapabilities"
@@ -60,10 +63,10 @@
           :disabled="cap.isIgnored || !editable ? true : null"
           :link="`/settings/items/${cap.item}/metadata/alexa`" />
       </f7-list>
-      <f7-block-footer v-if="!groupCapabilities.length" class="padding-left">
+      <f7-card-footer v-if="!groupCapabilities.length" class="padding-left">
         No direct group members of {{ item.name }} configured for Alexa
-      </f7-block-footer>
-    </f7-block>
+      </f7-card-footer>
+    </group-box>
     <p class="padding">
       <f7-link color="blue" external target="_blank" :href="docLink"> Alexa Integration Documentation </f7-link>
     </p>

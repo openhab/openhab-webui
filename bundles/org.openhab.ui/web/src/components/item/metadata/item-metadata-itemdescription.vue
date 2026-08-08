@@ -2,27 +2,30 @@
   <div v-if="ready">
     <config-sheet
       v-if="namespace === 'stateDescription'"
+      title="State Description Configuration"
       :parameterGroups="[]"
       :parameters="stateDescriptionParameters"
       :configuration="metadata.config"
       :read-only="!editable" />
-    <f7-list>
-      <f7-list-input
-        ref="input"
-        type="textarea"
-        :floating-label="theme.md"
-        :label="'Options'"
-        name="options"
-        :disabled="!editable ? true : null"
-        :value="options"
-        @input="updateOptions" />
-      <f7-block-footer class="param-description" alot="after-list">
-        <small
-          >Enter each option on a separate line.<br />Use <code>value=label</code> format to provide a label different than the
-          option.</small
-        >
-      </f7-block-footer>
-    </f7-list>
+    <group-box title="Options">
+      <f7-list>
+        <f7-list-input
+          ref="input"
+          type="textarea"
+          :floating-label="theme.md"
+          name="options"
+          class="options-textarea"
+          :disabled="!editable ? true : null"
+          :value="options"
+          @input="updateOptions" />
+        <f7-block-footer class="param-description">
+          <small
+            >Enter each option on a separate line.<br />Use <code>value=label</code> format to provide a label different than the
+            option.</small
+          >
+        </f7-block-footer>
+      </f7-list>
+    </group-box>
     <p class="padding">
       <f7-link v-if="namespace === 'stateDescription'" color="blue" external target="_blank" :href="docLink">
         State Description Documentation

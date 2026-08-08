@@ -1,30 +1,28 @@
 <template>
-  <f7-card v-if="item.type !== 'Group' || 'groupType' in item">
-    <f7-card-content v-if="loaded && services.length > 0">
-      <f7-list media-list>
-        <f7-list-item
-          v-for="p in services"
-          :key="p.id"
-          media-item
-          :title="p.label"
-          :subtitle="strategies[p.id]?.join(', ') || 'Not persisted'"
-          :badge="persistedBadges[p.id]"
-          :badge-color="persistedBadges[p.id] === '0' ? 'red' : 'green'"
-          :class="!p.editable ? 'item-persistence-badge-non-editable' : ''"
-          :link="p.editable ? '/settings/persistence/' + p.id : null">
-          <template #media>
-            <span class="item-initial">{{ p.id ? p.id[0] : '?' }}</span>
-          </template>
-          <template #after>
-            <f7-icon v-if="!p.editable" f7="lock_fill" size="1rem" color="gray" />
-          </template>
-        </f7-list-item>
-      </f7-list>
-    </f7-card-content>
+  <group-box v-if="item.type !== 'Group' || 'groupType' in item" title="Persistence Policies">
+    <f7-list v-if="loaded && services.length > 0" media-list>
+      <f7-list-item
+        v-for="p in services"
+        :key="p.id"
+        media-item
+        :title="p.label"
+        :subtitle="strategies[p.id]?.join(', ') || 'Not persisted'"
+        :badge="persistedBadges[p.id]"
+        :badge-color="persistedBadges[p.id] === '0' ? 'red' : 'green'"
+        :class="!p.editable ? 'item-persistence-badge-non-editable' : ''"
+        :link="p.editable ? '/settings/persistence/' + p.id : null">
+        <template #media>
+          <span class="item-initial">{{ p.id ? p.id[0] : '?' }}</span>
+        </template>
+        <template #after>
+          <f7-icon v-if="!p.editable" f7="lock_fill" size="1rem" color="gray" />
+        </template>
+      </f7-list-item>
+    </f7-list>
     <f7-card-footer>
-      <f7-button color="blue" href="/settings/persistence/"> Configure Persistence Policies </f7-button>
+      <f7-button color="blue" href="/settings/persistence/"> Configure Policies </f7-button>
     </f7-card-footer>
-  </f7-card>
+  </group-box>
 </template>
 
 <style lang="stylus">

@@ -1,10 +1,12 @@
 <template>
   <div v-if="ready">
-    <div>
-      <div v-if="editable" style="text-align: right" class="padding-right">
-        <label @click="toggleMultiple" style="cursor: pointer">Multiple</label>
-        <f7-checkbox :checked="multiple ? true : null" @change="toggleMultiple" />
-      </div>
+    <group-box title="Matter Device Types">
+      <template v-if="editable || true" #after-title>
+        <label>
+          <f7-checkbox :checked="multiple ? true : null" @change="toggleMultiple" />
+          Multiple
+        </label>
+      </template>
       <f7-list v-if="deviceTypes">
         <f7-list-item
           :key="classSelectKey"
@@ -25,76 +27,72 @@
           </select>
         </f7-list-item>
       </f7-list>
-      <div v-if="parameters && parameters.length">
-        <config-sheet
-          :parameterGroups="parametersGroups"
-          :parameters="parameters"
-          :configuration="metadata.config"
-          :read-only="!editable" />
-      </div>
-      <f7-block v-if="shouldShowAttributeMapping" class="padding-top no-padding no-margin">
-        <f7-block-title class="padding-horizontal" medium> Matter Attributes Mapping </f7-block-title>
-        <f7-block-footer v-if="dirtyItem.size">
-          <f7-button color="blue" @click="updatedLinkedItem"> Update group members </f7-button>
-        </f7-block-footer>
-        <f7-block v-for="deviceType in classesAsArray" :key="deviceType" class="no-padding">
-          <f7-block-title class="padding-left">
-            {{ deviceType }}
-          </f7-block-title>
-          <f7-list>
-            <f7-list-item
-              v-for="attribute in deviceTypes[deviceType]?.attributes"
-              :key="attribute.name"
-              :disabled="!editable ? true : null"
-              smart-select
-              :title="attribute.mandatory ? attribute.label + '*' : attribute.label"
-              :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
-              <select @change="updateLinkedItem(deviceType, attribute.name, $event.target.value)">
-                <option value="" />
-                <option
-                  v-for="mbr in item.members"
-                  :value="mbr.name"
-                  :key="mbr.id"
-                  :selected="isLinked(deviceType, attribute.name, mbr) ? true : null">
-                  {{ mbr.label }} ({{ mbr.name }})
-                </option>
-              </select>
-            </f7-list-item>
-          </f7-list>
-          <!-- Option mapping UI: separate from item mapping list -->
-          <div v-for="attribute in deviceTypes[deviceType]?.attributes" :key="attribute.name + '-mapping'">
-            <template v-if="getMappedChild(attribute.name) && getAttributeOptions(attribute.name, deviceType).length">
-              <div class="option-mapping-fields padding-left padding-bottom">
-                <div class="padding-bottom padding-top">
-                  <b>Mapping options for {{ attribute.label }}</b>
-                </div>
-                <f7-list no-hairlines-md>
-                  <f7-list-input
-                    v-for="option in getAttributeOptions(attribute.name, deviceType)"
-                    :key="option.label"
-                    type="text"
-                    :label="option.label"
-                    :value="getChildMapping(attribute.name, option.label, option.value)"
-                    :disabled="!editable ? true : null"
-                    @input="setChildMapping(attribute.name, option.label, $event.target.value)" />
-                </f7-list>
-              </div>
-            </template>
-          </div>
-        </f7-block>
-        <f7-block-footer>
-          <small class="text-color-gray">* indicates mandatory mapping</small>
-        </f7-block-footer>
-        <f7-block-footer v-if="dirtyItem.size">
-          <f7-button color="blue" @click="updatedLinkedItem"> Update group members </f7-button>
-        </f7-block-footer>
-      </f7-block>
-      <p class="padding">
-        <f7-link color="blue" external target="_blank" :href="`${runtimeStore.websiteUrl}/link/matter`">
-          Matter integration documentation
-        </f7-link>
-      </p>
+    </group-box>
+    <div v-if="parameters && parameters.length">
+      <config-sheet :parameterGroups="parametersGroups" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
     </div>
+    <f7-block v-if="shouldShowAttributeMapping" class="padding-top no-padding no-margin">
+      <f7-block-title class="padding-horizontal" medium> Matter Attributes Mapping </f7-block-title>
+      <f7-block-footer v-if="dirtyItem.size">
+        <f7-button color="blue" @click="updatedLinkedItem"> Update group members </f7-button>
+      </f7-block-footer>
+      <f7-block v-for="deviceType in classesAsArray" :key="deviceType" class="no-padding">
+        <f7-block-title class="padding-left">
+          {{ deviceType }}
+        </f7-block-title>
+        <f7-list>
+          <f7-list-item
+            v-for="attribute in deviceTypes[deviceType]?.attributes"
+            :key="attribute.name"
+            :disabled="!editable ? true : null"
+            smart-select
+            :title="attribute.mandatory ? attribute.label + '*' : attribute.label"
+            :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true }">
+            <select @change="updateLinkedItem(deviceType, attribute.name, $event.target.value)">
+              <option value="" />
+              <option
+                v-for="mbr in item.members"
+                :value="mbr.name"
+                :key="mbr.id"
+                :selected="isLinked(deviceType, attribute.name, mbr) ? true : null">
+                {{ mbr.label }} ({{ mbr.name }})
+              </option>
+            </select>
+          </f7-list-item>
+        </f7-list>
+        <!-- Option mapping UI: separate from item mapping list -->
+        <div v-for="attribute in deviceTypes[deviceType]?.attributes" :key="attribute.name + '-mapping'">
+          <template v-if="getMappedChild(attribute.name) && getAttributeOptions(attribute.name, deviceType).length">
+            <div class="option-mapping-fields padding-left padding-bottom">
+              <div class="padding-bottom padding-top">
+                <b>Mapping options for {{ attribute.label }}</b>
+              </div>
+              <f7-list no-hairlines-md>
+                <f7-list-input
+                  v-for="option in getAttributeOptions(attribute.name, deviceType)"
+                  :key="option.label"
+                  type="text"
+                  :label="option.label"
+                  :value="getChildMapping(attribute.name, option.label, option.value)"
+                  :disabled="!editable ? true : null"
+                  @input="setChildMapping(attribute.name, option.label, $event.target.value)" />
+              </f7-list>
+            </div>
+          </template>
+        </div>
+      </f7-block>
+      <f7-block-footer>
+        <small class="text-color-gray">* indicates mandatory mapping</small>
+      </f7-block-footer>
+      <f7-block-footer v-if="dirtyItem.size">
+        <f7-button color="blue" @click="updatedLinkedItem"> Update group members </f7-button>
+      </f7-block-footer>
+    </f7-block>
+    <p class="padding">
+      <f7-link color="blue" external target="_blank" :href="`${runtimeStore.websiteUrl}/link/matter`">
+        Matter integration documentation
+      </f7-link>
+    </p>
   </div>
   <div v-else class="text-align-center">
     <f7-preloader />

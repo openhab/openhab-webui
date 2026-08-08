@@ -1,11 +1,10 @@
 <template>
-  <div>
+  <group-box title="Synonyms">
     <f7-list>
       <f7-list-input
         ref="input"
         type="textarea"
         :floating-label="theme.md"
-        :label="'Synonyms'"
         name="synonyms"
         :value="synonyms"
         :disabled="!editable ? true : null"
@@ -16,7 +15,7 @@
         </f7-block-footer>
       </template>
     </f7-list>
-  </div>
+  </group-box>
 </template>
 
 <script>

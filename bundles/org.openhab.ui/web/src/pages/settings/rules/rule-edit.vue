@@ -86,111 +86,113 @@
         <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :stubMode="stubMode" :templateName="templateName" />
 
         <f7-block v-if="ready" class="block-narrow">
-          <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
-            <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable.
-          </f7-block-footer>
+          <!-- Template Selection -->
           <f7-col v-if="createMode && templates.length > 0 && !ruleCopy" class="new-rule-from-template">
-            <f7-list>
-              <f7-list-item ref="templateAccordion" accordion-item>
-                <template #title>
-                  <template v-if="currentTemplate"> Create from Template: {{ currentTemplate.label }} </template>
-                  <template v-else> Create a new rule from scratch (or expand to select a template) </template>
-                </template>
-                <f7-accordion-content>
-                  <f7-list media-list>
-                    <f7-list-item
-                      title="No template"
-                      footer="Create a new rule from scratch"
-                      radio
-                      :checked="!hasTemplate"
-                      radio-icon="start"
-                      :value="''"
-                      @change="selectTemplate(null)" />
-                  </f7-list>
-                  <f7-block-header class="margin-left margin-top"> or choose a rule template: </f7-block-header>
-                  <f7-list media-list>
-                    <f7-list-item
-                      v-for="template in templates"
-                      :key="template.uid"
-                      :footer="template.description"
-                      :value="template.uid"
-                      radio
-                      :checked="currentTemplate && currentTemplate.uid === template.uid ? true : null"
-                      radio-icon="start"
-                      @change="selectTemplate(template.uid)">
-                      <template #title>
-                        {{ template.label }}
-                        <template v-if="getTopicLink(template)">
-                          &nbsp;
-                          <f7-link
-                            :href="getTopicLink(template)"
-                            tooltip="View openHAB Community Marketplace topic for this template"
-                            target="_blank"
-                            class="external"
-                            color="gray"
-                            :icon-size="18"
-                            icon="info_circle"
-                            icon-ios="f7:info_circle"
-                            icon-md="f7:info_circle"
-                            icon-aurora="f7:info_circle" />
-                        </template>
-                      </template>
-                    </f7-list-item>
-                  </f7-list>
-                </f7-accordion-content>
-              </f7-list-item>
-            </f7-list>
+            <group-box
+              ref="templateAccordion"
+              :title="
+                currentTemplate
+                  ? 'Create from Template: ' + currentTemplate.label
+                  : 'Create a new rule from scratch (or expand to select a template)'
+              "
+              full-width
+              accordion>
+              <f7-list media-list>
+                <f7-list-item
+                  title="No template"
+                  footer="Create a new rule from scratch"
+                  radio
+                  :checked="!hasTemplate"
+                  radio-icon="start"
+                  :value="''"
+                  @change="selectTemplate(null)" />
+              </f7-list>
+              <f7-block-header class="margin-left margin-top"> or choose a rule template: </f7-block-header>
+              <f7-list media-list>
+                <f7-list-item
+                  v-for="template in templates"
+                  :key="template.uid"
+                  :footer="template.description"
+                  :value="template.uid"
+                  radio
+                  :checked="currentTemplate && currentTemplate.uid === template.uid ? true : null"
+                  radio-icon="start"
+                  @change="selectTemplate(template.uid)">
+                  <template #title>
+                    {{ template.label }}
+                    <template v-if="getTopicLink(template)">
+                      &nbsp;
+                      <f7-link
+                        :href="getTopicLink(template)"
+                        tooltip="View openHAB Community Marketplace topic for this template"
+                        target="_blank"
+                        class="external"
+                        color="gray"
+                        :icon-size="18"
+                        icon="info_circle"
+                        icon-ios="f7:info_circle"
+                        icon-md="f7:info_circle"
+                        icon-aurora="f7:info_circle" />
+                    </template>
+                  </template>
+                </f7-list-item>
+              </f7-list>
+            </group-box>
           </f7-col>
           <f7-col v-if="currentTemplate && (createMode || stubMode)">
-            <f7-block-title medium> Template </f7-block-title>
-            <f7-list media-list>
-              <f7-list-item :footer="currentTemplate.description">
-                <template #title>
-                  {{ currentTemplate.label }}
-                  <template v-if="currentTemplateTopicLink">
-                    &nbsp;
-                    <f7-link
-                      :href="currentTemplateTopicLink"
-                      tooltip="View openHAB Community Marketplace topic for this template"
-                      target="_blank"
-                      class="external"
-                      color="gray"
-                      :icon-size="18"
-                      icon="info_circle"
-                      icon-ios="f7:info_circle"
-                      icon-md="f7:info_circle"
-                      icon-aurora="f7:info_circle" />
+            <group-box title="Template">
+              <f7-list media-list>
+                <f7-list-item :footer="currentTemplate.description">
+                  <template #title>
+                    {{ currentTemplate.label }}
+                    <template v-if="currentTemplateTopicLink">
+                      &nbsp;
+                      <f7-link
+                        :href="currentTemplateTopicLink"
+                        tooltip="View openHAB Community Marketplace topic for this template"
+                        target="_blank"
+                        class="external"
+                        color="gray"
+                        :icon-size="18"
+                        icon="info_circle"
+                        icon-ios="f7:info_circle"
+                        icon-md="f7:info_circle"
+                        icon-aurora="f7:info_circle" />
+                    </template>
                   </template>
-                </template>
-              </f7-list-item>
-            </f7-list>
-            <!-- Show radio options only if integrating template (createMode && ruleCopy?.templateUID) -->
-            <f7-list v-if="createMode && ruleCopy?.templateUID" media-list>
-              <f7-list-item
-                title="Keep template"
-                footer="The rule will still be linked to the template and can be regenerated if the template changes."
-                :value="currentTemplate.uid"
-                radio
-                :checked="Boolean(rule.templateUID) ? true : null"
-                radio-icon="start"
-                @change="keepTemplate(true)" />
-              <f7-list-item
-                title="Integrate template"
-                footer="Integrates the template in the rule so that the rule is no longer linked to the template."
-                value="integrate"
-                radio
-                :checked="!rule.templateUID ? true : null"
-                radio-icon="start"
-                @change="keepTemplate(false)" />
-            </f7-list>
-            <!-- Show Template Configuration only if template is kept or not integrating -->
-            <template v-if="rule.templateUID || !createMode || !ruleCopy?.templateUID">
-              <f7-block-title medium class="margin-vertical padding-top"> Template Configuration </f7-block-title>
+                </f7-list-item>
+              </f7-list>
+            </group-box>
+            <group-box v-if="createMode && ruleCopy?.templateUID" title="Template Integration Options">
+              <!-- Show radio options only if integrating template (createMode && ruleCopy?.templateUID) -->
+              <f7-list media-list>
+                <f7-list-item
+                  title="Keep template"
+                  footer="The rule will still be linked to the template and can be regenerated if the template changes."
+                  :value="currentTemplate.uid"
+                  radio
+                  :checked="Boolean(rule.templateUID) ? true : null"
+                  radio-icon="start"
+                  @change="keepTemplate(true)" />
+                <f7-list-item
+                  title="Integrate template"
+                  footer="Integrates the template in the rule so that the rule is no longer linked to the template."
+                  value="integrate"
+                  radio
+                  :checked="!rule.templateUID ? true : null"
+                  radio-icon="start"
+                  @change="keepTemplate(false)" />
+              </f7-list>
+            </group-box>
+            <group-box v-if="rule.templateUID || !createMode || !ruleCopy?.templateUID" title="Template Configuration">
+              <!-- Show Template Configuration only if template is kept or not integrating -->
               <config-sheet :parameter-groups="[]" :parameters="currentTemplate.configDescriptions" :configuration="rule.configuration" />
-            </template>
+            </group-box>
           </f7-col>
+
+          <!-- Module Reorder Control -->
           <f7-col v-if="!hasTemplate || (createMode && ruleCopy?.templateUID && !rule.templateUID)" class="rule-modules">
-            <div v-if="isEditable" class="no-padding float-right">
+            <div v-if="isEditable" class="no-padding float-right margin-top margin-bottom">
               <f7-button
                 @click="toggleModuleControls"
                 small
@@ -206,71 +208,75 @@
                 &nbsp;Reorder
               </f7-button>
             </div>
+
+            <!-- Module Sections -->
             <div v-for="section in ['triggers', 'actions', 'conditions']" :key="section">
-              <template v-if="isEditable || rule[section].length > 0">
-                <f7-block-title medium class="no-margin-bottom">
-                  {{ SECTION_LABELS[section][0] }}
-                </f7-block-title>
-                <f7-block-footer class="no-margin-top margin-horizontal" style="margin-bottom: var(--f7-list-margin-vertical)">
-                  {{ SECTION_LABELS[section][1] }}
-                </f7-block-footer>
-              </template>
-              <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
-                <f7-list-item
-                  v-for="mod in rule[section]"
-                  media
-                  :title="mod.label || suggestedModuleTitle(mod, null, section)"
-                  :footer="mod.description || suggestedModuleDescription(mod, null, section)"
-                  :key="mod.id"
-                  :link="!showModuleControls && !isOpaqueModule(mod)"
-                  @click="(ev) => editModule(ev, section, mod)"
-                  swipeout>
-                  <template #media>
-                    <f7-link
-                      v-if="isEditable"
-                      icon-color="red"
-                      icon-aurora="f7:minus_circle_filled"
-                      icon-ios="f7:minus_circle_filled"
-                      icon-md="material:remove_circle_outline"
-                      @click="showSwipeout" />
-                  </template>
-                  <f7-swipeout-actions v-if="isEditable" right>
-                    <f7-swipeout-button
-                      @click="(ev) => deleteModule(ev, section, mod)"
-                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                      Delete
-                    </f7-swipeout-button>
-                  </f7-swipeout-actions>
-                </f7-list-item>
-              </f7-list>
-              <f7-list v-if="isEditable">
-                <f7-list-item
-                  link
-                  no-chevron
-                  media-item
-                  :color="uiOptionsStore.darkMode === 'dark' ? 'black' : 'white'"
-                  :subtitle="SECTION_LABELS[section][2]"
-                  @click="addModule(section)">
-                  <template #media>
-                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-                  </template>
-                </f7-list-item>
-                <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
-              </f7-list>
+              <group-box :title="SECTION_LABELS[section][0]" :description="SECTION_LABELS[section][1]">
+                <f7-list sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, section)">
+                  <f7-list-item
+                    v-for="mod in rule[section]"
+                    media
+                    :title="mod.label || suggestedModuleTitle(mod, null, section)"
+                    :footer="mod.description || suggestedModuleDescription(mod, null, section)"
+                    :key="mod.id"
+                    :link="!showModuleControls && !isOpaqueModule(mod)"
+                    @click="(ev) => editModule(ev, section, mod)"
+                    swipeout>
+                    <template #media>
+                      <f7-link
+                        v-if="isEditable"
+                        icon-color="red"
+                        icon-aurora="f7:minus_circle_filled"
+                        icon-ios="f7:minus_circle_filled"
+                        icon-md="material:remove_circle_outline"
+                        @click="showSwipeout" />
+                    </template>
+                    <f7-swipeout-actions v-if="isEditable" right>
+                      <f7-swipeout-button
+                        @click="(ev) => deleteModule(ev, section, mod)"
+                        style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                        Delete
+                      </f7-swipeout-button>
+                    </f7-swipeout-actions>
+                  </f7-list-item>
+                  <f7-list-item v-if="!rule[section].length">
+                    <template #title>
+                      <em>No {{ section }}<template v-if="createMode"> added yet</template>.</em>
+                    </template>
+                  </f7-list-item>
+                </f7-list>
+                <f7-list v-if="isEditable">
+                  <f7-list-item
+                    link
+                    no-chevron
+                    media-item
+                    class="add-module-item"
+                    :color="uiOptionsStore.darkMode === 'dark' ? 'black' : 'white'"
+                    :subtitle="SECTION_LABELS[section][2]"
+                    @click="addModule(section)">
+                    <template #media>
+                      <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+                    </template>
+                  </f7-list-item>
+                  <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
+                </f7-list>
+              </group-box>
             </div>
           </f7-col>
           <f7-col v-if="!createMode && !stubMode">
-            <f7-list>
-              <f7-list-button v-if="isEditable || (!hasOpaqueModule && !hasSharedContextModule)" color="blue" @click="duplicateRule">
-                Duplicate Rule
-              </f7-list-button>
-              <f7-list-button
-                v-if="!hasOpaqueModule"
-                color="blue"
-                title="Copy File Definition"
-                @click="copyPopupOpened = !copyPopupOpened" />
-              <f7-list-button v-if="isEditable" color="red" @click="deleteRule"> Delete Rule </f7-list-button>
-            </f7-list>
+            <group-box v-if="isEditable || !hasOpaqueModule">
+              <f7-list>
+                <f7-list-button v-if="isEditable || (!hasOpaqueModule && !hasSharedContextModule)" color="blue" @click="duplicateRule">
+                  Duplicate Rule
+                </f7-list-button>
+                <f7-list-button
+                  v-if="!hasOpaqueModule"
+                  color="blue"
+                  title="Copy File Definition"
+                  @click="copyPopupOpened = !copyPopupOpened" />
+                <f7-list-button v-if="isEditable" color="red" @click="deleteRule"> Delete Rule </f7-list-button>
+              </f7-list>
+            </group-box>
           </f7-col>
         </f7-block>
       </f7-tab>
@@ -480,6 +486,8 @@
     margin-bottom 0
   .list
     margin-top 0
+  .add-module-item
+    border-top 1px solid var(--f7-list-border-color, var(--f7-border-color))
 .rule-code-editor
 .rule-source-viewer.code-editor-fit
   position absolute
