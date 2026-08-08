@@ -141,8 +141,15 @@ function newSSEConnection(
             // Close the current broken connection
             es.close()
             es.clearKeepalive()
-            // Reinitialize the connection
+            // Reinitialize the connection and update openSSEClients so that
+            // SSEService.close() can reach the new live EventSource.
+            const oldIndex = openSSEClients.indexOf(es)
             eventSource = initEventSource() // Reassign the outer scope's eventSource
+            if (oldIndex >= 0) {
+              openSSEClients.splice(oldIndex, 1, eventSource)
+            } else {
+              openSSEClients.push(eventSource)
+            }
           }
         }, reconnectSeconds * 1000)
       }

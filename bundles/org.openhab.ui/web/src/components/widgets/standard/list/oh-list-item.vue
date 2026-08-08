@@ -190,11 +190,6 @@ export default {
       return this.context.component.slots.accordion
     }
   },
-  created() {
-    if (this.config.divider && !this.context.editmode) {
-      window.addEventListener('resize', this.duringResize)
-    }
-  },
   methods: {
     openAccordionOrPerformAction() {
       if (this.isEquipmentAccordion) {
