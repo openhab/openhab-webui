@@ -85,8 +85,8 @@ export function getCategoryAxisData(config: OhCategoryAxis.Config, startTime: Da
       }
       break
     case OhCategoryAxis.CategoryType.values:
-      data.push(...(config.data || []))
-      break
+      // pass through
+      return { data: config.data ?? [], name: undefined }
     default:
       const exhaustiveCheck: never = config.categoryType
       console.warn('oh-category-axis: Unknown categoryType', exhaustiveCheck)
@@ -97,17 +97,17 @@ export function getCategoryAxisData(config: OhCategoryAxis.Config, startTime: Da
 
 const categoryAxis: AxisComponent = {
   get(context, component, startTime, endTime, inverse) {
-    const config = component.config as any as OhCategoryAxis.Config
     // @ts-expect-error component config's type doesn't include the required properties
     const axis = context.evaluateExpression<OhCategoryAxisOption>(ComponentId.get(component)!, component.config, OhCategoryAxisDefinition)
     axis.type = 'category'
     const chartType = context.chart.config.chartType
 
-    const { name, data } = getCategoryAxisData(config, startTime, endTime, chartType)
-    axis.name = name
+    const { name, data } = getCategoryAxisData(axis, startTime, endTime, chartType)
+    if (name && !axis.name) axis.name = name
+
     axis.data = data
 
-    if (inverse) axis.data = axis.data.reverse()
+    if (inverse && Array.isArray(axis.data)) axis.data = axis.data.reverse()
 
     return axis
   }

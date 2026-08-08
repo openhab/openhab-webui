@@ -91,8 +91,6 @@ import {
   VisualMapComponent
 } from 'echarts/components'
 
-import 'echarts/theme/dark.js'
-
 import VChart from 'vue-echarts'
 
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
