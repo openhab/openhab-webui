@@ -3,27 +3,23 @@
  * It includes type guard functions that ensure the structure of configuration objects and component objects match expected types, allowing for safer type assertions in TypeScript.
  */
 
-/**
- * Represents a type predicate function used to validate and narrow down
- * an unknown type to a specific target type `T`.
- *
- * @template T - The target type that this guard validates.
- * @param config - An unverified type structure to check.
- * @returns `config is T` if the input matches type `T`, otherwise `false`.
- */
-export type ConfigGuardFn<T> = (config: unknown) => config is T
+export type ConfigValidationFn<T> = (config: Record<string, unknown>) => boolean
 
 /**
- * Type of provided validation function inserted by generate-component-ts build file into the `isConfig` function for each component.
- * It is used to further validate the config object structure beyond basic type checking.
- * This function is expected to return `true` if the input matches type `T`, otherwise `false`.
- * The function should be defined in the generate-widget-component-ts-config.js config file.
+ * Callable interface for configuration guard functions.
+ *
+ * The function call signature validates and narrows an unknown value to `T`.
+ * The optional `validationFn` property can be attached to the same function
+ * object to expose additional object-shape validation logic.
  *
  * @template T - The target type that this guard validates.
- * @param config - An unverified type structure to check.
- * @returns `true` if the input matches type `T`, otherwise `false`.
+ * @param config - The unknown input structure to validate.
+ * @returns `true` when the input is valid for `T`, otherwise `false`.
  */
-export type ConfigValidationFn<T> = (config: Record<string, unknown>) => boolean
+export interface ConfigGuardFn<T> {
+  (config: unknown): config is T
+  validationFn?: ConfigValidationFn<T>
+}
 
 type Component = {
   component: string
