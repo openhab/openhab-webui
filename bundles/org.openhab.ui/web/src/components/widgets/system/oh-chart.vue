@@ -1,5 +1,5 @@
 <template>
-  <oh-chart-component ref="chart" :context="this.context" />
+  <oh-chart-component ref="chart" :context="context" />
 </template>
 
 <script>

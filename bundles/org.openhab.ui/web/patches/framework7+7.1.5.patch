@@ -1,3 +1,39 @@
+diff --git a/node_modules/framework7/components/tooltip/tooltip.js b/node_modules/framework7/components/tooltip/tooltip.js
+index c4ffd27..533b1cc 100644
+--- a/node_modules/framework7/components/tooltip/tooltip.js
++++ b/node_modules/framework7/components/tooltip/tooltip.js
+@@ -99,13 +99,12 @@ export default {
+     },
+ 
+     pageBeforeRemove(page) {
+-      const app = this;
+-      page.$el.find('.tooltip-init').each(el => {
++      page.$el.find('*').each(el => {
+         if (el.f7Tooltip) el.f7Tooltip.destroy();
+       });
+ 
+-      if (app.theme === 'ios' && page.view && page.view.router.dynamicNavbar && page.$navbarEl && page.$navbarEl.length > 0) {
+-        page.$navbarEl.find('.tooltip-init').each(el => {
++      if (page.$navbarEl && page.$navbarEl.length > 0) {
++        page.$navbarEl.find('*').each(el => {
+           if (el.f7Tooltip) el.f7Tooltip.destroy();
+         });
+       }
+diff --git a/node_modules/framework7/modules/router/router-class.js b/node_modules/framework7/modules/router/router-class.js
+index 01963aa..c35bb06 100644
+--- a/node_modules/framework7/modules/router/router-class.js
++++ b/node_modules/framework7/modules/router/router-class.js
+@@ -1072,6 +1072,10 @@ class Router extends Framework7Class {
+     $pageEl.trigger(colonName, page);
+     router.emit(camelName, page);
+ 
++    if (callback === 'afterIn' && page.pageFrom) {
++      page.pageFrom = null;
++    }
++
+     if (callback === 'beforeRemove' || callback === 'beforeUnmount') {
+       detachEvents();
+ 
 diff --git a/node_modules/framework7/package.json b/node_modules/framework7/package.json
 index f607800..24e6369 100644
 --- a/node_modules/framework7/package.json

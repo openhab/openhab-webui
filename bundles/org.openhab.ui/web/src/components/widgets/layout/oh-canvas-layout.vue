@@ -234,9 +234,7 @@ export default {
     }
   },
   beforeUnmount() {
-    if (!this.context.editmode) {
-      window.removeEventListener('resize', this.setDimensions)
-    }
+    window.removeEventListener('resize', this.setDimensions)
     if (this.config.embedSvg && this.embeddedSvgReady) {
       this.embeddedSvgReady = false
       this.unsubscribeEmbeddedSvgListeners()

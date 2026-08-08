@@ -832,6 +832,7 @@ export default {
   },
   beforeUnmount() {
     this.stopEventSource()
+    this.stopSSE()
     if (this.addThingAutocomplete) this.addThingAutocomplete.destroy()
   },
   methods: {
@@ -1242,6 +1243,8 @@ export default {
       )
     },
     stopSSE() {
+      if (!this.sseClient) return
+
       this.$oh.sse.close(this.sseClient)
       this.sseClient = null
     },
