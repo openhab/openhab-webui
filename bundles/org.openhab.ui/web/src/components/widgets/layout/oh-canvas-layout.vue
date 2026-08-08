@@ -161,11 +161,6 @@ import * as api from '@/api'
 const instance = getCurrentInstance()
 const globalProps = instance?.appContext.config.globalProperties
 
-const defaultConfig = {
-  layoutType: 'fixed',
-  fixedType: 'canvas'
-} as OhCanvasLayoutType.Config
-
 // Defines
 const props = defineProps<{
   context: WidgetContext
@@ -179,6 +174,9 @@ const emits = defineEmits<{
 defineOptions({
   widget: OhCanvasLayoutDefinition
 })
+
+OhCanvasLayoutType.isConfig.validationFn = (config) =>
+  'layoutType' in config && config.layoutType === 'fixed' && 'fixedType' in config && config.fixedType === 'canvas'
 
 // Composables
 const context = computed(() => props.context)
