@@ -331,7 +331,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Webview widget Webview Test, no url configured/)
+    expect(lastDialogConfig.content).toMatch(/Web View widget Webview Test, no url configured/)
 
     // configure a url for the Webview and check that there are no validation errors anymore
     lastDialogConfig = null
@@ -490,6 +490,39 @@ describe('SitemapEdit', () => {
     expect(lastDialogConfig).toBeFalsy()
   })
 
+  it('validates nested sitemap has a name or item configured', async () => {
+    wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.addWidget('NestedSitemap')
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.label = 'NestedSitemap Test'
+
+    // should not validate as the NestedSitemap has no name or item configured
+    lastDialogConfig = null
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Sitemap widget NestedSitemap Test, must have either name or item configured/)
+
+    // configure a name for the NestedSitemap and check that there are no validation errors anymore
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.name = 'NestedSitemapName'
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
+    // remove the name and configure an item for the NestedSitemap and check that there are no validation errors anymore
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.name = null
+    wrapper.vm.selectedWidget.item = 'Item1'
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+  })
+
   it('validates mappings', async () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap, null])
     await wrapper.vm.$nextTick()
@@ -579,7 +612,7 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
-    expect(lastDialogConfig.content).toMatch(/Buttongrid widget Buttongrid Test, no buttons defined/)
+    expect(lastDialogConfig.content).toMatch(/Button Grid widget Buttongrid Test, no buttons defined/)
 
     // add button, should not validate as the button has no row defined
     lastDialogConfig = null
