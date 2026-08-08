@@ -45,6 +45,27 @@ index c3bbb28..0fad65a 100644
 -export { f7, f7ready, theme, useStore };
 +export { f7, f7ready, theme, useStore, registerComponents };
  export default Framework7Vue;
+diff --git a/node_modules/framework7-vue/package.json b/node_modules/framework7-vue/package.json
+index 836e093..ba6e4bd 100644
+--- a/node_modules/framework7-vue/package.json
++++ b/node_modules/framework7-vue/package.json
+@@ -4,8 +4,14 @@
+   "description": "Build full featured iOS & Android apps using Framework7 & Vue",
+   "type": "module",
+   "exports": {
+-    ".": "./framework7-vue.js",
+-    "./bundle": "./framework7-vue-bundle.js",
++    ".": {
++      "default": "./framework7-vue.js",
++      "types": "./framework7-vue.d.ts"
++    },
++    "./bundle": {
++      "default": "./framework7-vue-bundle.js",
++      "types": "./framework7-vue.d.ts"
++    },
+     "./components/*": "./components/*",
+     "./shared/*": "./shared/*"
+   },
 diff --git a/node_modules/framework7-vue/shared/components-router.js b/node_modules/framework7-vue/shared/components-router.js
 index 6859856..865c9e0 100644
 --- a/node_modules/framework7-vue/shared/components-router.js
