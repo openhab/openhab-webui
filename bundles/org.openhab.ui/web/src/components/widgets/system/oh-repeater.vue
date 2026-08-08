@@ -46,7 +46,8 @@ const props = defineProps<{
 defineOptions({ inheritAttrs: false, widget: OhRepeaterDefinition })
 
 // Composables
-const { config, childContext, evaluateExpression, defaultSlots } = useWidgetContext(computed(() => props.context))
+const context = computed(() => props.context)
+const { config, childContext, evaluateExpression, defaultSlots } = useWidgetContext(context, OhRepeater.isConfig)
 
 // Data/State
 const error = ref<string | null>(null)
@@ -80,14 +81,15 @@ const childrenContexts = computed(() => {
     )
   }
   if (map) {
-    _source = _source.map((el, idx, source) =>
-      evaluateExpression('mapExpr', '=' + map, iterationContext(childContext(props.context.component), el, idx, source))
-    )
+    _source = _source.map((el, idx, source) => {
+      const mapped = evaluateExpression('mapExpr', '=' + map, iterationContext(childContext(props.context.component), el, idx, source))
+      return mapped instanceof Error ? el : (mapped as SourceTypeElement)
+    })
   }
 
   let contexts = []
   let idx = 0
-  const ds = defaultSlots.value as api.UiComponent[]
+  const ds = defaultSlots.value
   for (let i of _source) {
     contexts.push(
       ...ds.map((c) => {
@@ -133,7 +135,7 @@ const source = computedAsync(async (): Promise<SourceArray> => {
     switch (sourceType.value) {
       case OhRepeater.SourceType.range:
         const start = cfg.rangeStart || 0
-        const stop = isNaN(cfg.rangeStop) ? 10 : cfg.rangeStop
+        const stop = typeof cfg.rangeStop === 'number' && !Number.isNaN(cfg.rangeStop) ? cfg.rangeStop : 10
         const step = cfg.rangeStep || 1
         return Array(Math.floor((stop + step - start) / step))
           .fill(start)
@@ -163,7 +165,10 @@ const source = computedAsync(async (): Promise<SourceArray> => {
         if (!cfg.in) {
           return []
         }
-        return cfg.in
+        return String(cfg.in)
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0)
     }
   } catch (e) {
     console.error('oh-repeater: error fetching source data', e)
