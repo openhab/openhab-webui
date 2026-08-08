@@ -101,6 +101,29 @@ html
   --f7-button-large-text-transform none
   --f7-button-small-text-transform none
 
+/* Custom Dialog Sizes */
+.dialog.dialog-medium
+  --f7-dialog-width: 360px
+
+  @media (max-width: 599px) {
+    --f7-dialog-width: 75vw
+  }
+
+  @media (min-width: 768px) {
+    --f7-dialog-width: 500px
+  }
+
+.dialog.dialog-wide
+  --f7-dialog-width: 560px
+
+  @media (max-width: 599px) {
+    --f7-dialog-width: 95vw
+  }
+
+  @media (min-width: 768px) {
+    --f7-dialog-width: 700px
+  }
+
 /* Adjustments for iOS & Material Design themes */
 .ios
 .md
@@ -397,6 +420,8 @@ html
   .item-inner:after
     display none !important
   .menu-sublinks
+    color var(--f7-list-item-footer-text-color)
+    margin-bottom var(--f7-list-margin-vertical)
     .item-content
       padding-left calc(2*var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left))
 

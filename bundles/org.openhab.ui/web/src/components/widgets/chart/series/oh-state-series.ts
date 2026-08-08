@@ -23,7 +23,28 @@ const renderState: CustomSeriesRenderItem = (_params, api) => {
     rectShape && {
       type: 'rect',
       shape: rectShape,
-      style: api.style({}) // TODO: Address deprecation warning
+      style: {
+        fill: api.visual('color') as string
+      },
+      textContent: {
+        type: 'text',
+        style: {
+          text: String(state ?? ''),
+          overflow: 'truncate'
+        },
+        z2: 10
+      },
+      textConfig: {
+        position: 'insideLeft',
+        distance: 6,
+        width: Math.max(0, rectShape.width - 12),
+        height: rectShape.height
+      },
+      emphasis: {
+        textConfig: {
+          position: 'insideLeft'
+        }
+      }
     }
   )
 }

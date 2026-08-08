@@ -292,12 +292,8 @@ function generateComponentValidation(component, configValidator) {
   content += `  config: Config\n`
   content += `}\n\n`
 
-  content += `export const isConfig = (config: unknown): config is Config => {\n`
-  if (configValidator) {
-    content += `  return guardConfig<Config>(config, ${configValidator.toString()})\n`
-  } else {
-    content += `  return guardConfig<Config>(config)\n`
-  }
+  content += `export const isConfig: ConfigGuardFn<Config> = (config: unknown): config is Config => {\n`
+  content += `  return guardConfig<Config>(config, isConfig.validationFn)\n`
   content += `}\n\n`
 
   content += `export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {\n`
@@ -381,7 +377,7 @@ function generateComponentTS(mapCommonOptions) {
       content += generateComponentValidation(widgetName, configWidget.configValidator)
 
       let preamble = '// note: this file is generated and should not be edited by hand\n\n'
-      preamble += `import { guardConfig, guardComponent } from '@/types/widget-ts-template'\n`
+      preamble += `import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'\n`
 
       let postamble = ''
       if (commonComponents.length > 0) {

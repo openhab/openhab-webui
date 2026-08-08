@@ -79,8 +79,7 @@ export default {
           'embedSvgFlashing?: boolean',
           'embedSvgFlashing?: boolean\n' + '  embeddedSvgActions?: Record<string, OhSvgElement.Config>\n'
         ) // add embeddedSvgActions to type
-    },
-    configValidator: `(config) => 'layoutType' in config && config.layoutType === 'fixed' && 'fixedType' in config && config.fixedType === 'canvas'`
+    }
   },
   OhPlanPage: {
     _All: {

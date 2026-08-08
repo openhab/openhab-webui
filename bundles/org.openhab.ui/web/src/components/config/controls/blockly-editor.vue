@@ -496,6 +496,21 @@
               <shadow type="oh_thing" />
             </value>
           </block>
+          <block type="oh_getthing_isenabled">
+            <value name="thingUid">
+              <shadow type="oh_thing" />
+            </value>
+          </block>
+          <block type="oh_setthing_enabled">
+            <value name="thingUid">
+              <shadow type="oh_thing" />
+            </value>
+            <value name="enabledState">
+              <shadow type="logic_boolean">
+                <field name="BOOL">TRUE</field>
+              </shadow>
+            </value>
+          </block>
           <block type="oh_getthing_attribute">
             <value name="thing">
               <shadow type="oh_getthing">

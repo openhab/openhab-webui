@@ -2,7 +2,7 @@ import { OhSvgElement } from '@/types/components/widgets'
 
 // note: this file is generated and should not be edited by hand
 
-import { guardConfig, guardComponent } from '@/types/widget-ts-template'
+import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'
 
 export interface Config {
   grid?: number
@@ -29,8 +29,8 @@ export interface Component {
   config: Config
 }
 
-export const isConfig = (config: unknown): config is Config => {
-  return guardConfig<Config>(config, (config) => 'layoutType' in config && config.layoutType === 'fixed' && 'fixedType' in config && config.fixedType === 'canvas')
+export const isConfig: ConfigGuardFn<Config> = (config: unknown): config is Config => {
+  return guardConfig<Config>(config, isConfig.validationFn)
 }
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {

@@ -50,16 +50,16 @@ export default {
             .then((data) => {
               const resp = JSON.parse(data)
               localStorage.setItem('openhab.ui:refreshToken', resp.refresh_token)
-              return this.$oh.auth.setAccessToken(resp.access_token, this.$oh.api).then(() => {
-                // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
-                setTimeout(this.refreshAccessToken, resp.expires_in * 950)
-                useUserStore().setUser(resp.user)
+              this.$oh.auth.setAccessToken(resp.access_token)
 
-                const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
-                f7.views.main.router.navigate(nextRoute, { animate: false, clearPreviousHistory: true })
+              // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
+              setTimeout(this.refreshAccessToken, resp.expires_in * 950)
+              useUserStore().setUser(resp.user)
 
-                resolve(resp.user)
-              })
+              const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
+              f7.views.main.router.navigate(nextRoute, { animate: false, clearPreviousHistory: true })
+
+              resolve(resp.user)
             })
             .catch((err) => {
               console.log('Exchanging authorization code failed', err)
@@ -85,15 +85,16 @@ export default {
           .postPlain('/rest/auth/token', payload, 'application/json', 'application/x-www-form-urlencoded')
           .then((data) => {
             const resp = JSON.parse(data)
-            return this.$oh.auth.setAccessToken(resp.access_token, this.$oh.api).then(() => {
-              // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
-              setTimeout(this.refreshAccessToken, resp.expires_in * 950)
-              // also make sure to check the token and renew it when the app becomes visible again
-              this.currentTokenExpireTime = new Date().getTime() + resp.expires_in * 950
-              document.addEventListener('visibilitychange', this.checkTokenAfterVisibilityChange)
-              useUserStore().setUser(resp.user)
-              resolve(resp)
-            })
+            this.$oh.auth.setAccessToken(resp.access_token)
+
+            // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
+            setTimeout(this.refreshAccessToken, resp.expires_in * 950)
+            // also make sure to check the token and renew it when the app becomes visible again
+            this.currentTokenExpireTime = new Date().getTime() + resp.expires_in * 950
+            document.addEventListener('visibilitychange', this.checkTokenAfterVisibilityChange)
+            useUserStore().setUser(resp.user)
+
+            resolve(resp)
           })
           .catch((err) => {
             console.log('Refreshing access token failed', err)

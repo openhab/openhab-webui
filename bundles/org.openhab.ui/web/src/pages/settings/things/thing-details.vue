@@ -47,7 +47,10 @@
                 -
                 <f7-link :href="'/settings/things/' + thing.bridgeUID"> View Bridge </f7-link>
               </template>
-              <br />
+              <template v-else-if="offerInstallBinding">
+                - Binding is not installed. <f7-link @click="installBinding"> Install Binding </f7-link>
+              </template>
+              <template v-else-if="bindingHasErrors"> - Binding is installed but failed to load. Check the logs for errors. </template>
               <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />
             </div>
           </f7-col>
@@ -251,11 +254,7 @@
         <f7-block v-if="ready" class="block-narrow no-margin-top">
           <f7-col>
             <f7-list>
-              <f7-list-button
-                v-if="thing?.statusInfo?.statusDetail === 'HANDLER_MISSING_ERROR'"
-                color="blue"
-                title="Install Binding"
-                @click="installBinding" />
+              <f7-list-button v-if="offerInstallBinding" color="blue" title="Install Binding" @click="installBinding" />
               <f7-list-button v-if="!error" color="blue" title="Duplicate Thing" @click="duplicateThing" />
               <f7-list-button
                 v-if="!error"
@@ -392,17 +391,6 @@ p.action-description
     font-weight normal
     .advanced-actions-label
       cursor pointer
-
-.dialog.wide-property-dialog
-  --f7-dialog-width: 560px
-
-  @media (max-width: 599px) {
-    --f7-dialog-width: 95vw
-  }
-
-  @media (min-width: 768px) {
-    --f7-dialog-width: 700px
-  }
 </style>
 
 <script>
@@ -569,7 +557,9 @@ export default {
       'firmwares',
       'editable',
       'isExtensible',
-      'hasLinkedItems'
+      'hasLinkedItems',
+      'offerInstallBinding',
+      'bindingHasErrors'
     ])
   },
   watch: {
@@ -1152,7 +1142,7 @@ export default {
       const dialog = f7.dialog.create({
         title: 'Property Details',
         content: dialogContent,
-        cssClass: 'wide-property-dialog',
+        cssClass: 'dialog-wide',
         buttons: [{ text: 'OK' }]
       })
       dialog.open()

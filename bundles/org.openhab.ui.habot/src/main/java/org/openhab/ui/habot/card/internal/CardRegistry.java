@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -116,7 +115,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
     public Collection<Card> getRecent(int skip, int count) {
         int limit = (count < 1) ? 10 : count;
 
-        return getAll().stream().sorted(byTimestamp).skip(skip).limit(limit).collect(Collectors.toList());
+        return getAll().stream().sorted(byTimestamp).skip(skip).limit(limit).toList();
     }
 
     /**
@@ -125,7 +124,7 @@ public class CardRegistry extends AbstractRegistry<Card, String, CardProvider> {
      * @return the non-ephemeral cards
      */
     public Collection<Card> getNonEphemeral() {
-        return getAll().stream().filter(c -> !c.isEphemeral()).collect(Collectors.toList());
+        return getAll().stream().filter(c -> !c.isEphemeral()).toList();
     }
 
     /*

@@ -1,5 +1,5 @@
 import { EventSourcePolyfill, NativeEventSource } from 'event-source-polyfill'
-import { getAccessToken, getTokenInCustomHeader, getBasicCredentials, getRequireToken } from './auth'
+import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from './auth'
 import type { ItemState } from '../stores/useStatesStore'
 
 /**
@@ -40,7 +40,7 @@ function newSSEConnection(
     // have already expired when initEventSource() is called again after
     // a connection failure.
     const accessToken = getAccessToken()
-    if (accessToken && getRequireToken()) {
+    if (accessToken) {
       if (getTokenInCustomHeader()) {
         headers['X-OPENHAB-TOKEN'] = accessToken
       } else {
@@ -130,10 +130,7 @@ function newSSEConnection(
         errorCallback()
       }
 
-      // Handle reconnection logic
-      // Note: readyState === 2 is defined as CLOSED in EventSource spec
-      if (es.readyState === 2) {
-        console.log('%c=!= Event source connection broken...', 'background-color: red; color: white')
+      const scheduleReconnect = () => {
         console.debug(`Attempting SSE reconnection in ${reconnectSeconds} seconds...`)
 
         setTimeout(() => {
@@ -148,6 +145,28 @@ function newSSEConnection(
             eventSource = initEventSource() // Reassign the outer scope's eventSource
           }
         }, reconnectSeconds * 1000)
+      }
+
+      // Handle reconnection logic
+      // Note: readyState === 2 is defined as CLOSED in EventSource spec
+      if (es.readyState === 2) {
+        console.log('%c=!= Event source connection broken...', 'background-color: red; color: white')
+
+        // Since SSE hides the response status, do a regular fetch to figure out if our credentials are rejected or not
+        fetch(path, { method: 'HEAD', headers: headers })
+          .then((response) => {
+            if (response.status === 401) {
+              console.debug(`SSE: The server responded with "${response.status}", aborting reconnect.`)
+              es.close()
+              es.clearKeepalive()
+            } else {
+              scheduleReconnect()
+            }
+          })
+          .catch((err) => {
+            console.debug(`SSE: Coudn't connect to the server, scheduling reconnect: ${err}`)
+            scheduleReconnect()
+          })
       }
     }
 

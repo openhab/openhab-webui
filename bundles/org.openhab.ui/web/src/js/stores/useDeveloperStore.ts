@@ -9,6 +9,7 @@ interface PinnedObjects {
   scripts: Array<string>
   pages: Array<string>
   widgets: Array<string>
+  sitemaps: Array<string>
   transformations: Array<string>
   persistenceConfigs: Array<string>
 }
@@ -22,6 +23,7 @@ export const useDeveloperStore = defineStore('developer', () => {
     scripts: [],
     pages: [],
     widgets: [],
+    sitemaps: [],
     transformations: [],
     persistenceConfigs: []
   })

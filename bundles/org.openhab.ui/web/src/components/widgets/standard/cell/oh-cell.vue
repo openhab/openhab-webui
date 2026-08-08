@@ -26,6 +26,7 @@
       <div
         v-else
         class="cell-background"
+        :style="config.style"
         :class="[config.color ? 'bg-color-' + config.color : '', { on: isOn }, { 'card-opened-fade-out': !config.keepColorWhenOpened }]" />
     </slot>
     <f7-link
@@ -148,6 +149,10 @@
         line-height 20px
         .header-icon
           margin-right 5px
+    .cell-expanded-contents
+      width 100%
+      > div
+        width 100%
     .cell-expanded-header
       margin-top calc(var(--f7-safe-area-top) + 2rem)
       font-weight 500
@@ -259,9 +264,8 @@ export default {
       return false
     },
     openCell(evt) {
+      if (this.context.editmode || !this.hasExpandedControls) return
       if (evt && evt.preventDefault) evt.preventDefault()
-      if (this.context.editmode) return false
-      if (!this.hasExpandedControls) return false
       f7.card.open(this.$refs.card.$el)
       history.pushState(
         { cardId: this.cardId },

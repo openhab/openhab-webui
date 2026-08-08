@@ -14,7 +14,7 @@ declare module '@vue/runtime-core' {
 }
 
 declare global {
-  declare namespace Intl {
+  namespace Intl {
     function supportedValuesOf(key: 'timeZone'): string[]
   }
 }
