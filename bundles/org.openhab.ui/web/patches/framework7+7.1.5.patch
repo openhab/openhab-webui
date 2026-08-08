@@ -1,44 +1,39 @@
-diff --git a/node_modules/framework7/package.json b/node_modules/framework7/package.json
-index f607800..24e6369 100644
---- a/node_modules/framework7/package.json
-+++ b/node_modules/framework7/package.json
-@@ -4,12 +4,30 @@
-   "description": "Full featured mobile HTML framework for building iOS & Android apps",
-   "type": "module",
-   "exports": {
--    ".": "./framework7.esm.js",
--    "./core": "./framework7.esm.js",
--    "./bundle": "./framework7-bundle.esm.js",
--    "./lite": "./framework7-lite.esm.js",
--    "./lite/bundle": "./framework7-lite-bundle.esm.js",
--    "./lite-bundle": "./framework7-lite-bundle.esm.js",
-+    ".": {
-+      "default": "./framework7.esm.js",
-+      "types": "./framework7-types.d.ts"
-+    },
-+    "./core":  {
-+      "default": "./framework7.esm.js",
-+      "types": "./framework7-types.d.ts"
-+    },
-+    "./bundle": {
-+      "default": "./framework7-bundle.esm.js",
-+      "types": "./framework7-types.d.ts"
-+    },
-+    "./lite": {
-+      "default": "./framework7-lite.esm.js",
-+      "types": "./framework7-types.d.ts"
-+    },
-+    "./lite/bundle": {
-+      "default": "./framework7-lite-bundle.esm.js",
-+      "types": "./framework7-types.d.ts"
-+    },
-+    "./lite-bundle": {
-+      "default": "./framework7-lite-bundle.esm.js",
-+      "types": "./framework7-types.d.ts"
-+    },
-     "./less": "./framework7.less",
-     "./less/bundle": "./framework7-bundle.less",
-     "./css": "./framework7.css",
+diff --git a/node_modules/framework7/components/tooltip/tooltip.js b/node_modules/framework7/components/tooltip/tooltip.js
+index c4ffd27..533b1cc 100644
+--- a/node_modules/framework7/components/tooltip/tooltip.js
++++ b/node_modules/framework7/components/tooltip/tooltip.js
+@@ -99,13 +99,12 @@ export default {
+     },
+ 
+     pageBeforeRemove(page) {
+-      const app = this;
+-      page.$el.find('.tooltip-init').each(el => {
++      page.$el.find('*').each(el => {
+         if (el.f7Tooltip) el.f7Tooltip.destroy();
+       });
+ 
+-      if (app.theme === 'ios' && page.view && page.view.router.dynamicNavbar && page.$navbarEl && page.$navbarEl.length > 0) {
+-        page.$navbarEl.find('.tooltip-init').each(el => {
++      if (page.$navbarEl && page.$navbarEl.length > 0) {
++        page.$navbarEl.find('*').each(el => {
+           if (el.f7Tooltip) el.f7Tooltip.destroy();
+         });
+       }
+diff --git a/node_modules/framework7/modules/router/router-class.js b/node_modules/framework7/modules/router/router-class.js
+index 01963aa..c35bb06 100644
+--- a/node_modules/framework7/modules/router/router-class.js
++++ b/node_modules/framework7/modules/router/router-class.js
+@@ -1072,6 +1072,10 @@ class Router extends Framework7Class {
+     $pageEl.trigger(colonName, page);
+     router.emit(camelName, page);
+ 
++    if (callback === 'afterIn' && page.pageFrom) {
++      page.pageFrom = null;
++    }
++
+     if (callback === 'beforeRemove' || callback === 'beforeUnmount') {
+       detachEvents();
+ 
 diff --git a/node_modules/framework7/shared/utils.d.ts b/node_modules/framework7/shared/utils.d.ts
 index c88ac4c..e29088b 100644
 --- a/node_modules/framework7/shared/utils.d.ts
