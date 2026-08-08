@@ -12,7 +12,7 @@
  */
 package org.openhab.ui.cometvisu.internal.backend.model.config.pure;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Adapter for marshaling CDATA content
