@@ -123,8 +123,7 @@ export default {
       return {
         component: this.overviewPage,
         store: this.context.store,
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        vars: Object.assign(this.vars, this.overviewPage?.config?.defineVars ?? {})
+        vars: this.vars
       }
     },
     pageStyle() {
@@ -132,6 +131,16 @@ export default {
       return this.overviewPage.config.style
     },
     ...mapStores(useUserStore, useStatesStore, useComponentsStore, useUIOptionsStore, useRuntimeStore)
+  },
+  watch: {
+    overviewPage: {
+      handler(newPage) {
+        if (newPage?.config?.defineVars) {
+          this.vars = Object.assign(this.vars, newPage.config.defineVars)
+        }
+      },
+      immediate: true
+    }
   }
 }
 </script>
