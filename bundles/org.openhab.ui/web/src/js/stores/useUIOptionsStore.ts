@@ -7,12 +7,6 @@ import { isAdminMenuSection, type AdminMenuSection } from '@/js/admin-menu.ts'
 
 type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
-export interface LogHighlightFilter {
-  text: string
-  color: string
-  active: boolean
-}
-
 type SidebarSubmenuSelections = Partial<Record<AdminMenuSection, string[]>>
 
 export const useUIOptionsStore = defineStore('uiOptions', () => {
@@ -87,21 +81,6 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const sitemapShowItemName = ref<boolean>(localStorage.getItem('openhab.ui:sitemap.showItemName') === 'true')
 
   const logDockHeight = ref<number | null>(parseInt(localStorage.getItem('openhab.ui:logDock.height') || '') || null)
-  const logViewerTextMode = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.textMode') === 'true')
-  const _storedLogViewerHighlightFilters = localStorage.getItem('openhab.ui:logviewer.logHighlightFilters')
-  const parseLogViewerHighlightFilters = (): LogHighlightFilter[] => {
-    if (!_storedLogViewerHighlightFilters) return []
-    try {
-      return JSON.parse(_storedLogViewerHighlightFilters) as LogHighlightFilter[]
-    } catch {
-      // ignore malformed data
-      return []
-    }
-  }
-  const logViewerHighlightFilters = ref<LogHighlightFilter[]>(parseLogViewerHighlightFilters())
-  const logViewerFilterText = ref<string>(localStorage.getItem('openhab.ui:logviewer.logFilterText') || '')
-  const logViewerShowErrors = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.logShowErrors') === 'true')
-  const logViewerEmbeddedCollapsed = ref<boolean>(localStorage.getItem('openhab.ui:logviewer.embedded.collapsedToolbar') !== 'false')
 
   const dialogEnabled = ref<boolean>(localStorage.getItem('openhab.ui:dialog.enabled') === 'true')
   const dialogIdentifier = ref<string>(localStorage.getItem('openhab.ui:dialog.id') || '')
@@ -262,34 +241,6 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     }
   })
 
-  watch(logViewerTextMode, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.textMode', newValue.toString())
-  })
-
-  watch(
-    logViewerHighlightFilters,
-    (newValue) => {
-      localStorage.setItem('openhab.ui:logviewer.logHighlightFilters', JSON.stringify(newValue))
-    },
-    { deep: true }
-  )
-
-  watch(logViewerFilterText, (newValue) => {
-    if (!newValue) {
-      localStorage.removeItem('openhab.ui:logviewer.logFilterText')
-    } else {
-      localStorage.setItem('openhab.ui:logviewer.logFilterText', newValue)
-    }
-  })
-
-  watch(logViewerShowErrors, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.logShowErrors', newValue.toString())
-  })
-
-  watch(logViewerEmbeddedCollapsed, (newValue) => {
-    localStorage.setItem('openhab.ui:logviewer.embedded.collapsedToolbar', newValue.toString())
-  })
-
   watch(dialogEnabled, (newValue) => {
     localStorage.setItem('openhab.ui:dialog.enabled', newValue ? 'true' : 'false')
     setTimeout(() => {
@@ -405,11 +356,6 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     modelPickerShowNonSemantic,
     sitemapShowItemName,
     logDockHeight,
-    logViewerTextMode,
-    logViewerHighlightFilters,
-    logViewerFilterText,
-    logViewerShowErrors,
-    logViewerEmbeddedCollapsed,
     dialogEnabled,
     dialogIdentifier,
     dialogListeningItem,

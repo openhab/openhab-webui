@@ -474,6 +474,7 @@ export default {
           } else {
             switch (topicParts[3]) {
               case 'status':
+                // console.log('Received status update for thing', topicParts[2], 'with payload', event.payload)
                 const updatedThing = this.things.find((t) => t.UID === topicParts[2])
                 const newStatus = JSON.parse(event.payload)
                 if (updatedThing) {

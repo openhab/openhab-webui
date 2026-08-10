@@ -27,7 +27,7 @@
       :class="{ 'disabled-link': logViewerCore?.filterCount === 0 }"
       @click="logViewerCore?.copyTableToClipboard()" />
     <f7-link
-      icon-f7="trash"
+      icon-f7="text_badge_xmark"
       tooltip="Clear the log buffer"
       :class="{ 'disabled-link': (logViewerCore?.tableData?.length ?? 0) === 0 }"
       @click="logViewerCore?.clearLog()" />
@@ -36,6 +36,7 @@
       <f7-icon v-else f7="exclamationmark_triangle" />
     </f7-link>
     <f7-link icon-f7="pencil" tooltip="Configure highlights" data-popup=".log-highlights-popup" class="popup-open" />
+    <f7-link icon-f7="textformat_size" tooltip="Set text size" @click="logViewerCore?.toggleTextSize()" />
     <f7-segmented>
       <f7-button
         outline
@@ -58,12 +59,12 @@
     </f7-segmented>
     <f7-link
       v-if="!logViewerCore?.textMode"
-      icon-f7="arrow_counterclockwise"
-      tooltip="Reset column widths to default"
-      @click="logViewerCore?.resetColumnWidths()" />
+      icon-f7="resize_h"
+      tooltip="Auto resize column widths"
+      @click="logViewerCore?.autoSizeColumn(-1)" />
     <f7-link
       v-if="!logViewerCore?.textMode"
-      icon-f7="arrow_turn_down_left"
+      icon-f7="arrow_turn_down_left_fill"
       :icon-color="logViewerCore?.wrapMessages ? '' : 'gray'"
       tooltip="Toggle message wrapping"
       @click="logViewerCore?.toggleWrapMessages()" />
