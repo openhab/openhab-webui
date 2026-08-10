@@ -675,7 +675,6 @@ export default {
     async load() {
       if (this.loading) return
       this.loading = true
-      console.log('props.showType', this.showType)
 
       if (this.initSearchbar) {
         this.lastSearchQuery[this.showType.toLowerCase()].value = this.$refs.searchbar?.$el.f7Searchbar.query
@@ -712,8 +711,6 @@ export default {
             },
             { tagSet: new Set(), languageSet: new Set(), triggerSet: new Set() }
           )
-
-          console.log('languageSet', languageSet)
 
           this.filtersDefinitions.tag.options = Object.fromEntries([...tagSet].sort().map((tag) => [tag.toLowerCase(), tag]))
           this.filtersDefinitions.language.options = Object.fromEntries([...languageSet].sort().map((lang) => [lang.toLowerCase(), lang]))
