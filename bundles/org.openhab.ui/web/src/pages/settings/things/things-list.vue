@@ -3,7 +3,10 @@
     <f7-navbar>
       <oh-nav-content title="Things" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="selection.toggleSelectionMode()"
+            :text="!theme.md ? (selection.selectionMode ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -17,73 +20,34 @@
           @update:tokenized-search="search.onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selected.size > 0" class="display-flex justify-content-center" style="width: 100%">
-        <f7-link
-          v-show="selected.size > 0"
-          color="red"
-          class="delete display-flex flex-direction-row margin-right"
-          icon-ios="f7:trash"
-          icon-aurora="f7:trash"
-          @click="removeSelected">
-          Remove
-        </f7-link>
-        <f7-link
-          v-show="selected.size > 0"
-          color="orange"
-          class="disable display-flex flex-direction-row margin-right"
-          @click="doDisableEnableSelected(false)"
-          icon-ios="f7:pause_circle"
-          icon-aurora="f7:pause_circle">
-          &nbsp;Disable
-        </f7-link>
-        <f7-link
-          v-show="selected.size > 0"
-          color="green"
-          class="enable display-flex flex-direction-row margin-right"
-          @click="doDisableEnableSelected(true)"
-          icon-ios="f7:play_circle"
-          icon-aurora="f7:play_circle">
-          &nbsp;Enable
-        </f7-link>
-        <f7-link
-          v-show="selected.size > 0"
-          color="theme-alt"
-          class="copy display-flex flex-direction-row"
-          @click="copyFileDefinitionToClipboard(ObjectType.THING, selected)"
-          icon-ios="f7:square_on_square"
-          icon-aurora="f7:square_on_square">
-          &nbsp;Copy
-        </f7-link>
-      </div>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selected.size }} selected</div>
-      <div v-if="theme.md" class="right">
-        <f7-link
-          v-show="selected.size > 0"
-          tooltip="Disable selected"
-          icon-md="material:pause_circle_outline"
-          icon-color="white"
-          @click="doDisableEnableSelected(false)" />
-        <f7-link
-          v-show="selected.size > 0"
-          tooltip="Enable selected"
-          icon-md="material:play_circle_outline"
-          icon-color="white"
-          @click="doDisableEnableSelected(true)" />
-        <f7-link
-          v-show="selected.size > 0"
-          tooltip="Remove selected"
-          icon-md="material:delete"
-          icon-color="white"
-          @click="removeSelected" />
-        <f7-link
-          v-show="selected.size > 0"
-          tooltip="Copy selected"
-          icon-md="material:content_copy"
-          icon-color="white"
-          @click="copyFileDefinitionToClipboard(ObjectType.THING, selected)" />
-      </div>
+    <f7-toolbar v-if="selection.selectionMode" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <list-selection-actions
+        @close="selection.toggleSelectionMode"
+        :remove-count="selectedDeletable.size"
+        @remove="removeSelected"
+        :copy-count="selection.selectedInFilter.size"
+        @copy="copyFileDefinitionToClipboard(ObjectType.THING, [...selection.selectedInFilter])">
+        <template #extra-actions>
+          <list-selection-action-link
+            text="Disable"
+            :count="selectedDisablable.size"
+            tooltip="Disable selected"
+            icon-md="material:pause_circle_outline"
+            icon-ios="f7:pause_circle"
+            icon-aurora="f7:pause_circle"
+            color="orange"
+            @click="doDisableEnableSelected(false)" />
+          <list-selection-action-link
+            text="Enable"
+            :count="selectedEnablable.size"
+            tooltip="Enable selected"
+            icon-md="material:play_circle_outline"
+            icon-ios="f7:play_circle"
+            icon-aurora="f7:play_circle"
+            color="green"
+            @click="doDisableEnableSelected(true)" />
+        </template>
+      </list-selection-actions>
     </f7-toolbar>
 
     <f7-list-index
@@ -120,12 +84,13 @@
             <f7-button :active="groupBy === 'location'" @click="switchGroupOrder('location')"> By location </f7-button>
           </f7-segmented>
         </div>
-        <group-box :title="getListTitle(search.isFiltered, search.filteredResults.length, things.length, 'Thing', selected.size)">
+        <group-box
+          :title="getListTitle(search.isFiltered, search.filteredResults.length, things.length, 'Thing', selection.selectedInFilter.size)">
           <template #after-title>
             <f7-link
-              v-if="showCheckboxes && search.filteredResults.length > 0"
-              @click="selectDeselectAll"
-              :text="allSelected ? 'Deselect all' : 'Select all'" />
+              v-if="selection.selectionMode && search.filteredResults.length > 0"
+              @click="selection.selectDeselectAll"
+              :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
             <label v-if="groupBy === 'location'" class="advanced-label">
               <f7-checkbox v-model:checked="showNoLocation" />
               Show no location
@@ -139,12 +104,12 @@
                 :key="index"
                 media-item
                 class="thinglist-item"
-                :checkbox="showCheckboxes"
-                :checked="isChecked(thing.UID) ? true : null"
+                :checkbox="selection.selectionMode"
+                :checked="selection.isSelected(thing.UID)"
                 :value="thing.UID"
                 prevent-router
-                @click.ctrl="ctrlClick($event, thing)"
-                @click.meta="ctrlClick($event, thing)"
+                @click.ctrl="selection.ctrlClick(thing.UID)"
+                @click.meta="selection.ctrlClick(thing.UID)"
                 @click.exact="click($event, thing)"
                 :link="`${encodeURIComponent(thing.UID)}`">
                 <template #title>
@@ -202,7 +167,7 @@
       <f7-fab position="right-bottom" color="theme-alt" href="add/">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
-      <f7-fab position="center-bottom" :text="`Inbox (${inboxCount})`" :color="inboxCount > 0 ? 'red' : 'gray'" href="inbox">
+      <f7-fab position="center-bottom" :text="`Inbox (${inbox.length})`" :color="inbox.length > 0 ? 'red' : 'gray'" href="inbox">
         <f7-icon f7="tray" />
       </f7-fab>
     </template>
@@ -230,21 +195,22 @@
 <script>
 import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
+import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import ListSelectionActionLink from '@/components/list/list-selection-action-link.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import { showToast } from '@/js/dialog-promises'
+import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import { useSearch } from '@/components/useSearch'
+import { useSelection } from '@/components/useSelection'
 import { getListTitle, highlightMatches } from '@/pages/list-helpers'
 
 export default {
@@ -257,12 +223,16 @@ export default {
   components: {
     EmptyStatePlaceholder,
     ClipboardIcon,
-    OhSearchbar
+    OhSearchbar,
+    ListSelectionActions,
+    ListSelectionActionLink
   },
   setup() {
     const things = shallowRef([])
     const haystackFields = ['uid', 'label', 'location']
     const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
+    const runtimeStore = useRuntimeStore()
 
     const filtersDefinitions = {
       is: {
@@ -297,14 +267,14 @@ export default {
       }
     }
 
-    const search = reactive(
-      useSearch(things, {
-        filtersDefinitions,
-        haystackFields,
-        uidField: 'UID',
-        includeMatches: true
-      })
-    )
+    const searchState = useSearch(things, {
+      filtersDefinitions,
+      haystackFields,
+      uidField: 'UID',
+      includeMatches: true
+    })
+    const search = reactive(searchState)
+    const selection = reactive(useSelection(searchState.filteredUids))
 
     filtersDefinitions.status.options = () => search.getFuseValuesForField('statusInfo.status')
     filtersDefinitions.location.options = () => search.getFuseValuesForField('location')
@@ -317,11 +287,13 @@ export default {
       things,
       filtersDefinitions,
       search,
+      selection,
       thingStatusBadgeColor,
       thingStatusBadgeText,
       getListTitle,
       haystackFields,
       highlightMatches,
+      runtimeStore,
       ohSearchbarRef
     }
   },
@@ -331,24 +303,12 @@ export default {
       initSearchbar: false,
       loading: false,
       inbox: [],
-      selected: new Set(), // set of thing UIDs
-      showCheckboxes: false,
       groupBy: 'alphabetical',
       showNoLocation: false,
       eventSource: null
     }
   },
-  watch: {
-    'search.filteredUids'() {
-      this.selected = new Set(this.search.filteredUids.filter((uid) => this.selected.has(uid)))
-    }
-  },
   computed: {
-    emptySearchOrFilterResults() {
-      return (
-        (this.search.isFiltered || this.$refs['list-filter']?.filtered) && this.search.filteredResults.length == 0 && this.things.length
-      )
-    },
     indexedResults() {
       if (this.groupBy === 'alphabetical') {
         return this.search.filteredResults.reduce((prev, result) => {
@@ -398,20 +358,25 @@ export default {
           }, {})
       }
     },
-    thingsCount() {
-      let sum = 0
-      Object.keys(this.indexedResults).forEach((key) => {
-        sum = sum + this.indexedResults[key].length
-      })
-      return sum
+    selectedDeletable() {
+      return new Set(
+        this.things.filter((thing) => this.selection.selectedInFilter.has(thing.UID) && thing.editable !== false).map((thing) => thing.UID)
+      )
     },
-    inboxCount() {
-      return this.inbox.length
+    selectedEnablable() {
+      return new Set(
+        this.things
+          .filter((thing) => this.selection.selectedInFilter.has(thing.UID) && thing.statusInfo?.statusDetail === 'DISABLED')
+          .map((thing) => thing.UID)
+      )
     },
-    allSelected() {
-      return this.selected.size >= this.search.filteredResults.length && this.search.filteredResults.length > 0
-    },
-    ...mapStores(useRuntimeStore, useUIOptionsStore)
+    selectedDisablable() {
+      return new Set(
+        this.things
+          .filter((thing) => this.selection.selectedInFilter.has(thing.UID) && thing.statusInfo?.statusDetail !== 'DISABLED')
+          .map((thing) => thing.UID)
+      )
+    }
   },
   methods: {
     async onPageAfterIn() {
@@ -459,74 +424,45 @@ export default {
         if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
-    toggleCheck() {
-      this.showCheckboxes = !this.showCheckboxes
-    },
-    selectDeselectAll() {
-      if (this.allSelected) {
-        this.selected.clear()
-      } else {
-        this.selected = new Set(this.search.filteredUids)
-      }
-    },
-    isChecked(item) {
-      return this.selected.has(item)
-    },
     click(event, item) {
-      if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.UID)
+      if (this.selection.selectionMode) {
+        this.selection.toggleItemSelection(item.UID)
       } else {
         this.f7router.navigate(item.UID)
       }
     },
-    ctrlClick(event, item) {
-      this.toggleItemCheck(event, item.UID)
-      if (this.selected.size === 0) this.showCheckboxes = false
-    },
-    toggleItemCheck(event, item) {
-      if (!this.showCheckboxes) this.showCheckboxes = true
-      if (this.isChecked(item)) {
-        this.selected.delete(item)
-      } else {
-        this.selected.add(item)
-      }
-    },
-    removeSelected() {
-      f7.dialog.confirm(`Remove ${this.selected.size} selected things?`, 'Remove Things', () => {
-        this.doRemoveSelected()
-      })
-    },
-    doRemoveSelected() {
-      if ([...this.selected].some((i) => this.things.find((thing) => thing.UID === i).editable === false)) {
-        f7.dialog.alert('Some of the selected things are not modifiable because they have been provisioned by files')
+    async removeSelected() {
+      if (this.selection.selectedDeletable.size === 0) return
+      if (
+        !(await showConfirmDialog(
+          `Remove ${this.selectedDeletable.size} of ${this.selection.selectedInFilter.size} selected things?`,
+          'Remove Things'
+        ))
+      )
         return
-      }
 
       let dialog = f7.dialog.progress('Deleting Things...')
-
-      const promises = [...this.selected].map((i) => this.$oh.api.delete('/rest/things/' + i))
-      Promise.all(promises)
-        .then((data) => {
-          showToast('Things removed')
-          this.selected.clear()
-          dialog.close()
-          this.load()
-        })
-        .catch((err) => {
-          dialog.close()
-          this.load()
-          console.error(err)
-          f7.dialog.alert('An error occurred while deleting: ' + err)
-        })
+      const promises = [...this.selectedDeletable].map((i) => this.$oh.api.delete('/rest/things/' + i))
+      try {
+        await Promise.all(promises)
+        showToast('Things removed')
+      } catch (err) {
+        console.error(err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+      } finally {
+        dialog.close()
+        this.load()
+      }
     },
     doDisableEnableSelected(enable) {
       let dialog = f7.dialog.progress('Please Wait...')
 
-      const promises = [...this.selected].map((i) => this.$oh.api.putPlain('/rest/things/' + i + '/enable', enable.toString()))
+      const selectedSet = enable ? this.selectedEnablable : this.selectedDisablable
+
+      const promises = [...selectedSet].map((uid) => this.$oh.api.putPlain('/rest/things/' + uid + '/enable', enable.toString()))
       Promise.all(promises)
         .then((data) => {
           showToast(enable ? 'Things enabled' : 'Things disabled')
-          this.selected.clear()
           dialog.close()
           this.load()
         })

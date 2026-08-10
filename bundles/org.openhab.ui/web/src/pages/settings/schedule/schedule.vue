@@ -3,7 +3,10 @@
     <f7-navbar>
       <oh-nav-content title="Schedule" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="selection.toggleSelectionMode"
+            :text="!theme.md ? (selection.selectionMode ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -17,22 +20,11 @@
           @update:tokenized-search="search.onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <f7-link
-        v-if="!theme.md"
-        v-show="selected.size > 0"
-        class="delete"
-        icon-ios="f7:trash"
-        icon-aurora="f7:trash"
-        @click="removeSelected">
-        Remove {{ selected.size }}
-      </f7-link>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selected.size }} selected</div>
-      <div v-if="theme.md" class="right">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
-        <f7-link icon-md="material:more_vert" icon-color="white" @click="removeSelected" />
-      </div>
+    <f7-toolbar v-if="selection.selectionMode" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <list-selection-actions
+        @close="selection.toggleSelectionMode"
+        @remove="removeSelected"
+        :copy-count="selection.selectedInFilter.size" />
     </f7-toolbar>
 
     <empty-state-placeholder
@@ -63,9 +55,9 @@
                     </div>
                     <div class="timeline-item-title">
                       <f7-checkbox
-                        v-if="showCheckboxes"
-                        :checked="selected.has(occurrence.rule.uid)"
-                        @change="toggleItemCheck(occurrence.rule.uid)" />
+                        v-if="selection.selectionMode"
+                        :checked="selection.isSelected(occurrence.rule.uid)"
+                        @change="selection.toggleItemSelection(occurrence.rule.uid)" />
                       {{ occurrence.rule.name }}
                     </div>
                     <!-- <div class="timeline-item-text">{{occurrence[1].description}}</div> -->
@@ -102,14 +94,17 @@ import { f7, theme } from 'framework7-vue'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
-import { showToast } from '@/js/dialog-promises'
+import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
+import ListSelectionActions from '@/components/list/list-selection-actions.vue'
 import { useSearch } from '@/components/useSearch'
+import { useSelection } from '@/components/useSelection'
 
 export default {
   components: {
     'empty-state-placeholder': EmptyStatePlaceholder,
-    OhSearchbar
+    OhSearchbar,
+    ListSelectionActions
   },
   props: {
     f7router: Object
@@ -153,13 +148,13 @@ export default {
       }
     }
 
-    const search = reactive(
-      useSearch(rules, {
-        filtersDefinitions,
-        haystackFields,
-        uidField: (item) => item.rule.uid
-      })
-    )
+    const searchState = useSearch(rules, {
+      filtersDefinitions,
+      haystackFields,
+      uidField: (item) => item.rule.uid
+    })
+    const search = reactive(searchState)
+    const selection = reactive(useSelection(searchState.filteredUids))
 
     filtersDefinitions.tag.options = () => search.getFuseValuesForField('tag')
 
@@ -169,6 +164,7 @@ export default {
       ohSearchbarRef,
       filtersDefinitions,
       search,
+      selection,
       haystackFields
     }
   },
@@ -178,10 +174,8 @@ export default {
       initSearchbar: false,
       loading: false,
       noRuleEngine: false,
-      selected: new Set(), // selected UIDs
-      showCheckboxes: false,
       eventSource: null,
-      start: new Date()
+      start: new Date(new Date().setHours(0, 0, 0, 0))
     }
   },
   computed: {
@@ -211,6 +205,9 @@ export default {
       }
 
       return cal
+    },
+    filteredIndicesSet() {
+      return new Set(this.filteredIndices)
     }
   },
   methods: {
@@ -220,14 +217,16 @@ export default {
     onPageBeforeOut() {
       this.stopEventSource()
       this.ohSearchbarRef?.persistSearchbarQuery()
+      this.ohSearchbarRef?.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
       this.loading = true
 
       this.initSearchbar = false
-      this.selected.clear()
-      this.showCheckboxes = false
+      this.selection.clearSelection()
+      this.selection.selectionMode = false
+
       const limit = new Date()
       limit.setDate(this.start.getDate() + 31)
       await this.$oh.api
@@ -268,41 +267,22 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    toggleCheck() {
-      this.showCheckboxes = !this.showCheckboxes
-    },
-    isChecked(item) {
-      return this.selected.has(item)
-    },
-    toggleItemCheck(item) {
-      if (this.isChecked(item)) {
-        this.selected.delete(item)
-      } else {
-        this.selected.add(item)
-      }
-    },
-    removeSelected() {
-      f7.dialog.confirm(`Remove ${this.selected.size} selected rules?`, 'Remove Rules', () => {
-        this.doRemoveSelected()
-      })
-    },
-    doRemoveSelected() {
-      let dialog = f7.dialog.progress('Deleting Rules...')
+    async removeSelected() {
+      if (this.selection.selectedInFilter.size === 0) return
+      if (!(await showConfirmDialog(`Remove ${this.selection.selectedInFilter.size} selected rules?`, 'Remove Rules'))) return
 
-      const promises = [...this.selected].map((i) => this.$oh.api.delete('/rest/rules/' + i))
-      Promise.all(promises)
-        .then((data) => {
-          showToast('Rules removed')
-          this.selected.clear()
-          dialog.close()
-          this.load()
-        })
-        .catch((err) => {
-          dialog.close()
-          this.load()
-          console.error(err)
-          f7.dialog.alert('An error occurred while deleting: ' + err)
-        })
+      let dialog = f7.dialog.progress('Deleting Rules...')
+      const promises = [...this.selection.selectedInFilter].map((i) => this.$oh.api.delete('/rest/rules/' + i))
+      try {
+        await Promise.all(promises)
+        showToast('Rules removed')
+      } catch (err) {
+        console.error(err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+      } finally {
+        dialog.close()
+        this.load()
+      }
     }
   }
 }

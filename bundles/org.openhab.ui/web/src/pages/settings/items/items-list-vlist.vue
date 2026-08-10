@@ -3,7 +3,10 @@
     <f7-navbar>
       <oh-nav-content title="Items" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="selection.toggleSelectionMode"
+            :text="!theme.md ? (selection.selectionMode ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -19,33 +22,13 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selected.size > 0" class="display-flex justify-content-center" style="width: 100%">
-        <f7-link
-          v-show="selected.size"
-          color="red"
-          class="delete display-flex flex-direction-row margin-right"
-          icon-ios="f7:trash"
-          icon-aurora="f7:trash"
-          @click="removeSelected">
-          Remove
-        </f7-link>
-        <f7-link
-          v-show="selected.size > 0"
-          color="theme-alt"
-          class="copy display-flex flex-direction-row"
-          icon-ios="f7:square_on_square"
-          icon-aurora="f7:square_on_square"
-          @click="copySelected">
-          &nbsp;Copy
-        </f7-link>
-      </div>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selected.size }} selected</div>
-      <div v-if="theme.md && selected.size" class="right">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
-        <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
-      </div>
+    <f7-toolbar v-if="selection.selectionMode" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <list-selection-actions
+        @close="selection.toggleSelectionMode"
+        :remove-count="selectedDeletable.size"
+        @remove="removeSelected"
+        :copy-count="selection.selectedInFilter.size"
+        @copy="copySelected" />
     </f7-toolbar>
 
     <f7-block class="block-narrow margin-top-half">
@@ -80,9 +63,10 @@
       </f7-col>
 
       <f7-col v-if="ready && items.length > 0">
-        <group-box :title="getListTitle(search.isFiltered, search.filteredResults.length, items.length, 'Item', selected.size)">
-          <template v-if="showCheckboxes && search.filteredResults.length > 0" #after-title>
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+        <group-box
+          :title="getListTitle(search.isFiltered, search.filteredResults.length, items.length, 'Item', selection.selectedInFilter.size)">
+          <template v-if="selection.selectionMode && search.filteredResults.length > 0" #after-title>
+            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
           </template>
           <f7-list class="searchbar-found col" ref="itemsList" media-list virtual-list :virtual-list-params="vlParams">
             <ul>
@@ -91,11 +75,11 @@
                 :key="index"
                 media-item
                 class="itemlist-item"
-                :checkbox="showCheckboxes"
-                :checked="isChecked(item.name)"
+                :checkbox="selection.selectionMode"
+                :checked="selection.isSelected(item.name)"
                 prevent-router
-                @click.ctrl="ctrlClick($event, item)"
-                @click.meta="ctrlClick($event, item)"
+                @click.ctrl="selection.ctrlClick(item.name)"
+                @click.meta="selection.ctrlClick(item.name)"
                 @click.exact="click($event, item)"
                 :link="`${encodeURIComponent(item.name)}`"
                 :style="`top: ${vlData.topPosition}px`">
@@ -166,10 +150,10 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" color="theme-alt" @click="load()">
+      <f7-fab v-show="!selection.selectionMode" position="center-bottom" text="Refresh" color="theme-alt" @click="load()">
         <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
       </f7-fab>
-      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="theme-alt" href="add">
+      <f7-fab v-show="!selection.selectionMode" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
     </template>
@@ -197,8 +181,10 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
+import ListSelectionActions from '@/components/list/list-selection-actions.vue'
 import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { useSearch } from '@/components/useSearch'
+import { useSelection } from '@/components/useSelection'
 import { getListTitle, highlightMatches } from '@/pages/list-helpers'
 
 export default {
@@ -208,7 +194,8 @@ export default {
   },
   components: {
     EmptyStatePlaceholder,
-    OhSearchbar
+    OhSearchbar,
+    ListSelectionActions
   },
   setup() {
     const items = shallowRef([])
@@ -263,14 +250,14 @@ export default {
       }
     }
 
-    const search = reactive(
-      useSearch(items, {
-        filtersDefinitions,
-        haystackFields,
-        uidField: 'name',
-        includeMatches: true
-      })
-    )
+    const searchState = useSearch(items, {
+      filtersDefinitions,
+      haystackFields,
+      uidField: 'name',
+      includeMatches: true
+    })
+    const search = reactive(searchState)
+    const selection = reactive(useSelection(searchState.filteredUids))
 
     filtersDefinitions.type.options = () => search.getFuseValuesForField('type')
     filtersDefinitions.group.options = () => search.getFuseValuesForField('group')
@@ -287,6 +274,7 @@ export default {
       items,
       filtersDefinitions,
       search,
+      selection,
       getListTitle,
       getNonSemanticTags,
       getItemTypeLabel,
@@ -310,9 +298,12 @@ export default {
         renderExternal: this.renderExternal,
         height: this.height
       },
-      selected: new Set(), // set of item names
-      showCheckboxes: false,
       eventSource: null
+    }
+  },
+  computed: {
+    selectedDeletable() {
+      return new Set(this.items.filter((item) => this.selection.selectedInFilter.has(item.name) && item.editable).map((item) => item.name))
     }
   },
   methods: {
@@ -407,79 +398,43 @@ export default {
       }
       return vlHeight
     },
-    toggleCheck() {
-      this.showCheckboxes = !this.showCheckboxes
-    },
-    isChecked(itemName) {
-      return this.selected.has(itemName)
-    },
     click(event, item) {
-      if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.name)
+      if (this.selection.selectionMode) {
+        this.selection.toggleItemSelection(item.name)
       } else {
         this.f7router.navigate(item.name)
       }
     },
-    ctrlClick(event, item) {
-      this.toggleItemCheck(event, item.name)
-      if (!this.selected.size) this.showCheckboxes = false
-    },
-    toggleItemCheck(event, item) {
-      if (!this.showCheckboxes) this.showCheckboxes = true
-      if (this.isChecked(item)) {
-        this.selected.delete(item)
-      } else {
-        this.selected.add(item)
-      }
-    },
-    selectDeselectAll() {
-      if (this.allSelected) {
-        this.selected.clear()
-      } else {
-        this.selected = new Set(this.search.filteredResults.map((result) => result.item.name))
-      }
-    },
     copySelected() {
-      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, [...this.selected])
+      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, [...this.selection.selectedInFilter])
     },
     async removeSelected() {
-      if (!(await showConfirmDialog(`Remove ${this.selected.size} selected items?`, 'Remove Items'))) return
-
+      if (this.selectedDeletable.size === 0) return
       if (
-        Array.from(this.selected)
-          .map((i) => this.items.find((item) => item.name === i))
-          .some((i) => i.editable === false)
-      ) {
-        f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
+        !(await showConfirmDialog(
+          `Remove ${this.selectedDeletable.size} of ${this.selection.selectedInFilter.size} selected items?`,
+          'Remove Items'
+        ))
+      )
         return
-      }
 
       let dialog = f7.dialog.progress('Deleting Items...')
-
-      const promises = Array.from(this.selected).map((i) => this.$oh.api.delete('/rest/items/' + i))
-      Promise.all(promises)
-        .then((data) => {
-          showToast('Items removed')
-          this.selected.clear()
-          dialog.close()
-          this.load()
-        })
-        .catch((err) => {
-          dialog.close()
-          this.load()
-          console.error(err)
-          f7.dialog.alert('An error occurred while deleting: ' + err)
-        })
+      const promises = [...this.selectedDeletable].map((i) => this.$oh.api.delete('/rest/items/' + i))
+      try {
+        await Promise.all(promises)
+        showToast('Items removed')
+      } catch (err) {
+        console.error(err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+      } finally {
+        dialog.close()
+        this.load()
+      }
     }
   },
   watch: {
     'search.filteredResults'() {
       this.syncVirtualList()
-    }
-  },
-  computed: {
-    allSelected() {
-      return this.selected.size >= this.search.filteredResults.length && this.search.filteredResults.length > 0
     }
   }
 }
