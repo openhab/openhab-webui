@@ -7,23 +7,22 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-sitemaps"
-          :custom-search="true"
-          @searchbar:search="searchbarSearch"
-          @searchbar:clear="searchbarClear"
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="'sitemaps-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="search.onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
+      <div v-if="!theme.md && selected.size > 0" class="display-flex justify-content-center" style="width: 100%">
         <f7-link
           v-if="!theme.md"
-          v-show="selection.length"
+          v-show="selectedInFilter.size > 0"
           color="red"
           class="delete display-flex flex-direction-row margin-right"
           icon-ios="f7:trash"
@@ -32,7 +31,7 @@
           Remove
         </f7-link>
         <f7-link
-          v-show="selection.length"
+          v-show="selectedInFilter.size > 0"
           color="theme-alt"
           class="copy display-flex flex-direction-row"
           icon-ios="f7:square_on_square"
@@ -42,8 +41,8 @@
         </f7-link>
       </div>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="toggleCheck()" />
-      <div v-if="theme.md" class="title">{{ selection.length }} selected</div>
-      <div v-if="theme.md && selection.length" class="right">
+      <div v-if="theme.md" class="title">{{ selectedInFilter.size }} selected</div>
+      <div v-if="theme.md && selectedInFilter.size > 0" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
         <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
       </div>
@@ -60,19 +59,19 @@
 
     <f7-block class="block-narrow">
       <f7-col v-show="ready">
-        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
-        <f7-list v-if="sitemaps.length > 0 && filteredSitemaps.length === 0" class="searchbar-not-found">
+        <f7-list v-if="sitemaps.length > 0 && search.filteredResults.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <group-box :title="listTitle">
-          <template v-if="showCheckboxes && selectableSitemapNames.length" #after-title>
+        <group-box
+          :title="getListTitle(search.isFiltered, search.filteredResults.length, sitemaps.length, 'Sitemap', selectedInFilter.size)">
+          <template v-if="showCheckboxes && search.filteredUids.length > 0" #after-title>
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
-          <f7-list v-show="filteredSitemaps.length > 0" class="col sitemaps-list" ref="sitemapsList" :contacts-list="true" media-list>
-            <f7-list-group v-for="(sitemapsWithInitial, initial) in indexedSitemaps" :key="initial">
-              <f7-list-item v-if="sitemapsWithInitial.length" :title="initial" group-title />
+          <f7-list v-show="search.filteredResults.length > 0" class="col sitemaps-list" ref="sitemapsList" :contacts-list="true" media-list>
+            <f7-list-group v-for="(resultsWithInitial, initial) in indexedResults" :key="initial">
+              <f7-list-item v-if="resultsWithInitial.length > 0" :title="initial" group-title />
               <f7-list-item
-                v-for="sitemap in sitemapsWithInitial"
+                v-for="{ item: sitemap, matches } in resultsWithInitial"
                 :key="sitemap.name"
                 media-item
                 :checkbox="showCheckboxes"
@@ -81,9 +80,13 @@
                 @click.ctrl="ctrlClick($event, sitemap)"
                 @click.meta="ctrlClick($event, sitemap)"
                 @click.exact="click($event, sitemap)"
-                :link="encodeURIComponent(sitemap.name)"
-                :title="sitemap.label || sitemap.name"
-                :footer="sitemap.name">
+                :link="encodeURIComponent(sitemap.name)">
+                <template #title>
+                  <span v-html="highlightMatches(sitemap.label, matches, 'label') || highlightMatches(sitemap.name, matches, 'name')" />
+                </template>
+                <template #footer>
+                  <span v-html="highlightMatches(sitemap.name, matches, 'name')" />
+                </template>
                 <template #media>
                   <oh-icon :icon="sitemap.icon || 'f7:menu'" :height="32" :width="32" />
                 </template>
@@ -124,24 +127,21 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { useSearch } from '@/components/useSearch'
+import { getListTitle, highlightMatches } from '@/pages/list-helpers'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
-import * as api from '@/api'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
 
-const ITEM_KINDS = {
-  editable: 'Editable',
-  readonly: 'Non-editable'
-}
+import * as api from '@/api'
 
 export default {
   mixins: [FileDefinition],
@@ -150,17 +150,48 @@ export default {
   },
   components: {
     EmptyStatePlaceholder,
-    ListFilter
+    OhSearchbar
   },
   setup() {
+    const sitemaps = shallowRef([])
+    const haystackFields = ['name', 'label']
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
     const runtimeStore = useRuntimeStore()
-    const lastSearchQueryStore = useLastSearchQueryStore()
+
+    const filtersDefinitions = {
+      is: {
+        label: 'Kind',
+        getFn: (sitemap) => (sitemap.editable ? 'editable' : 'readonly'),
+        options: ['Editable', 'Readonly']
+      },
+      name: {
+        label: 'Name'
+      },
+      label: {
+        label: 'Label'
+      }
+    }
+
+    const search = reactive(
+      useSearch(sitemaps, {
+        filtersDefinitions,
+        haystackFields,
+        uidField: 'name',
+        includeMatches: true
+      })
+    )
 
     return {
       theme,
+      sitemaps,
+      BREAKPOINTS,
       runtimeStore,
-      lastSearchQueryStore,
-      BREAKPOINTS
+      filtersDefinitions,
+      search,
+      getListTitle,
+      haystackFields,
+      highlightMatches,
+      ohSearchbarRef
     }
   },
   data() {
@@ -168,75 +199,36 @@ export default {
       ready: false,
       initSearchbar: false,
       loading: false,
-      sitemaps: [],
-      filteredItems: [],
-      filters: {
-        kinds: {
-          label: 'Kind',
-          options: { ...ITEM_KINDS }
-        }
-      },
-      selectedItems: [],
-      showCheckboxes: false,
-      searchQuery: ''
+      selected: new Set(),
+      showCheckboxes: false
     }
   },
   computed: {
-    filteredSitemaps() {
-      if (!this.searchQuery.length) return this.filteredItems
-      return this.filteredItems.filter((sitemap) => this.sitemapMatchesSearch(sitemap, this.searchQuery))
-    },
-    filteredSitemapsCount() {
-      return this.filteredSitemaps.length
-    },
-    indexedSitemaps() {
-      return this.filteredSitemaps.reduce((prev, sitemap) => {
+    indexedResults() {
+      return this.search.filteredResults.reduce((prev, result) => {
+        const sitemap = result.item
         const label = sitemap.label || sitemap.name
         const initial = label.substring(0, 1).toUpperCase()
         if (!prev[initial]) prev[initial] = []
-        prev[initial].push(sitemap)
+        prev[initial].push(result)
         return prev
       }, {})
     },
-    searchPlaceholder() {
-      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
-    },
     allSelected() {
-      return this.selectableSitemapNames.length > 0 && this.selectableSitemapNames.every((name) => this.selectedItems.includes(name))
+      return this.search.filteredUids.length > 0 && this.search.filteredUids.every((name) => this.selected.has(name))
     },
-    listTitle() {
-      let title = this.filteredSitemapsCount
-      if (this.searchQuery.length || this.$refs.filters?.filtered) {
-        title += ` of ${this.sitemaps.length} sitemaps found`
-      } else {
-        title += ' sitemaps'
-      }
-      if (this.selection.length > 0) {
-        title += `, ${this.selection.length} selected`
-      }
-      return title
-    },
-    selectableSitemapNames() {
-      return this.filteredSitemaps.map((sitemap) => sitemap.name)
-    },
-    selection() {
-      return this.selectableSitemapNames.filter((name) => this.selectedItems.includes(name))
+    selectedInFilter() {
+      return new Set(this.search.filteredUids.filter((name) => this.selected.has(name)))
     }
   },
   methods: {
-    searchbarSearch(event) {
-      this.searchQuery = event?.query || ''
-    },
-    searchbarClear() {
-      this.searchQuery = ''
-    },
-    onPageAfterIn() {
-      this.load()
+    async onPageAfterIn() {
+      await this.load()
     },
     onPageBeforeOut() {
-      this.lastSearchQueryStore.lastSitemapsSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.ohSearchbarRef?.persistSearchbarQuery()
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
 
@@ -244,86 +236,52 @@ export default {
       this.initSearchbar = false
 
       this.sitemaps = []
-      this.selectedItems = []
+      this.selected.clear()
       this.showCheckboxes = false
 
-      api
-        .getSitemapDefinitions()
-        .then((data) => {
-          this.sitemaps = data.sort((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
-          this.initSearchbar = true
-          this.ready = true
-          this.updateFilteredItems()
-
-          nextTick(() => {
-            if (this.$refs.listIndex) this.$refs.listIndex.update()
-            if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
-            }
-            this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastSitemapsSearchQuery || '')
-          })
-        })
-        .catch((err) => {
-          console.error(err)
-          showToast('An error occurred while loading sitemaps: ' + (err?.message || String(err)))
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    updateFilteredItems() {
-      const filters = this.$refs.filters
-      if (!filters || !filters.filtered) {
-        this.filteredItems = this.sitemaps
+      try {
+        const _sitemaps = await api.getSitemapDefinitions()
+        this.sitemaps = _sitemaps.sort((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
+      } catch (err) {
+        console.error(err)
+        showToast('An error occurred while loading sitemaps: ' + (err?.message || String(err)))
         return
+      } finally {
+        this.loading = false
       }
 
-      const selected = filters.selected
-      this.filteredItems = this.sitemaps.filter((sitemap) => {
-        const kind = sitemap.editable ? 'editable' : 'readonly'
-        const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
+      this.initSearchbar = true
+      this.ready = true
 
-        return kindMatch
+      nextTick(() => {
+        if (this.$refs.listIndex) this.$refs.listIndex.update()
+        if (this.$device.desktop) {
+          this.ohSearchbarRef?.focus()
+        }
       })
-
-      if (this.$refs.listIndex) this.$refs.listIndex.update()
     },
     toggleCheck() {
       this.showCheckboxes = !this.showCheckboxes
       if (!this.showCheckboxes) {
-        this.selectedItems = []
+        this.selected.clear()
       }
     },
     isChecked(item) {
-      return this.selectedItems.indexOf(item) >= 0
-    },
-    getNormalizedSearchTerms(query) {
-      return (query || '').toLowerCase().trim().split(/\s+/).filter(Boolean)
-    },
-    getSitemapSearchText(sitemap) {
-      const searchText = sitemap.label + ' ' + sitemap.name
-      return searchText.toLowerCase()
-    },
-    sitemapMatchesSearch(sitemap, query) {
-      const terms = this.getNormalizedSearchTerms(query)
-      if (!terms.length) return true
-      const sitemapSearchText = this.getSitemapSearchText(sitemap)
-      return terms.every((term) => sitemapSearchText.includes(term))
+      return this.selected.has(item)
     },
     selectDeselectAll() {
       if (this.allSelected) {
-        this.selectedItems = []
+        this.selected.clear()
       } else {
-        // assign a copy so mutations to `selectedItems` don't modify the computed `selectableSitemapNames` array
-        this.selectedItems = Array.from(this.selectableSitemapNames)
+        this.selected = new Set(this.search.filteredUids)
       }
     },
     copySelected() {
-      if (this.selection.length === 0) {
+      if (this.selectedInFilter.size === 0) {
         showToast('No sitemaps selected to copy')
         return
       }
-      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, this.selection)
+      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, [...this.selectedInFilter])
     },
     click(event, item) {
       if (this.showCheckboxes) {
@@ -334,14 +292,14 @@ export default {
     },
     ctrlClick(event, item) {
       this.toggleItemCheck(event, item.name, item)
-      if (!this.selectedItems.length) this.showCheckboxes = false
+      if (!this.selected.size) this.showCheckboxes = false
     },
-    toggleItemCheck(event, itemName, item) {
+    toggleItemCheck(event, name, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
-      if (this.isChecked(itemName)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(itemName), 1)
+      if (this.isChecked(name)) {
+        this.selected.delete(name)
       } else {
-        this.selectedItems.push(itemName)
+        this.selected.add(name)
       }
       // Calling preventDefault() is necessary to prevent the default label-click behavior of toggling the checkbox,
       // which would cause it to go out of sync with Vue's state.
@@ -351,27 +309,25 @@ export default {
       event.preventDefault()
     },
     removeSelected() {
-      const vm = this
-
-      f7.dialog.confirm(`Remove ${this.selection.length} selected sitemaps?`, `Remove Sitemaps`, () => {
-        vm.doRemoveSelected()
+      f7.dialog.confirm(`Remove ${this.selectedInFilter.size} selected sitemaps?`, `Remove Sitemaps`, () => {
+        this.doRemoveSelected()
       })
     },
     doRemoveSelected() {
-      if (this.selection.some((i) => !this.sitemaps.find((s) => s.name === i)?.editable)) {
+      if ([...this.selectedInFilter].some((i) => !this.sitemaps.find((s) => s.name === i)?.editable)) {
         f7.dialog.alert('Some of the selected sitemaps are not modifiable because they have been created by textual configuration')
         return
       }
 
       let dialog = f7.dialog.progress(`Deleting Sitemaps...`)
 
-      const promises = this.selection.map((p) => {
+      const promises = [...this.selectedInFilter].map((p) => {
         return api.removeSitemapFromRegistry({ sitemapname: p })
       })
       Promise.all(promises)
         .then((data) => {
           showToast('Sitemaps removed')
-          this.selectedItems = []
+          this.selected.clear()
           dialog.close()
           this.load()
           f7.emit('sidebarRefresh', null)
