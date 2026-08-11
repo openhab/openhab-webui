@@ -60,9 +60,7 @@
     <f7-block class="block-narrow">
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
-          <span>{{
-            getListTitle(searchString.toString().length !== 0, filteredList.length, sitemaps.length, 'Sitemap', selected.length)
-          }}</span>
+          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, sitemaps.length, 'Sitemap', selected.length) }}</span>
           <template v-if="showCheckboxes && selectableSitemapNames.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
@@ -132,7 +130,7 @@
 </template>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import FileDefinition from '@/pages/settings/file-definition-mixin'
@@ -161,44 +159,56 @@ export default {
     ListFilter
   },
   setup() {
+    const sitemaps = ref([])
     const runtimeStore = useRuntimeStore()
 
     const filtersDefinitions = {
-      kinds: {
+      is: {
         label: 'Kind',
-        options: ITEM_KINDS,
         singleSelect: true,
-        searchbarKeyword: 'is',
-        keywordChecker: (sitemap, value) => (value.toLowerCase() == 'editable' ? !!sitemap.editable : !sitemap.editable)
+        getFn: (sitemap) => (sitemap.editable ? 'editable' : 'readonly')
+      },
+      name: {
+        label: 'Name',
+        hideOptions: true
+      },
+      label: {
+        label: 'Label',
+        hideOptions: true
       }
     }
 
-    const haystackFunc = (sitemap) => {
-      return sitemap.label + ' ' + sitemap.name
-    }
-
     const {
-      search,
-      searchString,
-      searchValue,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery
-    } = useSearch('searchbar', haystackFunc, { filtersDefinitions, persistSearchStringKey: 'sitemaps-query' })
-
-    return {
-      theme,
-      runtimeStore,
-      filtersDefinitions,
-      search,
-      searchString,
-      searchValue,
+      rawSearchString,
+      filteredList,
       selectedListFilters,
       onUpdateSelectedListFilters,
       persistSearchbarQuery,
       restoreSearchbarQuery,
-      getListTitle
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
+    } = useSearch(sitemaps, 'searchbar', {
+      filtersDefinitions,
+      persistSearchStringKey: 'sitemaps-query',
+      haystackFields: ['name', 'label']
+    })
+
+    return {
+      theme,
+      sitemaps,
+      runtimeStore,
+      filtersDefinitions,
+      rawSearchString,
+      filteredList,
+      selectedListFilters,
+      onUpdateSelectedListFilters,
+      persistSearchbarQuery,
+      restoreSearchbarQuery,
+      getListTitle,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
     }
   },
   data() {
@@ -206,15 +216,11 @@ export default {
       ready: false,
       initSearchbar: false,
       loading: false,
-      sitemaps: [],
       selected: [],
       showCheckboxes: false
     }
   },
   computed: {
-    filteredList() {
-      return this.search(this.sitemaps)
-    },
     indexedSitemaps() {
       return this.filteredList.reduce((prev, sitemap) => {
         const label = sitemap.label || sitemap.name
@@ -223,9 +229,6 @@ export default {
         prev[initial].push(sitemap)
         return prev
       }, {})
-    },
-    searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
       return this.selectableSitemapNames.length > 0 && this.selectableSitemapNames.every((name) => this.selected.includes(name))
@@ -243,6 +246,7 @@ export default {
       this.restoreSearchbarQuery()
     },
     onPageBeforeOut() {
+      this.destroyAutocompleteSearchbar()
       this.persistSearchbarQuery()
     },
     async load() {
@@ -271,6 +275,8 @@ export default {
       this.ready = true
 
       nextTick(() => {
+        this.destroyAutocompleteSearchbar()
+        this.createAutocompleteSearchbar()
         if (this.$refs.listIndex) this.$refs.listIndex.update()
         const searchbar = this.$refs.searchbar?.$el.f7Searchbar
         if (this.$device.desktop && searchbar) {

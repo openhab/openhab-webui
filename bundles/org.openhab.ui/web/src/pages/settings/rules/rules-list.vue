@@ -167,7 +167,7 @@
     <f7-block v-show="!noRuleEngine && ready && rules.length > 0" class="block-narrow">
       <f7-col>
         <f7-block-title class="no-margin-top">
-          <span>{{ getListTitle(searchString.toString().length !== 0, filteredList.length, rules.length, 'Rule', selected.length) }}</span>
+          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, rules.length, 'Rule', selected.length) }}</span>
           <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
@@ -402,7 +402,7 @@
 </style>
 
 <script>
-import { nextTick, reactive } from 'vue'
+import { nextTick, reactive, ref } from 'vue'
 import { useStorage } from '@vueuse/core'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
@@ -420,20 +420,6 @@ import { useSearch } from '@/components/useSearch'
 import { getListTitle } from '@/pages/list-helpers'
 import copyToClipboard from '@/js/clipboard'
 
-import automation_languages from '@/assets/automation-languages'
-
-const ITEM_KINDS = {
-  editable: 'Editable',
-  readonly: 'Non-editable'
-}
-
-const ITEM_KINDS_RULES = {
-  editable: 'Editable',
-  readonly: 'Non-editable',
-  marketplace: 'Marketplace',
-  template: 'Template Based'
-}
-
 const storagePrefix = 'openhab.ui:search:rules-query:'
 
 export default {
@@ -449,6 +435,7 @@ export default {
     EmptyStatePlaceholder
   },
   setup(props) {
+    const rules = ref([])
     const ruleStatuses = reactive({})
     const lastSearchQuery = {
       script: useStorage(storagePrefix + 'scripts', '', sessionStorage, {
@@ -476,29 +463,35 @@ export default {
       STRIPPED: 'Strip template'
     })
 
-    function statusKeywordChecker(rule, value) {
-      const haystack = (rule.status.status + rule.status.statusDetail + ruleStatusBadgeText(rule.status)).toLowerCase()
-      return searchValue(haystack, value)
-    }
-
     const filtersDefinitions = {
-      kinds: {
+      is: {
         label: 'Kind',
-        options: props.showType === 'Rule' ? ITEM_KINDS_RULES : ITEM_KINDS,
         singleSelect: true,
-        searchbarKeyword: 'is',
-        keywordChecker: (rule, value) => {
-          if (value === 'editable') return rule.editable === true
-          if (value === 'readonly') return rule.editable === false
-          if (value === 'marketplace') return rule.tags?.includes('marketplace')
-          if (value === 'template') return !!rule.templateUID
-          return false
+        getFn: (rule) => {
+          if (rule.editable === true) return 'editable'
+          if (rule.tags?.includes('marketplace')) return 'marketplace'
+          if (rule.templateUID) return 'template'
+          return 'readonly'
         }
+      },
+      name: {
+        label: 'Name',
+        hideOptions: true,
+        path: 'name'
+      },
+      uid: {
+        label: 'UID',
+        hideOptions: true,
+        path: 'uid'
+      },
+      description: {
+        label: 'Description',
+        hideOptions: true,
+        path: 'description'
       },
       tag: {
         label: 'Tag',
-        options: {},
-        keywordChecker: (rule, value) => searchValue(rule.tags, value)
+        getFn: (rule) => displayedTags(rule)
       },
       status: {
         label: 'Status',
@@ -510,44 +503,40 @@ export default {
           disabled: 'Disabled'
         },
         advanced: true,
-        keywordChecker: statusKeywordChecker
+        getFn: (rule) => [rule.status?.status, rule.status?.statusDetail, ruleStatusBadgeText(ruleStatuses[rule.uid])]
       },
       language: {
         label: 'Language',
         options: {},
-        keywordChecker: (rule, value) => {
-          const language = getRuleLanguage(rule).shortName.toLowerCase()
-          return searchValue(language, value)
-        }
+        getFn: (rule) => getRuleLanguage(rule)?.shortName
       },
       trigger: {
         label: 'Trigger',
-        options: {},
         advanced: true,
-        keywordChecker: (rule, value) => {
-          const trigger = rule.triggers
-            ?.map((t) => t.type)
-            .filter(Boolean)
-            .join(' ')
-          return searchValue(trigger, value)
-        }
+        getFn: (rule) => rule.triggers?.map((t) => t.type).filter(Boolean)
       }
     }
 
-    const haystackFunc = (rule) => {
-      const hayStack = [rule.name, rule.uid, rule.description, ruleStatusBadgeText(ruleStatuses[rule.uid]), ...displayedTags(rule)]
-        .join(' ')
-        .toLowerCase()
-      return hayStack
-    }
-
-    const { search, searchString, searchValue, selectedListFilters, onUpdateSelectedListFilters } = useSearch('searchbar', haystackFunc, {
-      filtersDefinitions
+    const {
+      rawSearchString,
+      filteredList,
+      selectedListFilters,
+      onUpdateSelectedListFilters,
+      persistSearchbarQuery,
+      restoreSearchbarQuery,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
+    } = useSearch(rules, 'searchbar', {
+      filtersDefinitions,
+      persistSearchStringKey: 'rules-query',
+      haystackFields: ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
     })
 
     return {
       f7,
       theme,
+      rules,
       ruleStatuses,
       ruleStatusBadgeText,
       ruleStatusBadgeColor,
@@ -556,12 +545,16 @@ export default {
       displayedTags,
       serializationOptions,
       filtersDefinitions,
-      search,
-      searchString,
-      searchValue,
+      rawSearchString,
+      filteredList,
+      persistSearchbarQuery,
+      restoreSearchbarQuery,
+      searchPlaceholder,
       selectedListFilters,
       onUpdateSelectedListFilters,
-      getListTitle
+      getListTitle,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar
     }
   },
   data() {
@@ -570,7 +563,6 @@ export default {
       initSearchbar: false,
       loading: false,
       noRuleEngine: false,
-      rules: [],
       selected: [],
       showCheckboxes: false,
       eventSource: null,
@@ -594,9 +586,6 @@ export default {
     }
   },
   computed: {
-    filteredList() {
-      return this.search(this.rules)
-    },
     listedUids() {
       return new Set(this.filteredList.map((rule) => rule.uid))
     },
@@ -610,9 +599,6 @@ export default {
 
         return prev
       }, {})
-    },
-    searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
       return this.selected.length >= this.filteredList.length && this.filteredList.length > 0
@@ -669,6 +655,7 @@ export default {
       await this.load()
     },
     onPageBeforeOut() {
+      this.destroyAutocompleteSearchbar()
       this.stopEventSource()
       this.lastSearchQuery[this.showType.toLowerCase()].value = this.$refs.searchbar?.$el.f7Searchbar.query
     },
@@ -695,27 +682,6 @@ export default {
         if (ruleData.status === 'fulfilled') {
           this.rules = ruleData.value.filter((r) => ruleType(r) === this.showType).sort((a, b) => a.name.localeCompare(b.name))
 
-          // setup filter options
-          const { tagSet, languageSet, triggerSet } = this.rules.reduce(
-            (acc, rule) => {
-              rule.tags
-                .filter((tag) => tag !== 'Scene' && tag !== 'Script' && !tag.startsWith('marketplace:'))
-                .forEach((tag) => acc.tagSet.add(tag))
-              const language = getRuleLanguage(rule)
-              acc.languageSet.add(getRuleLanguage(rule)?.shortName)
-              rule.triggers
-                ?.map((t) => t.type)
-                .filter(Boolean)
-                .forEach((t) => acc.triggerSet.add(t))
-              return acc
-            },
-            { tagSet: new Set(), languageSet: new Set(), triggerSet: new Set() }
-          )
-
-          this.filtersDefinitions.tag.options = Object.fromEntries([...tagSet].sort().map((tag) => [tag.toLowerCase(), tag]))
-          this.filtersDefinitions.language.options = Object.fromEntries([...languageSet].sort().map((lang) => [lang.toLowerCase(), lang]))
-          this.filtersDefinitions.trigger.options = Object.fromEntries([...triggerSet].sort().map((t) => [t.toLowerCase(), t]))
-
           this.initSearchbar = true
 
           this.loading = false
@@ -723,6 +689,9 @@ export default {
           this.noRuleEngine = false
 
           nextTick(() => {
+            this.destroyAutocompleteSearchbar()
+            this.createAutocompleteSearchbar()
+
             if (this.$refs.listIndex) this.$refs.listIndex.$el.f7ListIndex.update()
             const searchbar = this.$refs.searchbar?.$el.f7Searchbar
             if (this.$device.desktop && searchbar) {

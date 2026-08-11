@@ -1,9 +1,10 @@
-import { ref, useTemplateRef, type Ref, shallowRef } from 'vue'
+import { ref, useTemplateRef, type Ref, shallowRef, computed, watch } from 'vue'
+import { f7 } from 'framework7-vue'
 import { useEventListener, useThrottleFn, useStorage } from '@vueuse/core'
-import { type Searchbar } from 'framework7'
-import SearchString, { type Condition } from 'search-string'
+import { type Searchbar, type Autocomplete } from 'framework7'
+import { parseAdvancedQueryRobustDeep, getAutocompleteContext, getUniqueValuesForField, applySuggestion } from '@/components/search-helpers'
 
-import { useSearchMatch } from '@/composables/useSearchMatch'
+import Fuse from 'fuse.js'
 
 /**
  * a function that provides search and filter functionality for an item.
@@ -19,14 +20,17 @@ export interface FilterDefinition {
   options?: Record<string, string>
   singleSelect?: boolean
   advanced?: boolean
-  searchbarKeyword?: string
-  keywordChecker?: KeywordChecker
+  path?: string
+  hideOptions?: boolean
+  getFn?: (item: unknown) => string
 }
 
 export interface UseSearchOptions {
   persistSearchStringKey?: string
   persistStorage?: 'local' | 'session' // default is sesson storage
+  returnType?: 'items' | 'indices'
   filtersDefinitions?: Record<string, FilterDefinition>
+  haystackFields?: string[]
 }
 
 type ListFilterSelected = Record<string, Set<string>>
@@ -35,12 +39,21 @@ type F7SearchbarInstance = { $el: { f7Searchbar: Searchbar.Searchbar | undefined
 
 const storagePrefix = 'openhab.ui:search:'
 
-export function useSearch<T>(
-  searchbar: string | Ref<F7SearchbarInstance | null>,
-  haystackFunc: (item: T) => string,
-  options: UseSearchOptions = {}
-) {
+export function useSearch<T>(list: Ref<T[]>, searchbar: string | Ref<F7SearchbarInstance | null>, options: UseSearchOptions = {}) {
   const { filtersDefinitions } = options
+
+  let autocompleteSearchbar: Autocomplete.Autocomplete | null = null
+  let inputEl: HTMLInputElement | null = null
+  const fieldAliases: Record<string, string> = Object.fromEntries(
+    Object.entries(filtersDefinitions ?? {})
+      .filter((entry): entry is [string, FilterDefinition & { path: string }] => {
+        const [key, def] = entry
+        return typeof def.path === 'string' && key !== def.path
+      })
+      .map(([key, def]) => [key, def.path])
+  )
+  const haystackFields = options.haystackFields ?? Object.entries(filtersDefinitions ?? {}).map(([key, def]) => def.path ?? key)
+
   const persistedQueryString: Ref<string | null> | null = options.persistSearchStringKey
     ? useStorage(storagePrefix + options.persistSearchStringKey, '', options.persistStorage === 'local' ? localStorage : sessionStorage, {
         flush: 'sync',
@@ -48,29 +61,67 @@ export function useSearch<T>(
       })
     : null
 
-  const keywordCheckers: Record<string, KeywordChecker> = {}
-  Object.entries(filtersDefinitions ?? {}).forEach(([type, definition]) => {
-    const checker = definition.keywordChecker
-    if (!checker) return
-    keywordCheckers[definition.searchbarKeyword ?? type] = checker
-  })
-
-  const { getWildcardRegex, clearCache } = useSearchMatch()
-
   // reactive data
-  const searchString = shallowRef<SearchString>(SearchString.parse(''))
+  // const searchString = shallowRef<SearchString>(SearchString.parse(''))
+  const rawSearchString = shallowRef<string>('')
+  const parsedSearchString = shallowRef(parseAdvancedQueryRobustDeep('', haystackFields, fieldAliases))
   const searchbarRef: Ref<F7SearchbarInstance | null> = typeof searchbar === 'string' ? useTemplateRef(searchbar) : searchbar
   const selectedListFilters = ref<ListFilterSelected>({})
 
   const onSearchbarSearch = useThrottleFn(
     (event: CustomEvent<{ query?: string }>) => {
       const query = event.detail.query ?? ''
-      searchString.value = SearchString.parse(query)
-      selectedListFilters.value = _syncListFilters(searchString.value) || {}
+      rawSearchString.value = query
+      parsedSearchString.value = parseAdvancedQueryRobustDeep(query, haystackFields, fieldAliases)
+      console.log('onSearchbarSearch: parsedSearchString:', parsedSearchString.value)
     },
     300,
     true
   )
+
+  const fuseAvailableKeys = computed(() => {
+    return Object.keys(filtersDefinitions ?? {}).sort()
+  })
+
+  const fuseOptions = computed(() => {
+    const keys = Object.entries(filtersDefinitions ?? {})
+      .filter(([key, def]) => def.path ?? key)
+      .map(([key, def]) => (def.getFn ? { name: def.path ?? key, getFn: def.getFn } : (def.path ?? key)))
+
+    return {
+      keys,
+      useExtendedSearch: true,
+      threshold: 0, // precise search, no fuzzy matching
+      ignoreLocation: true // search anywhere in the string
+    }
+  })
+
+  const fuse = computed(() => {
+    const fuseInstance = new Fuse<T>(list.value, fuseOptions.value)
+    return fuseInstance
+  })
+
+  const searchPlaceholder = computed(() => {
+    if (!filtersDefinitions || window.innerWidth < 900) return 'Search...'
+    const fields = fuseAvailableKeys.value.join(', ')
+    return `Search keywords or field:value (${fields})`
+  })
+
+  const filteredList = computed(() => {
+    return fuse.value.search(parsedSearchString.value).map((item) => {
+      if (options.returnType === 'indices') {
+        return item.refIndex
+      } else {
+        return item.item
+      }
+    })
+  })
+
+  watch(rawSearchString, (newValue: string) => {
+    if (newValue !== inputEl?.value) {
+      searchbarRef?.value?.$el?.f7Searchbar?.search(newValue)
+    }
+  })
 
   // events
   useEventListener(searchbarRef as Ref<F7SearchbarInstance>, 'searchbar:search', (event: Event) => {
@@ -86,8 +137,73 @@ export function useSearch<T>(
 
   // Methods
   function onClearSearch() {
-    searchString.value = SearchString.parse('')
-    clearCache()
+    rawSearchString.value = ''
+  }
+
+  function createAutocompleteSearchbar() {
+    const searchbarElement = searchbarRef?.value?.$el
+    if (!(searchbarElement instanceof HTMLElement)) return null
+
+    inputEl = searchbarElement.querySelector<HTMLInputElement>('input[type="search"]')
+    if (!inputEl) return null
+
+    if (autocompleteSearchbar) {
+      autocompleteSearchbar.destroy()
+      autocompleteSearchbar = null
+    }
+
+    autocompleteSearchbar = f7.autocomplete.create({
+      openIn: 'dropdown',
+      inputEl,
+      // limit: 10,
+      source: autocompleteSource,
+      typeahead: true,
+      updateInputValueOnSelect: false,
+      on: {
+        change: (value) => {
+          console.log('autocomplete change event, value:', value)
+          if (!value) return
+
+          const cursorPosition = inputEl?.selectionStart ?? value.length
+          const newText = applySuggestion(
+            rawSearchString.value,
+            (value[0] as string) ?? '',
+            getAutocompleteContext(rawSearchString.value, cursorPosition),
+            cursorPosition
+          )
+          console.log('autocomplete change event, newText:', newText)
+          rawSearchString.value = newText ?? ''
+        }
+      }
+    })
+  }
+
+  function destroyAutocompleteSearchbar() {
+    if (!autocompleteSearchbar) return
+
+    autocompleteSearchbar.destroy()
+    autocompleteSearchbar = null
+  }
+
+  function autocompleteSource(query: string, render: (suggestions: string[]) => void) {
+    let suggestions: string[] = []
+    const cursorPosition = inputEl?.selectionStart ?? query.length
+
+    if (query.length === 0) {
+      render(suggestions)
+      return
+    }
+
+    const context = getAutocompleteContext(query, cursorPosition)
+    if (context.type === 'field') {
+      suggestions = fuseAvailableKeys.value.filter((f) => f.startsWith(context.query.toLowerCase())).map((f) => `${f}:`)
+    } else if (context.type === 'value' && context.field && !filtersDefinitions?.[context.field]?.hideOptions) {
+      const predefinedValues = getUniqueValuesForField(fuse.value, fieldAliases[context.field] ?? context.field)
+      suggestions = predefinedValues.filter((v) => v.indexOf(context.query.toLowerCase()) >= 0)
+    }
+
+    // Render items by passing array with result items
+    render(suggestions)
   }
 
   function restoreSearchbarQuery() {
@@ -103,7 +219,7 @@ export function useSearch<T>(
   function persistSearchbarQuery() {
     const key = options.persistSearchStringKey
     if (!key) return
-    const toPersist = searchString.value.toString()
+    const toPersist = rawSearchString.value
     const hasValue = !!toPersist && toPersist !== ''
     console.log('Persisting search string for key: ' + key, toPersist)
     if (options.persistSearchStringKey && persistedQueryString) {
@@ -111,99 +227,11 @@ export function useSearch<T>(
     }
   }
 
-  /**
-   * Checks if a string or array of strings matches a search pattern, supporting wildcards and exact match. Utility function for keyword checkers.
-   *
-   * - If the search string starts with '=', it is treated as an exact match (converted to a regex that matches the whole string).
-   * - Otherwise, the search string is treated as a wildcard pattern (case-insensitive).
-   * - If the regex is invalid, falls back to case-insensitive string comparison.
-   *
-   * @param value The string or array of strings to test.
-   * @param search The search pattern or string. If it starts with '=', matches exactly.
-   * @returns True if any value matches the search pattern, false otherwise.
-   */
-  function searchValue(value: string[] | string | null, search: string): boolean {
-    if (!value) return false
-    const regex = getWildcardRegex(search)
-    if (!regex) return false
-    if (Array.isArray(value)) {
-      return value.some((item) => regex.test(item))
-    } else {
-      return regex.test(value)
-    }
-  }
-
-  function matchCondition<T>(item: T, condition: Condition): boolean {
-    if (!condition.value || !keywordCheckers) return true
-
-    const checker = keywordCheckers[condition.keyword]
-    if (!checker) return true // unknown keyword, ignore
-    const result = checker(item, condition.value)
-    return condition.negated ? !result : result
-  }
-
-  function matchConditions<T>(item: T, conditions: Condition[]): boolean {
-    return conditions.every((condition) => matchCondition(item, condition))
-  }
-
-  function matchText(text: string, searchText: { text: string; negated: boolean }[]): boolean {
-    return searchText.every(({ text: search, negated }) => {
-      const regex = getWildcardRegex(search)
-      const result = regex ? regex.test(text) : text.toLowerCase() === search.toLowerCase()
-      return negated ? !result : result
-    })
-  }
-
-  /**
-   * Filters and searches an array of items using advanced keyword and text search logic. Used by components to filter lists
-   *
-   * @template T The type of items in the array.
-   * @param searchString The parsed search string (from search-string) containing conditions and text segments.
-   * @param items The array of items to search.
-   * @param getItemText Function to extract a searchable string from each item.
-   * @param returnType Determines the return type: 'items' (default) returns matching items, 'indices' returns their indices.
-   * @returns An array of matching items or their indices, depending on returnType.
-   *
-   * @overload
-   * @param returnType 'items' — returns T[]
-   * @returns {T[]}
-   *
-   * @overload
-   * @param returnType 'indices' — returns number[]
-   * @returns {number[]}
-   *
-   * @example
-   * // Returns matching items
-   * search(searchString, items, getItemText, 'items')
-   * // Returns indices of matching items
-   * search(searchString, items, getItemText, 'indices')
-   */
-  function search(items: T[], returnType: 'items'): T[]
-  function search(items: T[], returnType: 'indices'): number[]
-  function search(items: T[], returnType: 'items' | 'indices' | 'count' = 'items'): (T | number)[] {
-    const searchConditions = searchString.value.getConditionArray()
-    const searchText = searchString.value.getTextSegments()
-
-    const matches: (T | number)[] = []
-    items.forEach((item, idx) => {
-      let match = true
-      match = matchConditions(item, searchConditions)
-      if (!match) return
-
-      if (haystackFunc) {
-        const haystack = haystackFunc(item)
-        match = matchText(haystack, searchText)
-        if (!match) return
-      }
-
-      matches.push(returnType === 'items' ? item : idx)
-    })
-
-    return matches
-  }
-
   // when the search bar is updated, this will try to sync the list-filters with the search query so that the filter chips reflect the search query, used by components with list-filters and search bar, e.g. things-list and items-list-vlist
-  function _syncListFilters(searchString: SearchString) {
+  // function _syncListFilters(earchString: SearchString) {
+  function _syncListFilters() {
+    /*
+    const searchString = searchString.value
     if (!filtersDefinitions) return
     const conditions = searchString.getConditionArray()
     const selectedListFilters: ListFilterSelected = {}
@@ -240,9 +268,11 @@ export function useSearch<T>(
     })
 
     return selectedListFilters
+    */
   }
 
   function _syncSearchString() {
+    /*
     if (!filtersDefinitions || !selectedListFilters.value) return
 
     if (Object.keys(selectedListFilters.value).length === 0) {
@@ -274,15 +304,19 @@ export function useSearch<T>(
     })
 
     searchbarRef?.value?.$el?.f7Searchbar?.search(searchString.value.toString())
+    */
   }
 
   return {
-    searchString, // searchString is the parsed search string of type SearchString, which contains the conditions and text segments of the search query.
+    rawSearchString,
+    parsedSearchString,
     selectedListFilters,
-    search, // search takes an array of items and returns the items or their indices that match the search criteria.
-    searchValue,
+    filteredList,
     onUpdateSelectedListFilters,
     persistSearchbarQuery,
-    restoreSearchbarQuery
+    restoreSearchbarQuery,
+    createAutocompleteSearchbar,
+    destroyAutocompleteSearchbar,
+    searchPlaceholder
   }
 }

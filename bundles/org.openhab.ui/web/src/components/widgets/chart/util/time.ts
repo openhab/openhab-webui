@@ -6,6 +6,9 @@ import { ChartType, type Period } from '@/types/components/widgets'
 dayjs.extend(IsoWeek)
 dayjs.extend(DayDuration)
 
+console.log('dayjs LLLL format: ', dayjs().format('LLLL'))
+console.log('dayjs llll format: ', dayjs().format('llll'))
+
 /**
  * Maps a chart type to a dayjs unit.
  * @param chartType
