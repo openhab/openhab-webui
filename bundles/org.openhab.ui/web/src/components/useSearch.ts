@@ -62,7 +62,6 @@ export function useSearch<T>(list: Ref<T[]>, searchbar: string | Ref<F7Searchbar
     : null
 
   // reactive data
-  // const searchString = shallowRef<SearchString>(SearchString.parse(''))
   const rawSearchString = shallowRef<string>('')
   const parsedSearchString = shallowRef(parseAdvancedQueryRobustDeep('', haystackFields, fieldAliases))
   const searchbarRef: Ref<F7SearchbarInstance | null> = typeof searchbar === 'string' ? useTemplateRef(searchbar) : searchbar
@@ -73,7 +72,7 @@ export function useSearch<T>(list: Ref<T[]>, searchbar: string | Ref<F7Searchbar
       const query = event.detail.query ?? ''
       rawSearchString.value = query
       parsedSearchString.value = parseAdvancedQueryRobustDeep(query, haystackFields, fieldAliases)
-      console.log('onSearchbarSearch: parsedSearchString:', parsedSearchString.value)
+      console.debug('onSearchbarSearch: parsedSearchString:', parsedSearchString.value)
     },
     300,
     true
@@ -161,7 +160,7 @@ export function useSearch<T>(list: Ref<T[]>, searchbar: string | Ref<F7Searchbar
       updateInputValueOnSelect: false,
       on: {
         change: (value) => {
-          console.log('autocomplete change event, value:', value)
+          console.debug('autocomplete change event, value:', value)
           if (!value) return
 
           const cursorPosition = inputEl?.selectionStart ?? value.length
@@ -171,7 +170,7 @@ export function useSearch<T>(list: Ref<T[]>, searchbar: string | Ref<F7Searchbar
             getAutocompleteContext(rawSearchString.value, cursorPosition),
             cursorPosition
           )
-          console.log('autocomplete change event, newText:', newText)
+          console.debug('autocomplete change event, newText:', newText)
           rawSearchString.value = newText ?? ''
         }
       }

@@ -76,7 +76,7 @@ export function parseAdvancedQueryRobustDeep(
   fieldAliases?: Record<string, string>
 ): Record<string, any> | string {
   const tokens = sanitizeParenthesesAndTokenize(queryString) // Using the balancer from the previous step
-  console.log('Tokens after sanitization:', tokens) // Debugging output to verify tokenization
+  console.debug('Tokens after sanitization:', tokens) // Debugging output to verify tokenization
   let index = 0
 
   function parseExpression(): Record<string, any> | null {
@@ -158,7 +158,7 @@ interface AutocompleteContext {
 export function getAutocompleteContext(text: string, cursorPosition: number): AutocompleteContext {
   if (!text) return { type: 'field', query: '' }
 
-  console.log('getAutocompleteContext: text:', text, 'cursorPosition:', cursorPosition)
+  console.debug('getAutocompleteContext: text:', text, 'cursorPosition:', cursorPosition)
 
   const left = text.slice(0, cursorPosition).search(/\S+$/)
   const right = text.slice(cursorPosition).search(/\s/)
