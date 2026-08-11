@@ -13,7 +13,7 @@
           ref="searchbar"
           class="searchbar-items"
           custom-search
-          :placeholder="searchbarPlaceholder"
+          :placeholder="searchPlaceholder"
           :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
@@ -80,7 +80,7 @@
 
       <f7-col v-if="ready && items.length > 0">
         <f7-block-title class="no-margin-top">
-          <span>{{ getListTitle(searchString.toString().length !== 0, filteredList.length, items.length, 'Item', selected.length) }}</span>
+          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, items.length, 'Item', selected.length) }}</span>
           <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
@@ -179,7 +179,7 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, ref } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -207,80 +207,101 @@ export default {
     EmptyStatePlaceholder
   },
   setup() {
+    const items = ref([])
+
     const filtersDefinitions = {
-      kind: {
+      is: {
         label: 'Kind',
-        options: { editable: 'Editable', readonly: 'Non-editable' },
         singleSelect: true,
-        searchbarKeyword: 'is',
-        keywordChecker: (item, value) => (value.toLowerCase() == 'editable' ? !!item.editable : !item.editable)
+        getFn: (item) => (item.editable ? 'editable' : 'readonly')
+      },
+      name: {
+        label: 'Name',
+        path: 'name',
+        hideOptions: true
+      },
+      label: {
+        label: 'Label',
+        path: 'label',
+        hideOptions: true
       },
       type: {
         label: 'Item Type',
         options: Object.fromEntries(Types.ItemTypes.map((type) => [type.toLowerCase(), type])),
-        keywordChecker: (item, value) => searchValue(item.type, value) || (item.type === 'Group' && searchValue(item.groupType, value))
+        path: 'type', // TODO
+        getFn: (item) => item.type + (item.type === 'Group' ? ' ' + item.groupType : '')
       },
       group: {
         label: 'Group',
         options: {},
         advanced: true,
-        keywordChecker: (item, value) => searchValue(item.groupNames, value)
+        path: 'groupNames'
       },
       tag: {
         label: 'Tag',
         options: {},
         advanced: true,
-        keywordChecker: (item, value) => searchValue(item.tags, value)
+        path: 'tags'
       },
       state: {
         label: 'State',
         options: {},
         advanced: true,
-        keywordChecker: (item, value) => searchValue(item.state + ' ' + item.displayState, value)
+        path: 'state', // TODO
+        hideOptions: true,
+        getFn: (item) => item.state + (item.displayState ? ' ' + item.displayState : '')
       },
       unit: {
         label: 'Unit',
         options: {},
         advanced: true,
-        keywordChecker: (item, value) => searchValue(item.unitSymbol, value)
+        path: 'unitSymbol'
       },
       semantics: {
         label: 'Semantics',
         options: {},
         advanced: true,
-        keywordChecker: (item, value) => searchValue(item.metadata?.semantics?.value, value)
+        path: 'metadata.semantics.value',
+        getFn: (item) => (item.metadata?.semantics?.value ? item.metadata.semantics.value.split('_') : [])
       },
       metadata: {
         label: 'Metadata',
         options: {},
         advanced: true,
-        keywordChecker: (item, value) => (item.metadata ? searchValue(Object.keys(item.metadata), value) : false)
+        path: 'metadata',
+        getFn: (item) => (item.metadata ? Object.keys(item.metadata) : [])
       }
     }
 
-    const haystackFunc = (item) => [item.name, item.label, getItemTypeAndMetaLabel(item)].join(' ').toLowerCase()
-
     const {
-      search,
-      searchString,
-      searchValue,
+      rawSearchString,
+      filteredList,
       selectedListFilters,
       onUpdateSelectedListFilters,
       persistSearchbarQuery,
-      restoreSearchbarQuery
-    } = useSearch('searchbar', haystackFunc, {
+      restoreSearchbarQuery,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
+    } = useSearch(items, 'searchbar', {
+      returnType: 'indices',
       filtersDefinitions,
-      persistSearchStringKey: 'items-query'
+      persistSearchStringKey: 'items-query',
+      haystackFields: ['name', 'label', 'type'], // TODO getItemTypeAndMetaLabel
+      fieldAliases: { semantics: 'metadata.semantics.value', unit: 'unitSymbol' }
     })
 
     return {
       f7,
       theme,
+      items,
       filtersDefinitions,
+      filteredList,
       selectedListFilters,
-      search,
-      searchString,
-      searchValue,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder,
+      rawSearchString,
       onUpdateSelectedListFilters,
       persistSearchbarQuery,
       restoreSearchbarQuery,
@@ -294,7 +315,6 @@ export default {
       ready: false,
       initSearchbar: false,
       loading: false,
-      items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       vlData: {
         items: []
       },
@@ -304,7 +324,6 @@ export default {
         renderExternal: this.renderExternal,
         height: this.height
       },
-      filteredList: [],
       selected: [],
       showCheckboxes: false,
       eventSource: null
@@ -316,6 +335,7 @@ export default {
       this.restoreSearchbarQuery()
     },
     onPageBeforeOut(event) {
+      this.destroyAutocompleteSearchbar()
       this.stopEventSource()
       this.persistSearchbarQuery()
     },
@@ -331,26 +351,6 @@ export default {
           return labelA.localeCompare(labelB)
         })
 
-        const { tagSet, unitSet, semanticsSet, groupSet, metadataSet } = this.items.reduce(
-          (acc, item) => {
-            if (item.metadata) console.log('item', Object.keys(item.metadata))
-            if (item.tags) item.tags.forEach((tag) => acc.tagSet.add(tag))
-            if (item.unitSymbol) acc.unitSet.add(item.unitSymbol)
-            if (item.metadata?.semantics?.value) item.metadata.semantics.value.split('_').forEach((sem) => acc.semanticsSet.add(sem))
-            if (item.groupNames) item.groupNames.forEach((group) => acc.groupSet.add(group))
-            if (item.metadata) Object.keys(item.metadata).forEach((metadata) => acc.metadataSet.add(metadata))
-            return acc
-          },
-          { tagSet: new Set(), unitSet: new Set(), semanticsSet: new Set(), groupSet: new Set(), metadataSet: new Set() }
-        )
-        this.filtersDefinitions.tag.options = Object.fromEntries([...tagSet].sort().map((tag) => [tag.toLowerCase(), tag]))
-        this.filtersDefinitions.unit.options = Object.fromEntries([...unitSet].sort().map((unit) => [unit.toLowerCase(), unit]))
-        this.filtersDefinitions.semantics.options = Object.fromEntries([...semanticsSet].sort().map((sem) => [sem.toLowerCase(), sem]))
-        this.filtersDefinitions.group.options = Object.fromEntries([...groupSet].sort().map((group) => [group.toLowerCase(), group]))
-        this.filtersDefinitions.metadata.options = Object.fromEntries(
-          [...metadataSet].sort().map((metadata) => [metadata.toLowerCase(), metadata])
-        )
-
         this.initSearchbar = true
         this.loading = false
 
@@ -358,8 +358,9 @@ export default {
         this.ready = true
 
         nextTick(() => {
+          this.destroyAutocompleteSearchbar()
+          this.createAutocompleteSearchbar()
           this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
-          this.updateListedItems()
 
           const searchbar = this.$refs.searchbar?.$el.f7Searchbar
           if (this.$device.desktop && searchbar) {
@@ -479,30 +480,17 @@ export default {
           console.error(err)
           f7.dialog.alert('An error occurred while deleting: ' + err)
         })
-    },
-    updateListedItems() {
-      this.$nextTick(() => {
-        this.filteredList = this.$refs.itemsList.$el.f7VirtualList.filteredItems || this.$refs.itemsList.$el.f7VirtualList.items || []
-      })
     }
   },
   watch: {
-    ready() {
-      this.updateListedItems()
-    },
-    searchString: {
-      handler() {
-        const matches = this.search(this.items, 'indicies')
-        this.$refs.itemsList?.$el.f7VirtualList.filterItems(matches)
-        this.updateListedItems()
-      },
-      deep: true
+    filteredList(matches) {
+      const f7VirtualList = this.$refs.itemsList?.$el.f7VirtualList
+      if (!f7VirtualList) return
+
+      f7VirtualList.filterItems(matches)
     }
   },
   computed: {
-    searchbarPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
-    },
     allSelected() {
       return this.selected.length >= this.filteredList.length && this.filteredList.length > 0
     },

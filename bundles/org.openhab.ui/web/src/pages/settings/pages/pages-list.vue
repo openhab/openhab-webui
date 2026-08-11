@@ -78,7 +78,7 @@
 
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
-          <span>{{ getListTitle(searchString.toString().length !== 0, filteredList.length, pages.length, 'Page', selection.length) }}</span>
+          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, pages.length, 'Page', selection.length) }}</span>
           <template v-if="showCheckboxes && pageUids.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
@@ -186,7 +186,7 @@
 </template>
 
 <script>
-import { nextTick, toRaw } from 'vue'
+import { nextTick, toRaw, ref } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
@@ -199,20 +199,6 @@ import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 import ListFilter from '@/components/util/list-filter.vue'
 
-const ITEM_KINDS = {
-  editable: 'Editable',
-  readonly: 'Non-editable'
-}
-
-const PAGE_TYPE_OPTIONS = {
-  layout: 'Layout',
-  home: 'Home',
-  tabs: 'Tabbed',
-  map: 'Map',
-  plan: 'Floor plan',
-  chart: 'Chart'
-}
-
 export default {
   components: {
     ListFilter
@@ -222,81 +208,73 @@ export default {
   },
   setup() {
     const runtimeStore = useRuntimeStore()
-
-    const componentsCache = new Map()
+    const pages = ref([])
 
     const filtersDefinitions = {
-      kind: {
+      is: {
         label: 'Kind',
-        options: { ...ITEM_KINDS },
         singleSelect: true,
-        searchbarKeyword: 'is',
-        keywordChecker: (page, value) => (value.toLowerCase() == 'editable' ? !!page.editable : !page.editable)
+        getFn: (page) => (page.editable ? 'editable' : 'readonly')
+      },
+      label: {
+        label: 'Label',
+        hideOptions: true,
+        path: 'config.label'
+      },
+      uid: {
+        label: 'UID',
+        hideOptions: true
       },
       type: {
         label: 'Type',
-        options: { ...PAGE_TYPE_OPTIONS },
-        keywordChecker: (page, value) => getPageType(page).type === value
+        getFn: (page) => getPageType(page).type
       },
       tag: {
         label: 'Tag',
-        options: {},
-        keywordChecker: (page, value) => searchValue(page.tags, value)
+        path: 'tags'
       },
       visible: {
         label: 'Visible to',
-        options: {},
         advanced: true,
-        keywordChecker: (page, value) => searchValue(page.config?.visibleTo || [], value)
+        path: 'config.visibleTo'
       },
       component: {
-        title: 'Component',
+        label: 'Component',
         advanced: true,
-        keywordChecker: (page, value) => {
-          let componentsInPage = componentsCache.get(page.uid)
-          if (!componentsInPage) {
-            componentsInPage = findElementsInObject(toRaw(page), 'component')
-            componentsCache.set(page.uid, componentsInPage)
-          }
-          return searchValue(componentsInPage, value)
-        }
+        getFn: (page) => findElementsInObject(toRaw(page), 'component')
       }
     }
 
-    const haystackFunc = (page) => {
-      const searchFields = [
-        page.config?.label,
-        page.uid,
-        getPageType(page)?.label,
-        ...(page.tags || []),
-        ...(page.config?.visibleTo || []).map((role) => role)
-      ]
-      return searchFields.filter(Boolean).join(' ').toLowerCase()
-    }
-
     const {
-      search,
-      searchString,
-      searchValue,
+      rawSearchString,
+      filteredList,
       selectedListFilters,
       onUpdateSelectedListFilters,
       persistSearchbarQuery,
-      restoreSearchbarQuery
-    } = useSearch('searchbar', haystackFunc, { filtersDefinitions, persistSearchStringKey: 'pages-query' })
-
+      restoreSearchbarQuery,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
+    } = useSearch(pages, 'searchbar', {
+      filtersDefinitions,
+      persistSearchStringKey: 'pages-query',
+      haystackFields: ['uid', 'label', 'tag']
+    })
     return {
       theme,
       runtimeStore,
+      pages,
       filtersDefinitions,
-      search,
-      searchString,
-      searchValue,
+      filteredList,
+      rawSearchString,
       selectedListFilters,
       onUpdateSelectedListFilters,
       persistSearchbarQuery,
       restoreSearchbarQuery,
       getListTitle,
-      componentsCache
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
     }
   },
   data() {
@@ -304,7 +282,6 @@ export default {
       ready: false,
       initSearchbar: false,
       loading: false,
-      pages: [],
       selected: [],
       showCheckboxes: false
     }
@@ -317,9 +294,6 @@ export default {
       set(value) {
         this.runtimeStore.pagesGroupOrder = value
       }
-    },
-    filteredList() {
-      return this.search(this.pages)
     },
     indexedPages() {
       if (this.groupBy === 'alphabetical') {
@@ -347,9 +321,6 @@ export default {
           }, {})
       }
     },
-    searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
-    },
     allSelected() {
       return this.pageUids.length > 0 && this.pageUids.every((uid) => this.selected.includes(uid))
     },
@@ -366,6 +337,7 @@ export default {
       this.restoreSearchbarQuery()
     },
     onPageBeforeOut() {
+      this.destroyAutocompleteSearchbar()
       this.persistSearchbarQuery()
     },
     async load() {
@@ -376,7 +348,6 @@ export default {
       this.pages = []
       this.selected = []
       this.showCheckboxes = false
-      this.componentsCache.clear()
       await this.$oh.api
         .get('/rest/ui/components/ui:page')
         .then((data) => {
@@ -403,6 +374,8 @@ export default {
           this.ready = true
 
           nextTick(() => {
+            this.destroyAutocompleteSearchbar()
+            this.createAutocompleteSearchbar()
             if (this.$refs.listIndex) this.$refs.listIndex.update()
             const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
             if (this.$device.desktop && searchbar) {

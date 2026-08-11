@@ -91,9 +91,7 @@
     <f7-block class="block-narrow">
       <f7-col v-show="ready">
         <f7-block-title>
-          <span>{{
-            getListTitle(searchString.toString().length !== 0, filteredList.length, things.length, 'Thing', selected.length)
-          }}</span>
+          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, things.length, 'Thing', selected.length) }}</span>
           <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
@@ -235,7 +233,7 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, shallowRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -274,72 +272,76 @@ export default {
     ClipboardIcon
   },
   setup() {
-    function statusKeywordChecker(thing, value) {
-      const haystack = (thing.statusInfo.status + thing.statusInfo.statusDetail + thingStatusBadgeText(thing.statusInfo)).toLowerCase()
-      if (value === 'others') {
-        const thingStatus = thingStatusBadgeText(thing.statusInfo).toLowerCase()
-        const knownStatuses = 'online,offline,disabled,uninitialized,unknown'
-        return knownStatuses.indexOf(thingStatus) > 0 ? false : true
-      }
-      return searchValue(haystack, value)
-    }
+    const things = shallowRef([])
 
     const filtersDefinitions = {
-      kind: {
+      is: {
         label: 'Kind',
-        options: { editable: 'Editable', readonly: 'Non-editable' },
         singleSelect: true,
-        searchbarKeyword: 'is',
-        keywordChecker: (thing, value) => (value.toLowerCase() == 'editable' ? !!thing.editable : !thing.editable)
+        getFn: (thing) => (thing.editable ? 'editable' : 'readonly')
+      },
+      uid: {
+        label: 'UID',
+        path: 'UID'
+      },
+      label: {
+        label: 'Label',
+        path: 'label',
+        hideOptions: true
       },
       status: {
         label: 'Status',
-        options: ITEM_STATUSES,
-        keywordChecker: statusKeywordChecker
+        path: 'statusInfo.status'
       },
       location: {
         label: 'Location',
         options: {},
         advanced: true,
-        keywordChecker: (thing, value) => searchValue(thing.location, value)
+        path: 'location'
       },
       binding: {
         label: 'Binding',
         options: {},
+        path: 'thingTypeUID',
         advanced: true,
-        keywordChecker: (thing, value) => searchValue(thing.thingTypeUID.split(':')[0], value)
+        getFn: (thing) => thing.thingTypeUID.split(':')[0]
       }
     }
 
-    const haystackFunc = (thing) => {
-      return [thing.UID, thing.label, thing.location].join(' ').toLowerCase()
-    }
-
     const {
-      search,
-      searchString,
-      searchValue,
+      rawSearchString,
+      filteredList,
       selectedListFilters,
       onUpdateSelectedListFilters,
       persistSearchbarQuery,
-      restoreSearchbarQuery
-    } = useSearch('searchbar', haystackFunc, { filtersDefinitions, persistSearchStringKey: 'things-query' })
+      restoreSearchbarQuery,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
+    } = useSearch(things, 'searchbar', {
+      filtersDefinitions,
+      persistSearchStringKey: 'things-query',
+      haystackFields: ['UID', 'label', 'location']
+    })
 
     return {
       f7,
       theme,
-      selectedListFilters,
+      things,
       filtersDefinitions,
-      search,
-      searchString,
-      searchValue,
+      filteredList,
+      selectedListFilters,
+      rawSearchString,
       onUpdateSelectedListFilters,
       thingStatusBadgeColor,
       thingStatusBadgeText,
       thingStatusDescription,
       persistSearchbarQuery,
       restoreSearchbarQuery,
-      getListTitle
+      getListTitle,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
     }
   },
   data() {
@@ -347,7 +349,6 @@ export default {
       ready: false,
       initSearchbar: false,
       loading: false,
-      things: [],
       inbox: [],
       selected: [],
       showCheckboxes: false,
@@ -363,10 +364,7 @@ export default {
   },
   computed: {
     emptySearchOrFilterResults() {
-      return (this.searchString || this.$refs['list-filter']?.filtered) && !this.filteredList.length && this.things.length
-    },
-    filteredList() {
-      return this.search(this.things)
+      return (this.rawSearchString || this.$refs['list-filter']?.filtered) && !this.filteredList.length && this.things.length
     },
     listedUids() {
       return new Set(this.filteredList.map((t) => t.UID))
@@ -431,14 +429,12 @@ export default {
     allSelected() {
       return this.selected.length >= this.filteredList.length && this.filteredList.length > 0
     },
-    searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
-    },
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
     async onPageAfterIn() {
       await this.load()
+
       if (this.searchFor) {
         this.$refs.searchbar.$el.f7Searchbar.search(this.searchFor)
       } else {
@@ -446,6 +442,7 @@ export default {
       }
     },
     onPageBeforeOut() {
+      this.destroyAutocompleteSearchbar()
       this.stopEventSource()
       this.persistSearchbarQuery()
     },
@@ -457,22 +454,12 @@ export default {
       await this.$oh.api.get('/rest/things?summary=true').then((data) => {
         this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
 
-        const { locationSet, bindingSet } = this.things.reduce(
-          (acc, thing) => {
-            console.log('thing', thing)
-            if (thing.location) acc.locationSet.add(thing.location)
-            if (thing.thingTypeUID) acc.bindingSet.add(thing.thingTypeUID.split(':')[0])
-            return acc
-          },
-          { locationSet: new Set(), bindingSet: new Set() }
-        )
-        this.filtersDefinitions.location.options = Object.fromEntries([...locationSet].sort().map((loc) => [loc.toLowerCase(), loc]))
-        this.filtersDefinitions.binding.options = Object.fromEntries([...bindingSet].sort().map((bind) => [bind.toLowerCase(), bind]))
-
         this.initSearchbar = true
         this.loading = false
         this.ready = true
         nextTick(() => {
+          this.destroyAutocompleteSearchbar()
+          this.createAutocompleteSearchbar()
           if (this.$refs.listIndex) this.$refs.listIndex.update()
           const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
           if (this.$device.desktop && searchbar) {
@@ -591,6 +578,7 @@ export default {
           } else {
             switch (topicParts[3]) {
               case 'status':
+                // console.log('Received status update for thing', topicParts[2], 'with payload', event.payload)
                 const updatedThing = this.things.find((t) => t.UID === topicParts[2])
                 const newStatus = JSON.parse(event.payload)
                 if (updatedThing) {

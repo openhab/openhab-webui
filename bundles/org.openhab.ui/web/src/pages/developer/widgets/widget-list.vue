@@ -7,7 +7,13 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <f7-searchbar v-if="initSearchbar" ref="searchbar" class="searchbar-widgets" custom-search :disable-button="!theme.aurora" />
+        <f7-searchbar
+          v-if="initSearchbar"
+          ref="searchbar"
+          class="searchbar-widgets"
+          custom-search
+          :placeholder="searchPlaceholder"
+          :disable-button="!theme.aurora" />
       </f7-subnavbar>
     </f7-navbar>
 
@@ -57,9 +63,7 @@
 
       <f7-col v-if="ready">
         <f7-block-title>
-          <span>{{
-            getListTitle(searchString.toString().length !== 0, filteredList.length, widgets.length, 'Widget', selected.length)
-          }}</span>
+          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, widgets.length, 'Widget', selected.length) }}</span>
           <template v-if="showCheckboxes && filteredList.length">
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
@@ -120,7 +124,7 @@
 
 <script>
 import { f7, theme } from 'framework7-vue'
-import { nextTick, toRaw } from 'vue'
+import { nextTick, toRaw, ref } from 'vue'
 import { showToast } from '@/js/dialog-promises'
 
 import copyToClipboard from '@/js/clipboard'
@@ -144,71 +148,65 @@ export default {
     f7router: Object
   },
   setup() {
-    const componentsCache = new Map()
+    const widgets = ref([])
     const filtersDefinitions = {
-      kind: {
+      is: {
         label: 'Kind',
-        options: { ...ITEM_KINDS },
         singleSelect: true,
-        searchbarKeyword: 'is',
-        keywordChecker: (widget, value) => {
-          const _value = value.toLowerCase()
-          if (_value === 'editable') return widget.editable === true
-          if (_value === 'non-editable') return widget.editable === false && !widget.tags?.some((t) => t.startsWith('marketplace:'))
-          if (_value === 'marketplace') return widget.tags?.some((t) => t.startsWith('marketplace:'))
-          return false
-        }
+        getFn: (widget) =>
+          widget.editable === true ? 'editable' : widget.tags?.some((t) => t.startsWith('marketplace:')) ? 'marketplace' : 'readonly'
+      },
+      uid: {
+        label: 'UID',
+        hideOptions: true
       },
       tag: {
         label: 'Tag',
-        options: {},
-        keywordChecker: (widget, value) => searchValue(widget.tags, value)
+        path: 'tags'
       },
       title: {
         title: 'Title',
         advanced: true,
-        keywordChecker: (widget, value) => searchValue(widget.config?.title, value)
+        hideOptions: true,
+        path: 'config.title'
       },
       component: {
-        title: 'Component',
+        label: 'Component',
         advanced: true,
-        keywordChecker: (widget, value) => {
-          let componentsInWidget = componentsCache.get(widget.uid)
-          if (!componentsInWidget) {
-            componentsInWidget = findElementsInObject(toRaw(widget), 'component')
-            componentsCache.set(widget.uid, componentsInWidget)
-          }
-          return searchValue(componentsInWidget, value)
-        }
+        getFn: (widget) => findElementsInObject(toRaw(widget), 'component')
       }
     }
 
-    const haystackFunc = (widget) => {
-      return [widget.uid, ...(widget.tags || []), widget.config?.title].join(' ').toLocaleLowerCase()
-    }
-
     const {
-      search,
-      searchString,
-      searchValue,
+      rawSearchString,
+      filteredList,
       selectedListFilters,
       onUpdateSelectedListFilters,
       persistSearchbarQuery,
-      restoreSearchbarQuery
-    } = useSearch('searchbar', haystackFunc, { filtersDefinitions, persistSearchStringKey: 'widgets-query' })
+      restoreSearchbarQuery,
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
+    } = useSearch(widgets, 'searchbar', {
+      filtersDefinitions,
+      persistSearchStringKey: 'widgets-query',
+      haystackFields: ['uid', 'tags', 'title']
+    })
 
     return {
       theme,
+      widgets,
       filtersDefinitions,
-      search,
-      searchString,
-      searchValue,
+      rawSearchString,
+      filteredList,
       selectedListFilters,
       onUpdateSelectedListFilters,
       persistSearchbarQuery,
       restoreSearchbarQuery,
       getListTitle,
-      componentsCache
+      createAutocompleteSearchbar,
+      destroyAutocompleteSearchbar,
+      searchPlaceholder
     }
   },
   data() {
@@ -216,7 +214,6 @@ export default {
       ready: false,
       loading: false,
       nowidgetEngine: false,
-      widgets: [],
       selected: [],
       initSearchbar: false,
       showCheckboxes: false,
@@ -224,9 +221,6 @@ export default {
     }
   },
   computed: {
-    filteredList() {
-      return this.search(this.widgets)
-    },
     allSelected() {
       return this.selected.length >= this.filteredList.length && this.filteredList.length > 0
     }
@@ -237,12 +231,12 @@ export default {
       this.restoreSearchbarQuery()
     },
     onPageBeforeOut() {
+      this.destroyAutocompleteSearchbar()
       this.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
       this.loading = true
-      this.componentsCache.clear()
       await this.$oh.api.get('/rest/ui/components/ui:widget').then((data) => {
         this.widgets = data.sort((a, b) => {
           return a.uid.localeCompare(b.uid)
@@ -261,6 +255,8 @@ export default {
         this.loading = false
         this.ready = true
         nextTick(() => {
+          this.destroyAutocompleteSearchbar()
+          this.createAutocompleteSearchbar()
           const searchbar = this.$refs.searchbar?.$el.f7Searchbar
           if (this.$device.desktop && searchbar) {
             searchbar.$inputEl[0].focus()
