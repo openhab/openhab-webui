@@ -3,15 +3,49 @@ import { getAccessToken, getTokenInCustomHeader, getBasicCredentials } from './a
 import type { ItemState } from '../stores/useStatesStore'
 
 /**
- * An EventSource that is extended with a keepalive/heartbeat mechanism.
+ * A logical Server-Sent Events (SSE) connection handle that tracks the underlying EventSource instance and reconnection/keepalive states.
  */
-export interface KeepaliveEventSource extends EventSource {
-  keepaliveTimer?: number
+export interface SSEConnection {
+  /**
+   * The fully resolved absolute URL of the connection endpoint.
+   */
+  readonly url: string
+  /**
+   * The current underlying EventSource instance used by this logical connection.
+   * Updated automatically when a reconnection occurs.
+   */
+  currentEventSource: EventSource | null
+  /**
+   * A flag indicating whether this connection has been explicitly closed.
+   * If true, it prevents further reconnection attempts and ignores any pending timer callbacks or stream events.
+   */
+  closed: boolean
+  /**
+   * The timeout job ID for the schedules reconnection attempt.
+   * Used to cancel pending reconnects when the connection is explicitly closed.
+   * Only present if the underlying EventSource connection has been lost.
+   */
+  reconnectTimeout: number | null
+  /**
+   * The timeout job ID for the active keepalive/heartbeat timer.
+   * Used to track if the server stops sending heartbeat signals.
+   * Only present if the server sent a {@code alive} heartbeat message.
+   */
+  keepaliveTimer: number | null
+  /**
+   * Establishes or resets the keepalive/heartbeat timer.
+   * Starts a timer for <code>seconds + 2</code> seconds, triggering the heartbeat callback with `false` if no heartbeat is received before the timer expires.
+   *
+   * @param seconds the heartbeat interval in seconds
+   */
   setKeepalive: (seconds?: number) => void
+  /**
+   * Clears the active keepalive/heartbeat timer and clear the timeout job ID.
+   */
   clearKeepalive: () => void
 }
 
-let openSSEClients: KeepaliveEventSource[] = []
+let openSSEClients: SSEConnection[] = []
 
 type ReadyCallback = (data: string) => void
 type MessageCallback = (data: any) => void
@@ -28,12 +62,38 @@ function newSSEConnection(
   messageCallback: MessageCallback,
   errorCallback: ErrorCallback,
   heartbeatCallback: HeartbeatCallback | undefined
-): KeepaliveEventSource {
-  let eventSource: KeepaliveEventSource
+): SSEConnection {
   let reconnectSeconds = 1
 
+  const connection: SSEConnection = {
+    url: '',
+    currentEventSource: null,
+    closed: false,
+    reconnectTimeout: null,
+    keepaliveTimer: null,
+    setKeepalive(seconds: number = 10) {
+      console.debug('Setting keepalive interval seconds', seconds)
+      this.clearKeepalive()
+      this.keepaliveTimer = setTimeout(
+        () => {
+          console.warn('SSE timeout error')
+          if (heartbeatCallback) {
+            heartbeatCallback(false)
+          }
+        },
+        (seconds + 2) * 1000
+      )
+    },
+    clearKeepalive() {
+      if (this.keepaliveTimer) {
+        clearTimeout(this.keepaliveTimer)
+      }
+      this.keepaliveTimer = null
+    }
+  }
+
   // Core initialization logic
-  function initEventSource(): KeepaliveEventSource {
+  function initEventSource(): EventSource {
     const headers: Record<string, string> = {}
     // Setup headers for authentication.
     // We make sure to always use the latest token here, otherwise it may
@@ -62,43 +122,21 @@ function newSSEConnection(
       newEventSource = new NativeEventSource(path)
     }
 
-    // Type assertion to treat the EventSource as our extended interface,
-    // allowing us to add custom methods/properties.
-    const es = newEventSource as KeepaliveEventSource
-
-    // Add keepalive/heartbeat mechanism
-    es.setKeepalive = (seconds: number = 10) => {
-      console.debug('Setting keepalive interval seconds', seconds)
-      es.clearKeepalive()
-      es.keepaliveTimer = setTimeout(
-        () => {
-          console.warn('SSE timeout error')
-          if (heartbeatCallback) {
-            heartbeatCallback(false)
-          }
-        },
-        (seconds + 2) * 1000
-      )
-    }
-
-    es.clearKeepalive = () => {
-      if (es.keepaliveTimer) clearTimeout(es.keepaliveTimer)
-      delete es.keepaliveTimer
-    }
-
     // Event handlers
     if (readyCallback) {
-      es.addEventListener('ready', (e: MessageEvent) => {
+      newEventSource.addEventListener('ready', (e: MessageEvent) => {
+        if (connection.closed) return
         readyCallback(e.data as string)
       })
     }
 
-    es.addEventListener('alive', (e: MessageEvent) => {
+    newEventSource.addEventListener('alive', (e: MessageEvent) => {
+      if (connection.closed) return
       // Type 'e.data' is string, parse to get the object with 'interval'
       let evt: { interval: number }
       try {
         evt = JSON.parse(e.data as string) as { interval: number }
-        es.setKeepalive(evt.interval)
+        connection.setKeepalive(evt.interval)
       } catch (error) {
         console.error('Failed to parse "alive" message data:', error)
         if (heartbeatCallback) heartbeatCallback(false)
@@ -108,7 +146,8 @@ function newSSEConnection(
       if (heartbeatCallback) heartbeatCallback(true)
     })
 
-    es.onmessage = (event: MessageEvent) => {
+    newEventSource.onmessage = (event: MessageEvent) => {
+      if (connection.closed) return
       let evt: unknown
       try {
         evt = JSON.parse(event.data as string)
@@ -119,13 +158,15 @@ function newSSEConnection(
       messageCallback(evt)
     }
 
-    es.onopen = (event: Event) => {
+    newEventSource.onopen = (event: Event) => {
+      if (connection.closed) return
       reconnectSeconds = 1 // Reset reconnection delay on successful open
     }
 
-    es.onerror = (event: Event) => {
+    newEventSource.onerror = (event: Event) => {
+      if (connection.closed) return
       console.warn('SSE error')
-      es.clearKeepalive()
+      connection.clearKeepalive()
       if (errorCallback) {
         errorCallback()
       }
@@ -133,59 +174,61 @@ function newSSEConnection(
       const scheduleReconnect = () => {
         console.debug(`Attempting SSE reconnection in ${reconnectSeconds} seconds...`)
 
-        setTimeout(() => {
+        connection.reconnectTimeout = setTimeout(() => {
+          if (connection.closed) return
           // Check state again before reconnecting
-          if (es.readyState === 2) {
+          if (newEventSource.readyState === 2) {
             reconnectSeconds = reconnectSeconds * 2
             if (reconnectSeconds > 10) reconnectSeconds = 10
             // Close the current broken connection
-            es.close()
-            es.clearKeepalive()
-            // Reinitialize the connection and update openSSEClients so that
-            // SSEService.close() can reach the new live EventSource.
-            const oldIndex = openSSEClients.indexOf(es)
-            eventSource = initEventSource() // Reassign the outer scope's eventSource
-            if (oldIndex >= 0) {
-              openSSEClients.splice(oldIndex, 1, eventSource)
-            } else {
-              openSSEClients.push(eventSource)
-            }
+            newEventSource.close()
+            connection.clearKeepalive()
+            // Reinitialize the connection
+            connection.reconnectTimeout = null
+            connection.currentEventSource = initEventSource()
           }
         }, reconnectSeconds * 1000)
       }
 
       // Handle reconnection logic
       // Note: readyState === 2 is defined as CLOSED in EventSource spec
-      if (es.readyState === 2) {
+      if (newEventSource.readyState === 2) {
         console.log('%c=!= Event source connection broken...', 'background-color: red; color: white')
 
         // Since SSE hides the response status, do a regular fetch to figure out if our credentials are rejected or not
         fetch(path, { method: 'HEAD', headers: headers })
           .then((response) => {
+            if (connection.closed) return
             if (response.status === 401) {
               console.debug(`SSE: The server responded with "${response.status}", aborting reconnect.`)
-              es.close()
-              es.clearKeepalive()
+              newEventSource.close()
+              connection.clearKeepalive()
             } else {
               scheduleReconnect()
             }
           })
           .catch((err) => {
-            console.debug(`SSE: Coudn't connect to the server, scheduling reconnect: ${err}`)
+            if (connection.closed) return
+            console.debug(`SSE: Couldn't connect to the server, scheduling reconnect: ${err}`)
             scheduleReconnect()
           })
       }
     }
 
-    return es
+    return newEventSource
   }
 
-  eventSource = initEventSource()
+  const es = initEventSource()
+  connection.currentEventSource = es
+  interface MutableSSEConnection extends SSEConnection {
+    url: string
+  }
+  ;(connection as MutableSSEConnection).url = es.url
 
-  openSSEClients.push(eventSource)
-  console.debug(`new SSE connection: ${eventSource.url}, ${openSSEClients.length} open`)
+  openSSEClients.push(connection)
+  console.debug(`new SSE connection: ${connection.url}, ${openSSEClients.length} open`)
   console.debug(openSSEClients)
-  return eventSource
+  return connection
 }
 
 const SSEService = {
@@ -203,7 +246,7 @@ const SSEService = {
     messageCallback: MessageCallback,
     errorCallback: ErrorCallback,
     heartbeatCallback?: HeartbeatCallback
-  ): KeepaliveEventSource {
+  ): SSEConnection {
     return newSSEConnection(path, undefined, messageCallback, errorCallback, heartbeatCallback)
   },
 
@@ -221,29 +264,35 @@ const SSEService = {
     updateCallback: StateMessageCallback,
     errorCallback: ErrorCallback,
     heartbeatCallback?: HeartbeatCallback
-  ): KeepaliveEventSource {
+  ): SSEConnection {
     return newSSEConnection(path, readyCallback, updateCallback, errorCallback, heartbeatCallback)
   },
 
   /**
    * Close the given SSE connection.
-   * @param es the SSE connection to close
+   * @param conn the SSE connection to close
    */
-  close(es: EventSource): void {
-    if (!es) return
+  close(conn: SSEConnection): void {
+    if (!conn) return
 
-    const keepaliveEventSource = es as KeepaliveEventSource
-
-    const index = openSSEClients.indexOf(keepaliveEventSource)
+    const index = openSSEClients.indexOf(conn)
     if (index >= 0) {
       openSSEClients.splice(index, 1)
     }
 
-    console.debug(`SSE connection closed: ${keepaliveEventSource.url}, ${openSSEClients.length} open`)
+    console.debug(`SSE connection closed: ${conn.url}, ${openSSEClients.length} open`)
     console.debug(openSSEClients)
 
-    keepaliveEventSource.clearKeepalive()
-    keepaliveEventSource.close()
+    conn.closed = true
+    conn.clearKeepalive()
+    if (conn.reconnectTimeout) {
+      clearTimeout(conn.reconnectTimeout)
+      conn.reconnectTimeout = null
+    }
+    if (conn.currentEventSource) {
+      conn.currentEventSource.close()
+      conn.currentEventSource = null
+    }
   }
 }
 

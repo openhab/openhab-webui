@@ -237,7 +237,7 @@ import { storeToRefs } from 'pinia'
 
 import * as api from '@/api'
 import { ApiError } from '@/js/hey-api.ts'
-import sse, { type KeepaliveEventSource } from '@/js/openhab/sse'
+import sse, { type SSEConnection } from '@/js/openhab/sse'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 import { useStatesStore } from '@/js/stores/useStatesStore.ts'
 
@@ -269,7 +269,7 @@ const settingsOpened = ref(false)
 const llmTools = ref<api.LlmTool[]>([])
 const { assistSelectedLlmTools, assistShowGenericToolVisualisation } = storeToRefs(uiOptionsStore)
 
-let sseConnection: KeepaliveEventSource | null = null
+let sseConnection: SSEConnection | null = null
 
 // Computed
 const suggestions = computed(() => [
