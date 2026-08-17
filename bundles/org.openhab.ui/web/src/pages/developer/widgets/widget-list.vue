@@ -7,13 +7,14 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-widgets"
-          custom-search
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="'widgets-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
 
@@ -63,16 +64,11 @@
 
       <f7-col v-if="ready">
         <f7-block-title>
-          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, widgets.length, 'Widget', selected.length) }}</span>
+          <span>{{ getListTitle(isFiltered, filteredList.length, widgets.length, 'Widget', selected.length) }}</span>
           <template v-if="showCheckboxes && filteredList.length">
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter
-          v-if="ready"
-          :filtersDefinitions="filtersDefinitions"
-          :selected="selectedListFilters"
-          @update:selected="onUpdateSelectedListFilters" />
         <f7-list v-if="!filteredList.length && widgets.length" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
@@ -124,12 +120,12 @@
 
 <script>
 import { f7, theme } from 'framework7-vue'
-import { nextTick, toRaw, ref } from 'vue'
+import { nextTick, shallowRef, toRaw, useTemplateRef } from 'vue'
 import { showToast } from '@/js/dialog-promises'
 
 import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
-import ListFilter from '@/components/util/list-filter.vue'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
 
 import { useSearch } from '@/components/useSearch'
 import { getListTitle, findElementsInObject } from '@/pages/list-helpers'
@@ -142,23 +138,25 @@ const ITEM_KINDS = {
 
 export default {
   components: {
-    ListFilter
+    OhSearchbar
   },
   props: {
     f7router: Object
   },
   setup() {
-    const widgets = ref([])
+    const widgets = shallowRef([])
+    const haystackFields = ['uid', 'tags', 'title']
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
     const filtersDefinitions = {
       is: {
         label: 'Kind',
-        singleSelect: true,
+        options: ['Editable', 'Readonly', 'Marketplace', 'Template'],
         getFn: (widget) =>
           widget.editable === true ? 'editable' : widget.tags?.some((t) => t.startsWith('marketplace:')) ? 'marketplace' : 'readonly'
       },
       uid: {
-        label: 'UID',
-        hideOptions: true
+        label: 'UID'
       },
       tag: {
         label: 'Tag',
@@ -166,47 +164,31 @@ export default {
       },
       title: {
         title: 'Title',
-        advanced: true,
-        hideOptions: true,
         path: 'config.title'
       },
       component: {
         label: 'Component',
-        advanced: true,
         getFn: (widget) => findElementsInObject(toRaw(widget), 'component')
       }
     }
 
-    const {
-      rawSearchString,
-      filteredList,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
-    } = useSearch(widgets, 'searchbar', {
+    const { filteredList, isFiltered, onUpdateTokenizedSearch, getFuseValuesForField } = useSearch(widgets, {
       filtersDefinitions,
-      persistSearchStringKey: 'widgets-query',
-      haystackFields: ['uid', 'tags', 'title']
+      haystackFields
     })
+
+    filtersDefinitions.tag.options = () => getFuseValuesForField('tag')
+    filtersDefinitions.component.options = () => getFuseValuesForField('component')
 
     return {
       theme,
       widgets,
       filtersDefinitions,
-      rawSearchString,
       filteredList,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
+      isFiltered,
+      onUpdateTokenizedSearch,
       getListTitle,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
+      ohSearchbarRef
     }
   },
   data() {
@@ -228,11 +210,9 @@ export default {
   methods: {
     async onPageAfterIn() {
       await this.load()
-      this.restoreSearchbarQuery()
     },
     onPageBeforeOut() {
-      this.destroyAutocompleteSearchbar()
-      this.persistSearchbarQuery()
+      this.ohSearchbarRef.value?.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
@@ -242,21 +222,10 @@ export default {
           return a.uid.localeCompare(b.uid)
         })
 
-        const { tagSet } = this.widgets.reduce(
-          (acc, widget) => {
-            if (widget.tags) widget.tags.forEach((tag) => acc.tagSet.add(tag))
-            return acc
-          },
-          { tagSet: new Set() }
-        )
-        this.filtersDefinitions.tag.options = Object.fromEntries([...tagSet].sort().map((tag) => [tag.toLowerCase(), tag]))
-
         this.initSearchbar = true
         this.loading = false
         this.ready = true
         nextTick(() => {
-          this.destroyAutocompleteSearchbar()
-          this.createAutocompleteSearchbar()
           const searchbar = this.$refs.searchbar?.$el.f7Searchbar
           if (this.$device.desktop && searchbar) {
             searchbar.$inputEl[0].focus()
