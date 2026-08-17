@@ -209,6 +209,10 @@ export default {
     },
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
+  beforeUnmount() {
+    this.stopSSE()
+    this.stopWS()
+  },
   methods: {
     developerColumnSections(column) {
       return this.developerNavigationSections.filter((section) => section.column === column)
@@ -283,6 +287,8 @@ export default {
       })
     },
     stopSSE() {
+      if (!this.sseClient) return
+
       this.$oh.sse.close(this.sseClient)
       this.sseClient = null
       this.sseEvents = []
@@ -296,6 +302,8 @@ export default {
       })
     },
     stopWS() {
+      if (!this.wsClient) return
+
       this.$oh.ws.close(this.wsClient)
       this.wsClient = null
       this.wsEvents = []

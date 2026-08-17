@@ -94,7 +94,9 @@ export default {
       if (!this.moveState.node.item.editable) return
       console.time('Timer: Drag')
       console.debug('Drag start - event:', event)
-      window.addEventListener('keydown', this.keyDownHandler)
+      if (window) {
+        window.addEventListener('keydown', this.keyDownHandler)
+      }
       this.moveState.moving = true
       this.moveState.canAdd = false
       this.moveState.canRemove = false
@@ -173,7 +175,9 @@ export default {
           ? event.explicitOriginalTarget
           : event.explicitOriginalTarget.parentNode
         : null
-      window.removeEventListener('keydown', this.keyDownHandler)
+      if (window) {
+        window.removeEventListener('keydown', this.keyDownHandler)
+      }
       if (this.moveState.cancelled) {
         console.debug('Drag end - cancelled')
         this.restoreModelUpdate()

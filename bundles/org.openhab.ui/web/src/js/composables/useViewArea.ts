@@ -44,9 +44,8 @@ export function useViewArea() {
         // ignore
       }
       resizeObserver = null
-    } else {
-      window.removeEventListener('resize', updateViewAreaDimensions)
     }
+    window.removeEventListener('resize', updateViewAreaDimensions)
     observedElement = null
   })
 
