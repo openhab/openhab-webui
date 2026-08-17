@@ -1,21 +1,12 @@
 import dayjs, { Dayjs, type OpUnitType } from 'dayjs'
-import updateLocale from 'dayjs/plugin/updateLocale'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
 import IsoWeek from 'dayjs/plugin/isoWeek'
 import DayDuration from 'dayjs/plugin/duration'
 import { ChartType, type Period } from '@/types/components/widgets'
 
-dayjs.extend(updateLocale)
+dayjs.extend(localizedFormat)
 dayjs.extend(IsoWeek)
 dayjs.extend(DayDuration)
-
-dayjs.updateLocale('en', {
-  formats: {
-    l: 'M/D/YYYY',
-    ll: 'MMM D, YYYY',
-    lll: 'MMM D, YYYY h:mm A',
-    llll: 'ddd, MMM D, YYYY h:mm A'
-  }
-})
 
 /**
  * Maps a chart type to a dayjs unit.
