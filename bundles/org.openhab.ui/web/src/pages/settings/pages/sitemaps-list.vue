@@ -139,7 +139,6 @@ import { useSearch } from '@/components/useSearch'
 import { getListTitle } from '@/pages/list-helpers'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
 
 import * as api from '@/api'

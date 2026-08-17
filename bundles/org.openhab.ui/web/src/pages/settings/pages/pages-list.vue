@@ -7,13 +7,14 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-pages"
-          custom-search
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="'pages-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
 
@@ -78,17 +79,12 @@
 
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
-          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, pages.length, 'Page', selection.length) }}</span>
+          <span>{{ getListTitle(isFiltered, filteredList.length, pages.length, 'Page', selection.length) }}</span>
           <template v-if="showCheckboxes && pageUids.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter
-          v-if="ready"
-          :filtersDefinitions="filtersDefinitions"
-          :selected="selectedListFilters"
-          @update:selected="onUpdateSelectedListFilters" />
         <div v-show="ready && filteredList.length > 0" class="padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
@@ -186,7 +182,7 @@
 </template>
 
 <script>
-import { nextTick, toRaw, ref } from 'vue'
+import { nextTick, toRaw, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
@@ -197,33 +193,33 @@ import { getListTitle, findElementsInObject } from '@/pages/list-helpers'
 
 import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
-import ListFilter from '@/components/util/list-filter.vue'
+
+import OhSearchbar from '@/pages/oh-searchbar.vue'
 
 export default {
   components: {
-    ListFilter
+    OhSearchbar
   },
   props: {
     f7router: Object
   },
   setup() {
     const runtimeStore = useRuntimeStore()
-    const pages = ref([])
+    const pages = shallowRef([])
+    const haystackFields = ['uid', 'label', 'tag']
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
 
     const filtersDefinitions = {
       is: {
         label: 'Kind',
-        singleSelect: true,
         getFn: (page) => (page.editable ? 'editable' : 'readonly')
       },
       label: {
         label: 'Label',
-        hideOptions: true,
         path: 'config.label'
       },
       uid: {
-        label: 'UID',
-        hideOptions: true
+        label: 'UID'
       },
       type: {
         label: 'Type',
@@ -235,46 +231,34 @@ export default {
       },
       visible: {
         label: 'Visible to',
-        advanced: true,
         path: 'config.visibleTo'
       },
       component: {
         label: 'Component',
-        advanced: true,
         getFn: (page) => findElementsInObject(toRaw(page), 'component')
       }
     }
 
-    const {
-      rawSearchString,
-      filteredList,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
-    } = useSearch(pages, 'searchbar', {
+    const { filteredList, isFiltered, onUpdateTokenizedSearch, getFuseValuesForField } = useSearch(pages, {
       filtersDefinitions,
-      persistSearchStringKey: 'pages-query',
-      haystackFields: ['uid', 'label', 'tag']
+      haystackFields
     })
+
+    filtersDefinitions.type.options = () => getFuseValuesForField('type')
+    filtersDefinitions.tag.options = () => getFuseValuesForField('tag')
+    filtersDefinitions.visible.options = () => getFuseValuesForField('visible')
+    filtersDefinitions.component.options = () => getFuseValuesForField('component')
+
     return {
       theme,
       runtimeStore,
       pages,
       filtersDefinitions,
       filteredList,
-      rawSearchString,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
+      isFiltered,
       getListTitle,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
+      onUpdateTokenizedSearch,
+      ohSearchbarRef
     }
   },
   data() {
@@ -334,11 +318,9 @@ export default {
   methods: {
     async onPageAfterIn() {
       await this.load()
-      this.restoreSearchbarQuery()
     },
     onPageBeforeOut() {
-      this.destroyAutocompleteSearchbar()
-      this.persistSearchbarQuery()
+      this.ohSearchbarRef.value?.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
@@ -357,25 +339,10 @@ export default {
             return aLabel.localeCompare(bLabel)
           })
 
-          const { tagSet, visibleSet } = this.pages.reduce(
-            (acc, page) => {
-              if (page.tags) page.tags.forEach((tag) => acc.tagSet.add(tag))
-              if (page.config?.visibleTo) page.config.visibleTo.forEach((visible) => acc.visibleSet.add(visible))
-              return acc
-            },
-            { tagSet: new Set(), visibleSet: new Set() }
-          )
-          this.filtersDefinitions.tag.options = Object.fromEntries([...tagSet].sort().map((tag) => [tag.toLowerCase(), tag]))
-          this.filtersDefinitions.visible.options = Object.fromEntries(
-            [...visibleSet].sort().map((visible) => [visible.toLowerCase(), visible])
-          )
-
           this.initSearchbar = true
           this.ready = true
 
           nextTick(() => {
-            this.destroyAutocompleteSearchbar()
-            this.createAutocompleteSearchbar()
             if (this.$refs.listIndex) this.$refs.listIndex.update()
             const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
             if (this.$device.desktop && searchbar) {

@@ -7,13 +7,14 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-things"
-          custom-search
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="'things-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
@@ -91,7 +92,7 @@
     <f7-block class="block-narrow">
       <f7-col v-show="ready">
         <f7-block-title>
-          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, things.length, 'Thing', selected.length) }}</span>
+          <span>{{ getListTitle(isFiltered, filteredList.length, things.length, 'Thing', selected.length) }}</span>
           <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
@@ -105,11 +106,6 @@
             </div>
           </template>
         </f7-block-title>
-        <list-filter
-          v-if="ready"
-          :selected="selectedListFilters"
-          @update:selected="onUpdateSelectedListFilters"
-          :filtersDefinitions="filtersDefinitions" />
       </f7-col>
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready">
@@ -233,7 +229,7 @@
 </style>
 
 <script>
-import { nextTick, shallowRef } from 'vue'
+import { nextTick, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -242,10 +238,10 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import { thingStatusBadgeColor, thingStatusBadgeText, thingStatusDescription } from '@/components/thing/thing-status'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
 import { useSearch } from '@/components/useSearch'
 import { getListTitle } from '@/pages/list-helpers'
@@ -267,27 +263,29 @@ export default {
     f7router: Object
   },
   components: {
-    ListFilter,
     EmptyStatePlaceholder,
-    ClipboardIcon
+    ClipboardIcon,
+    OhSearchbar
   },
   setup() {
     const things = shallowRef([])
+    const haystackFields = ['uid', 'label', 'location']
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
 
     const filtersDefinitions = {
       is: {
         label: 'Kind',
         singleSelect: true,
-        getFn: (thing) => (thing.editable ? 'editable' : 'readonly')
+        getFn: (thing) => (thing.editable ? 'editable' : 'readonly'),
+        options: ['Editable', 'Readonly']
       },
       uid: {
         label: 'UID',
-        path: 'UID'
+        getFn: (thing) => [thing.UID, thing.bridgeUID]
       },
       label: {
         label: 'Label',
-        path: 'label',
-        hideOptions: true
+        path: 'label'
       },
       status: {
         label: 'Status',
@@ -295,34 +293,23 @@ export default {
       },
       location: {
         label: 'Location',
-        options: {},
-        advanced: true,
         path: 'location'
       },
       binding: {
         label: 'Binding',
-        options: {},
         path: 'thingTypeUID',
-        advanced: true,
         getFn: (thing) => thing.thingTypeUID.split(':')[0]
       }
     }
 
-    const {
-      rawSearchString,
-      filteredList,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
-    } = useSearch(things, 'searchbar', {
+    const { filteredList, isFiltered, onUpdateTokenizedSearch, getFuseValuesForField } = useSearch(things, {
       filtersDefinitions,
-      persistSearchStringKey: 'things-query',
-      haystackFields: ['UID', 'label', 'location']
+      haystackFields
     })
+
+    filtersDefinitions.status.options = () => getFuseValuesForField('statusInfo.status')
+    filtersDefinitions.location.options = () => getFuseValuesForField('location')
+    filtersDefinitions.binding.options = () => getFuseValuesForField('thingTypeUID')
 
     return {
       f7,
@@ -330,18 +317,14 @@ export default {
       things,
       filtersDefinitions,
       filteredList,
-      selectedListFilters,
-      rawSearchString,
-      onUpdateSelectedListFilters,
+      isFiltered,
+      onUpdateTokenizedSearch,
       thingStatusBadgeColor,
       thingStatusBadgeText,
       thingStatusDescription,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
       getListTitle,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
+      haystackFields,
+      ohSearchbarRef
     }
   },
   data() {
@@ -364,7 +347,7 @@ export default {
   },
   computed: {
     emptySearchOrFilterResults() {
-      return (this.rawSearchString || this.$refs['list-filter']?.filtered) && !this.filteredList.length && this.things.length
+      return (this.isFiltered || this.$refs['list-filter']?.filtered) && !this.filteredList.length && this.things.length
     },
     listedUids() {
       return new Set(this.filteredList.map((t) => t.UID))
@@ -434,17 +417,13 @@ export default {
   methods: {
     async onPageAfterIn() {
       await this.load()
-
       if (this.searchFor) {
         this.$refs.searchbar.$el.f7Searchbar.search(this.searchFor)
-      } else {
-        this.restoreSearchbarQuery()
       }
     },
     onPageBeforeOut() {
-      this.destroyAutocompleteSearchbar()
       this.stopEventSource()
-      this.persistSearchbarQuery()
+      this.ohSearchbarRef.value?.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
@@ -458,8 +437,6 @@ export default {
         this.loading = false
         this.ready = true
         nextTick(() => {
-          this.destroyAutocompleteSearchbar()
-          this.createAutocompleteSearchbar()
           if (this.$refs.listIndex) this.$refs.listIndex.update()
           const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
           if (this.$device.desktop && searchbar) {

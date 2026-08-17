@@ -7,14 +7,14 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the rules list. -->
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-rules"
-          custom-search
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="`${showType}-search-string`"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar
@@ -167,18 +167,12 @@
     <f7-block v-show="!noRuleEngine && ready && rules.length > 0" class="block-narrow">
       <f7-col>
         <f7-block-title class="no-margin-top">
-          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, rules.length, 'Rule', selected.length) }}</span>
+          <span>{{ getListTitle(isFiltered, filteredList.length, rules.length, 'Rule', selected.length) }}</span>
           <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter
-          v-if="ready"
-          ref="list-filters"
-          :filtersDefinitions="filtersDefinitions"
-          :selected="selectedListFilters"
-          @update:selected="onUpdateSelectedListFilters" />
         <f7-list v-if="!filteredList.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
@@ -402,8 +396,7 @@
 </style>
 
 <script>
-import { nextTick, reactive, ref } from 'vue'
-import { useStorage } from '@vueuse/core'
+import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -413,14 +406,13 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { ruleStatusBadgeColor, ruleStatusBadgeText, isRuleStatusDisabled, getRuleLanguage, ruleType } from '@/components/rule/rule-helpers'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
 import { canSerializeRules, createFileFormatForRules } from '@/api'
 import { useSearch } from '@/components/useSearch'
 import { getListTitle } from '@/pages/list-helpers'
 import copyToClipboard from '@/js/clipboard'
 
-const storagePrefix = 'openhab.ui:search:rules-query:'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
 
 export default {
   props: {
@@ -431,26 +423,14 @@ export default {
     f7router: Object
   },
   components: {
-    ListFilter,
-    EmptyStatePlaceholder
+    EmptyStatePlaceholder,
+    OhSearchbar
   },
   setup(props) {
-    const rules = ref([])
+    const rules = shallowRef([])
     const ruleStatuses = reactive({})
-    const lastSearchQuery = {
-      script: useStorage(storagePrefix + 'scripts', '', sessionStorage, {
-        flush: 'sync',
-        writeDefaults: false
-      }),
-      scene: useStorage(storagePrefix + 'scenes', '', sessionStorage, {
-        flush: 'sync',
-        writeDefaults: false
-      }),
-      rule: useStorage(storagePrefix + 'rules', '', sessionStorage, {
-        flush: 'sync',
-        writeDefaults: false
-      })
-    }
+    const haystackFields = ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
 
     function displayedTags(rule) {
       return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
@@ -466,7 +446,7 @@ export default {
     const filtersDefinitions = {
       is: {
         label: 'Kind',
-        singleSelect: true,
+        options: ['Editable', 'Readonly', 'Marketplace', 'Template'],
         getFn: (rule) => {
           if (rule.editable === true) return 'editable'
           if (rule.tags?.includes('marketplace')) return 'marketplace'
@@ -476,17 +456,14 @@ export default {
       },
       name: {
         label: 'Name',
-        hideOptions: true,
         path: 'name'
       },
       uid: {
         label: 'UID',
-        hideOptions: true,
         path: 'uid'
       },
       description: {
         label: 'Description',
-        hideOptions: true,
         path: 'description'
       },
       tag: {
@@ -502,36 +479,26 @@ export default {
           running: 'Running',
           disabled: 'Disabled'
         },
-        advanced: true,
         getFn: (rule) => [rule.status?.status, rule.status?.statusDetail, ruleStatusBadgeText(ruleStatuses[rule.uid])]
       },
       language: {
         label: 'Language',
-        options: {},
         getFn: (rule) => getRuleLanguage(rule)?.shortName
       },
       trigger: {
         label: 'Trigger',
-        advanced: true,
         getFn: (rule) => rule.triggers?.map((t) => t.type).filter(Boolean)
       }
     }
 
-    const {
-      rawSearchString,
-      filteredList,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
-    } = useSearch(rules, 'searchbar', {
+    const { filteredList, isFiltered, onUpdateTokenizedSearch, getFuseValuesForField } = useSearch(rules, {
       filtersDefinitions,
-      persistSearchStringKey: 'rules-query',
-      haystackFields: ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
+      haystackFields
     })
+
+    filtersDefinitions.tag.options = () => getFuseValuesForField('tag')
+    filtersDefinitions.language.options = () => getFuseValuesForField('language')
+    filtersDefinitions.trigger.options = () => getFuseValuesForField('trigger')
 
     return {
       f7,
@@ -541,20 +508,14 @@ export default {
       ruleStatusBadgeText,
       ruleStatusBadgeColor,
       isRuleStatusDisabled,
-      lastSearchQuery,
       displayedTags,
+      ohSearchbarRef,
       serializationOptions,
       filtersDefinitions,
-      rawSearchString,
       filteredList,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
-      searchPlaceholder,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      getListTitle,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar
+      isFiltered,
+      onUpdateTokenizedSearch,
+      getListTitle
     }
   },
   data() {
@@ -655,17 +616,13 @@ export default {
       await this.load()
     },
     onPageBeforeOut() {
-      this.destroyAutocompleteSearchbar()
       this.stopEventSource()
-      this.lastSearchQuery[this.showType.toLowerCase()].value = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.ohSearchbarRef.value?.persistSearchQuery()
     },
     async load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) {
-        this.lastSearchQuery[this.showType.toLowerCase()].value = this.$refs.searchbar?.$el.f7Searchbar.query
-      }
       this.initSearchbar = false
 
       this.selected = []
@@ -689,16 +646,11 @@ export default {
           this.noRuleEngine = false
 
           nextTick(() => {
-            this.destroyAutocompleteSearchbar()
-            this.createAutocompleteSearchbar()
-
             if (this.$refs.listIndex) this.$refs.listIndex.$el.f7ListIndex.update()
             const searchbar = this.$refs.searchbar?.$el.f7Searchbar
             if (this.$device.desktop && searchbar) {
               searchbar.$inputEl[0].focus()
             }
-            const searchQuery = this.lastSearchQuery[this.showType.toLowerCase()].value
-            this.$refs.searchbar?.$el.f7Searchbar.search(searchQuery || '')
           })
 
           if (!this.eventSource) this.startEventSource()
