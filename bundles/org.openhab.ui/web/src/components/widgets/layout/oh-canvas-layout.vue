@@ -206,10 +206,6 @@ export default {
       this.grid.pitch = this.config.grid || 20
       this.grid.enable = this.config.gridEnable || false
       this.actLyrIdx = this.config.activeIdx || 0
-
-      if (!this.context.editmode) {
-        window.addEventListener('resize', this.setDimensions)
-      }
     }
     this.$fullscreen.isEnabled = true
     this.canvasLayoutStyle()
@@ -234,9 +230,6 @@ export default {
     }
   },
   beforeUnmount() {
-    if (!this.context.editmode) {
-      window.removeEventListener('resize', this.setDimensions)
-    }
     if (this.config.embedSvg && this.embeddedSvgReady) {
       this.embeddedSvgReady = false
       this.unsubscribeEmbeddedSvgListeners()
