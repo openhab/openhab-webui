@@ -8,14 +8,14 @@
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-items"
-          search-container=".virtual-list"
-          @searchbar:search="searchbarSearch"
-          :placeholder="searchbarPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="'items-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
 
@@ -81,60 +81,59 @@
 
       <f7-col v-if="ready && items.length > 0">
         <f7-block-title class="no-margin-top">
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && listedItems.length">
+          <span>{{ getListTitle(isFiltered, filteredList.length, items.length, 'Item', selected.length) }}</span>
+          <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="processFilter" @reset="resetFilter" />
-
-        <f7-list v-if="!listedItems.length">
+        <f7-list v-if="!filteredList.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
         <f7-list class="searchbar-found col" ref="itemsList" media-list virtual-list :virtual-list-params="vlParams">
           <ul>
-            <f7-list-item
-              v-for="(item, index) in vlData.items"
-              :key="index"
-              media-item
-              class="itemlist-item"
-              :checkbox="showCheckboxes"
-              :checked="isChecked(item.name)"
-              prevent-router
-              @click.ctrl="ctrlClick($event, item)"
-              @click.meta="ctrlClick($event, item)"
-              @click.exact="click($event, item)"
-              :link="`${encodeURIComponent(item.name)}`"
-              :title="item.label ? item.label : item.name"
-              :footer="item.label ? item.name : '\xa0'"
-              :subtitle="getItemTypeAndMetaLabel(item)"
-              :style="`top: ${vlData.topPosition}px`"
-              :after="item.state ? item.state : '\xa0'">
-              <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
-              <template #media>
-                <oh-icon
-                  v-if="item.category"
-                  :icon="item.category"
-                  :state="item.type === 'Image' ? null : item.state"
-                  height="32"
-                  width="32" />
-                <span v-else class="item-initial">{{ item.name[0] }}</span>
-              </template>
-              <template #after-title>
-                <f7-icon v-if="!item.editable" f7="lock_fill" size="1rem" color="gray" />
-              </template>
-              <!-- <f7-button color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
-              <template #subtitle>
-                <div>
-                  <f7-chip v-for="tag in getNonSemanticTags(item)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                    <template #media>
-                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
-                    </template>
-                  </f7-chip>
-                </div>
-              </template>
-            </f7-list-item>
+            <template v-for="(item, index) in vlData.items" :key="index">
+              <f7-list-item
+                v-if="item"
+                media-item
+                class="itemlist-item"
+                :checkbox="showCheckboxes"
+                :checked="isChecked(item.name)"
+                prevent-router
+                @click.ctrl="ctrlClick($event, item)"
+                @click.meta="ctrlClick($event, item)"
+                @click.exact="click($event, item)"
+                :link="`${encodeURIComponent(item.name)}`"
+                :title="item.label ? item.label : item.name"
+                :footer="item.label ? item.name : '\xa0'"
+                :subtitle="getItemTypeAndMetaLabel(item)"
+                :style="`top: ${vlData.topPosition}px`"
+                :after="item.state ? item.state : '\xa0'">
+                <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
+                <template #media>
+                  <oh-icon
+                    v-if="item.category"
+                    :icon="item.category"
+                    :state="item.type === 'Image' ? null : item.state"
+                    height="32"
+                    width="32" />
+                  <span v-else class="item-initial">{{ item.name[0] }}</span>
+                </template>
+                <template #after-title>
+                  <f7-icon v-if="!item.editable" f7="lock_fill" size="1rem" color="gray" />
+                </template>
+                <!-- <f7-button color="blue" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
+                <template #subtitle>
+                  <div>
+                    <f7-chip v-for="tag in getNonSemanticTags(item)" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                      <template #media>
+                        <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                      </template>
+                    </f7-chip>
+                  </div>
+                </template>
+              </f7-list-item>
+            </template>
           </ul>
         </f7-list>
       </f7-col>
@@ -175,23 +174,22 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import * as Types from '@/assets/item-types'
 import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeAndMetaLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import ListFilter from '@/components/util/list-filter.vue'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
 import { showToast } from '@/js/dialog-promises'
-
-const ITEM_KINDS = { editable: 'Editable', readonly: 'Non-editable' }
+import { useSearch } from '@/components/useSearch'
+import { getListTitle } from '@/pages/list-helpers'
 
 export default {
   mixins: [ItemMixin, FileDefinition],
@@ -199,18 +197,101 @@ export default {
     f7router: Object
   },
   components: {
-    ListFilter,
-    EmptyStatePlaceholder
+    EmptyStatePlaceholder,
+    OhSearchbar
   },
   setup() {
-    return { f7, theme }
+    const items = shallowRef([])
+    const haystackFields = ['name', 'label', 'type'] // TODO getItemTypeAndMetaLabel
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
+    const filtersDefinitions = {
+      is: {
+        label: 'Kind',
+        singleSelect: true,
+        getFn: (item) => (item.editable ? 'editable' : 'readonly'),
+        options: ['Editable', 'Readonly']
+      },
+      name: {
+        label: 'Name',
+        path: 'name'
+      },
+      label: {
+        label: 'Label',
+        path: 'label'
+      },
+      type: {
+        label: 'Item Type',
+        getFn: (item) => [item.type, item.type === 'Group' ? item.groupType : '']
+      },
+      group: {
+        label: 'Members of Group',
+        advanced: true,
+        path: 'groupNames'
+      },
+      tag: {
+        label: 'Tag',
+        advanced: true,
+        path: 'tags'
+      },
+      state: {
+        label: 'State',
+        advanced: true,
+        path: 'state', // TODO
+        getFn: (item) => item.state + (item.displayState ? ' ' + item.displayState : '')
+      },
+      unit: {
+        label: 'Unit',
+        advanced: true,
+        path: 'unitSymbol'
+      },
+      semantics: {
+        label: 'Semantics',
+        advanced: true,
+        path: 'metadata.semantics.value',
+        getFn: (item) => (item.metadata?.semantics?.value ? item.metadata.semantics.value.split('_') : [])
+      },
+      metadata: {
+        label: 'Metadata',
+        advanced: true,
+        path: 'metadata',
+        getFn: (item) => (item.metadata ? Object.keys(item.metadata) : [])
+      }
+    }
+
+    const { filteredList, isFiltered, onUpdateTokenizedSearch, getFuseValuesForField } = useSearch(items, {
+      filtersDefinitions,
+      haystackFields,
+      returnType: 'indices'
+    })
+
+    filtersDefinitions.type.options = () => getFuseValuesForField('type')
+    filtersDefinitions.group.options = () => getFuseValuesForField('group')
+    filtersDefinitions.tag.options = () => getFuseValuesForField('tag')
+    filtersDefinitions.unit.options = () => getFuseValuesForField('unit')
+    filtersDefinitions.semantics.options = () => getFuseValuesForField('semantics')
+    filtersDefinitions.metadata.options = () => getFuseValuesForField('metadata')
+
+    return {
+      f7,
+      theme,
+      items,
+      filtersDefinitions,
+      filteredList,
+      isFiltered,
+      onUpdateTokenizedSearch,
+      getListTitle,
+      getNonSemanticTags,
+      getItemTypeAndMetaLabel,
+      ohSearchbarRef,
+      haystackFields
+    }
   },
   data() {
     return {
       ready: false,
       initSearchbar: false,
       loading: false,
-      items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       vlData: {
         items: []
       },
@@ -220,64 +301,46 @@ export default {
         renderExternal: this.renderExternal,
         height: this.height
       },
-      searchQuery: '',
-      filters: {
-        kinds: {
-          label: 'Kind',
-          options: ITEM_KINDS
-        },
-        types: {
-          label: 'Item Type',
-          options: Object.fromEntries(Types.ItemTypes.map((type) => [type, type]))
-        }
-      },
-      selectedItems: [],
-      listedItems: [],
-      excludedUids: new Set(),
+      selected: [],
       showCheckboxes: false,
       eventSource: null
     }
   },
   methods: {
-    onPageAfterIn(event) {
-      this.load()
+    async onPageAfterIn(event) {
+      await this.load()
     },
     onPageBeforeOut(event) {
       this.stopEventSource()
-      useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.ohSearchbarRef.value?.persistSearchbarQuery()
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
-
-      if (this.initSearchbar) useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
+      await this.$oh.api.get('/rest/items').then((data) => {
         this.items = data.sort((a, b) => {
           const labelA = a.label || a.name
           const labelB = b.label || b.name
           return labelA.localeCompare(labelB)
         })
+
         this.initSearchbar = true
         this.loading = false
+
         if (!this.eventSource) this.startEventSource()
         this.ready = true
 
         nextTick(() => {
           this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
-          this.updateListedItems()
-          this.processFilter()
 
           const searchbar = this.$refs.searchbar?.$el.f7Searchbar
           if (this.$device.desktop && searchbar) {
             searchbar.$inputEl[0].focus()
           }
-          const lastQuery = useLastSearchQueryStore().lastItemSearchQuery || ''
-          if (lastQuery) {
-            searchbar?.search(lastQuery)
-          }
 
+          // This should no longer be needed now that we are awaiting the load() function, but leaving it in for now just in case.
           // Hard refresh can leave the virtual list measured at zero height until
           // the page is fully visible, so trigger one delayed remeasure.
           setTimeout(() => {
@@ -306,12 +369,6 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    searchbarSearch(event) {
-      this.searchQuery = event?.query
-      if (!this.searchQuery && this.$refs.filters?.filtered) {
-        this.applyFilter()
-      }
-    },
     renderExternal(vl, vlData) {
       this.vlData = vlData
     },
@@ -324,7 +381,10 @@ export default {
         if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
 
-      const nonSemanticTags = this.getNonSemanticTags(item)
+      // Virtual list can briefly request height for missing rows while data/filter state updates.
+      if (!item) return vlHeight
+
+      const nonSemanticTags = getNonSemanticTags(item)
       if (nonSemanticTags.length > 0) {
         vlHeight += 28
         if (theme.ios) vlHeight += 4
@@ -336,7 +396,7 @@ export default {
       this.showCheckboxes = !this.showCheckboxes
     },
     isChecked(item) {
-      return this.selectedItems.indexOf(item) >= 0
+      return this.selected.indexOf(item) >= 0
     },
     click(event, item) {
       if (this.showCheckboxes) {
@@ -347,46 +407,46 @@ export default {
     },
     ctrlClick(event, item) {
       this.toggleItemCheck(event, item.name, item)
-      if (!this.selectedItems.length) this.showCheckboxes = false
+      if (!this.selected.length) this.showCheckboxes = false
     },
     toggleItemCheck(event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+        this.selected.splice(this.selected.indexOf(item), 1)
       } else {
-        this.selectedItems.push(item)
+        this.selected.push(item)
       }
     },
     selectDeselectAll() {
       if (this.allSelected) {
-        this.selectedItems = []
+        this.selected = []
       } else {
-        this.selectedItems = this.listedItems.map((i) => i.name)
+        this.selected = this.filteredList.map((i) => i.name)
       }
     },
     copySelected() {
-      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selectedItems)
+      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selected)
     },
     removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected items?`, 'Remove Items', () => {
+      f7.dialog.confirm(`Remove ${this.selected.length} selected items?`, 'Remove Items', () => {
         vm.doRemoveSelected()
       })
     },
     doRemoveSelected() {
-      if (this.selectedItems.some((i) => i.editable === false)) {
+      if (this.selected.some((i) => i.editable === false)) {
         f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
         return
       }
 
       let dialog = f7.dialog.progress('Deleting Items...')
 
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/items/' + i))
+      const promises = this.selected.map((i) => this.$oh.api.delete('/rest/items/' + i))
       Promise.all(promises)
         .then((data) => {
           showToast('Items removed')
-          this.selectedItems = []
+          this.selected = []
           dialog.close()
           this.load()
         })
@@ -396,122 +456,20 @@ export default {
           console.error(err)
           f7.dialog.alert('An error occurred while deleting: ' + err)
         })
-    },
-    searchAll(query, items) {
-      query = query.toLowerCase()
-      const found = []
-      const foundUids = new Set()
-      items.forEach((item, index) => {
-        if (this.excludedUids.has(item.name)) {
-          return // skip items excluded by filter
-        }
-        const haystack = [item.name, item.label, ...(item.tags || []), this.getItemTypeAndMetaLabel(item)]
-        if (haystack.join(' ').toLowerCase().includes(query)) {
-          found.push(index)
-          foundUids.add(item.name)
-        }
-      })
-
-      if (foundUids.size === 0) {
-        this.selectedItems = []
-      } else {
-        this.selectedItems = this.selectedItems.filter((uid) => foundUids.has(uid))
-      }
-      return found // return array with matched indexes
-    },
-    reapplySearch() {
-      const query = this.searchQuery
-      if (!query) {
-        return
-      }
-      this.$refs.searchbar?.$el.f7Searchbar.search('')
-      this.$refs.searchbar?.$el.f7Searchbar.search(query)
-    },
-    resetFilter() {
-      this.excludedUids.clear()
-      if (this.searchQuery) {
-        this.reapplySearch()
-      } else {
-        this.$refs.itemsList.$el.f7VirtualList.resetFilter()
-      }
-    },
-    applyFilter() {
-      let filteredIndexes = null
-      const selected = this.$refs.filters?.selected
-
-      this.excludedUids.clear()
-      if (selected && this.$refs.filters.filtered) {
-        filteredIndexes = []
-        this.items.forEach((item, index) => {
-          const typeMatch = !selected.types.size || selected.types.has(item.type.split(':')[0])
-          const kind = item.editable ? 'editable' : 'readonly'
-          const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
-          if (kindMatch && typeMatch) {
-            filteredIndexes.push(index)
-          } else {
-            this.excludedUids.add(item.name)
-          }
-        })
-      }
-
-      if (this.excludedUids.size > 0) {
-        this.selectedItems = this.selectedItems.filter((uid) => !this.excludedUids.has(uid))
-      }
-
-      if (this.searchQuery) {
-        this.reapplySearch()
-      } else if (filteredIndexes !== null) {
-        this.$refs.itemsList.$el.f7VirtualList.filterItems(filteredIndexes)
-      } else {
-        this.$refs.itemsList.$el.f7VirtualList.resetFilter()
-      }
-    },
-    processFilter() {
-      const filters = this.$refs.filters
-      if (filters?.filtered) {
-        this.applyFilter()
-      } else {
-        this.resetFilter()
-      }
-    },
-    updateListedItems() {
-      this.$nextTick(() => {
-        this.listedItems = this.$refs.itemsList.$el.f7VirtualList.filteredItems || this.$refs.itemsList.$el.f7VirtualList.items || []
-      })
     }
   },
   watch: {
-    ready() {
-      this.updateListedItems()
-    },
-    searchQuery() {
-      this.updateListedItems()
-    },
-    excludedUids: {
-      handler: function () {
-        this.updateListedItems()
-      },
-      deep: true
+    filteredList(matches) {
+      const f7VirtualList = this.$refs.itemsList?.$el.f7VirtualList
+      if (!f7VirtualList) return
+
+      const safeMatches = matches.filter((index) => Number.isInteger(index) && index >= 0 && index < this.items.length)
+      f7VirtualList.filterItems(safeMatches)
     }
   },
   computed: {
-    searchbarPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
-    },
     allSelected() {
-      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
-    },
-    listTitle() {
-      let title = this.listedItems.length
-      if (this.searchQuery || this.$refs.filters?.filtered) {
-        title += ` of ${this.items.length} Items found`
-      } else {
-        title += ' Items'
-      }
-      if (this.selectedItems.length > 0) {
-        title += `, ${this.selectedItems.length} selected`
-      }
-      return title
+      return this.selected.length >= this.filteredList.length && this.filteredList.length > 0
     },
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   }

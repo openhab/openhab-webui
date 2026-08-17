@@ -198,6 +198,7 @@ import { f7, theme } from 'framework7-vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeLabel } from '@/components/item/item-helpers'
 import ModelMixin from '@/pages/settings/model/model-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
@@ -208,7 +209,7 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme, utils }
+    return { theme, utils, getItemTypeLabel }
   },
   data() {
     return {
