@@ -1,4 +1,3 @@
-// TODO debug search
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
@@ -8,13 +7,14 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-sitemaps"
-          custom-search
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="'sitemaps-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
 
@@ -60,17 +60,12 @@
     <f7-block class="block-narrow">
       <f7-col v-show="ready">
         <f7-block-title class="no-margin-top">
-          <span>{{ getListTitle(rawSearchString.length !== 0, filteredList.length, sitemaps.length, 'Sitemap', selected.length) }}</span>
+          <span>{{ getListTitle(isFiltered, filteredList.length, sitemaps.length, 'Sitemap', selected.length) }}</span>
           <template v-if="showCheckboxes && selectableSitemapNames.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter
-          v-if="ready"
-          :filtersDefinitions="filtersDefinitions"
-          :selected="selectedListFilters"
-          @update:selected="onUpdateSelectedListFilters" />
         <f7-list v-if="sitemaps.length > 0 && filteredList.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
@@ -130,7 +125,7 @@
 </template>
 
 <script>
-import { nextTick, ref } from 'vue'
+import { nextTick, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import FileDefinition from '@/pages/settings/file-definition-mixin'
@@ -141,12 +136,9 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { showToast } from '@/js/dialog-promises'
 
-import * as api from '@/api'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
 
-const ITEM_KINDS = {
-  editable: 'Editable',
-  readonly: 'Non-editable'
-}
+import * as api from '@/api'
 
 export default {
   mixins: [FileDefinition],
@@ -155,42 +147,31 @@ export default {
   },
   components: {
     EmptyStatePlaceholder,
-    ListFilter
+    OhSearchbar
   },
   setup() {
-    const sitemaps = ref([])
+    const sitemaps = shallowRef([])
+    const haystackFields = ['name', 'label']
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
     const runtimeStore = useRuntimeStore()
 
     const filtersDefinitions = {
       is: {
         label: 'Kind',
-        singleSelect: true,
-        getFn: (sitemap) => (sitemap.editable ? 'editable' : 'readonly')
+        getFn: (sitemap) => (sitemap.editable ? 'editable' : 'readonly'),
+        options: ['Editable', 'Readonly']
       },
       name: {
-        label: 'Name',
-        hideOptions: true
+        label: 'Name'
       },
       label: {
-        label: 'Label',
-        hideOptions: true
+        label: 'Label'
       }
     }
 
-    const {
-      rawSearchString,
-      filteredList,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
-    } = useSearch(sitemaps, 'searchbar', {
+    const { filteredList, isFiltered, onUpdateTokenizedSearch, getFuseValuesForField } = useSearch(sitemaps, {
       filtersDefinitions,
-      persistSearchStringKey: 'sitemaps-query',
-      haystackFields: ['name', 'label']
+      haystackFields
     })
 
     return {
@@ -198,16 +179,13 @@ export default {
       sitemaps,
       runtimeStore,
       filtersDefinitions,
-      rawSearchString,
       filteredList,
-      selectedListFilters,
-      onUpdateSelectedListFilters,
-      persistSearchbarQuery,
-      restoreSearchbarQuery,
+      isFiltered,
+      onUpdateTokenizedSearch,
+      getFuseValuesForField,
       getListTitle,
-      createAutocompleteSearchbar,
-      destroyAutocompleteSearchbar,
-      searchPlaceholder
+      haystackFields,
+      ohSearchbarRef
     }
   },
   data() {
@@ -242,11 +220,9 @@ export default {
   methods: {
     async onPageAfterIn() {
       await this.load()
-      this.restoreSearchbarQuery()
     },
     onPageBeforeOut() {
-      this.destroyAutocompleteSearchbar()
-      this.persistSearchbarQuery()
+      this.ohSearchbarRef.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
@@ -274,8 +250,6 @@ export default {
       this.ready = true
 
       nextTick(() => {
-        this.destroyAutocompleteSearchbar()
-        this.createAutocompleteSearchbar()
         if (this.$refs.listIndex) this.$refs.listIndex.update()
         const searchbar = this.$refs.searchbar?.$el.f7Searchbar
         if (this.$device.desktop && searchbar) {

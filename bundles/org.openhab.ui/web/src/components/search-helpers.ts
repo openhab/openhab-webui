@@ -245,7 +245,7 @@ export function applySuggestion(
   if (isValueToken(token)) {
     const start = token.start ?? 0
     const end = start + (token.rawToken?.length ?? 0)
-    newToken = { ...token, values: [value], type: 'fieldValue', field: 'value'}
+    newToken = { ...token, values: [value], type: 'fieldValue', field: 'value' }
     newToken.rawToken = `${token.negated ? '-' : ''}${value.includes(' ') ? `"${value}"` : value}`
     newSearchString = existingQuery.slice(0, start) + newToken.rawToken + existingQuery.slice(end)
   } else if (isFieldValueToken(token)) {
@@ -254,7 +254,7 @@ export function applySuggestion(
     newToken = { ...token }
 
     newToken.values[token.values.length - 1] = value
-    const valueList = newToken.values.map(v => v.includes(' ') ? `"${v}"` : v).join(',')
+    const valueList = newToken.values.map((v) => (v.includes(' ') ? `"${v}"` : v)).join(',')
     newToken.rawToken = `${token.negated ? '-' : ''}${token.field}:${valueList}`
     newSearchString = existingQuery.slice(0, start) + newToken.rawToken + existingQuery.slice(end)
   } else {

@@ -275,7 +275,6 @@ export default {
     const filtersDefinitions = {
       is: {
         label: 'Kind',
-        singleSelect: true,
         getFn: (thing) => (thing.editable ? 'editable' : 'readonly'),
         options: ['Editable', 'Readonly']
       },
