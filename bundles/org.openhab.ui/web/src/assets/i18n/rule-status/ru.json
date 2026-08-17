@@ -3,6 +3,7 @@
   "HANDLER_INITIALIZING_ERROR": "ОШИБКА: ОБРАБОТЧИКА",
   "HANDLER_MISSING_ERROR": "ОШИБКА: ОБРАБОТЧИКА",
   "TEMPLATE_MISSING_ERROR": "ОШИБКА: ТЕМПЛЕТ",
+  "TEMPLATE_PENDING": "ОЖИДАНИЕ ШАБЛОНА",
   "INVALID_RULE": "НЕКОРРЕКТНОЕ",
   "DISABLED": "ОТКЛЮЧЕНО"
 }

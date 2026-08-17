@@ -7,6 +7,8 @@
   "things.text": "Things são os dispositivos e serviços conectados ao openHAB, eles são fornecidos por Add-ons.<br><br>Os Bindings instalados que suportam a descoberta automática adicionarão Things candidatas à sua Caixa de entrada. Você também pode iniciar uma busca por um Binding ou adicionar sua primeira Thing manualmente com o botão abaixo.",
   "things.nobindings.title": "Nenhum Binding",
   "things.nobindings.text": "Para adicionar Things ao seu sistema, você primeiro precisa instalar os Add-ons de Binding.",
+  "transformations.title": "Nenhuma transformação ainda",
+  "transformations.text": "As transformações são utilizadas para traduzir dados de um valor de matéria-prima atalhado ou técnico para uma representação legível do ser humano processada.",
   "model.title": "Comece a modelar sua casa",
   "model.text": "Construa um modelo de seus Items para organizá-los e relacioná-los um ao outro semânticamente.<br><br>Comece com uma hierarquia de locais: edifícios, áreas externas, andares e quartos, conforme necessário. Em seguida, insira o Equipamento e pontos de suas Things (ou manualmente).",
   "items.title": "Nenhum Item ainda",
@@ -17,6 +19,8 @@
   "pages.text": "Páginas de design para exibir informações de várias maneiras e interagir com seus Items. Você pode criar vários tipos de páginas: gráficos, sitemaps, plantas baixas...<br><br>Clique no botão abaixo para criar sua primeira página.",
   "rules.title": "Ainda não há regras",
   "rules.text": "Regras são os blocos de construção básicos para automatizar a sua casa - eles definem quais ações executar quando certos eventos ocorrem.<br><br>Crie sua primeira regra com o botão abaixo; para cenários mais avançados, você também pode escrever arquivos de script em sua pasta de configuração.",
+  "scenes.title": "Nenhuma cena ainda",
+  "scenes.text": "Cenas são regras que enviam comandos para restaurar um conjunto de itens a um estado desejado. <br/>  Você pode executá-las sob demanda ou chamá-las a partir de outras regras.<br><br> Crie sua primeira cena com o botão abaixo.",
   "scripts.title": "Nenhum script ainda",
   "scripts.text": "Scripts são um tipo especial de regras, sem gatilhos e um único módulo de ação para executar código.<br />Você pode executá-los sob demanda ou chamá-los de outras regras.<br><br>Crie seu primeiro script com o botão abaixo.",
   "schedule.title": "Nada no cronograma",
@@ -26,5 +30,9 @@
   "addons.title": "Nenhum add-on instalado",
   "addons.text": "Add-ons adicionam funcionalidade ao seu sistema openHAB.<br><br>Instale-os com o botão abaixo.",
   "page.unavailable.title": "Página Indisponível",
-  "page.unavailable.text": "Você não tem permissão para visualizar esta página devido a restrições de visibilidade."
+  "page.unavailable.text": "Você não tem permissão para visualizar esta página devido a restrições de visibilidade.",
+  "persistence.title": "Nenhum add-on de persistência instalado",
+  "persistence.text": "Com persistência, você pode armazenar estados do Item temporalmente, não importa se eles são valores históricos ou futuros. Para configurar a persistência, você precisa de pelo menos um complemento de persistência para ser instalado.",
+  "sitemaps.title": "Nenhum sitemaps ainda",
+  "sitemaps.text": "Sitemaps são uma maneira declarativa de definir a estrutura de uma interface de usuário para UIs que os apoia (interface de usuário básica, aplicativos móveis...). Eles são feitos de widgets para exibir estados do item ou enviar comandos para os itens.<br><br>Use o botão + para criar seu primeiro sitemap."
 }

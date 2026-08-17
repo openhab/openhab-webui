@@ -22,7 +22,7 @@
   "analyzer.coords.period.fixed": "Prefissato",
   "analyzer.coords.period.day": "Giorno",
   "analyzer.coords.period.isoWeek": "Settimana(Lun)",
-  "analyzer.coords.period.week": "Settimana (Dom)",
+  "analyzer.coords.period.week": "Settimana",
   "analyzer.coords.period.month": "Mese",
   "analyzer.coords.period.year": "Anno",
   "analyzer.coords.coordSystem": "Sistema di coordinate",
