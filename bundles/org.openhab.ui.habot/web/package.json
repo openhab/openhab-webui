@@ -21,7 +21,7 @@
     "jexl": "^1.1.4",
     "sprintf-js": "^1.1.1",
     "vue-async-computed": "^3.3.1",
-    "vue-echarts": "^3.0.3"
+    "vue-echarts": "^7.0.3"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.2",
