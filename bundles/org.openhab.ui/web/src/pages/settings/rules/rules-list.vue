@@ -515,7 +515,8 @@ export default {
       filteredList,
       isFiltered,
       onUpdateTokenizedSearch,
-      getListTitle
+      getListTitle,
+      haystackFields
     }
   },
   data() {

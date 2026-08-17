@@ -258,7 +258,8 @@ export default {
       isFiltered,
       getListTitle,
       onUpdateTokenizedSearch,
-      ohSearchbarRef
+      ohSearchbarRef,
+      haystackFields
     }
   },
   data() {

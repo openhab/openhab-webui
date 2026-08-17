@@ -7,15 +7,14 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
-          class="searchbar-schedule"
-          search-container=".timeline"
-          search-item=".timeline-item-inner"
-          search-in=".timeline-item-title"
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          ref="oh-searchbar"
+          class="searchbar-schedules"
+          :persist-search-string-key="'schedules-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
@@ -56,16 +55,20 @@
               <span>{{ day }}</span>
             </div>
             <div class="timeline-item-content">
-              <div v-for="(occurrence, $idx) in calendar[year][month][day]" class="timeline-item-inner" :key="$idx">
-                <div class="timeline-item-time">
-                  {{ occurrence[0].toTimeString().substring(0, 5) }}
-                </div>
-                <div class="timeline-item-title">
-                  {{ occurrence[1].name }}
-                </div>
-                <!-- <div class="timeline-item-text">{{occurrence[1].description}}</div> -->
-                <f7-link :href="'/settings/rules/' + occurrence[1].uid" small text="edit" />
-              </div>
+              <template v-for="(occurrence, idx) in calendar[year][month][day]">
+                <template v-if="filteredList.indexOf(occurrence.index) >= 0">
+                  <div class="timeline-item-inner" :key="idx">
+                    <div class="timeline-item-time">
+                      {{ occurrence.date.toTimeString().substring(0, 5) }}
+                    </div>
+                    <div class="timeline-item-title">
+                      {{ occurrence.rule.name }}
+                    </div>
+                    <!-- <div class="timeline-item-text">{{occurrence[1].description}}</div> -->
+                    <f7-link :href="'/settings/rules/' + occurrence.rule.uid" small text="edit" />
+                  </div>
+                </template>
+              </template>
             </div>
           </div>
         </div>
@@ -90,97 +93,144 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
-import { useStorage } from '@vueuse/core'
+import { nextTick, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { showToast } from '@/js/dialog-promises'
-
-const storagePrefix = 'openhab.ui:search:'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
+import { useSearch } from '@/components/useSearch'
 
 export default {
   components: {
-    'empty-state-placeholder': EmptyStatePlaceholder
+    'empty-state-placeholder': EmptyStatePlaceholder,
+    OhSearchbar
   },
   props: {
     f7router: Object
   },
   setup() {
-    const persistLastSearchQuery = useStorage(storagePrefix + 'schedule', '', sessionStorage, {
-      flush: 'sync',
-      writeDefaults: false
+    const rules = shallowRef([])
+    const haystackFields = ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
+    function displayedTags(rule) {
+      return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
+    }
+
+    const filtersDefinitions = {
+      name: {
+        label: 'Name',
+        path: 'rule.name'
+      },
+      uid: {
+        label: 'UID',
+        path: 'rule.uid'
+      },
+      description: {
+        label: 'Description',
+        path: 'rule.description'
+      },
+      tag: {
+        label: 'Tag',
+        getFn: (rule) => displayedTags(rule.rule)
+      },
+      status: {
+        label: 'Status',
+        options: {
+          uninitialized: 'Uninitialized',
+          initializing: 'Initializing',
+          idle: 'Idle',
+          running: 'Running',
+          disabled: 'Disabled'
+        },
+        getFn: (rule) => [rule.rule.status?.status, rule.rule.status?.statusDetail]
+      }
+    }
+
+    const { filteredList, isFiltered, onUpdateTokenizedSearch, getFuseValuesForField } = useSearch(rules, {
+      filtersDefinitions,
+      haystackFields,
+      returnType: 'indices'
     })
 
-    return { theme, persistLastSearchQuery }
+    filtersDefinitions.tag.options = () => getFuseValuesForField('tag')
+
+    return {
+      theme,
+      rules,
+      ohSearchbarRef,
+      filtersDefinitions,
+      filteredList,
+      isFiltered,
+      onUpdateTokenizedSearch,
+      haystackFields
+    }
   },
   data() {
     return {
       ready: false,
       initSearchbar: false,
       loading: false,
-      rules: [],
       noRuleEngine: false,
-      calendar: {},
       selectedItems: [],
       showCheckboxes: false,
-      eventSource: null
+      eventSource: null,
+      start: new Date()
+    }
+  },
+  computed: {
+    calendar() {
+      const limit = new Date()
+      limit.setDate(this.start.getDate() + 31)
+      const cal = {}
+
+      const occurrences = []
+      this.rules.forEach((rule, idx) => {
+        occurrences.push({ date: new Date(rule.date), rule: rule.rule, index: idx })
+      })
+
+      let day = new Date(this.start)
+      while (day < limit) {
+        const year = day.getFullYear()
+        const month = day.toLocaleString('default', { month: 'long' })
+        const dayofmonth = day.toLocaleString('default', { weekday: 'short' }) + ' ' + day.getDate()
+        const monthIndex = day.getMonth()
+        const dayIndex = day.getDate()
+        if (!cal[year]) cal[year] = {}
+        if (!cal[year][month]) cal[year][month] = {}
+        cal[year][month][dayofmonth] = occurrences.filter((o) => {
+          return o.date.getFullYear() === year && o.date.getMonth() === monthIndex && o.date.getDate() === dayIndex
+        })
+        day.setDate(day.getDate() + 1)
+      }
+
+      return cal
     }
   },
   methods: {
     async onPageAfterIn() {
       await this.load()
-      this.$refs.searchbar?.$el.f7Searchbar.search(this.persistLastSearchQuery || '')
     },
     onPageBeforeOut() {
       this.stopEventSource()
-      this.persistLastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
+      this.ohSearchbarRef.value?.persistLastSearchQuery()
     },
     async load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) {
-        this.persistLastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
-      }
       this.initSearchbar = false
 
-      let occurrences = []
-
-      let start = new Date(),
-        limit = new Date()
-      limit.setDate(start.getDate() + 31)
-
+      const limit = new Date()
+      limit.setDate(this.start.getDate() + 31)
       await this.$oh.api
-        .get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString())
+        .get('/rest/rules/schedule/simulations?from=' + this.start.toISOString() + '&until=' + limit.toISOString())
         .then((data) => {
           this.rules = data
           this.loading = false
           this.initSearchbar = true
-
-          // map RulesExecutions per time
-          this.rules.forEach((rule) => {
-            occurrences.push([new Date(rule.date), rule.rule])
-          })
-
-          this.calendar = {}
-
-          let day = start
-          while (day < limit) {
-            const year = day.getFullYear()
-            const month = day.toLocaleString('default', { month: 'long' })
-            const dayofmonth = day.toLocaleString('default', { weekday: 'short' }) + ' ' + day.getDate()
-            const monthIndex = day.getMonth()
-            const dayIndex = day.getDate()
-            const cal = this.calendar
-            if (!cal[year]) cal[year] = {}
-            if (!cal[year][month]) cal[year][month] = {}
-            cal[year][month][dayofmonth] = occurrences.filter((o) => {
-              return o[0].getFullYear() === year && o[0].getMonth() === monthIndex && o[0].getDate() === dayIndex
-            })
-            day.setDate(day.getDate() + 1)
-          }
 
           this.ready = true
           if (!this.eventSource) this.startEventSource()
@@ -251,11 +301,6 @@ export default {
           console.error(err)
           f7.dialog.alert('An error occurred while deleting: ' + err)
         })
-    }
-  },
-  computed: {
-    searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     }
   }
 }

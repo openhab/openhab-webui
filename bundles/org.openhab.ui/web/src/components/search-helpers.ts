@@ -229,8 +229,6 @@ export function tokensToFuse(
     return finish()
   }
 
-  console.debug('tokensToFuse', tokens, haystackFields, fieldAliases)
-
   return processExpression() || ''
 }
 
