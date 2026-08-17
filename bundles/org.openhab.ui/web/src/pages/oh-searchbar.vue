@@ -182,7 +182,6 @@ const tokensByField = computed<Record<string, FieldValueToken>>(() => {
     return acc
   }, {})
 
-  console.log('tokensByField computed:', _tokensByField)
   return _tokensByField
 })
 
@@ -357,18 +356,6 @@ async function autocompleteSource(query: string, render: (suggestions: string[])
   const cursorPosition = inputEl?.selectionStart !== 0 ? (inputEl?.selectionStart ?? 0) : query.length
   const previousChar = cursorPosition > query.length + 1 ? ' ' : (query[cursorPosition - 1] ?? ' ')
 
-  console.log(
-    'autocompleteSource called with query: _',
-    query,
-    '_ query length: ',
-    query.length,
-    'cursorPosition:',
-    cursorPosition,
-    'previousChar: _',
-    previousChar,
-    '_'
-  )
-
   let suggestions: string[] = []
 
   if (query.length === 0) {
@@ -403,8 +390,6 @@ function onAutocompletionClose(autocomplete: any) {
   const query = inputEl?.value ?? ''
   const cursorPosition = inputEl?.selectionStart !== 0 ? (inputEl?.selectionStart ?? 0) : query.length
   const currentChar = cursorPosition > query.length ? ' ' : (query[cursorPosition] ?? ' ')
-
-  console.log('currentChar:', currentChar, 'cursorPosition:', cursorPosition, 'query length:', query.length)
 
   const currentValueString = JSON.stringify(autocomplete?.value || [])
   // see hack note in opened event handler above

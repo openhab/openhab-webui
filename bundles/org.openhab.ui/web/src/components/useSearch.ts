@@ -29,7 +29,9 @@ export function useSearch<T>(list: Ref<T[]>, options: UseSearchOptions = {}) {
       })
       .map(([key, def]) => [key, def.path])
   )
-  const haystackFields = options.haystackFields ?? Object.entries(filtersDefinitions ?? {}).map(([key, def]) => def.path ?? key)
+  const haystackFields =
+    options.haystackFields?.map((field) => fieldAliases[field] ?? field) ??
+    Object.entries(filtersDefinitions ?? {}).map(([key, def]) => def.path ?? key)
 
   // reactive data
   const tokenizedSearch = ref<ParsedToken[]>([])
@@ -73,7 +75,6 @@ export function useSearch<T>(list: Ref<T[]>, options: UseSearchOptions = {}) {
 
   // Event
   function onUpdateTokenizedSearch(newTokenizedSearch: ParsedToken[]) {
-    console.debug('onUpdateTokenizedSearch', newTokenizedSearch)
     tokenizedSearch.value = newTokenizedSearch
   }
 
