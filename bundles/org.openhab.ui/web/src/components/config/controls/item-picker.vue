@@ -85,11 +85,16 @@
     outline 2px solid var(--f7-theme-color)
     outline-offset -2px
     border-radius var(--f7-list-inset-border-radius)
+  .item-title
+    flex-shrink 0
+    margin-right 16px
   .item-after
-    width 50%
     display flex
+    flex 1 1 0
+    min-width 0
     justify-content flex-end
     span
+      max-width 100%
       text-overflow ellipsis
       white-space nowrap
       overflow hidden

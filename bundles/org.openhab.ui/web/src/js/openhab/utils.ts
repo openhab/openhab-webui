@@ -1,7 +1,6 @@
 import { f7 } from 'framework7-vue'
 // eslint-disable-next-line import-x/named
 import { clean as cleanDiacritics } from 'diacritic'
-import truncate from 'lodash/truncate'
 
 export function normalizeLabel(label: string) {
   return cleanDiacritics(label.normalize('NFKD'))
@@ -60,16 +59,6 @@ export function simpleHash(obj: object | string): string {
   }
   return (hash >>> 0).toString(36)
 }
-/**
- * Truncate a string to a given length, adding an ellipsis if necessary.
- *
- * @param string the string to truncate
- * @param length the maximum length of the string
- * @returns the truncated string
- */
-export function truncateString(string: string, length: number): string {
-  return truncate(string, { length, separator: ' ' })
-}
 
 export default {
   normalizeLabel,
@@ -77,6 +66,5 @@ export default {
   normalizeInput,
   normalizeInputForThingId,
   hsbToRgb,
-  simpleHash,
-  truncateString
+  simpleHash
 }
