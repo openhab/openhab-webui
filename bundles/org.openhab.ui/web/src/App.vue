@@ -924,13 +924,11 @@ export default {
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
           if (locale) {
-            // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
-            if (locale === 'en') locale = 'en-gb'
             // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
             if (locale === 'no' || locale === 'no-no') locale = 'nb'
 
             const dayjsLocale = dayjsLocales.find(
-              (l) => l.key === locale || l.key === locale.toLowerCase() || l.key === locale.split('-')[0]
+              (l) => l.key === locale || l.key === locale.toLowerCase() || (locale.split('-')[0] !== 'en' && l.key === locale.split('-')[0])
             )
             const dayjsLoader = dayjsLocale ? dayjsLocalesGlob[`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`] : null
             dayjsLocalePromise = dayjsLoader
