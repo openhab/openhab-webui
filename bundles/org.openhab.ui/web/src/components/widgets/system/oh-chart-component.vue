@@ -150,6 +150,7 @@ const chartComposable = useChart(context, config, slots, evaluateExpression)
 const { startTime, endTime, options, period, earlierPeriod, laterPeriod, setDate, setPeriod } = chartComposable
 
 // data (state)
+const chart = ref<InstanceType<typeof VChart> | null>(null)
 const ready = ref(false)
 const calendarPicker = ref<Calendar.Calendar | null>(null)
 const calendarInput = ref<HTMLElement | null>(null)
@@ -226,6 +227,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   if (calendarPicker.value) calendarPicker.value.destroy()
+  if (chart.value) chart.value.dispose()
 })
 
 // methods
@@ -259,6 +261,7 @@ const handleClick = (evt: ECElementEvent) => {
 }
 
 const forceRerender = () => {
+  if (chart.value) chart.value.dispose()
   ready.value = false
   nextTick(() => {
     ready.value = true
