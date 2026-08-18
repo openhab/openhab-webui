@@ -2,7 +2,7 @@
   <div class="item-picker-container">
     <f7-list-item
       :title="showTitle ? label || 'Item' : undefined"
-      :after="$oh.utils.truncateString(displayValue, 60)"
+      :after="displayValue"
       link
       :disabled="disabled ? true : null"
       :textColor="textColor"
@@ -85,6 +85,14 @@
     outline 2px solid var(--f7-theme-color)
     outline-offset -2px
     border-radius var(--f7-list-inset-border-radius)
+  .item-after
+    width 50%
+    display flex
+    justify-content flex-end
+    span
+      text-overflow ellipsis
+      white-space nowrap
+      overflow hidden
 </style>
 
 <script>

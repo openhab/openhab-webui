@@ -106,7 +106,6 @@ import FilterPicker from '@/pages/settings/persistence/filter-picker.vue'
 import { FilterTypeName, type FiltersDefinition, emptyPersistenceServiceConfig } from '@/assets/definitions/persistence'
 import * as api from '@/api'
 import cloneDeep from 'lodash/cloneDeep'
-import GroupBox from '@/components/util/group-box.vue'
 
 // Props and emits
 const opened = defineModel<boolean>('opened')
