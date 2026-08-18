@@ -801,8 +801,6 @@ export default {
           let dayjsLocalePromise = Promise.resolve(null)
           // try to resolve the dayjs file to load if it exists
           if (locale) {
-            // fix for missing definitions in en.js locale, see https://github.com/iamkun/dayjs/blob/dev/src/locale/en.js
-            if (locale === 'en') locale = 'en-gb'
             // there is no single Norwegian locale in dayjs, so use nb (Norwegian Bokmål)
             if (locale === 'no' || locale === 'no-no') locale = 'nb'
 
