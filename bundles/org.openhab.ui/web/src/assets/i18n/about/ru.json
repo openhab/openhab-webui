@@ -17,5 +17,6 @@
   "about.reload.purgeExplanation2": "Выберите \"Очистить кэш\" и \"Перезагрузить\" ниже, чтобы сбросить все кэши и службы и снова загрузить всё с сервера.",
   "about.reload.purgeCachesAndRefresh": "Сбросить кэш и обновить",
   "about.reload.confirmPurge": "Сбросить кэш и службы? Произойдёт перезагрузка страницы с сервера, что может занять несколько секунд.",
-  "about.reload.reloadApp": "Перезагрузить приложение"
+  "about.reload.reloadApp": "Перезагрузить приложение",
+  "about.reload.setupWizard": "Мастер установки"
 }

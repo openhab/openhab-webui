@@ -166,9 +166,7 @@ export default {
     this.windowHeight = window.screen.height
   },
   beforeUnmount() {
-    if (!this.context.editmode) {
-      window.removeEventListener('resize', this.setDimensions)
-    }
+    window.removeEventListener('resize', this.setDimensions)
   },
   methods: {
     isRetina() {

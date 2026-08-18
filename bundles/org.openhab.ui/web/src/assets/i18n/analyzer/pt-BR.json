@@ -13,6 +13,7 @@
   "analyzer.series.table.type.bar": "Barra",
   "analyzer.series.table.type.line": "Linha",
   "analyzer.series.table.type.area": "Área",
+  "analyzer.series.table.type.state": "Estado",
   "analyzer.series.table.type.heatmap": "Mapa de Calor",
   "analyzer.series.table.na": "N/A",
   "analyzer.coords": "Coordenadas",
@@ -21,6 +22,7 @@
   "analyzer.coords.period.fixed": "Fixo",
   "analyzer.coords.period.day": "Dia",
   "analyzer.coords.period.isoWeek": "Semana",
+  "analyzer.coords.period.week": "Semana",
   "analyzer.coords.period.month": "Mês",
   "analyzer.coords.period.year": "Ano",
   "analyzer.coords.coordSystem": "Sistema de Coordenadas",
@@ -66,5 +68,7 @@
   "analyzer.dialogs.save.replace.message": "Uma página com o ID {uid} já existe, gostaria de substituí-la?",
   "analyzer.dialogs.save.replace.title": "Página já existe",
   "analyzer.page.updated": "Página do gráfico atualizada",
-  "analyzer.page.created": "Página do gráfico criada"
+  "analyzer.page.created": "Página do gráfico criada",
+  "analyzer.invalid-configuration.title": "Configuração inválida",
+  "analyzer.invalid-configuration.text": "Certifique-se que todos os parâmetros de consulta necessários foram informados e a configuração é válida."
 }

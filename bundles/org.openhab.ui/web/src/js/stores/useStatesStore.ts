@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { nextTick, ref, reactive } from 'vue'
 
-import sse from '@/js/openhab/sse'
+import sse, { type SSEConnection } from '@/js/openhab/sse'
 import * as api from '@/api'
 
 export type TrackedItems = Record<string, ItemState>
@@ -87,7 +87,7 @@ export const useStatesStore = defineStore('states', () => {
   const trackedItems = reactive<TrackedItems>(new Proxy({}, handler))
   const trackingList = ref<Array<string>>([])
   let trackerConnectionId: string | null = null
-  let trackerEventSource: EventSource | null = null
+  let trackerEventSource: SSEConnection | null = null
   let pendingTrackingListUpdate: boolean = false
   const keepConnectionOpen = ref<boolean>(false)
   const sseConnected = ref<boolean>(false)
