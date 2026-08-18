@@ -10,7 +10,7 @@
       class="group-box-header"
       :role="accordion ? 'button' : undefined"
       :tabindex="accordion ? 0 : undefined"
-      :aria-expanded="accordion ? String(isAccordionOpened) : undefined"
+      :aria-expanded="accordion ? isAccordionOpened : undefined"
       @click="toggleAccordion"
       @keydown.enter.prevent="toggleAccordion"
       @keydown.space.prevent="toggleAccordion">
@@ -227,21 +227,23 @@ flush-styles()
       border-top 1px solid var(--group-box-divider-color)
 </style>
 
-<script setup>
+<script setup lang="ts">
+import { ref, watch, useTemplateRef } from 'vue'
 import { f7 } from 'framework7-vue'
-import { ref, watch } from 'vue'
 
-const props = defineProps({
-  title: String,
-  description: String,
-  accordion: Boolean,
-  accordionOpened: {
-    type: Boolean,
-    default: false
+const props = withDefaults(
+  defineProps<{
+    title: string
+    description: string
+    accordion: boolean
+    accordionOpened?: boolean
+  }>(),
+  {
+    accordionOpened: false
   }
-})
+)
 
-const container = ref()
+const container = useTemplateRef('container')
 const isAccordionOpened = ref(props.accordionOpened)
 
 watch(
