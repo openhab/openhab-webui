@@ -3,7 +3,7 @@
     v-for="option in typeof filter.options === 'function' ? filter.options() : filter.options"
     :key="option"
     :text="option"
-    :color="isFilterSelected(option) ? 'blue' : 'gray'"
+    :color="isFilterSelected(option) ? 'blue' : ''"
     media-bg-color="blue"
     style="margin-right: 6px; cursor: pointer"
     @click="toggleFilterSelection(option)">

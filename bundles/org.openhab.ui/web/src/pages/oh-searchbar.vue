@@ -94,10 +94,13 @@
           word-break break-all
           overflow-wrap break-word
           white-space normal
-          width 90%
+          width 85%
+          background-color var(--f7-list-item-bg-color, var(--f7-card-bg-color))
         td.label-cell
-          width 10%
+          width 15%
           white-space normal
+          background-color var(--f7-list-group-title-bg-color)
+          vertical-align top
 </style>
 
 <script setup lang="ts">
