@@ -183,6 +183,13 @@ const aggregateSeries: SeriesComponent = {
 
     console.debug('oh-aggregate-series: groups', groups)
 
+    // Series with an offset are requested for a shifted period, so the look-back group added by
+    // adjustedStartTime() has to be determined against that shifted start instead of startTime.
+    const seriesStartTime =
+      series.offsetAmount && series.offsetUnit
+        ? startTime.subtract(series.offsetAmount, series.offsetUnit as dayjs.ManipulateType)
+        : startTime
+
     const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
     const data = groups
       .map((arr, idx, groups) => {
@@ -205,7 +212,7 @@ const aggregateSeries: SeriesComponent = {
           }
         }
       })
-      .filter((_d, idx) => !groups[idx][0].isBefore(startTime))
+      .filter((_d, idx) => !groups[idx][0].isBefore(seriesStartTime))
 
     if (!series.type) (series.type as unknown as string) = OhAggregateSeries.Type.heatmap
 

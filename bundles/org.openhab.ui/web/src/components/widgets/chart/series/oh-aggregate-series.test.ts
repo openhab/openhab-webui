@@ -210,5 +210,33 @@ describe('aggregateSeries', () => {
       expect(result.data[0][0]).toBe(0)
       expect(result.data[1][0]).toBe(1)
     })
+
+    it('should keep the data points of a series with an offset', () => {
+      const component = {
+        config: {
+          item: 'TestItem',
+          aggregationFunction: AggregationFunction.average,
+          offsetAmount: 1,
+          offsetUnit: 'day'
+        }
+      } as any
+      // The data is requested for the offset period, while get() receives the unshifted startTime
+      const offsetStartTime = startTime.subtract(1, 'day')
+      const points = [
+        {
+          name: 'TestItem',
+          data: [
+            { time: offsetStartTime.valueOf(), state: '10' }, // Hour 0
+            { time: offsetStartTime.add(1, 'hour').valueOf(), state: '20' } // Hour 1
+          ]
+        }
+      ] as any
+
+      const result = aggregateSeries.get(context, component, points, startTime, endTime)
+
+      expect(result.data).toHaveLength(2)
+      expect(result.data[0]).toEqual([0, '10'])
+      expect(result.data[1]).toEqual([1, '20'])
+    })
   })
 })
