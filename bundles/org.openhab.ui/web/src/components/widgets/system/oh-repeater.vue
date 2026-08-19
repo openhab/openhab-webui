@@ -165,7 +165,7 @@ const source = computedAsync(async (): Promise<SourceArray> => {
         if (!cfg.in) {
           return []
         }
-        if (sourceType.value == OhRepeater.SourceType.array) {
+        if (Array.isArray(cfg.in)) {
           return cfg.in
         }
         return String(cfg.in)
