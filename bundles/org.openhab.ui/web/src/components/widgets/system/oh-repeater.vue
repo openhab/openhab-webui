@@ -36,7 +36,7 @@ import { ApiError } from '@/js/hey-api'
 import { simpleHash } from '@/js/openhab/utils'
 
 type SourceTypeElement = api.EnrichedItem | api.EnrichedGroupItem | api.EnrichedRule | api.StateOption | api.CommandOption | string | number
-type SourceArray = SourceTypeElement[] | null
+type SourceArray = SourceTypeElement[] | string | null
 
 // define*
 const props = defineProps<{
@@ -163,7 +163,13 @@ const source = computedAsync(async (): Promise<SourceArray> => {
         if (!cfg.in) {
           return []
         }
-        return cfg.in
+        if (Array.isArray(cfg.in)) {
+          return cfg.in
+        }
+        return String(cfg.in)
+          .split(',')
+          .map((item) => item.trim())
+          .filter((item) => item.length > 0)
     }
   } catch (e) {
     console.error('oh-repeater: error fetching source data', e)
