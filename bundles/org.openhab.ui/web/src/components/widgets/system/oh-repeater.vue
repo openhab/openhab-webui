@@ -36,7 +36,7 @@ import { ApiError } from '@/js/hey-api'
 import { simpleHash } from '@/js/openhab/utils'
 
 type SourceTypeElement = api.EnrichedItem | api.EnrichedGroupItem | api.EnrichedRule | api.StateOption | api.CommandOption | string | number
-type SourceArray = SourceTypeElement[] | null
+type SourceArray = SourceTypeElement[] | string | null
 
 // define*
 const props = defineProps<{
@@ -164,6 +164,9 @@ const source = computedAsync(async (): Promise<SourceArray> => {
         }
         if (!cfg.in) {
           return []
+        }
+        if (sourceType.value == OhRepeater.SourceType.array) {
+          return cfg.in
         }
         return String(cfg.in)
           .split(',')
