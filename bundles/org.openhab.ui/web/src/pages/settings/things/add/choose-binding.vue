@@ -22,45 +22,49 @@
 
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-list v-if="!ready" class="col">
-          <f7-list-group>
+        <group-box title="Installed Bindings">
+          <f7-list v-if="!ready" class="col">
+            <f7-list-group>
+              <f7-list-item
+                v-for="n in 10"
+                media-item
+                :key="n"
+                :class="`skeleton-text skeleton-effect-blink`"
+                title="Label of the binding"
+                header="BindingID"
+                footer="This contains the description of the binding" />
+            </f7-list-group>
+          </f7-list>
+          <f7-list v-else class="col binding-list">
             <f7-list-item
-              v-for="n in 10"
+              v-for="binding in bindings"
               media-item
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Label of the binding"
-              header="BindingID"
-              footer="This contains the description of the binding" />
-          </f7-list-group>
-        </f7-list>
-        <f7-list v-else class="col binding-list">
-          <f7-list-item
-            v-for="binding in bindings"
-            media-item
-            :key="binding.uid"
-            :link="binding.id"
-            :title="binding.label"
-            :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id).length || undefined"
-            badge-color="red"
-            :footer="
-              binding.description && binding.description.indexOf('<br>') >= 0 ? binding.description.split('<br>')[0] : binding.description
-            ">
-            <template #media>
-              <addon-logo class="logo-square" :addon="binding" size="64" />
-            </template>
-            <template #after>
-              <f7-icon f7="info_circle" style="margin-left: 4px" :tooltip="binding.uid" />
-            </template>
-          </f7-list-item>
-        </f7-list>
+              :key="binding.uid"
+              :link="binding.id"
+              :title="binding.label"
+              :badge="inbox.filter((e) => e.thingTypeUID.split(':')[0] === binding.id).length || undefined"
+              badge-color="red"
+              :footer="
+                binding.description && binding.description.indexOf('<br>') >= 0 ? binding.description.split('<br>')[0] : binding.description
+              ">
+              <template #media>
+                <addon-logo class="logo-square" :addon="binding" size="64" />
+              </template>
+              <template #after>
+                <f7-icon f7="info_circle" style="margin-left: 4px" :tooltip="binding.uid" />
+              </template>
+            </f7-list-item>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
     <f7-block v-if="runtimeStore.apiEndpoint('addons')" class="block-narrow">
       <f7-col v-if="bindings.length">
-        <f7-list>
-          <f7-list-button color="blue" title="Install More Bindings" @click="installBindings" />
-        </f7-list>
+        <group-box>
+          <f7-list>
+            <f7-list-button color="blue" title="Install More Bindings" @click="installBindings" />
+          </f7-list>
+        </group-box>
       </f7-col>
       <f7-row v-else-if="ready" class="display-flex justify-content-center">
         <f7-button large fill color="blue" @click="installBindings"> Install Bindings </f7-button>

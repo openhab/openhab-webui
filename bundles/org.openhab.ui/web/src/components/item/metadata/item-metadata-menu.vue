@@ -1,39 +1,55 @@
 <template>
-  <f7-card>
-    <f7-card-content v-if="this.editableNamespaces.length > 0">
-      <f7-list>
-        <ul>
-          <f7-list-item
-            v-for="namespace in wellKnownNamespaces"
-            :key="namespace.name"
-            :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
-            :title="namespace.label"
-            :after="namespace.value || 'Not Set'">
-            <template #title>
-              <f7-icon v-if="!namespace.editable" f7="lock_fill" size="1rem" color="gray" />
-            </template>
-          </f7-list-item>
-        </ul>
-        <ul v-if="customNamespaces.length > 0">
-          <f7-list-item divider />
-          <f7-list-item
-            v-for="namespace in customNamespaces"
-            :key="namespace.name"
-            :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
-            :title="namespace.label"
-            :after="namespace.value || 'Not Set'">
-            <template #title>
-              <f7-icon v-if="!namespace.editable" f7="lock_fill" size="1rem" color="gray" />
-            </template>
-          </f7-list-item>
-        </ul>
-      </f7-list>
-    </f7-card-content>
+  <group-box title="Metadata">
+    <f7-list v-if="this.editableNamespaces.length > 0" class="metadata-list">
+      <ul v-if="wellKnownNamespaces.length > 0">
+        <f7-list-item divider title="Well-known Namespaces" />
+        <f7-list-item
+          v-for="namespace in wellKnownNamespaces"
+          :key="namespace.name"
+          :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
+          :title="namespace.label"
+          :after="namespace.value || 'Not Set'">
+          <template #title>
+            <f7-icon v-if="!namespace.editable" f7="lock_fill" size="1rem" color="gray" />
+          </template>
+        </f7-list-item>
+      </ul>
+      <ul v-if="customNamespaces.length > 0">
+        <f7-list-item divider title="Custom Namespaces" />
+        <f7-list-item
+          v-for="namespace in customNamespaces"
+          :key="namespace.name"
+          :link="'/settings/items/' + item.name + '/metadata/' + namespace.name"
+          :title="namespace.label"
+          :after="namespace.value || 'Not Set'">
+          <template #title>
+            <f7-icon v-if="!namespace.editable" f7="lock_fill" size="1rem" color="gray" />
+          </template>
+        </f7-list-item>
+      </ul>
+    </f7-list>
     <f7-card-footer>
       <f7-button color="blue" @click="addMetadata"> Add Metadata </f7-button>
     </f7-card-footer>
-  </f7-card>
+  </group-box>
 </template>
+
+<style lang="stylus">
+.metadata-list
+  .item-title
+    flex-shrink 0
+    margin-right 16px
+  .item-after
+    display flex
+    flex 1 1 0
+    min-width 0
+    justify-content flex-end
+    span
+      max-width 100%
+      text-overflow ellipsis
+      white-space nowrap
+      overflow hidden
+</style>
 
 <script>
 import MetadataNamespaces from '@/assets/definitions/metadata/namespaces.js'
@@ -72,13 +88,14 @@ export default {
         })
     },
     wellKnownNamespaces() {
-      return this.editableNamespaces
-        .filter((n) => this.metadataNamespaces.some((wk) => wk.name === n.name))
-        .map((n) => {
-          const wellKnown = this.metadataNamespaces.find((wk) => wk.name === n.name)
+      // Return the item metadata but adopt the ordering of the well-known namespaces
+      return this.metadataNamespaces
+        .filter((wk) => this.editableNamespaces.some((n) => n.name === wk.name))
+        .map((wk) => {
+          const editable = this.editableNamespaces.find((n) => n.name === wk.name)
           return {
-            ...n,
-            label: wellKnown.label
+            ...editable,
+            label: wk.label
           }
         })
     },

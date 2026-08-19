@@ -47,10 +47,6 @@
       </div>
     </f7-toolbar>
 
-    <f7-list class="searchbar-not-found">
-      <f7-list-item title="Nothing found" />
-    </f7-list>
-
     <f7-block v-show="!nowidgetEngine" class="block-narrow">
       <!-- skeleton for not ready -->
       <f7-col v-show="!ready">
@@ -68,42 +64,47 @@
         </f7-list>
       </f7-col>
       <f7-col v-if="ready">
-        <f7-block-title class="searchbar-hide-on-search"> {{ blocks.length }} block libraries </f7-block-title>
-        <f7-list v-show="blocks.length > 0" class="searchbar-found col blocks-list" ref="blocksList" media-list>
-          <f7-list-item
-            v-for="(b, index) in blocks"
-            :key="index"
-            media-item
-            class="blockslist-item"
-            :checkbox="showCheckboxes"
-            :checked="isChecked(b.uid) ? true : null"
-            prevent-router
-            @click.ctrl="ctrlClick($event, b)"
-            @click.meta="ctrlClick($event, b)"
-            @click.exact="click($event, b)"
-            :link="`${b.uid}`"
-            :title="b.uid">
-            <template #subtitle>
-              <div>
-                <f7-chip v-for="tag in b.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                  <template #media>
-                    <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
-                  </template>
-                </f7-chip>
-              </div>
-            </template>
-            <template #media>
-              <span class="item-initial">{{ b.uid[0].toUpperCase() }}</span>
-            </template>
-            <template #after>
-              <!-- This is here to push the after-title icon so it would appear immediately after the title
-                    for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
-            </template>
-            <template #after-title>
-              <f7-icon v-if="b.editable === false" f7="lock_fill" color="gray" />
-            </template>
-          </f7-list-item>
+        <f7-list class="searchbar-not-found">
+          <f7-list-item title="Nothing found" />
         </f7-list>
+
+        <group-box v-if="ready" :title="blocks.length + ' block libraries'">
+          <f7-list v-show="blocks.length > 0" class="searchbar-found col blocks-list" ref="blocksList" media-list>
+            <f7-list-item
+              v-for="(b, index) in blocks"
+              :key="index"
+              media-item
+              class="blockslist-item"
+              :checkbox="showCheckboxes"
+              :checked="isChecked(b.uid) ? true : null"
+              prevent-router
+              @click.ctrl="ctrlClick($event, b)"
+              @click.meta="ctrlClick($event, b)"
+              @click.exact="click($event, b)"
+              :link="`${b.uid}`"
+              :title="b.uid">
+              <template #subtitle>
+                <div>
+                  <f7-chip v-for="tag in b.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                    <template #media>
+                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                    </template>
+                  </f7-chip>
+                </div>
+              </template>
+              <template #media>
+                <span class="item-initial">{{ b.uid[0].toUpperCase() }}</span>
+              </template>
+              <template #after>
+                <!-- This is here to push the after-title icon so it would appear immediately after the title
+                    for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
+              </template>
+              <template #after-title>
+                <f7-icon v-if="b.editable === false" f7="lock_fill" color="gray" />
+              </template>
+            </f7-list-item>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
     <template #fixed>

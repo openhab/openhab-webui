@@ -17,8 +17,7 @@
               :key="column"
               width="100"
               :medium="developerNavigationColumns.length > 1 ? '50' : '100'">
-              <template v-for="section in developerColumnSections(column)" :key="section.id">
-                <f7-block-title>{{ $t(section.titleKey) }}</f7-block-title>
+              <group-box v-for="section in developerColumnSections(column)" :key="section.id" :title="$t(section.titleKey)">
                 <f7-list>
                   <template v-for="item in section.items" :key="item.id">
                     <f7-list-item
@@ -84,7 +83,7 @@
                     </f7-list-item>
                   </template>
                 </f7-list>
-              </template>
+              </group-box>
             </f7-col>
           </f7-row>
           <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">

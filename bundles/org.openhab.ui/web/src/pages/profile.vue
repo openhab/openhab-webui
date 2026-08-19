@@ -20,22 +20,20 @@
     <f7-block class="block-narrow after-profile-header">
       <f7-row>
         <f7-col>
-          <f7-list>
-            <f7-list-button color="blue" :external="true" href="/changePassword">
-              {{ t('profile.changePassword') }}
-            </f7-list-button>
-          </f7-list>
+          <group-box title="Account">
+            <f7-list>
+              <f7-list-button color="blue" :external="true" href="/changePassword">
+                {{ t('profile.changePassword') }}
+              </f7-list-button>
+            </f7-list>
+          </group-box>
         </f7-col>
       </f7-row>
     </f7-block>
     <f7-block class="block-narrow">
       <f7-row>
         <f7-col>
-          <f7-block-title>{{ t('profile.sessions') }}</f7-block-title>
-          <f7-block-footer class="padding-horizontal">
-            {{ t('profile.sessions.header') }}
-          </f7-block-footer>
-          <f7-card>
+          <group-box :title="t('profile.sessions')" :description="t('profile.sessions.header')">
             <f7-list media-list swipeout>
               <f7-list-item
                 v-for="session in filteredSessions"
@@ -68,18 +66,14 @@
                 {{ t('profile.sessions.signOut') }}
               </f7-list-button>
             </f7-list>
-          </f7-card>
+          </group-box>
         </f7-col>
       </f7-row>
     </f7-block>
     <f7-block class="block-narrow margin-bottom padding-bottom">
       <f7-row>
         <f7-col>
-          <f7-block-title>{{ t('profile.apiTokens') }}</f7-block-title>
-          <f7-block-footer class="padding-horizontal">
-            {{ t('profile.apiTokens.header') }}
-          </f7-block-footer>
-          <f7-card>
+          <group-box :title="t('profile.apiTokens')" :description="t('profile.apiTokens.header')">
             <f7-list media-list swipeout>
               <f7-list-item
                 v-for="apiToken in apiTokens"
@@ -109,7 +103,7 @@
                 {{ t('profile.apiTokens.create') }}
               </f7-list-button>
             </f7-list>
-          </f7-card>
+          </group-box>
         </f7-col>
       </f7-row>
     </f7-block>

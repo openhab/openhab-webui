@@ -23,11 +23,13 @@
             <component :is="editorControl" :item="item" :metadata="metadata" :namespace="namespace" />
           </f7-col>
         </f7-block>
-        <f7-block v-if="ready" class="block-narrow">
+        <f7-block v-if="ready && !creationMode && editable" class="block-narrow">
           <f7-col>
-            <f7-list>
-              <f7-list-button v-if="!creationMode && editable" color="red" @click="remove()"> Remove metadata </f7-list-button>
-            </f7-list>
+            <group-box>
+              <f7-list>
+                <f7-list-button color="red" @click="remove()"> Remove metadata </f7-list-button>
+              </f7-list>
+            </group-box>
           </f7-col>
         </f7-block>
       </f7-tab>
@@ -169,6 +171,7 @@ export default {
   methods: {
     onPageBeforeIn() {
       this.load()
+      console.log('router', this.f7router)
     },
     onEditorInput(value) {
       this.yaml = value

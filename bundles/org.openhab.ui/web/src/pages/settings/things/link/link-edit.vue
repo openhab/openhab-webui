@@ -12,36 +12,31 @@
     </f7-navbar>
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
-        <div v-if="item.state">
+        <group-box v-if="item.state" title="Item State">
           <item-state-preview :item="item" :context="context" />
-        </div>
+        </group-box>
 
-        <f7-block-title>Link</f7-block-title>
-        <f7-card>
-          <f7-card-content>
-            <f7-list media-list>
-              <ul>
-                <f7-list-item divider title="Channel" />
-                <f7-list-item
-                  media-item
-                  class="channel-item"
-                  :title="channel.label || channelType.label"
-                  :footer="channel.uid + ' (' + getItemType(channel) + ')'"
-                  :subtitle="thing.label"
-                  :badge="thingStatusBadgeText(thing.statusInfo)"
-                  :badge-color="thingStatusBadgeColor(thing.statusInfo)"
-                  :link="'/settings/things/' + thing.UID">
-                  <template #media>
-                    <span class="item-initial">{{
-                      channel.label ? channel.label[0] : channelType.label ? channelType.label[0] : '?'
-                    }}</span>
-                  </template>
-                </f7-list-item>
-                <f7-list-item divider title="Item" />
-                <item :item="item" :context="context" :link="'/settings/items/' + item.name" />
-              </ul>
-            </f7-list>
-          </f7-card-content>
+        <group-box title="Link Details">
+          <f7-list media-list>
+            <ul>
+              <f7-list-item divider title="Channel" />
+              <f7-list-item
+                media-item
+                class="channel-item"
+                :title="channel.label || channelType.label"
+                :footer="channel.uid + ' (' + getItemType(channel) + ')'"
+                :subtitle="thing.label"
+                :badge="thingStatusBadgeText(thing.statusInfo)"
+                :badge-color="thingStatusBadgeColor(thing.statusInfo)"
+                :link="'/settings/things/' + thing.UID">
+                <template #media>
+                  <span class="item-initial">{{ channel.label ? channel.label[0] : channelType.label ? channelType.label[0] : '?' }}</span>
+                </template>
+              </f7-list-item>
+              <f7-list-item divider title="Item" />
+              <item :item="item" :context="context" :link="'/settings/items/' + item.name" />
+            </ul>
+          </f7-list>
           <f7-card-footer v-if="item && (item.editable || link.editable)">
             <f7-button v-if="source === 'thing' && item.editable" color="red" fill @click="unlinkAndDelete()">
               Unlink &amp; Remove Item
@@ -50,42 +45,43 @@
               {{ source === 'thing' && link.editable ? 'Unlink Only' : 'Unlink' }}
             </f7-button>
           </f7-card-footer>
-        </f7-card>
+        </group-box>
       </f7-col>
       <f7-col>
-        <f7-block-title>Profile</f7-block-title>
-        <f7-block-footer class="padding-left padding-right">
-          Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
-          <f7-link external color="blue" target="_blank" :href="`${runtimeStore.websiteUrl}/link/profiles`">
-            Learn more about profiles.
-          </f7-link>
-        </f7-block-footer>
-        <f7-block v-if="!ready" class="text-align-center">
-          <f7-preloader />
-          <div>Loading...</div>
-        </f7-block>
-        <f7-list v-else class="profile-list">
-          <f7-list-item
-            v-for="profileType in profileTypes"
-            radio
-            class="profile-item"
-            :checked="
-              (!currentProfileType && profileType.uid === 'system:default') ||
-              (currentProfileType && profileType.uid === currentProfileType.uid)
-                ? true
-                : null
-            "
-            :disabled="!link.editable ? true : null"
-            :class="{ 'profile-disabled': !link.editable }"
-            @change="onProfileTypeChange(profileType.uid)"
-            :key="profileType.uid"
-            :title="profileType.label"
-            name="profile-type" />
-        </f7-list>
+        <group-box title="Profile">
+          <f7-block-footer class="padding-left padding-right">
+            Profiles define how Channels and Items work together. Install transformation add-ons to get additional profiles.
+            <f7-link external color="blue" target="_blank" :href="`${runtimeStore.websiteUrl}/link/profiles`">
+              Learn more about profiles.
+            </f7-link>
+          </f7-block-footer>
+          <f7-block v-if="!ready" class="text-align-center">
+            <f7-preloader />
+            <div>Loading...</div>
+          </f7-block>
+          <f7-list v-else class="profile-list">
+            <f7-list-item
+              v-for="profileType in profileTypes"
+              radio
+              class="profile-item"
+              :checked="
+                (!currentProfileType && profileType.uid === 'system:default') ||
+                (currentProfileType && profileType.uid === currentProfileType.uid)
+                  ? true
+                  : null
+              "
+              :disabled="!link.editable ? true : null"
+              :class="{ 'profile-disabled': !link.editable }"
+              @change="onProfileTypeChange(profileType.uid)"
+              :key="profileType.uid"
+              :title="profileType.label"
+              name="profile-type" />
+          </f7-list>
+        </group-box>
       </f7-col>
       <f7-col v-if="profileTypeConfiguration != null">
-        <f7-block-title>Profile Configuration</f7-block-title>
         <config-sheet
+          title="Profile Configuration"
           ref="profileConfiguration"
           :key="'profileTypeConfiguration-' + currentProfileType.uid"
           :parameter-groups="profileTypeConfiguration.parameterGroups"

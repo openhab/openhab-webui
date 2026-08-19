@@ -64,52 +64,50 @@
       </f7-col>
 
       <f7-col v-if="ready">
-        <f7-block-title>
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && listedItems.length">
-            -
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
-        </f7-block-title>
         <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
         <f7-list v-if="!listedItems.length && widgets.length" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-show="listedItems.length > 0" class="col widgets-list" ref="widgetsList" media-list>
-          <f7-list-item
-            v-for="widget in listedItems"
-            :key="widget.uid"
-            media-item
-            class="widgetlist-item"
-            :checkbox="showCheckboxes"
-            :checked="isChecked(widget.uid)"
-            prevent-router
-            @click.ctrl="ctrlClick($event, widget)"
-            @click.meta="ctrlClick($event, widget)"
-            @click.exact="click($event, widget)"
-            :link="`${encodeURIComponent(widget.uid)}`"
-            :title="widget.uid">
-            <template #subtitle>
-              <div>
-                <f7-chip v-for="tag in widget.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
-                  <template #media>
-                    <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
-                  </template>
-                </f7-chip>
-              </div>
-            </template>
-            <template #media>
-              <span class="item-initial">{{ widget.uid[0].toUpperCase() }}</span>
-            </template>
-            <template #after>
-              <!-- This is here to push the after-title icon so it would appear immediately after the title
+        <group-box :title="listTitle">
+          <template v-if="showCheckboxes && listedItems.length" #after-title>
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
+          <f7-list v-show="listedItems.length > 0" class="col widgets-list" ref="widgetsList" media-list>
+            <f7-list-item
+              v-for="widget in listedItems"
+              :key="widget.uid"
+              media-item
+              class="widgetlist-item"
+              :checkbox="showCheckboxes"
+              :checked="isChecked(widget.uid)"
+              prevent-router
+              @click.ctrl="ctrlClick($event, widget)"
+              @click.meta="ctrlClick($event, widget)"
+              @click.exact="click($event, widget)"
+              :link="`${encodeURIComponent(widget.uid)}`"
+              :title="widget.uid">
+              <template #subtitle>
+                <div>
+                  <f7-chip v-for="tag in widget.tags" :key="tag" :text="tag" media-bg-color="blue" style="margin-right: 6px">
+                    <template #media>
+                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                    </template>
+                  </f7-chip>
+                </div>
+              </template>
+              <template #media>
+                <span class="item-initial">{{ widget.uid[0].toUpperCase() }}</span>
+              </template>
+              <template #after>
+                <!-- This is here to push the after-title icon so it would appear immediately after the title
                     for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
-            </template>
-            <template #after-title>
-              <f7-icon v-if="widget.editable === false" f7="lock_fill" size="1rem" color="gray" />
-            </template>
-          </f7-list-item>
-        </f7-list>
+              </template>
+              <template #after-title>
+                <f7-icon v-if="widget.editable === false" f7="lock_fill" size="1rem" color="gray" />
+              </template>
+            </f7-list-item>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
     <template #fixed>

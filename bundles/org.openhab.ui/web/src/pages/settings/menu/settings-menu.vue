@@ -23,8 +23,7 @@
     <f7-block class="block-narrow after-big-title settings-menu">
       <f7-row>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
-          <template v-for="section in settingsNavigationSections" :key="section.id">
-            <f7-block-title>{{ $t(section.titleKey) }}</f7-block-title>
+          <group-box v-for="section in settingsNavigationSections" :key="section.id" :title="$t(section.titleKey)">
             <f7-list media-list class="search-list">
               <f7-list-item
                 v-for="item in section.items"
@@ -42,63 +41,58 @@
                 </template>
               </f7-list-item>
             </f7-list>
-          </template>
+          </group-box>
         </f7-col>
         <f7-col :class="!addonsLoaded || (addonsLoaded && addonsInstalled.length > 0) ? 'settings-col' : ''" width="100" medium="50">
-          <div v-show="servicesLoaded">
-            <f7-block-title>{{ $t('settings.groups.system-settings') }}</f7-block-title>
-            <f7-list class="search-list">
+          <group-box v-show="servicesLoaded" :title="$t('settings.groups.system-settings')">
+            <f7-list class="search-list no-margin-top">
               <f7-list-item
                 v-for="service in systemSettings"
                 v-show="!service.hidden"
                 :key="service.id"
                 :link="'services/' + service.id"
                 :title="service.label" />
+
               <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
-          </div>
+          </group-box>
           <!-- skeleton for not servicesLoaded -->
-          <div v-if="!servicesLoaded">
-            <f7-block-title>{{ $t('settings.groups.system-settings') }}</f7-block-title>
+          <group-box v-if="!servicesLoaded" :title="$t('settings.groups.system-settings')">
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
-          </div>
+          </group-box>
           <div v-show="$f7dim.width < 1450">
-            <div v-show="addonsLoaded && addonsInstalled.length > 0">
-              <addon-section
-                class="add-on-section"
-                :addonsInstalled="addonsInstalled"
-                :addonsServices="addonsServices"
-                :expanded="expandedTypes.addonsExpanded"
-                @expand="expand('addonsExpanded')" />
-            </div>
-            <!-- skeleton for not addonsLoaded -->
-            <div v-if="!addonsLoaded">
-              <f7-block-title>{{ $t('settings.groups.addon-settings') }}</f7-block-title>
-              <f7-list>
-                <f7-list-item v-for="n in 4" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
-              </f7-list>
-            </div>
-          </div>
-        </f7-col>
-        <f7-col v-show="$f7dim.width >= 1450" width="33" class="add-on-col">
-          <div v-show="addonsLoaded && addonsInstalled.length > 0">
             <addon-section
+              v-show="addonsLoaded && addonsInstalled.length > 0"
+              class="add-on-section"
               :addonsInstalled="addonsInstalled"
               :addonsServices="addonsServices"
               :expanded="expandedTypes.addonsExpanded"
               @expand="expand('addonsExpanded')" />
+            <!-- skeleton for not addonsLoaded -->
+            <group-box v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')">
+              <f7-list>
+                <f7-list-item v-for="n in 4" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
+              </f7-list>
+            </group-box>
           </div>
+        </f7-col>
+        <f7-col v-show="$f7dim.width >= 1450" width="33" class="add-on-col">
+          <addon-section
+            v-show="addonsLoaded && addonsInstalled.length > 0"
+            :addonsInstalled="addonsInstalled"
+            :addonsServices="addonsServices"
+            :expanded="expandedTypes.addonsExpanded"
+            @expand="expand('addonsExpanded')" />
           <!-- skeleton for not addonsLoaded -->
-          <div v-if="!addonsLoaded">
-            <f7-block-title>{{ $t('settings.groups.addon-settings') }}</f7-block-title>
+          <group-box v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')">
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
-          </div>
+          </group-box>
         </f7-col>
       </f7-row>
       <f7-block-footer v-if="$t('home.overview.title') !== 'Overview'" class="margin text-align-center">
@@ -120,6 +114,20 @@
     height calc(var(--f7-searchbar-input-height) + var(--f7-searchbar-inner-padding-left))
     .searchbar
       top calc(0.5 * var(--f7-searchbar-inner-padding-left))
+
+  .list-group
+    background var(--f7-list-bg-color, #fff)
+    border-radius 16px
+    overflow hidden
+    margin-bottom 20px
+
+    .list
+      margin-bottom 6px
+      ul:after
+        display none !important
+      li:first-child
+        padding-top 6px
+        border-top 1px solid var(--f7-list-border-color)
 </style>
 
 <script>
