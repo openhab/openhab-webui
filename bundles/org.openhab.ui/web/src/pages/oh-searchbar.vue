@@ -1,5 +1,5 @@
 <template>
-  <div class="oh-searchbar">
+  <div class="oh-searchbar-container">
     <f7-searchbar
       v-memo="[placeholder, theme.aurora]"
       ref="f7searchbar"
@@ -15,44 +15,67 @@
       </template>
     </f7-searchbar>
 
-    <!-- Render outside f7-searchbar to avoid slot-driven re-renders, but keep aligned with wrapper positioning. -->
-    <div v-if="showFilters" class="filters autocomplete-dropdown">
+    <f7-popover
+      class="filters-popover"
+      :opened="showFilters"
+      :backdrop="false"
+      targetEl=".input-filter-button"
+      containerEl=".oh-searchbar-container"
+      vertical-position="auto"
+      :closeByBackdropClick="true"
+      :closeOnEscape="true"
+      @popover:closed="showFilters = false">
       <div class="autocomplete-dropdown-inner">
         <div class="data-table no-safe-areas">
           <table>
             <tbody>
+              <tr>
+                <td class="label-cell">
+                  <div>Includes</div>
+                </td>
+                <td>
+                  <f7-input type="text" @input="onTextInput('include-input', $event)" />
+                </td>
+              </tr>
+              <tr>
+                <td class="label-cell">
+                  <div>Excludes</div>
+                </td>
+                <td>
+                  <f7-input type="text" @input="onTextInput('exclude-input', $event)" />
+                </td>
+              </tr>
               <tr v-for="(filter, key) in filtersWithOptions" :key="key">
-                <td class="label-cell">{{ filter.label }}</td>
+                <td class="label-cell" :class="{ 'filter-selected': anyFiltersSelected(key) }">{{ filter.label }}</td>
                 <td class="value-cell">
-                  <filter-options-list
-                    :filter="filter"
-                    :field="key"
-                    :token="tokensByField[key] ?? null"
-                    @update:token="updateToken"
-                    @add:token="addToken"
-                    @delete:token="deleteToken"></filter-options-list>
+                  <div>
+                    <filter-options-list
+                      :filter="filter"
+                      :field="key"
+                      :token="tokensByField[key] ?? null"
+                      @update:token="updateToken"
+                      @add:token="addToken"
+                      @delete:token="deleteToken"></filter-options-list>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
+    </f7-popover>
   </div>
 </template>
 
 <style lang="stylus">
-.oh-searchbar
+.oh-searchbar-container
   position relative
   flex-grow 1
   width 100%
 
-  .popover
-    width 100%
-
   .input-clear-button
     right 40px !important
-  i.icon.f7-icons.input-filter-button
+  .input-filter-button
     position absolute
     top 50%
     transform translateY(-50%)
@@ -65,22 +88,26 @@
     align-content center
     cursor pointer
 
-  .filters
-    margin -5px calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)) 0 calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left))
-    width calc(100% - (var(--f7-searchbar-inner-padding-left) + var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-left) + var(--f7-safe-area-right)))
-  .filters.autocomplete-dropdown
+.aurora .oh-searchbar-container
+  .filters-popover
+    left calc(var(--f7-searchbar-inner-padding-left, 0px) + var(--f7-safe-area-left, 0px)) !important
+    right calc(var(--f7-searchbar-inner-padding-right, 0px) + var(--f7-safe-area-right, 0px)) !important
+    top calc(var(--f7-searchbar-height, 48px) - 4px) !important
+    width unset
+    z-index 10000
+  // margin -5px calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)) 0 calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left))
+  // width calc(100% - (var(--f7-searchbar-inner-padding-left) + var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-left) + var(--f7-safe-area-right)))
+  .filters-popover
     background-color var(--f7-searchbar-input-bg-color, var(--f7-searchbar-bg-color))
-    border-radius var(--f7-searchbar-input-border-radius)
-  .filters.autocomplete-dropdown .autocomplete-dropdown-placeholder
-    color var(--f7-searchbar-placeholder-color)
-  .filters.autocomplete-dropdown li:last-child
+    // border-radius var(--f7-searchbar-input-border-radius)
+  .filters-popover li:last-child
     border-radius 0 0 var(--f7-searchbar-input-border-radius) var(--f7-searchbar-input-border-radius)
-    position relative
+    //position relative
     overflow hidden
-  .filters.autocomplete-dropdown .item-content
+  .filters-popover .item-content
     padding-left calc(var(--f7-searchbar-input-padding-horizontal) + var(--f7-searchbar-input-extra-padding-left, 0px))
 
-  .filters
+  .filters-popover
     .data-table
       table
         table-layout fixed
@@ -90,17 +117,26 @@
           padding-top 10px !important
           padding-bottom 10px !important
           height unset
+        td.label-cell
+          width 15%
+          background-color var(--f7-list-group-title-bg-color)
+          vertical-align top
+          border-left 4px solid transparent
+        td.label-cell.filter-selected
+          border-left 4px solid var(--f7-color-blue)
         td.value-cell
           word-break break-all
           overflow-wrap break-word
           white-space normal
           width 85%
-          background-color var(--f7-list-item-bg-color, var(--f7-card-bg-color))
-        td.label-cell
-          width 15%
-          white-space normal
-          background-color var(--f7-list-group-title-bg-color)
-          vertical-align top
+          background-color var(--f7-searchbar-input-bg-color, var(--f7-searchbar-bg-color))
+        td.value-cell > div
+            max-height calc(var(--f7-chip-height, 32px) * 3 + 12px)
+            overflow-y auto
+            display flex
+            flex-wrap wrap
+            align-content flex-start
+            scrollbar-gutter stable
 </style>
 
 <script setup lang="ts">
@@ -114,9 +150,9 @@ import {
   isValueToken,
   isFieldValueToken,
   applySuggestion,
-  type Token,
   type ParsedToken,
-  type FieldValueToken
+  type FieldValueToken,
+  type ValueToken
 } from '@/components/search-helpers'
 import FilterOptionsList from '@/pages/filter-options-list.vue'
 
@@ -175,12 +211,14 @@ const filtersWithOptions = computed(() => {
   )
 })
 
-const tokensByField = computed<Record<string, FieldValueToken>>(() => {
+const tokensByField = computed<Record<string, FieldValueToken | ValueToken>>(() => {
   if (!showFilters.value) return {}
 
-  const _tokensByField = tokenizedSearch.value.reduce<Record<string, FieldValueToken>>((acc, token) => {
+  const _tokensByField = tokenizedSearch.value.reduce<Record<string, FieldValueToken | ValueToken>>((acc, token) => {
     if (isFieldValueToken(token)) {
       acc[token.field] = token
+    } if (isValueToken(token)) {
+      acc['__keywords'] = token
     }
     return acc
   }, {})
@@ -205,10 +243,6 @@ onMounted(() => {
   restoreSearchbarQuery()
   createAutocompleteSearchbar()
 
-  useEventListener(document, 'keydown', (e) => {
-    if (e.key === 'Escape') showFilters.value = false
-  })
-
   useEventListener(inputEl, 'keydown', (e) => {
     if (e.key === 'Tab') {
       e.preventDefault()
@@ -216,18 +250,6 @@ onMounted(() => {
         onAutocompletionClose({ value: [highlightedSuggestion] })
         highlightedSuggestion = null
       }
-    }
-  })
-
-  useEventListener(document, 'click', (e) => {
-    const target = e.target as HTMLElement | null
-    if (!target) return
-
-    const clickedInsideFilters = !!target.closest('.filters.autocomplete-dropdown')
-    const clickedFilterButton = !!target.closest('.input-filter-button')
-
-    if (!clickedInsideFilters && !clickedFilterButton) {
-      showFilters.value = false
     }
   })
 })
@@ -257,6 +279,28 @@ function onSearchbarSearch(event: { query?: string }) {
 
 function onSearchbarClear() {
   rawSearchString.value = ''
+}
+
+const onTextInputThrottled = useThrottleFn(
+  (id: 'include-input' | 'exclude-input', event: Event) => {
+    const target = event.target as HTMLInputElement
+    if (!target) return
+    const query = target.value ?? ''
+
+    if (id === 'include-input') {
+      console.log('Include input changed: ' + query)
+    } else {
+      console.log('Exclude input changed: ' + query)
+    }
+
+    // updateRawSearchString(query)
+  },
+  300,
+  true
+)
+
+function onTextInput(id: 'include-input' | 'exclude-input', event: Event) {
+  onTextInputThrottled(id, event)
 }
 
 function addToken(token: FieldValueToken) {
@@ -290,6 +334,10 @@ function updateToken(token: FieldValueToken) {
 }
 
 // Methods
+function anyFiltersSelected(field: string): boolean {
+  const token = tokensByField.value[field]
+  return !!token && isFieldValueToken(token) && token.values?.length > 0
+}
 
 function restoreSearchbarQuery(key?: string) {
   key = key ?? props.persistSearchStringKey
