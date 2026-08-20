@@ -34,7 +34,7 @@
                   <div>Includes</div>
                 </td>
                 <td>
-                  <f7-input type="text" @input="onTextInput('include-input', $event)" />
+                  <f7-input type="text" :value="includedKeywords" @input="onTextInput('include-input', $event)" />
                 </td>
               </tr>
               <tr>
@@ -42,7 +42,7 @@
                   <div>Excludes</div>
                 </td>
                 <td>
-                  <f7-input type="text" @input="onTextInput('exclude-input', $event)" />
+                  <f7-input type="text" :value="excludedKeywords" @input="onTextInput('exclude-input', $event)" />
                 </td>
               </tr>
               <tr v-for="(filter, key) in filtersWithOptions" :key="key">
@@ -52,7 +52,7 @@
                     <filter-options-list
                       :filter="filter"
                       :field="key"
-                      :token="tokensByField[key] ?? null"
+                      :token="(tokensByField[key] as FieldValueToken) ?? null"
                       @update:token="updateToken"
                       @add:token="addToken"
                       @delete:token="deleteToken"></filter-options-list>
@@ -211,19 +211,32 @@ const filtersWithOptions = computed(() => {
   )
 })
 
-const tokensByField = computed<Record<string, FieldValueToken | ValueToken>>(() => {
+const tokensByField = computed<Record<string, FieldValueToken>>(() => {
   if (!showFilters.value) return {}
 
-  const _tokensByField = tokenizedSearch.value.reduce<Record<string, FieldValueToken | ValueToken>>((acc, token) => {
+  const _tokensByField = tokenizedSearch.value.reduce<Record<string, FieldValueToken>>((acc, token) => {
     if (isFieldValueToken(token)) {
       acc[token.field] = token
-    } if (isValueToken(token)) {
-      acc['__keywords'] = token
     }
     return acc
   }, {})
 
+  console.log('tokensByField', _tokensByField)
   return _tokensByField
+})
+
+const includedKeywords = computed(() => {
+  const tokens = tokenizedSearch.value
+    .filter((t): t is ValueToken => isValueToken(t))
+    .filter((t) => !t.negated)
+  return tokens.map((t) => t.values.join(',')).join(' ')
+})
+
+const excludedKeywords = computed(() => {
+  const tokens = tokenizedSearch.value
+    .filter((t): t is ValueToken => isValueToken(t))
+    .filter((t) => t.negated)
+  return tokens.map((t) => t.values.join(',')).join(' ')
 })
 
 // Watchers
@@ -288,12 +301,9 @@ const onTextInputThrottled = useThrottleFn(
     const query = target.value ?? ''
 
     if (id === 'include-input') {
-      console.log('Include input changed: ' + query)
-    } else {
-      console.log('Exclude input changed: ' + query)
-    }
 
-    // updateRawSearchString(query)
+    } else {
+    }
   },
   300,
   true
@@ -303,7 +313,7 @@ function onTextInput(id: 'include-input' | 'exclude-input', event: Event) {
   onTextInputThrottled(id, event)
 }
 
-function addToken(token: FieldValueToken) {
+function addToken(token: FieldValueToken ) {
   if (!isFieldValueToken(token)) return
   const newSearchString = rawSearchString.value + ' ' + `${token.field}:${token.values?.join(',')}`
   f7SearchbarRef?.value?.$el?.f7Searchbar?.search(newSearchString)
@@ -336,7 +346,7 @@ function updateToken(token: FieldValueToken) {
 // Methods
 function anyFiltersSelected(field: string): boolean {
   const token = tokensByField.value[field]
-  return !!token && isFieldValueToken(token) && token.values?.length > 0
+  return !!token && !Array.isArray(token) && isFieldValueToken(token) && token.values.length > 0
 }
 
 function restoreSearchbarQuery(key?: string) {
