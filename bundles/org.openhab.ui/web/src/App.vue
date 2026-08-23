@@ -805,10 +805,7 @@ export default {
             if (locale === 'no' || locale === 'no-no') locale = 'nb'
 
             const dayjsLocale = dayjsLocales.find(
-              (l) =>
-                l.key === locale ||
-                l.key === locale.toLowerCase() ||
-                ((l.key === locale.split('-')[0]) !== 'en' && l.key === locale.split('-')[0])
+              (l) => l.key === locale || l.key === locale.toLowerCase() || (locale.split('-')[0] !== 'en' && l.key === locale.split('-')[0])
             )
             const dayjsLoader = dayjsLocale ? dayjsLocalesGlob[`../node_modules/dayjs/esm/locale/${dayjsLocale.key}.js`] : null
             dayjsLocalePromise = dayjsLoader

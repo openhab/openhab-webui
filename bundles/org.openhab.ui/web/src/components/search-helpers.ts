@@ -160,6 +160,18 @@ function getTokenFuseExpression(token: FieldValueToken | ValueToken, haystackFie
   return null
 }
 
+export function tokensToString(tokens: ParsedToken[]): string {
+  let result = ''
+  tokens.forEach((token) => {
+    result += token.rawToken ?? ''
+    if (token.type === 'fieldValue' || token.type === 'value') {
+      result += ' '
+    }
+  })
+
+  return result.trim()
+}
+
 /**
  * parses a user query string into a robust deep object structure suitable for Fuse.js.
  * This parser supports nested parentheses, AND/OR operators, negation, and field:value pairs with alias resolution.

@@ -20,9 +20,8 @@
       :opened="showFilters"
       :backdrop="false"
       targetEl=".input-filter-button"
-      containerEl=".oh-searchbar-container"
+      containerEl=".searchbar-input-wrap"
       vertical-position="auto"
-      :closeByBackdropClick="true"
       :closeOnEscape="true"
       @popover:closed="showFilters = false">
       <div class="autocomplete-dropdown-inner">
@@ -33,7 +32,7 @@
                 <td class="label-cell">
                   <div>Includes</div>
                 </td>
-                <td>
+                <td class="text-input-cell">
                   <f7-input type="text" :value="includedKeywords" @input="onTextInput('include-input', $event)" />
                 </td>
               </tr>
@@ -41,7 +40,7 @@
                 <td class="label-cell">
                   <div>Excludes</div>
                 </td>
-                <td>
+                <td class="text-input-cell">
                   <f7-input type="text" :value="excludedKeywords" @input="onTextInput('exclude-input', $event)" />
                 </td>
               </tr>
@@ -90,19 +89,18 @@
 
 .aurora .oh-searchbar-container
   .filters-popover
-    left calc(var(--f7-searchbar-inner-padding-left, 0px) + var(--f7-safe-area-left, 0px)) !important
-    right calc(var(--f7-searchbar-inner-padding-right, 0px) + var(--f7-safe-area-right, 0px)) !important
-    top calc(var(--f7-searchbar-height, 48px) - 4px) !important
+    // left calc(var(--f7-searchbar-inner-padding-left, 0px) + var(--f7-safe-area-left, 0px)) !important
+    // right calc(var(--f7-searchbar-inner-padding-right, 0px) + var(--f7-safe-area-right, 0px)) !important
+    left 0px !important
+    right 0px !important
+    top 0px !important
+    // top calc(var(--f7-searchbar-height, 48px) - 4px) !important
     width unset
-    z-index 10000
-  // margin -5px calc(var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-right)) 0 calc(var(--f7-searchbar-inner-padding-left) + var(--f7-safe-area-left))
-  // width calc(100% - (var(--f7-searchbar-inner-padding-left) + var(--f7-searchbar-inner-padding-right) + var(--f7-safe-area-left) + var(--f7-safe-area-right)))
-  .filters-popover
     background-color var(--f7-searchbar-input-bg-color, var(--f7-searchbar-bg-color))
-    // border-radius var(--f7-searchbar-input-border-radius)
+    border-radius var(--f7-searchbar-input-border-radius)
+    padding-top 38px
+    z-index 29
   .filters-popover li:last-child
-    border-radius 0 0 var(--f7-searchbar-input-border-radius) var(--f7-searchbar-input-border-radius)
-    //position relative
     overflow hidden
   .filters-popover .item-content
     padding-left calc(var(--f7-searchbar-input-padding-horizontal) + var(--f7-searchbar-input-extra-padding-left, 0px))
@@ -124,12 +122,21 @@
           border-left 4px solid transparent
         td.label-cell.filter-selected
           border-left 4px solid var(--f7-color-blue)
+        td.text-input-cell
+          input
+            padding unset
+            background-color inherit
+            border-radius unset
         td.value-cell
           word-break break-all
           overflow-wrap break-word
           white-space normal
           width 85%
           background-color var(--f7-searchbar-input-bg-color, var(--f7-searchbar-bg-color))
+          .filter-text-input
+            width 100%
+            height 32px
+            padding-left 0px
         td.value-cell > div
             max-height calc(var(--f7-chip-height, 32px) * 3 + 12px)
             overflow-y auto
@@ -150,6 +157,7 @@ import {
   isValueToken,
   isFieldValueToken,
   applySuggestion,
+  tokensToString,
   type ParsedToken,
   type FieldValueToken,
   type ValueToken
@@ -221,22 +229,43 @@ const tokensByField = computed<Record<string, FieldValueToken>>(() => {
     return acc
   }, {})
 
-  console.log('tokensByField', _tokensByField)
   return _tokensByField
 })
 
-const includedKeywords = computed(() => {
-  const tokens = tokenizedSearch.value
-    .filter((t): t is ValueToken => isValueToken(t))
-    .filter((t) => !t.negated)
-  return tokens.map((t) => t.values.join(',')).join(' ')
+const includedKeywords = computed({
+  get: () => {
+    const tokens = tokenizedSearch.value.filter((t): t is ValueToken => isValueToken(t)).filter((t) => !t.negated)
+    return tokens.map((t) => t.values.join(',')).join(' ')
+  },
+  set: (newValue: string) => {
+    // strip out all existing value tokens that are not negated, and append the new value token string to the end of the search string
+    const tokens = tokenizedSearch.value.filter((t) => !isValueToken(t) || (isValueToken(t) && t.negated))
+    let newSearchString = tokensToString(tokens)
+    if (newSearchString.length > 0) newSearchString += ' '
+    newSearchString += newValue
+    f7SearchbarRef?.value?.$el?.f7Searchbar?.search(newSearchString)
+  }
 })
 
-const excludedKeywords = computed(() => {
-  const tokens = tokenizedSearch.value
-    .filter((t): t is ValueToken => isValueToken(t))
-    .filter((t) => t.negated)
-  return tokens.map((t) => t.values.join(',')).join(' ')
+const excludedKeywords = computed({
+  get: () => {
+    const tokens = tokenizedSearch.value.filter((t): t is ValueToken => isValueToken(t)).filter((t) => t.negated)
+    return tokens.map((t) => t.values.join(',')).join(' ')
+  },
+  set: (newValue: string) => {
+    // strip out all existing value tokens that are negated, and append the new value token string to the end of the search string
+    const tokens = tokenizedSearch.value.filter((t) => !isValueToken(t) || (isValueToken(t) && !t.negated))
+    const newValueNegated = newValue
+      .split(' ')
+      .map((v) => v.trim())
+      .filter((v) => v !== '')
+      .map((v) => '-' + v)
+      .join(' ')
+    let newSearchString = tokensToString(tokens)
+    if (newSearchString.length > 0) newSearchString += ' '
+    newSearchString += newValueNegated
+    f7SearchbarRef?.value?.$el?.f7Searchbar?.search(newSearchString)
+  }
 })
 
 // Watchers
@@ -294,26 +323,19 @@ function onSearchbarClear() {
   rawSearchString.value = ''
 }
 
-const onTextInputThrottled = useThrottleFn(
-  (id: 'include-input' | 'exclude-input', event: Event) => {
-    const target = event.target as HTMLInputElement
-    if (!target) return
-    const query = target.value ?? ''
-
-    if (id === 'include-input') {
-
-    } else {
-    }
-  },
-  300,
-  true
-)
-
 function onTextInput(id: 'include-input' | 'exclude-input', event: Event) {
-  onTextInputThrottled(id, event)
+  const target = event.target as HTMLInputElement
+  if (!target) return
+  const query = target.value ?? ''
+
+  if (id === 'include-input') {
+    includedKeywords.value = query
+  } else {
+    excludedKeywords.value = query
+  }
 }
 
-function addToken(token: FieldValueToken ) {
+function addToken(token: FieldValueToken) {
   if (!isFieldValueToken(token)) return
   const newSearchString = rawSearchString.value + ' ' + `${token.field}:${token.values?.join(',')}`
   f7SearchbarRef?.value?.$el?.f7Searchbar?.search(newSearchString)
