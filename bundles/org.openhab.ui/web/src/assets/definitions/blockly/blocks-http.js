@@ -236,6 +236,7 @@ export default function (f7) {
    */
   javascriptGenerator.forBlock['oh_httprequest'] = function (block, generator) {
     const requestType = block.getFieldValue('requestType')
+    const isPayloadRequest = ['HttpPostRequest', 'HttpPutRequest'].includes(requestType)
 
     let url = valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
 
@@ -246,9 +247,9 @@ export default function (f7) {
     }
 
     const contentType = block.getFieldValue('contentType')
-
     let payload = valueToCode(block, 'payload', javascriptGenerator.ORDER_ATOMIC)
-    if (payload) {
+
+    if (isPayloadRequest && contentType !== 'none' && payload) {
       if (contentType === 'application/x-www-form-urlencoded') {
         const payloadEncodeFunction = encodeParams(payload)
         payload = `${payloadEncodeFunction}(${payload})`
@@ -262,19 +263,31 @@ export default function (f7) {
     const timeout = valueToCode(block, 'timeoutInput', javascriptGenerator.ORDER_ATOMIC) || 3000
 
     let code = ''
-    if (payload) {
-      if (!headers) {
-        code = `actions.HTTP.send${requestType}(${url}, '${contentType}', ${payload}, ${timeout})`
+
+    if (isPayloadRequest) {
+      // Determine string representations for contentType and content
+      const parsedContentType = contentType && contentType !== 'none' ? `'${contentType}'` : '""'
+      const parsedPayload = payload || '""'
+
+      if (headers) {
+        // Must use 5-arg signature when headers are present
+        code = `actions.HTTP.send${requestType}(${url}, ${parsedContentType}, ${parsedPayload}, ${headers}, ${timeout})`
+      } else if (contentType !== 'none' || payload) {
+        // Use 4-arg signature with contentType and content
+        code = `actions.HTTP.send${requestType}(${url}, ${parsedContentType}, ${parsedPayload}, ${timeout})`
       } else {
-        code = `actions.HTTP.send${requestType}(${url}, '${contentType}', ${payload}, ${headers}, ${timeout})`
+        // Fallback 2-arg signature when no payload/contentType/headers are specified
+        code = `actions.HTTP.send${requestType}(${url}, ${timeout})`
       }
     } else {
-      if (!headers) {
-        code = `actions.HTTP.send${requestType}(${url}, ${timeout})`
-      } else {
+      // GET and DELETE requests
+      if (headers) {
         code = `actions.HTTP.send${requestType}(${url}, ${headers}, ${timeout})`
+      } else {
+        code = `actions.HTTP.send${requestType}(${url}, ${timeout})`
       }
     }
+
     return [code, javascriptGenerator.ORDER_NONE]
   }
 
