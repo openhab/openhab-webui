@@ -20,6 +20,6 @@
   "chat.showGenericToolVisualisation": "Show all tool calls",
   "chat.noLlmInterpreterTitle": "LLM-based HLI Required",
   "chat.noLlmInterpreterText": "The chat feature requires a Large Language Model (LLM)-based Human Language Interpreter to function.",
-  "chat.noLlmInterpreterHint": "You can install the Gemini binding from the add-on store to get started. Make sure to set it as default HLI after installation! Support for more LLM providers will be added in the future.",
-  "chat.installGeminiBinding": "Install Gemini Binding"
+  "chat.noLlmInterpreterHint": "You can install the ChatGPT or Gemini binding from the add-on store to get started. The ChatGPT binding supports any OpenAI API-compatible provider (OpenAI, OpenRouter, Mistral AI, Ollama, etc.). Make sure to set it as default HLI after installation!",
+  "chat.installHliBinding": "Install an LLM HLI Binding"
 }
