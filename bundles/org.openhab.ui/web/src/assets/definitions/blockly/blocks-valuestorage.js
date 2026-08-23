@@ -15,16 +15,16 @@ export default function defineOHBlocks_Variables(f7) {
       this.appendValueInput('value').setCheck(['Number', 'Boolean', 'String'])
       this.appendDummyInput().appendField('into')
       this.appendValueInput('key')
-      this.appendDummyInput()
-        .appendField('to ')
-        .appendField(
-          new Blockly.FieldDropdown([
-            ['private', '.private'],
-            ['shared', '.shared']
-          ]),
-          'cacheType'
-        )
-        .appendField('cache')
+
+      const cacheDropdown = new Blockly.FieldDropdown(
+        [
+          ['private', '.private'],
+          ['shared', '.shared']
+        ],
+        this.validate.bind(this)
+      )
+
+      this.appendDummyInput('cacheInput').appendField('to ').appendField(cacheDropdown, 'cacheType').appendField('cache')
       this.setInputsInline(true)
       this.setPreviousStatement(true, null)
       this.setNextStatement(true, null)
@@ -33,6 +33,33 @@ export default function defineOHBlocks_Variables(f7) {
         'stores a value with a variable name that can be retrieved on subsequent runs of this rule/script to the private rule or shared global cache. Vales stored in the shared cache will automatically have `javaify()` applied.'
       )
       this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-value-storage.html#store-value')
+    },
+    validate: function (newValue) {
+      const cacheInput = this.getInput('cacheInput')
+      if (!cacheInput) return
+
+      const hasJavaify = this.getField('javaifyOpt')
+
+      if (newValue === '.shared') {
+        if (!hasJavaify) {
+          cacheInput.appendField(' ', 'javaifySpace')
+
+          const javaifyTooltip = 'Automatically convert JS objects to Java objects for storage in the shared cache.'
+          const checkbox = new Blockly.FieldCheckbox('TRUE')
+          checkbox.setTooltip(javaifyTooltip)
+          cacheInput.appendField(checkbox, 'javaifyOpt')
+
+          const label = new Blockly.FieldLabel('javaify value')
+          label.setTooltip(javaifyTooltip)
+          cacheInput.appendField(label, 'javaifyLabel')
+        }
+      } else {
+        if (hasJavaify) {
+          cacheInput.removeField('javaifySpace')
+          cacheInput.removeField('javaifyOpt')
+          cacheInput.removeField('javaifyLabel')
+        }
+      }
     }
   }
 
@@ -40,6 +67,12 @@ export default function defineOHBlocks_Variables(f7) {
     const key = valueToCode(block, 'key', javascriptGenerator.ORDER_ATOMIC)
     const value = valueToCode(block, 'value', javascriptGenerator.ORDER_ATOMIC)
     const cacheType = block.getFieldValue('cacheType')
+    const javaifyOpt = block.getField('javaifyOpt') ? block.getFieldValue('javaifyOpt') === 'TRUE' : true
+
+    // To maintain backwards compatibility, we only specify the extra argument if it's different from the default
+    if (cacheType === '.shared' && !javaifyOpt) {
+      return `cache.shared.put(${key}, ${value}, false);\n`
+    }
     return `cache${cacheType}.put(${key}, ${value});\n`
   }
 
@@ -77,7 +110,7 @@ export default function defineOHBlocks_Variables(f7) {
           cacheInput.appendField(' ', 'jsifySpace')
 
           const jsifyTooltip =
-            'Automatically converts retrieved Java objects from the shared cache back into standard JavaScript objects for ease of use.'
+            'Automatically convert retrieved Java objects from the shared cache back into standard JavaScript objects for ease of use.'
           const checkbox = new Blockly.FieldCheckbox('TRUE')
           checkbox.setTooltip(jsifyTooltip)
           cacheInput.appendField(checkbox, 'jsifyOpt')
