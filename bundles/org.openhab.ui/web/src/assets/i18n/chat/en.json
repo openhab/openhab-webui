@@ -18,8 +18,8 @@
   "chat.settingsTitle": "Chat Settings",
   "chat.llmTools": "Tools Selection",
   "chat.showGenericToolVisualisation": "Show all tool calls",
-  "chat.noLlmInterpreterTitle": "LLM-based HLI Required",
-  "chat.noLlmInterpreterText": "The chat feature requires a Large Language Model (LLM)-based Human Language Interpreter to function.",
-  "chat.noLlmInterpreterHint": "You can install the ChatGPT or Gemini binding from the add-on store to get started. The ChatGPT binding supports any OpenAI API-compatible provider (OpenAI, OpenRouter, Mistral AI, Ollama, etc.). Make sure to set it as default HLI after installation!",
-  "chat.installHliBinding": "Install an LLM HLI Binding"
+  "chat.noLlmInterpreterTitle": "No AI Available",
+  "chat.noLlmInterpreterText": "Chat needs an AI service to understand your requests and interact with your home.",
+  "chat.noLlmInterpreterHint": "Install an AI service binding from the add-on store to connect to a service of your choice. Make sure to set it as default human language interpreter in the voice settings after installation!",
+  "chat.installHliBinding": "Open Add-on Store"
 }
