@@ -435,9 +435,13 @@ export default {
     async removeSelected() {
       const vm = this
 
-      if(!await showConfirmDialog(`Remove ${this.selected.size} selected items?`, 'Remove Items')) return
+      if (!(await showConfirmDialog(`Remove ${this.selected.size} selected items?`, 'Remove Items'))) return
 
-      if (Array.from(this.selected).map((i) => this.items.find((item) => item.name === i)).some((i) => i.editable === false)) {
+      if (
+        Array.from(this.selected)
+          .map((i) => this.items.find((item) => item.name === i))
+          .some((i) => i.editable === false)
+      ) {
         f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
         return
       }
