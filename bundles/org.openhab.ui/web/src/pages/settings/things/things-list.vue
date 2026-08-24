@@ -246,15 +246,6 @@ import { showToast } from '@/js/dialog-promises'
 import { useSearch } from '@/components/useSearch'
 import { getListTitle } from '@/pages/list-helpers'
 
-const ITEM_STATUSES = {
-  online: 'Online',
-  offline: 'Offline',
-  disabled: 'Disabled',
-  unitialized: 'Uninitialized',
-  unknown: 'Unknown',
-  others: 'Other Status'
-}
-
 export default {
   mixins: [FileDefinition],
   props: {
@@ -416,13 +407,10 @@ export default {
   methods: {
     async onPageAfterIn() {
       await this.load()
-      if (this.searchFor) {
-        this.$refs.searchbar.$el.f7Searchbar.search(this.searchFor)
-      }
     },
     onPageBeforeOut() {
       this.stopEventSource()
-      this.ohSearchbarRef.value?.persistSearchbarQuery()
+      this.ohSearchbarRef?.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
@@ -437,9 +425,8 @@ export default {
         this.ready = true
         nextTick(() => {
           if (this.$refs.listIndex) this.$refs.listIndex.update()
-          const searchbar = this.$refs.searchbar?.$el?.f7Searchbar
-          if (this.$device.desktop && searchbar) {
-            searchbar.$inputEl[0].focus()
+          if (this.$device.desktop) {
+            this.ohSearchbarRef?.focus()
           }
         })
         if (!this.eventSource) this.startEventSource()

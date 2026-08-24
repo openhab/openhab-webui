@@ -61,7 +61,6 @@ export function useSearch<T>(list: Ref<T[]>, options: UseSearchOptions = {}) {
 
   const filteredList = computed(() => {
     const fuseSearch = tokensToFuse(tokenizedSearch.value, haystackFields, fieldAliases)
-    console.debug('fuseSearch', fuseSearch)
     try {
       const result = fuse.value.search(fuseSearch)
       return result.map((item) => (options.returnType === 'indices' ? item.refIndex : item.item))

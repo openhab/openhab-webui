@@ -215,7 +215,7 @@ export default {
     },
     onPageBeforeOut() {
       this.stopEventSource()
-      this.ohSearchbarRef.value?.persistLastSearchQuery()
+      this.ohSearchbarRef?.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
@@ -236,9 +236,8 @@ export default {
           if (!this.eventSource) this.startEventSource()
 
           nextTick(() => {
-            const searchbar = this.$refs.searchbar?.$el.f7Searchbar
-            if (this.$device.desktop && searchbar) {
-              searchbar.$inputEl[0].focus()
+            if (this.$device.desktop) {
+              this.ohSearchbarRef?.focus()
             }
           })
         })

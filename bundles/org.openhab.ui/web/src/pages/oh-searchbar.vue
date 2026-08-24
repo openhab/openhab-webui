@@ -3,8 +3,6 @@
     <f7-searchbar
       v-memo="[placeholder, theme.aurora]"
       ref="f7searchbar"
-      class="oh-searchbar"
-      id="oh-searchbar"
       :disable-button="!theme.aurora"
       :placeholder="placeholder"
       custom-search
@@ -98,12 +96,9 @@
 
 .oh-searchbar-container
   .filters-popover
-    // left calc(var(--f7-searchbar-inner-padding-left, 0px) + var(--f7-safe-area-left, 0px)) !important
-    // right calc(var(--f7-searchbar-inner-padding-right, 0px) + var(--f7-safe-area-right, 0px)) !important
     left 0px !important
     right 0px !important
     top 0px !important
-    // top calc(var(--f7-searchbar-height, 48px) - 4px) !important
     width unset
     background-color var(--f7-searchbar-input-bg-color, var(--f7-searchbar-bg-color))
     border-radius var(--f7-searchbar-input-border-radius)
@@ -117,7 +112,7 @@
   .filters-popover
     .data-table
       table
-        table-layout fixed
+        table-layout auto
         width 100%
       tbody
         td
@@ -125,9 +120,9 @@
           padding-bottom 10px !important
           height unset
         td.label-cell
-          width 15%
           vertical-align top
           border-left 4px solid transparent
+          padding-right 30px
         td.label-cell.filter-selected
           border-left 4px solid var(--f7-color-blue)
         td.text-input-cell
@@ -140,7 +135,6 @@
           word-break break-all
           overflow-wrap break-word
           white-space normal
-          width 85%
           background-color var(--f7-list-group-title-bg-color)
           .filter-text-input
             width 100%
@@ -175,7 +169,7 @@ import FilterOptionsList from '@/pages/filter-options-list.vue'
 
 type F7SearchbarInstance = {
   $el: { f7Searchbar: Searchbar.Searchbar | undefined; querySelector(selector: string): HTMLElement | null }
-} & EventSource
+}
 
 const storagePrefix = 'openhab.ui:search:'
 
@@ -380,6 +374,10 @@ function anyFiltersSelected(field: string): boolean {
   return !!token && !Array.isArray(token) && isFieldValueToken(token) && token.values.length > 0
 }
 
+function focus() {
+  inputEl?.focus()
+}
+
 function restoreSearchbarQuery(key?: string) {
   key = key ?? props.persistSearchStringKey
   if (!key || !persistedQueryString) return
@@ -505,6 +503,7 @@ function onAutocompletionClose(autocomplete: any) {
 
 defineExpose({
   persistSearchbarQuery,
-  restoreSearchbarQuery
+  restoreSearchbarQuery,
+  focus
 })
 </script>

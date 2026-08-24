@@ -222,7 +222,7 @@ export default {
       await this.load()
     },
     onPageBeforeOut() {
-      this.ohSearchbarRef.persistSearchbarQuery()
+      this.ohSearchbarRef?.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
@@ -251,9 +251,8 @@ export default {
 
       nextTick(() => {
         if (this.$refs.listIndex) this.$refs.listIndex.update()
-        const searchbar = this.$refs.searchbar?.$el.f7Searchbar
-        if (this.$device.desktop && searchbar) {
-          searchbar.$inputEl[0].focus()
+        if (this.$device.desktop) {
+          this.ohSearchbarRef?.focus()
         }
       })
     },

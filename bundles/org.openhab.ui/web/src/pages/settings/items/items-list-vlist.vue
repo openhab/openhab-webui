@@ -20,9 +20,9 @@
     </f7-navbar>
 
     <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
+      <div v-if="!theme.md && selected.size > 0" class="display-flex justify-content-center" style="width: 100%">
         <f7-link
-          v-show="selectedItems.length"
+          v-show="selected.size"
           color="red"
           class="delete display-flex flex-direction-row margin-right"
           icon-ios="f7:trash"
@@ -31,7 +31,7 @@
           Remove
         </f7-link>
         <f7-link
-          v-show="selectedItems.length"
+          v-show="selected.size"
           color="blue"
           class="copy display-flex flex-direction-row"
           icon-ios="f7:square_on_square"
@@ -41,8 +41,8 @@
         </f7-link>
       </div>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
-      <div v-if="theme.md && selectedItems.length" class="right">
+      <div v-if="theme.md" class="title">{{ selected.size }} selected</div>
+      <div v-if="theme.md && selected.size" class="right">
         <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
         <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
       </div>
@@ -81,7 +81,7 @@
 
       <f7-col v-if="ready && items.length > 0">
         <f7-block-title class="no-margin-top">
-          <span>{{ getListTitle(isFiltered, filteredList.length, items.length, 'Item', selected.length) }}</span>
+          <span>{{ getListTitle(isFiltered, filteredList.length, items.length, 'Item', selected.size) }}</span>
           <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
@@ -190,6 +190,8 @@ import OhSearchbar from '@/pages/oh-searchbar.vue'
 import { showToast } from '@/js/dialog-promises'
 import { useSearch } from '@/components/useSearch'
 import { getListTitle } from '@/pages/list-helpers'
+
+import { showConfirmDialog } from '@/js/dialog-promises'
 
 export default {
   mixins: [ItemMixin, FileDefinition],
@@ -301,7 +303,7 @@ export default {
         renderExternal: this.renderExternal,
         height: this.height
       },
-      selected: [],
+      selected: new Set(),
       showCheckboxes: false,
       eventSource: null
     }
@@ -312,7 +314,7 @@ export default {
     },
     onPageBeforeOut(event) {
       this.stopEventSource()
-      this.ohSearchbarRef.value?.persistSearchbarQuery()
+      this.ohSearchbarRef?.persistSearchbarQuery()
     },
     async load() {
       if (this.loading) return
@@ -335,9 +337,8 @@ export default {
         nextTick(() => {
           this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
 
-          const searchbar = this.$refs.searchbar?.$el.f7Searchbar
-          if (this.$device.desktop && searchbar) {
-            searchbar.$inputEl[0].focus()
+          if (this.$device.desktop) {
+            this.ohSearchbarRef?.focus()
           }
 
           // This should no longer be needed now that we are awaiting the load() function, but leaving it in for now just in case.
@@ -396,57 +397,58 @@ export default {
       this.showCheckboxes = !this.showCheckboxes
     },
     isChecked(item) {
-      return this.selected.indexOf(item) >= 0
+      return this.selected.has(item)
     },
     click(event, item) {
       if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.name, item)
+        this.toggleItemCheck(event, item.name)
       } else {
         this.f7router.navigate(item.name)
       }
     },
     ctrlClick(event, item) {
-      this.toggleItemCheck(event, item.name, item)
-      if (!this.selected.length) this.showCheckboxes = false
+      this.toggleItemCheck(event, item.name)
+      if (!this.selected.size) this.showCheckboxes = false
     },
     toggleItemCheck(event, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true
       if (this.isChecked(item)) {
-        this.selected.splice(this.selected.indexOf(item), 1)
+        this.selected.delete(item)
       } else {
-        this.selected.push(item)
+        this.selected.add(item)
       }
     },
     selectDeselectAll() {
       if (this.allSelected) {
-        this.selected = []
+        this.selected.clear()
       } else {
-        this.selected = this.filteredList.map((i) => i.name)
+        this.selected.clear()
+        this.filteredList.forEach((index) => {
+          const item = this.items[index]
+          if (item) this.selected.add(item.name)
+        })
       }
     },
     copySelected() {
-      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selected)
+      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, [...this.selected])
     },
-    removeSelected() {
+    async removeSelected() {
       const vm = this
 
-      f7.dialog.confirm(`Remove ${this.selected.length} selected items?`, 'Remove Items', () => {
-        vm.doRemoveSelected()
-      })
-    },
-    doRemoveSelected() {
-      if (this.selected.some((i) => i.editable === false)) {
+      if(!await showConfirmDialog(`Remove ${this.selected.size} selected items?`, 'Remove Items')) return
+
+      if (Array.from(this.selected).map((i) => this.items.find((item) => item.name === i)).some((i) => i.editable === false)) {
         f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
         return
       }
 
       let dialog = f7.dialog.progress('Deleting Items...')
 
-      const promises = this.selected.map((i) => this.$oh.api.delete('/rest/items/' + i))
+      const promises = Array.from(this.selected).map((i) => this.$oh.api.delete('/rest/items/' + i))
       Promise.all(promises)
         .then((data) => {
           showToast('Items removed')
-          this.selected = []
+          this.selected.clear()
           dialog.close()
           this.load()
         })
@@ -469,7 +471,7 @@ export default {
   },
   computed: {
     allSelected() {
-      return this.selected.length >= this.filteredList.length && this.filteredList.length > 0
+      return this.selected.size >= this.filteredList.length && this.filteredList.length > 0
     },
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   }
