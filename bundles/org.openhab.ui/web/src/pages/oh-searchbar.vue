@@ -23,6 +23,7 @@
       containerEl=".searchbar-input-wrap"
       vertical-position="auto"
       :closeOnEscape="true"
+      :arrow="false"
       @popover:closed="showFilters = false">
       <div class="autocomplete-dropdown-inner">
         <div class="data-table no-safe-areas">
@@ -67,6 +68,13 @@
 </template>
 
 <style lang="stylus">
+.ios
+  .oh-searchbar-container
+    .input-filter-button
+      width 20px
+      height 20px
+      font-size 20px
+
 .oh-searchbar-container
   position relative
   flex-grow 1
@@ -84,10 +92,11 @@
     color var(--f7-searchbar-input-clear-button-color, var(--f7-input-clear-button-color))
     width 24px
     height 24px
+    font-size 24px
     align-content center
     cursor pointer
 
-.aurora .oh-searchbar-container
+.oh-searchbar-container
   .filters-popover
     // left calc(var(--f7-searchbar-inner-padding-left, 0px) + var(--f7-safe-area-left, 0px)) !important
     // right calc(var(--f7-searchbar-inner-padding-right, 0px) + var(--f7-safe-area-right, 0px)) !important
@@ -117,28 +126,28 @@
           height unset
         td.label-cell
           width 15%
-          background-color var(--f7-list-group-title-bg-color)
           vertical-align top
           border-left 4px solid transparent
         td.label-cell.filter-selected
           border-left 4px solid var(--f7-color-blue)
         td.text-input-cell
+          background-color var(--f7-list-group-title-bg-color)
           input
             padding unset
-            background-color inherit
             border-radius unset
+            background-color inherit
         td.value-cell
           word-break break-all
           overflow-wrap break-word
           white-space normal
           width 85%
-          background-color var(--f7-searchbar-input-bg-color, var(--f7-searchbar-bg-color))
+          background-color var(--f7-list-group-title-bg-color)
           .filter-text-input
             width 100%
             height 32px
             padding-left 0px
         td.value-cell > div
-            max-height calc(var(--f7-chip-height, 32px) * 3 + 12px)
+            max-height calc(var(--f7-chip-height, 32px) * 3.5 + 12px)
             overflow-y auto
             display flex
             flex-wrap wrap
