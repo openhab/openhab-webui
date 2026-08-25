@@ -260,14 +260,22 @@ export function useChart(
   const getSeriesPromises = async (component: api.UiComponent): Promise<OhSeriesOption> => {
     const config = evaluateExpression<OhSeriesConfig>(ComponentId.get(component)!, component.config)
 
+    // Series with an offset are requested for a period shifted into the past so that they can be
+    // compared with the displayed period, so all time calculations for them use the shifted period.
+    const offsetAmount = 'offsetAmount' in config ? config.offsetAmount : undefined
+    const offsetUnit = 'offsetUnit' in config ? (config.offsetUnit as dayjs.ManipulateType | undefined) : undefined
+    const applyOffset = (time: Dayjs): Dayjs => (offsetAmount && offsetUnit ? time.subtract(offsetAmount, offsetUnit) : time)
+    const seriesStartTime = applyOffset(startTime.value)
+    const seriesEndTime = applyOffset(endTime.value)
+
     const getter = (data: [api.EnrichedItem | null, api.ItemHistory][]): OhSeriesOption =>
       transformCustomSeriesOptions(
         seriesComponents[component.component].get(
           chartContext.value,
           component,
           data.map((d) => d[1]),
-          startTime.value,
-          endTime.value
+          seriesStartTime,
+          seriesEndTime
         )
       )
 
@@ -278,7 +286,7 @@ export function useChart(
 
     const now = dayjs()
     const isBetweenStartAndEnd =
-      dayjs(startTime.value).subtract(5, 'minutes').isBefore(now) && dayjs(endTime.value).add(5, 'minutes').isAfter(now)
+      dayjs(seriesStartTime).subtract(5, 'minutes').isBefore(now) && dayjs(seriesEndTime).add(5, 'minutes').isAfter(now)
     const isNotFuture = !(future.value > 0)
 
     let boundary =
@@ -313,19 +321,14 @@ export function useChart(
     })
 
     const combinedPromises = neededItems.map(async (neededItem) => {
-      let seriesStartTime = startTime.value
-      let seriesEndTime = endTime.value
+      let queryStartTime = seriesStartTime
       if (seriesComponents[component.component].adjustedStartTime) {
-        seriesStartTime = seriesComponents[component.component].adjustedStartTime!(chartContext.value, component, seriesStartTime)
-      }
-      if ('offsetAmount' in config && config.offsetAmount && config.offsetUnit) {
-        seriesStartTime = seriesStartTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
-        seriesEndTime = seriesEndTime.subtract(config.offsetAmount, config.offsetUnit as dayjs.ManipulateType)
+        queryStartTime = seriesComponents[component.component].adjustedStartTime!(chartContext.value, component, queryStartTime)
       }
       const query = {
         itemName: neededItem,
         serviceId: 'service' in config ? config.service : undefined,
-        starttime: seriesStartTime.toISOString(),
+        starttime: queryStartTime.toISOString(),
         endtime: seriesEndTime.subtract(1, 'millisecond').toISOString(),
         boundary,
         itemState,
