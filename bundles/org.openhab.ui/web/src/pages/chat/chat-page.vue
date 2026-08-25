@@ -17,8 +17,8 @@
         <p class="chat-splash-text primary">{{ t('chat.noLlmInterpreterText') }}</p>
         <div class="chat-splash-divider"></div>
         <p class="chat-splash-text secondary">{{ t('chat.noLlmInterpreterHint') }}</p>
-        <f7-button fill large round class="chat-splash-button" href="/addons/binding/binding-gemini">
-          {{ t('chat.installGeminiBinding') }}
+        <f7-button fill large round class="chat-splash-button" @click="openAddonStore">
+          {{ t('chat.installHliBinding') }}
         </f7-button>
       </div>
     </div>
@@ -99,21 +99,21 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 const uiOptionsStore = useUIOptionsStore()
 const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
 
-// Props
-defineProps<{
+// --- Defines ---
+const props = defineProps<{
   f7router: Router.Router
 }>()
 
-// State
+// --- State/Data ---
 const chatCoreRef = ref<InstanceType<typeof ChatCore> | null>(null)
 const pageRef = ref<any>(null)
 const checkingInterpreters = ref(true)
 const showSplash = ref(false)
 
-// Computed
+// --- Computed ---
 const conversationId = computed(() => uiOptionsStore.dialogIdentifier)
 
-// Lifecycle
+// --- Lifecycle hooks ---
 onMounted(async () => {
   await loadLocaleMessages('chat', mergeLocaleMessage)
   try {
@@ -129,4 +129,14 @@ onMounted(async () => {
     checkingInterpreters.value = false
   }
 })
+
+// --- Methods ---
+const openAddonStore = () => {
+  props.f7router.navigate('/addons/binding/', {
+    props: {
+      searchFor: 'human language interpreter',
+      backLinkUrl: props.f7router.currentRoute.url
+    }
+  })
+}
 </script>
