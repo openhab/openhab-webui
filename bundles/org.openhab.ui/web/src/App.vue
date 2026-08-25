@@ -386,15 +386,6 @@
     .logo-inner
       background #111111 !important
 
-.menu-sublinks
-  color var(--f7-list-item-footer-text-color)
-  padding-left 0
-  margin-bottom var(--f7-list-margin-vertical)
-  background-color red
-  // --f7-list-item-media-margin 24px
-  // --f7-list-item-padding-horizontal 32px
-  // --f7-list-chevron-icon-color var(--oh-theme-alt-color-tint) !important
-
 .section-toggle
   width 36px
   color gray
