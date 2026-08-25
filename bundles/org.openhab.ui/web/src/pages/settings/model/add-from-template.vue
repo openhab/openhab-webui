@@ -51,7 +51,7 @@
 
     <div v-if="selectedTemplate !== null && checkedItems.length > 0" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="add">
+        <f7-button class="padding-left padding-right" style="width: 150px" color="theme-alt" large raised fill @click="add">
           Add to Model
         </f7-button>
       </div>

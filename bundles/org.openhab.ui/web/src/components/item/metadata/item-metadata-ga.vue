@@ -40,7 +40,7 @@
       <config-sheet :parameterGroups="[]" :parameters="parameters" :configuration="metadata.config" :read-only="!editable" />
     </div>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" :href="`${runtimeStore.websiteUrl}/link/google-assistant`">
+      <f7-link color="theme-alt" external target="_blank" :href="`${runtimeStore.websiteUrl}/link/google-assistant`">
         Google Assistant Integration Documentation
       </f7-link>
     </p>

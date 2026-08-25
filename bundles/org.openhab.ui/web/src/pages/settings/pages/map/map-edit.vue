@@ -86,8 +86,12 @@
                   </f7-menu>
                 </template>
               </f7-list-item>
-              <f7-list-button v-if="isEditable" color="blue" title="Add marker" @click="addWidget(page, 'oh-map-marker')" />
-              <f7-list-button v-if="isEditable" color="blue" title="Add circle marker" @click="addWidget(page, 'oh-map-circle-marker')" />
+              <f7-list-button v-if="isEditable" color="theme-alt" title="Add marker" @click="addWidget(page, 'oh-map-marker')" />
+              <f7-list-button
+                v-if="isEditable"
+                color="theme-alt"
+                title="Add circle marker"
+                @click="addWidget(page, 'oh-map-circle-marker')" />
             </f7-list>
           </f7-col>
         </f7-block>

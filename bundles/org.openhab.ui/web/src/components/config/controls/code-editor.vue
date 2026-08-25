@@ -39,7 +39,7 @@
       icon-ios="f7:square_on_square"
       icon-aurora="f7:square_on_square"
       icon-md="material:content_copy"
-      color="blue"
+      color="theme-alt"
       tooltip="Copy code to clipboard"
       class="copy display-flex flex-direction-row">
       <span class="button-label">Copy</span>

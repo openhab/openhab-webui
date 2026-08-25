@@ -160,7 +160,7 @@ export default {
     entryActionsCopyThingDefinitionButton(entry) {
       return {
         text: 'Copy Thing File Definition',
-        color: 'blue',
+        color: 'theme-alt',
         bold: true,
         onClick: () => this.copyFileDefinitionToClipboard(this.ObjectType.THING, [entry.thingUID])
       }
@@ -168,7 +168,7 @@ export default {
     entryActionsIgnoreButton(entry, loadFn, ignored) {
       return {
         text: !ignored ? 'Ignore' : 'Unignore',
-        color: !ignored ? 'orange' : 'blue',
+        color: !ignored ? 'orange' : 'theme-alt',
         onClick: () => {
           if (ignored) {
             this.unignoreEntry(entry, loadFn)

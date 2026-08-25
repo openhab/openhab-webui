@@ -24,10 +24,10 @@
       </f7-block-footer>
     </f7-list>
     <p class="padding">
-      <f7-link v-if="namespace === 'stateDescription'" color="blue" external target="_blank" :href="docLink">
+      <f7-link v-if="namespace === 'stateDescription'" color="theme-alt" external target="_blank" :href="docLink">
         State Description Documentation
       </f7-link>
-      <f7-link v-if="namespace === 'commandDescription'" color="blue" external target="_blank" :href="docLink">
+      <f7-link v-if="namespace === 'commandDescription'" color="theme-alt" external target="_blank" :href="docLink">
         Command Description Documentation
       </f7-link>
     </p>

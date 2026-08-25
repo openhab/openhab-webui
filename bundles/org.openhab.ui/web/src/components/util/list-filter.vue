@@ -21,8 +21,8 @@
                   v-for="(label, value) in filter.options"
                   :key="value"
                   :text="label"
-                  :color="isFilteredBy(type, value) ? 'blue' : ''"
-                  media-bg-color="blue"
+                  :color="isFilteredBy(type, value) ? 'theme-alt' : ''"
+                  media-bg-color="theme-alt"
                   style="margin-right: 6px; cursor: pointer"
                   @click="toggleFilter(type, value)">
                   <template #media>

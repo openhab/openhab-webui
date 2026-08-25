@@ -21,7 +21,7 @@
       <f7-row>
         <f7-col>
           <f7-list>
-            <f7-list-button color="blue" :external="true" href="/changePassword">
+            <f7-list-button color="theme-alt" :external="true" href="/changePassword">
               {{ t('profile.changePassword') }}
             </f7-list-button>
           </f7-list>
@@ -61,7 +61,10 @@
                   </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
-              <f7-list-button v-if="!expandedTypes.sessions && sessions.length > 10" color="blue" @click="expandedTypes.sessions = true">
+              <f7-list-button
+                v-if="!expandedTypes.sessions && sessions.length > 10"
+                color="theme-alt"
+                @click="expandedTypes.sessions = true">
                 {{ t('dialogs.showAll') }}
               </f7-list-button>
               <f7-list-button color="red" @click="logout()">
@@ -105,7 +108,7 @@
                   </f7-swipeout-button>
                 </f7-swipeout-actions>
               </f7-list-item>
-              <f7-list-button color="blue" :external="true" href="/createApiToken">
+              <f7-list-button color="theme-alt" :external="true" href="/createApiToken">
                 {{ t('profile.apiTokens.create') }}
               </f7-list-button>
             </f7-list>

@@ -2,7 +2,7 @@
   <f7-list-button
     v-if="config.listButton && !context.editmode"
     :title="config.title || 'Action'"
-    :color="config.color || 'blue'"
+    :color="config.color || 'theme-alt'"
     @click.stop="performAction" />
   <f7-list-item v-else-if="config.divider && !context.editmode" divider ref="divider" :title="config.title" />
   <f7-list-item

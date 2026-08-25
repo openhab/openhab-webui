@@ -73,7 +73,7 @@
       <f7-block v-if="searchResults.length === 0">
         '{{ this.$refs.storeSearchbar.$el.f7Searchbar.query }}' not found in {{ currentTab === 'main' ? 'any' : currentTab }} add-ons
         <div class="flex-shrink-0 if-aurora display-flex justify-content-center">
-          <f7-button color="blue" fill raised @click="clearSearch"> Clear Search </f7-button>
+          <f7-button color="theme-alt" fill raised @click="clearSearch"> Clear Search </f7-button>
         </div>
       </f7-block>
       <addons-section
