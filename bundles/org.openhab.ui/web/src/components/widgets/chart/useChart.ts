@@ -286,7 +286,7 @@ export function useChart(
 
     const now = dayjs()
     const isBetweenStartAndEnd =
-      dayjs(startTime.value).subtract(5, 'minutes').isBefore(now) && dayjs(endTime.value).add(5, 'minutes').isAfter(now)
+      dayjs(seriesStartTime).subtract(5, 'minutes').isBefore(now) && dayjs(seriesEndTime).add(5, 'minutes').isAfter(now)
     const isNotFuture = !(future.value > 0)
 
     let boundary =
