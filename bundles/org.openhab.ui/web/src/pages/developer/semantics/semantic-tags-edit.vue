@@ -340,7 +340,6 @@
 
 .semantics-tree
   padding 0
-  border-right 1px solid var(--f7-block-strong-border-color)
   --f7-theme-color var(--oh-theme-alt-color)
   --f7-theme-color-rgb var(--oh-theme-alt-color-rgb)
   .treeview
