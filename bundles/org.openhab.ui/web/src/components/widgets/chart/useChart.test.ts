@@ -3,8 +3,8 @@ import { flushPromises } from '@vue/test-utils'
 import { ref, type Ref } from 'vue'
 import dayjs from 'dayjs'
 import { useChart } from './useChart'
-import { startOf } from './util/time.ts'
-import { AggregationFunction, ChartType } from '@/types/components/widgets'
+import { startOf } from './util/time'
+import { AggregationFunction, ChartType, type OhChart as OhChartType } from '@/types/components/widgets'
 import type { WidgetContext } from '../types'
 import type * as api from '@/api'
 
@@ -48,15 +48,18 @@ describe('useChart', () => {
   it('requests and renders the data of a series with an offset (regression for #4438)', async () => {
     // useChart shifts the query and the series period for offset series into the past, so that
     // e.g. "yesterday" can be compared with "today". The persistence data below therefore lies in
-    // the *offset* (shifted) period, not in the period the chart itself displays.
-    const endTime = startOf(ChartType.day, dayjs('2026-01-15')).add(1, 'day')
-    const startTime = endTime.subtract(1, 'day')
+    // the offset (shifted) period, not in the period the chart itself displays.
+    const date = '2026-01-15'
+    const itemName = 'TestItem'
+
+    const startTime = startOf(ChartType.day, dayjs(date))
+    const endTime = startTime.add(1, 'day')
     const offsetStartTime = startTime.subtract(1, 'day')
     const offsetEndTime = endTime.subtract(1, 'day')
 
-    getItemByName.mockResolvedValue({ type: 'Number', name: 'TestItem', state: '0' })
+    getItemByName.mockResolvedValue({ type: 'Number', name: itemName, state: '0' })
     getItemDataFromPersistenceService.mockResolvedValue({
-      name: 'TestItem',
+      name: itemName,
       datapoints: '2',
       unit: '',
       data: [
@@ -67,29 +70,30 @@ describe('useChart', () => {
 
     const context = ref({
       component: { component: 'oh-chart', config: {} },
-      props: {}
-    }) as unknown as Ref<WidgetContext>
+      props: {},
+      config: {}
+    }) satisfies Ref<WidgetContext>
 
     const config = ref({
       chartType: ChartType.day
-    }) as any
+    }) satisfies Ref<OhChartType.Config>
 
     const slots = ref({
       series: [
         {
           component: 'oh-aggregate-series',
           config: {
-            item: 'TestItem',
+            item: itemName,
             aggregationFunction: AggregationFunction.average,
             offsetAmount: 1,
             offsetUnit: 'day'
           }
         }
       ]
-    }) as Ref<Record<string, api.UiComponent[]>>
+    }) satisfies Ref<Record<string, api.UiComponent[]>>
 
     const { options, setDate } = useChart(context, config, slots, evaluateExpression)
-    setDate('2026-01-15')
+    setDate(date)
 
     await flushPromises()
     await flushPromises()
