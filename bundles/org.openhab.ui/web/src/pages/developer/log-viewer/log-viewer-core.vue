@@ -5,164 +5,127 @@
         ref="resizableTable"
         :columns="TABLE_COLUMN_DEFS"
         :column-resize-enabled="!textMode"
-        :content-wrap-enabled="wrapMessages && !textMode"
-        :storage-key="COLUMN_WIDTHS_KEY"
+        :storage-key="props.storageKeyPrefix + 'columnWidths'"
         :default-column-widths="DEFAULT_COLUMN_WIDTHS"
-        @scroll="handleScroll"
-        @auto-size-column="autoSizeColumn" />
+        @auto-size-column="autoSizeColumn"
+        @table-click="onTableClick"
+        @scroll="onScroll"
+        :line-height="!textMode ? LineHeights[textSize] : LineHeights[`textmode_${textSize}` as TextSize]"
+        :list="filteredList"
+        :class="{
+          small: textSize === 'small',
+          medium: textSize === 'medium',
+          large: textSize === 'large',
+          textmode: textMode,
+          'content-wrapped': wrapMessages
+        }"
+        :getItemKey="(item) => (item as EnrichedLogEntry).sequence">
+        <template #row="{ item }">
+          <LogTableRow :item="item as EnrichedLogEntry" :text-mode="textMode" :highlight-filters="activeHighlightFilters" />
+        </template>
+      </resizable-table>
+      <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-blue" @click="showLatestLogs()">
+        <f7-icon f7="arrow_down_to_line" />
+      </button>
     </f7-card>
-    <button v-show="!autoScroll" class="button button-fill dock-scroll-button color-theme-alt" @click="showLatestLogs()">
-      <f7-icon f7="arrow_down_to_line" />
-    </button>
   </div>
-  <!-- Logger Settings Popup -->
-  <f7-popup class="log-settings-popup">
-    <f7-page>
-      <f7-navbar title="Logging Settings">
-        <f7-nav-right>
-          <f7-link class="popup-close">Close</f7-link>
-        </f7-nav-right>
-      </f7-navbar>
-      <f7-page-content class="no-padding">
-        <f7-block class="input-with-buttons-container">
-          <div class="input-with-buttons searchbar">
-            <input
-              type="text"
-              placeholder="Add custom logger package entry..."
-              @keyup.enter="handleLogPackageEnter($event)"
-              class="custom-input" />
-          </div>
-        </f7-block>
-        <f7-block style="margin-top: 4px; font-size: 0.85rem; text-align: center">
-          Logger will be added with ROOT log level {{ defaultLogLevel }}
-        </f7-block>
 
-        <f7-list class="col wide">
-          <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName" :title="loggerPackage.loggerName">
-            <template #after>
-              <f7-input type="select" :value="loggerPackage.level" @input="updateLogLevel(loggerPackage, $event.target.value)">
-                <option value="DEFAULT">Default</option>
-                <option value="TRACE">Trace</option>
-                <option value="DEBUG">Debug</option>
-                <option value="INFO">Info</option>
-                <option value="WARN">Warning</option>
-                <option value="ERROR">Error</option>
-                <option value="OFF">Off</option>
-              </f7-input>
-              <f7-button small icon-f7="xmark_circle" @click="removeLogLevel(loggerPackage)" />
-            </template>
-          </f7-list-item>
-        </f7-list>
-      </f7-page-content>
-    </f7-page>
-  </f7-popup>
+  <LogViewerSettingsPopup
+    :default-log-level="defaultLogLevel"
+    :logger-packages="loggerPackages"
+    @update:log-level="updateLogLevel"
+    @add:logger="addLogger"
+    @delete:logger="removeLogger" />
 
-  <!-- Highlights Popup -->
-  <f7-popup class="log-highlights-popup" @popup:close="saveHighlighters">
-    <f7-page>
-      <f7-navbar title="Logging Highlight Filters">
-        <f7-nav-right>
-          <f7-link class="popup-close">Close</f7-link>
-        </f7-nav-right>
-      </f7-navbar>
-      <f7-page-content>
-        <f7-list class="col wide">
-          <f7-list-item v-for="(highlightFilter, index) in highlightFilters" :key="index">
-            <template #media>
-              <input type="checkbox" v-model="highlightFilter.active" />
-            </template>
-            <template #title>
-              <f7-input v-model:value="highlightFilter.text" type="text" placeholder="Enter text to highlight..." />
-            </template>
+  <LogViewerHighlightsPopup v-model:highlight-filters="highlightFilters" />
 
-            <!-- Color Picker -->
-            <template #after>
-              <div>
-                <f7-button
-                  class="color-picker-button"
-                  @click="openColorPopover(index, $event)"
-                  :style="{ backgroundColor: highlightFilter.color }" />
-              </div>
-              <f7-button small icon-f7="xmark_circle" @click="removeHighlight(index)" />
-            </template>
-          </f7-list-item>
-        </f7-list>
-        <button class="button" @click="addNewHighlight">Add New Highlight</button>
-      </f7-page-content>
-    </f7-page>
-  </f7-popup>
+  <LogViewerDetailsPopup
+    :log-entry="selectedLogEntry"
+    @select:next="updateSelectedByIndex(selectedLogIndex + 1)"
+    @select:previous="updateSelectedByIndex(selectedLogIndex - 1)"
+    @select:latest="updateSelectedByIndex(filteredList.length - 1)" />
 
-  <!-- Color Picker Popover -->
-  <f7-popover id="color-picker-popover" class="color-picker-popover">
-    <f7-block>
-      <div class="color-palette">
-        <button
-          v-for="color in colors"
-          :key="color"
-          :style="{ backgroundColor: color }"
-          :class="{ selected: currentHighlightColor === color }"
-          @click="selectHighlightColor(color)" />
-      </div>
-    </f7-block>
-  </f7-popover>
-
-  <!-- Log Details Popup -->
-  <f7-popup class="log-details-popup" id="logdetails-popup" ref="logDetailsPopup" close-on-escape close-by-backdrop-click>
-    <f7-page>
-      <f7-navbar title="Log Details" ref="logDetailsNavbar">
-        <f7-nav-right>
-          <f7-link class="popup-close"> Close </f7-link>
-        </f7-nav-right>
-      </f7-navbar>
-      <f7-toolbar bottom class="toolbar-details">
-        <div class="display-flex justify-content-center" style="width: 100%">
-          <f7-link class="display-flex flex-direction-row margin-right" @click="selectPrevious()">
-            <f7-icon f7="backward_fill" />
-            &nbsp; Previous
-          </f7-link>
-          <f7-link class="display-flex flex-direction-row margin-right" @click="selectNext()">
-            Next &nbsp;
-            <f7-icon f7="forward_fill" />
-          </f7-link>
-          <f7-link class="display-flex flex-direction-row" @click="selectLatest()">
-            <f7-icon f7="forward_end_fill" />
-          </f7-link>
-        </div>
-      </f7-toolbar>
-
-      <f7-list class="col wide">
-        <f7-list-item header="Time" :title="selectedLog ? selectedLog.time + selectedLog.milliseconds : ''" />
-        <f7-list-item header="Timestamp" :title="selectedLog ? selectedLog.timestamp : ''" />
-        <f7-list-item header="Level" :title="selectedLog ? selectedLog.level : ''" />
-        <f7-list-item header="Logger Class" :title="selectedLog ? selectedLog.loggerName : ''" />
-        <f7-list-item>
-          <template #title>
-            <div class="item-title">
-              <div class="item-header">Message</div>
-              <div class="log-message">
-                {{ selectedLog ? selectedLog.message : '' }}
-              </div>
-            </div>
-          </template>
-        </f7-list-item>
-        <f7-list-item v-if="selectedLog && selectedLog.stackTrace">
-          <template #title>
-            <div class="item-title">
-              <div class="item-header">Stack Trace</div>
-              <div class="stack-trace">
-                {{ selectedLog.stackTrace }}
-              </div>
-            </div>
-          </template>
-        </f7-list-item>
-      </f7-list>
-    </f7-page>
-  </f7-popup>
+  <Teleport v-if="searchbarContainer" defer :to="searchbarContainer">
+    <oh-searchbar
+      ref="oh-searchbar"
+      class="searchbar-logviewer"
+      :persist-search-string-key="storageKeyPrefix + 'searchbar-search-string'"
+      :haystack-fields="haystackFields"
+      :filters-definitions="filtersDefinitions"
+      @update:tokenized-search="onUpdateTokenizedSearch" />
+  </Teleport>
 </template>
 
 <style lang="stylus">
-// shared styles for log viewer page and embedded component
-.log-viewer
+// shared styles fo r log viewer page and embedded component
+.log-viewer .table-block
+  background #F8F9FA !important
+  color #343A40
+  .resizable-table-header-cell
+    background-color #E9ECEF !important
+    color #343A40 !important
+    border-bottom 1px solid #DEE2E6
+  table tbody
+    tr
+      border-bottom 1px solid #DEE2E6
+    tr:hover
+      background-color #EEF2F6 !important
+    tr:nth-child(even)
+      background-color #FFFFFF !important
+    td
+      overflow hidden
+      text-overflow ellipsis
+      white-space nowrap
+      vertical-align middle
+      text-align left
+
+    td.time
+      color #6C757D !important
+      font-family monospace
+      cursor pointer
+      padding-left 0.5em
+      text-align left
+    td.level
+      text-align center
+      text-overflow unset
+      span
+        border-radius 3px
+        display inline-flex
+        line-height 1;
+        padding 2px 6px
+        align-items center
+        height 1.2em
+      span::before
+        content "●"
+        margin-right 4px
+        font-size 0.8em
+    td.logger
+      color #5C6670 !important
+      direction rtl
+    td.message
+      text-wrap nowrap
+      white-space pre
+      max-width 80vw
+
+    tr.info .level span
+      color #1976D2 !important
+      background #E3F2FD !important
+    tr.debug .level span
+      color #6C757D !important
+      background #E9ECEF !important
+    tr.warn .level span
+      color #B77900 !important
+      background #FFF3CD !important
+    tr.error .level span
+      color #D32F2F !important
+      background #FDECEC !important
+    tr.trace .level span
+      color #7B4AB5 !important
+      background #F1E8FA !important
+
+    td span.filter-highlight
+      font-weight bold
+
   .log-period
     white-space nowrap !important
   .disabled-link
@@ -188,7 +151,6 @@
     align-items center
     justify-content center
 
-  /* Ensure the card takes full width and removes padding */
   .log-viewer-card
     margin 0
     padding 0
@@ -199,177 +161,105 @@
     border-radius 0
 
   .table-container
-    overflow-y auto
-    overflow-x auto
     display block
     position relative
 
-  table
-    overflow-x auto
-    position relative
-    border-collapse collapse
-    table-layout auto
+  .small table
+    font-size 11px
+    line-height 13px
+    tr
+      height 13px
+    i.icon
+      font-size 12px !important
+    td
+      padding 2px
 
-  table.content-wrapped
-    tr.table-rows
-      height auto
-      min-height 31px
-    td.nowrap
+  .medium table
+    font-size 13px
+    line-height 15px
+    i.icon
+      font-size 15px !important
+    td
+      padding 4px
+
+  .large table
+    font-size 15px
+    line-height 18px
+    i.icon
+      font-size 18px !important
+    td
+      padding 5px
+
+  .content-wrapped table
+    td.msg
       white-space pre-wrap
-      overflow visible
-      text-overflow unset
       word-break break-word
+      text-wrap normal
 
-  td.nowrap
-    padding 5px
-    text-align left
-    white-space nowrap
-    overflow hidden
-    text-overflow ellipsis
-    max-width 100dvw
-
-  td.sticky
-    position sticky
-    left 0
-    width 105px
-    color black
-    background-color #f1f1f1
-    z-index 1
-    white-space nowrap
-    overflow hidden
-
-  td.details-trigger
-    cursor pointer
-
-  td.details-trigger *
-    cursor pointer
-
-  td.level
-    width 50px
-    overflow hidden
-
-  td.logger
-    width 280px
-    overflow hidden
-
-  span.logger
-    width 100%
-    display block
-    direction rtl
-    text-align left
-    overflow hidden
-    text-overflow ellipsis
-    white-space nowrap
-
-  tr.table-rows
-    height 31px
-
-  tr.error
-    background-color rgb(255, 96, 96)
-    color black
-
-  tr.warn
-    background-color rgb(247, 253, 163)
-    color black
-
-  tr.info
-    color black
-    background-color rgb(163, 253, 163)
-
-  tr.debug
-    color inherit
-
-  tr.trace
-    color rgb(112, 112, 112)
-
-  td.text
+  .textmode
     font-family monospace
-    font-size 0.9em
-    padding-left 4em
-    line-height 1.2em
-    color grey
-    span
-      margin-right 5px
-    .time
-      margin-left -3.2em
-      cursor pointer
-    .level
-      width 3em
-      display inline-block
-      margin-right 0
-    .logger
-      width 20em
-      display inline-block
-      vertical-align middle
-      margin-right 0
-    .msg
+    tr
+      border-bottom none
+    td
+      padding 0
+      white-space pre-wrap
+      word-break break-word
+      text-wrap normal
+      div.textline
+        display inline-block
+        width 100%
+        padding-left 4em
+        text-indent -4em
+    span.info
+      color #1976D2 !important
+    span.debug
+      color #6C757D !important
+    span.warn
+      color #B77900 !important
+    span.error
+      color #D32F2F !important
+    span.trace
+      color #7B4AB5 !important
+
+    span.msg
       font-weight bold
-    .error
-      color red
-    .warn
-      color orange
-    .info
-      color green
-    .debug
-      color teal
-    .trace
-      color teal
 
-  .milliseconds
-    font-size 0.8em
+.dark .log-viewer .table-block
+  background #15191d !important
+  color #d5d9de
+  .resizable-table-header-cell
+    background-color #20262D !important
+    color #F0F3F6 !important
+    border-bottom 1px solid #303841
+  tbody
+    tr
+      border-bottom 1px solid #303841
+    tr:hover
+      background-color #252C33 !important
+    tr:nth-child(even)
+      background-color #1B2025 !important
 
-.log-settings-popup
-  .input-with-buttons-container
-    display flex
-    justify-content center
-    padding 10px
+    td.time // Timestamp
+      color #9DA7B1 !important
+    td.logger   // Logger
+      color #9da7b1 !important
+    td.msg   // Message
+      color #d5d9de !important
 
-  .input-with-buttons
-    display flex
-    align-items center
-    border-radius 5px !important
-    overflow hidden
-    width 100% !important
-    background-color var(--f7-searchbar-input-bg-color)
-
-  .custom-input
-    flex 1
-    border none
-    padding 10px !important
-    outline none
-
-.log-details-popup
-  .navbar
-    cursor move
-  .log-message
-    white-space normal
-    word-break break-word
-  .stack-trace
-    white-space pre-line
-    word-break break-word
-  margin-left 0
-  margin-top 0
-
-.color-picker-popover
-  .color-palette
-    display flex
-    flex-wrap wrap
-    gap 8px
-    justify-content center
-
-  .color-palette button
-    width 32px
-    height 32px
-    border none
-    border-radius 50%
-    cursor pointer
-    outline none
-    box-shadow 0 2px 4px rgba(0, 0, 0, 0.2)
-    transition transform 0.2s
-
-  .color-palette button.selected
-    transform scale(1.2)
-    border 2px solid black
+    tr.info .level span
+      background #12395A !important
+    tr.debug .level span
+      background #30363D !important
+    tr.warn .level span
+      background #4A3508 !important
+    tr.error .level span
+      background #4A1818 !important
+    tr.trace .level span
+      background #392447 !important
+  .textmode
+    tbody
+      tr
+        border-bottom none
 
 @keyframes opacity-pulse
   0%
@@ -379,12 +269,16 @@
 </style>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, useTemplateRef, shallowRef, triggerRef, watch } from 'vue'
+import { ref, computed, nextTick, useTemplateRef, watch, type Ref } from 'vue'
 import { f7 } from 'framework7-vue'
-import { useDraggable } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
-import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useStorage } from '@vueuse/core'
 import ResizableTable from './resizable-table.vue'
+import LogViewerSettingsPopup from './log-viewer-settings-popup.vue'
+import LogViewerHighlightsPopup from './log-viewer-highlights-popup.vue'
+import LogViewerDetailsPopup from './log-viewer-details-popup.vue'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
+import { useSearch } from '@/components/useSearch'
+import { LogTableRow } from './log-viewer-row.ts'
 
 // TODO: Remove once we have refactored clipboard to TypeScript
 // @ts-expect-error-next-line
@@ -394,185 +288,173 @@ import * as api from '@/api'
 import ws, { type MessageCallback, type ReadyCallback, type CloseCallback, type ErrorCallback } from '@/js/openhab/ws'
 import { showToast } from '@/js/dialog-promises'
 
-interface LogEntry {
-  sequence: number
-  timestamp: number
-  level: string
-  loggerName: string
-  message: string
-  stackTrace?: string
-  unixtime: number
-}
+import { type LogEntry, type EnrichedLogEntry, type LogHighlightFilter, Color } from './types'
 
-interface EnrichedLogEntry extends LogEntry {
-  id: number
-  milliseconds: string
-  visible: boolean
-  time: string
-  el?: HTMLTableRowElement
+// Should match the actual line heights used in the CSS for the different text sizes and modes
+enum LineHeights {
+  small = 22,
+  medium = 28,
+  large = 33,
+  textmode_small = 17,
+  textmode_medium = 23,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  textmode_large = 28
 }
-
-enum LEVEL_ICONS {
-  TRACE = 'line_horizontal_3',
-  DEBUG = 'ant',
-  INFO = 'info_circle',
-  WARN = 'flag',
-  ERROR = 'exclamationmark_octagon_fill',
-  DEFAULT = 'question_diamond'
-}
+type TextSize = keyof typeof LineHeights
 
 const maxEntries = 2000
-const lineHeight = 31
-
-type ResizableTableExposed = InstanceType<typeof ResizableTable>
-
 const resizableTableRef = useTemplateRef('resizableTable')
-const logDetailsPopupRef = useTemplateRef('logDetailsPopup')
-const logDetailsNavbarRef = useTemplateRef('logDetailsNavbar')
-let tableClickHandler: ((e: Event) => void) | null = null
 
-function getResizableTable(): ResizableTableExposed | null {
-  return (resizableTableRef.value as unknown as ResizableTableExposed | null) ?? null
-}
+const props = withDefaults(
+  defineProps<{
+    searchbarContainer?: string | HTMLElement | null
+    storageKeyPrefix?: string
+  }>(),
+  {
+    storageKeyPrefix: 'org.openhab.ui:logviewer:'
+  }
+)
 
-// Composables
-useDraggable(() => logDetailsNavbarRef.value?.$el, {
-  preventDefault: true,
-  stopPropagation: true,
-  onStart: (_, event) => {
-    const target = event.target as HTMLElement | null
-    if (target?.closest('.popup-close, .link, a, button, input, select, textarea')) return false
-
-    const popupEl = logDetailsPopupRef.value?.$el
-    if (!popupEl || !popupEl.parentElement) return false
-
-    // Prevent dragging if the popup has full parent width (e.g. on mobile)
-    if (popupEl.offsetWidth >= popupEl.parentElement.offsetWidth) return false
-
-    // Framework7 popups are centered with margins by default.
-    // Reset margins so top/left updates take visible effect while dragging.
-    popupEl.style.marginLeft = '0'
-    popupEl.style.marginTop = '0'
-    return
-  },
-  onMove: (pos) => {
-    const popupEl = logDetailsPopupRef.value?.$el
-    if (!popupEl) return
-
-    popupEl.style.top = pos.y + 'px'
-    popupEl.style.left = pos.x + 'px'
+// --- Persistent State ---
+const textMode = useStorage<boolean>(props.storageKeyPrefix + 'textMode', false, localStorage, { flush: 'sync', writeDefaults: false })
+const showErrors = useStorage<boolean>(props.storageKeyPrefix + 'showErrors', false, localStorage, { flush: 'sync', writeDefaults: false })
+const wrapMessages = useStorage<boolean>(props.storageKeyPrefix + 'wrapMessages', false, localStorage, {
+  flush: 'sync',
+  writeDefaults: false
+})
+const filterText = useStorage<string>(props.storageKeyPrefix + 'logFilterText', '', localStorage, { flush: 'sync', writeDefaults: false })
+const textSize = useStorage<TextSize>(props.storageKeyPrefix + 'textSize', 'medium', localStorage, { flush: 'sync', writeDefaults: false })
+const highlightFilters = useStorage<LogHighlightFilter[]>(props.storageKeyPrefix + 'logHighlightFilters', [], localStorage, {
+  flush: 'sync',
+  writeDefaults: false,
+  serializer: {
+    read: (raw) => {
+      // parse highlight filters from storage in order to ensure backward compatibility with previous versions of the app
+      try {
+        const parsed = JSON.parse(raw)
+        if (Array.isArray(parsed)) {
+          return parsed.map((item) => ({
+            text: item.text ?? '',
+            color: Object.values(Color).includes(item.color) ? item.color : Color.yellow,
+            active: item.active ?? true
+          }))
+        }
+      } catch (e) {
+        console.warn('Failed to parse highlight filters from storage:', e)
+      }
+      return []
+    },
+    write: (value) => JSON.stringify(value)
   }
 })
 
-// State/Data
+// --- State/Data ---
 let defaultLogLevel = 'WARN'
 let socket: WebSocket | null = null
 let reconnectDelay = 1000
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 let batchUpdatePending = false
-let nextId = 0
 const batchLogs: EnrichedLogEntry[] = []
 
-const colors: string[] = [
-  '#FF0000', // Red
-  '#00FF00', // Green
-  '#0000FF', // Blue
-  '#FFFF00', // Yellow
-  '#FF00FF', // Magenta
-  '#00FFFF', // Cyan
-  '#FFA500', // Orange
-  '#800080', // Purple
-  '#008000', // Dark Green
-  '#000080', // Navy Blue
-  '#FFC0CB', // Pink
-  '#A52A2A', // Brown
-  '#FFD700', // Gold
-  '#808080', // Gray
-  '#8B4513', // Saddle Brown
-  '#4682B4' // Steel Blue
-]
+const filtersDefinitions = {
+  level: {
+    label: 'Kind',
+    options: ['DEBUG', 'INFO', 'WARN', 'ERROR', 'TRACE']
+  },
+  message: {
+    label: 'Message'
+  },
+  logger: {
+    label: 'Logger',
+    path: 'loggerName'
+  },
+  has: {
+    label: 'Has',
+    getFn: (entry: unknown) => {
+      const logEntry = entry as LogEntry
+      return logEntry.stackTrace && logEntry.stackTrace.length > 0 ? 'stacktrace' : ''
+    },
+    options: ['stacktrace']
+  }
+}
+const haystackFields = ['message', 'loggerName']
 
-let scrollTime: number = 0
-
-const uiOptionsStore = useUIOptionsStore()
-const {
-  logViewerTextMode: textMode,
-  logViewerShowErrors: showErrors,
-  logViewerHighlightFilters: highlightFilters,
-  logViewerFilterText: filterText
-} = storeToRefs(uiOptionsStore)
-
+let maxScrollHeight = 0
 const loggerPackages = ref<api.LoggerInfo[]>([])
 const stateConnected = ref(false)
 const stateProcessing = ref(true)
 const stateConnecting = ref(false)
 const loadingLoggers = ref(true)
 const autoScroll = ref(true)
-const filterCount = ref(0)
-const wrapMessages = ref(localStorage.getItem('openhab.ui:logviewer.wrapMessages') === 'true')
-const tableData = shallowRef<EnrichedLogEntry[]>([])
+const tableData: EnrichedLogEntry[] = [] // non-reactive to manually updates efficiently
 const logStart = ref('--:--:--')
 const logEnd = ref('--:--:--')
-const currentHighlightColorItemIndex = ref<number | null>(null)
-const currentHighlightColor = ref('#FF5252')
 const lastSequence = ref(0)
-const selectedId = ref<number>(-1)
-const selectedLog = ref<EnrichedLogEntry | null>(null)
-let lastFirstIndex = -1
+
+const selectedLogId = ref<number>(-1)
+const selectedLogIndex = ref<number>(-1)
+const selectedLogEntry = ref<EnrichedLogEntry | null>(null)
 
 // Column definitions (table mode only)
-const COLUMN_WIDTHS_KEY = 'openhab.ui:logviewer.columnWidths'
 const DEFAULT_COLUMN_WIDTHS = [110, 60, 280, 2000]
-const TABLE_COLUMN_DEFS = [{ label: 'Time' }, { label: 'Level' }, { label: 'Logger' }, { label: 'Message' }]
-let measureCanvasCtx: CanvasRenderingContext2D | null = null
+const TABLE_COLUMN_DEFS = [
+  { label: 'Time', width: 'max-content' },
+  { label: 'Level', width: 'max-content' },
+  { label: 'Logger', width: '15%', maxWidth: '0' }, // maxWidth = 0 will force width % when in auto-size
+  { label: 'Message', width: 'auto' }
+]
 
-function getMeasureCtx(): CanvasRenderingContext2D | null {
-  if (!measureCanvasCtx) {
-    measureCanvasCtx = document.createElement('canvas').getContext('2d')
+const { filteredList, onUpdateTokenizedSearch, addDataToFuse, forceUpdateFuseIndex, forceUpdateFuseFilter } = useSearch(tableData, {
+  filtersDefinitions,
+  haystackFields,
+  fuseSearchInterceptor: (fuseSearch) => {
+    if (typeof fuseSearch === 'string' && fuseSearch.trim() === '') {
+      return fuseSearch
+    } else if (typeof fuseSearch === 'object' && Object.keys(fuseSearch).length >= 0) {
+      if (showErrors.value) {
+        return { $or: [fuseSearch, { level: 'ERROR' }] }
+      }
+    }
+    return fuseSearch
   }
-  return measureCanvasCtx
-}
-
-function measureTextWidth(text: string, font: string): number {
-  const ctx = getMeasureCtx()
-  if (!ctx) return 0
-  ctx.font = font
-  return ctx.measureText(text).width
-}
+})
 
 function autoSizeColumn(colIndex: number) {
-  const tbody = getTableBody()
-  const firstTd = tbody?.querySelector('td')
-  const font = firstTd ? getComputedStyle(firstTd).font : '13px sans-serif'
   const fields: (keyof EnrichedLogEntry)[] = ['time', 'level', 'loggerName', 'message']
-  const field = fields[colIndex]
-  let maxWidth = measureTextWidth(TABLE_COLUMN_DEFS[colIndex].label, font)
-  for (const entry of filteredTableData.value) {
-    const text = colIndex === 0 ? entry.time + entry.milliseconds : String(entry[field])
-    const w = measureTextWidth(text, font)
-    if (w > maxWidth) maxWidth = w
-  }
-  // add cell padding; col 0 also needs room for the icon (~26px)
-  const padding = colIndex === 0 ? 52 : 16
-  getResizableTable()?.setColumnWidth(colIndex, Math.min(Math.ceil(maxWidth) + padding, 6000))
-}
 
-function resetColumnWidths() {
-  getResizableTable()?.resetColumnWidths()
+  const maxColumnTexts = filteredList.value.reduce((acc: string[], entry) => {
+    entry = entry as EnrichedLogEntry
+    fields.forEach((field, index) => {
+      const text = String(entry[field])
+      if (text.length > (acc[index]?.length ?? 0)) {
+        acc[index] = text
+      }
+    })
+    return acc
+  }, [])
+  maxColumnTexts[1] = 'ERROR'
+
+  const columnWidths = resizableTableRef.value?.autoSizeColumns(maxColumnTexts, '100%')
+  if (colIndex < 0) {
+    // auto size all columns
+    columnWidths?.forEach((width, index) => {
+      resizableTableRef.value?.setColumnWidth(index, width)
+    })
+  } else {
+    resizableTableRef.value?.setColumnWidth(colIndex, columnWidths?.[colIndex] ?? DEFAULT_COLUMN_WIDTHS[colIndex])
+  }
 }
 
 // Computed
-const filteredTableData = computed(() => {
-  return tableData.value.filter((item) => item.visible)
+const filterCount = computed(() => {
+  return filteredList.value.length
 })
 
 const countersBadgeColor = computed(() => {
-  if (tableData.value.length >= maxEntries) return 'red'
-  if (filterCount.value < tableData.value.length) return 'orange'
+  if (tableData.length >= maxEntries) return 'red'
+  if (filterCount.value < tableData.length) return 'orange'
   return 'green'
 })
-
-const selectedIndex = computed(() => tableData.value.findIndex((e) => e.id === selectedId.value))
 
 const periodRangeColor = computed(() => {
   if (!stateConnected.value) return 'red'
@@ -586,30 +468,17 @@ const periodRangeTooltip = computed(() => {
 })
 
 const isConnecting = computed(() => stateConnecting.value)
-
-const filterTextLowerCase = computed(() => filterText.value.toLowerCase())
 const activeHighlightFilters = computed(() => highlightFilters.value.filter((filter) => filter.active && filter.text.trim() !== ''))
-
-// Watchers
-watch(selectedId, (newId) => {
-  const log = tableData.value.find((e) => e.id === newId)
-  if (log) selectedLog.value = { ...log }
-})
 
 watch(
   activeHighlightFilters,
   () => {
-    clearCache()
-    updateFilter()
+    // updateFilter()
   },
   { deep: true }
 )
 
 // Methods
-function clearCache() {
-  tableData.value.forEach((entry) => delete entry.el)
-}
-
 async function load() {
   loggerPackages.value = []
   loadingLoggers.value = true
@@ -632,63 +501,44 @@ async function load() {
   }
 
   startConnecting()
-
-  updateFilter()
-
-  nextTick(() => {
-    const tbody = getTableBody()
-    if (!tbody) return
-
-    if (tableClickHandler) {
-      tbody.removeEventListener('click', tableClickHandler)
-      tableClickHandler = null
-    }
-
-    tableClickHandler = (e: Event) => {
-      const target = e.target as HTMLElement
-      const detailTrigger = target.closest('.details-trigger') as HTMLElement | null
-      if (!detailTrigger) return
-      const tr = detailTrigger.closest('tr') as HTMLTableRowElement | null
-      if (!tr) return
-      if (tr.classList.contains('padder')) return
-      const idAttr = tr.dataset.id
-      if (!idAttr) return
-      const id = Number(idAttr)
-      if (Number.isNaN(id)) return
-      onRowClick(id)
-    }
-
-    tbody.addEventListener('click', tableClickHandler)
-  })
 }
 
 function cleanup() {
   loggingStop()
-  if (tableClickHandler) {
-    const tbody = getTableBody()
-    if (tbody) {
-      tbody.removeEventListener('click', tableClickHandler)
-    }
-    tableClickHandler = null
+}
+
+function updateSelectedByIndex(selectedIndex: number) {
+  if (selectedIndex >= 0 && selectedIndex < tableData.length) {
+    selectedLogIndex.value = selectedIndex
+    selectedLogEntry.value = { ...tableData[selectedIndex] }
+    selectedLogId.value = selectedLogEntry.value.sequence
+  } else {
+    selectedLogIndex.value = -1
+    selectedLogEntry.value = null
+    selectedLogId.value = -1
   }
 }
 
-function getTableBody(): HTMLTableSectionElement | null {
-  return getResizableTable()?.getTableBody() ?? null
+function updateSelectedById(selectedId: number) {
+  const index = tableData.findIndex((item) => item.sequence === selectedId)
+  updateSelectedByIndex(index)
 }
 
-function updateLogLevel(logger: api.LoggerInfo, value: string) {
-  logger.level = value
-  api.putLogger({ loggerName: logger.loggerName, loggerInfo: logger }).catch((error) => {
-    console.warn('Failed to update log level for ' + logger.loggerName + ':', error)
-  })
+function updateLogLevel(loggerName: string, value: string) {
+  const logger = loggerPackages.value.find((item) => item.loggerName === loggerName)
+  if (logger) {
+    logger.level = value
+    api.putLogger({ loggerName: logger.loggerName, loggerInfo: logger }).catch((error) => {
+      console.warn('Failed to update log level for ' + logger.loggerName + ':', error)
+    })
+  }
 }
 
-async function removeLogLevel(logger: api.LoggerInfo) {
-  await api.removeLogger({ loggerName: logger.loggerName }).catch((error) => {
-    console.warn('Failed to remove log level for ' + logger.loggerName + ':', error)
+async function removeLogger(loggerName: string) {
+  await api.removeLogger({ loggerName: loggerName }).catch((error) => {
+    console.warn('Failed to remove logger ' + loggerName + ':', error)
   })
-  loggerPackages.value = loggerPackages.value.filter((loggerPackage) => loggerPackage.loggerName !== logger.loggerName)
+  loggerPackages.value = loggerPackages.value.filter((loggerPackage) => loggerPackage.loggerName !== loggerName)
 }
 
 function startConnecting() {
@@ -775,63 +625,16 @@ function socketClose() {
   socket = null
 }
 
-function renderEntry(entry: EnrichedLogEntry) {
-  if (entry.el) return entry.el
-  let tr = document.createElement('tr')
-  let icon = LEVEL_ICONS[entry.level as keyof typeof LEVEL_ICONS] || LEVEL_ICONS.DEFAULT
-  const levelLowerCased = entry.level.toLowerCase()
-  if (textMode.value) {
-    tr.innerHTML =
-      `<td class="text"><span class="time details-trigger">${entry.time}${entry.milliseconds}</span>` +
-      `[<span class="level ${levelLowerCased}">${entry.level}</span>] ` +
-      `[<span class="logger" title="${entry.loggerName}">${entry.loggerName}</span>] - ` +
-      `<span class="msg ${levelLowerCased}">${highlightText(escapeHtml(entry.message))}</span></td>`
-  } else {
-    tr.className = 'table-rows ' + levelLowerCased
-    tr.innerHTML =
-      '<td class="sticky details-trigger"><i class="icon f7-icons" style="font-size: 18px;">' +
-      icon +
-      `</i> ${entry.time}<span class="milliseconds">${entry.milliseconds}</span></td>` +
-      `<td class="level">${entry.level}</td>` +
-      `<td class="logger"><span class="logger" title="${entry.loggerName}">${entry.loggerName}</span></td>` +
-      `<td class="nowrap">${highlightText(escapeHtml(entry.message))}</td>`
-  }
-  // mark row for delegated click handling
-  tr.dataset.id = String(entry.id)
-  entry.el = tr
-  return tr
-}
-
-function onRowClick(entityId: number) {
-  const index = tableData.value.findIndex((e) => e.id === entityId)
-  if (index !== -1) {
-    selectedId.value = index
-    selectedLog.value = { ...tableData.value[index] }
-    f7.popup.open('#logdetails-popup')
-  }
-}
-
-function selectPrevious() {
-  const idx = selectedIndex.value
-  if (idx > 0) {
-    selectedId.value = tableData.value[idx - 1].id
-  }
-}
-
-function selectNext() {
-  const idx = selectedIndex.value
-  if (idx === -1) {
-    if (tableData.value.length > 0) {
-      selectedId.value = tableData.value[0].id
-    }
-  } else if (idx < tableData.value.length - 1) {
-    selectedId.value = tableData.value[idx + 1].id
-  }
-}
-
-function selectLatest() {
-  if (tableData.value.length > 0) {
-    selectedId.value = tableData.value[tableData.value.length - 1].id
+function onTableClick(event: MouseEvent) {
+  const target = event.target as HTMLElement
+  const tr = target.closest('tr')
+  if (!tr) return
+  const entityId = Number(tr.dataset.id)
+  if (!isNaN(entityId)) {
+    updateSelectedById(entityId)
+    nextTick(() => {
+      f7.popup.open('#logdetails-popup')
+    })
   }
 }
 
@@ -839,79 +642,35 @@ function addLogEntry(logEntry: LogEntry) {
   lastSequence.value = Math.max(lastSequence.value, logEntry.sequence)
   const date = new Date(logEntry.unixtime)
 
-  const hours = date.getHours().toString().padStart(2, '0')
-  const minutes = date.getMinutes().toString().padStart(2, '0')
-  const seconds = date.getSeconds().toString().padStart(2, '0')
-  const ms = '.' + date.getMilliseconds().toString().padStart(3, '0')
+  const time = date.toISOString().slice(11, 23)
+  const formattedTimeSansMS = time.slice(0, 8)
 
-  const formattedTime = `${hours}:${minutes}:${seconds}`
-
-  logEnd.value = formattedTime
-  if (tableData.value.length === 0) {
-    logStart.value = formattedTime
+  logEnd.value = formattedTimeSansMS
+  if (tableData.length === 0) {
+    logStart.value = formattedTimeSansMS
   }
 
-  let vis = false
-  if (stateProcessing.value) {
-    vis = processFilter(logEntry)
-    if (vis) {
-      // TODO: Do we need to scroll 1 line to keep the view steady?
-      filterCount.value++
-    }
-  }
-
-  let entry = {
-    id: nextId++,
-    visible: vis,
-    time: formattedTime,
-    timestamp: logEntry.timestamp,
-    milliseconds: ms,
-    level: logEntry.level.toUpperCase(),
-    loggerName: logEntry.loggerName,
-    message: logEntry.message,
-    stackTrace: logEntry.stackTrace,
-    sequence: logEntry.sequence,
-    unixtime: logEntry.unixtime
-  } satisfies EnrichedLogEntry
-
+  let entry = { ...logEntry, time } satisfies EnrichedLogEntry
   batchLogs.push(entry)
 
   if (!batchUpdatePending) {
     batchUpdatePending = true
     requestAnimationFrame(() => {
       batchLogs.forEach((entry) => {
-        tableData.value.push(entry)
-
-        if (entry.visible) {
-          const tr = renderEntry(entry)
-          getTableBody()?.appendChild(tr)
-        }
-
-        if (tableData.value.length > maxEntries) {
-          lastFirstIndex = -1 // Force redraw as indices shifted
-          const removedElement = tableData.value.shift()
-          if (removedElement) {
-            logStart.value = removedElement.time
-            if (removedElement.visible) {
-              filterCount.value--
-              let firstRow = getTableBody()?.firstElementChild
-              if (firstRow?.classList.contains('padder')) firstRow = firstRow.nextElementSibling
-              if (firstRow) {
-                getTableBody()?.removeChild(firstRow)
-              }
-            }
+        if (stateProcessing.value) {
+          // fuse will add data to tableData
+          addDataToFuse(entry, tableData.length > maxEntries)
+        } else {
+          if (tableData.length > maxEntries) {
+            tableData.shift()
           }
+          tableData.push(entry)
         }
       })
       batchLogs.length = 0
 
-      // manually trigger shallowRef after pushing & optionally slicing data to/from tableData
-      triggerRef(tableData)
-
-      if (autoScroll.value) {
+      if (autoScroll.value && stateProcessing.value) {
         nextTick(() => scrollToBottom())
-      } else {
-        nextTick(() => handleScroll())
       }
 
       batchUpdatePending = false
@@ -930,7 +689,7 @@ function loggingContinue() {
   if (!stateConnected.value) {
     startConnecting()
   }
-  updateFilter()
+  forceUpdateFuseIndex()
   stateProcessing.value = true
 }
 
@@ -945,185 +704,53 @@ function loggingStop() {
 }
 
 function clearLog() {
-  tableData.value.length = 0
-  filterCount.value = 0
+  tableData.length = 0
+  forceUpdateFuseIndex()
   logStart.value = '--:--:--'
   logEnd.value = '--:--:--'
-  selectedId.value = -1
-  selectedLog.value = null
-  nextId = 0
+  updateSelectedByIndex(-1)
   batchLogs.length = 0
-  const tableBody = getTableBody()
-  if (tableBody) tableBody.innerHTML = ''
 }
 
 function showLatestLogs() {
+  stateProcessing.value = true
   autoScroll.value = true
-  scrollToBottom()
+  maxScrollHeight = 0
+  nextTick(() => scrollToBottom())
 }
 
 function scrollToBottom() {
-  // Scroll to the bottom of the table
-  const tableContainer = getResizableTable()?.getContainerElement()
-  if (tableContainer) {
-    tableContainer.scrollTop = tableContainer.scrollHeight
-    // Delay manual scroll detection to avoid autoscrolling being defeated when new logs arrive
-    scrollTime = Date.now() + 250
-  }
-  if (textMode.value || !wrapMessages.value) {
-    redrawPartOfTable()
-  }
+  // resizableTableRef.value?.scrollTo(filteredList.value.length, { block: 'end', inline: 'end' })
+  resizableTableRef.value?.scrollToBottom()
 }
 
-function handleScroll() {
-  const tableContainer = getResizableTable()?.getContainerElement()
-  if (!tableContainer) return
+function onScroll(event: Event) {
+  const scrollTop = (event.target as HTMLElement).scrollTop
+  const clientHeight = (event.target as HTMLElement).clientHeight
 
-  if (Date.now() < scrollTime) return
-
-  // Detect if the user has scrolled up
-  const isAtBottom = tableContainer.scrollHeight - tableContainer.scrollTop < tableContainer.clientHeight + 20
-  autoScroll.value = isAtBottom
-
-  if (textMode.value || !wrapMessages.value) {
-    redrawPartOfTable()
+  // add some guardband to avoid auto-scroll being triggered inadvertently
+  if (scrollTop + clientHeight < maxScrollHeight - 100) {
+    autoScroll.value = false
   }
+
+  maxScrollHeight = Math.max(maxScrollHeight, scrollTop + clientHeight)
 }
 
-function redrawPartOfTable() {
-  const tableContainer = getResizableTable()?.getContainerElement()
-  if (!tableContainer) return
-
-  const tableBody = getTableBody()
-  if (!tableBody) return
-
-  const filteredItemsCount = filteredTableData.value.length
-
-  // When messages wrap, row heights vary — skip fixed-height virtual windowing
-  if (!textMode.value && wrapMessages.value) {
-    tableBody.innerHTML = ''
-    for (let i = 0; i < filteredItemsCount; i++) {
-      tableBody.appendChild(renderEntry(filteredTableData.value[i]))
-    }
-    return
-  }
-
-  const currentIndexAtTop = Math.floor(tableContainer.scrollTop / lineHeight)
-  const nbVisibleLines = Math.floor(tableContainer.offsetHeight / lineHeight)
-
-  // make sure to redraw only 50 elements below around visible area
-  const firstIndexToRedraw = Math.max(0, currentIndexAtTop - 50)
-  const lastIndexToRedraw = Math.min(currentIndexAtTop + nbVisibleLines + 50, filteredItemsCount - 1)
-  // console.debug(`Should redraw ${firstIndexToRedraw}/${lastIndexToRedraw}`)
-
-  if (firstIndexToRedraw === lastFirstIndex) {
-    // Check if the last visible element is already in the table (happens when new logs arrive)
-    const lastRow = tableBody.lastElementChild as HTMLElement | null
-    if (!lastRow || lastRow.classList.contains('padder') || Number(lastRow.dataset.id) === filteredTableData.value[lastIndexToRedraw]?.id) {
-      return
-    }
-  }
-  lastFirstIndex = firstIndexToRedraw
-
-  tableBody.innerHTML = ''
-  if (firstIndexToRedraw > 0) {
-    const padder = document.createElement('tr')
-    padder.className = 'padder'
-    padder.style.height = lineHeight * firstIndexToRedraw + 'px'
-    tableBody.appendChild(padder)
-  }
-  for (let i = firstIndexToRedraw; i <= lastIndexToRedraw; i++) {
-    tableBody.appendChild(renderEntry(filteredTableData.value[i]))
-  }
-  if (lastIndexToRedraw < filteredItemsCount - 1) {
-    const padder = document.createElement('tr')
-    padder.className = 'padder'
-    padder.style.height = lineHeight * (filteredItemsCount - 1 - lastIndexToRedraw) + 'px'
-    tableBody.appendChild(padder)
-  }
-}
-
-function handleLogPackageEnter(event: KeyboardEvent) {
+function addLogger(loggerName: string) {
   let logger = {
-    loggerName: (event.target as HTMLInputElement)?.value,
+    loggerName: loggerName,
     level: 'INFO'
   }
-  updateLogLevel(logger, defaultLogLevel)
+  updateLogLevel(loggerName, defaultLogLevel)
   loggerPackages.value.push(logger)
   loggerPackages.value.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
 }
 
-const processFilter = (logEntry: LogEntry) => {
-  return (
-    logEntry.loggerName.toLowerCase().includes(filterTextLowerCase.value) ||
-    logEntry.message.toLowerCase().includes(filterTextLowerCase.value) ||
-    (showErrors.value && logEntry.level === 'ERROR')
-  )
-}
-
-function handleFilter(searchbar: HTMLInputElement, filter: string) {
-  if (!searchbar) return
-  if (!filter) {
-    clearFilter()
-    return
-  }
-  filterText.value = filter
-  updateFilter()
-  scrollToBottom()
-}
-
-function clearFilter() {
-  filterText.value = ''
-  updateFilter()
-  scrollToBottom()
-}
-
-function updateFilter() {
-  let cnt = 0
-
-  for (const entry of tableData.value) {
-    entry.visible = processFilter(entry)
-    if (entry.visible) {
-      cnt++
-    }
-  }
-  filterCount.value = cnt
-  lastFirstIndex = -1
-  redrawPartOfTable()
-}
-
-/**
- * Utility to escape unsafe HTML characters and prevent XSS from log payloads.
- * @param unsafe
- */
-function escapeHtml(unsafe: string): string {
-  return unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;')
-}
-
-/**
- * Render text highlighting based on active highlight filters.
- * @param text
- */
-function highlightText(text: string) {
-  if (activeHighlightFilters.value.length === 0) {
-    return text // Skip if no filters are active
-  }
-
-  // Apply each filter with its respective color
-  activeHighlightFilters.value.forEach((filter) => {
-    // Escape regex special characters so users can search for things like "[WARN]"
-    const regexSafeFilter = filter.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    const regex = new RegExp(`(${regexSafeFilter})`, 'gi')
-    text = text.replace(regex, `<span style="background-color: ${filter.color}; font-weight: bold;">$1</span>`)
-  })
-  return text
-}
-
 function downloadCSV() {
-  const filteredData = tableData.value.filter((row) => row.visible)
+  const filteredData = filteredList.value
 
   const transformedData = filteredData.map((row) => ({
-    time: row.time + row.milliseconds,
+    time: row.time,
     level: row.level,
     source: row.loggerName,
     data: row.message
@@ -1162,9 +789,9 @@ function convertObjectArrayToCSV(array: Record<string, string>[]) {
 
 function copyTableToClipboard() {
   if (textMode.value) {
-    const logs = filteredTableData.value
+    const logs = filteredList.value
       .map((log) => {
-        return `${log.time}${log.milliseconds} [${log.level}] [${log.loggerName}] - ${log.message}`
+        return `${log.time} [${log.level}] [${log.loggerName}] - ${log.message}`
       })
       .join('\n')
     // v-clipboard works without https, but it can only copy plain text
@@ -1176,7 +803,7 @@ function copyTableToClipboard() {
     return
   }
 
-  const table = getResizableTable()?.getTableElement()
+  const table = resizableTableRef.value?.getTableElement()
   if (!table) {
     return
   }
@@ -1206,55 +833,34 @@ function copyTableToClipboard() {
 }
 
 function setTextMode(textModeEnabled: boolean) {
+  maxScrollHeight = 0
   textMode.value = textModeEnabled
   if (textModeEnabled) {
-    getResizableTable()?.clearResizeHoverState()
-  }
-  clearCache()
-  lastFirstIndex = -1
-  updateFilter()
-}
-
-function saveHighlighters() {
-  clearCache()
-  updateFilter()
-}
-
-function addNewHighlight() {
-  highlightFilters.value.push({
-    text: '',
-    color: colors[0],
-    active: false
-  })
-}
-
-function removeHighlight(index: number) {
-  highlightFilters.value.splice(index, 1)
-}
-
-function openColorPopover(index: number, event: Event) {
-  currentHighlightColorItemIndex.value = index
-  currentHighlightColor.value = highlightFilters.value[index].color
-  f7.popover.open('#color-picker-popover', event.target as HTMLElement)
-}
-
-function selectHighlightColor(color: string | null) {
-  f7.popover.close('#color-picker-popover')
-  if (color !== null && currentHighlightColorItemIndex.value !== null) {
-    highlightFilters.value[currentHighlightColorItemIndex.value].color = color
+    resizableTableRef.value?.clearResizeHoverState()
   }
 }
 
 function toggleErrorDisplay() {
   showErrors.value = !showErrors.value
-  updateFilter()
+  forceUpdateFuseFilter()
 }
 
 function toggleWrapMessages() {
   wrapMessages.value = !wrapMessages.value
-  localStorage.setItem('openhab.ui:logviewer.wrapMessages', wrapMessages.value.toString())
-  lastFirstIndex = -1
-  updateFilter()
+}
+
+function toggleTextSize() {
+  maxScrollHeight = 0
+  if (textSize.value === 'small') {
+    textSize.value = 'medium'
+  } else if (textSize.value === 'medium') {
+    textSize.value = 'large'
+  } else {
+    textSize.value = 'small'
+  }
+  nextTick(() => {
+    autoSizeColumn(-1) // auto size all columns
+  })
 }
 
 defineExpose({
@@ -1264,7 +870,7 @@ defineExpose({
   periodRangeColor,
   periodRangeTooltip,
   isConnecting,
-  selectedLog,
+  selectedLogEntry,
   filterCount,
   stateConnected,
   stateProcessing,
@@ -1275,8 +881,6 @@ defineExpose({
   showErrors,
   load,
   cleanup,
-  handleFilter,
-  clearFilter,
   loggingContinue,
   loggingPause,
   loggingStop,
@@ -1287,8 +891,9 @@ defineExpose({
   copyTableToClipboard,
   clearLog,
   setTextMode,
-  resetColumnWidths,
   wrapMessages,
-  toggleWrapMessages
+  toggleWrapMessages,
+  toggleTextSize,
+  autoSizeColumn
 })
 </script>

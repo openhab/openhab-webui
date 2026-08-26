@@ -4,7 +4,6 @@
     class="page-home"
     :class="{ 'standard-background': standardBackground }"
     @page:init="onPageInit"
-    @page:beforein="onPageBeforeIn"
     @page:afterin="onPageAfterIn"
     @page:beforeout="onPageBeforeOut">
     <f7-navbar
