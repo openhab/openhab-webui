@@ -113,6 +113,19 @@
                 <div><f7-block-title>Icon Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
               </f7-block>
+              <f7-block
+                v-if="
+                  selectedWidget &&
+                  WIDGET_TYPES_CAN_COMMAND.includes(selectedWidget.type) &&
+                  (isEditable || selectedWidget.confirmCmdRules?.length)
+                ">
+                <div><f7-block-title>Confirm Rules</f7-block-title></div>
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="confirmCmdRules"
+                  :fields="confirmCmdRulesFields"
+                  :disabled="!isEditable" />
+              </f7-block>
               <f7-block v-if="isEditable && selectedWidget && canAddChildren(selectedWidget) && selectedWidget.type !== 'Buttongrid'">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
                 <f7-card>
@@ -236,6 +249,17 @@
           <f7-link
             v-if="
               selectedWidget &&
+              WIDGET_TYPES_CAN_COMMAND.includes(selectedWidget.type) &&
+              (isEditable || selectedWidget.confirmCmdRules?.length)
+            "
+            class="padding-left padding-right"
+            :tab-link-active="detailsTab === 'confirmCmdRules'"
+            @click="detailsTab = 'confirmCmdRules'">
+            Confirm
+          </f7-link>
+          <f7-link
+            v-if="
+              selectedWidget &&
               selectedWidget.type !== 'Sitemap' &&
               (isEditable ||
                 selectedWidget.labelColorRules?.length ||
@@ -285,6 +309,9 @@
             <f7-block-title>Icon Color</f7-block-title>
             <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
           </div>
+        </f7-block>
+        <f7-block v-if="selectedWidget && detailsTab === 'confirmCmdRules'" style="margin-bottom: 6rem">
+          <attribute-details :widget="selectedWidget" attribute="confirmCmdRules" :fields="confirmCmdRulesFields" :disabled="!isEditable" />
         </f7-block>
       </f7-page>
     </f7-sheet>
@@ -474,7 +501,7 @@ export default {
       detailsTab: 'widget',
       currentTab: 'tree',
       eventSource: null,
-      defaultFalseWidgetBooleans: ['staticIcon', 'switchSupport', 'releaseOnly', 'forceAsItem', 'stateless'],
+      defaultFalseWidgetBooleans: ['staticIcon', 'switchSupport', 'releaseOnly', 'forceAsItem', 'stateless', 'confirmCmd'],
       switchMappingFields: [
         { command: { width: '10%', placeholder: 'cmd', required: true } },
         ':',
@@ -521,6 +548,17 @@ export default {
         },
         '=',
         { argument: { width: '20%', placeholder: 'color', required: true } }
+      ],
+      confirmCmdRulesFields: [
+        {
+          conditions: [
+            { item: { width: '30%', type: 'item', placeholder: '[item]' } },
+            { condition: { width: '0%', type: 'operator' } },
+            { value: { placeholder: 'value', required: true } }
+          ]
+        },
+        '=',
+        { argument: { width: '20%', placeholder: 'confirmCmd' } }
       ]
     }
   },
@@ -1005,7 +1043,15 @@ export default {
           const label = scope.widgetErrorLabel(widget)
           Object.keys(widget)
             .filter((attr) =>
-              ['mappings', 'visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr)
+              [
+                'mappings',
+                'visibilityRules',
+                'valueColorRules',
+                'labelColorRules',
+                'iconColorRules',
+                'iconRules',
+                'confirmCmdRules'
+              ].includes(attr)
             )
             .forEach((attr) => {
               widget[attr].forEach((param) => {
@@ -1015,7 +1061,9 @@ export default {
                   )
                 }
                 if (
-                  ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr) &&
+                  ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules', 'confirmCmdRules'].includes(
+                    attr
+                  ) &&
                   !this.validateRule(attr, param)
                 ) {
                   validationWarnings.push(widget.type + ' widget ' + label + ', syntax error in ' + attr)
@@ -1046,70 +1094,74 @@ export default {
       return widget.label ?? (widget.item ? 'for item ' + widget.item : 'without label')
     },
     validateMapping(mapping) {
-      return this.isDefinedValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
+      return !(this.isUndefinedValue(mapping.command) || (this.isEmptyValue(mapping.label) && this.isEmptyValue(mapping.icon)))
     },
     validateRule(attr, rule) {
-      if (attr !== 'visibilityRules') {
-        return this.isNonEmptyValue(rule.argument)
+      if (!['visibilityRules', 'confirmCmdRules'].includes(attr)) {
+        return !this.isEmptyValue(rule.argument)
       }
-      if (rule.conditions?.some((condition) => !this.isDefinedValue(condition.value))) {
+      if (rule.conditions?.some((condition) => this.isUndefinedValue(condition.value))) {
         return false
       }
       return true
     },
-    isNonEmptyValue(value) {
+    isEmptyValue(value) {
       if (typeof value === 'string') {
-        return value !== ''
+        return value === ''
       }
-      return this.isDefinedValue(value)
+      return this.isUndefinedValue(value)
     },
-    isDefinedValue(value) {
-      return value !== null && value !== undefined
+    isUndefinedValue(value) {
+      return value === null || value === undefined
     },
-    sanitizeRuleCondition(condition, visibilityRule) {
+    sanitizeRuleCondition(condition, requiresValue) {
       if (!condition || typeof condition !== 'object' || Array.isArray(condition)) {
         return null
       }
-      if (visibilityRule && !this.isDefinedValue(condition.value)) {
+      if (requiresValue && this.isUndefinedValue(condition.value)) {
         return null
       }
       const sanitizedCondition = {}
       ;['item', 'condition', 'value'].forEach((key) => {
-        if (this.isDefinedValue(condition[key])) {
+        if (!this.isUndefinedValue(condition[key])) {
           sanitizedCondition[key] = condition[key]
         }
       })
       return Object.keys(sanitizedCondition).length ? sanitizedCondition : null
     },
-    sanitizeRuleEntry(rule, visibilityRule) {
+    sanitizeRuleEntry(rule, requiresValue, requiresArgument) {
       if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
         return null
       }
       const sanitizedRule = {}
       if (Array.isArray(rule.conditions)) {
-        const sanitizedConditions = rule.conditions
-          .map((condition) => this.sanitizeRuleCondition(condition, visibilityRule))
-          .filter(Boolean)
+        const sanitizedConditions = rule.conditions.map((condition) => this.sanitizeRuleCondition(condition, requiresValue)).filter(Boolean)
         if (sanitizedConditions.length) {
           sanitizedRule.conditions = sanitizedConditions
         }
       }
-      if (this.isNonEmptyValue(rule.argument)) {
+      if (!this.isEmptyValue(rule.argument)) {
         sanitizedRule.argument = rule.argument
       }
-      if (!visibilityRule && !sanitizedRule.argument) {
+      if (requiresArgument && !sanitizedRule.argument) {
         return null
       }
       return Object.keys(sanitizedRule).length ? sanitizedRule : null
     },
     sanitizeRuleAttributes(widget) {
-      const ruleAttributes = ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules']
+      const ruleAttributes = ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules', 'confirmCmdRules']
       ruleAttributes.forEach((ruleAttribute) => {
         if (!Array.isArray(widget[ruleAttribute])) {
           return
         }
         widget[ruleAttribute] = widget[ruleAttribute]
-          .map((rule) => this.sanitizeRuleEntry(rule, ruleAttribute === 'visibilityRules'))
+          .map((rule) =>
+            this.sanitizeRuleEntry(
+              rule,
+              ruleAttribute === 'visibilityRules',
+              !['visibilityRules', 'confirmCmdRules'].includes(ruleAttribute)
+            )
+          )
           .filter(Boolean)
         if (!widget[ruleAttribute].length) {
           delete widget[ruleAttribute]
@@ -1122,7 +1174,7 @@ export default {
       }
       const sanitizedMapping = {}
       Object.keys(mapping).forEach((key) => {
-        if (this.isDefinedValue(mapping[key])) {
+        if (!this.isUndefinedValue(mapping[key])) {
           sanitizedMapping[key] = mapping[key]
         }
       })
