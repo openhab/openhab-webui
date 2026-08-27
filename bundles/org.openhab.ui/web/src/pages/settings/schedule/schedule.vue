@@ -72,7 +72,7 @@
       </div>
     </div>
     <template #fixed>
-      <f7-fab v-if="ready" position="right-bottom" color="blue" href="add">
+      <f7-fab v-if="ready" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>

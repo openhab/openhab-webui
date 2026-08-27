@@ -22,7 +22,14 @@
       @new-language="language = $event" />
     <div v-if="ready && createMode" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="createTransformation">
+        <f7-button
+          class="padding-left padding-right"
+          style="width: 150px"
+          color="theme-alt"
+          large
+          raised
+          fill
+          @click="createTransformation">
           Create
         </f7-button>
       </div>
@@ -51,13 +58,13 @@
         </f7-segmented>
         <f7-link
           v-if="DocumentationLinks[transformation.type]"
-          icon-color="blue"
+          icon-color="theme-alt"
           :text="$device.desktop ? 'Open Documentation' : 'Docs'"
           tooltip="Open documentation"
           icon-ios="f7:question_circle"
           icon-md="f7:question_circle"
           icon-aurora="f7:question_circle"
-          color="blue"
+          color="theme-alt"
           :href="runtimeStore.websiteUrl + DocumentationLinks[transformation.type]"
           target="_blank"
           external />
@@ -80,7 +87,7 @@
       @save="createMode ? createTransformation() : save()" />
     <blockly-editor v-else-if="isBlockly" ref="blocklyEditor" :blocks="transformation.configuration.blockSource" @change="dirty = true" />
     <!-- TODO: Enable Blockly after blocks have been adjusted
-    <f7-fab v-show="transformation.configuration && !transformation.configuration.function && transformation.configuration.mode === 'application/javascript' && !isBlockly" position="center-bottom" color="blue" @click="convertToBlockly" text="Design with Blockly">
+    <f7-fab v-show="transformation.configuration && !transformation.configuration.function && transformation.configuration.mode === 'application/javascript' && !isBlockly" position="center-bottom" color="theme-alt" @click="convertToBlockly" text="Design with Blockly">
       <f7-icon f7="ticket_fill" />
     </f7-fab>
     -->

@@ -2,7 +2,7 @@
   <f7-list-button
     v-if="config.listButton && !context.editmode"
     :title="config.title || 'Action'"
-    :color="config.color || 'blue'"
+    :color="config.color || 'theme-alt'"
     @click.stop="performAction" />
   <f7-list-item v-else-if="config.divider && !context.editmode" divider ref="divider" :title="config.title" />
   <f7-list-item
@@ -188,11 +188,6 @@ export default {
     accordionSlots() {
       if (!this.context.component.slots?.accordion?.length) return []
       return this.context.component.slots.accordion
-    }
-  },
-  created() {
-    if (this.config.divider && !this.context.editmode) {
-      window.addEventListener('resize', this.duringResize)
     }
   },
   methods: {

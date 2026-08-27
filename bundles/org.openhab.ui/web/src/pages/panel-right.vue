@@ -1,6 +1,6 @@
 <template>
   <f7-page class="other-apps">
-    <f7-navbar color="blue" :title="$t('home.otherApps')" />
+    <f7-navbar color="theme-alt" :title="$t('home.otherApps')" />
     <f7-link v-for="app in apps" class="app-link" :key="app.url" :href="app.url" external target="_blank">
       <f7-card class="app-card">
         <f7-card-content :padding="false">

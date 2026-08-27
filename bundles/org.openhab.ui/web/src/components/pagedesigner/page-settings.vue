@@ -95,7 +95,7 @@
         </div>
       </f7-list>
       <f7-list v-if="!createMode" inline-labels no-hairline-md>
-        <f7-list-button color="blue" @click="duplicatePage"> Duplicate Page </f7-list-button>
+        <f7-list-button color="theme-alt" @click="duplicatePage"> Duplicate Page </f7-list-button>
         <f7-list-button v-if="!readOnly" color="red" @click="deletePage"> Remove Page </f7-list-button>
       </f7-list>
     </template>

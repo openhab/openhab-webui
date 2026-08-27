@@ -21,7 +21,7 @@
             <f7-button
               class="padding-left padding-right"
               style="width: 150px"
-              :color="scanning ? 'red' : 'blue'"
+              :color="scanning ? 'red' : 'theme-alt'"
               large
               raised
               fill
@@ -49,7 +49,7 @@
             :title="entry.label"
             :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
             :footer="entry.thingUID" />
-          <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="blue" />
+          <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="theme-alt" />
         </f7-list>
 
         <f7-block-title>Add Manually</f7-block-title>
@@ -73,7 +73,7 @@
               :footer="getHeading(thingType.description)"
               :header="thingType.UID"
               :badge="thingType.bridge ? 'Bridge' : ''"
-              badge-color="blue"
+              badge-color="theme-alt"
               media-item />
           </ul>
         </f7-list>
@@ -188,7 +188,7 @@ export default {
         try {
           this.scanTimeout = parseInt(data)
           this.scanProgress = 0
-          let progressBarEl = f7.progressbar.show('#scan-progress', 0, 'blue')
+          let progressBarEl = f7.progressbar.show('#scan-progress', 0, 'theme-alt')
           this.intervalId = setInterval(() => {
             this.scanProgress += 1
             f7.progressbar.set(progressBarEl, (this.scanProgress * 100) / this.scanTimeout)

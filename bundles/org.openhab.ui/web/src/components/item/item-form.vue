@@ -141,7 +141,7 @@
               :text="group"
               :deleteable="editable"
               @delete="deleteGroup"
-              media-bg-color="blue"
+              media-bg-color="theme-alt"
               style="margin-right: 6px">
               <template #media>
                 <f7-icon ios="f7:folder_fill" md="material:folder" aurora="f7:folder_fill" />

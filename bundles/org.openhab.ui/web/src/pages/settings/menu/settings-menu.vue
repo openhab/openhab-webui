@@ -54,7 +54,7 @@
                 :key="service.id"
                 :link="'services/' + service.id"
                 :title="service.label" />
-              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="blue" @click="expand('systemSettingsExpanded')">
+              <f7-list-button v-if="!expandedTypes.systemSettingsExpanded" color="theme-alt" @click="expand('systemSettingsExpanded')">
                 {{ $t('dialogs.showAll') }}
               </f7-list-button>
             </f7-list>
@@ -381,7 +381,7 @@ export default {
     },
     settingsMenuBadgeColor(item) {
       if (item.id === 'things' && this.inboxCount > 0) return 'red'
-      return 'blue'
+      return 'theme-alt'
     },
     handleSettingsMenuItemClick(item) {
       if (item.id === 'model') this.modelSelectedItem = null
@@ -407,7 +407,7 @@ export default {
     .settings-col
       width 33%
 .settings-menu .icon
-  color var(--f7-color-blue)
+  color var(--oh-theme-alt-color)
 .theme-filled .settings-menu .icon
   color var(--f7-color-gray) !important
 .aurora .settings-menu .icon

@@ -13,6 +13,7 @@
   "analyzer.series.table.type.bar": "Столб",
   "analyzer.series.table.type.line": "Линия",
   "analyzer.series.table.type.area": "Область",
+  "analyzer.series.table.type.state": "Состояние",
   "analyzer.series.table.type.heatmap": "Тепловая карта",
   "analyzer.series.table.na": "Н/Д",
   "analyzer.coords": "Координаты",
@@ -21,6 +22,7 @@
   "analyzer.coords.period.fixed": "Фиксированный",
   "analyzer.coords.period.day": "День",
   "analyzer.coords.period.isoWeek": "Неделя",
+  "analyzer.coords.period.week": "Неделя",
   "analyzer.coords.period.month": "Месяц",
   "analyzer.coords.period.year": "Год",
   "analyzer.coords.coordSystem": "Система координат",
@@ -66,5 +68,7 @@
   "analyzer.dialogs.save.replace.message": "Страница с указанным именем ID {uid} уже существует. Перезаписать?",
   "analyzer.dialogs.save.replace.title": "Страница уже существует",
   "analyzer.page.updated": "Страница графика обновлена",
-  "analyzer.page.created": "Страница с графиком создана"
+  "analyzer.page.created": "Страница с графиком создана",
+  "analyzer.invalid-configuration.title": "Недействительная конфигурация",
+  "analyzer.invalid-configuration.text": "Убедитесь, что переданы все необходимые параметры запроса и что конфигурация верна."
 }

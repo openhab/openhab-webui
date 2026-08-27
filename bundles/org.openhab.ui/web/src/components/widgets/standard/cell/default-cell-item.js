@@ -31,7 +31,7 @@ export default function itemDefaultCellComponent(item, itemNameAsFooter) {
       component = {
         component: 'oh-cell',
         config: {
-          color: 'blue',
+          color: 'theme-alt',
           action: 'toggle',
           actionItem: item.name,
           actionCommand: 'ON',
@@ -44,7 +44,7 @@ export default function itemDefaultCellComponent(item, itemNameAsFooter) {
       component = {
         component: 'oh-slider-cell',
         config: {
-          color: 'blue',
+          color: 'theme-alt',
           action: 'toggle',
           actionItem: item.name,
           actionCommand: 'ON',
@@ -107,7 +107,7 @@ export default function itemDefaultCellComponent(item, itemNameAsFooter) {
         component = {
           component: 'oh-slider-cell',
           config: {
-            color: 'blue',
+            color: 'theme-alt',
             action: 'toggle',
             actionItem: item.name,
             actionCommand: 'ON',
@@ -125,7 +125,7 @@ export default function itemDefaultCellComponent(item, itemNameAsFooter) {
       component = {
         component: 'oh-cell',
         config: {
-          color: 'blue',
+          color: 'theme-alt',
           action: 'toggle',
           actionItem: item.name,
           actionCommand: 'ON',

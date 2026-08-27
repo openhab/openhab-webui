@@ -126,6 +126,8 @@ All web development happens in the `web/` directory.
 - **Composable argument reactivity:** If reactivity needs to be preserved when passing arguments to composables, `Ref`s or `ComputedRef`s must be passed instead of raw values.
 - **Reactivity export reactivity:** Composables must not export raw values. Instead, they should export `Ref`s or `ComputedRef`s to ensure reactivity is preserved for the caller.
 - **CSS leaking:** Wrap styles in `<style>` with a unique class matching the component name to prevent styles from affecting other components.
+- **Unclosed SSE Streams/WebSockets & Retainers:** Connecting an SSE stream (`$oh.sse.connect(...)`) or WebSocket (`this.$oh.ws.connect(...)`) binds callback closures to `this` (the component instance). If `this.$oh.sse.close(...)`/`this.$oh.ws.close(...)` is not called in `beforeUnmount()` / `onUnmounted()`, the component, its reactive state, child components, and DOM subtree will be permanently pinned in memory.
+- **Global Event Listener Cleanup:** Window or document event listeners (`resize`, `keydown`, `mousedown`, `mousemove`, `popstate`) attached in `mounted()` / `onMounted()` must be unconditionally removed in `beforeUnmount()` / `onUnmounted()`. Safely guard any `$refs` dereferences with optional chaining (`this.$refs.card?.$el`) so teardown runtime exceptions do not bypass listener removal.
 
 ## Reference Documentation
 

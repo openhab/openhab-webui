@@ -17,5 +17,6 @@
   "about.reload.purgeExplanation2": "Selecione Limpar Caches e Atualizar abaixo para limpar todos os caches, cancelar o registro de serviços e baixar tudo do servidor novamente.",
   "about.reload.purgeCachesAndRefresh": "Limpar Caches e Atualizar",
   "about.reload.confirmPurge": "Limpar todos os caches de aplicativos e cancelar o registro dos serviços? Isso também irá recarregar a página do servidor, o que pode demorar alguns segundos.",
-  "about.reload.reloadApp": "Recarregar o App"
+  "about.reload.reloadApp": "Recarregar o App",
+  "about.reload.setupWizard": "Assistente de configuração"
 }
