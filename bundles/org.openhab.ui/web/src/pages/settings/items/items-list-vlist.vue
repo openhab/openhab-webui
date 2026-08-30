@@ -187,11 +187,9 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
-import { showToast } from '@/js/dialog-promises'
+import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { useSearch } from '@/components/useSearch'
 import { getListTitle } from '@/pages/list-helpers'
-
-import { showConfirmDialog } from '@/js/dialog-promises'
 
 export default {
   mixins: [ItemMixin, FileDefinition],
