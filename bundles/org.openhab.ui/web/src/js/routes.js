@@ -473,7 +473,7 @@ export default [
       {
         path: 'scenes/',
         beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(RulesListPage, { showScenes: true }),
+        async: loadAsync(RulesListPage, { showType: 'Scene' }),
         routes: [
           {
             path: 'add',
@@ -498,7 +498,7 @@ export default [
       {
         path: 'scripts/',
         beforeEnter: [enforceAdminForRoute],
-        async: loadAsync(RulesListPage, { showScripts: true }),
+        async: loadAsync(RulesListPage, { showType: 'Script' }),
         routes: [
           {
             path: 'add',
