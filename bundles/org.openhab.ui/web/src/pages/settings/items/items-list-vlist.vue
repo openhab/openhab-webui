@@ -145,7 +145,7 @@
         <f7-button
           large
           fill
-          color="blue"
+          color="theme-alt"
           external
           :href="`${runtimeStore.websiteUrl}/link/items`"
           target="_blank"
@@ -154,10 +154,10 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" color="blue" @click="load()">
+      <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" color="theme-alt" @click="load()">
         <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
       </f7-fab>
-      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="blue" href="add">
+      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
     </template>

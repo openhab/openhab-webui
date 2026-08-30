@@ -4,7 +4,7 @@ export default () => [
   pt(
     'timeFormat',
     'Time Format',
-    'Time format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
+    'Time format, see <a class="external text-color-theme-alt" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
   ).o(
     [
       { value: 'LTS', label: "Localized time including seconds ('LTS', e.g. '8:02:18 PM')" },
@@ -20,7 +20,7 @@ export default () => [
   pt(
     'dateFormat',
     'Date Format',
-    'Date format, see <a class="external text-color-blue" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
+    'Date format, see <a class="external text-color-theme-alt" target="_blank" href="https://day.js.org/docs/en/display/format">dayjs docs</a>'
   )
     .o(
       [

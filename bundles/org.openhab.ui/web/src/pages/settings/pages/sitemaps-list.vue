@@ -32,7 +32,7 @@
         </f7-link>
         <f7-link
           v-show="selection.length > 0"
-          color="blue"
+          color="theme-alt"
           class="copy display-flex flex-direction-row"
           icon-ios="f7:square_on_square"
           icon-aurora="f7:square_on_square"
@@ -106,7 +106,7 @@
             <f7-button
               large
               fill
-              color="blue"
+              color="theme-alt"
               external
               :href="`${runtimeStore.websiteUrl}/docs/ui/sitemaps`"
               target="_blank"
@@ -117,7 +117,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="blue" href="add">
+      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
     </template>

@@ -54,7 +54,7 @@
                 icon-md="f7:play_round"
                 icon-aurora="f7:play_round"
                 icon-size="32"
-                :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
+                :color="rule.status.status === 'IDLE' ? 'theme-alt' : 'gray'"
                 @click="runNow" />
             </div>
             Status:
@@ -255,18 +255,18 @@
                     <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
                   </template>
                 </f7-list-item>
-                <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
+                <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'theme-alt'" :title="sectionLabels[section][1]"></f7-list-button> -->
               </f7-list>
             </div>
           </f7-col>
           <f7-col v-if="!createMode && !stubMode">
             <f7-list>
-              <f7-list-button v-if="isEditable || (!hasOpaqueModule && !hasSharedContextModule)" color="blue" @click="duplicateRule">
+              <f7-list-button v-if="isEditable || (!hasOpaqueModule && !hasSharedContextModule)" color="theme-alt" @click="duplicateRule">
                 Duplicate Rule
               </f7-list-button>
               <f7-list-button
                 v-if="!hasOpaqueModule"
-                color="blue"
+                color="theme-alt"
                 title="Copy File Definition"
                 @click="copyPopupOpened = !copyPopupOpened" />
               <f7-list-button v-if="isEditable" color="red" @click="deleteRule"> Delete Rule </f7-list-button>

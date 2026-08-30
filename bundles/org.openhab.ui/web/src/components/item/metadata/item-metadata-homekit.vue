@@ -65,11 +65,11 @@
         </f7-list>
       </f7-block>
       <f7-block-footer v-if="editable">
-        <f7-button color="blue" @click="updatedLinkedItem"> Update group members </f7-button>
+        <f7-button color="theme-alt" @click="updatedLinkedItem"> Update group members </f7-button>
       </f7-block-footer>
     </f7-block>
     <p class="padding">
-      <f7-link color="blue" external target="_blank" :href="`${runtimeStore.websiteUrl}/link/homekit`">
+      <f7-link color="theme-alt" external target="_blank" :href="`${runtimeStore.websiteUrl}/link/homekit`">
         HomeKit integration documentation
       </f7-link>
     </p>

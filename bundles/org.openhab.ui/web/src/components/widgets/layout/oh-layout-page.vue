@@ -4,7 +4,7 @@
       <oh-block v-for="(component, idx) in defaultSlots" v-bind="$attrs" :key="idx" :context="childContext(component)" />
       <f7-block v-if="context.editmode?.isEditable">
         <f7-list>
-          <f7-list-button color="blue" @click="$emit('add-block', context.component)"> Add Block </f7-list-button>
+          <f7-list-button color="theme-alt" @click="$emit('add-block', context.component)"> Add Block </f7-list-button>
         </f7-list>
       </f7-block>
 
@@ -15,7 +15,7 @@
       <template v-else-if="context.editmode?.isEditable">
         <f7-block>
           <f7-list>
-            <f7-list-button color="blue" @click="$emit('add-masonry', context.component)"> Add Masonry </f7-list-button>
+            <f7-list-button color="theme-alt" @click="$emit('add-masonry', context.component)"> Add Masonry </f7-list-button>
           </f7-list>
         </f7-block>
       </template>

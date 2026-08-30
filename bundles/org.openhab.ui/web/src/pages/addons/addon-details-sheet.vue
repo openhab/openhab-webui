@@ -33,7 +33,7 @@
       <f7-block>
         <f7-row>
           <f7-col class="col-100 margin-top padding-horizontal">
-            <f7-button v-if="state === 'UNINSTALLED'" large fill color="blue" @click="install()">
+            <f7-button v-if="state === 'UNINSTALLED'" large fill color="theme-alt" @click="install()">
               {{ installableAddon ? 'Install' : 'Add' }}
             </f7-button>
             <f7-button v-if="state !== 'UNINSTALLED'" large fill color="red" @click="uninstall()">

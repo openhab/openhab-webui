@@ -18,7 +18,7 @@
         class="fullscreen-link"
         icon-f7="rectangle_arrow_up_right_arrow_down_left"
         text="Fullscreen"
-        color="blue"
+        color="theme-alt"
         @click="toggleFullscreen" />
       <div class="display-flex flex-direction-row align-items-center">
         <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />&nbsp;Run mode<span
@@ -40,7 +40,7 @@
           <f7-col>
             <f7-block-footer class="padding-horizontal margin-bottom">
               Note: After saving this page, you can view the page settings by clicking the chevron up icon (<f7-icon
-                color="blue"
+                color="theme-alt"
                 f7="chevron_up" />) at the bottom right corner of the screen, next to "Run mode"
             </f7-block-footer>
           </f7-col>
@@ -331,7 +331,7 @@ export default {
           .map((k) => {
             return {
               text: stdWidgets[k].widget().label,
-              color: 'blue',
+              color: 'theme-alt',
               onClick: () => doAddWidget(stdWidgets[k].widget().name)
             }
           })
@@ -340,7 +340,7 @@ export default {
           .map((w) => {
             return {
               text: w.uid,
-              color: 'blue',
+              color: 'theme-alt',
               onClick: () => doAddWidget('widget:' + w.uid)
             }
           })
@@ -357,7 +357,7 @@ export default {
             [{ label: true, text: 'Personal Widgets' }, ...customWidgetOptions],
             [
               {
-                color: 'blue',
+                color: 'theme-alt',
                 text: 'Add from Model...',
                 onClick: addFromModel
               }

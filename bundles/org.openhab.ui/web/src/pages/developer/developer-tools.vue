@@ -61,7 +61,7 @@
                           style="height: 100%; height: 32px"
                           class="display-flex float-right flex-direction-column justify-content-center">
                           <f7-toggle
-                            color="blue"
+                            color="theme-alt"
                             :checked="developerToggleValue(item.controlId) ? true : null"
                             @click.stop="toggleDeveloperMenuControl(item.controlId)" />
                         </div>

@@ -24,7 +24,7 @@
           <f7-button
             large
             fill
-            color="blue"
+            color="theme-alt"
             external
             :href="`${runtimeStore.websiteUrl}/link/docs`"
             target="_blank"
@@ -32,7 +32,7 @@
           <span style="width: 8px" />
           <f7-button
             large
-            color="blue"
+            color="theme-alt"
             external
             :href="`${runtimeStore.websiteUrl}/link/tutorial`"
             target="_blank"
@@ -42,7 +42,7 @@
           <f7-button
             large
             fill
-            color="blue"
+            color="theme-alt"
             @click="f7.emit('selectDeveloperDock', { dock: 'help', helpTab: 'quick' })"
             :text="$t('home.overview.button.quickstart')" />
         </f7-row>

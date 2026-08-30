@@ -37,7 +37,9 @@
 
     <div v-if="ready && currentChannelType" class="if-aurora display-flex justify-content-center margin padding">
       <div class="flex-shrink-0">
-        <f7-button class="padding-left padding-right" style="width: 150px" color="blue" large raised fill @click="save"> Create </f7-button>
+        <f7-button class="padding-left padding-right" style="width: 150px" color="theme-alt" large raised fill @click="save">
+          Create
+        </f7-button>
       </div>
     </div>
   </f7-page>

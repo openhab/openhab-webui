@@ -33,7 +33,7 @@
                 icon-md="f7:play_round"
                 icon-aurora="f7:play_round"
                 icon-size="32"
-                :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
+                :color="rule.status.status === 'IDLE' ? 'theme-alt' : 'gray'"
                 @click="runNow" />
             </div>
             Status:
@@ -120,13 +120,13 @@
                       <f7-link
                         icon-f7="arrow_uturn_left_circle"
                         class="margin-left-half"
-                        color="blue"
+                        color="theme-alt"
                         tooltip="Set to current state"
                         @click="(ev) => updateCommandFromCurrentState(ev, mod)" />
                       <f7-link
                         icon-f7="arrowtriangle_right_circle"
                         class="margin-left-half"
-                        color="blue"
+                        color="theme-alt"
                         tooltip="Test command"
                         @click="(ev) => testCommand(ev, mod)" />
                     </span>
@@ -157,14 +157,14 @@
                     @input="selectItems"
                     :no-after="true"
                     class="scene-items-picker" />
-                  <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'blue'" :title="sectionLabels[section][1]"></f7-list-button> -->
+                  <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'theme-alt'" :title="sectionLabels[section][1]"></f7-list-button> -->
                 </f7-list-group>
               </f7-list>
             </div>
           </f7-col>
           <f7-col v-if="isEditable && !createMode">
             <f7-list>
-              <f7-list-button color="blue" @click="duplicateRule"> Duplicate Scene </f7-list-button>
+              <f7-list-button color="theme-alt" @click="duplicateRule"> Duplicate Scene </f7-list-button>
               <f7-list-button color="red" @click="deleteRule"> Remove Scene </f7-list-button>
             </f7-list>
           </f7-col>

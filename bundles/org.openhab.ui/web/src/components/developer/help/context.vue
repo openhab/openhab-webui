@@ -4,7 +4,7 @@
       <div v-show="ready" v-html="parsedDocs" />
     </f7-block>
     <f7-block>
-      <f7-link external :href="documentationLink" target="_blank" text="Open full documentation" color="blue" />
+      <f7-link external :href="documentationLink" target="_blank" text="Open full documentation" color="theme-alt" />
     </f7-block>
   </f7-block>
 </template>
@@ -111,7 +111,10 @@ export default {
 
                 // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
                 body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')
-                body = body.replace(/<!--F7:blue ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #2196f3">$1</i>')
+                body = body.replace(
+                  /<!--F7:blue ([A-z]*) -->/gm,
+                  '<i class="f7-icons size-22" style="color: var(--oh-theme-alt-color)">$1</i>'
+                )
                 body = body.replace(/<!--F7:green ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #4cd964">$1</i>')
 
                 body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')

@@ -48,7 +48,7 @@
         </f7-link>
         <f7-link
           v-show="selected.length"
-          color="blue"
+          color="theme-alt"
           class="copy display-flex flex-direction-row"
           @click="copyFileDefinitionToClipboard(ObjectType.THING, selected)"
           icon-ios="f7:square_on_square"
@@ -191,7 +191,7 @@
         <f7-button
           large
           fill
-          color="blue"
+          color="theme-alt"
           external
           :href="`${runtimeStore.websiteUrl}/link/thing`"
           target="_blank"
@@ -200,7 +200,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab position="right-bottom" color="blue" href="add/">
+      <f7-fab position="right-bottom" color="theme-alt" href="add/">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
       <f7-fab position="center-bottom" :text="`Inbox (${inboxCount})`" :color="inboxCount > 0 ? 'red' : 'gray'" href="inbox">
@@ -222,7 +222,7 @@
     right -4px
     width 10px
     height 10px
-    background-color var(--f7-color-blue)
+    background-color var(--oh-theme-alt-color)
     border 1px solid var(--f7-list-bg-color)
     border-radius 50%
     pointer-events none

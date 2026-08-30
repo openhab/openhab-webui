@@ -9,7 +9,7 @@
             :item="member"
             :link="'/settings/items/' + member.name"
             :context="context" />
-          <!-- <f7-list-button @click="enableEditMode" color="blue" title="Add or Remove Members" /> -->
+          <!-- <f7-list-button @click="enableEditMode" color="theme-alt" title="Add or Remove Members" /> -->
         </ul>
         <f7-list-group v-if="editMembers">
           <item-picker
@@ -25,9 +25,9 @@
       </f7-list>
     </f7-card-content>
     <f7-card-footer>
-      <f7-button v-if="!editMembers" color="blue" @click="enableEditMode"> Change </f7-button>
-      <f7-button v-if="editMembers" color="blue" fill raised @click="updateMembers"> Apply </f7-button>
-      <f7-button v-if="editMembers" color="blue" @click="cancelEditMode"> Cancel </f7-button>
+      <f7-button v-if="!editMembers" color="theme-alt" @click="enableEditMode"> Change </f7-button>
+      <f7-button v-if="editMembers" color="theme-alt" fill raised @click="updateMembers"> Apply </f7-button>
+      <f7-button v-if="editMembers" color="theme-alt" @click="cancelEditMode"> Cancel </f7-button>
     </f7-card-footer>
   </f7-card>
 </template>

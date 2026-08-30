@@ -41,7 +41,7 @@ function showManualCopyDialog(data, dialogTitle, dialogText, onSuccess, onError)
         },
         {
           text: 'OK',
-          color: 'blue',
+          color: 'theme-alt',
           onClick: () => {
             copyText(data, undefined, (error, event) => {
               if (error) {

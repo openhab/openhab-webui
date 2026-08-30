@@ -64,7 +64,7 @@
                       {{ item.groupNames ? item.groupNames.join(', ') : '' }}
                     </td>
                     <td v-if="item.tags" class="label-cell">
-                      <f7-chip v-for="tag in item.tags" class="margin-right" :key="tag" :text="tag" media-bg-color="blue">
+                      <f7-chip v-for="tag in item.tags" class="margin-right" :key="tag" :text="tag" media-bg-color="theme-alt">
                         <template #media>
                           <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                         </template>

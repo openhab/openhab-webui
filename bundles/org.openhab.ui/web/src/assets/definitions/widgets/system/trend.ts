@@ -7,7 +7,7 @@ export default () => [
   pt(
     'trendGradient',
     'Trend Line Gradient',
-    'Colors of the trend line (see <a target="_blank" class="external text-color-blue" href="https://github.com/QingWei-Li/vue-trend#props">vue-trend</a>)'
+    'Colors of the trend line (see <a target="_blank" class="external text-color-theme-alt" href="https://github.com/QingWei-Li/vue-trend#props">vue-trend</a>)'
   ).a(),
   po('trendGradientDirection', 'Trend Line Gradient Direction', 'Direction of the trend line gradient (default: top)', [
     { value: 'top', label: 'top' },

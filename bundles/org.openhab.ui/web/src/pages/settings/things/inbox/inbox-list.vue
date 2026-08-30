@@ -58,7 +58,7 @@
         <template v-if="$f7dim.width >= 500">
           <f7-button
             @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)"
-            color="blue"
+            color="theme-alt"
             class="copy wider-screen display-flex flex-direction-row"
             icon-ios="f7:square_on_square"
             icon-aurora="f7:square_on_square">
@@ -67,7 +67,7 @@
         </template>
         <!-- buttons for narrower screen -->
         <template v-else>
-          <f7-button color="blue" class="popover-button narrower-screen" popover-open=".item-popover"> ... </f7-button>
+          <f7-button color="theme-alt" class="popover-button narrower-screen" popover-open=".item-popover"> ... </f7-button>
           <f7-popover
             class="item-popover"
             ref="popover"
@@ -78,7 +78,7 @@
             <div class="margin-vertical display-flex justify-content-center" style="width: 100%">
               <f7-link
                 @click="performActionOnSelection('copy')"
-                color="blue"
+                color="theme-alt"
                 class="copy display-flex flex-direction-column margin-right"
                 icon-ios="f7:square_on_square"
                 icon-aurora="f7:square_on_square"
@@ -197,7 +197,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="blue" href="/settings/things/add/">
+      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="theme-alt" href="/settings/things/add/">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>
