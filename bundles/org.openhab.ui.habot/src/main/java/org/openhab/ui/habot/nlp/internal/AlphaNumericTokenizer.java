@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import opennlp.tools.tokenize.SimpleTokenizer;
+import opennlp.tools.tokenize.Tokenizer;
 import opennlp.tools.util.Span;
 
 /**
@@ -24,7 +25,7 @@ import opennlp.tools.util.Span;
  *
  * @author Yannick Schaus - Initial contribution
  */
-public class AlphaNumericTokenizer extends SimpleTokenizer {
+public class AlphaNumericTokenizer implements Tokenizer {
 
     public static final AlphaNumericTokenizer INSTANCE;
 
@@ -41,8 +42,13 @@ public class AlphaNumericTokenizer extends SimpleTokenizer {
     }
 
     @Override
+    public String[] tokenize(String s) {
+        return Span.spansToStrings(tokenizePos(s), s);
+    }
+
+    @Override
     public Span[] tokenizePos(String s) {
-        Span[] tokens = super.tokenizePos(s);
+        Span[] tokens = SimpleTokenizer.INSTANCE.tokenizePos(s);
         Stream<Span> filteredTokens = Arrays.stream(tokens)
                 .filter(span -> Character.isLetter(span.getCoveredText(s).charAt(0))
                         || Character.isDigit(span.getCoveredText(s).charAt(0)));

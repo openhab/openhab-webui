@@ -31,7 +31,6 @@ import opennlp.tools.doccat.DoccatFactory;
 import opennlp.tools.doccat.DoccatModel;
 import opennlp.tools.doccat.DocumentCategorizerME;
 import opennlp.tools.doccat.DocumentSample;
-import opennlp.tools.ml.AbstractTrainer;
 import opennlp.tools.namefind.NameFinderME;
 import opennlp.tools.namefind.NameSample;
 import opennlp.tools.namefind.NameSampleDataStream;
@@ -114,7 +113,6 @@ public class IntentTrainer {
                 .concatenateObjectStream(categoryStreams);
 
         TrainingParameters trainingParams = TrainingParameters.defaultParams();
-        trainingParams.put(AbstractTrainer.VERBOSE_PARAM, false);
 
         /* train the categorizer! */
         DoccatModel doccatModel = DocumentCategorizerME.train(language, combinedDocumentSampleStream, trainingParams,
