@@ -154,7 +154,11 @@ function getTokenFuseExpression(token: FieldValueToken | ValueToken, haystackFie
     if (haystackFields.length === 1) {
       return { [haystackFields[0]]: isNegated ? `!${token.values?.[0]}` : token.values?.[0] }
     }
-    return { $or: haystackFields.map((field) => ({ [field]: isNegated ? `!${token.values?.[0]}` : (token.values?.[0] ?? '') })) }
+    return {
+      [isNegated ? '$and' : '$or']: haystackFields.map((field) => ({
+        [field]: isNegated ? `!${token.values?.[0]}` : (token.values?.[0] ?? '')
+      }))
+    }
   }
 
   return null

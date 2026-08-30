@@ -6,6 +6,7 @@
       :disable-button="!theme.aurora"
       :placeholder="placeholder"
       custom-search
+      :spellcheck="false"
       @searchbar:search="onSearchbarSearch"
       @searchbar:clear="onSearchbarClear">
       <template #input-wrap-end>
@@ -341,8 +342,14 @@ function onTextInput(id: 'include-input' | 'exclude-input', event: Event) {
 function addToken(token: FieldValueToken) {
   if (!isFieldValueToken(token)) return
   const newSearchString = rawSearchString.value + ' ' + `${token.field}:${token.values?.join(',')}`
-  f7SearchbarRef?.value?.$el?.f7Searchbar?.search(newSearchString)
-  inputEl?.setSelectionRange(newSearchString.length, newSearchString.length)
+
+  rawSearchString.value = newSearchString
+  if (inputEl) {
+    inputEl.value = newSearchString
+    inputEl.setSelectionRange(newSearchString.length, newSearchString.length)
+  }
+  tokenizedSearch.value = tokenizeString(newSearchString)
+  emits('update:tokenizedSearch', tokenizedSearch.value)
 }
 
 function deleteToken(token: FieldValueToken) {
@@ -353,8 +360,13 @@ function deleteToken(token: FieldValueToken) {
   const end = token.start && token.rawToken ? token.start + token.rawToken.length : oldSearchString.length
   const newSearchString = oldSearchString.slice(0, start) + oldSearchString.slice(end)
 
-  f7SearchbarRef?.value?.$el?.f7Searchbar?.search(newSearchString)
-  inputEl?.setSelectionRange(newSearchString.length, newSearchString.length)
+  rawSearchString.value = newSearchString
+  if (inputEl) {
+    inputEl.value = newSearchString
+    inputEl.setSelectionRange(newSearchString.length, newSearchString.length)
+  }
+  tokenizedSearch.value = tokenizeString(newSearchString)
+  emits('update:tokenizedSearch', tokenizedSearch.value)
 }
 
 function updateToken(token: FieldValueToken) {
@@ -364,8 +376,14 @@ function updateToken(token: FieldValueToken) {
   const start = token.start ?? 0
   const end = token.start && token.rawToken ? token.start + token.rawToken.length : oldSearchString.length
   const newSearchString = oldSearchString.slice(0, start) + `${token.field}:${token.values?.join(',')}` + oldSearchString.slice(end)
-  f7SearchbarRef?.value?.$el?.f7Searchbar?.search(newSearchString)
-  inputEl?.setSelectionRange(newSearchString.length, newSearchString.length)
+
+  rawSearchString.value = newSearchString
+  if (inputEl) {
+    inputEl.value = newSearchString
+    inputEl.setSelectionRange(newSearchString.length, newSearchString.length)
+  }
+  tokenizedSearch.value = tokenizeString(newSearchString)
+  emits('update:tokenizedSearch', tokenizedSearch.value)
 }
 
 // Methods
@@ -439,8 +457,9 @@ function destroyAutocompleteSearchbar() {
 }
 
 async function autocompleteSource(query: string, render: (suggestions: string[]) => void) {
-  if (autocompleteSearchbar && !Array.isArray((autocompleteSearchbar as { value?: unknown }).value)) {
-    ;(autocompleteSearchbar as { value: string[] }).value = []
+  const autocompleteValue = Array.isArray(autocompleteSearchbar?.value) ? autocompleteSearchbar.value : []
+  if (autocompleteSearchbar && !Array.isArray(autocompleteSearchbar.value)) {
+    autocompleteSearchbar.value = []
   }
 
   const cursorPosition = inputEl?.selectionStart !== 0 ? (inputEl?.selectionStart ?? 0) : query.length
@@ -469,6 +488,9 @@ async function autocompleteSource(query: string, render: (suggestions: string[])
     const options = typeof optionsFnOrArray === 'function' ? (optionsFnOrArray() ?? []) : (optionsFnOrArray ?? [])
     const valueQuery = previousChar === ',' ? '' : (token.values?.[token.values?.length - 1]?.toLowerCase() ?? '')
     suggestions = options.filter((o) => o.toLowerCase().startsWith(valueQuery))
+    if (suggestions.length === 1 && suggestions[0].toLowerCase() === valueQuery) {
+      suggestions = []
+    }
   }
 
   // save first option as highlighted suggestion for tab completion
@@ -485,11 +507,11 @@ function onAutocompletionClose(autocomplete: any) {
   // see hack note in opened event handler above
   if (initialValueString === currentValueString) return
 
-  const value = autocomplete?.value?.[0] as string | undefined
-  if (!value) return
+  const selectedValue = Array.isArray(autocomplete?.value) ? autocomplete.value[0] : undefined
+  if (!selectedValue) return
 
-  const token = tokenizeString(query, inputEl?.selectionStart ?? value.length)
-  const { newSearchString, newToken } = applySuggestion(query, token, value, currentChar === ',')
+  const token = tokenizeString(query, inputEl?.selectionStart ?? selectedValue.length)
+  const { newSearchString, newToken } = applySuggestion(query, token, selectedValue, currentChar === ',')
   f7SearchbarRef?.value?.$el?.f7Searchbar?.search(newSearchString)
 
   nextTick(() => {

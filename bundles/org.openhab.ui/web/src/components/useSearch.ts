@@ -1,26 +1,49 @@
-import { ref, type Ref, shallowRef, computed } from 'vue'
+/**
+ * useSearch composable - automates the process of filtering a list based on a tokenized search input using Fuse.js.
+ *
+ * @description A composable that provides search functionality using Fuse.js. Supports a reactive list to update the fuse search index when the list changes, or an incremental mode where the list is not reactive.
+ * @param list - The list of items to search through. Can be a Ref or a plain array (to support manual incremental updates).
+ * @param options - Optional search configuration.
+ * @param options.returnType - Optional return type, either 'items' or 'indices'. Defaults to 'items'.
+ * @param options.filtersDefinitions - Optional filter definitions to customize the search behavior.
+ * @param options.haystackFields - Optional list of fields to include in the search. Defaults to all fields defined in the filter definitions.
+ * @returns An object containing the filtered list and utility methods for managing the search.
+ */
+
+import { ref, shallowRef, type ShallowRef, type Ref, computed, isRef, watch } from 'vue'
 import { tokensToFuse, type ParsedToken, type FilterDefinition } from '@/components/search-helpers'
 
 import Fuse from 'fuse.js'
 
-/**
- * a function that provides search and filter functionality for an item.
- * @returns boolean indicating whether the item matches the search criteria.
- */
-export interface KeywordChecker<T = unknown> {
-  (item: T, compareString: string): boolean
-}
-
 // define props, model and emits
-export interface UseSearchOptions {
-  returnType?: 'items' | 'indices'
+export type SearchReturnType<TItem, TReturnType extends 'items' | 'indices' | undefined = undefined> = TReturnType extends 'indices'
+  ? number[]
+  : TItem[]
+
+export interface UseSearchOptions<TReturnType extends 'items' | 'indices' | undefined = undefined> {
+  returnType?: TReturnType
   filtersDefinitions?: Record<string, FilterDefinition>
   haystackFields?: string[]
+  fuseSearchInterceptor?: (fuseSearch: string | Record<string, unknown>) => string | Record<string, unknown>
 }
 
-export function useSearch<T>(list: Ref<T[]>, options: UseSearchOptions = {}) {
+export interface UseSearchResult<TItem, TReturnType extends 'items' | 'indices' | undefined = undefined> {
+  filteredList: Readonly<ShallowRef<SearchReturnType<TItem, TReturnType>>>
+  isFiltered: Readonly<Ref<boolean>>
+  onUpdateTokenizedSearch: (newTokenizedSearch: ParsedToken[]) => void
+  getFuseValuesForField: (fieldName: string) => string[]
+  forceUpdateFuseIndex: () => void
+  forceUpdateFuseFilter: () => void
+  addDataToFuse: (newData: TItem, capSize: boolean) => void
+}
+
+export function useSearch<TItem, TReturnType extends 'items' | 'indices' | undefined = undefined>(
+  list: Ref<TItem[]> | TItem[],
+  options: UseSearchOptions<TReturnType> = {}
+): UseSearchResult<TItem, TReturnType> {
   const { filtersDefinitions } = options
 
+  // extract field aliases from filtersDefinitions
   const fieldAliases: Record<string, string> = Object.fromEntries(
     Object.entries(filtersDefinitions ?? {})
       .filter((entry): entry is [string, FilterDefinition & { path: string }] => {
@@ -35,6 +58,9 @@ export function useSearch<T>(list: Ref<T[]>, options: UseSearchOptions = {}) {
 
   // reactive data
   const tokenizedSearch = ref<ParsedToken[]>([])
+  const _forceUpdateFuseIndex = ref(0) // used to force Fuse to update when the list changes
+  const _forceUpdateFuseFilter = ref(0) // used to force Fuse to update when the list changes
+  const filteredList = ref<SearchReturnType<TItem, TReturnType>>([])
 
   const fuseOptions = computed(() => {
     const keys = Object.entries(filtersDefinitions ?? {})
@@ -51,26 +77,51 @@ export function useSearch<T>(list: Ref<T[]>, options: UseSearchOptions = {}) {
 
   const fuse = computed(() => {
     try {
-      const fuseInstance = new Fuse<T>(list.value, fuseOptions.value)
-      return fuseInstance
+      void _forceUpdateFuseIndex.value // access to trigger recomputation when list changes
+      return new Fuse<TItem>(isRef(list) ? list.value : list, fuseOptions.value)
     } catch (error) {
       console.error('Error creating Fuse instance:', error)
-      return new Fuse<T>([], fuseOptions.value) // Return an empty Fuse instance on error
+      return new Fuse<TItem>([], fuseOptions.value) // Return an empty Fuse instance on error
     }
   })
 
-  const filteredList = computed(() => {
-    const fuseSearch = tokensToFuse(tokenizedSearch.value, haystackFields, fieldAliases)
-    try {
-      const result = fuse.value.search(fuseSearch)
-      return result.map((item) => (options.returnType === 'indices' ? item.refIndex : item.item))
-    } catch (error) {
-      console.error('Error performing Fuse search:', error)
-      return []
+  const fuseSearch = computed(() => {
+    void _forceUpdateFuseFilter.value
+    let tokens = tokensToFuse(tokenizedSearch.value, haystackFields, fieldAliases)
+    if (options.fuseSearchInterceptor) {
+      tokens = options.fuseSearchInterceptor(tokens)
     }
+    return tokens
   })
 
-  const isFiltered = computed(() => tokenizedSearch.value.length > 0)
+  watch(
+    [fuseSearch, fuse],
+    ([newFuseSearch, newFuse]) => {
+      try {
+        const result = newFuse.search(fuseSearch.value)
+        filteredList.value = result.map((item) => (options.returnType === 'indices' ? item.refIndex : item.item))
+      } catch (error) {
+        console.error('Error performing Fuse search:', error)
+        filteredList.value = []
+      }
+    },
+    {
+      deep: true,
+      immediate: true
+    }
+  )
+
+  function _logComputedCost(measureName: string) {
+    const entries = performance.getEntriesByName(measureName)
+    if (entries.length === 0) return console.log('No evaluations yet.')
+
+    const lastEntry = entries[entries.length - 1]
+    console.log(`Last Execution Time (${measureName}): ${lastEntry.duration.toFixed(3)} ms`)
+  }
+
+  const isFiltered = computed(
+    () => (typeof fuseSearch.value === 'string' && fuseSearch.value.length > 0) || Object.keys(fuseSearch.value).length > 0
+  )
 
   // Event
   function onUpdateTokenizedSearch(newTokenizedSearch: ParsedToken[]) {
@@ -78,6 +129,11 @@ export function useSearch<T>(list: Ref<T[]>, options: UseSearchOptions = {}) {
   }
 
   // Methods
+  /**
+   * Get unique values for a specific field from the Fuse index.
+   * @param fieldName
+   * @returns An array of unique values for the specified field, sorted alphabetically.
+   */
   function getFuseValuesForField(fieldName: string): string[] {
     const field = fieldAliases[fieldName] ?? fieldName
     const keys = fuse.value.getIndex().keys
@@ -101,10 +157,48 @@ export function useSearch<T>(list: Ref<T[]>, options: UseSearchOptions = {}) {
     return Array.from(uniqueValues).sort()
   }
 
+  function forceUpdateFuseIndex() {
+    _forceUpdateFuseIndex.value++
+  }
+
+  function forceUpdateFuseFilter() {
+    _forceUpdateFuseFilter.value++
+  }
+
+  /**
+   * Manually incrementally add to list (assuming it's not a ref).
+   * It will update the Fuse index, add the new data to the list and update the filteredList if the new data matches the current search.
+   */
+  function addDataToFuse(newData: TItem, capSize: boolean = false) {
+    if (isRef(list)) {
+      console.warn('Cannot add data to Fuse index because the list is a Ref.')
+      return
+    }
+
+    if (capSize) {
+      fuse.value.removeAt(0) // remove the first item to keep the list size capped
+    }
+    // fuse adds data to the list, so we don't need to add it to the list manually
+    fuse.value.add(newData)
+    if (isFiltered.value) {
+      const result = new Fuse([newData], fuseOptions.value).search(fuseSearch.value)
+      if (result.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        filteredList.value.push(options.returnType === 'indices' ? result[0].refIndex : result[0].item)
+      }
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      filteredList.value.push(options.returnType === 'indices' ? filteredList.value.length : newData)
+    }
+  }
+
   return {
     filteredList,
     isFiltered,
     onUpdateTokenizedSearch,
-    getFuseValuesForField
-  }
+    getFuseValuesForField,
+    forceUpdateFuseIndex,
+    forceUpdateFuseFilter,
+    addDataToFuse
+  } as UseSearchResult<TItem, TReturnType>
 }
