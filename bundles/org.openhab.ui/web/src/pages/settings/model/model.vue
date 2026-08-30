@@ -296,6 +296,7 @@
 import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapWritableState } from 'pinia'
+import { useStorage } from '@vueuse/core'
 
 import AddFromThing from './add-from-thing.vue'
 import AddFromTemplate from './add-from-template.vue'
@@ -313,7 +314,8 @@ import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+
+const storagePrefix = 'openhab.ui:search:'
 
 export default {
   props: {
@@ -330,9 +332,15 @@ export default {
     LinkDetails
   },
   setup() {
+    const persistLastSearchQuery = useStorage(storagePrefix + 'model', '', sessionStorage, {
+      flush: 'sync',
+      writeDefaults: false
+    })
+
     return {
       f7,
-      theme
+      theme,
+      persistLastSearchQuery
     }
   },
   data() {
@@ -371,20 +379,21 @@ export default {
     })
   },
   methods: {
-    onPageAfterIn() {
+    async onPageAfterIn() {
       useStatesStore().startTrackingStates()
       if (this.selectedItem) {
         this.update()
       } else {
         this.expandedTreeviewItems = []
-        this.load()
+        await this.load()
+        this.$refs.searchbar?.$el.f7Searchbar.search(this.persistLastSearchQuery || '')
       }
     },
     onPageBeforeOut() {
       this.detailsOpened = false
       useStatesStore().stopTrackingStates()
       this.stopEventSource()
-      useLastSearchQueryStore().lastModelSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.persistLastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
     },
     modelItem(item) {
       const modelItem = {
@@ -411,27 +420,27 @@ export default {
 
       return modelItem
     },
-    load() {
-      if (this.initSearchbar) useLastSearchQueryStore().lastModelSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+    async load() {
+      if (this.initSearchbar) {
+        this.persistLastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
+      }
       this.initSearchbar = false
 
-      this.loadModel().then(() => {
+      await this.loadModel().then(() => {
         this.initSearchbar = true
         nextTick(() => {
           if (this.$device.desktop && this.$refs.searchbar) {
             this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
           }
-          this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastModelSearchQuery || '')
           this.restoreExpanded()
         })
         if (!this.eventSource) this.startEventSource()
       })
     },
-    update() {
+    async update() {
       this.previousSelection = this.selectedItem
       this.newItem = null
-      this.load()
-      // this.newItemParent = null
+      await this.load()
     },
     startEventSource() {
       this.eventSource = this.$oh.sse.connect(

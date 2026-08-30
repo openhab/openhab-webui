@@ -248,7 +248,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import SceneConfigureItemPopup from './scene-configure-item-popup.vue'
 
 import RuleMixin from '../rule-edit-mixin'
-import RuleStatus from '@/components/rule/rule-status-mixin'
+import { ruleStatusBadgeColor } from '@/components/rule/rule-helpers.ts'
 
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
@@ -257,7 +257,7 @@ import { useDirty } from '@/pages/useDirty'
 import { useTabs } from '@/pages/useTabs'
 
 export default {
-  mixins: [RuleMixin, RuleStatus],
+  mixins: [RuleMixin],
   components: {
     RuleGeneralSettings,
     ItemPicker,
@@ -273,7 +273,7 @@ export default {
   setup() {
     const { dirty, dirtyIndicator } = useDirty('scene-edit-page')
     const { currentTab, switchTab } = useTabs('design')
-    return { dirty, dirtyIndicator, currentTab, switchTab }
+    return { dirty, dirtyIndicator, currentTab, switchTab, ruleStatusBadgeColor }
   },
   data() {
     return {

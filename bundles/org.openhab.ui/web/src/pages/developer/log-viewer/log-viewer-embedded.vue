@@ -48,26 +48,21 @@
     </div>
 
     <div v-if="!collapsed" class="dock-filter-row searchbar">
-      <f7-searchbar
-        ref="searchbar"
-        :value="logViewerCore?.filterText"
-        custom-search
-        placeholder="Filter"
-        clear-button
-        :disable-button="false"
-        @searchbar:search="logViewerCore?.handleFilter"
-        @searchbar:clear="logViewerCore?.clearFilter" />
+      <div ref="searchbarContainer" id="searchbar-container" style="flex: 1; display: flex; align-items: center; padding-left: 8px" />
       <div class="dock-stats">
         <f7-badge class="log-period margin-left-half" :color="logViewerCore?.periodRangeColor" :tooltip="logViewerCore?.periodRangeTooltip">
           {{ logViewerCore?.logStart }}&nbsp;>&nbsp;{{ logViewerCore?.logEnd }}
         </f7-badge>
-        <f7-badge class="margin-horizontal" :color="logViewerCore?.countersBadgeColor" tooltip="Log entries filtered/total">
+        <f7-badge class="log-count margin-horizontal" :color="logViewerCore?.countersBadgeColor" tooltip="Log entries filtered/total">
           {{ logViewerCore?.filterCount ?? 0 }}/{{ logViewerCore?.tableData?.length ?? 0 }}
         </f7-badge>
       </div>
     </div>
 
-    <log-viewer-core ref="logViewerCore" />
+    <log-viewer-core
+      ref="logViewerCore"
+      :searchbar-container="searchbarContainerRef"
+      :storage-key-prefix="'org.openhab.ui:logviewer.embedded:'" />
 
     <div v-if="!collapsed" class="dock-toolbar">
       <log-viewer-toolbar :log-viewer-core="logViewerCore" />
@@ -94,6 +89,12 @@
     background-color #f59b00
   .badge.color-green
     background-color #12cc00
+
+  .log-period
+    width: 150px
+
+  .log-count
+    width: 90px
 
   .dock-header
     .connecting-flash:not(.disabled-link)
@@ -174,10 +175,9 @@
 </style>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, useTemplateRef, nextTick, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, useTemplateRef } from 'vue'
 import { getDevice } from 'framework7'
-import { storeToRefs } from 'pinia'
-import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useStorage } from '@vueuse/core'
 import LogViewerCore from './log-viewer-core.vue'
 import LogViewerToolbar from './log-viewer-toolbar.vue'
 
@@ -195,26 +195,16 @@ defineProps<{
 }>()
 
 // State/Data
-const uiOptionsStore = useUIOptionsStore()
-const { logViewerEmbeddedCollapsed: collapsed } = storeToRefs(uiOptionsStore)
+const collapsed = useStorage('openhab.ui:logviewer.embedded.collapsedToolbar', false, localStorage, { flush: 'sync', writeDefaults: false })
 const logViewerCore = useTemplateRef('logViewerCore')
-const searchbar = useTemplateRef('searchbar')
+const searchbarContainerRef = useTemplateRef('searchbarContainer')
 
 function toggleCollapsed() {
   collapsed.value = !collapsed.value
 }
 
-// Lifecycle Hooks
 onMounted(() => {
   logViewerCore.value?.load()
-  // Ensure the F7 searchbar shows the persisted query (Framework7 may not
-  // update its internal query from the prop binding in some cases).
-  nextTick(() => {
-    const sb = searchbar.value as any
-    if (sb?.$el?.f7Searchbar && logViewerCore.value?.filterText) {
-      sb.$el.f7Searchbar.query = logViewerCore.value.filterText
-    }
-  })
 })
 
 onBeforeUnmount(() => {

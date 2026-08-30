@@ -3,11 +3,10 @@ import { f7 } from 'framework7-vue'
 import cloneDeep from 'lodash/cloneDeep'
 import * as types from '@/assets/item-types.js'
 import ItemMixin from '@/components/item/item-mixin'
-import TagMixin from '@/components/tags/tag-mixin'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
 export default {
-  mixins: [ItemMixin, TagMixin],
+  mixins: [ItemMixin],
   emits: ['clear-selected'],
   watch: {
     canSave(val) {

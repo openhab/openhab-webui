@@ -1,23 +1,20 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut" class="rules-list">
     <f7-navbar>
-      <oh-nav-content :title="type" back-link="Settings" back-link-url="/settings/" :f7router>
+      <oh-nav-content :title="showType + 's'" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
           <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the rules list. -->
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-rules"
-          custom-search
-          @searchbar:search="search"
-          @searchbar:clear="clearSearch"
-          @searchbar:disable="clearSearch"
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="`${showType}-search-string`"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar
@@ -37,8 +34,8 @@
         &nbsp;{{ $t('dialogs.delete') }}&nbsp;{{ selectedDeletableItems.length }}
       </f7-link>
       <f7-link
-        v-if="!theme.md && !showScenes"
-        v-show="selectedItems.length && canDisable"
+        v-if="!theme.md && showType !== 'Scene'"
+        v-show="selected.length && canDisable"
         color="orange"
         class="disable"
         @click="doDisableEnableSelected(false)"
@@ -47,8 +44,8 @@
         &nbsp;{{ $t('dialogs.disable') }}&nbsp;{{ disablableItems }}
       </f7-link>
       <f7-link
-        v-if="!theme.md && !showScenes"
-        v-show="selectedItems.length && canEnable"
+        v-if="!theme.md && showType !== 'Scene'"
+        v-show="selected.length && canEnable"
         color="green"
         class="enable"
         @click="doDisableEnableSelected(true)"
@@ -57,18 +54,18 @@
         &nbsp;{{ $t('dialogs.enable') }}&nbsp;{{ enablableItems }}
       </f7-link>
       <f7-link
-        v-if="!theme.md && !showScenes"
-        v-show="selectedItems?.length"
+        v-if="!theme.md && showType !== 'Scene'"
+        v-show="selected.length"
         color="blue"
         class="copy"
         @click="initRuleDefinitionsPopup()"
         icon-ios="f7:square_on_square"
         icon-aurora="f7:square_on_square">
-        &nbsp;{{ $t('dialogs.copy') }}&nbsp;{{ selectedItems?.length }}
+        &nbsp;{{ $t('dialogs.copy') }}&nbsp;{{ selected.length }}
       </f7-link>
       <f7-link
-        v-if="!theme.md && !showScenes"
-        v-show="selectedItems.length && canRegenerate"
+        v-if="!theme.md && showType !== 'Scene'"
+        v-show="selected.length && canRegenerate"
         :color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
         class="enable"
         @click="regenerateSelected()"
@@ -77,32 +74,32 @@
         &nbsp;{{ $t('dialogs.regenerate') }}&nbsp;{{ regeneratableItemsCount }}
       </f7-link>
       <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
+      <div v-if="theme.md" class="title">{{ selected.length }} selected</div>
       <div v-if="theme.md" class="right">
         <f7-link
-          v-if="!showScenes"
-          v-show="selectedItems.length && canRegenerate"
+          v-if="showType !== 'Scene'"
+          v-show="selected.length && canRegenerate"
           tooltip="Regenerate selected from template"
           icon-md="material:autorenew"
           icon-color="white"
           @click="regenerateSelected()" />
         <f7-link
-          v-if="!showScenes"
-          v-show="selectedItems.length && canDisable"
+          v-if="showType !== 'Scene'"
+          v-show="selected.length && canDisable"
           tooltip="Disable selected"
           icon-md="material:pause_circle_outline"
           icon-color="white"
           @click="doDisableEnableSelected(false)" />
         <f7-link
-          v-if="!showScenes"
-          v-show="selectedItems.length && canEnable"
+          v-if="showType !== 'Scene'"
+          v-show="selected.length && canEnable"
           tooltip="Enable selected"
           icon-md="material:play_circle_outline"
           icon-color="white"
           @click="doDisableEnableSelected(true)" />
         <f7-link
-          v-if="!showScenes"
-          v-show="selectedItems?.length"
+          v-if="showType !== 'Scene'"
+          v-show="selected.length"
           tooltip="Copy selected"
           icon-md="material:content_copy"
           icon-color="white"
@@ -151,8 +148,8 @@
     </f7-block>
     <!-- rule engine available and ready, but no rules -->
     <f7-block v-else-if="ready && !rules.length" class="block-narrow">
-      <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
-      <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
+      <empty-state-placeholder v-if="showType == 'Script'" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
+      <empty-state-placeholder v-else-if="showType == 'Scene'" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
       <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
         <f7-button
@@ -160,7 +157,7 @@
           fill
           color="theme-alt"
           external
-          :href="`${runtimeStore.websiteUrl}/link/${type.toLowerCase()}`"
+          :href="`${runtimeStore.websiteUrl}/link/${showType.toLowerCase()}`"
           target="_blank"
           :text="$t('home.overview.button.documentation')" />
       </f7-row>
@@ -170,17 +167,16 @@
     <f7-block v-show="!noRuleEngine && ready && rules.length > 0" class="block-narrow">
       <f7-col>
         <f7-block-title class="no-margin-top">
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && listedItems.length">
+          <span>{{ getListTitle(isFiltered, filteredList.length, rules.length, 'Rule', selected.length) }}</span>
+          <template v-if="showCheckboxes && filteredList.length">
             -
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
         </f7-block-title>
-        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
-        <f7-list v-if="!listedItems.length">
+        <f7-list v-if="!filteredList.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-show="listedItems.length > 0" class="searchbar-found col rules-list" ref="rulesList" media-list contacts-list>
+        <f7-list v-show="filteredList.length > 0" class="searchbar-found col rules-list" ref="rulesList" media-list contacts-list>
           <f7-list-group v-for="(rulesWithInitial, initial) in indexedRules" :key="initial">
             <f7-list-item v-if="rulesWithInitial.length" :title="initial" group-title />
             <f7-list-item
@@ -198,7 +194,7 @@
               :title="rule.name"
               :text="rule.uid"
               :footer="rule.description"
-              :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
+              :badge="showType == 'Scene' ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
               :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
               <template #footer>
                 <div class="footer-inner">
@@ -400,49 +396,128 @@
 </style>
 
 <script>
-import { nextTick, toRaw } from 'vue'
+import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import debounce from 'debounce'
-import RuleStatus from '@/components/rule/rule-status-mixin'
+import { ruleStatusBadgeColor, ruleStatusBadgeText, isRuleStatusDisabled, getRuleLanguage, ruleType } from '@/components/rule/rule-helpers'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
 import { canSerializeRules, createFileFormatForRules } from '@/api'
+import { useSearch } from '@/components/useSearch'
+import { getListTitle } from '@/pages/list-helpers'
 import copyToClipboard from '@/js/clipboard'
 
-const ITEM_KINDS = {
-  editable: 'Editable',
-  readonly: 'Non-editable',
-  marketplace: 'Marketplace',
-  template: 'Template Based'
-}
+import OhSearchbar from '@/pages/oh-searchbar.vue'
 
 export default {
-  mixins: [RuleStatus],
   props: {
-    showScripts: Boolean,
-    showScenes: Boolean,
+    showType: {
+      type: String,
+      default: 'Rule'
+    },
     f7router: Object
   },
   components: {
-    ListFilter,
-    EmptyStatePlaceholder
+    EmptyStatePlaceholder,
+    OhSearchbar
   },
-  setup() {
+  setup(props) {
+    const rules = shallowRef([])
+    const ruleStatuses = reactive({})
+    const haystackFields = ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
+    function displayedTags(rule) {
+      return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
+    }
+
     const serializationOptions = Object.freeze({
       NORMAL: 'Normal',
       ALL: 'Include all',
       STUB: 'Stub only',
       STRIPPED: 'Strip template'
     })
-    return { f7, theme, serializationOptions }
+
+    const filtersDefinitions = {
+      is: {
+        label: 'Kind',
+        options: ['Editable', 'Readonly', 'Marketplace', 'Template'],
+        getFn: (rule) => {
+          if (rule.editable === true) return 'editable'
+          if (rule.tags?.includes('marketplace')) return 'marketplace'
+          if (rule.templateUID) return 'template'
+          return 'readonly'
+        }
+      },
+      name: {
+        label: 'Name',
+        path: 'name'
+      },
+      uid: {
+        label: 'UID',
+        path: 'uid'
+      },
+      description: {
+        label: 'Description',
+        path: 'description'
+      },
+      tag: {
+        label: 'Tag',
+        getFn: (rule) => displayedTags(rule)
+      },
+      status: {
+        label: 'Status',
+        options: {
+          uninitialized: 'Uninitialized',
+          initializing: 'Initializing',
+          idle: 'Idle',
+          running: 'Running',
+          disabled: 'Disabled'
+        },
+        getFn: (rule) => [rule.status?.status, rule.status?.statusDetail, ruleStatusBadgeText(ruleStatuses[rule.uid])]
+      },
+      language: {
+        label: 'Language',
+        getFn: (rule) => getRuleLanguage(rule)?.shortName
+      },
+      trigger: {
+        label: 'Trigger',
+        getFn: (rule) => rule.triggers?.map((t) => t.type).filter(Boolean)
+      }
+    }
+
+    const { filteredList, isFiltered, onUpdateTokenizedSearch, getFuseValuesForField } = useSearch(rules, {
+      filtersDefinitions,
+      haystackFields
+    })
+
+    filtersDefinitions.tag.options = () => getFuseValuesForField('tag')
+    filtersDefinitions.language.options = () => getFuseValuesForField('language')
+    filtersDefinitions.trigger.options = () => getFuseValuesForField('trigger')
+
+    return {
+      f7,
+      theme,
+      rules,
+      ruleStatuses,
+      ruleStatusBadgeText,
+      ruleStatusBadgeColor,
+      isRuleStatusDisabled,
+      displayedTags,
+      ohSearchbarRef,
+      serializationOptions,
+      filtersDefinitions,
+      filteredList,
+      isFiltered,
+      onUpdateTokenizedSearch,
+      getListTitle,
+      haystackFields
+    }
   },
   data() {
     return {
@@ -450,21 +525,7 @@ export default {
       initSearchbar: false,
       loading: false,
       noRuleEngine: false,
-      rules: [],
-      ruleStatuses: {},
-      filters: {
-        kinds: {
-          label: 'Kind',
-          options: { ...ITEM_KINDS }
-        },
-        tags: {
-          label: 'Tag',
-          options: {}
-        }
-      },
-      filteredItems: [],
-      selectedItems: [],
-      searchQuery: null,
+      selected: [],
       showCheckboxes: false,
       eventSource: null,
       templates: [],
@@ -481,42 +542,17 @@ export default {
       dslCopyErrors: []
     }
   },
-  mounted() {
-    if (this.showScene || this.showScripts) {
-      delete this.filters.kinds.options.marketplace
-      delete this.filters.kinds.options.template
-    }
-  },
   watch: {
     listedUids() {
-      this.selectedItems = this.selectedItems.filter((i) => this.listedUids.has(i))
+      this.selected = this.selected.filter((i) => this.listedUids.has(i))
     }
   },
   computed: {
-    type() {
-      return this.showScripts ? 'Scripts' : this.showScenes ? 'Scenes' : 'Rules'
-    },
-    listedItems() {
-      if (!this.searchQuery) return this.filteredItems
-
-      return this.filteredItems.filter((rule) => {
-        const hayStack = [
-          rule.name,
-          rule.uid,
-          rule.description,
-          this.ruleStatusBadgeText(this.ruleStatuses[rule.uid]),
-          ...this.displayedTags(rule)
-        ]
-          .join(' ')
-          .toLowerCase()
-        return hayStack.includes(this.searchQuery)
-      })
-    },
     listedUids() {
-      return new Set(this.listedItems.map((rule) => rule.uid))
+      return new Set(this.filteredList.map((rule) => rule.uid))
     },
     indexedRules() {
-      return this.listedItems.reduce((prev, rule, i, rules) => {
+      return this.filteredList.reduce((prev, rule, i, rules) => {
         const initial = rule.name.substring(0, 1).toUpperCase()
         if (!prev[initial]) {
           prev[initial] = []
@@ -526,43 +562,28 @@ export default {
         return prev
       }, {})
     },
-    searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
-    },
     allSelected() {
-      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
-    },
-    listTitle() {
-      let title = this.listedItems.length
-      if (this.searchQuery || this.$refs.filters?.filtered) {
-        title += ` of ${this.rules.length} ${this.type} found`
-      } else {
-        title += ' ' + this.type
-      }
-      if (this.selectedItems.length > 0) {
-        title += `, ${this.selectedItems.length} selected`
-      }
-      return title
+      return this.selected.length >= this.filteredList.length && this.filteredList.length > 0
     },
     selectedDeletableItems() {
-      if (!this.selectedItems.length) return []
-      const selectedUids = new Set(this.selectedItems)
+      if (!this.selected.length) return []
+      const selectedUids = new Set(this.selected)
       return this.rules.filter((r) => selectedUids.has(r.uid) && r.editable).map((r) => r.uid)
     },
     enablableItems() {
-      if (!this.selectedItems.length) return 0
-      return this.selectedItems.filter((i) => this.isRuleStatusDisabled(this.ruleStatuses[i])).length
+      if (!this.selected.length) return 0
+      return this.selected.filter((i) => isRuleStatusDisabled(this.ruleStatuses[i])).length
     },
     disablableItems() {
-      if (!this.selectedItems.length) return 0
-      return this.selectedItems.filter((i) => this.ruleStatuses[i] && !this.isRuleStatusDisabled(this.ruleStatuses[i])).length
+      if (!this.selected.length) return 0
+      return this.selected.filter((i) => this.ruleStatuses[i] && !isRuleStatusDisabled(this.ruleStatuses[i])).length
     },
     regeneratableItemsCount() {
       return this.regeneratableItems.length
     },
     regeneratableItems() {
-      if (!this.selectedItems.length) return []
-      return this.selectedItems.filter((i) => {
+      if (!this.selected.length) return []
+      return this.selected.filter((i) => {
         const rule = this.rules.find((r) => r.uid === i)
         return (
           rule &&
@@ -592,62 +613,32 @@ export default {
     ...mapStores(useRuntimeStore, useUIOptionsStore)
   },
   methods: {
-    onPageAfterIn() {
-      this.load()
+    async onPageAfterIn() {
+      await this.load()
     },
     onPageBeforeOut() {
       this.stopEventSource()
-      useLastSearchQueryStore().lastRulesSearchQuery[this.type] = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.ohSearchbarRef?.persistSearchQuery()
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) useLastSearchQueryStore().lastRulesSearchQuery[this.type] = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.selectedItems = []
+      this.selected = []
       this.showCheckboxes = false
-      let filter = ''
-      if (this.showScripts) {
-        filter = '&tags=Script'
-      }
-      if (this.showScenes) {
-        filter = '&tags=Scene'
-      }
+      let filter = this.showType != 'Rule' ? '&tags=' + this.showType : ''
 
-      const promises = [this.$oh.api.get('/rest/templates'), this.$oh.api.get('/rest/rules?summary=true' + filter)]
-      Promise.allSettled(promises).then((results) => {
-        const templateData = results[0]
-        const ruleData = results[1]
+      const promises = [this.$oh.api.get('/rest/templates'), this.$oh.api.get('/rest/rules?summary=false' + filter)]
+      await Promise.allSettled(promises).then(([templateData, ruleData]) => {
         if (templateData.status === 'fulfilled') {
           this.templates = templateData.value
         } else {
           console.warn('Failed to retrieve rule templates. Status: "' + templateData.status + '", Reason: "' + templateData.reason + '"')
         }
         if (ruleData.status === 'fulfilled') {
-          this.rules = ruleData.value
-            .filter((r) => {
-              if (!this.showScripts && r.tags?.includes('Script')) return false
-              if (!this.showScenes && r.tags?.includes('Scene')) return false
-              return true
-            })
-            .sort((a, b) => a.name.localeCompare(b.name))
-
-          const uniqueTags = new Set()
-          this.rules.forEach((rule) => {
-            this.ruleStatuses[rule.uid] = rule.status
-
-            rule.tags.forEach((t) => {
-              if (t === 'Scene' || t === 'Script') return
-              if (t.startsWith('marketplace:')) return
-              uniqueTags.add(t)
-            })
-          })
-
-          const sortedTags = Array.from(uniqueTags).sort((a, b) => a.localeCompare(b))
-          this.filters.tags.options = Object.fromEntries(sortedTags.map((tag) => [tag, tag]))
-          this.updateFilteredItems()
+          this.rules = ruleData.value.filter((r) => ruleType(r) === this.showType).sort((a, b) => a.name.localeCompare(b.name))
 
           this.initSearchbar = true
 
@@ -657,10 +648,10 @@ export default {
 
           nextTick(() => {
             if (this.$refs.listIndex) this.$refs.listIndex.$el.f7ListIndex.update()
-            if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+            const searchbar = this.$refs.searchbar?.$el.f7Searchbar
+            if (this.$device.desktop) {
+              this.ohSearchbarRef?.focus()
             }
-            this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastRulesSearchQuery[this.type] || '')
           })
 
           if (!this.eventSource) this.startEventSource()
@@ -704,7 +695,7 @@ export default {
       this.showCheckboxes = !this.showCheckboxes
     },
     isChecked(item) {
-      return this.selectedItems.indexOf(item) >= 0
+      return this.selected.indexOf(item) >= 0
     },
     click(event, item) {
       if (this.showCheckboxes) {
@@ -715,7 +706,7 @@ export default {
     },
     ctrlClick(event, item) {
       this.toggleItemCheck(event, item.uid, item)
-      if (!this.selectedItems.length) this.showCheckboxes = false
+      if (!this.selected.length) this.showCheckboxes = false
     },
     templateClick(event, ctrl, rule) {
       if (!rule || !rule.templateUID) return
@@ -736,21 +727,14 @@ export default {
         rules.forEach((r) => {
           this.setItemChecked(r.uid, doCheck)
         })
-        if (ctrl && !this.selectedItems.length) this.showCheckboxes = false
+        if (ctrl && !this.selected.length) this.showCheckboxes = false
       }
-    },
-    search: debounce(function (searchbar, query, previousQuery) {
-      // don't use arrow function here, otherwise `this` is not the Vue instance
-      this.searchQuery = query.trim().toLowerCase()
-    }, 200),
-    clearSearch() {
-      this.searchQuery = null
     },
     selectDeselectAll() {
       if (this.allSelected) {
-        this.selectedItems = []
+        this.selected = []
       } else {
-        this.selectedItems = Array.from(this.listedUids)
+        this.selected = Array.from(this.listedUids)
       }
     },
     toggleItemCheck(event, item) {
@@ -764,11 +748,11 @@ export default {
     setItemChecked(item, checked) {
       if (checked) {
         if (!this.isChecked(item)) {
-          this.selectedItems.push(item)
+          this.selected.push(item)
         }
       } else {
         if (this.isChecked(item)) {
-          this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
+          this.selected.splice(this.selected.indexOf(item), 1)
         }
       }
     },
@@ -790,7 +774,7 @@ export default {
       Promise.all(promises)
         .then((data) => {
           showToast((promises.length === 1 ? 'Rule' : 'Rules') + ' deleted')
-          this.selectedItems = []
+          this.selected = []
           dialog.close()
           this.load()
         })
@@ -802,15 +786,15 @@ export default {
         })
     },
     doDisableEnableSelected(enable) {
-      if (!this.selectedItems.length) return
+      if (!this.selected.length) return
       let dialog = f7.dialog.progress('Please Wait...')
 
-      const items = this.selectedItems.filter((i) => Boolean(this.isRuleStatusDisabled(this.ruleStatuses[i])) === Boolean(enable))
+      const items = this.selected.filter((i) => Boolean(isRuleStatusDisabled(this.ruleStatuses[i])) === Boolean(enable))
       const promises = items.map((i) => this.$oh.api.postPlain('/rest/rules/' + i + '/enable', enable.toString()))
       Promise.all(promises)
         .then((data) => {
           showToast((promises.length === 1 ? 'Rule ' : 'Rules ') + (enable ? 'enabled' : 'disabled'))
-          this.selectedItems = []
+          this.selected = []
           dialog.close()
           this.load()
         })
@@ -822,7 +806,7 @@ export default {
         })
     },
     regenerateSelected() {
-      if (!this.selectedItems.length) return
+      if (!this.selected.length) return
       const rules = this.regeneratableItems.map((i) => this.rules.find((r) => r.uid === i))
       if (rules.length === 0) return
       if (rules.length === 1 && rules[0].editable) {
@@ -855,40 +839,12 @@ export default {
           })
       }
     },
-    displayedTags(rule) {
-      return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
-    },
-    updateFilteredItems() {
-      const filters = this.$refs.filters
-      if (filters === undefined || !filters.filtered) {
-        this.filteredItems = this.rules
-        return
-      }
-
-      const selected = filters.selected
-      const ruleKinds = new Set()
-
-      this.filteredItems = this.rules.filter((rule) => {
-        const tagsMatch = !selected.tags.size || rule.tags.some((t) => selected.tags.has(t))
-
-        ruleKinds.clear()
-        ruleKinds.add(rule.editable ? 'editable' : 'readonly')
-        if (rule.tags.some((t) => t.startsWith('marketplace:'))) ruleKinds.add('marketplace')
-        if (rule.templateUID) ruleKinds.add('template')
-        const kindsMatch = !selected.kinds.size || toRaw(selected.kinds).intersection(ruleKinds).size > 0
-
-        return tagsMatch && kindsMatch
-      })
-
-      // update rules list
-      this.$refs.listIndex.update()
-    },
     templateName(rule) {
       let template = this.templates ? this.templates.find((t) => t.uid === rule.templateUID) : undefined
       return template ? template.label : rule.templateUID
     },
     async initRuleDefinitionsPopup() {
-      const ruleUids = this.selectedItems
+      const ruleUids = this.selected
       if (!ruleUids || !ruleUids.length) {
         return
       }
@@ -983,17 +939,17 @@ export default {
       console.debug("Can't serialize to DSL:", this.dslCopyErrors)
     },
     deselectIncompatibleDsl() {
-      if (!this.selectedItems || !this.selectedItems.length) {
+      if (!this.selected || !this.selected.length) {
         return
       }
-      this.selectedItems = this.dslCopyOk
+      this.selected = this.dslCopyOk
       this.initRuleDefinitionsPopup()
     },
     deselectIncompatibleYaml() {
-      if (!this.selectedItems || !this.selectedItems.length) {
+      if (!this.selected || !this.selected.length) {
         return
       }
-      this.selectedItems = this.yamlCopyOk
+      this.selected = this.yamlCopyOk
       this.initRuleDefinitionsPopup()
     },
     exportDslClicked() {
@@ -1011,15 +967,15 @@ export default {
       }
     },
     copyRuleDefinitionsToClipboard(type, serializationOption) {
-      if (!this.selectedItems || !this.selectedItems.length) {
+      if (!this.selected || !this.selected.length) {
         return
       }
       const mediaType = type === 'DSL' ? 'application/vnd.openhab.dsl.rule' : 'application/yaml'
-      const progressDialog = f7.dialog.progress(`Loading ${type || 'YAML'} definition${this.selectedItems.length === 1 ? '' : 's'}...`)
+      const progressDialog = f7.dialog.progress(`Loading ${type || 'YAML'} definition${this.selected.length === 1 ? '' : 's'}...`)
       createFileFormatForRules(
         {
           serializationOption: serializationOption || undefined,
-          body: this.selectedItems
+          body: this.selected
         },
         {
           parseAs: 'text',
@@ -1031,16 +987,16 @@ export default {
         .then((ruleDefinition) => {
           progressDialog.close()
           copyToClipboard(ruleDefinition, {
-            dialogTitle: `Copy ${this.selectedItems.length} Rule File Definition${this.selectedItems.length === 1 ? '' : 's'}`,
-            dialogText: `Rule definition${this.selectedItems.length === 1 ? '' : 's'} retrieved successfully. Click OK to copy ${this.selectedItems.length === 1 ? 'it' : 'them'} to the clipboard.`,
+            dialogTitle: `Copy ${this.selected.length} Rule File Definition${this.selected.length === 1 ? '' : 's'}`,
+            dialogText: `Rule definition${this.selected.length === 1 ? '' : 's'} retrieved successfully. Click OK to copy ${this.selected.length === 1 ? 'it' : 'them'} to the clipboard.`,
             onSuccess: () => {
               showToast(
-                `${this.selectedItems.length} ${type || 'YAML'} rule definition${this.selectedItems.length === 1 ? '' : 's'} copied to clipboard`
+                `${this.selected.length} ${type || 'YAML'} rule definition${this.selected.length === 1 ? '' : 's'} copied to clipboard`
               )
             },
             onError: () => {
               f7.dialog.alert(
-                `Error copying rule ${type || 'YAML'} definition${this.selectedItems.length === 1 ? '' : 's'} to the clipboard`,
+                `Error copying rule ${type || 'YAML'} definition${this.selected.length === 1 ? '' : 's'} to the clipboard`,
                 'Error'
               )
             }
@@ -1049,8 +1005,8 @@ export default {
         })
         .catch((error) => {
           progressDialog.close()
-          console.error(`Failed to generate rule definition${this.selectedItems.length === 1 ? '' : 's'}`, error)
-          f7.dialog.alert(`Error loading rule ${type || 'YAML'} definition${this.selectedItems.length === 1 ? '' : 's'}: ${error}`, 'Error')
+          console.error(`Failed to generate rule definition${this.selected.length === 1 ? '' : 's'}`, error)
+          f7.dialog.alert(`Error loading rule ${type || 'YAML'} definition${this.selected.length === 1 ? '' : 's'}: ${error}`, 'Error')
           this.copyPopupOpened = false
         })
     }

@@ -91,10 +91,9 @@ import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
 import DuplicateChannelPage from '@/pages/settings/things/channel/channel-duplicate.vue'
 
-import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeAndMetaLabel } from '@/components/item/item-helpers'
 
 export default {
-  mixins: [ItemMixin],
   props: {
     channelType: Object,
     channelId: String,
@@ -107,6 +106,9 @@ export default {
     f7router: Object
   },
   emits: ['channel-updated'],
+  setup() {
+    return { getItemTypeAndMetaLabel }
+  },
   data() {
     return {
       ready: false,
