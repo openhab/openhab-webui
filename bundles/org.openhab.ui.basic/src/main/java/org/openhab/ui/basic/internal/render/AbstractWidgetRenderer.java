@@ -141,8 +141,9 @@ public abstract class AbstractWidgetRenderer implements WidgetRenderer {
         snippet = snippet.replace("%value%", getValue(text));
         snippet = snippet.replace("%has_value%", Boolean.valueOf(hasValue(text)).toString());
         snippet = snippet.replace("%visibility_class%", itemUIRegistry.getVisiblity(w) ? "" : "mdl-form__row--hidden");
-        String confirmCmdMessage = itemUIRegistry.getConfirmCmdMessage(w);
-        snippet = snippet.replace("%confirm_message%", confirmCmdMessage != null ? escapeHtml(confirmCmdMessage) : "");
+        String commandConfirmMessage = itemUIRegistry.getCommandConfirmMessage(w);
+        snippet = snippet.replace("%command_confirm_message%",
+                commandConfirmMessage != null ? escapeHtml(commandConfirmMessage) : "");
 
         String state = getState(w);
         snippet = snippet.replace("%state%", escapeHtml(state));
