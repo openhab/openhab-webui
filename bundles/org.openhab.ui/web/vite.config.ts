@@ -48,7 +48,21 @@ export default defineConfig({
             injectTo: 'head-prepend',
             attrs: {
               'http-equiv': 'Content-Security-Policy',
-              content: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:;"
+              /*
+               * Content-Security Policy Explanation:
+               * - default: allow loading resources from same origin
+               * - scripts: same origin
+               * - styles: same source & inline style (<style> tags and style attributes)
+               * - fonts: same source & data: URIs
+               * - images: any origin & data: URIs
+               * - media: any origin, data:, blob: & media: URIs
+               * - embedding (<iframe> tag): any origin
+               * - connect (fetch, XHR, WebSocket, etc.): same origin, *.openhab.org & raw.githubusercontent.com (add-on logos, READMEs, etc.), Iconify icon sources, and any origin (until we provide a way to set this dynamically)
+               * - web workers: same origin and blob: URIs (required by Video.js)
+               * - objects (browser plugins, Flash, etc.): blocked
+               * - base: only allow same origin to set <base href="...">
+               */
+              content: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:; object-src 'none'; base-uri 'self';"
             }
           }
         ]
