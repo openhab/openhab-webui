@@ -18,9 +18,10 @@
         </f7-block-footer>
         <!-- Action Inputs -->
         <f7-col>
-          <f7-block-title class="parameter-group-title"> Action Input </f7-block-title>
           <config-sheet
             v-if="inputConfigDescriptions.length > 0"
+            title="Action Input"
+            :accordion="actionOutput"
             ref="configSheet"
             :parameter-groups="[]"
             :parameters="inputConfigDescriptions"
@@ -43,12 +44,11 @@
         </f7-col>
         <!-- Action Outputs -->
         <f7-col v-if="!executing && actionOutput">
-          <f7-block-title class="parameter-group-title"> Action Output </f7-block-title>
-          <div v-if="Object.keys(actionOutput).length === 0" class="margin">
-            There is either no output for this action or something went wrong - please check the logs.
-          </div>
-          <div v-else>
-            <f7-list media-list>
+          <group-box title="Action Output">
+            <div v-if="Object.keys(actionOutput).length === 0" class="margin">
+              There is either no output for this action or something went wrong - please check the logs.
+            </div>
+            <f7-list v-else media-list>
               <template v-for="key of Object.keys(actionOutput)" :key="key + '-list-item'">
                 <!-- Render result as a list item, works without action output definition from REST -->
                 <f7-list-item
@@ -94,7 +94,7 @@
                 </f7-accordion-content>
               </f7-list-item>
             </f7-list>
-          </div>
+          </group-box>
         </f7-col>
       </f7-block>
     </f7-page>

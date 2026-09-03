@@ -14,67 +14,74 @@
       </f7-navbar>
       <f7-col>
         <f7-block-title medium>Items</f7-block-title>
-        <f7-list>
-          <f7-list-item title="Persist all Items">
-            <template #after>
-              <f7-toggle v-model:checked="allItemsSelected" />
-            </template>
-          </f7-list-item>
-        </f7-list>
-        <f7-list>
-          <f7-list-group>
-            <item-picker
-              key="groups"
-              label="Select groups"
-              name="groupItems"
-              :multiple="true"
-              filterType="Group"
-              :disabled="allItemsSelected ? true : null"
-              :value="groupItems"
-              @input="groupItems = $event" />
-          </f7-list-group>
-          <f7-list-item>... whose members are to be persisted.</f7-list-item>
-        </f7-list>
-        <f7-list>
-          <f7-list-group>
-            <item-picker
-              key="items"
-              label="Select Items"
-              name="items"
-              :multiple="true"
-              :disabled="allItemsSelected ? true : null"
-              :value="items"
-              @input="items = $event" />
-          </f7-list-group>
-          <f7-list-item>... to be persisted.</f7-list-item>
-        </f7-list>
-        <f7-list>
-          <f7-list-group>
-            <item-picker
-              key="exclude-groups"
-              label="Select exclude groups"
-              name="excludeGroupItems"
-              :multiple="true"
-              filterType="Group"
-              :disabled="!anySelected ? true : null"
-              :value="excludeGroupItems"
-              @input="excludeGroupItems = $event" />
-          </f7-list-group>
-          <f7-list-item>... whose members are to be excluded from persistence.</f7-list-item>
-        </f7-list>
-        <f7-list>
-          <f7-list-group>
-            <item-picker
-              key="exclude-items"
-              label="Select exclude Items"
-              name="excludeItems"
-              :multiple="true"
-              :disabled="!anySelected ? true : null"
-              :value="excludeItems"
-              @input="excludeItems = $event" />
-          </f7-list-group>
-          <f7-list-item>... to be excluded from persistence.</f7-list-item>
-        </f7-list>
+        <group-box title="What to persist" description="Select the Items or groups of Items to be persisted.">
+          <f7-list>
+            <f7-list-item title="Persist all Items">
+              <template #after>
+                <f7-toggle v-model:checked="allItemsSelected" />
+              </template>
+            </f7-list-item>
+          </f7-list>
+          <template v-if="!allItemsSelected">
+            <f7-list>
+              <f7-list-group>
+                <item-picker
+                  key="groups"
+                  label="Select groups"
+                  name="groupItems"
+                  :multiple="true"
+                  filterType="Group"
+                  :disabled="allItemsSelected ? true : null"
+                  :value="groupItems"
+                  @input="groupItems = $event" />
+              </f7-list-group>
+              <f7-list-item>... whose members are to be persisted.</f7-list-item>
+            </f7-list>
+            <f7-list>
+              <f7-list-group>
+                <item-picker
+                  key="items"
+                  label="Select Items"
+                  name="items"
+                  :multiple="true"
+                  :disabled="allItemsSelected ? true : null"
+                  :value="items"
+                  @input="items = $event" />
+              </f7-list-group>
+              <f7-list-item>... to be persisted.</f7-list-item>
+            </f7-list>
+          </template>
+        </group-box>
+
+        <group-box title="What to exclude" description="Select the Items or groups of Items to be excluded from persistence.">
+          <f7-list>
+            <f7-list-group>
+              <item-picker
+                key="exclude-groups"
+                label="Select exclude groups"
+                name="excludeGroupItems"
+                :multiple="true"
+                filterType="Group"
+                :disabled="!anySelected ? true : null"
+                :value="excludeGroupItems"
+                @input="excludeGroupItems = $event" />
+            </f7-list-group>
+            <f7-list-item>... whose members are to be excluded from persistence.</f7-list-item>
+          </f7-list>
+          <f7-list>
+            <f7-list-group>
+              <item-picker
+                key="exclude-items"
+                label="Select exclude Items"
+                name="excludeItems"
+                :multiple="true"
+                :disabled="!anySelected ? true : null"
+                :value="excludeItems"
+                @input="excludeItems = $event" />
+            </f7-list-group>
+            <f7-list-item>... to be excluded from persistence.</f7-list-item>
+          </f7-list>
+        </group-box>
         <f7-col>
           <f7-block-title medium class="padding-top">Strategies</f7-block-title>
           <strategy-picker v-model:cron-strategies="cronStrategies" v-model:selected-strategies="localItemConfiguration.strategies" />

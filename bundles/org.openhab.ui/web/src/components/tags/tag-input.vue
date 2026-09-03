@@ -1,5 +1,5 @@
 <template>
-  <div v-if="item && item.tags" class="tag-editor">
+  <group-box v-if="item && item.tags" class="tag-editor">
     <f7-list>
       <f7-list-item :title="title || 'Tags'" :badge="tags.length.toString()" />
       <f7-list-item v-if="tags.length > 0">
@@ -28,7 +28,7 @@
         </template>
       </f7-list-input>
     </f7-list>
-  </div>
+  </group-box>
 </template>
 
 <script>

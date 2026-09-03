@@ -70,105 +70,104 @@
         <f7-block v-if="ready && !error" class="block-narrow no-margin-bottom">
           <f7-col>
             <thing-general-settings :thing="thing" :thing-type="thingType" :ready="true" :read-only="!editable" />
-            <f7-block-title v-if="thingType && thingType.UID" medium style="margin-bottom: var(--f7-list-margin-vertical)">
-              Information
-            </f7-block-title>
             <not-editable-notice v-if="!editable" subject="Thing" />
-            <f7-list accordion-opposite>
-              <f7-list-item v-if="thingType" accordion-item title="Thing Type" :after="thingType.label">
-                <f7-accordion-content class="thing-type-description">
-                  <div class="margin" v-html="thingType?.description" />
-                </f7-accordion-content>
-              </f7-list-item>
-              <f7-list-item v-else title="Missing Thing-Type (is the binding installed?)" :after="thing.thingTypeUID" text-color="red" />
-              <f7-list-item
-                v-if="thing && Object.keys(thing.properties).length > 0"
-                accordion-item
-                title="Thing Properties"
-                :badge="Object.keys(thing.properties).length">
-                <f7-accordion-content>
-                  <f7-list>
-                    <f7-list-item
-                      v-for="(value, key) in thing.properties"
-                      class="thing-property"
-                      :key="key"
-                      @click="showFullPropertyIfTruncated(key, value)">
-                      <template #title>
-                        <div class="item-title-content">
-                          <span :ref="'titleSpan-' + key">{{ key }}</span>
-                        </div>
-                      </template>
-                      <template #after>
-                        <div class="item-after-content">
-                          <span :ref="'valueSpan-' + key">{{ value }}</span>
-                          <f7-icon
-                            v-if="isTruncated(key, 'title') || isTruncated(key, 'value')"
-                            f7="info_circle"
-                            size="16"
-                            class="truncation-icon" />
-                        </div>
-                      </template>
-                    </f7-list-item>
-                  </f7-list>
-                </f7-accordion-content>
-              </f7-list-item>
-              <f7-list-item
-                v-if="thing.firmwareStatus"
-                accordion-item
-                title="Firmware"
-                :badge="firmwares.length"
-                :badge-color="thing.firmwareStatus.status === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
-                <f7-accordion-content>
-                  <f7-list>
-                    <f7-list-item class="thing-property" title="Status" :after="firmwareStatusText" />
-                    <f7-list-item class="thing-property" title="Current Version" :after="thing.properties.firmwareVersion" />
-                    <f7-list-item
-                      v-for="firmware in firmwares"
-                      class="thing-property"
-                      :key="firmware.version"
-                      header="Version"
-                      :title="firmware.version"
-                      :after="firmware.description"
-                      :footer="firmware.changelog">
-                      <div class="item-after">
-                        <f7-badge
-                          :color="
-                            firmware.version === thing.properties.firmwareVersion
-                              ? 'gray'
-                              : firmware.version > thing.properties.firmwareVersion
-                                ? 'green'
-                                : 'red'
-                          ">
-                          {{
-                            compareVersions(firmware.version, thing.properties.firmwareVersion) === 0
-                              ? 'Current Version'
-                              : compareVersions(firmware.version, thing.properties.firmwareVersion) > 0
-                                ? 'Upgrade'
-                                : 'Downgrade'
-                          }}
-                          <f7-link
-                            v-if="compareVersions(firmware.version, thing.properties.firmwareVersion) !== 0 && !firmwareUpdating"
-                            icon-color="white"
-                            :tooltip="
-                              compareVersions(firmware.version, thing.properties.firmwareVersion) === 1
-                                ? 'Start Upgrade'
-                                : 'Start Downgrade'
-                            "
-                            style="margin-left: 4px"
-                            icon-ios="f7:play_fill"
-                            icon-md="f7:play_fill"
-                            icon-aurora="f7:play_fill"
-                            icon-size="16"
-                            @click="startFirmwareUpdate(firmware)" />
-                        </f7-badge>
-                      </div>
-                    </f7-list-item>
-                  </f7-list>
-                </f7-accordion-content>
-              </f7-list-item>
-            </f7-list>
 
-            <f7-block-title medium class="no-margin-bottom"> Configuration </f7-block-title>
+            <group-box v-if="thingType && thingType.UID" title="Information">
+              <f7-list accordion>
+                <f7-list-item v-if="thingType" accordion-item title="Thing Type" :after="thingType.label">
+                  <f7-accordion-content class="thing-type-description">
+                    <div class="margin" v-html="thingType?.description" />
+                  </f7-accordion-content>
+                </f7-list-item>
+                <f7-list-item v-else title="Missing Thing-Type (is the binding installed?)" :after="thing.thingTypeUID" text-color="red" />
+                <f7-list-item
+                  v-if="thing && Object.keys(thing.properties).length > 0"
+                  accordion-item
+                  title="Thing Properties"
+                  :badge="Object.keys(thing.properties).length">
+                  <f7-accordion-content>
+                    <f7-list>
+                      <f7-list-item
+                        v-for="(value, key) in thing.properties"
+                        class="thing-property"
+                        :key="key"
+                        @click="showFullPropertyIfTruncated(key, value)">
+                        <template #title>
+                          <div class="item-title-content">
+                            <span :ref="'titleSpan-' + key">{{ key }}</span>
+                          </div>
+                        </template>
+                        <template #after>
+                          <div class="item-after-content">
+                            <span :ref="'valueSpan-' + key">{{ value }}</span>
+                            <f7-icon
+                              v-if="isTruncated(key, 'title') || isTruncated(key, 'value')"
+                              f7="info_circle"
+                              size="16"
+                              class="truncation-icon" />
+                          </div>
+                        </template>
+                      </f7-list-item>
+                    </f7-list>
+                  </f7-accordion-content>
+                </f7-list-item>
+                <f7-list-item
+                  v-if="thing.firmwareStatus"
+                  accordion-item
+                  title="Firmware"
+                  :badge="firmwares.length"
+                  :badge-color="thing.firmwareStatus.status === 'UPDATE_EXECUTABLE' ? 'green' : 'gray'">
+                  <f7-accordion-content>
+                    <f7-list>
+                      <f7-list-item class="thing-property" title="Status" :after="firmwareStatusText" />
+                      <f7-list-item class="thing-property" title="Current Version" :after="thing.properties.firmwareVersion" />
+                      <f7-list-item
+                        v-for="firmware in firmwares"
+                        class="thing-property"
+                        :key="firmware.version"
+                        header="Version"
+                        :title="firmware.version"
+                        :after="firmware.description"
+                        :footer="firmware.changelog">
+                        <div class="item-after">
+                          <f7-badge
+                            :color="
+                              firmware.version === thing.properties.firmwareVersion
+                                ? 'gray'
+                                : firmware.version > thing.properties.firmwareVersion
+                                  ? 'green'
+                                  : 'red'
+                            ">
+                            {{
+                              compareVersions(firmware.version, thing.properties.firmwareVersion) === 0
+                                ? 'Current Version'
+                                : compareVersions(firmware.version, thing.properties.firmwareVersion) > 0
+                                  ? 'Upgrade'
+                                  : 'Downgrade'
+                            }}
+                            <f7-link
+                              v-if="compareVersions(firmware.version, thing.properties.firmwareVersion) !== 0 && !firmwareUpdating"
+                              icon-color="white"
+                              :tooltip="
+                                compareVersions(firmware.version, thing.properties.firmwareVersion) === 1
+                                  ? 'Start Upgrade'
+                                  : 'Start Downgrade'
+                              "
+                              style="margin-left: 4px"
+                              icon-ios="f7:play_fill"
+                              icon-md="f7:play_fill"
+                              icon-aurora="f7:play_fill"
+                              icon-size="16"
+                              @click="startFirmwareUpdate(firmware)" />
+                          </f7-badge>
+                        </div>
+                      </f7-list-item>
+                    </f7-list>
+                  </f7-accordion-content>
+                </f7-list-item>
+              </f7-list>
+            </group-box>
+
             <config-sheet
               ref="thingConfiguration"
               :parameter-groups="configDescriptions?.parameterGroups"
@@ -180,24 +179,24 @@
               :f7router />
 
             <!-- Thing Actions & UI Actions -->
-            <template v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties">
-              <f7-block-title medium class="no-margin-top" style="display: flex; align-items: center; justify-content: space-between">
-                Actions
-                <div v-if="advancedThingActionsCount" class="advanced-actions-toggle">
-                  <label class="advanced-label">
-                    <f7-checkbox v-model:checked="showAdvancedThingActions" />
-                    Show advanced
-                    <f7-badge
-                      v-if="advancedThingActionsCount"
-                      style="margin-left: 2px"
-                      color="theme-alt"
-                      class="count-badge"
-                      tooltip="Advanced/Expert Thing actions">
-                      {{ advancedThingActionsCount }}
-                    </f7-badge>
-                  </label>
-                </div>
-              </f7-block-title>
+            <group-box
+              v-if="thingActions?.length > 0 || thingType?.UID?.startsWith('zwave:') || hasMatterThreadProperties"
+              title="Actions"
+              full-width>
+              <template v-if="advancedThingActionsCount">
+                <label class="advanced-label">
+                  <f7-checkbox v-model:checked="showAdvancedThingActions" />
+                  Show advanced
+                  <f7-badge
+                    v-if="advancedThingActionsCount"
+                    style="margin-left: 2px"
+                    color="theme-alt"
+                    class="count-badge"
+                    tooltip="Advanced/Expert Thing actions">
+                    {{ advancedThingActionsCount }}
+                  </f7-badge>
+                </label>
+              </template>
               <f7-list class="margin-top" media-list>
                 <f7-list-item
                   v-if="thingType?.UID?.startsWith('zwave:')"
@@ -217,7 +216,7 @@
                   link=""
                   @click="doThingAction(action)" />
               </f7-list>
-            </template>
+            </group-box>
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
@@ -253,16 +252,18 @@
 
         <f7-block v-if="ready" class="block-narrow no-margin-top">
           <f7-col>
-            <f7-list>
-              <f7-list-button v-if="offerInstallBinding" color="theme-alt" title="Install Binding" @click="installBinding" />
-              <f7-list-button v-if="!error" color="theme-alt" title="Duplicate Thing" @click="duplicateThing" />
-              <f7-list-button
-                v-if="!error"
-                color="theme-alt"
-                title="Copy File Definition"
-                @click="copyFileDefinitionToClipboard(ObjectType.THING, [thingId])" />
-              <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
-            </f7-list>
+            <group-box>
+              <f7-list>
+                <f7-list-button v-if="offerInstallBinding" color="theme-alt" title="Install Binding" @click="installBinding" />
+                <f7-list-button v-if="!error" color="theme-alt" title="Duplicate Thing" @click="duplicateThing" />
+                <f7-list-button
+                  v-if="!error"
+                  color="theme-alt"
+                  title="Copy File Definition"
+                  @click="copyFileDefinitionToClipboard(ObjectType.THING, [thingId])" />
+                <f7-list-button v-if="editable" color="red" title="Remove Thing" @click="deleteThing" />
+              </f7-list>
+            </group-box>
           </f7-col>
         </f7-block>
       </f7-tab>
@@ -277,28 +278,30 @@
             :context="context"
             :f7router />
           <f7-col v-if="isExtensible || thing.channels.length > 0">
-            <f7-list>
-              <f7-list-button
-                v-if="isExtensible && editable"
-                class="searchbar-ignore"
-                color="theme-alt"
-                title="Add Channel"
-                @click="addChannel()" />
-              <f7-list-button class="searchbar-ignore" color="theme-alt" title="Add Equipment to Model" @click="addToModel(true)" />
-              <f7-list-button class="searchbar-ignore" color="theme-alt" title="Add Points to Model" @click="addToModel(false)" />
-              <f7-list-button
-                v-if="hasLinkedItems"
-                class="searchbar-ignore"
-                color="red"
-                title="Unlink all Items"
-                @click="unlinkAll(false)" />
-              <f7-list-button
-                v-if="hasLinkedItems"
-                class="searchbar-ignore"
-                color="red"
-                title="Unlink and Remove all Items"
-                @click="unlinkAll(true)" />
-            </f7-list>
+            <group-box>
+              <f7-list>
+                <f7-list-button
+                  v-if="isExtensible && editable"
+                  class="searchbar-ignore"
+                  color="theme-alt"
+                  title="Add Channel"
+                  @click="addChannel()" />
+                <f7-list-button class="searchbar-ignore" color="theme-alt" title="Add Equipment to Model" @click="addToModel(true)" />
+                <f7-list-button class="searchbar-ignore" color="theme-alt" title="Add Points to Model" @click="addToModel(false)" />
+                <f7-list-button
+                  v-if="hasLinkedItems"
+                  class="searchbar-ignore"
+                  color="red"
+                  title="Unlink all Items"
+                  @click="unlinkAll(false)" />
+                <f7-list-button
+                  v-if="hasLinkedItems"
+                  class="searchbar-ignore"
+                  color="red"
+                  title="Unlink and Remove all Items"
+                  @click="unlinkAll(true)" />
+              </f7-list>
+            </group-box>
           </f7-col>
         </f7-block>
       </f7-tab>
@@ -1191,6 +1194,7 @@ export default {
   },
   mounted() {
     this.checkPropertyTruncation()
+    console.log('advancedThingActionsCount', this.advancedThingActionsCount)
   },
   updated() {
     this.checkPropertyTruncation()
