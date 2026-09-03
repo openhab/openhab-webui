@@ -61,15 +61,11 @@
 
         <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :inSceneEditor="true" />
 
+        <not-editable-notice v-if="!editable" subject="Thing" />
+
         <f7-block v-if="ready" class="block-narrow">
-          <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
-            <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a
-            file.
-          </f7-block-footer>
-          <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
-            </f7-col> -->
           <f7-col class="scene-modules">
-            <div v-if="rule['actions'].length > 0" class="no-padding float-right">
+            <div v-if="rule['actions'].length > 0" class="no-padding float-right margin-top margin-bottom">
               <f7-button
                 @click="toggleModuleControls"
                 small
@@ -85,8 +81,8 @@
                 &nbsp;Reorder
               </f7-button>
             </div>
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configuration </f7-block-title>
+
+            <group-box title="Scene Configuration">
               <f7-list class="scene-items" sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, 'actions')">
                 <f7-list-item
                   v-for="mod in rule['actions']"
@@ -160,13 +156,15 @@
                   <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'theme-alt'" :title="sectionLabels[section][1]"></f7-list-button> -->
                 </f7-list-group>
               </f7-list>
-            </div>
+            </group-box>
           </f7-col>
           <f7-col v-if="isEditable && !createMode">
-            <f7-list>
-              <f7-list-button color="theme-alt" @click="duplicateRule"> Duplicate Scene </f7-list-button>
-              <f7-list-button color="red" @click="deleteRule"> Remove Scene </f7-list-button>
-            </f7-list>
+            <group-box>
+              <f7-list>
+                <f7-list-button color="theme-alt" @click="duplicateRule"> Duplicate Scene </f7-list-button>
+                <f7-list-button color="red" @click="deleteRule"> Remove Scene </f7-list-button>
+              </f7-list>
+            </group-box>
           </f7-col>
         </f7-block>
       </f7-tab>

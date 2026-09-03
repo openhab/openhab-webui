@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <group-box title="Voice System">
     <f7-list>
       <f7-list-input
         ref="input"
@@ -16,8 +16,8 @@
         </f7-block-footer>
       </template>
     </f7-list>
-    <config-sheet :parameterGroups="[]" :parameters="ruleOptionParameters" :configuration="metadata.config" :read-only="!editable" />
-  </div>
+  </group-box>
+  <config-sheet :parameterGroups="[]" :parameters="ruleOptionParameters" :configuration="metadata.config" :read-only="!editable" />
 </template>
 
 <script>

@@ -169,65 +169,63 @@
     <!-- rule engine available and ready and has rules -->
     <f7-block v-show="!noRuleEngine && ready && rules.length > 0" class="block-narrow">
       <f7-col>
-        <f7-block-title class="no-margin-top">
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && listedItems.length">
-            -
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
-        </f7-block-title>
         <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
         <f7-list v-if="!listedItems.length">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list v-show="listedItems.length > 0" class="searchbar-found col rules-list" ref="rulesList" media-list contacts-list>
-          <f7-list-group v-for="(rulesWithInitial, initial) in indexedRules" :key="initial">
-            <f7-list-item v-if="rulesWithInitial.length" :title="initial" group-title />
-            <f7-list-item
-              v-for="rule in rulesWithInitial"
-              :key="rule.uid"
-              media-item
-              class="rulelist-item"
-              :checkbox="showCheckboxes ? true : null"
-              :checked="isChecked(rule.uid) ? true : null"
-              prevent-router
-              @click.ctrl="ctrlClick($event, rule)"
-              @click.meta="ctrlClick($event, rule)"
-              @click.exact="click($event, rule)"
-              :link="`${encodeURIComponent(rule.uid)}`"
-              :title="rule.name"
-              :text="rule.uid"
-              :footer="rule.description"
-              :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
-              :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
-              <template #footer>
-                <div class="footer-inner">
-                  <f7-chip
-                    v-if="rule.templateUID"
-                    :text="templateName(rule)"
-                    @click.ctrl="(e) => templateClick(e, true, rule)"
-                    @click.meta="(e) => templateClick(e, true, rule)"
-                    @click.exact="(e) => templateClick(e, false, rule)"
-                    media-bg-color="orange"
-                    style="margin-right: 2px">
-                    <template #media>
-                      <f7-icon ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
-                    </template>
-                  </f7-chip>
-                  <f7-chip v-for="tag in displayedTags(rule)" :key="tag" :text="tag" media-bg-color="theme-alt" style="margin-right: 6px">
-                    <template #media>
-                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
-                    </template>
-                  </f7-chip>
-                </div>
-              </template>
-              <!-- <span slot="media" class="item-initial">{{initial}}</span> -->
-              <template v-if="rule.editable === false" #after-title>
-                <f7-icon f7="lock_fill" size="1rem" color="gray" />
-              </template>
-            </f7-list-item>
-          </f7-list-group>
-        </f7-list>
+        <group-box :title="listTitle">
+          <template v-if="showCheckboxes && listedItems.length" #after-title>
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
+          <f7-list v-show="listedItems.length > 0" class="searchbar-found col rules-list" ref="rulesList" media-list contacts-list>
+            <f7-list-group v-for="(rulesWithInitial, initial) in indexedRules" :key="initial">
+              <f7-list-item v-if="rulesWithInitial.length" :title="initial" group-title />
+              <f7-list-item
+                v-for="rule in rulesWithInitial"
+                :key="rule.uid"
+                media-item
+                class="rulelist-item"
+                :checkbox="showCheckboxes ? true : null"
+                :checked="isChecked(rule.uid) ? true : null"
+                prevent-router
+                @click.ctrl="ctrlClick($event, rule)"
+                @click.meta="ctrlClick($event, rule)"
+                @click.exact="click($event, rule)"
+                :link="`${encodeURIComponent(rule.uid)}`"
+                :title="rule.name"
+                :text="rule.uid"
+                :footer="rule.description"
+                :badge="showScenes ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
+                :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
+                <template #footer>
+                  <div class="footer-inner">
+                    <f7-chip
+                      v-if="rule.templateUID"
+                      :text="templateName(rule)"
+                      @click.ctrl="(e) => templateClick(e, true, rule)"
+                      @click.meta="(e) => templateClick(e, true, rule)"
+                      @click.exact="(e) => templateClick(e, false, rule)"
+                      media-bg-color="orange"
+                      style="margin-right: 2px">
+                      <template #media>
+                        <f7-icon ios="f7:doc_on_doc_fill" md="material:file_copy" aurora="f7:doc_on_doc_fill" />
+                      </template>
+                    </f7-chip>
+                    <f7-chip v-for="tag in displayedTags(rule)" :key="tag" :text="tag" media-bg-color="theme-alt" style="margin-right: 6px">
+                      <template #media>
+                        <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                      </template>
+                    </f7-chip>
+                  </div>
+                </template>
+                <!-- <span slot="media" class="item-initial">{{initial}}</span> -->
+                <template v-if="rule.editable === false" #after-title>
+                  <f7-icon f7="lock_fill" size="1rem" color="gray" />
+                </template>
+              </f7-list-item>
+            </f7-list-group>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
 

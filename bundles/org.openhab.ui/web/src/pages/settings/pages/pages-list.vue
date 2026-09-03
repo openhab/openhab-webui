@@ -79,13 +79,6 @@
       </f7-col>
 
       <f7-col v-show="ready">
-        <f7-block-title class="no-margin-top">
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && pageUids.length">
-            -
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
-        </f7-block-title>
         <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
         <div v-show="ready && pages.length > 0" class="padding-left padding-right">
           <f7-segmented strong tag="p">
@@ -94,66 +87,68 @@
           </f7-segmented>
         </div>
 
-        <f7-list v-if="pages.length > 0 && filteredPages.length === 0" class="searchbar-not-found">
-          <f7-list-item title="Nothing found" />
-        </f7-list>
-        <f7-list
-          v-show="filteredPages.length > 0"
-          class="col pages-list"
-          ref="pagesList"
-          :contacts-list="groupBy === 'alphabetical'"
-          media-list>
-          <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
-            <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
-            <f7-list-item
-              v-for="page in pagesWithInitial"
-              :key="page.uid"
-              media-item
-              class="pagelist-item"
-              :checkbox="showCheckboxes"
-              :checked="isChecked(page.uid) ? true : null"
-              prevent-router
-              @click.ctrl="ctrlClick($event, page)"
-              @click.meta="ctrlClick($event, page)"
-              @click.exact="click($event, page)"
-              :link="getPageLink(page)"
-              :title="page.config?.label || page.uid"
-              :subtitle="getPageType(page).label"
-              :footer="page.uid"
-              :badge="page.config?.order">
-              <template #subtitle>
-                <div>
-                  <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="theme-alt" style="margin-right: 6px">
-                    <template #media>
-                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
-                    </template>
-                  </f7-chip>
-                  <f7-chip
-                    v-for="userrole in page.config?.visibleTo || []"
-                    :key="userrole"
-                    :text="userrole"
-                    media-bg-color="green"
-                    style="margin-right: 6px">
-                    <template #media>
-                      <f7-icon f7="person_crop_circle_fill_badge_checkmark" />
-                    </template>
-                  </f7-chip>
-                </div>
-              </template>
-              <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
-              <template #after>
-                <!-- This is here to push the after-title icon so it would appear immediately after the title
+        <group-box :title="listTitle">
+          <template v-if="showCheckboxes && pageUids.length" #after-title>
+            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          </template>
+          <f7-list
+            v-show="filteredPages.length > 0"
+            class="col pages-list"
+            ref="pagesList"
+            :contacts-list="groupBy === 'alphabetical'"
+            media-list>
+            <f7-list-group v-for="(pagesWithInitial, initial) in indexedPages" :key="initial">
+              <f7-list-item v-if="pagesWithInitial.length" :title="initial" group-title />
+              <f7-list-item
+                v-for="page in pagesWithInitial"
+                :key="page.uid"
+                media-item
+                class="pagelist-item"
+                :checkbox="showCheckboxes"
+                :checked="isChecked(page.uid) ? true : null"
+                prevent-router
+                @click.ctrl="ctrlClick($event, page)"
+                @click.meta="ctrlClick($event, page)"
+                @click.exact="click($event, page)"
+                :link="getPageLink(page)"
+                :title="page.config?.label || page.uid"
+                :subtitle="getPageType(page).label"
+                :footer="page.uid"
+                :badge="page.config?.order">
+                <template #subtitle>
+                  <div>
+                    <f7-chip v-for="tag in page.tags" :key="tag" :text="tag" media-bg-color="theme-alt" style="margin-right: 6px">
+                      <template #media>
+                        <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                      </template>
+                    </f7-chip>
+                    <f7-chip
+                      v-for="userrole in page.config?.visibleTo || []"
+                      :key="userrole"
+                      :text="userrole"
+                      media-bg-color="green"
+                      style="margin-right: 6px">
+                      <template #media>
+                        <f7-icon f7="person_crop_circle_fill_badge_checkmark" />
+                      </template>
+                    </f7-chip>
+                  </div>
+                </template>
+                <!-- <span class="item-initial">{{page.config.label[0].toUpperCase()}}</span> -->
+                <template #after>
+                  <!-- This is here to push the after-title icon so it would appear immediately after the title
                      for consistency with Things, Items, and other lists that have the lock icon for non-editable entries -->
-              </template>
-              <template #after-title>
-                <f7-icon v-if="page.editable === false" f7="lock_fill" size="1rem" color="gray" />
-              </template>
-              <template #media>
-                <oh-icon :color="page.config?.sidebar ? '' : 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
-              </template>
-            </f7-list-item>
-          </f7-list-group>
-        </f7-list>
+                </template>
+                <template #after-title>
+                  <f7-icon v-if="page.editable === false" f7="lock_fill" size="1rem" color="gray" />
+                </template>
+                <template #media>
+                  <oh-icon :color="page.config?.sidebar ? '' : 'gray'" :icon="getPageIcon(page)" :height="32" :width="32" />
+                </template>
+              </f7-list-item>
+            </f7-list-group>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
 

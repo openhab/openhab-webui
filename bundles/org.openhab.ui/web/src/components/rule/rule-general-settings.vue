@@ -2,63 +2,62 @@
   <div>
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
-        <f7-list inline-labels no-hairlines-md>
-          <f7-list-input
-            ref="ruleUid"
-            :label="`${type} UID`"
-            type="text"
-            :placeholder="`A unique identifier for the ${type.toLowerCase()}`"
-            :value="rule.uid || ''"
-            required
-            :validate="editable"
-            :disabled="!createMode ? true : null"
-            :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
-            input-id="input"
-            :pattern="uidPattern"
-            error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
-            @input="rule.uid = $event.target.value || undefined"
-            :clear-button="createMode">
-            <template #inner>
-              <f7-link
-                v-if="createMode && !uidValid"
-                icon-f7="hammer_fill"
-                style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
-                tooltip="Fix UID"
-                @click="normalizeUid()" />
-            </template>
-          </f7-list-input>
-          <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
-          <f7-list-input
-            label="Label"
-            type="text"
-            :placeholder="`${type} label for display purposes`"
-            :info="createMode ? 'Required' : ''"
-            :value="rule.name || ''"
-            required
-            validate
-            :disabled="!editable ? true : null"
-            @input="rule.name = $event.target.value || undefined"
-            :clear-button="editable" />
-          <f7-list-input
-            label="Description"
-            type="text"
-            :value="rule.description || ''"
-            :disabled="!editable ? true : null"
-            @input="rule.description = $event.target.value || undefined"
-            :clear-button="editable" />
-        </f7-list>
-        <f7-list inline-labels no-hairlines-md>
-          <div>
-            <tag-input
-              v-if="!stubMode"
-              title="Tags"
-              :item="rule"
+        <group-box title="Rule Properties">
+          <f7-list inline-labels no-hairlines-md>
+            <f7-list-input
+              ref="ruleUid"
+              :label="`${type} UID`"
+              type="text"
+              :placeholder="`A unique identifier for the ${type.toLowerCase()}`"
+              :value="rule.uid || ''"
+              required
+              :validate="editable"
+              :disabled="!createMode ? true : null"
+              :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
+              input-id="input"
+              :pattern="uidPattern"
+              error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
+              @input="rule.uid = $event.target.value || undefined"
+              :clear-button="createMode">
+              <template #inner>
+                <f7-link
+                  v-if="createMode && !uidValid"
+                  icon-f7="hammer_fill"
+                  style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
+                  tooltip="Fix UID"
+                  @click="normalizeUid()" />
+              </template>
+            </f7-list-input>
+            <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
+            <f7-list-input
+              label="Label"
+              type="text"
+              :placeholder="`${type} label for display purposes`"
+              :info="createMode ? 'Required' : ''"
+              :value="rule.name || ''"
+              required
+              validate
               :disabled="!editable ? true : null"
-              :showSemanticTags="true"
-              :inScriptEditor="inScriptEditor"
-              :inSceneEditor="inSceneEditor" />
-          </div>
-        </f7-list>
+              @input="rule.name = $event.target.value || undefined"
+              :clear-button="editable" />
+            <f7-list-input
+              label="Description"
+              type="text"
+              :value="rule.description || ''"
+              :disabled="!editable ? true : null"
+              @input="rule.description = $event.target.value || undefined"
+              :clear-button="editable" />
+          </f7-list>
+        </group-box>
+        <tag-input
+          v-if="!stubMode"
+          title="Tags"
+          :item="rule"
+          :disabled="!editable ? true : null"
+          :showSemanticTags="true"
+          :inScriptEditor="inScriptEditor"
+          :inSceneEditor="inSceneEditor" />
+        <not-editable-notice v-if="!editable" :subject="inScriptEditor ? 'script' : inSceneEditor ? 'scene' : 'rule'" />
       </f7-col>
     </f7-block>
 
@@ -98,6 +97,7 @@
 <script>
 import TagInput from '@/components/tags/tag-input.vue'
 import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
+import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
@@ -113,7 +113,8 @@ export default {
     inSceneEditor: Boolean
   },
   components: {
-    TagInput
+    TagInput,
+    NotEditableNotice
   },
   data() {
     return {

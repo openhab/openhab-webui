@@ -14,10 +14,11 @@
         </f7-button>
       </f7-col>
     </f7-block>
+
     <f7-block v-if="configDescription && config" form class="block-narrow">
       <f7-col>
-        <f7-block-title medium> Add-on configuration </f7-block-title>
         <config-sheet
+          title="Add-on Configuration"
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
           :configuration="config" />
@@ -25,19 +26,26 @@
     </f7-block>
     <f7-block v-if="loggerPackages.length > 0" form class="block-narrow">
       <f7-col>
-        <f7-block-title medium> Add-on log settings </f7-block-title>
-        <f7-list class="col wide">
-          <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName" :title="loggerPackage.loggerName">
-            <f7-input type="select" :value="loggerPackage.level" @input="loggerPackage.level = $event.target.value">
-              <option value="DEFAULT">Default</option>
-              <option value="TRACE">Trace</option>
-              <option value="DEBUG">Debug</option>
-              <option value="INFO">Info</option>
-              <option value="WARN">Warning</option>
-              <option value="ERROR">Error</option>
-            </f7-input>
-          </f7-list-item>
-        </f7-list>
+        <group-box :title="'Logging Levels'">
+          <f7-list class="no-margin-top no-margin-bottom">
+            <f7-list-item v-for="loggerPackage in loggerPackages" :key="loggerPackage.loggerName" class="logger-row-stacked">
+              <div class="logger-container">
+                <div class="logger-name">{{ loggerPackage.loggerName }}</div>
+
+                <div class="custom-segmented-track">
+                  <button
+                    v-for="level in ['DEFAULT', 'OFF', 'TRACE', 'DEBUG', 'INFO', 'WARN', 'ERROR']"
+                    :key="level"
+                    type="button"
+                    :class="{ 'segment-active': loggerPackage.level === level }"
+                    @click="loggerPackage.level = level">
+                    {{ level }}
+                  </button>
+                </div>
+              </div>
+            </f7-list-item>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
   </f7-page>
@@ -53,6 +61,92 @@
   @media (max-width 1023px)
     margin-left 16px
     margin-right 16px
+
+.config-page-header
+  margin-top 24px !important
+  margin-bottom 8px !important
+
+  .header-flex-wrapper
+    display flex // <-- CRITICAL: Tells the browser to use flexbox rules
+    flex-direction column // Stacks nicely on small mobile screens
+    justify-content space-between
+    gap 12px
+    padding-bottom 12px
+    border-bottom 1px solid rgba(255, 255, 255, 0.08)
+
+    // Snap to side-by-side layout on tablets & desktop screens
+    @media (min-width: 768px)
+      flex-direction row
+      align-items flex-end // Snaps the toggle to the bottom line of the text description
+
+  .header-main-text
+    h2
+      margin 0 0 4px 0
+      font-size 18px // Sized down slightly to match standard dashboard headers
+      font-weight 600
+    p
+      margin 0
+      font-size 13px
+      color rgba(255, 255, 255, 0.45)
+      line-height 1.4
+
+  .advanced-toggle-label
+    display flex
+    align-items center
+    gap 8px
+    cursor pointer
+    user-select none
+    font-size 13px
+    font-weight 500
+    color var(--f7-theme-color, #ff9500) // Keeps your unified theme tint matching
+    white-space nowrap
+
+    @media (min-width: 768px)
+      padding-bottom 4px // Matches alignment beautifully to description baseline on desktop
+
+    input[type="checkbox"]
+      accent-color var(--f7-theme-color, #ff9500)
+
+.logger-row-stacked
+  .item-content, .item-inner
+    display block
+
+  .logger-container
+    padding 12px 0 14px
+
+  .logger-name
+    margin-bottom 12px
+
+  .custom-segmented-track
+    display flex
+    border 1px solid var(--f7-theme-color)
+    border-radius 6px
+    overflow hidden
+
+    button
+      // flex 1
+      background transparent
+      border none
+      color var(--f7-theme-color-text)
+      opacity 0.45
+      font-size 11px
+      font-weight 600
+      height 2em
+      cursor pointer
+
+      &:hover:not(.segment-active)
+        background var(--f7-theme-color)
+        color var(--f7-theme-color-text)
+        opacity 0.65
+
+      &.segment-active
+        background var(--f7-theme-color, #ff9500)
+        color var(--f7-theme-color-text, #fff)
+        opacity 1
+        font-weight 700
+
+      & + button
+        border-left 1px solid var(--f7-theme-color)
 </style>
 
 <script>

@@ -63,9 +63,6 @@
       </f7-col>
 
       <f7-col v-show="transformations.length > 0">
-        <f7-block-title class="searchbar-hide-on-search">
-          <span>{{ transformations.length }} transformations</span>
-        </f7-block-title>
         <div class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
@@ -76,36 +73,38 @@
         <f7-list class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <f7-list
-          class="searchbar-found col transformations-list"
-          ref="transformationsList"
-          :contacts-list="groupBy === 'alphabetical'"
-          media-list>
-          <f7-list-group v-for="(transformationsWithInitial, initial) in indexedTransformations" :key="initial">
-            <f7-list-item v-if="transformationsWithInitial.length" :title="initial" group-title />
-            <f7-list-item
-              v-for="transformation in transformationsWithInitial"
-              :key="transformation.uid"
-              media-item
-              class="transformationlist-item"
-              :checkbox="showCheckboxes && transformation.editable"
-              :checked="isChecked(transformation.uid) ? true : null"
-              @click.ctrl="(e) => ctrlClick(e, transformation)"
-              @click.meta="(e) => ctrlClick(e, transformation)"
-              @click.exact="(e) => click(e, transformation)"
-              link=""
-              :title="transformation.label"
-              :subtitle="transformation.type">
-              <template #after-title>
-                <f7-icon v-if="!transformation.editable" f7="lock_fill" size="1rem" color="gray" />
-              </template>
-              <template #footer>
-                {{ transformation.uid }}
-                <clipboard-icon :value="transformation.uid" tooltip="Copy UID" />
-              </template>
-            </f7-list-item>
-          </f7-list-group>
-        </f7-list>
+        <group-box :title="transformations.length + ' transformations'" full-width>
+          <f7-list
+            class="searchbar-found col transformations-list"
+            ref="transformationsList"
+            :contacts-list="groupBy === 'alphabetical'"
+            media-list>
+            <f7-list-group v-for="(transformationsWithInitial, initial) in indexedTransformations" :key="initial">
+              <f7-list-item v-if="transformationsWithInitial.length" :title="initial" group-title />
+              <f7-list-item
+                v-for="transformation in transformationsWithInitial"
+                :key="transformation.uid"
+                media-item
+                class="transformationlist-item"
+                :checkbox="showCheckboxes && transformation.editable"
+                :checked="isChecked(transformation.uid) ? true : null"
+                @click.ctrl="(e) => ctrlClick(e, transformation)"
+                @click.meta="(e) => ctrlClick(e, transformation)"
+                @click.exact="(e) => click(e, transformation)"
+                link=""
+                :title="transformation.label"
+                :subtitle="transformation.type">
+                <template #after-title>
+                  <f7-icon v-if="!transformation.editable" f7="lock_fill" size="1rem" color="gray" />
+                </template>
+                <template #footer>
+                  {{ transformation.uid }}
+                  <clipboard-icon :value="transformation.uid" tooltip="Copy UID" />
+                </template>
+              </f7-list-item>
+            </f7-list-group>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
 

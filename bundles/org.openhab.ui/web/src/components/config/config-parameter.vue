@@ -2,7 +2,7 @@
   <f7-list
     v-show="configDescription.visible ? configDescription.visible(value, configuration, configDescription, parameters) : true"
     ref="parameter"
-    class="config-parameter"
+    :class="['config-parameter', { 'advanced-param': configDescription.advanced }]"
     :no-hairlines-md="
       configDescription.type !== 'BOOLEAN' &&
       (!configDescription.options || !configDescription.options.length) &&
@@ -39,8 +39,6 @@
 </template>
 
 <script>
-import { f7 } from 'framework7-vue'
-
 // import ScriptEditorPopup from './config/script-editor-popup.vue'
 import ParameterThing from './controls/parameter-thing.vue'
 import ParameterBoolean from './controls/parameter-boolean.vue'
@@ -164,6 +162,7 @@ export default {
     padding-left 0
 .param-description
   padding-left 16px !important
+  padding-right 10px !important
   &.block-footer
     margin-top 2px
     margin-bottom 1rem
@@ -187,4 +186,6 @@ export default {
       white-space nowrap
       margin-top 0
       margin-bottom 0
+  &.advanced-param
+    border-left 2px solid var(--f7-color-blue)
 </style>

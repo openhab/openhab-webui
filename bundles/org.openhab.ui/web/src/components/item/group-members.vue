@@ -1,35 +1,33 @@
 <template>
-  <f7-card>
-    <f7-card-content>
-      <f7-list>
-        <ul v-if="!editMembers">
-          <item
-            v-for="member in sortedGroupMembers"
-            :key="member.name"
-            :item="member"
-            :link="'/settings/items/' + member.name"
-            :context="context" />
-          <!-- <f7-list-button @click="enableEditMode" color="theme-alt" title="Add or Remove Members" /> -->
-        </ul>
-        <f7-list-group v-if="editMembers">
-          <item-picker
-            :multiple="true"
-            name="groupMembers"
-            :value="pickedMemberNames"
-            label="Members"
-            :editableOnly="true"
-            :filterType="compatibleItemTypes"
-            :showFilterToggle="true"
-            @input="(members) => (pickedMemberNames = members)" />
-        </f7-list-group>
-      </f7-list>
-    </f7-card-content>
+  <group-box title="Members">
+    <f7-list>
+      <ul v-if="!editMembers">
+        <item
+          v-for="member in sortedGroupMembers"
+          :key="member.name"
+          :item="member"
+          :link="'/settings/items/' + member.name"
+          :context="context" />
+        <!-- <f7-list-button @click="enableEditMode" color="theme-alt" title="Add or Remove Members" /> -->
+      </ul>
+      <f7-list-group v-if="editMembers">
+        <item-picker
+          :multiple="true"
+          name="groupMembers"
+          :value="pickedMemberNames"
+          label="Members"
+          :editableOnly="true"
+          :filterType="compatibleItemTypes"
+          :showFilterToggle="true"
+          @input="(members) => (pickedMemberNames = members)" />
+      </f7-list-group>
+    </f7-list>
     <f7-card-footer>
       <f7-button v-if="!editMembers" color="theme-alt" @click="enableEditMode"> Change </f7-button>
       <f7-button v-if="editMembers" color="theme-alt" fill raised @click="updateMembers"> Apply </f7-button>
       <f7-button v-if="editMembers" color="theme-alt" @click="cancelEditMode"> Cancel </f7-button>
     </f7-card-footer>
-  </f7-card>
+  </group-box>
 </template>
 
 <script>
