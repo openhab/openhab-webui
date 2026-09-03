@@ -8,7 +8,7 @@ import vueDevtools from 'vite-plugin-vue-devtools'
 import { visualizer } from 'rollup-plugin-visualizer'
 import webpackStats from 'rollup-plugin-webpack-stats'
 
-const projectRootDir = resolve(__dirname)
+const projectRootDir = resolve(import.meta.dirname)
 
 const production: boolean = process.env.NODE_ENV === 'production'
 const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
