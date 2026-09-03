@@ -103,10 +103,10 @@
           <span>{{ t('about.miscellaneous.theme.disablePageTransition') }}</span>
           <f7-toggle v-model:checked="disablePageTransitionAnimation" />
         </f7-list-item>
-          <f7-list-item>
-            <span>{{ t('about.miscellaneous.theme.disableHideBarsOnScroll') }}</span>
-            <f7-toggle v-model:checked="disableHideBarsOnScroll" />
-          </f7-list-item>
+        <f7-list-item>
+          <span>{{ t('about.miscellaneous.theme.disableHideBarsOnScroll') }}</span>
+          <f7-toggle v-model:checked="disableHideBarsOnScroll" />
+        </f7-list-item>
         <f7-list-item>
           <span>{{ t('about.miscellaneous.webaudio.enable') }}</span>
           <f7-toggle v-model:checked="webAudio" />

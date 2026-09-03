@@ -121,11 +121,11 @@
                 <template #subtitle>
                   <div>
                     <f7-chip
-                    v-for="tag in getNonSemanticTags(item)"
-                    :key="tag"
-                    :text="tag"
-                    media-bg-color="theme-alt"
-                    style="margin-right: 6px">
+                      v-for="tag in getNonSemanticTags(item)"
+                      :key="tag"
+                      :text="tag"
+                      media-bg-color="theme-alt"
+                      style="margin-right: 6px">
                       <template #media>
                         <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
                       </template>
