@@ -91,6 +91,18 @@ All web development happens in the `web/` directory.
 - Avoid obvious comments (e.g., `// variable declaration`)
 - Use JSDoc for API/class/method documentation
 - Generate oh-* component documentation by running `node generate.js` in `doc/components/src` after modifying widget definitions
+  - If the script fails (TypeScript import issues), manually update the corresponding `.md` file in `doc/components/`
+  - Widget parameters are defined in `web/src/assets/definitions/widgets/` (TypeScript)
+  - Documentation follows the PropBlock structure with type, name, label, and description
+
+### Widget Development Workflow
+When modifying or creating oh-* widgets:
+1. Edit the Vue component in `web/src/components/widgets/` (e.g., `oh-video.vue`, `oh-video-webrtc.vue`)
+2. Update the widget definition in `web/src/assets/definitions/widgets/` (e.g., `video.ts`)
+3. Run `npm run generate-widget-component-ts` to regenerate TypeScript types
+4. Update documentation in `doc/components/oh-<widget>.md` (manually or via `node generate.js`)
+5. Test changes locally with `npm run dev`
+6. Format and lint: `npm run format && npm run lint`
 
 ### Formatting
 - Use `npm run format:check` to check for formatting issues
