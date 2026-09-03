@@ -21,7 +21,7 @@
           <f7-icon v-if="showAdvanced" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
         </template>
       </f7-chip>
-      <f7-badge v-if="advancedNonDefaultCount" color="blue" class="count-badge" tooltip="Non-default advanced parameter">
+      <f7-badge v-if="advancedNonDefaultCount" color="theme-alt" class="count-badge" tooltip="Non-default advanced parameter">
         {{ advancedNonDefaultCount }}
       </f7-badge>
     </div>

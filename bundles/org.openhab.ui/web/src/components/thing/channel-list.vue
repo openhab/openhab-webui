@@ -14,8 +14,8 @@
         :clear-button="true" />
       <f7-chip
         v-if="hasAdvanced"
-        media-bg-color="blue"
-        :color="showAdvanced ? 'blue' : ''"
+        media-bg-color="theme-alt"
+        :color="showAdvanced ? 'theme-alt' : ''"
         class="advanced-chip not-selectable"
         text="Advanced"
         @click="showAdvanced = !showAdvanced">
