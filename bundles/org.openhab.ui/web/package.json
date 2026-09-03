@@ -207,6 +207,8 @@
   "overrides": {
     "rollup-plugin-visualizer": {
       "vite": "^8.0.0"
-    }
+    },
+    "@swc/core": "1.15.47",
+    "@swc/wasm": "1.15.30"
   }
 }
