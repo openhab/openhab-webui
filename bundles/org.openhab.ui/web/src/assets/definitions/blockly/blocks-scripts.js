@@ -68,6 +68,112 @@ export default function defineOHBlocks_Scripts(f7, transformationServices) {
   }
 
   /*
+   * Runs the rule with the specified UID, synchronously or asynchronously.
+   * Parameters can be provided with the special parameter block oh_scriptparam
+   * Blockly part
+   */
+  Blockly.Blocks['oh_runrule_v2'] = {
+    init: function () {
+      const dropdown = new Blockly.FieldDropdown(
+        [
+          ['asynchronously', 'ASYNC'],
+          ['synchronously', 'SYNC']
+        ],
+        this.validate.bind(this)
+      )
+
+      this.appendValueInput('ruleUID').setCheck('String').appendField('run rule or script').appendField(dropdown, 'MODE')
+      this.appendValueInput('parameters').appendField('with context').setCheck('Dictionary')
+      this.setInputsInline(false)
+
+      // Set the default
+      this.setPreviousStatement(true, null)
+      this.setNextStatement(true, null)
+
+      this.setColour(0)
+      this.setTooltip('Run a rule or script with a certain UID, and optional parameters. To retrive the result, use synchronous mode.')
+      this.setHelpUrl(
+        'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#run-rule-or-script-created-in-ui'
+      )
+    },
+
+    validate: function (newValue) {
+      if (newValue === 'SYNC') {
+        this.setPreviousStatement(false)
+        this.setNextStatement(false)
+        this.setOutput(true, 'Dictionary')
+      } else {
+        this.setOutput(false)
+        this.setPreviousStatement(true, null)
+        this.setNextStatement(true, null)
+      }
+    }
+  }
+
+  /*
+   * Runs the rule with the specified UID, synchronously or asynchronously.
+   * Parameters can be provided with the special parameter block oh_scriptparam
+   * Code part
+   */
+  javascriptGenerator.forBlock['oh_runrule_v2'] = function (block) {
+    const ruleUID = javascriptGenerator.valueToCode(block, 'ruleUID', javascriptGenerator.ORDER_ATOMIC)
+    const scriptParameters = javascriptGenerator.valueToCode(block, 'parameters', javascriptGenerator.ORDER_ATOMIC) || 'null'
+
+    if (block.getFieldValue('MODE') === 'SYNC') {
+      const code = `rules.runRule(${ruleUID}, ${scriptParameters})`
+      return [code, javascriptGenerator.ORDER_NONE]
+    } else {
+      return `rules.runAsync(${ruleUID}, ${scriptParameters});\n`
+    }
+  }
+
+  /*
+   * Recursively convert any value, array or object to use Java types. Functions are not supported.
+   * Blockly part
+   */
+  Blockly.Blocks['oh_javaify'] = {
+    init: function () {
+      this.appendValueInput('INPUT_VALUE').appendField('javaify')
+      this.setOutput(true, null)
+      this.setColour(280)
+      this.setTooltip('Recursively convert any value, array or object to use Java types. Functions are not supported.')
+    }
+  }
+
+  /*
+   * Recursively convert any value, array or object to use Java types. Functions are not supported.
+   * Code part
+   */
+  javascriptGenerator.forBlock['oh_javaify'] = function (block) {
+    const inputValue = javascriptGenerator.valueToCode(block, 'INPUT_VALUE', javascriptGenerator.ORDER_NONE) || 'null'
+    const code = `javaify(${inputValue})`
+    return [code, javascriptGenerator.ORDER_NONE]
+  }
+
+  /*
+   * Recursively convert Java Lists, Sets, and Maps and their entries/values to their JS counterparts.
+   * Blockly part
+   */
+  Blockly.Blocks['oh_jsify'] = {
+    init: function () {
+      this.appendValueInput('INPUT_VALUE').appendField('jsify')
+      this.setOutput(true, null)
+      this.setColour(300)
+      this.setTooltip('Recursively convert Java Lists, Sets, and Maps and their entries/values to their JS counterparts.')
+    }
+  }
+
+  /*
+   * Recursively convert Java Lists, Sets, and Maps and their entries/values to their JS counterparts.
+   * Code part
+   */
+  javascriptGenerator.forBlock['oh_jsify'] = function (block) {
+    const inputValue = javascriptGenerator.valueToCode(block, 'INPUT_VALUE', javascriptGenerator.ORDER_NONE) || 'null'
+    const code = `jsify(${inputValue})`
+    return [code, javascriptGenerator.ORDER_NONE]
+  }
+
+  /*
    * Allow transformations via different methods
    * inputs
    *   - value to be transformed
