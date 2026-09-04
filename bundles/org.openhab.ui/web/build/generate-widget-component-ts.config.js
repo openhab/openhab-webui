@@ -71,5 +71,28 @@ export default {
     _All: {
       modifier: (e) => e.replace('data?: string', 'data?: string[]') // Fix array type
     }
+  },
+  OhCanvasLayout: {
+    _All: {
+      modifier: (e) =>
+        `import { OhSvgElement } from '@/types/components/widgets'\n\n${e}`.replace(
+          'embedSvgFlashing?: boolean',
+          'embedSvgFlashing?: boolean\n' + '  embeddedSvgActions?: Record<string, OhSvgElement.Config>\n'
+        ) // add embeddedSvgActions to type
+    }
+  },
+  OhPlanPage: {
+    _All: {
+      modifier: (e) =>
+        `import { OhSvgElement } from '@/types/components/widgets'\n\n${e}`.replace(
+          'embedSvgFlashing?: boolean',
+          'embedSvgFlashing?: boolean\n' + '  embeddedSvgActions?: Record<string, OhSvgElement.Config>'
+        ) // add embeddedSvgActions to type
+    }
+  },
+  OhCanvasItem: {
+    _All: {
+      modifier: (e) => e.replace('w\?: number', "w?: number | 'auto'").replace('h\?: number', "h?: number | 'auto'") // Fix auto type
+    }
   }
 }
