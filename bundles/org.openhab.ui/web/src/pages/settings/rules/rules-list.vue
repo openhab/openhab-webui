@@ -131,7 +131,7 @@
       title="rules.missingengine.title"
       text="rules.missingengine.text" />
     <!-- rule engine available but not yet ready -->
-    <f7-block v-else-if="!noRuleEngine && !ready" class="block-narrow">
+    <f7-block v-else-if="!noRuleEngine && !ready" class="block-narrow" v-deferred>
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col rules-list">

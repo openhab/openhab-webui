@@ -61,7 +61,7 @@
         </f7-list-item>
       </f7-list>
     </f7-block>
-    <f7-block v-if="!ready" class="text-align-center padding-top margin-top">
+    <f7-block v-if="!ready" class="text-align-center padding-top margin-top" v-deferred>
       <f7-block-title>
         <f7-preloader :size="30" />
         <div>Loading...</div>

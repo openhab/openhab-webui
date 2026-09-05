@@ -7,6 +7,9 @@ import '@/js/monkeypatch'
 // Import Vue
 import { createApp, reactive, type Component } from 'vue'
 
+// Import directives
+import { vDeferred } from '@/js/directives/vDeferred'
+
 // Import globally registered components
 import OhNavContent from '@/components/navigation/oh-nav-content.vue'
 import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
@@ -76,6 +79,9 @@ app.component('OhIcon', OhIconComponent)
 app.component('GenericWidgetComponent', GenericWidgetComponent)
 app.component('GroupBox', GroupBox)
 registerWidgets(app)
+
+// Register custom directives
+app.directive('deferred', vDeferred)
 
 app.mount('#app')
 performance.mark('app-mounted')
