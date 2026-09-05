@@ -672,8 +672,15 @@ export const removeApiToken = <ThrowOnError extends boolean = false>(parameters:
 export const getAddons = <ThrowOnError extends boolean = false>(parameters?: {
     'Accept-Language'?: string;
     serviceId?: string;
+    installedOnly?: boolean;
+    refresh?: boolean;
 }, options?: Options<never, ThrowOnError>): RequestResult<GetAddonsResponses, GetAddonsErrors, ThrowOnError, 'data'> => {
-    const params = buildClientParams([parameters], [{ args: [{ in: 'headers', key: 'Accept-Language' }, { in: 'query', key: 'serviceId' }] }]);
+    const params = buildClientParams([parameters], [{ args: [
+                { in: 'headers', key: 'Accept-Language' },
+                { in: 'query', key: 'serviceId' },
+                { in: 'query', key: 'installedOnly' },
+                { in: 'query', key: 'refresh' }
+            ] }]);
     return (options?.client ?? client).get<GetAddonsResponses, GetAddonsErrors, ThrowOnError, 'data'>({
         responseStyle: 'data',
         security: [{ scheme: 'bearer', type: 'http' }],

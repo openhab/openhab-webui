@@ -16,7 +16,9 @@
   "paths": {
     "/module-types": {
       "get": {
-        "tags": ["module-types"],
+        "tags": [
+          "module-types"
+        ],
         "summary": "Get all available module types.",
         "operationId": "getModuleTypes",
         "parameters": [
@@ -72,7 +74,9 @@
     },
     "/module-types/{moduleTypeUID}": {
       "get": {
-        "tags": ["module-types"],
+        "tags": [
+          "module-types"
+        ],
         "summary": "Gets a module type corresponding to the given UID.",
         "operationId": "getModuleTypeById",
         "parameters": [
@@ -113,7 +117,9 @@
     },
     "/rules": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Get available rules, optionally filtered by tags and/or prefix.",
         "operationId": "getRules",
         "parameters": [
@@ -169,12 +175,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "post": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Creates a rule.",
         "operationId": "createRule",
         "requestBody": {
@@ -210,14 +220,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/enable": {
       "post": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Sets the rule enabled status.",
         "operationId": "enableRule",
         "parameters": [
@@ -252,14 +266,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/actions": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Gets the rule actions.",
         "operationId": "getRuleActions",
         "parameters": [
@@ -293,14 +311,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Gets the rule corresponding to the given UID.",
         "operationId": "getRuleById",
         "parameters": [
@@ -331,12 +353,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Updates an existing rule corresponding to the given UID.",
         "operationId": "updateRule",
         "parameters": [
@@ -371,12 +397,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Removes an existing rule corresponding to the given UID.",
         "operationId": "deleteRule",
         "parameters": [
@@ -400,14 +430,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/conditions": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Gets the rule conditions.",
         "operationId": "getRuleConditions",
         "parameters": [
@@ -441,14 +475,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/config": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Gets the rule configuration values.",
         "operationId": "getRuleConfiguration",
         "parameters": [
@@ -479,12 +517,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Sets the rule configuration values.",
         "operationId": "updateRuleConfiguration",
         "parameters": [
@@ -521,14 +563,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/{moduleCategory}/{id}": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Gets the rule's module corresponding to the given Category and ID.",
         "operationId": "getRuleModuleById",
         "parameters": [
@@ -577,14 +623,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/{moduleCategory}/{id}/config": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Gets the module's configuration.",
         "operationId": "getRuleModuleConfig",
         "parameters": [
@@ -633,14 +683,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/{moduleCategory}/{id}/config/{param}": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Gets the module's configuration parameter.",
         "operationId": "getRuleModuleConfigParameter",
         "parameters": [
@@ -698,12 +752,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Sets the module's configuration parameter value.",
         "operationId": "setRuleModuleConfigParameter",
         "parameters": [
@@ -765,14 +823,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/triggers": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Gets the rule triggers.",
         "operationId": "getRuleTriggers",
         "parameters": [
@@ -806,14 +868,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/regenerate": {
       "post": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Regenerates the rule from its template.",
         "operationId": "regenerateRule",
         "parameters": [
@@ -837,14 +903,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/{ruleUID}/runnow": {
       "post": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Executes actions of the rule.",
         "operationId": "runRuleNow_1",
         "parameters": [
@@ -881,14 +951,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/rules/schedule/simulations": {
       "get": {
-        "tags": ["rules"],
+        "tags": [
+          "rules"
+        ],
         "summary": "Simulates the executions of rules filtered by tag 'Schedule' within the given times.",
         "operationId": "getScheduleRuleSimulations",
         "parameters": [
@@ -929,14 +1003,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/templates": {
       "get": {
-        "tags": ["templates"],
+        "tags": [
+          "templates"
+        ],
         "summary": "Get all available templates.",
         "operationId": "getTemplates",
         "parameters": [
@@ -968,7 +1046,9 @@
     },
     "/templates/{templateUID}": {
       "get": {
-        "tags": ["templates"],
+        "tags": [
+          "templates"
+        ],
         "summary": "Gets a template corresponding to the given UID.",
         "operationId": "getTemplateById",
         "parameters": [
@@ -1009,7 +1089,9 @@
     },
     "/actions/{thingUID}/{actionUid}": {
       "post": {
-        "tags": ["actions"],
+        "tags": [
+          "actions"
+        ],
         "summary": "Executes a thing action.",
         "operationId": "executeThingAction",
         "parameters": [
@@ -1076,7 +1158,9 @@
     },
     "/actions/{thingUID}": {
       "get": {
-        "tags": ["actions"],
+        "tags": [
+          "actions"
+        ],
         "summary": "Get all available actions for provided thing UID",
         "operationId": "getAvailableActionsForThing",
         "parameters": [
@@ -1121,7 +1205,9 @@
     },
     "/uuid": {
       "get": {
-        "tags": ["uuid"],
+        "tags": [
+          "uuid"
+        ],
         "summary": "A unified unique id.",
         "operationId": "getUUID",
         "responses": {
@@ -1140,7 +1226,9 @@
     },
     "/audio/defaultsink": {
       "get": {
-        "tags": ["audio"],
+        "tags": [
+          "audio"
+        ],
         "summary": "Get the default sink if defined or the first available sink.",
         "operationId": "getAudioDefaultSink",
         "parameters": [
@@ -1172,7 +1260,9 @@
     },
     "/audio/defaultsource": {
       "get": {
-        "tags": ["audio"],
+        "tags": [
+          "audio"
+        ],
         "summary": "Get the default source if defined or the first available source.",
         "operationId": "getAudioDefaultSource",
         "parameters": [
@@ -1204,7 +1294,9 @@
     },
     "/audio/sinks": {
       "get": {
-        "tags": ["audio"],
+        "tags": [
+          "audio"
+        ],
         "summary": "Get the list of all sinks.",
         "operationId": "getAudioSinks",
         "parameters": [
@@ -1236,7 +1328,9 @@
     },
     "/audio/sources": {
       "get": {
-        "tags": ["audio"],
+        "tags": [
+          "audio"
+        ],
         "summary": "Get the list of all sources.",
         "operationId": "getAudioSources",
         "parameters": [
@@ -1268,7 +1362,9 @@
     },
     "/auth/logout": {
       "post": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Delete the session associated with a refresh token.",
         "operationId": "deleteSession",
         "requestBody": {
@@ -1306,7 +1402,9 @@
     },
     "/auth/apitokens": {
       "get": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "List the API tokens associated to the authenticated user.",
         "operationId": "getApiTokens",
         "responses": {
@@ -1337,7 +1435,9 @@
     },
     "/auth/sessions": {
       "get": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "List the sessions associated to the authenticated user.",
         "operationId": "getSessionsForCurrentUser",
         "responses": {
@@ -1368,7 +1468,9 @@
     },
     "/auth/token": {
       "post": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Get access and refresh tokens.",
         "operationId": "getOAuthToken",
         "parameters": [
@@ -1428,7 +1530,9 @@
     },
     "/auth/apitokens/{name}": {
       "delete": {
-        "tags": ["auth"],
+        "tags": [
+          "auth"
+        ],
         "summary": "Revoke a specified API token associated to the authenticated user.",
         "operationId": "removeApiToken",
         "parameters": [
@@ -1459,7 +1563,9 @@
     },
     "/addons": {
       "get": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Get all add-ons.",
         "operationId": "getAddons",
         "parameters": [
@@ -1477,6 +1583,22 @@
             "description": "service ID",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "installedOnly",
+            "in": "query",
+            "description": "true to return only installed add-ons",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "refresh",
+            "in": "query",
+            "description": "true to refresh add-ons before returning them",
+            "schema": {
+              "type": "boolean"
             }
           }
         ],
@@ -1500,14 +1622,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/addons/{addonId}": {
       "get": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Get add-on with given ID.",
         "operationId": "getAddonById",
         "parameters": [
@@ -1555,14 +1681,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/addons/{addonId}/config": {
       "get": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Get add-on configuration for given add-on ID.",
         "operationId": "getAddonConfiguration",
         "parameters": [
@@ -1605,12 +1735,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Updates an add-on configuration for given ID and returns the old configuration.",
         "operationId": "updateAddonConfiguration",
         "parameters": [
@@ -1668,14 +1802,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/addons/services": {
       "get": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Get all add-on types.",
         "operationId": "getAddonTypes",
         "parameters": [
@@ -1705,14 +1843,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/addons/suggestions": {
       "get": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Get suggested add-ons to be installed.",
         "operationId": "getSuggestedAddons",
         "parameters": [
@@ -1742,14 +1884,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/addons/types": {
       "get": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Get add-on services.",
         "operationId": "getAddonServices",
         "parameters": [
@@ -1790,14 +1936,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/addons/{addonId}/install": {
       "post": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Installs the add-on with the given ID.",
         "operationId": "installAddonById",
         "parameters": [
@@ -1830,14 +1980,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/addons/url/{url}/install": {
       "post": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Installs the add-on from the given URL.",
         "operationId": "installAddonFromURL",
         "parameters": [
@@ -1861,14 +2015,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/addons/{addonId}/uninstall": {
       "post": {
-        "tags": ["addons"],
+        "tags": [
+          "addons"
+        ],
         "summary": "Uninstalls the add-on with the given ID.",
         "operationId": "uninstallAddon",
         "parameters": [
@@ -1901,14 +2059,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/channel-types": {
       "get": {
-        "tags": ["channel-types"],
+        "tags": [
+          "channel-types"
+        ],
         "summary": "Gets all available channel types.",
         "operationId": "getChannelTypes",
         "parameters": [
@@ -1947,14 +2109,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/channel-types/{channelTypeUID}": {
       "get": {
-        "tags": ["channel-types"],
+        "tags": [
+          "channel-types"
+        ],
         "summary": "Gets channel type by UID.",
         "operationId": "getChannelTypeByUID",
         "parameters": [
@@ -1996,14 +2162,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/channel-types/{channelTypeUID}/linkableItemTypes": {
       "get": {
-        "tags": ["channel-types"],
+        "tags": [
+          "channel-types"
+        ],
         "summary": "Gets the item types the given trigger channel type UID can be linked to.",
         "operationId": "getLinkableItemTypesByChannelTypeUID",
         "parameters": [
@@ -2041,14 +2211,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/config-descriptions": {
       "get": {
-        "tags": ["config-descriptions"],
+        "tags": [
+          "config-descriptions"
+        ],
         "summary": "Gets all available config descriptions.",
         "operationId": "getConfigDescriptions",
         "parameters": [
@@ -2086,14 +2260,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/config-descriptions/{uri}": {
       "get": {
-        "tags": ["config-descriptions"],
+        "tags": [
+          "config-descriptions"
+        ],
         "summary": "Gets a config description by URI.",
         "operationId": "getConfigDescriptionByURI",
         "parameters": [
@@ -2135,14 +2313,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/discovery": {
       "get": {
-        "tags": ["discovery"],
+        "tags": [
+          "discovery"
+        ],
         "summary": "Gets all bindings that support discovery.",
         "operationId": "getBindingsWithDiscoverySupport",
         "responses": {
@@ -2163,14 +2345,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/discovery/bindings/{bindingId}/info": {
       "get": {
-        "tags": ["discovery"],
+        "tags": [
+          "discovery"
+        ],
         "summary": "Gets information about the discovery services for a binding.",
         "operationId": "getDiscoveryServicesInfo",
         "parameters": [
@@ -2209,14 +2395,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/discovery/bindings/{bindingId}/scan": {
       "post": {
-        "tags": ["discovery"],
+        "tags": [
+          "discovery"
+        ],
         "summary": "Starts asynchronous discovery process for a binding and returns the timeout in seconds of the discovery operation.",
         "operationId": "scan",
         "parameters": [
@@ -2256,14 +2446,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/inbox/{thingUID}/approve": {
       "post": {
-        "tags": ["inbox"],
+        "tags": [
+          "inbox"
+        ],
         "summary": "Approves the discovery result by adding the thing to the registry.",
         "operationId": "approveInboxItemById",
         "parameters": [
@@ -2319,14 +2513,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/inbox/{thingUID}": {
       "delete": {
-        "tags": ["inbox"],
+        "tags": [
+          "inbox"
+        ],
         "summary": "Removes the discovery result from the inbox.",
         "operationId": "removeItemFromInbox",
         "parameters": [
@@ -2350,14 +2548,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/inbox": {
       "get": {
-        "tags": ["inbox"],
+        "tags": [
+          "inbox"
+        ],
         "summary": "Get all discovered things.",
         "operationId": "getDiscoveredInboxItems",
         "parameters": [
@@ -2388,14 +2590,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/inbox/{thingUID}/ignore": {
       "post": {
-        "tags": ["inbox"],
+        "tags": [
+          "inbox"
+        ],
         "summary": "Flags a discovery result as ignored for further processing.",
         "operationId": "flagInboxItemAsIgnored",
         "parameters": [
@@ -2416,14 +2622,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/inbox/{thingUID}/unignore": {
       "post": {
-        "tags": ["inbox"],
+        "tags": [
+          "inbox"
+        ],
         "summary": "Removes ignore flag from a discovery result.",
         "operationId": "removeIgnoreFlagOnInboxItem",
         "parameters": [
@@ -2444,14 +2654,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/rules/check": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Checks if the specified rule(s) can be serialized to the target format.",
         "operationId": "canSerializeRules",
         "parameters": [
@@ -2461,7 +2675,10 @@
             "description": "Target format",
             "schema": {
               "type": "string",
-              "enum": ["application/vnd.openhab.dsl.rule", "application/yaml"],
+              "enum": [
+                "application/vnd.openhab.dsl.rule",
+                "application/yaml"
+              ],
               "default": "application/yaml"
             }
           }
@@ -2483,7 +2700,10 @@
               "examples": {
                 "Rule UID example": {
                   "description": "Rule UID example",
-                  "value": ["ruleUid1", "ruleUid2"]
+                  "value": [
+                    "ruleUid1",
+                    "ruleUid2"
+                  ]
                 },
                 "Rule example": {
                   "description": "Rule example",
@@ -2493,7 +2713,9 @@
                         "uid": "string",
                         "name": "string",
                         "description": "string",
-                        "tags": ["string"],
+                        "tags": [
+                          "string"
+                        ],
                         "triggers": [
                           {
                             "id": "string",
@@ -2574,14 +2796,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/create": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Create file format.",
         "operationId": "create",
         "parameters": [
@@ -2618,7 +2844,12 @@
             "description": "Decides what to include in serialized rules and rule templates",
             "schema": {
               "type": "string",
-              "enum": ["Normal", "Include all", "Stub only", "Strip template"],
+              "enum": [
+                "Normal",
+                "Include all",
+                "Stub only",
+                "Strip template"
+              ],
               "default": "Normal"
             }
           }
@@ -2641,7 +2872,7 @@
               "application/yaml": {
                 "schema": {
                   "type": "string",
-                  "example": "version: 1\ntags:\n  Equipment_MyEquipment:\n    label: My Equipment\n    description: This is my equipment\n    synonyms:\n      - My Equipments\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nrules:\n  MyRule:\n    label: Label\n    actions:\n      - config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script\n    triggers:\n      - config:\n          itemName: MyItem\n        type: ItemReceivedCommand\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
+                  "example": "version: 1\ntags:\n  Equipment_MyEquipment:\n    label: My Equipment\n    description: This is my equipment\n    synonyms:\n      - My Equipments\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nrules:\n  MyRule:\n    label: Label\n    triggers:\n      - config:\n          itemName: MyItem\n        type: ItemReceivedCommand\n    actions:\n      - config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
                 }
               },
               "text/vnd.openhab.dsl.thing": {
@@ -2682,14 +2913,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/items": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Create file format for a list of items in registry.",
         "operationId": "createFileFormatForItems",
         "parameters": [
@@ -2743,14 +2978,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/ruletemplates": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Create file format for a list of rule templates in the registry.",
         "operationId": "createFileFormatForRuleTemplates",
         "parameters": [
@@ -2760,7 +2999,10 @@
             "description": "Decides what to include in serialized rule templates",
             "schema": {
               "type": "string",
-              "enum": ["Normal", "Include all"],
+              "enum": [
+                "Normal",
+                "Include all"
+              ],
               "default": "Normal"
             }
           }
@@ -2785,7 +3027,7 @@
               "application/yaml": {
                 "schema": {
                   "type": "string",
-                  "example": "version: 1\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged"
+                  "example": "version: 1\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script"
                 }
               }
             }
@@ -2802,14 +3044,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/rules": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Create file format for a list of rules in the registry.",
         "operationId": "createFileFormatForRules",
         "parameters": [
@@ -2819,7 +3065,12 @@
             "description": "Decides what to include in serialized rules",
             "schema": {
               "type": "string",
-              "enum": ["Normal", "Include all", "Stub only", "Strip template"],
+              "enum": [
+                "Normal",
+                "Include all",
+                "Stub only",
+                "Strip template"
+              ],
               "default": "Normal"
             }
           }
@@ -2850,7 +3101,7 @@
               "application/yaml": {
                 "schema": {
                   "type": "string",
-                  "example": "version: 1\nrules:\n  MyRule:\n    label: My Rule\n    description: My rule description\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script\n    triggers:\n      - id: \"1\"\n        config:\n          time: 12:00\n        type: TimeOfDay"
+                  "example": "version: 1\nrules:\n  MyRule:\n    label: My Rule\n    description: My rule description\n    triggers:\n      - id: \"1\"\n        config:\n          time: 12:00\n        type: TimeOfDay\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script"
                 }
               }
             }
@@ -2867,14 +3118,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/tags": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Create file format for a list of semantic tags in registry.",
         "operationId": "createFileFormatForSemanticTags",
         "parameters": [
@@ -2931,14 +3186,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/sitemaps": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Create file format for a list of sitemaps in registry.",
         "operationId": "createFileFormatForSitemaps",
         "requestBody": {
@@ -2981,14 +3240,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/things": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Create file format for a list of things in things or discovery registry.",
         "operationId": "createFileFormatForThings",
         "parameters": [
@@ -3042,14 +3305,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/file-format/parse": {
       "post": {
-        "tags": ["file-format"],
+        "tags": [
+          "file-format"
+        ],
         "summary": "Parse file format.",
         "operationId": "parse",
         "requestBody": {
@@ -3058,7 +3325,7 @@
             "application/yaml": {
               "schema": {
                 "type": "string",
-                "example": "version: 1\ntags:\n  Equipment_MyEquipment:\n    label: My Equipment\n    description: This is my equipment\n    synonyms:\n      - My Equipments\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nrules:\n  MyRule:\n    label: Label\n    actions:\n      - config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script\n    triggers:\n      - config:\n          itemName: MyItem\n        type: ItemReceivedCommand\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
+                "example": "version: 1\ntags:\n  Equipment_MyEquipment:\n    label: My Equipment\n    description: This is my equipment\n    synonyms:\n      - My Equipments\nthings:\n  binding:typeBridge:idBridge:\n    isBridge: true\n    label: Label bridge\n    location: Location bridge\n    config:\n      stringParam: my value\n  binding:type:idBridge:id:\n    bridge: binding:typeBridge:idBridge\n    label: Label thing\n    location: Location thing\n    config:\n      booleanParam: true\n      decimalParam: 2.5\nitems:\n  Group1:\n    type: Group\n    label: Label\n  Group2:\n    type: Group\n    group:\n      type: Switch\n      function: Or\n      parameters:\n        - \"ON\"\n        - \"OFF\"\n    label: Label\n  MyItem:\n    type: Switch\n    label: Label\n    icon: icon\n    groups:\n      - Group1\n      - Group2\n    tags:\n      - Tag1\n      - Tag2\n    channel: binding:type:idBridge:id:channelid\n    metadata:\n      namespace:\n        value: my value\n        config:\n          param: my param value\nrules:\n  MyRule:\n    label: Label\n    triggers:\n      - config:\n          itemName: MyItem\n        type: ItemReceivedCommand\n    actions:\n      - config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"MyRule is running\")\n        type: Script\nruleTemplates:\n  my-template:\n    label: My Template\n    description: Logs when an Item state changes to ON\n    configDescriptions:\n      sourceItem:\n        context: item\n        description: The source Item whose state to monitor\n        label: Source Item\n        required: false\n        type: TEXT\n        readOnly: false\n        multiple: false\n        advanced: false\n        verify: false\n        limitToOptions: true\n    triggers:\n      - id: \"1\"\n        config:\n          itemName: \"{{sourceItem}}\"\n          state: \"ON\"\n          previousState: \"OFF\"\n        type: ItemChanged\n    actions:\n      - id: \"2\"\n        config:\n          type: DSL\n          script: |\n            logInfo(\"Test\", \"{{sourceItem}} turned on\")\n        type: Script\nsitemaps:\n  MySitemap:\n    label: My Sitemap\n    widgets:\n      - type: Frame\n        widgets:\n          - type: Input\n            item: MyItem\n            label: My Input"
               }
             },
             "text/vnd.openhab.dsl.thing": {
@@ -3108,14 +3375,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/items/{itemName}/members/{memberItemName}": {
       "put": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Adds a new member to a group item.",
         "operationId": "addMemberToGroupItem",
         "parameters": [
@@ -3153,12 +3424,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Removes an existing member from a group item.",
         "operationId": "removeMemberFromGroupItem",
         "parameters": [
@@ -3196,14 +3471,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/items/{itemName}/metadata/{namespace}": {
       "put": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Adds metadata to an item.",
         "operationId": "addMetadataToItem",
         "parameters": [
@@ -3257,12 +3536,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Removes metadata in a specific namespace from an item.",
         "operationId": "removeMetadataFromItem",
         "parameters": [
@@ -3302,14 +3585,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/items/{itemName}/tags/{tag}": {
       "put": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Adds a tag to an item.",
         "operationId": "addTagToItem",
         "parameters": [
@@ -3346,12 +3633,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Removes a tag from an item.",
         "operationId": "removeTagFromItem",
         "parameters": [
@@ -3388,14 +3679,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/items/{itemName}": {
       "get": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Gets a single item.",
         "operationId": "getItemByName",
         "parameters": [
@@ -3469,7 +3764,9 @@
         }
       },
       "put": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Adds a new item to the registry or updates the existing item.",
         "operationId": "addOrUpdateItemInRegistry",
         "parameters": [
@@ -3529,12 +3826,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "post": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Sends a command to an item.",
         "operationId": "sendItemCommand",
         "parameters": [
@@ -3599,7 +3900,9 @@
         }
       },
       "delete": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Removes an item from the registry.",
         "operationId": "removeItemFromRegistry",
         "parameters": [
@@ -3624,14 +3927,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/items": {
       "get": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Get all available items.",
         "operationId": "getItems",
         "parameters": [
@@ -3729,7 +4036,9 @@
         }
       },
       "put": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Adds a list of items to the registry or updates the existing items.",
         "operationId": "addOrUpdateItemsInRegistry",
         "requestBody": {
@@ -3763,14 +4072,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/items/{itemName}/state": {
       "get": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Gets the state of an item.",
         "operationId": "getItemState_1",
         "parameters": [
@@ -3802,7 +4115,9 @@
         }
       },
       "put": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Updates the state of an item.",
         "operationId": "updateItemState",
         "parameters": [
@@ -3876,7 +4191,9 @@
     },
     "/items/{itemName}/metadata/namespaces": {
       "get": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Gets the namespace of an item.",
         "operationId": "getItemNamespaces",
         "parameters": [
@@ -3918,7 +4235,9 @@
     },
     "/items/{itemName}/semantic/{semanticClass}": {
       "get": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Gets the item which defines the requested semantics of an item.",
         "operationId": "getSemanticItem",
         "parameters": [
@@ -3970,7 +4289,9 @@
     },
     "/items/semantics/health": {
       "get": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Gets configuration problems with item semantics.",
         "operationId": "getSemanticsHealth",
         "responses": {
@@ -3993,14 +4314,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/items/metadata/purge": {
       "post": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Remove unused/orphaned metadata.",
         "operationId": "purgeDatabase",
         "responses": {
@@ -4010,14 +4335,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/items/{itemName}/metadata": {
       "delete": {
-        "tags": ["items"],
+        "tags": [
+          "items"
+        ],
         "summary": "Removes all managed metadata from an item.",
         "operationId": "removeAllMetadataFromItem",
         "parameters": [
@@ -4042,14 +4371,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/links": {
       "get": {
-        "tags": ["links"],
+        "tags": [
+          "links"
+        ],
         "summary": "Gets all available links.",
         "operationId": "getItemLinks",
         "parameters": [
@@ -4087,14 +4420,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/links/{itemName}/{channelUID}": {
       "get": {
-        "tags": ["links"],
+        "tags": [
+          "links"
+        ],
         "summary": "Retrieves an individual link.",
         "operationId": "getItemLink",
         "parameters": [
@@ -4134,12 +4471,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["links"],
+        "tags": [
+          "links"
+        ],
         "summary": "Links an item to a channel.",
         "operationId": "linkItemToChannel",
         "parameters": [
@@ -4185,12 +4526,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["links"],
+        "tags": [
+          "links"
+        ],
         "summary": "Unlinks an item from a channel.",
         "operationId": "unlinkItemFromChannel",
         "parameters": [
@@ -4229,14 +4574,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/links/orphans": {
       "get": {
-        "tags": ["links"],
+        "tags": [
+          "links"
+        ],
         "summary": "Get orphan links between items and broken/non-existent thing channels",
         "operationId": "getOrphanLinks",
         "responses": {
@@ -4256,14 +4605,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/links/purge": {
       "post": {
-        "tags": ["links"],
+        "tags": [
+          "links"
+        ],
         "summary": "Remove unused/orphaned links.",
         "operationId": "purgeDatabase_1",
         "responses": {
@@ -4273,14 +4626,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/links/{object}": {
       "delete": {
-        "tags": ["links"],
+        "tags": [
+          "links"
+        ],
         "summary": "Delete all links that refer to an item or thing.",
         "operationId": "removeAllLinksForObject",
         "parameters": [
@@ -4301,14 +4658,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/persistence/{serviceId}": {
       "get": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Gets a persistence service configuration.",
         "operationId": "getPersistenceServiceConfiguration",
         "parameters": [
@@ -4340,12 +4701,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Sets a persistence service configuration.",
         "operationId": "putPersistenceServiceConfiguration",
         "parameters": [
@@ -4394,12 +4759,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Deletes a persistence service configuration.",
         "operationId": "deletePersistenceServiceConfiguration",
         "parameters": [
@@ -4427,14 +4796,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/persistence/items/{itemName}": {
       "get": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Gets Item persistence data from the persistence service.",
         "operationId": "getItemDataFromPersistenceService",
         "parameters": [
@@ -4543,7 +4916,9 @@
         }
       },
       "put": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Stores Item persistence data into the persistence service.",
         "operationId": "storeItemDataInPersistenceService",
         "parameters": [
@@ -4597,12 +4972,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Deletes Item persistence data from a specific persistence service in a given time range.",
         "operationId": "deleteItemFromPersistenceService",
         "parameters": [
@@ -4667,14 +5046,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/persistence/health": {
       "get": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Gets configuration problems with persistence services.",
         "operationId": "getPersistenceHealth",
         "responses": {
@@ -4695,14 +5078,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/persistence/items": {
       "get": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Gets a list of stored Items available via a specific persistence service with their stored name.",
         "operationId": "getItemsForPersistenceService",
         "parameters": [
@@ -4747,14 +5134,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/persistence/strategysuggestions": {
       "get": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Gets a persistence service suggested strategies.",
         "operationId": "getPersistenceServiceStrategySuggestions",
         "parameters": [
@@ -4796,14 +5187,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/persistence": {
       "get": {
-        "tags": ["persistence"],
+        "tags": [
+          "persistence"
+        ],
         "summary": "Gets a list of persistence services.",
         "operationId": "getPersistenceServices",
         "parameters": [
@@ -4833,14 +5228,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/profile-types": {
       "get": {
-        "tags": ["profile-types"],
+        "tags": [
+          "profile-types"
+        ],
         "summary": "Gets all available profile types.",
         "operationId": "getProfileTypes",
         "parameters": [
@@ -4887,14 +5286,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/services/{serviceId}/config": {
       "get": {
-        "tags": ["services"],
+        "tags": [
+          "services"
+        ],
         "summary": "Get service configuration for given service ID.",
         "operationId": "getServiceConfig",
         "parameters": [
@@ -4925,12 +5328,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["services"],
+        "tags": [
+          "services"
+        ],
         "summary": "Updates a service configuration for given service ID and returns the old configuration.",
         "operationId": "updateServiceConfig",
         "parameters": [
@@ -4981,12 +5388,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["services"],
+        "tags": [
+          "services"
+        ],
         "summary": "Deletes a service configuration for given service ID and returns the old configuration.",
         "operationId": "deleteServiceConfig",
         "parameters": [
@@ -5020,14 +5431,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/services": {
       "get": {
-        "tags": ["services"],
+        "tags": [
+          "services"
+        ],
         "summary": "Get all configurable services.",
         "operationId": "getServices",
         "parameters": [
@@ -5057,14 +5472,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/services/{serviceId}": {
       "get": {
-        "tags": ["services"],
+        "tags": [
+          "services"
+        ],
         "summary": "Get configurable service for given service ID.",
         "operationId": "getServicesById",
         "parameters": [
@@ -5103,14 +5522,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/services/{serviceId}/contexts": {
       "get": {
-        "tags": ["services"],
+        "tags": [
+          "services"
+        ],
         "summary": "Get existing multiple context service configurations for the given factory PID.",
         "operationId": "getServiceContext",
         "parameters": [
@@ -5149,14 +5572,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/tags": {
       "get": {
-        "tags": ["tags"],
+        "tags": [
+          "tags"
+        ],
         "summary": "Get all available semantic tags.",
         "operationId": "getSemanticTags",
         "parameters": [
@@ -5186,7 +5613,9 @@
         }
       },
       "post": {
-        "tags": ["tags"],
+        "tags": [
+          "tags"
+        ],
         "summary": "Creates a new semantic tag and adds it to the registry.",
         "operationId": "createSemanticTag",
         "parameters": [
@@ -5230,14 +5659,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/tags/{tagId}": {
       "get": {
-        "tags": ["tags"],
+        "tags": [
+          "tags"
+        ],
         "summary": "Gets a semantic tag and its sub tags.",
         "operationId": "getSemanticTagAndSubTags",
         "parameters": [
@@ -5279,7 +5712,9 @@
         }
       },
       "put": {
-        "tags": ["tags"],
+        "tags": [
+          "tags"
+        ],
         "summary": "Updates a semantic tag.",
         "operationId": "updateSemanticTag",
         "parameters": [
@@ -5332,12 +5767,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["tags"],
+        "tags": [
+          "tags"
+        ],
         "summary": "Removes a semantic tag and its sub tags from the registry.",
         "operationId": "removeSemanticTag",
         "parameters": [
@@ -5372,14 +5811,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things": {
       "get": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Get all available things.",
         "operationId": "getThings",
         "parameters": [
@@ -5427,12 +5870,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "post": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Creates a new thing and adds it to the registry.",
         "operationId": "createThingInRegistry",
         "parameters": [
@@ -5476,14 +5923,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things/{thingUID}": {
       "get": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Gets thing by UID.",
         "operationId": "getThingById",
         "parameters": [
@@ -5522,12 +5973,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Updates a thing.",
         "operationId": "updateThing",
         "parameters": [
@@ -5580,12 +6035,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Removes a thing from the registry. Set 'force' to __true__ if you want the thing to be removed immediately.",
         "operationId": "removeThingById",
         "parameters": [
@@ -5632,14 +6091,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things/{thingUID}/config/status": {
       "get": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Gets thing config status.",
         "operationId": "getThingConfigStatus",
         "parameters": [
@@ -5681,14 +6144,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things/{thingUID}/firmware/status": {
       "get": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Gets thing's firmware status.",
         "operationId": "getThingFirmwareStatus",
         "parameters": [
@@ -5727,14 +6194,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things/{thingUID}/firmwares": {
       "get": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Get all available firmwares for provided thing UID",
         "operationId": "getAvailableFirmwaresForThing",
         "parameters": [
@@ -5777,14 +6248,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things/{thingUID}/status": {
       "get": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Gets thing status.",
         "operationId": "getThingStatus",
         "parameters": [
@@ -5823,14 +6298,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things/{thingUID}/enable": {
       "put": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Sets the thing enabled status.",
         "operationId": "enableThing",
         "parameters": [
@@ -5879,14 +6358,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things/{thingUID}/config": {
       "put": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Updates thing's configuration.",
         "operationId": "updateThingConfig",
         "parameters": [
@@ -5944,14 +6427,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/things/{thingUID}/firmware/{firmwareVersion}": {
       "put": {
-        "tags": ["things"],
+        "tags": [
+          "things"
+        ],
         "summary": "Update thing firmware.",
         "operationId": "updateThingFirmware",
         "parameters": [
@@ -5995,14 +6482,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/thing-types": {
       "get": {
-        "tags": ["thing-types"],
+        "tags": [
+          "thing-types"
+        ],
         "summary": "Gets all available thing types without config description, channels and properties.",
         "operationId": "getThingTypes",
         "parameters": [
@@ -6043,7 +6534,9 @@
     },
     "/thing-types/{thingTypeUID}": {
       "get": {
-        "tags": ["thing-types"],
+        "tags": [
+          "thing-types"
+        ],
         "summary": "Gets thing type by UID.",
         "operationId": "getThingTypeById",
         "parameters": [
@@ -6084,7 +6577,9 @@
     },
     "/": {
       "get": {
-        "tags": ["root"],
+        "tags": [
+          "root"
+        ],
         "summary": "Gets information about the runtime, the API version and links to resources.",
         "operationId": "getRoot",
         "responses": {
@@ -6103,7 +6598,9 @@
     },
     "/systeminfo": {
       "get": {
-        "tags": ["systeminfo"],
+        "tags": [
+          "systeminfo"
+        ],
         "summary": "Gets information about the system.",
         "operationId": "getSystemInformation",
         "responses": {
@@ -6120,14 +6617,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/systeminfo/uom": {
       "get": {
-        "tags": ["systeminfo"],
+        "tags": [
+          "systeminfo"
+        ],
         "summary": "Get all supported dimensions and their system units.",
         "operationId": "getUoMInformation",
         "responses": {
@@ -6144,14 +6645,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/sitemaps/events/subscribe": {
       "post": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Creates a sitemap event subscription.",
         "operationId": "createSitemapEventSubscription",
         "responses": {
@@ -6166,7 +6671,9 @@
     },
     "/sitemaps/{sitemapname}": {
       "get": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Get sitemap by name.",
         "operationId": "getSitemapByName",
         "parameters": [
@@ -6211,7 +6718,9 @@
         }
       },
       "put": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Adds a new sitemap to the registry or updates the existing sitemap.",
         "operationId": "addOrUpdateSitemapInRegistry",
         "parameters": [
@@ -6267,12 +6776,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Removes a sitemap from the registry.",
         "operationId": "removeSitemapFromRegistry",
         "parameters": [
@@ -6300,14 +6813,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/sitemaps/{sitemapname}/{pageid}": {
       "get": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Polls the data for one page of a sitemap.",
         "operationId": "pollDataForPage",
         "parameters": [
@@ -6378,7 +6895,9 @@
     },
     "/sitemaps/{sitemapname}/*": {
       "get": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Polls the data for a whole sitemap. Not recommended due to potentially high traffic.",
         "operationId": "pollDataForSitemap",
         "parameters": [
@@ -6439,7 +6958,9 @@
     },
     "/sitemaps/{sitemapname}/definition": {
       "get": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Get sitemap definition by name.",
         "operationId": "getSitemapDefinitionByName",
         "parameters": [
@@ -6473,7 +6994,9 @@
     },
     "/sitemaps/events/{subscriptionid}/*": {
       "get": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Get sitemap events for a whole sitemap. Not recommended due to potentially high traffic.",
         "operationId": "getSitemapEvents",
         "parameters": [
@@ -6511,7 +7034,9 @@
     },
     "/sitemaps/events/{subscriptionid}": {
       "get": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Get sitemap events.",
         "operationId": "getSitemapEvents_1",
         "parameters": [
@@ -6557,7 +7082,9 @@
     },
     "/sitemaps": {
       "get": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Get all available sitemaps.",
         "operationId": "getSitemaps",
         "responses": {
@@ -6579,7 +7106,9 @@
     },
     "/sitemaps/*/definition": {
       "get": {
-        "tags": ["sitemaps"],
+        "tags": [
+          "sitemaps"
+        ],
         "summary": "Get all available sitemap definitions.",
         "operationId": "getSitemapDefinitions",
         "responses": {
@@ -6601,7 +7130,9 @@
     },
     "/events/states": {
       "get": {
-        "tags": ["events"],
+        "tags": [
+          "events"
+        ],
         "summary": "Initiates a new item state tracker connection",
         "operationId": "initNewStateTacker",
         "responses": {
@@ -6613,7 +7144,9 @@
     },
     "/events": {
       "get": {
-        "tags": ["events"],
+        "tags": [
+          "events"
+        ],
         "summary": "Get all events.",
         "operationId": "getEvents",
         "parameters": [
@@ -6638,7 +7171,9 @@
     },
     "/events/states/{connectionId}": {
       "post": {
-        "tags": ["events"],
+        "tags": [
+          "events"
+        ],
         "summary": "Changes the list of items a SSE connection will receive state updates to.",
         "operationId": "updateItemListForStateUpdates",
         "parameters": [
@@ -6677,7 +7212,9 @@
     },
     "/transformations/{uid}": {
       "get": {
-        "tags": ["transformations"],
+        "tags": [
+          "transformations"
+        ],
         "summary": "Get a single transformation",
         "operationId": "getTransformation",
         "parameters": [
@@ -6708,12 +7245,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["transformations"],
+        "tags": [
+          "transformations"
+        ],
         "summary": "Put a single transformation",
         "operationId": "putTransformation",
         "parameters": [
@@ -6751,12 +7292,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["transformations"],
+        "tags": [
+          "transformations"
+        ],
         "summary": "Get a single transformation",
         "operationId": "deleteTransformation",
         "parameters": [
@@ -6783,14 +7328,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/transformations/services": {
       "get": {
-        "tags": ["transformations"],
+        "tags": [
+          "transformations"
+        ],
         "summary": "Get all transformation services",
         "operationId": "getTransformationServices",
         "responses": {
@@ -6810,14 +7359,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/transformations": {
       "get": {
-        "tags": ["transformations"],
+        "tags": [
+          "transformations"
+        ],
         "summary": "Get a list of all transformations",
         "operationId": "getTransformations",
         "responses": {
@@ -6837,14 +7390,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/ui/components/{namespace}": {
       "get": {
-        "tags": ["ui"],
+        "tags": [
+          "ui"
+        ],
         "summary": "Get all registered UI components in the specified namespace.",
         "operationId": "getRegisteredUIComponentsInNamespace",
         "parameters": [
@@ -6882,7 +7439,9 @@
         }
       },
       "post": {
-        "tags": ["ui"],
+        "tags": [
+          "ui"
+        ],
         "summary": "Add a UI component in the specified namespace.",
         "operationId": "addUIComponentToNamespace",
         "parameters": [
@@ -6918,14 +7477,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/ui/components/{namespace}/{componentUID}": {
       "get": {
-        "tags": ["ui"],
+        "tags": [
+          "ui"
+        ],
         "summary": "Get a specific UI component in the specified namespace.",
         "operationId": "getUIComponentInNamespace",
         "parameters": [
@@ -6963,7 +7526,9 @@
         }
       },
       "put": {
-        "tags": ["ui"],
+        "tags": [
+          "ui"
+        ],
         "summary": "Update a specific UI component in the specified namespace.",
         "operationId": "updateUIComponentInNamespace",
         "parameters": [
@@ -7013,12 +7578,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["ui"],
+        "tags": [
+          "ui"
+        ],
         "summary": "Remove a specific UI component in the specified namespace.",
         "operationId": "removeUIComponentFromNamespace",
         "parameters": [
@@ -7052,14 +7621,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/ui/tiles": {
       "get": {
-        "tags": ["ui"],
+        "tags": [
+          "ui"
+        ],
         "summary": "Get all registered UI tiles.",
         "operationId": "getUITiles",
         "responses": {
@@ -7081,7 +7654,9 @@
     },
     "/voice/conversations/{id}": {
       "get": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Get a conversation.",
         "operationId": "getConversationById",
         "parameters": [
@@ -7113,7 +7688,9 @@
         }
       },
       "delete": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Deletes a full conversation or its messages since a given message id.",
         "operationId": "deleteConversationById",
         "parameters": [
@@ -7149,7 +7726,9 @@
     },
     "/voice/defaultvoice": {
       "get": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Gets the default voice.",
         "operationId": "getDefaultVoice",
         "responses": {
@@ -7171,7 +7750,9 @@
     },
     "/voice/interpreters/{id}": {
       "get": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Gets a single interpreter.",
         "operationId": "getVoiceInterpreterByUID",
         "parameters": [
@@ -7216,7 +7797,9 @@
     },
     "/voice/interpreters": {
       "get": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Get the list of all interpreters.",
         "operationId": "getVoiceInterpreters",
         "parameters": [
@@ -7246,7 +7829,9 @@
         }
       },
       "post": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Sends a text to the default human language interpreter.",
         "operationId": "interpretTextByDefaultInterpreter",
         "parameters": [
@@ -7269,11 +7854,12 @@
           {
             "name": "llmTools",
             "in": "query",
-            "description": "Comma separated list of llm-tool ids",
+            "description": "Comma separated list of llm-tool ids or * wildcard",
             "schema": {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "string",
+                "default": "*"
               }
             }
           },
@@ -7319,7 +7905,9 @@
     },
     "/voice/llmtools": {
       "get": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Get the list of all LLM tools.",
         "operationId": "getLLMTools",
         "parameters": [
@@ -7351,7 +7939,9 @@
     },
     "/voice/voices": {
       "get": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Get the list of all voices.",
         "operationId": "getVoices",
         "responses": {
@@ -7373,7 +7963,9 @@
     },
     "/voice/interpreters/{ids}": {
       "post": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Sends a text to a given human language interpreter(s).",
         "operationId": "interpretText",
         "parameters": [
@@ -7396,11 +7988,12 @@
           {
             "name": "llmTools",
             "in": "query",
-            "description": "Comma separated list of llm-tool ids",
+            "description": "Comma separated list of llm-tool ids or * wildcard",
             "schema": {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "string",
+                "default": "*"
               }
             }
           },
@@ -7458,7 +8051,9 @@
     },
     "/voice/conversations": {
       "get": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Get the metadata of all conversations.",
         "operationId": "listConversations",
         "responses": {
@@ -7480,7 +8075,9 @@
     },
     "/voice/listenandanswer": {
       "post": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Executes a simple dialog sequence without keyword spotting for a given audio source.",
         "operationId": "listenAndAnswer",
         "parameters": [
@@ -7567,7 +8164,9 @@
     },
     "/voice/say": {
       "post": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Speaks a given text with a given voice through the given audio sink.",
         "operationId": "textToSpeech",
         "parameters": [
@@ -7616,7 +8215,9 @@
     },
     "/voice/dialog/start": {
       "post": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Start dialog processing for a given audio source.",
         "operationId": "startDialog",
         "parameters": [
@@ -7716,7 +8317,9 @@
     },
     "/voice/dialog/stop": {
       "post": {
-        "tags": ["voice"],
+        "tags": [
+          "voice"
+        ],
         "summary": "Stop dialog processing for a given audio source.",
         "operationId": "stopDialog",
         "parameters": [
@@ -7744,7 +8347,9 @@
     },
     "/logging/{loggerName}": {
       "get": {
-        "tags": ["logging"],
+        "tags": [
+          "logging"
+        ],
         "summary": "Get a single logger.",
         "operationId": "getLogger",
         "parameters": [
@@ -7773,12 +8378,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "put": {
-        "tags": ["logging"],
+        "tags": [
+          "logging"
+        ],
         "summary": "Modify or add logger",
         "operationId": "putLogger",
         "parameters": [
@@ -7814,12 +8423,16 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       },
       "delete": {
-        "tags": ["logging"],
+        "tags": [
+          "logging"
+        ],
         "summary": "Remove a single logger.",
         "operationId": "removeLogger",
         "parameters": [
@@ -7841,14 +8454,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/logging": {
       "get": {
-        "tags": ["logging"],
+        "tags": [
+          "logging"
+        ],
         "summary": "Get all loggers",
         "operationId": "getLogger_1",
         "responses": {
@@ -7865,14 +8482,18 @@
         },
         "security": [
           {
-            "oauth2": ["admin"]
+            "oauth2": [
+              "admin"
+            ]
           }
         ]
       }
     },
     "/iconsets": {
       "get": {
-        "tags": ["iconsets"],
+        "tags": [
+          "iconsets"
+        ],
         "summary": "Gets all icon sets.",
         "operationId": "getIconSets",
         "parameters": [
@@ -7906,7 +8527,10 @@
   "components": {
     "schemas": {
       "ConfigDescriptionParameter": {
-        "required": ["name", "type"],
+        "required": [
+          "name",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "context": {
@@ -7929,7 +8553,12 @@
           },
           "type": {
             "type": "string",
-            "enum": ["TEXT", "INTEGER", "DECIMAL", "BOOLEAN"]
+            "enum": [
+              "TEXT",
+              "INTEGER",
+              "DECIMAL",
+              "BOOLEAN"
+            ]
           },
           "min": {
             "type": "number"
@@ -7997,7 +8626,12 @@
         }
       },
       "ModuleType": {
-        "required": ["configDescriptions", "tags", "uid", "visibility"],
+        "required": [
+          "configDescriptions",
+          "tags",
+          "uid",
+          "visibility"
+        ],
         "type": "object",
         "properties": {
           "uid": {
@@ -8005,7 +8639,11 @@
           },
           "visibility": {
             "type": "string",
-            "enum": ["VISIBLE", "HIDDEN", "EXPERT"]
+            "enum": [
+              "VISIBLE",
+              "HIDDEN",
+              "EXPERT"
+            ]
           },
           "tags": {
             "uniqueItems": true,
@@ -8040,7 +8678,12 @@
         }
       },
       "Action": {
-        "required": ["configuration", "id", "inputs", "type"],
+        "required": [
+          "configuration",
+          "id",
+          "inputs",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8070,7 +8713,12 @@
         }
       },
       "Condition": {
-        "required": ["configuration", "id", "inputs", "type"],
+        "required": [
+          "configuration",
+          "id",
+          "inputs",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8164,7 +8812,11 @@
           },
           "visibility": {
             "type": "string",
-            "enum": ["VISIBLE", "HIDDEN", "EXPERT"]
+            "enum": [
+              "VISIBLE",
+              "HIDDEN",
+              "EXPERT"
+            ]
           },
           "description": {
             "type": "string"
@@ -8172,7 +8824,11 @@
         }
       },
       "Trigger": {
-        "required": ["configuration", "id", "type"],
+        "required": [
+          "configuration",
+          "id",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8261,7 +8917,11 @@
           },
           "visibility": {
             "type": "string",
-            "enum": ["VISIBLE", "HIDDEN", "EXPERT"]
+            "enum": [
+              "VISIBLE",
+              "HIDDEN",
+              "EXPERT"
+            ]
           },
           "description": {
             "type": "string"
@@ -8279,7 +8939,12 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["UNINITIALIZED", "INITIALIZING", "IDLE", "RUNNING"]
+            "enum": [
+              "UNINITIALIZED",
+              "INITIALIZING",
+              "IDLE",
+              "RUNNING"
+            ]
           },
           "statusDetail": {
             "type": "string",
@@ -8302,19 +8967,19 @@
       "Module": {
         "type": "object",
         "properties": {
-          "typeUID": {
-            "type": "string"
-          },
           "configuration": {
             "$ref": "#/components/schemas/Configuration"
+          },
+          "typeUID": {
+            "type": "string"
           },
           "id": {
             "type": "string"
           },
-          "label": {
+          "description": {
             "type": "string"
           },
-          "description": {
+          "label": {
             "type": "string"
           }
         }
@@ -8363,7 +9028,11 @@
           },
           "visibility": {
             "type": "string",
-            "enum": ["VISIBLE", "HIDDEN", "EXPERT"]
+            "enum": [
+              "VISIBLE",
+              "HIDDEN",
+              "EXPERT"
+            ]
           },
           "configDescriptions": {
             "type": "array",
@@ -8455,7 +9124,10 @@
         }
       },
       "ThingAction": {
-        "required": ["actionUid", "inputs"],
+        "required": [
+          "actionUid",
+          "inputs"
+        ],
         "type": "object",
         "properties": {
           "actionUid": {
@@ -8469,7 +9141,11 @@
           },
           "visibility": {
             "type": "string",
-            "enum": ["VISIBLE", "HIDDEN", "EXPERT"]
+            "enum": [
+              "VISIBLE",
+              "HIDDEN",
+              "EXPERT"
+            ]
           },
           "inputs": {
             "type": "array",
@@ -8492,7 +9168,9 @@
         }
       },
       "AudioSink": {
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8504,7 +9182,9 @@
         }
       },
       "AudioSource": {
-        "required": ["id"],
+        "required": [
+          "id"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -8685,7 +9365,15 @@
         }
       },
       "ChannelType": {
-        "required": ["UID", "advanced", "kind", "label", "parameterGroups", "parameters", "tags"],
+        "required": [
+          "UID",
+          "advanced",
+          "kind",
+          "label",
+          "parameterGroups",
+          "parameters",
+          "tags"
+        ],
         "type": "object",
         "properties": {
           "parameters": {
@@ -8717,7 +9405,10 @@
           },
           "kind": {
             "type": "string",
-            "enum": ["STATE", "TRIGGER"]
+            "enum": [
+              "STATE",
+              "TRIGGER"
+            ]
           },
           "stateDescription": {
             "$ref": "#/components/schemas/StateDescription"
@@ -8763,7 +9454,10 @@
         }
       },
       "ConfigDescriptionParameterGroup": {
-        "required": ["advanced", "name"],
+        "required": [
+          "advanced",
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -8821,7 +9515,10 @@
         }
       },
       "EnrichedConfigDescription": {
-        "required": ["parameterGroups", "parameters"],
+        "required": [
+          "parameterGroups",
+          "parameters"
+        ],
         "type": "object",
         "properties": {
           "uri": {
@@ -8842,7 +9539,10 @@
         }
       },
       "EnrichedConfigDescriptionParameter": {
-        "required": ["name", "type"],
+        "required": [
+          "name",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "context": {
@@ -8865,7 +9565,12 @@
           },
           "type": {
             "type": "string",
-            "enum": ["TEXT", "INTEGER", "DECIMAL", "BOOLEAN"]
+            "enum": [
+              "TEXT",
+              "INTEGER",
+              "DECIMAL",
+              "BOOLEAN"
+            ]
           },
           "min": {
             "type": "number"
@@ -8928,7 +9633,9 @@
         }
       },
       "DiscoveryInfo": {
-        "required": ["inputSupported"],
+        "required": [
+          "inputSupported"
+        ],
         "type": "object",
         "properties": {
           "inputSupported": {
@@ -8943,7 +9650,12 @@
         }
       },
       "DiscoveryResult": {
-        "required": ["flag", "label", "properties", "thingUID"],
+        "required": [
+          "flag",
+          "label",
+          "properties",
+          "thingUID"
+        ],
         "type": "object",
         "properties": {
           "bridgeUID": {
@@ -8951,7 +9663,10 @@
           },
           "flag": {
             "type": "string",
-            "enum": ["NEW", "IGNORED"]
+            "enum": [
+              "NEW",
+              "IGNORED"
+            ]
           },
           "label": {
             "type": "string"
@@ -9001,12 +9716,14 @@
       "JsonArray": {
         "type": "object",
         "properties": {
-          "asNumber": {
+          "asBigDecimal": {
             "type": "number"
           },
-          "asFloat": {
-            "type": "number",
-            "format": "float"
+          "asBigInteger": {
+            "type": "integer"
+          },
+          "asNumber": {
+            "type": "number"
           },
           "asByte": {
             "type": "string",
@@ -9015,17 +9732,18 @@
           "asCharacter": {
             "type": "string"
           },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
           "asShort": {
             "type": "integer",
             "format": "int32"
           },
-          "asBigDecimal": {
-            "type": "number"
-          },
-          "asBigInteger": {
-            "type": "integer"
-          },
           "empty": {
+            "type": "boolean"
+          },
+          "asBoolean": {
             "type": "boolean"
           },
           "asString": {
@@ -9043,24 +9761,6 @@
             "type": "integer",
             "format": "int64"
           },
-          "asBoolean": {
-            "type": "boolean"
-          },
-          "jsonObject": {
-            "type": "boolean"
-          },
-          "jsonArray": {
-            "type": "boolean"
-          },
-          "jsonNull": {
-            "type": "boolean"
-          },
-          "asJsonArray": {
-            "$ref": "#/components/schemas/JsonArray"
-          },
-          "asJsonNull": {
-            "$ref": "#/components/schemas/JsonNull"
-          },
           "jsonPrimitive": {
             "type": "boolean"
           },
@@ -9069,45 +9769,27 @@
           },
           "asJsonPrimitive": {
             "$ref": "#/components/schemas/JsonPrimitive"
+          },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "jsonObject": {
+            "type": "boolean"
           }
         }
       },
       "JsonElement": {
         "type": "object",
         "properties": {
-          "jsonObject": {
-            "type": "boolean"
-          },
-          "jsonArray": {
-            "type": "boolean"
-          },
-          "jsonNull": {
-            "type": "boolean"
-          },
-          "asJsonArray": {
-            "$ref": "#/components/schemas/JsonArray"
-          },
-          "asJsonNull": {
-            "$ref": "#/components/schemas/JsonNull"
-          },
-          "asNumber": {
-            "type": "number"
-          },
-          "asFloat": {
-            "type": "number",
-            "format": "float"
-          },
-          "asByte": {
-            "type": "string",
-            "format": "byte"
-          },
-          "asCharacter": {
-            "type": "string"
-          },
-          "asShort": {
-            "type": "integer",
-            "format": "int32"
-          },
           "jsonPrimitive": {
             "type": "boolean"
           },
@@ -9123,6 +9805,42 @@
           "asBigInteger": {
             "type": "integer"
           },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "jsonObject": {
+            "type": "boolean"
+          },
+          "asNumber": {
+            "type": "number"
+          },
+          "asByte": {
+            "type": "string",
+            "format": "byte"
+          },
+          "asCharacter": {
+            "type": "string"
+          },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
+          "asShort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
           "asString": {
             "type": "string"
           },
@@ -9137,48 +9855,12 @@
           "asLong": {
             "type": "integer",
             "format": "int64"
-          },
-          "asBoolean": {
-            "type": "boolean"
           }
         }
       },
       "JsonNull": {
         "type": "object",
         "properties": {
-          "jsonObject": {
-            "type": "boolean"
-          },
-          "jsonArray": {
-            "type": "boolean"
-          },
-          "jsonNull": {
-            "type": "boolean"
-          },
-          "asJsonArray": {
-            "$ref": "#/components/schemas/JsonArray"
-          },
-          "asJsonNull": {
-            "$ref": "#/components/schemas/JsonNull"
-          },
-          "asNumber": {
-            "type": "number"
-          },
-          "asFloat": {
-            "type": "number",
-            "format": "float"
-          },
-          "asByte": {
-            "type": "string",
-            "format": "byte"
-          },
-          "asCharacter": {
-            "type": "string"
-          },
-          "asShort": {
-            "type": "integer",
-            "format": "int32"
-          },
           "jsonPrimitive": {
             "type": "boolean"
           },
@@ -9194,6 +9876,42 @@
           "asBigInteger": {
             "type": "integer"
           },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "jsonObject": {
+            "type": "boolean"
+          },
+          "asNumber": {
+            "type": "number"
+          },
+          "asByte": {
+            "type": "string",
+            "format": "byte"
+          },
+          "asCharacter": {
+            "type": "string"
+          },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
+          "asShort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
           "asString": {
             "type": "string"
           },
@@ -9208,9 +9926,6 @@
           "asLong": {
             "type": "integer",
             "format": "int64"
-          },
-          "asBoolean": {
-            "type": "boolean"
           }
         }
       },
@@ -9220,39 +9935,6 @@
           "empty": {
             "type": "boolean"
           },
-          "jsonObject": {
-            "type": "boolean"
-          },
-          "jsonArray": {
-            "type": "boolean"
-          },
-          "jsonNull": {
-            "type": "boolean"
-          },
-          "asJsonArray": {
-            "$ref": "#/components/schemas/JsonArray"
-          },
-          "asJsonNull": {
-            "$ref": "#/components/schemas/JsonNull"
-          },
-          "asNumber": {
-            "type": "number"
-          },
-          "asFloat": {
-            "type": "number",
-            "format": "float"
-          },
-          "asByte": {
-            "type": "string",
-            "format": "byte"
-          },
-          "asCharacter": {
-            "type": "string"
-          },
-          "asShort": {
-            "type": "integer",
-            "format": "int32"
-          },
           "jsonPrimitive": {
             "type": "boolean"
           },
@@ -9268,6 +9950,42 @@
           "asBigInteger": {
             "type": "integer"
           },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "jsonObject": {
+            "type": "boolean"
+          },
+          "asNumber": {
+            "type": "number"
+          },
+          "asByte": {
+            "type": "string",
+            "format": "byte"
+          },
+          "asCharacter": {
+            "type": "string"
+          },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
+          "asShort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "asBoolean": {
+            "type": "boolean"
+          },
           "asString": {
             "type": "string"
           },
@@ -9282,21 +10000,23 @@
           "asLong": {
             "type": "integer",
             "format": "int64"
-          },
-          "asBoolean": {
-            "type": "boolean"
           }
         }
       },
       "JsonPrimitive": {
         "type": "object",
         "properties": {
-          "asNumber": {
+          "asBigDecimal": {
             "type": "number"
           },
-          "asFloat": {
-            "type": "number",
-            "format": "float"
+          "asBigInteger": {
+            "type": "integer"
+          },
+          "boolean": {
+            "type": "boolean"
+          },
+          "asNumber": {
+            "type": "number"
           },
           "asByte": {
             "type": "string",
@@ -9305,24 +10025,22 @@
           "asCharacter": {
             "type": "string"
           },
+          "asFloat": {
+            "type": "number",
+            "format": "float"
+          },
           "asShort": {
             "type": "integer",
             "format": "int32"
           },
-          "string": {
-            "type": "boolean"
-          },
           "number": {
             "type": "boolean"
           },
-          "boolean": {
+          "string": {
             "type": "boolean"
           },
-          "asBigDecimal": {
-            "type": "number"
-          },
-          "asBigInteger": {
-            "type": "integer"
+          "asBoolean": {
+            "type": "boolean"
           },
           "asString": {
             "type": "string"
@@ -9339,24 +10057,6 @@
             "type": "integer",
             "format": "int64"
           },
-          "asBoolean": {
-            "type": "boolean"
-          },
-          "jsonObject": {
-            "type": "boolean"
-          },
-          "jsonArray": {
-            "type": "boolean"
-          },
-          "jsonNull": {
-            "type": "boolean"
-          },
-          "asJsonArray": {
-            "$ref": "#/components/schemas/JsonArray"
-          },
-          "asJsonNull": {
-            "$ref": "#/components/schemas/JsonNull"
-          },
           "jsonPrimitive": {
             "type": "boolean"
           },
@@ -9365,6 +10065,21 @@
           },
           "asJsonPrimitive": {
             "$ref": "#/components/schemas/JsonPrimitive"
+          },
+          "asJsonNull": {
+            "$ref": "#/components/schemas/JsonNull"
+          },
+          "asJsonArray": {
+            "$ref": "#/components/schemas/JsonArray"
+          },
+          "jsonArray": {
+            "type": "boolean"
+          },
+          "jsonNull": {
+            "type": "boolean"
+          },
+          "jsonObject": {
+            "type": "boolean"
           }
         }
       },
@@ -9386,7 +10101,14 @@
         }
       },
       "Channel": {
-        "required": ["configuration", "defaultTags", "id", "kind", "properties", "uid"],
+        "required": [
+          "configuration",
+          "defaultTags",
+          "id",
+          "kind",
+          "properties",
+          "uid"
+        ],
         "type": "object",
         "properties": {
           "uid": {
@@ -9476,7 +10198,9 @@
         }
       },
       "FileFormatChannelLink": {
-        "required": ["channelUID"],
+        "required": [
+          "channelUID"
+        ],
         "type": "object",
         "properties": {
           "channelUID": {
@@ -9491,7 +10215,10 @@
         }
       },
       "FileFormatItem": {
-        "required": ["name", "type"],
+        "required": [
+          "name",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "type": {
@@ -9543,7 +10270,9 @@
         }
       },
       "GroupFunction": {
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -9558,7 +10287,10 @@
         }
       },
       "Metadata": {
-        "required": ["editable", "value"],
+        "required": [
+          "editable",
+          "value"
+        ],
         "type": "object",
         "properties": {
           "value": {
@@ -9788,11 +10520,23 @@
             "items": {
               "$ref": "#/components/schemas/SitemapRule"
             }
+          },
+          "widgets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapWidgetDefinition"
+            }
           }
         }
       },
       "Thing": {
-        "required": ["UID", "channels", "configuration", "properties", "thingTypeUID"],
+        "required": [
+          "UID",
+          "channels",
+          "configuration",
+          "properties",
+          "thingTypeUID"
+        ],
         "type": "object",
         "properties": {
           "label": {
@@ -9881,7 +10625,12 @@
         }
       },
       "EnrichedItem": {
-        "required": ["editable", "name", "state", "type"],
+        "required": [
+          "editable",
+          "name",
+          "state",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "type": {
@@ -9956,7 +10705,10 @@
         }
       },
       "GroupItem": {
-        "required": ["name", "type"],
+        "required": [
+          "name",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "type": {
@@ -9993,7 +10745,12 @@
         }
       },
       "EnrichedGroupItem": {
-        "required": ["editable", "name", "state", "type"],
+        "required": [
+          "editable",
+          "name",
+          "state",
+          "type"
+        ],
         "type": "object",
         "properties": {
           "type": {
@@ -10138,7 +10895,11 @@
           },
           "problem": {
             "type": "string",
-            "enum": ["THING_CHANNEL_MISSING", "ITEM_MISSING", "ITEM_AND_THING_CHANNEL_MISSING"]
+            "enum": [
+              "THING_CHANNEL_MISSING",
+              "ITEM_MISSING",
+              "ITEM_AND_THING_CHANNEL_MISSING"
+            ]
           }
         }
       },
@@ -10224,7 +10985,9 @@
         }
       },
       "PersistenceFilter": {
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -10401,7 +11164,12 @@
         }
       },
       "ConfigurableService": {
-        "required": ["category", "id", "label", "multiple"],
+        "required": [
+          "category",
+          "id",
+          "label",
+          "multiple"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -10451,7 +11219,15 @@
         }
       },
       "EnrichedChannel": {
-        "required": ["configuration", "defaultTags", "id", "kind", "linkedItems", "properties", "uid"],
+        "required": [
+          "configuration",
+          "defaultTags",
+          "id",
+          "kind",
+          "linkedItems",
+          "properties",
+          "uid"
+        ],
         "type": "object",
         "properties": {
           "uid": {
@@ -10507,7 +11283,15 @@
         }
       },
       "EnrichedThing": {
-        "required": ["UID", "channels", "configuration", "editable", "properties", "statusInfo", "thingTypeUID"],
+        "required": [
+          "UID",
+          "channels",
+          "configuration",
+          "editable",
+          "properties",
+          "statusInfo",
+          "thingTypeUID"
+        ],
         "type": "object",
         "properties": {
           "label": {
@@ -10569,12 +11353,23 @@
         }
       },
       "ThingStatusInfo": {
-        "required": ["status", "statusDetail"],
+        "required": [
+          "status",
+          "statusDetail"
+        ],
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["UNINITIALIZED", "INITIALIZING", "UNKNOWN", "ONLINE", "OFFLINE", "REMOVING", "REMOVED"]
+            "enum": [
+              "UNINITIALIZED",
+              "INITIALIZING",
+              "UNKNOWN",
+              "ONLINE",
+              "OFFLINE",
+              "REMOVING",
+              "REMOVED"
+            ]
           },
           "statusDetail": {
             "type": "string",
@@ -10609,7 +11404,12 @@
           },
           "type": {
             "type": "string",
-            "enum": ["INFORMATION", "WARNING", "ERROR", "PENDING"]
+            "enum": [
+              "INFORMATION",
+              "WARNING",
+              "ERROR",
+              "PENDING"
+            ]
           },
           "message": {
             "type": "string"
@@ -10621,7 +11421,11 @@
         }
       },
       "Firmware": {
-        "required": ["modelRestricted", "thingTypeUID", "version"],
+        "required": [
+          "modelRestricted",
+          "thingTypeUID",
+          "version"
+        ],
         "type": "object",
         "properties": {
           "thingTypeUID": {
@@ -10651,7 +11455,13 @@
         }
       },
       "StrippedThingType": {
-        "required": ["UID", "bridge", "label", "listed", "supportedBridgeTypeUIDs"],
+        "required": [
+          "UID",
+          "bridge",
+          "label",
+          "listed",
+          "supportedBridgeTypeUIDs"
+        ],
         "type": "object",
         "properties": {
           "UID": {
@@ -10684,7 +11494,14 @@
         }
       },
       "ChannelDefinition": {
-        "required": ["advanced", "id", "label", "properties", "tags", "typeUID"],
+        "required": [
+          "advanced",
+          "id",
+          "label",
+          "properties",
+          "tags",
+          "typeUID"
+        ],
         "type": "object",
         "properties": {
           "description": {
@@ -10724,7 +11541,10 @@
         }
       },
       "ChannelGroupDefinition": {
-        "required": ["channels", "id"],
+        "required": [
+          "channels",
+          "id"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -10745,7 +11565,13 @@
         }
       },
       "ThingType": {
-        "required": ["UID", "bridge", "label", "listed", "supportedBridgeTypeUIDs"],
+        "required": [
+          "UID",
+          "bridge",
+          "label",
+          "listed",
+          "supportedBridgeTypeUIDs"
+        ],
         "type": "object",
         "properties": {
           "UID": {
@@ -10835,7 +11661,10 @@
           },
           "measurementSystem": {
             "type": "string",
-            "enum": ["SI", "US"]
+            "enum": [
+              "SI",
+              "US"
+            ]
           },
           "timezone": {
             "type": "string"
@@ -11099,6 +11928,12 @@
           "linkedPage": {
             "$ref": "#/components/schemas/SitemapPage"
           },
+          "widgets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SitemapWidget"
+            }
+          },
           "mappings": {
             "type": "array",
             "items": {
@@ -11174,7 +12009,10 @@
         }
       },
       "ConfigDescription": {
-        "required": ["parameterGroups", "parameters"],
+        "required": [
+          "parameterGroups",
+          "parameters"
+        ],
         "type": "object",
         "properties": {
           "uri": {
@@ -11195,6 +12033,13 @@
         }
       },
       "EnrichedRootUIComponent": {
+        "required": [
+          "component",
+          "config",
+          "props",
+          "tags",
+          "uid"
+        ],
         "type": "object",
         "properties": {
           "component": {
@@ -11236,7 +12081,10 @@
         }
       },
       "UIComponent": {
-        "required": ["component", "config"],
+        "required": [
+          "component",
+          "config"
+        ],
         "type": "object",
         "properties": {
           "component": {
@@ -11258,7 +12106,13 @@
         }
       },
       "RootUIComponent": {
-        "required": ["component", "config", "uid", "tags", "props", "timestamp"],
+        "required": [
+          "component",
+          "config",
+          "props",
+          "tags",
+          "uid"
+        ],
         "type": "object",
         "properties": {
           "component": {
@@ -11297,7 +12151,11 @@
         }
       },
       "Tile": {
-        "required": ["imageUrl", "name", "url"],
+        "required": [
+          "imageUrl",
+          "name",
+          "url"
+        ],
         "type": "object",
         "properties": {
           "name": {
@@ -11345,7 +12203,13 @@
           },
           "role": {
             "type": "string",
-            "enum": ["USER", "OPENHAB", "THINKING", "TOOL_CALL", "TOOL_RETURN"]
+            "enum": [
+              "USER",
+              "OPENHAB",
+              "THINKING",
+              "TOOL_CALL",
+              "TOOL_RETURN"
+            ]
           },
           "content": {
             "type": "string"
@@ -11367,7 +12231,10 @@
         }
       },
       "HumanLanguageInterpreter": {
-        "required": ["id", "label"],
+        "required": [
+          "id",
+          "label"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -11386,7 +12253,10 @@
         }
       },
       "LLMTool": {
-        "required": ["id", "label"],
+        "required": [
+          "id",
+          "label"
+        ],
         "type": "object",
         "properties": {
           "id": {
@@ -11455,7 +12325,10 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["PNG", "SVG"]
+              "enum": [
+                "PNG",
+                "SVG"
+              ]
             }
           }
         }

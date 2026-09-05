@@ -137,11 +137,11 @@ export type RuleStatusInfo = {
 };
 
 export type Module = {
-    typeUID: string;
     configuration: Configuration;
+    typeUID: string;
     id: string;
-    label: string;
     description: string;
+    label: string;
 };
 
 export type Configuration = {
@@ -383,123 +383,123 @@ export type SerializabilityResults = {
 };
 
 export type JsonArray = {
-    asNumber: number;
-    asFloat: number;
-    asByte: string;
-    asCharacter: string;
-    asShort: number;
     asBigDecimal: number;
     asBigInteger: number;
+    asNumber: number;
+    asByte: string;
+    asCharacter: string;
+    asFloat: number;
+    asShort: number;
     empty: boolean;
+    asBoolean: boolean;
     asString: string;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asBoolean: boolean;
-    jsonObject: boolean;
-    jsonArray: boolean;
-    jsonNull: boolean;
-    asJsonArray: JsonArray;
-    asJsonNull: JsonNull;
     jsonPrimitive: boolean;
     asJsonObject: JsonObject;
     asJsonPrimitive: JsonPrimitive;
+    asJsonNull: JsonNull;
+    asJsonArray: JsonArray;
+    jsonArray: boolean;
+    jsonNull: boolean;
+    jsonObject: boolean;
 };
 
 export type JsonElement = {
-    jsonObject: boolean;
-    jsonArray: boolean;
-    jsonNull: boolean;
-    asJsonArray: JsonArray;
-    asJsonNull: JsonNull;
-    asNumber: number;
-    asFloat: number;
-    asByte: string;
-    asCharacter: string;
-    asShort: number;
     jsonPrimitive: boolean;
     asJsonObject: JsonObject;
     asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
+    asJsonNull: JsonNull;
+    asJsonArray: JsonArray;
+    jsonArray: boolean;
+    jsonNull: boolean;
+    jsonObject: boolean;
+    asNumber: number;
+    asByte: string;
+    asCharacter: string;
+    asFloat: number;
+    asShort: number;
+    asBoolean: boolean;
     asString: string;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asBoolean: boolean;
 };
 
 export type JsonNull = {
-    jsonObject: boolean;
-    jsonArray: boolean;
-    jsonNull: boolean;
-    asJsonArray: JsonArray;
-    asJsonNull: JsonNull;
-    asNumber: number;
-    asFloat: number;
-    asByte: string;
-    asCharacter: string;
-    asShort: number;
     jsonPrimitive: boolean;
     asJsonObject: JsonObject;
     asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
+    asJsonNull: JsonNull;
+    asJsonArray: JsonArray;
+    jsonArray: boolean;
+    jsonNull: boolean;
+    jsonObject: boolean;
+    asNumber: number;
+    asByte: string;
+    asCharacter: string;
+    asFloat: number;
+    asShort: number;
+    asBoolean: boolean;
     asString: string;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asBoolean: boolean;
 };
 
 export type JsonObject = {
     empty: boolean;
-    jsonObject: boolean;
-    jsonArray: boolean;
-    jsonNull: boolean;
-    asJsonArray: JsonArray;
-    asJsonNull: JsonNull;
-    asNumber: number;
-    asFloat: number;
-    asByte: string;
-    asCharacter: string;
-    asShort: number;
     jsonPrimitive: boolean;
     asJsonObject: JsonObject;
     asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
+    asJsonNull: JsonNull;
+    asJsonArray: JsonArray;
+    jsonArray: boolean;
+    jsonNull: boolean;
+    jsonObject: boolean;
+    asNumber: number;
+    asByte: string;
+    asCharacter: string;
+    asFloat: number;
+    asShort: number;
+    asBoolean: boolean;
     asString: string;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asBoolean: boolean;
 };
 
 export type JsonPrimitive = {
-    asNumber: number;
-    asFloat: number;
-    asByte: string;
-    asCharacter: string;
-    asShort: number;
-    string: boolean;
-    number: boolean;
-    boolean: boolean;
     asBigDecimal: number;
     asBigInteger: number;
+    boolean: boolean;
+    asNumber: number;
+    asByte: string;
+    asCharacter: string;
+    asFloat: number;
+    asShort: number;
+    number: boolean;
+    string: boolean;
+    asBoolean: boolean;
     asString: string;
     asDouble: number;
     asInt: number;
     asLong: number;
-    asBoolean: boolean;
-    jsonObject: boolean;
-    jsonArray: boolean;
-    jsonNull: boolean;
-    asJsonArray: JsonArray;
-    asJsonNull: JsonNull;
     jsonPrimitive: boolean;
     asJsonObject: JsonObject;
     asJsonPrimitive: JsonPrimitive;
+    asJsonNull: JsonNull;
+    asJsonArray: JsonArray;
+    jsonArray: boolean;
+    jsonNull: boolean;
+    jsonObject: boolean;
 };
 
 export type StringList = Array<string>;
@@ -640,6 +640,7 @@ export type SitemapWidgetDefinition = {
     labelColorRules: Array<SitemapRule>;
     valueColorRules: Array<SitemapRule>;
     iconColorRules: Array<SitemapRule>;
+    widgets: Array<SitemapWidgetDefinition>;
 };
 
 export type Thing = {
@@ -1097,6 +1098,7 @@ export type SitemapWidget = {
     state: string;
     item: EnrichedItem;
     linkedPage: SitemapPage;
+    widgets: Array<SitemapWidget>;
     mappings: Array<SitemapMapping>;
 };
 
@@ -1137,14 +1139,14 @@ export type EnrichedRootUiComponent = {
     config: {
         [key: string]: unknown;
     };
-    slots: {
+    slots?: {
         [key: string]: Array<UiComponent>;
     };
     uid: string;
     tags: Array<string>;
     props: ConfigDescription;
-    timestamp: string;
-    editable: boolean;
+    timestamp?: string;
+    editable?: boolean;
 };
 
 export type UiComponent = {
@@ -1168,7 +1170,7 @@ export type RootUiComponent = {
     uid: string;
     tags: Array<string>;
     props: ConfigDescription;
-    timestamp: string;
+    timestamp?: string;
 };
 
 export type Tile = {
@@ -2281,6 +2283,14 @@ export type GetAddonsData = {
          * service ID
          */
         serviceId?: string;
+        /**
+         * true to return only installed add-ons
+         */
+        installedOnly?: boolean;
+        /**
+         * true to refresh add-ons before returning them
+         */
+        refresh?: boolean;
     };
     url: '/addons';
 };
@@ -6296,7 +6306,7 @@ export type InterpretTextByDefaultInterpreterData = {
          */
         conversation?: string;
         /**
-         * Comma separated list of llm-tool ids
+         * Comma separated list of llm-tool ids or * wildcard
          */
         llmTools?: Array<string>;
         /**
@@ -6388,7 +6398,7 @@ export type InterpretTextData = {
          */
         conversation?: string;
         /**
-         * Comma separated list of llm-tool ids
+         * Comma separated list of llm-tool ids or * wildcard
          */
         llmTools?: Array<string>;
         /**
