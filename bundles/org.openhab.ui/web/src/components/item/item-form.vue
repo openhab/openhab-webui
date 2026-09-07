@@ -24,7 +24,7 @@
               @click="$oh.utils.normalizeInput('#input')" />
           </template>
         </f7-list-input>
-        <f7-list-input v-else class="wrap-uid-input" label="Name" type="text" :input="false" disabled>
+        <f7-list-input v-else class="wrap-uid-input" label="Name" type="text" :input="false">
           <template #input>
             <span class="uid-text">
               {{ item.name }}
