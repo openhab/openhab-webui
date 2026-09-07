@@ -120,31 +120,6 @@
 
     <f7-block class="block-narrow">
       <f7-col>
-        <f7-block-title>
-          <span v-if="ready">
-            <template v-if="searchQuery">{{ filteredItems.length }} of</template>
-            {{ inboxCount }} entries<template v-if="selectedItems.length > 0">, {{ selectedItems.length }} selected</template>
-            <template v-if="showCheckboxes">
-              -
-              <f7-link @click="selectDeselectAll" :text="areAllSelected ? 'Deselect all' : 'Select all'" />
-            </template>
-          </span>
-          <div
-            v-if="!$device.desktop && $f7dim.width < 1024"
-            style="text-align: right; color: var(--f7-block-text-color); font-weight: normal"
-            class="float-right">
-            <label class="advanced-label">
-              <f7-checkbox v-model:checked="showIgnored" @change="changeIgnored" />
-              Show ignored
-            </label>
-          </div>
-          <div v-else style="text-align: right; color: var(--f7-block-text-color); font-weight: normal" class="float-right">
-            <label class="advanced-label">
-              Show ignored
-              <f7-checkbox v-model:checked="showIgnored" @change="changeIgnored" />
-            </label>
-          </div>
-        </f7-block-title>
         <div v-show="!ready || inboxCount > 0" class="searchbar-found padding-left padding-right">
           <f7-segmented strong tag="p">
             <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
@@ -152,43 +127,59 @@
           </f7-segmented>
         </div>
 
-        <!-- skeleton for not ready -->
-        <f7-list v-if="!ready" contacts-list class="col inbox-list">
-          <f7-list-group>
-            <f7-list-item
-              v-for="n in 10"
-              media-item
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Label of the thing"
-              subtitle="This contains the inbox UID"
-              footer="binding:thingUID" />
-          </f7-list-group>
-        </f7-list>
+        <group-box :title="listTitle">
+          <template #after-title>
+            <div class="header-controls">
+              <template v-if="showCheckboxes">
+                <f7-link @click="selectDeselectAll" :text="areAllSelected ? 'Deselect all' : 'Select all'" />
+                <span class="divider">|</span>
+              </template>
 
-        <f7-list v-else media-list class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
-          <f7-list-group v-for="(inboxWithInitial, initial) in filteredIndexedInbox" :key="initial">
-            <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title />
-            <f7-list-item
-              v-for="entry in inboxWithInitial"
-              :key="entry.thingUID"
-              :link="true"
-              media-item
-              :checkbox="showCheckboxes"
-              :checked="isChecked(entry.thingUID) ? true : null"
-              @change="(e) => toggleItemCheck(e, entry.thingUID)"
-              @click.ctrl="(e) => ctrlClick(e, entry)"
-              @click.meta="(e) => ctrlClick(e, entry)"
-              @click.exact="(e) => click(e, entry)"
-              :title="entry.label"
-              :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-              :footer="entry.thingUID"
-              :badge="entry.flag === 'IGNORED' ? 'IGNORED' : ''" />
-          </f7-list-group>
-        </f7-list>
-        <f7-list v-if="ready && searchQuery && filteredItems.length === 0">
-          <f7-list-item title="Nothing found" />
-        </f7-list>
+              <label>
+                Show ignored
+                <f7-checkbox v-model:checked="showIgnored" @change="changeIgnored" />
+              </label>
+            </div>
+          </template>
+
+          <!-- skeleton for not ready -->
+          <f7-list v-if="!ready" contacts-list class="col inbox-list">
+            <f7-list-group>
+              <f7-list-item
+                v-for="n in 10"
+                media-item
+                :key="n"
+                :class="`skeleton-text skeleton-effect-blink`"
+                title="Label of the thing"
+                subtitle="This contains the inbox UID"
+                footer="binding:thingUID" />
+            </f7-list-group>
+          </f7-list>
+
+          <f7-list v-else media-list class="searchbar-found col" :contacts-list="groupBy === 'alphabetical'">
+            <f7-list-group v-for="(inboxWithInitial, initial) in filteredIndexedInbox" :key="initial">
+              <f7-list-item v-if="inboxWithInitial.length" :title="initial" group-title />
+              <f7-list-item
+                v-for="entry in inboxWithInitial"
+                :key="entry.thingUID"
+                :link="true"
+                media-item
+                :checkbox="showCheckboxes"
+                :checked="isChecked(entry.thingUID) ? true : null"
+                @change="(e) => toggleItemCheck(e, entry.thingUID)"
+                @click.ctrl="(e) => ctrlClick(e, entry)"
+                @click.meta="(e) => ctrlClick(e, entry)"
+                @click.exact="(e) => click(e, entry)"
+                :title="entry.label"
+                :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
+                :footer="entry.thingUID"
+                :badge="entry.flag === 'IGNORED' ? 'IGNORED' : ''" />
+            </f7-list-group>
+          </f7-list>
+          <f7-list v-if="ready && searchQuery && filteredItems.length === 0">
+            <f7-list-item title="Nothing found" />
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
 
@@ -205,7 +196,16 @@
   </f7-page>
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
+.header-controls
+  display: flex
+  align-items: center
+  gap: 8px
+
+  .divider
+    opacity: 0.4
+    font-weight: 300
+
 .searchbar-found
   @media (min-width 960px)
     padding-left 0 !important
@@ -299,6 +299,14 @@ export default {
     },
     areAllSelected() {
       return this.selectedItems.length >= this.filteredItems.length
+    },
+    listTitle() {
+      if (!this.ready) return 'Loading Inbox entries...'
+
+      const prefix = this.searchQuery ? `${this.filteredItems.length} of ` : ''
+      const suffix = this.selectedItems.length ? `, ${this.selectedItems.length} selected` : ''
+
+      return `${prefix}${this.inboxCount} Inbox entries${suffix}`
     }
   },
   methods: {
