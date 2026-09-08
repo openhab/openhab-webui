@@ -26,15 +26,14 @@
                 @click="$oh.utils.normalizeInputForThingId('#input')" />
             </template>
           </f7-list-input>
-          <f7-list-item v-if="!createMode" media-item class="channel-item" title="Channel UID">
-            <template #subtitle>
-              <div>
+          <f7-list-input v-else media-item label="Channel UID" class="wrap-uid-input" type="text" :input="false">
+            <template #input>
+              <span class="uid-text">
                 {{ channel.uid }}
-                <clipboard-icon :value="channel.uid" tooltip="Copy UID" />
-              </div>
+                <clipboard-icon :value="channel.uid" tooltip="Copy UID" class="uid-copy-icon" />
+              </span>
             </template>
-          </f7-list-item>
-
+          </f7-list-input>
           <f7-list-input
             label="Label"
             type="text"
@@ -91,6 +90,26 @@
   .property-key
     display inline-block
     padding-left 12px
+
+  .wrap-uid-input
+    height auto !important
+
+    :deep(.item-content), :deep(.item-input-wrap)
+      align-items flex-start !important
+      height auto !important
+
+    :deep(.item-title.item-label)
+      align-self flex-start !important
+
+    .uid-text
+      white-space normal !important
+      word-break break-all !important
+      display inline-flex
+      gap 8px
+
+      .uid-copy-icon
+        margin-top 5px
+        pointer-events initial !important
 </style>
 
 <script>
