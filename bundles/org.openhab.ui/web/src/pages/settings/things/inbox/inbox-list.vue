@@ -301,7 +301,7 @@ export default {
       return this.selectedItems.length >= this.filteredItems.length
     },
     listTitle() {
-      if (!this.ready) return 'Loading Inbox entries...'
+      if (!this.ready) return ''
 
       const prefix = this.searchQuery ? `${this.filteredItems.length} of ` : ''
       const suffix = this.selectedItems.length ? `, ${this.selectedItems.length} selected` : ''
