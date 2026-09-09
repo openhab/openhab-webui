@@ -21,22 +21,18 @@
                   :error-message-force="!!idErrorMessage">
                   <template #inner>
                     <f7-link
-                      v-if="createMode && idErrorMessage && !idErrorMessage.includes('exists') && thing.ID"
+                      v-if="idErrorMessage && !idErrorMessage.includes('exists') && thing.ID"
                       icon-f7="hammer_fill"
                       style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
                       tooltip="Fix ID"
                       @click="$oh.utils.normalizeInputForThingId('#input')" />
                   </template>
                 </f7-list-input>
-                <f7-list-input label="Thing UID" type="text" class="wrap-text" :input="false" disabled>
+                <f7-list-input v-else label="Thing UID" type="text" class="uuid-list-input" :input="false">
                   <template #input>
                     <span>
                       {{ thing.UID }}
-                      <clipboard-icon
-                        v-if="thing.UID && ready"
-                        :value="thing.UID"
-                        tooltip="Copy UID"
-                        style="pointer-events: initial !important" />
+                      <clipboard-icon v-if="thing.UID && ready" :value="thing.UID" tooltip="Copy UID" />
                     </span>
                   </template>
                 </f7-list-input>

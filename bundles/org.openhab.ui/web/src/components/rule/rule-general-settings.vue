@@ -5,22 +5,19 @@
         <group-box title="Rule Properties">
           <f7-list inline-labels no-hairlines-md>
             <f7-list-input
-              ref="ruleUid"
+              v-if="createMode"
               :label="`${type} UID`"
               type="text"
               :placeholder="`A unique identifier for the ${type.toLowerCase()}`"
               :value="rule.uid || ''"
               required
               :validate="editable"
-              :disabled="!createMode ? true : null"
-              :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
+              info="Required. Note: cannot be changed after the creation"
               input-id="input"
-              :input="editable"
               :pattern="uidPattern"
               error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
               @input="rule.uid = $event.target.value || undefined"
-              class="wrap-text"
-              :clear-button="createMode">
+              clear-button>
               <template #inner>
                 <f7-link
                   v-if="createMode && !uidValid"
@@ -29,8 +26,13 @@
                   tooltip="Fix UID"
                   @click="normalizeUid()" />
               </template>
-              <template v-if="!editable" #input>
+            </f7-list-input>
+            <f7-list-input v-else label="Rule UID" type="text" class="uuid-list-input" :input="false">
+              <template #input>
+                <span>
                   {{ rule.uid }}
+                  <clipboard-icon :value="rule.uid" tooltip="Copy UID" />
+                </span>
               </template>
             </f7-list-input>
             <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
@@ -103,6 +105,7 @@
 import TagInput from '@/components/tags/tag-input.vue'
 import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 import NotEditableNotice from '@/components/util/not-editable-notice.vue'
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
@@ -119,7 +122,8 @@ export default {
   },
   components: {
     TagInput,
-    NotEditableNotice
+    NotEditableNotice,
+    ClipboardIcon
   },
   data() {
     return {

@@ -19,7 +19,7 @@
             @input="channel.id = $event.target.value">
             <template #inner>
               <f7-link
-                v-if="createMode && $refs.channelId?.state?.inputInvalid && channel.id.trim()"
+                v-if="$refs.channelId?.state?.inputInvalid && channel.id.trim()"
                 icon-f7="hammer_fill"
                 style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
                 tooltip="Fix ID"

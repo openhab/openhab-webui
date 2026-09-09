@@ -1,27 +1,35 @@
 <template>
-  <group-box v-if="item" class="quick-link-form no-padding" title="Item Details">
+  <group-box v-if="item" class="item-form no-padding" title="Item Details">
     <f7-list inline-labels no-hairlines-md>
       <f7-list-group>
         <f7-list-input
+          v-if="createMode"
           label="Name"
           type="text"
           placeholder="A unique identifier for the Item."
           :value="item.name"
-          :disabled="!createMode ? true : null"
-          :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
+          info="Required. Note: cannot be changed after the creation"
           required
           :error-message="nameErrorMessage"
-          :error-message-force="createMode && !!nameErrorMessage"
+          :error-message-force="!!nameErrorMessage"
           input-id="input"
           @input="item.name = $event.target.value"
-          :clear-button="createMode">
+          clear-button>
           <template #inner>
             <f7-link
-              v-if="createMode && nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()"
+              v-if="nameErrorMessage && !nameErrorMessage.includes('exists') && item.name.trim()"
               icon-f7="hammer_fill"
               style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
               tooltip="Fix ID"
               @click="$oh.utils.normalizeInput('#input')" />
+          </template>
+        </f7-list-input>
+        <f7-list-input v-else label="Name" type="text" class="uuid-list-input" :input="false">
+          <template #input>
+            <span>
+              {{ item.name }}
+              <clipboard-icon v-if="item.name" :value="item.name" tooltip="Copy UID" />
+            </span>
           </template>
         </f7-list-input>
         <f7-list-input
@@ -187,6 +195,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
+import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import GroupForm from '@/components/item/group-form.vue'
@@ -211,6 +220,7 @@ export default {
     stateDescription: String
   },
   components: {
+    ClipboardIcon,
     SemanticsPicker,
     ItemPicker,
     GroupForm,
