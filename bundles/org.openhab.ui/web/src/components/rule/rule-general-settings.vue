@@ -15,9 +15,11 @@
               :disabled="!createMode ? true : null"
               :info="createMode ? 'Required. Note: cannot be changed after the creation' : ''"
               input-id="input"
+              :input="editable"
               :pattern="uidPattern"
               error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
               @input="rule.uid = $event.target.value || undefined"
+              class="wrap-text"
               :clear-button="createMode">
               <template #inner>
                 <f7-link
@@ -26,6 +28,9 @@
                   style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
                   tooltip="Fix UID"
                   @click="normalizeUid()" />
+              </template>
+              <template v-if="!editable" #input>
+                  {{ rule.uid }}
               </template>
             </f7-list-input>
             <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
