@@ -8,7 +8,7 @@ import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts
 
 import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, WidgetContext } from './types'
 import { type EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
-import { computed, onBeforeUnmount, onMounted, readonly, type Ref, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, type Ref, ref } from 'vue'
 import * as api from '@/api'
 import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 import { type ConfigGuardFn } from '@/types/widget-ts-template'

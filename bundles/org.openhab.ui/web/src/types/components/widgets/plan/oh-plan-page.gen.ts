@@ -1,3 +1,5 @@
+import { OhSvgElement } from '@/types/components/widgets'
+
 // note: this file is generated and should not be edited by hand
 
 import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'
@@ -27,6 +29,7 @@ export interface Config {
   tooltipColor?: TooltipColor
   embedSvg?: boolean
   embedSvgFlashing?: boolean
+  embeddedSvgActions?: Record<string, OhSvgElement.Config>
 }
 export interface Component {
   component: 'oh-plan-page'

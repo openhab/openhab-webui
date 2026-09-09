@@ -2,6 +2,7 @@
 
 import { WidgetDefinition, pb, pt, pi, pn, pg } from '../helpers.ts'
 import { actionGroup, actionParams } from '../actions.ts'
+import { svgEmbeddedGroup, svgEmbeddedParams } from '../svgEmbedded.ts'
 import ClockParameters from '../system/clock.ts'
 
 export const CardParameterGroup = () => pg('card', 'Card', 'Parameters of the card')
@@ -172,6 +173,7 @@ export const OhImageCardDefinition = () =>
     .paramGroup(CardParameterGroup(), CardParameters())
     .paramGroup(pg('image', 'Image'), ImageParameters())
     .paramGroup(actionGroup(undefined, undefined, 'Action to perform when the image is clicked'), actionParams())
+    .paramGroup(svgEmbeddedGroup, svgEmbeddedParams)
 
 // OhVideoCard
 import VideoParameters from '../system/video.ts'

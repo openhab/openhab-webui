@@ -2,6 +2,7 @@
 
 import { WidgetDefinition, po, pt, pn, pb, pg } from '../helpers.ts'
 import { VisibilityGroup, VisibilityParameters } from '../visibility.ts'
+import { svgEmbeddedGroup, svgEmbeddedParams } from '../svgEmbedded.ts'
 
 export function OhBlockDescription() {
   return new WidgetDefinition('oh-block', 'Layout Grid Block', 'A block in a grid layout').params([
@@ -90,7 +91,11 @@ export function OhCanvasItemDefinition() {
       pb('notStyled', 'Preserve classic style', 'Preserve classic appearance of widgets as in standard layout pages.'),
       pb('noCanvasShadow', 'No elements shadow', 'Do not shadow inner elements of standard widgets').v((_value, configuration) => {
         return configuration.notStyled !== true
-      })
+      }),
+      pn('x', 'X Position', 'X position of the widget on the canvas (default 20)'),
+      pn('y', 'Y Position', 'Y position of the widget on the canvas (default 20)'),
+      pn('w', 'Width', 'Width of the widget on the canvas (default 100)'),
+      pn('h', 'Height', 'Height of the widget on the canvas (default 100)')
     ]
   )
 }
@@ -113,10 +118,7 @@ export function OhCanvasLayoutDefinition() {
         'The src-set attribute of background image element to take into account multiple device resolutions. For example: "/static/floorplans/floor-0.jpg, /static/floorplans/floor-0@2x.jpg 2x"'
       )
     ])
-    .paramGroup(pg('svgEmbedding', 'SVG Embedding'), [
-      pb('embedSvg', 'Embed SVG', 'Embed SVG image directly into the page (default false)'),
-      pb('embedSvgFlashing', 'Embed SVG Flashing in Run-Mode', 'Flashes SVG elements on hovering in run-mode as well (default false)')
-    ])
+    .paramGroup(svgEmbeddedGroup, svgEmbeddedParams)
     .paramGroup(pg('appearance', 'Appearance'), [
       pb(
         'hideNavbar',
@@ -132,12 +134,14 @@ export function OhCanvasLayoutDefinition() {
       ).v((_value, configuration) => {
         return configuration.hideNavbar === true
       }),
-      pb('showFullscreenIcon', 'Show Fullscreen Icon', 'Show a fullscreen icon on the top right corner (default false)')
+      pb('showFullscreenIcon', 'Show Fullscreen Icon', 'Show a fullscreen icon on the top right corner (default false)'),
+      pb('gridEnable', 'Enable Grid', 'Show grid on canvas (default false)').a(),
+      pn('activeIdx', 'Active Layer Index', 'Index of the active layer (default 0)').a()
     ])
     .paramGroup(pg('shadow', 'Canvas items shadow'), [
       pt('boxShadow', 'Box shadow', 'Shadow applied to box elements (box-shadow CSS syntax).').a(),
       pt('textShadow', 'Text shadow', 'Shadow applied to text elements or font icons (text-shadow CSS syntax)').a(),
-      pt('filterShadow', 'Filter Shadow', 'Shadow applied to raster or SVG image elements (filter: drop-shadow() CSS syntax)').a()
+      pt('filterShadow', 'Filter Shadow', 'Shadow applied to raster or SVG image elements (filter: drop-shadow() CSS syntax)').m()
     ])
 }
 
@@ -149,7 +153,8 @@ export function OhCanvasLayerDefinition() {
         'preload',
         'Pre-load',
         'Pre-load layer contents so that switching layer visibility is faster and dynamic widgets are immediately displayed in their current state. Initial page load might be longer (default false)'
-      ).a()
+      ).a(),
+      pb('editVisible', 'Edit Mode Visible', 'Layer is visible in edit mode (default true)').v(() => false)
     ])
     .paramGroup(VisibilityGroup(), VisibilityParameters())
 }

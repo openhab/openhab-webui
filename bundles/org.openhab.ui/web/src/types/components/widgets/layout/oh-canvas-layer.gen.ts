@@ -10,6 +10,7 @@ export enum VisibleTo {
 export interface Config {
   layerName?: string
   preload?: boolean
+  editVisible?: boolean
   visible?: string
   visibleTo?: VisibleTo
 }
