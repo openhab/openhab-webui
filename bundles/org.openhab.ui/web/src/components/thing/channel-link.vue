@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!ready" class="loading searchbar-ignore">
+  <div v-if="!ready" class="loading searchbar-ignore" v-deferred>
     <div class="list media-list margin-left searchbar-ignore">
       <ul>
         <li class="item-content skeleton-text searchbar-ignore">

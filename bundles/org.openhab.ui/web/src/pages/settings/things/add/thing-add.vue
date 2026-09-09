@@ -20,7 +20,7 @@
       </f7-col>
     </f7-block>
     <!-- skeletons for not ready -->
-    <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink">
+    <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink" v-deferred>
       <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :ready="false" />
       <f7-col>
         <f7-block-title>____ _______</f7-block-title>

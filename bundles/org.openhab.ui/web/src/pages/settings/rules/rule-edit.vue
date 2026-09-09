@@ -72,7 +72,8 @@
         <f7-block
           v-else-if="!createMode && !stubMode"
           class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink"
-          strong>
+          strong
+          v-deferred>
           <f7-col>
             ______:
             <f7-chip class="margin-left" text="________" />
