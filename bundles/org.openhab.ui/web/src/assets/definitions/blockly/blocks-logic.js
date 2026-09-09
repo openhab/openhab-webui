@@ -151,6 +151,7 @@ export default function (f7) {
       this.appendDummyInput().appendField('Operation AND/OR')
       this.appendStatementInput('STACK')
       this.setTooltip('multiple and control')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic')
       this.contextMenu = false
     }
   }
@@ -165,6 +166,7 @@ export default function (f7) {
       this.setPreviousStatement(true)
       this.setNextStatement(true)
       this.setTooltip('conditionalStatement')
+      this.setHelpUrl('https://www.openhab.org/docs/configuration/blockly/rules-blockly-standard-ext.html#logic')
       this.contextMenu = false
     }
   }
