@@ -28,7 +28,7 @@
                       @click="$oh.utils.normalizeInputForThingId('#input')" />
                   </template>
                 </f7-list-input>
-                <f7-list-input v-else label="Thing UID" type="text" class="uuid-list-input" :input="false">
+                <f7-list-input v-else label="Thing UID" type="text" class="uid-list-input" :input="false">
                   <template #input>
                     <span>
                       {{ thing.UID }}

@@ -27,7 +27,7 @@
                   @click="normalizeUid()" />
               </template>
             </f7-list-input>
-            <f7-list-input v-else label="Rule UID" type="text" class="uuid-list-input" :input="false">
+            <f7-list-input v-else label="Rule UID" type="text" class="uid-list-input" :input="false">
               <template #input>
                 <span>
                   {{ rule.uid }}
