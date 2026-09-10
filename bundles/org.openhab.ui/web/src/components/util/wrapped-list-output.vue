@@ -32,7 +32,6 @@
 
     .copy-icon
       margin-top 5px
-      pointer-events initial !important
 </style>
 
 <script setup lang="ts">
