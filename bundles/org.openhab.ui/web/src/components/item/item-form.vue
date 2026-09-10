@@ -24,14 +24,7 @@
               @click="$oh.utils.normalizeInput('#input')" />
           </template>
         </f7-list-input>
-        <f7-list-input v-else label="Name" type="text" class="uid-list-input" :input="false">
-          <template #input>
-            <span>
-              {{ item.name }}
-              <clipboard-icon v-if="item.name" :value="item.name" tooltip="Copy UID" />
-            </span>
-          </template>
-        </f7-list-input>
+        <wrapped-list-output v-else label="Name" :value="item.name" clipboard />
         <f7-list-input
           label="Label"
           type="text"
@@ -195,7 +188,7 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import WrappedListOutput from '@/components/util/wrapped-list-output.vue'
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import GroupForm from '@/components/item/group-form.vue'
@@ -220,7 +213,7 @@ export default {
     stateDescription: String
   },
   components: {
-    ClipboardIcon,
+    WrappedListOutput,
     SemanticsPicker,
     ItemPicker,
     GroupForm,

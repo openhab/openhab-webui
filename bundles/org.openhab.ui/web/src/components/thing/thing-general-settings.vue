@@ -6,53 +6,52 @@
           <f7-col>
             <group-box title="Thing Details">
               <f7-list inline-labels no-hairlines-md class="no-margin">
-                <f7-list-input
-                  v-if="createMode"
-                  label="Thing ID"
-                  type="text"
-                  placeholder="Required"
-                  :value="thing.ID"
-                  input-id="input"
-                  @input="changeUID"
-                  info="Note: cannot be changed after the creation"
-                  clear-button
-                  required
-                  :error-message="idErrorMessage"
-                  :error-message-force="!!idErrorMessage">
-                  <template #inner>
-                    <f7-link
-                      v-if="idErrorMessage && !idErrorMessage.includes('exists') && thing.ID"
-                      icon-f7="hammer_fill"
-                      style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
-                      tooltip="Fix ID"
-                      @click="$oh.utils.normalizeInputForThingId('#input')" />
-                  </template>
-                </f7-list-input>
-                <f7-list-input v-else label="Thing UID" type="text" class="uid-list-input" :input="false">
-                  <template #input>
-                    <span>
-                      {{ thing.UID }}
-                      <clipboard-icon v-if="thing.UID && ready" :value="thing.UID" tooltip="Copy UID" />
-                    </span>
-                  </template>
-                </f7-list-input>
-                <f7-list-input
-                  label="Label"
-                  type="text"
-                  :disabled="!ready || readOnly ? true : null"
-                  placeholder="e.g. My Thing"
-                  :value="thing.label"
-                  @input="thing.label = $event.target.value"
-                  required
-                  validate />
-                <f7-list-input
-                  label="Location"
-                  type="text"
-                  :disabled="!ready || readOnly ? true : null"
-                  placeholder="e.g. Kitchen"
-                  :value="thing.location"
-                  @input="thing.location = $event.target.value"
-                  :clear-button="ready && !readOnly" />
+                <f7-list-group>
+                  <f7-list-input
+                    v-if="createMode"
+                    label="Thing ID"
+                    type="text"
+                    placeholder="Required"
+                    :value="thing.ID"
+                    input-id="input"
+                    @input="changeUID"
+                    info="Note: cannot be changed after the creation"
+                    clear-button
+                    required
+                    :error-message="idErrorMessage"
+                    :error-message-force="!!idErrorMessage">
+                    <template #inner>
+                      <f7-link
+                        v-if="idErrorMessage && !idErrorMessage.includes('exists') && thing.ID"
+                        icon-f7="hammer_fill"
+                        style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
+                        tooltip="Fix ID"
+                        @click="$oh.utils.normalizeInputForThingId('#input')" />
+                    </template>
+                  </f7-list-input>
+                  <wrapped-list-output v-else label="Thing UID" :value="thing.UID" clipboard />
+                  <f7-list-input
+                    v-if="!readOnly"
+                    label="Label"
+                    type="text"
+                    :disabled="!ready ? true : null"
+                    placeholder="e.g. My Thing"
+                    :value="thing.label"
+                    @input="thing.label = $event.target.value"
+                    required
+                    validate />
+                  <wrapped-list-output v-else label="Label" :value="thing.label" />
+                  <f7-list-input
+                    v-if="!readOnly"
+                    label="Location"
+                    type="text"
+                    :disabled="!ready ? true : null"
+                    placeholder="e.g. Kitchen"
+                    :value="thing.location"
+                    @input="thing.location = $event.target.value"
+                    clear-button />
+                  <wrapped-list-output v-else label="Location" :value="thing.location" />
+                </f7-list-group>
               </f7-list>
             </group-box>
             <group-box
@@ -81,7 +80,7 @@
 
 <script>
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
-import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import WrappedListOutput from '@/components/util/wrapped-list-output.vue'
 import ThingMixin from '@/components/thing/thing-mixin'
 
 export default {
@@ -96,7 +95,7 @@ export default {
   },
   components: {
     ThingPicker,
-    ClipboardIcon
+    WrappedListOutput
   },
   computed: {
     editable() {

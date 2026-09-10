@@ -4,56 +4,53 @@
       <f7-col>
         <group-box title="Rule Properties">
           <f7-list inline-labels no-hairlines-md>
-            <f7-list-input
-              v-if="createMode"
-              :label="`${type} UID`"
-              type="text"
-              :placeholder="`A unique identifier for the ${type.toLowerCase()}`"
-              :value="rule.uid || ''"
-              required
-              :validate="editable"
-              info="Required. Note: cannot be changed after the creation"
-              input-id="input"
-              :pattern="uidPattern"
-              error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
-              @input="rule.uid = $event.target.value || undefined"
-              clear-button>
-              <template #inner>
-                <f7-link
-                  v-if="createMode && !uidValid"
-                  icon-f7="hammer_fill"
-                  style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
-                  tooltip="Fix UID"
-                  @click="normalizeUid()" />
-              </template>
-            </f7-list-input>
-            <f7-list-input v-else label="Rule UID" type="text" class="uid-list-input" :input="false">
-              <template #input>
-                <span>
-                  {{ rule.uid }}
-                  <clipboard-icon :value="rule.uid" tooltip="Copy UID" />
-                </span>
-              </template>
-            </f7-list-input>
-            <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
-            <f7-list-input
-              label="Label"
-              type="text"
-              :placeholder="`${type} label for display purposes`"
-              :info="createMode ? 'Required' : ''"
-              :value="rule.name || ''"
-              required
-              validate
-              :disabled="!editable ? true : null"
-              @input="rule.name = $event.target.value || undefined"
-              :clear-button="editable" />
-            <f7-list-input
-              label="Description"
-              type="text"
-              :value="rule.description || ''"
-              :disabled="!editable ? true : null"
-              @input="rule.description = $event.target.value || undefined"
-              :clear-button="editable" />
+            <f7-list-group>
+              <f7-list-input
+                v-if="createMode"
+                :label="`${type} UID`"
+                type="text"
+                :placeholder="`A unique identifier for the ${type.toLowerCase()}`"
+                :value="rule.uid || ''"
+                required
+                :validate="editable"
+                info="Required. Note: cannot be changed after the creation"
+                input-id="input"
+                :pattern="uidPattern"
+                error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
+                @input="rule.uid = $event.target.value || undefined"
+                clear-button>
+                <template #inner>
+                  <f7-link
+                    v-if="createMode && !uidValid"
+                    icon-f7="hammer_fill"
+                    style="margin-top: 4px; margin-left: 4px; margin-bottom: auto"
+                    tooltip="Fix UID"
+                    @click="normalizeUid()" />
+                </template>
+              </f7-list-input>
+              <wrapped-list-output v-else label="Rule UID" :value="rule.uid" clipboard />
+              <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
+              <f7-list-input
+                v-if="editable"
+                label="Label"
+                type="text"
+                :placeholder="`${type} label for display purposes`"
+                :info="createMode ? 'Required' : ''"
+                :value="rule.name || ''"
+                required
+                validate
+                @input="rule.name = $event.target.value || undefined"
+                clear-button />
+              <wrapped-list-output v-else label="Label" :value="rule.name" />
+              <f7-list-input
+                v-if="editable"
+                label="Description"
+                type="text"
+                :value="rule.description || ''"
+                @input="rule.description = $event.target.value || undefined"
+                clear-button />
+              <wrapped-list-output v-else label="Description" :value="rule.description" />
+            </f7-list-group>
           </f7-list>
         </group-box>
         <tag-input
@@ -105,7 +102,7 @@
 import TagInput from '@/components/tags/tag-input.vue'
 import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 import NotEditableNotice from '@/components/util/not-editable-notice.vue'
-import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import WrappedListOutput from '@/components/util/wrapped-list-output.vue'
 
 const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
@@ -123,7 +120,7 @@ export default {
   components: {
     TagInput,
     NotEditableNotice,
-    ClipboardIcon
+    WrappedListOutput
   },
   data() {
     return {
