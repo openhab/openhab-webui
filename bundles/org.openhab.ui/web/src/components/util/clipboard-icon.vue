@@ -12,6 +12,7 @@
 <style lang="stylus">
 .clipboard-icon
   cursor: copy
+  pointer-events: auto !important
 </style>
 
 <script>
