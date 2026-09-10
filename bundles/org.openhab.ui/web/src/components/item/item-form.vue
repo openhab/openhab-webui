@@ -26,13 +26,14 @@
         </f7-list-input>
         <wrapped-list-output v-else label="Name" :value="item.name" clipboard />
         <f7-list-input
+          v-if="editable"
           label="Label"
           type="text"
           placeholder="Item label for display purposes"
           :value="item.label"
           @input="updateLabel"
-          :disabled="!editable ? true : null"
-          :clear-button="editable" />
+          clear-button />
+        <wrapped-list-output v-else label="Label" :value="item.label" />
       </f7-list-group>
       <f7-list-group v-if="!hideType" v-show="itemType">
         <!-- Type -->
