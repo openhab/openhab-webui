@@ -66,8 +66,9 @@
     <maven.compiler.release>${oh.java.version}</maven.compiler.release>
 
     <bnd.version>7.4.0</bnd.version>
+    <bouncycastle.version>1.86</bouncycastle.version>
     <eea.version>2.4.0</eea.version>
-    <jackson.annotations.version>2.20</jackson.annotations.version>
+    <jackson.annotations.version>2.22</jackson.annotations.version>
     <karaf.version>4.5.0-SNAPSHOT</karaf.version>
     <karaf.maven.plugin.version>4.5.0-SNAPSHOT</karaf.maven.plugin.version>
     <ohc.version>5.3.0-SNAPSHOT</ohc.version>
