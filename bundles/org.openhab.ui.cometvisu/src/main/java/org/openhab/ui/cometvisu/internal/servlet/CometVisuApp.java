@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletException;
-
 import org.openhab.core.config.core.ConfigurableService;
 import org.openhab.core.events.EventPublisher;
 import org.openhab.core.items.ItemRegistry;
@@ -35,6 +33,7 @@ import org.openhab.ui.cometvisu.internal.Config;
 import org.openhab.ui.cometvisu.internal.util.ClientInstaller;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -43,10 +42,11 @@ import org.osgi.service.component.annotations.Modified;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
+import org.osgi.service.servlet.whiteboard.HttpWhiteboardConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.Servlet;
 
 /**
  * registers the CometVisuServlet-Service
@@ -64,7 +64,9 @@ public class CometVisuApp {
 
     protected static final String CONFIG_URI = "ui:cometvisu";
 
-    protected HttpService httpService;
+    private BundleContext bundleContext;
+
+    private ServiceRegistration<Servlet> servletRegistration;
 
     private ItemUIRegistry itemUIRegistry;
 
@@ -176,15 +178,6 @@ public class CometVisuApp {
         return sitemapProviders;
     }
 
-    @Reference
-    protected void setHttpService(HttpService httpService) {
-        this.httpService = httpService;
-    }
-
-    protected void unsetHttpService(HttpService httpService) {
-        this.httpService = null;
-    }
-
     private void readConfiguration(final Map<String, Object> properties) {
         if (properties != null) {
             setProperties(properties);
@@ -244,7 +237,9 @@ public class CometVisuApp {
      *            ConfigAdmin service
      */
     @Activate
-    protected void activate(Map<String, Object> configProps) throws ConfigurationException {
+    protected void activate(BundleContext bundleContext, Map<String, Object> configProps)
+            throws ConfigurationException {
+        this.bundleContext = bundleContext;
         readConfiguration(configProps);
         registerServlet();
         logger.info("Started CometVisu UI at {} serving {}", Config.cometvisuWebappAlias, Config.cometvisuWebfolder);
@@ -253,6 +248,7 @@ public class CometVisuApp {
     @Deactivate
     public void deactivate(BundleContext componentContext) {
         unregisterServlet();
+        this.bundleContext = null;
         logger.info("Stopped CometVisu UI");
     }
 
@@ -268,17 +264,23 @@ public class CometVisuApp {
                     Config.cometvisuWebappAlias.length() - 1);
         }
 
-        Dictionary<String, String> servletParams = new Hashtable<>();
+        Dictionary<String, Object> servletParams = new Hashtable<>();
+        servletParams.put(HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_NAME, "org.openhab.ui.cometvisu");
+        servletParams.put(HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_PATTERN,
+                new String[] { Config.cometvisuWebappAlias, Config.cometvisuWebappAlias + "/*" });
         servlet = new CometVisuServlet(Config.cometvisuWebfolder, this);
-        try {
-            httpService.registerServlet(Config.cometvisuWebappAlias, servlet, servletParams, null);
-        } catch (ServletException | NamespaceException e) {
-            logger.error("Error during servlet startup", e);
+        if (bundleContext == null) {
+            logger.warn("Cannot register CometVisu servlet because the bundle context is unavailable");
+            return;
         }
+        servletRegistration = bundleContext.registerService(Servlet.class, servlet, servletParams);
     }
 
     private void unregisterServlet() {
-        httpService.unregister(Config.cometvisuWebappAlias);
+        if (servletRegistration != null) {
+            servletRegistration.unregister();
+            servletRegistration = null;
+        }
     }
 
     /**
