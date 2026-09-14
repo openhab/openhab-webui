@@ -3,7 +3,7 @@
     <f7-navbar large class="store-nav">
       <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :large="true" :back-link-url="backLinkUrl" :f7router />
     </f7-navbar>
-    <f7-toolbar v-if="$f7dim.width < BREAKPOINTS.LG || !leftPanelOpened" tabbar bottom>
+    <f7-toolbar v-if="$f7dim.width <= BREAKPOINTS.MD || !leftPanelOpened" tabbar bottom>
       <f7-link
         tab-link="#main"
         :tab-link-active="runtimeStore.pagePath === '/addons/'"

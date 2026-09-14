@@ -323,7 +323,7 @@
               &nbsp;{{ $f7dim.width < BREAKPOINTS.SM ? '' : 'Run' }}
             </f7-button>
             <f7-chip
-              v-if="$f7dim.width > BREAKPOINTS.SM"
+              v-if="$f7dim.width >= BREAKPOINTS.SM"
               class="display-flex flex-direction-row"
               :text="rule.status.status"
               :color="ruleStatusBadgeColor(rule.status)"
