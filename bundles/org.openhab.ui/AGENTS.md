@@ -120,6 +120,7 @@ All web development happens in the `web/` directory.
     - Watchers
     - Lifecycle hooks
     - Methods
+8. **Responsive Breakpoints:** Always use `BREAKPOINTS` from `@/js/constants/breakpoints` or the `useBreakpoints` composable from `@/js/composables/useBreakpoints` when working with breakpoints instead of hardcoding raw pixel values in `<template>` conditions or scripts.
 
 ## Common Pitfalls
 

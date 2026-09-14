@@ -35,7 +35,7 @@
       </f7-subnavbar>
 
       <!-- Toolbar -->
-      <f7-toolbar v-if="$f7dim.width >= 500" bottom class="toolbar-details">
+      <f7-toolbar v-if="$f7dim.width >= BREAKPOINTS.XS" bottom class="toolbar-details">
         <f7-link v-if="!multiple" class="left" :class="{ disabled: selectedItem == null }" @click="selectedItem = null"> Clear </f7-link>
         <span v-else />
         <div class="padding-right text-align-right">
@@ -100,6 +100,7 @@
 import { f7, theme } from 'framework7-vue'
 import { nextTick } from 'vue'
 import { mapWritableState } from 'pinia'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import ModelTreeview from '@/components/model/model-treeview.vue'
 import ModelMixin from '@/pages/settings/model/model-mixin'
@@ -124,7 +125,7 @@ export default {
   },
   emits: ['closed', 'input'],
   setup() {
-    return { f7, theme }
+    return { f7, theme, BREAKPOINTS }
   },
   data() {
     return {

@@ -189,7 +189,7 @@
 
     <f7-block v-if="ready && !things.length" class="block-narrow">
       <empty-state-placeholder icon="lightbulb" title="things.title" text="things.text" />
-      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < BREAKPOINTS.LG" class="display-flex justify-content-center">
         <f7-button
           large
           fill
@@ -246,6 +246,7 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 const ITEM_KINDS = {
   editable: 'Editable',
@@ -272,7 +273,7 @@ export default {
     ClipboardIcon
   },
   setup() {
-    return { f7, theme }
+    return { f7, theme, BREAKPOINTS }
   },
   data() {
     return {
@@ -387,7 +388,7 @@ export default {
       return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
     },
     searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     listTitle() {
       let title = this.listedItems.length

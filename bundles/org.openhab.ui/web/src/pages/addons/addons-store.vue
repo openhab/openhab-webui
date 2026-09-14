@@ -3,7 +3,7 @@
     <f7-navbar large class="store-nav">
       <oh-nav-content :title="AddonTitles[currentTab] || 'Add-on Store'" :large="true" :back-link-url="backLinkUrl" :f7router />
     </f7-navbar>
-    <f7-toolbar v-if="$f7dim.width < 1024 || !leftPanelOpened" tabbar bottom>
+    <f7-toolbar v-if="$f7dim.width < BREAKPOINTS.LG || !leftPanelOpened" tabbar bottom>
       <f7-link
         tab-link="#main"
         :tab-link-active="runtimeStore.pagePath === '/addons/'"
@@ -297,6 +297,7 @@ import AddonsSection from '@/components/addons/addons-section.vue'
 import { AddonIcons, AddonTitles, AddonSuggestionLabels, AddonConnectionTypes, AddonRegionTypes } from '@/assets/addon-store.ts'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 let handledReloadInCurrentDocument = false
 
@@ -314,7 +315,7 @@ export default {
     AddonsSection
   },
   setup() {
-    return { f7, theme }
+    return { f7, theme, BREAKPOINTS }
   },
   data() {
     return {
