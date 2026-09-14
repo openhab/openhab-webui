@@ -1,6 +1,9 @@
 import { computed, getCurrentInstance } from 'vue'
-import { BREAKPOINTS } from '@/js/constants/breakpoints'
+import { BREAKPOINTS, type BreakpointKey } from '@/js/constants/breakpoints'
 
+/**
+ * Composable for using Main UI's standardized breakpoints in Vue components.
+ */
 export function useBreakpoints() {
   const instance = getCurrentInstance()
   const $f7dim = instance?.proxy?.$f7dim
@@ -8,20 +11,24 @@ export function useBreakpoints() {
   const width = computed(() => $f7dim?.width ?? 0)
   const height = computed(() => $f7dim?.height ?? 0)
 
-  const isXs = computed(() => width.value < BREAKPOINTS.XS)
-  const isSm = computed(() => width.value >= BREAKPOINTS.SM)
-  const isMd = computed(() => width.value >= BREAKPOINTS.MD)
-  const isLg = computed(() => width.value >= BREAKPOINTS.LG)
-  const isXl = computed(() => width.value >= BREAKPOINTS.XL)
+  const resolveBreakpoint = (key: Lowercase<BreakpointKey>): number => {
+    const normalizedKey = key.toUpperCase() as keyof typeof BREAKPOINTS
+    return BREAKPOINTS[normalizedKey]
+  }
+
+  const greaterThanOrEqual = (key: Lowercase<BreakpointKey>) => {
+    return computed(() => width.value >= resolveBreakpoint(key))
+  }
+
+  const lessThan = (key: Lowercase<BreakpointKey>) => {
+    return computed(() => width.value < resolveBreakpoint(key))
+  }
 
   return {
     BREAKPOINTS,
     width,
     height,
-    isXs,
-    isSm,
-    isMd,
-    isLg,
-    isXl
+    greaterThanOrEqual,
+    lessThan
   }
 }
