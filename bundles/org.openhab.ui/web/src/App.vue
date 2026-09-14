@@ -12,7 +12,8 @@
       :cover="showSidebar ? true : null"
       class="sidebar"
       :visible-breakpoint="960"
-      :swipe="!uiOptionsStore.disableLeftPanelSwipe">
+      :swipe="!$device.desktop && !uiOptionsStore.disableLeftPanelSwipe"
+      :swipe-active-area="50">
       <f7-page>
         <!-- openHAB Logo -->
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close @click.capture="handleSidebarClick">

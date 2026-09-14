@@ -95,7 +95,7 @@
           <span>{{ t('about.miscellaneous.home.disableCardExpansionAnimation') }}</span>
           <f7-toggle v-model:checked="disableExpandableCardAnimation" />
         </f7-list-item>
-        <f7-list-item>
+        <f7-list-item v-if="!$device.desktop">
           <span>{{ t('about.miscellaneous.theme.disableLeftPanelSwipe') }}</span>
           <f7-toggle v-model:checked="disableLeftPanelSwipe" />
         </f7-list-item>
