@@ -57,7 +57,7 @@
 
     <f7-block class="block-narrow">
       <!-- skeleton for not ready -->
-      <f7-col v-if="!ready">
+      <f7-col v-if="!ready" v-deferred>
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list v-if="!ready" contacts-list class="col wide pages-list">
           <f7-list-group>

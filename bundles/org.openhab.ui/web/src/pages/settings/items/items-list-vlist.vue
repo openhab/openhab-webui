@@ -58,7 +58,7 @@
       </f7-col>
 
       <!-- skeleton for not ready -->
-      <f7-col v-show="!ready">
+      <f7-col v-if="!ready" v-deferred>
         <f7-block-title class="no-margin-top"> &nbsp;Loading... </f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>

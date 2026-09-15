@@ -143,7 +143,7 @@
           </template>
 
           <!-- skeleton for not ready -->
-          <f7-list v-if="!ready" contacts-list class="col inbox-list">
+          <f7-list v-if="!ready" contacts-list class="col inbox-list" v-deferred>
             <f7-list-group>
               <f7-list-item
                 v-for="n in 10"

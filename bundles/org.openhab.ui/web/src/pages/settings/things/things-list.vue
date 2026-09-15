@@ -101,7 +101,7 @@
         <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="updateFilteredItems" @reset="updateFilteredItems" />
       </f7-col>
       <!-- skeleton for not ready -->
-      <f7-col v-if="!ready">
+      <f7-col v-if="!ready" v-deferred>
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col things-list">
           <f7-list-group>

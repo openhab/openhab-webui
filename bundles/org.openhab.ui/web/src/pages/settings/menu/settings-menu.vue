@@ -59,7 +59,7 @@
             </f7-list>
           </group-box>
           <!-- skeleton for not servicesLoaded -->
-          <group-box v-if="!servicesLoaded" :title="$t('settings.groups.system-settings')">
+          <group-box v-if="!servicesLoaded" :title="$t('settings.groups.system-settings')" v-deferred>
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
@@ -73,7 +73,7 @@
               :expanded="expandedTypes.addonsExpanded"
               @expand="expand('addonsExpanded')" />
             <!-- skeleton for not addonsLoaded -->
-            <group-box v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')">
+            <group-box v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')" v-deferred>
               <f7-list>
                 <f7-list-item v-for="n in 4" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
               </f7-list>
@@ -88,7 +88,7 @@
             :expanded="expandedTypes.addonsExpanded"
             @expand="expand('addonsExpanded')" />
           <!-- skeleton for not addonsLoaded -->
-          <group-box v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')">
+          <group-box v-if="!addonsLoaded" :title="$t('settings.groups.addon-settings')" v-deferred>
             <f7-list>
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>

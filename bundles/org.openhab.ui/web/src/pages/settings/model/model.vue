@@ -67,7 +67,7 @@
       <f7-link class="right details-link padding-right" ref="detailsLink" @click="detailsOpened = true" icon-f7="chevron_up" />
     </f7-toolbar>
 
-    <f7-block v-if="!ready" class="text-align-center">
+    <f7-block v-if="!ready" class="text-align-center" v-deferred>
       <f7-preloader />
       <div>Loading...</div>
     </f7-block>
