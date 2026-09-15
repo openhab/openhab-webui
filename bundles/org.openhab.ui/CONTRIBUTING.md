@@ -66,6 +66,7 @@ Some of its very helpful features are:
 - Computed properties (see [Vue.js: Essentials: Computed Properties](https://vuejs.org/guide/essentials/computed.html)) should be used instead of method calls for getting prop values in the `<template>`. Methods re-evaluate on every rerender, negatively impacting performance.
 - Conditional HTML attributes on HTML elements should be unset using `null` if the condition is false: `condition ? true : null`. This does not apply for Vue components.
 - All embedded `<style>` should have a component-specific top-level class as parent to prevent leaking styles to other components.
+- Always use `BREAKPOINTS` from `@/js/constants/breakpoints` or the `useBreakpoints` composable from `@/js/composables/useBreakpoints` when working with responsive breakpoints instead of hardcoding raw pixel values in templates or scripts.
 
 For new components, additional guidelines apply:
 

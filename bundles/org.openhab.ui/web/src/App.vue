@@ -11,7 +11,7 @@
       left
       :cover="showSidebar ? true : null"
       class="sidebar"
-      :visible-breakpoint="960"
+      :visible-breakpoint="BREAKPOINTS.MD"
       :swipe="!uiOptionsStore.disableLeftPanelSwipe">
       <f7-page>
         <!-- openHAB Logo -->
@@ -217,7 +217,7 @@
       <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="runtimeStore.showDeveloperDock" right :visible-breakpoint="1280" resizable>
+    <f7-panel v-if="runtimeStore.showDeveloperDock" right :visible-breakpoint="BREAKPOINTS.LG" resizable>
       <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" :searchFor="developerSearch" />
     </f7-panel>
 
@@ -250,7 +250,7 @@
       :main="true"
       class="safe-areas"
       :class="{ 'log-dock-offset': showDockedLogViewer && !logDockFullscreen }"
-      :master-detail-breakpoint="960"
+      :master-detail-breakpoint="BREAKPOINTS.MD"
       :browser-history="true"
       :browser-history-root="origin"
       browser-history-separator=""
@@ -470,6 +470,7 @@ import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
 
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 import { getRoot } from '@/api'
 import { isUnauthorized } from '@/js/hey-api'
 import { request } from 'framework7'
@@ -501,7 +502,8 @@ export default {
       globalMergeLocaleMessage,
       locale,
       startAudioWebSocket,
-      triggerDialog
+      triggerDialog,
+      BREAKPOINTS
     }
   },
   data() {
@@ -534,8 +536,8 @@ export default {
         routes,
         // Enable panel left visibility breakpoint
         panel: {
-          leftBreakpoint: 960,
-          rightBreakpoint: 1280
+          leftBreakpoint: BREAKPOINTS.MD,
+          rightBreakpoint: BREAKPOINTS.LG
         },
         card: {
           swipeToClose: true
