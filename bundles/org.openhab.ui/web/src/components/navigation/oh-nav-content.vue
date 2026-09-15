@@ -1,6 +1,12 @@
 <template>
   <f7-nav-left class="oh-nav-content">
-    <f7-link v-if="menuIcon" class="menu-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
+    <f7-link
+      v-if="device.desktop && menuIcon"
+      class="menu-icon"
+      icon-ios="f7:menu"
+      icon-aurora="f7:menu"
+      icon-md="material:menu"
+      panel-open="left" />
     <f7-link v-if="!theme.md" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
       {{ $f7dim.width > 500 ? backLink || t('dialogs.back') : null }}
     </f7-link>
@@ -14,7 +20,7 @@
     {{ title }}<span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
   </f7-nav-title-large>
   <f7-nav-right>
-    <developer-dock-icon />
+    <developer-icons />
     <f7-link v-if="editable === false" icon-f7="lock_fill" icon-only tooltip="Not editable through the UI" />
     <template v-if="saveLink && (editable === undefined || editable === true)">
       <f7-link
@@ -59,9 +65,11 @@
  */
 import { f7, theme } from 'framework7-vue'
 import type { Router } from 'framework7'
-import DeveloperDockIcon from '@/components/developer/developer-dock-icon.vue'
+import DeveloperIcons from '@/components/developer/developer-icons.vue'
 import { useI18n } from 'vue-i18n'
+const device = f7.device
 
+// --- Defines ---
 const props = withDefaults(
   defineProps<{
     title: string
@@ -91,10 +99,10 @@ defineSlots<{
   after: void
 }>()
 
+// --- Composables ---
 const { t } = useI18n({ useScope: 'local' })
 
-console.log('nav router', props.f7router)
-
+// --- Methods ---
 function back() {
   if (props.backLinkUrl) return
   if (props.backLinkUrl === null) {

@@ -1,5 +1,5 @@
 <template>
-  <span v-if="developerIconVisible || logIconVisible" class="dev-dock-icons">
+  <span v-if="developerIconVisible || logIconVisible" class="dev-icons">
     <!-- Developer dock icon: follows width + admin rules -->
     <f7-link
       v-if="developerIconVisible && runtimeStore.showDeveloperDock"
@@ -34,11 +34,13 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
 import type { Framework7Events } from '@/types/framework7-extensions'
 
+// --- Composables ---
 const userStore = useUserStore()
 const runtimeStore = useRuntimeStore()
 
 const { proxy } = getCurrentInstance() as any
 
+// --- Computed ---
 const developerIconVisible = computed(() => {
   return userStore.isAdmin() && proxy.$f7dim.width >= 1280
 })
@@ -54,7 +56,7 @@ const isOnLogViewerPage = computed(() => {
 </script>
 
 <style scoped lang="stylus">
-.dev-dock-icons
+.dev-icons
   display inline-flex
   &:not(:last-child)
     margin-right 8px
