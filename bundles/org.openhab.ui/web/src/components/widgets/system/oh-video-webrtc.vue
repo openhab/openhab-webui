@@ -4,14 +4,14 @@
       ref="videoPlayer"
       :autoplay="this.startManually ? false : true"
       :controls="this.hideControls ? false : true"
-      :muted="startMuted ? true : false"
+      :muted="isMuted"
       :poster="computedPosterUrl"
       playsinline
       style="max-width: 100%">
       Sorry, your browser doesn't support embedded videos.
     </video>
     <button
-      v-if="sendAudio"
+      v-if="sendAudio && micActive === undefined"
       class="oh-video-mic"
       :class="{ active: isMicOn }"
       @click="toggleMic"
@@ -37,24 +37,62 @@ export default {
     startMuted: { type: Boolean },
     hideControls: { type: Boolean },
     posterURL: { type: String },
-    sendAudio: { type: Boolean }
+    sendAudio: { type: Boolean },
+    micActive: { type: Boolean, default: undefined },
+    muteActive: { type: Boolean, default: undefined }
   },
   data() {
     return {
       webrtc: null,
       localAudioStream: null,
       audioTransceiver: null,
-      isMicOn: false
+      offerAbortController: null,
+      webrtcSendChannel: null,
+      popupElement: null,
+      isStopping: false,
+      isMicOn: false,
+      isMuted: false
     }
   },
   watch: {
     src(value) {
+      if (!value) {
+        this.stopStream()
+        return
+      }
       this.startStream()
     },
     sendAudio(value) {
       if (value === false && this.isMicOn) {
         this.isMicOn = false
         this.disableMicrophone()
+      }
+    },
+    micActive(value) {
+      if (this.sendAudio !== true) {
+        if (this.isMicOn) {
+          this.isMicOn = false
+          this.disableMicrophone()
+        }
+        return
+      }
+      if (value === true && !this.isMicOn) {
+        this.isMicOn = true
+        if (this.webrtc) {
+          this.enableMicrophone(this.webrtc, this.audioTransceiver)
+        } else if (this.inForeground && this.src) {
+          this.startStream()
+        }
+      } else if (value === false && this.isMicOn) {
+        this.isMicOn = false
+        this.disableMicrophone()
+      }
+    },
+    muteActive(value) {
+      if (value === true) {
+        this.isMuted = true
+      } else if (value === false) {
+        this.isMuted = false
       }
     }
   },
@@ -71,18 +109,124 @@ export default {
         : this.posterURL
     }
   },
+  mounted() {
+    this.isMuted = this.muteActive !== undefined ? this.muteActive : (this.startMuted || false)
+    if (this.sendAudio === true && this.micActive === true) {
+      this.isMicOn = true
+      if (this.inForeground && this.src && !this.webrtc) {
+        this.startStream()
+      }
+    }
+    this.attachPopupLifecycleListeners()
+  },
+  beforeUnmount() {
+    this.detachPopupLifecycleListeners()
+    this.stopStream()
+  },
   methods: {
+    attachPopupLifecycleListeners() {
+      const wrapper = this.$el
+      if (!wrapper || typeof wrapper.closest !== 'function') {
+        return
+      }
+      const popup = wrapper.closest('.popup')
+      if (!popup) {
+        return
+      }
+      this.popupElement = popup
+      popup.addEventListener('popup:close', this.onPopupClose)
+      popup.addEventListener('popup:opened', this.onPopupOpened)
+    },
+    detachPopupLifecycleListeners() {
+      const popup = this.popupElement
+      if (!popup) {
+        return
+      }
+      popup.removeEventListener('popup:close', this.onPopupClose)
+      popup.removeEventListener('popup:opened', this.onPopupOpened)
+      this.popupElement = null
+    },
+    onPopupClose() {
+      this.stopStream()
+    },
+    onPopupOpened() {
+      if (this.inForeground && this.src && !this.webrtc) {
+        this.startStream()
+      }
+    },
+    resetVideoElement() {
+      const videoPlayer = this.$refs.videoPlayer
+      if (!videoPlayer) {
+        return
+      }
+      try {
+        const stream = videoPlayer.srcObject
+        if (stream && typeof stream.getTracks === 'function') {
+          stream.getTracks().forEach((track) => {
+            try {
+              track.stop()
+            } catch (e) {}
+          })
+        }
+      } catch (e) {}
+
+      try {
+        videoPlayer.pause()
+      } catch (e) {}
+      videoPlayer.srcObject = null
+      try {
+        videoPlayer.removeAttribute('src')
+        videoPlayer.load()
+      } catch (e) {}
+    },
     stopStream() {
+      if (this.isStopping) {
+        return
+      }
+      const hasActiveStream = !!(
+        this.offerAbortController ||
+        this.webrtc ||
+        this.webrtcSendChannel ||
+        (this.$refs.videoPlayer && this.$refs.videoPlayer.srcObject)
+      )
+      if (!hasActiveStream) {
+        return
+      }
+      this.isStopping = true
       console.debug('WebRTC Closing Connection')
-      if (this.webrtc) {
-        this.webrtc.isClosed = true
-        try {
-          this.disableMicrophone()
-        } catch (e) {}
-        this.webrtc.close()
-        // see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/close
-        this.audioTransceiver = null
-        this.webrtc = null
+      try {
+        if (this.offerAbortController) {
+          try {
+            this.offerAbortController.abort()
+          } catch (e) {}
+          this.offerAbortController = null
+        }
+        if (this.webrtcSendChannel) {
+          try {
+            this.webrtcSendChannel.onclose = null
+          } catch (e) {}
+          try {
+            this.webrtcSendChannel.close()
+          } catch (e) {}
+          this.webrtcSendChannel = null
+        }
+        if (this.webrtc) {
+          this.webrtc.isClosed = true
+          try {
+            this.disableMicrophone()
+          } catch (e) {}
+          try {
+            this.webrtc.ontrack = null
+            this.webrtc.onnegotiationneeded = null
+          } catch (e) {}
+          this.webrtc.close()
+          // see https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/close
+          this.audioTransceiver = null
+          this.webrtc = null
+        }
+        this.resetVideoElement()
+      } finally {
+        this.isStopping = false
       }
     },
     startStream() {
@@ -114,14 +258,26 @@ export default {
         this.enableMicrophone(webrtc, this.audioTransceiver)
       }
       webrtc.onnegotiationneeded = function handleNegotiationNeeded() {
+        const offerAbortController = new AbortController()
+        self.offerAbortController = offerAbortController
         // WebRTC lifecycle to create a live stream
         webrtc
           .createOffer()
           .then((offer) => webrtc.setLocalDescription(offer))
           .then(() => waitForCandidates(self.candidatesTimeout))
-          .then(() => sendOffer())
-          .then((answer) => webrtc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: answer })))
+          .then(() => sendOffer(offerAbortController))
+          .then((answer) => {
+            if (webrtc.isClosed || self.webrtc !== webrtc) {
+              return
+            }
+            return webrtc.setRemoteDescription(new RTCSessionDescription({ type: 'answer', sdp: answer }))
+          })
           .catch((e) => console.warn(e))
+          .finally(() => {
+            if (self.offerAbortController === offerAbortController) {
+              self.offerAbortController = null
+            }
+          })
 
         // waits x amount of time for ICE candidates before resolving
         function waitForCandidates(timeout = 2000) {
@@ -145,17 +301,22 @@ export default {
           })
         }
         // Sends our SDP offer to the remote server, expects a SDP answer back
-        function sendOffer() {
+        function sendOffer(offerAbortController) {
           console.debug('Offer: ', webrtc.localDescription.sdp)
           return new Promise((resolve, reject) => {
             fetch(self.src, {
               method: 'POST',
+              signal: offerAbortController ? offerAbortController.signal : undefined,
               body: new URLSearchParams({
                 data: btoa(webrtc.localDescription.sdp)
               })
             })
               .then((response) => response.text())
               .then((data) => {
+                if (webrtc.isClosed || self.webrtc !== webrtc) {
+                  reject(new Error('WebRTC connection already closed'))
+                  return
+                }
                 const answer = atob(data)
                 console.debug('Answer: ', answer)
                 resolve(answer)
@@ -166,10 +327,11 @@ export default {
       }
       // creates a channel needed by nest(?) cameras, we also use this to restart streams if closed
       const webrtcSendChannel = webrtc.createDataChannel('dataSendChannel')
+      this.webrtcSendChannel = webrtcSendChannel
       webrtcSendChannel.onclose = (_event) => {
         console.debug(`${webrtcSendChannel.label} has closed`)
         // if we did not close this, restart the stream
-        if (!webrtc.isClosed) {
+        if (!webrtc.isClosed && this.webrtc === webrtc && !this.isStopping) {
           console.warn(`${webrtcSendChannel.label} closed prematurely, restarting`)
           self.startStream()
         }
@@ -200,7 +362,8 @@ export default {
           return
         }
         // If already enabled, do nothing
-        if (this.localAudioStream && this.localAudioStream.getAudioTracks().some((t) => t.enabled)) {
+        if (this.localAudioStream && this.localAudioStream.getAudioTracks().some((t) => t.enabled)
+            && audioTransceiver && audioTransceiver.sender && audioTransceiver.sender.track) {
           return
         }
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
