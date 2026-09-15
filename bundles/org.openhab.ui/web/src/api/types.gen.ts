@@ -134,14 +134,15 @@ export type RuleStatusInfo = {
     status: 'UNINITIALIZED' | 'INITIALIZING' | 'IDLE' | 'RUNNING';
     statusDetail: 'NONE' | 'HANDLER_MISSING_ERROR' | 'HANDLER_INITIALIZING_ERROR' | 'CONFIGURATION_ERROR' | 'TEMPLATE_MISSING_ERROR' | 'TEMPLATE_PENDING' | 'INVALID_RULE' | 'DISABLED';
     description: string;
+    duration: number;
 };
 
 export type Module = {
-    typeUID: string;
-    configuration: Configuration;
-    id: string;
     label: string;
+    configuration: Configuration;
     description: string;
+    id: string;
+    typeUID: string;
 };
 
 export type Configuration = {
@@ -383,30 +384,40 @@ export type SerializabilityResults = {
 };
 
 export type JsonArray = {
+    asBigDecimal: number;
+    asBigInteger: number;
+    asString: string;
+    asBoolean: boolean;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    empty: boolean;
     asNumber: number;
     asFloat: number;
     asByte: string;
     asCharacter: string;
     asShort: number;
-    asBigDecimal: number;
-    asBigInteger: number;
-    empty: boolean;
-    asString: string;
-    asDouble: number;
-    asInt: number;
-    asLong: number;
-    asBoolean: boolean;
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
     jsonObject: boolean;
     jsonArray: boolean;
     jsonNull: boolean;
     asJsonArray: JsonArray;
     asJsonNull: JsonNull;
-    jsonPrimitive: boolean;
-    asJsonObject: JsonObject;
-    asJsonPrimitive: JsonPrimitive;
 };
 
 export type JsonElement = {
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
+    asBigDecimal: number;
+    asBigInteger: number;
+    asString: string;
+    asBoolean: boolean;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
     jsonObject: boolean;
     jsonArray: boolean;
     jsonNull: boolean;
@@ -417,19 +428,19 @@ export type JsonElement = {
     asByte: string;
     asCharacter: string;
     asShort: number;
-    jsonPrimitive: boolean;
-    asJsonObject: JsonObject;
-    asJsonPrimitive: JsonPrimitive;
-    asBigDecimal: number;
-    asBigInteger: number;
-    asString: string;
-    asDouble: number;
-    asInt: number;
-    asLong: number;
-    asBoolean: boolean;
 };
 
 export type JsonNull = {
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
+    asBigDecimal: number;
+    asBigInteger: number;
+    asString: string;
+    asBoolean: boolean;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
     jsonObject: boolean;
     jsonArray: boolean;
     jsonNull: boolean;
@@ -440,20 +451,20 @@ export type JsonNull = {
     asByte: string;
     asCharacter: string;
     asShort: number;
-    jsonPrimitive: boolean;
-    asJsonObject: JsonObject;
-    asJsonPrimitive: JsonPrimitive;
-    asBigDecimal: number;
-    asBigInteger: number;
-    asString: string;
-    asDouble: number;
-    asInt: number;
-    asLong: number;
-    asBoolean: boolean;
 };
 
 export type JsonObject = {
     empty: boolean;
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
+    asBigDecimal: number;
+    asBigInteger: number;
+    asString: string;
+    asBoolean: boolean;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
     jsonObject: boolean;
     jsonArray: boolean;
     jsonNull: boolean;
@@ -464,42 +475,32 @@ export type JsonObject = {
     asByte: string;
     asCharacter: string;
     asShort: number;
-    jsonPrimitive: boolean;
-    asJsonObject: JsonObject;
-    asJsonPrimitive: JsonPrimitive;
-    asBigDecimal: number;
-    asBigInteger: number;
-    asString: string;
-    asDouble: number;
-    asInt: number;
-    asLong: number;
-    asBoolean: boolean;
 };
 
 export type JsonPrimitive = {
+    asBigDecimal: number;
+    asBigInteger: number;
+    asString: string;
+    asBoolean: boolean;
+    asDouble: number;
+    asInt: number;
+    asLong: number;
+    number: boolean;
+    boolean: boolean;
     asNumber: number;
     asFloat: number;
     asByte: string;
     asCharacter: string;
     asShort: number;
     string: boolean;
-    number: boolean;
-    boolean: boolean;
-    asBigDecimal: number;
-    asBigInteger: number;
-    asString: string;
-    asDouble: number;
-    asInt: number;
-    asLong: number;
-    asBoolean: boolean;
+    jsonPrimitive: boolean;
+    asJsonObject: JsonObject;
+    asJsonPrimitive: JsonPrimitive;
     jsonObject: boolean;
     jsonArray: boolean;
     jsonNull: boolean;
     asJsonArray: JsonArray;
     asJsonNull: JsonNull;
-    jsonPrimitive: boolean;
-    asJsonObject: JsonObject;
-    asJsonPrimitive: JsonPrimitive;
 };
 
 export type StringList = Array<string>;
@@ -640,6 +641,7 @@ export type SitemapWidgetDefinition = {
     labelColorRules: Array<SitemapRule>;
     valueColorRules: Array<SitemapRule>;
     iconColorRules: Array<SitemapRule>;
+    widgets: Array<SitemapWidgetDefinition>;
 };
 
 export type Thing = {
@@ -1097,6 +1099,7 @@ export type SitemapWidget = {
     state: string;
     item: EnrichedItem;
     linkedPage: SitemapPage;
+    widgets: Array<SitemapWidget>;
     mappings: Array<SitemapMapping>;
 };
 
@@ -1114,6 +1117,40 @@ export type EnrichedSitemapDefinition = {
     label: string;
     widgets: Array<SitemapWidgetDefinition>;
     editable: boolean;
+};
+
+export type ServerAliveEvent = {
+    sitemapName?: string;
+    pageId?: string;
+    readonly TYPE: 'ALIVE';
+};
+
+export type SitemapChangedEvent = {
+    sitemapName?: string;
+    pageId?: string;
+    readonly TYPE: 'SITEMAP_CHANGED';
+};
+
+export type SitemapEvent = (SitemapWidgetEvent | SitemapChangedEvent | ServerAliveEvent) & {
+    sitemapName: string;
+    pageId: string;
+};
+
+export type SitemapWidgetEvent = {
+    sitemapName?: string;
+    pageId?: string;
+    widgetId: string;
+    label?: string;
+    labelSource?: string;
+    icon?: string;
+    reloadIcon?: boolean;
+    labelcolor?: string;
+    valuecolor?: string;
+    iconcolor?: string;
+    visibility?: boolean;
+    state?: string;
+    item?: EnrichedItem;
+    descriptionChanged?: boolean;
 };
 
 export type Transformation = {
@@ -1137,14 +1174,14 @@ export type EnrichedRootUiComponent = {
     config: {
         [key: string]: unknown;
     };
-    slots: {
+    slots?: {
         [key: string]: Array<UiComponent>;
     };
     uid: string;
     tags: Array<string>;
     props: ConfigDescription;
-    timestamp: string;
-    editable: boolean;
+    timestamp?: string;
+    editable?: boolean;
 };
 
 export type UiComponent = {
@@ -1168,7 +1205,7 @@ export type RootUiComponent = {
     uid: string;
     tags: Array<string>;
     props: ConfigDescription;
-    timestamp: string;
+    timestamp?: string;
 };
 
 export type Tile = {
@@ -1229,6 +1266,21 @@ export type IconSet = {
     label: string;
     description: string;
     formats: Array<'PNG' | 'SVG'>;
+};
+
+export type ServerAliveEventWritable = {
+    sitemapName?: string;
+    pageId?: string;
+};
+
+export type SitemapChangedEventWritable = {
+    sitemapName?: string;
+    pageId?: string;
+};
+
+export type SitemapEventWritable = (SitemapWidgetEvent | SitemapChangedEventWritable | ServerAliveEventWritable) & {
+    sitemapName: string;
+    pageId: string;
 };
 
 export type GetModuleTypesData = {
@@ -2281,6 +2333,14 @@ export type GetAddonsData = {
          * service ID
          */
         serviceId?: string;
+        /**
+         * true to return only installed add-ons
+         */
+        installedOnly?: boolean;
+        /**
+         * true to refresh add-ons before returning them
+         */
+        refresh?: boolean;
     };
     url: '/addons';
 };
@@ -5585,6 +5645,10 @@ export type PollDataForPageData = {
          * language
          */
         'Accept-Language'?: string;
+        /**
+         * X-Atmosphere-Transport for long polling
+         */
+        'X-Atmosphere-Transport'?: string;
     };
     path: {
         /**
@@ -5636,6 +5700,10 @@ export type PollDataForSitemapData = {
          * language
          */
         'Accept-Language'?: string;
+        /**
+         * X-Atmosphere-Transport for long polling
+         */
+        'X-Atmosphere-Transport'?: string;
     };
     path: {
         /**
@@ -5736,8 +5804,10 @@ export type GetSitemapEventsResponses = {
     /**
      * OK
      */
-    200: unknown;
+    200: SitemapEvent;
 };
+
+export type GetSitemapEventsResponse = GetSitemapEventsResponses[keyof GetSitemapEventsResponses];
 
 export type GetSitemapEvents1Data = {
     body?: never;
@@ -5775,8 +5845,10 @@ export type GetSitemapEvents1Responses = {
     /**
      * OK
      */
-    200: unknown;
+    200: SitemapEvent;
 };
+
+export type GetSitemapEvents1Response = GetSitemapEvents1Responses[keyof GetSitemapEvents1Responses];
 
 export type GetSitemapsData = {
     body?: never;
@@ -6296,7 +6368,7 @@ export type InterpretTextByDefaultInterpreterData = {
          */
         conversation?: string;
         /**
-         * Comma separated list of llm-tool ids
+         * Comma separated list of llm-tool ids or * wildcard
          */
         llmTools?: Array<string>;
         /**
@@ -6388,7 +6460,7 @@ export type InterpretTextData = {
          */
         conversation?: string;
         /**
-         * Comma separated list of llm-tool ids
+         * Comma separated list of llm-tool ids or * wildcard
          */
         llmTools?: Array<string>;
         /**
