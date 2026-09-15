@@ -21,11 +21,6 @@ export interface ConfigGuardFn<T> {
   validationFn?: ConfigValidationFn<T>
 }
 
-type Component = {
-  component: string
-  config?: unknown
-}
-
 /**
  * Validates whether an unknown value is a non-null object and optionally
  * runs a custom validation function
@@ -62,7 +57,7 @@ export function guardComponent<TComponent extends { component: string; config?: 
   isConfig: ConfigGuardFn<TConfig>,
   defaultConfig?: TConfig
 ): component is TComponent & { config: TConfig } {
-  if (!component || typeof component !== 'object') return false
+  if (!component || typeof component !== 'object' || Array.isArray(component)) return false
 
   const candidate = component as Record<string, unknown>
   if (candidate.component !== componentType) return false
