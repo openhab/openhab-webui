@@ -134,14 +134,15 @@ export type RuleStatusInfo = {
     status: 'UNINITIALIZED' | 'INITIALIZING' | 'IDLE' | 'RUNNING';
     statusDetail: 'NONE' | 'HANDLER_MISSING_ERROR' | 'HANDLER_INITIALIZING_ERROR' | 'CONFIGURATION_ERROR' | 'TEMPLATE_MISSING_ERROR' | 'TEMPLATE_PENDING' | 'INVALID_RULE' | 'DISABLED';
     description: string;
+    duration: number;
 };
 
 export type Module = {
-    configuration: Configuration;
-    typeUID: string;
-    id: string;
-    description: string;
     label: string;
+    configuration: Configuration;
+    description: string;
+    id: string;
+    typeUID: string;
 };
 
 export type Configuration = {
@@ -385,25 +386,25 @@ export type SerializabilityResults = {
 export type JsonArray = {
     asBigDecimal: number;
     asBigInteger: number;
-    asNumber: number;
-    asByte: string;
-    asCharacter: string;
-    asFloat: number;
-    asShort: number;
-    empty: boolean;
-    asBoolean: boolean;
     asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
+    empty: boolean;
+    asNumber: number;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asShort: number;
     jsonPrimitive: boolean;
     asJsonObject: JsonObject;
     asJsonPrimitive: JsonPrimitive;
-    asJsonNull: JsonNull;
-    asJsonArray: JsonArray;
+    jsonObject: boolean;
     jsonArray: boolean;
     jsonNull: boolean;
-    jsonObject: boolean;
+    asJsonArray: JsonArray;
+    asJsonNull: JsonNull;
 };
 
 export type JsonElement = {
@@ -412,21 +413,21 @@ export type JsonElement = {
     asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
-    asJsonNull: JsonNull;
-    asJsonArray: JsonArray;
-    jsonArray: boolean;
-    jsonNull: boolean;
-    jsonObject: boolean;
-    asNumber: number;
-    asByte: string;
-    asCharacter: string;
-    asFloat: number;
-    asShort: number;
-    asBoolean: boolean;
     asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
+    jsonObject: boolean;
+    jsonArray: boolean;
+    jsonNull: boolean;
+    asJsonArray: JsonArray;
+    asJsonNull: JsonNull;
+    asNumber: number;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asShort: number;
 };
 
 export type JsonNull = {
@@ -435,21 +436,21 @@ export type JsonNull = {
     asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
-    asJsonNull: JsonNull;
-    asJsonArray: JsonArray;
-    jsonArray: boolean;
-    jsonNull: boolean;
-    jsonObject: boolean;
-    asNumber: number;
-    asByte: string;
-    asCharacter: string;
-    asFloat: number;
-    asShort: number;
-    asBoolean: boolean;
     asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
+    jsonObject: boolean;
+    jsonArray: boolean;
+    jsonNull: boolean;
+    asJsonArray: JsonArray;
+    asJsonNull: JsonNull;
+    asNumber: number;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asShort: number;
 };
 
 export type JsonObject = {
@@ -459,47 +460,47 @@ export type JsonObject = {
     asJsonPrimitive: JsonPrimitive;
     asBigDecimal: number;
     asBigInteger: number;
-    asJsonNull: JsonNull;
-    asJsonArray: JsonArray;
-    jsonArray: boolean;
-    jsonNull: boolean;
-    jsonObject: boolean;
-    asNumber: number;
-    asByte: string;
-    asCharacter: string;
-    asFloat: number;
-    asShort: number;
-    asBoolean: boolean;
     asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
+    jsonObject: boolean;
+    jsonArray: boolean;
+    jsonNull: boolean;
+    asJsonArray: JsonArray;
+    asJsonNull: JsonNull;
+    asNumber: number;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asShort: number;
 };
 
 export type JsonPrimitive = {
     asBigDecimal: number;
     asBigInteger: number;
-    boolean: boolean;
-    asNumber: number;
-    asByte: string;
-    asCharacter: string;
-    asFloat: number;
-    asShort: number;
-    number: boolean;
-    string: boolean;
-    asBoolean: boolean;
     asString: string;
+    asBoolean: boolean;
     asDouble: number;
     asInt: number;
     asLong: number;
+    number: boolean;
+    boolean: boolean;
+    asNumber: number;
+    asFloat: number;
+    asByte: string;
+    asCharacter: string;
+    asShort: number;
+    string: boolean;
     jsonPrimitive: boolean;
     asJsonObject: JsonObject;
     asJsonPrimitive: JsonPrimitive;
-    asJsonNull: JsonNull;
-    asJsonArray: JsonArray;
+    jsonObject: boolean;
     jsonArray: boolean;
     jsonNull: boolean;
-    jsonObject: boolean;
+    asJsonArray: JsonArray;
+    asJsonNull: JsonNull;
 };
 
 export type StringList = Array<string>;
@@ -1118,6 +1119,40 @@ export type EnrichedSitemapDefinition = {
     editable: boolean;
 };
 
+export type ServerAliveEvent = {
+    sitemapName?: string;
+    pageId?: string;
+    readonly TYPE: 'ALIVE';
+};
+
+export type SitemapChangedEvent = {
+    sitemapName?: string;
+    pageId?: string;
+    readonly TYPE: 'SITEMAP_CHANGED';
+};
+
+export type SitemapEvent = (SitemapWidgetEvent | SitemapChangedEvent | ServerAliveEvent) & {
+    sitemapName: string;
+    pageId: string;
+};
+
+export type SitemapWidgetEvent = {
+    sitemapName?: string;
+    pageId?: string;
+    widgetId: string;
+    label?: string;
+    labelSource?: string;
+    icon?: string;
+    reloadIcon?: boolean;
+    labelcolor?: string;
+    valuecolor?: string;
+    iconcolor?: string;
+    visibility?: boolean;
+    state?: string;
+    item?: EnrichedItem;
+    descriptionChanged?: boolean;
+};
+
 export type Transformation = {
     uid: string;
     label: string;
@@ -1231,6 +1266,21 @@ export type IconSet = {
     label: string;
     description: string;
     formats: Array<'PNG' | 'SVG'>;
+};
+
+export type ServerAliveEventWritable = {
+    sitemapName?: string;
+    pageId?: string;
+};
+
+export type SitemapChangedEventWritable = {
+    sitemapName?: string;
+    pageId?: string;
+};
+
+export type SitemapEventWritable = (SitemapWidgetEvent | SitemapChangedEventWritable | ServerAliveEventWritable) & {
+    sitemapName: string;
+    pageId: string;
 };
 
 export type GetModuleTypesData = {
@@ -5595,6 +5645,10 @@ export type PollDataForPageData = {
          * language
          */
         'Accept-Language'?: string;
+        /**
+         * X-Atmosphere-Transport for long polling
+         */
+        'X-Atmosphere-Transport'?: string;
     };
     path: {
         /**
@@ -5646,6 +5700,10 @@ export type PollDataForSitemapData = {
          * language
          */
         'Accept-Language'?: string;
+        /**
+         * X-Atmosphere-Transport for long polling
+         */
+        'X-Atmosphere-Transport'?: string;
     };
     path: {
         /**
@@ -5746,8 +5804,10 @@ export type GetSitemapEventsResponses = {
     /**
      * OK
      */
-    200: unknown;
+    200: SitemapEvent;
 };
+
+export type GetSitemapEventsResponse = GetSitemapEventsResponses[keyof GetSitemapEventsResponses];
 
 export type GetSitemapEvents1Data = {
     body?: never;
@@ -5785,8 +5845,10 @@ export type GetSitemapEvents1Responses = {
     /**
      * OK
      */
-    200: unknown;
+    200: SitemapEvent;
 };
+
+export type GetSitemapEvents1Response = GetSitemapEvents1Responses[keyof GetSitemapEvents1Responses];
 
 export type GetSitemapsData = {
     body?: never;
