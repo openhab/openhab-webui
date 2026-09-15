@@ -41,23 +41,23 @@
                     v-for="(field, fieldidx) in leadingFields"
                     :key="`leading-${fieldidx}`"
                     v-bind="getFieldInputProps(field, fieldidx, attr.value, isItemField(field), isOperatorField(field))"
-                    @input="updateAttributeValue($event, idx, attr, fieldKey(field))"
-                    @change="updateAttribute($event, idx, attr, fieldKey(field))" />
+                    @input="updateAttributeValue($event, idx, attr, field, leadingFields)"
+                    @change="updateAttribute($event, idx, attr, field, leadingFields)" />
                 </template>
                 <field-input
                   v-for="(field, fieldidx) in arrayFieldDefinition(arrayField)"
                   :key="`nested-${nestedIdx}-${fieldidx}`"
                   v-bind="getFieldInputProps(field, fieldidx, nestedValue, isItemField(field), isOperatorField(field))"
-                  @input="updateNestedAttributeValue($event, idx, attr, arrayField, nestedIdx, fieldKey(field))"
-                  @change="updateNestedAttribute($event, idx, attr, arrayField, nestedIdx, fieldKey(field))" />
+                  @input="updateNestedAttributeValue($event, idx, attr, arrayField, nestedIdx, field, arrayFieldDefinition(arrayField))"
+                  @change="updateNestedAttribute($event, idx, attr, arrayField, nestedIdx, field, arrayFieldDefinition(arrayField))" />
                 <div v-if="nestedIdx < arrayFieldValues(attr.value, arrayField).length - 1" style="padding-left: 0px">AND</div>
                 <template v-if="nestedIdx === arrayFieldValues(attr.value, arrayField).length - 1">
                   <field-input
                     v-for="(field, fieldidx) in trailingFields"
                     :key="`trailing-${fieldidx}`"
                     v-bind="getFieldInputProps(field, fieldidx, attr.value, isItemField(field), isOperatorField(field))"
-                    @input="updateAttributeValue($event, idx, attr, fieldKey(field))"
-                    @change="updateAttribute($event, idx, attr, fieldKey(field))" />
+                    @input="updateAttributeValue($event, idx, attr, field, trailingFields)"
+                    @change="updateAttribute($event, idx, attr, field, trailingFields)" />
                   <f7-button v-if="!disabled" :tabindex="-1" text="+" small @click="addArrayFieldEntry(idx, attr, arrayField)" />
                 </template>
                 <f7-button
@@ -81,8 +81,8 @@
                 v-for="(field, fieldidx) in fields"
                 :key="fieldidx"
                 v-bind="getFieldInputProps(field, fieldidx, attr.value, isItemField(field), isOperatorField(field))"
-                @input="updateAttributeValue($event, idx, attr, fieldKey(field))"
-                @change="updateAttribute($event, idx, attr, fieldKey(field))" />
+                @input="updateAttributeValue($event, idx, attr, field, fields)"
+                @change="updateAttribute($event, idx, attr, field, fields)" />
             </div>
           </div>
           <f7-button v-if="!disabled" :tabindex="-1" text="" icon-material="clear" small @click="removeAttribute(idx)" />
@@ -609,7 +609,13 @@ export default {
         if (!this.isFieldObject(field)) {
           return value
         }
-        value[this.fieldKey(field)] = this.isArrayField(field) ? [this.createFieldValue(this.fieldDefinition(field))] : ''
+        if (this.isArrayField(field)) {
+          // Optional array fields (e.g. conditions alongside an argument) start empty so an
+          // unedited row doesn't persist a phantom entry with all-blank fields.
+          value[this.fieldKey(field)] = this.isOptionalArrayField(field, fields) ? [] : [this.createFieldValue(this.fieldDefinition(field))]
+        } else {
+          value[this.fieldKey(field)] = ''
+        }
         return value
       }, {})
     },
@@ -628,15 +634,17 @@ export default {
       }
       return [this.createFieldValue(this.arrayFieldDefinition(field))]
     },
-    updateAttribute($event, idx, attr, field) {
+    updateAttribute($event, idx, attr, field, fieldsGroup = this.fields) {
+      const fieldKey = this.fieldKey(field)
       let value = $event.target.value
-      if (!field && !value) {
+      if (!fieldKey && !value) {
         this.removeAttribute(idx)
         return
       }
-      if (field) {
+      if (fieldKey) {
         value = this.ensureAttributeValue(idx)
-        value[field] = $event.target.value
+        value[fieldKey] = $event.target.value
+        this.applyOperatorDefault(value, fieldsGroup, field)
       }
       this.widget[this.attribute][idx] = value
     },
@@ -646,10 +654,10 @@ export default {
       }
       return input ?? ''
     },
-    updateAttributeValue(rawValue, idx, attr, field) {
-      this.updateAttribute({ target: { value: this.normalizeInputValue(rawValue) } }, idx, attr, field)
+    updateAttributeValue(rawValue, idx, attr, field, fieldsGroup) {
+      this.updateAttribute({ target: { value: this.normalizeInputValue(rawValue) } }, idx, attr, field, fieldsGroup)
     },
-    updateNestedAttribute($event, idx, attr, arrayField, nestedIdx, field) {
+    updateNestedAttribute($event, idx, attr, arrayField, nestedIdx, field, fieldsGroup) {
       const value = this.ensureAttributeValue(idx)
       const arrayKey = this.fieldKey(arrayField)
       if (!Array.isArray(value[arrayKey])) {
@@ -658,11 +666,41 @@ export default {
       if (!value[arrayKey][nestedIdx]) {
         value[arrayKey][nestedIdx] = this.createFieldValue(this.arrayFieldDefinition(arrayField))
       }
-      value[arrayKey][nestedIdx][field] = $event.target.value
+      const nestedEntry = value[arrayKey][nestedIdx]
+      nestedEntry[this.fieldKey(field)] = $event.target.value
+      this.applyOperatorDefault(nestedEntry, fieldsGroup || this.arrayFieldDefinition(arrayField), field)
       this.widget[this.attribute][idx] = value
     },
-    updateNestedAttributeValue(rawValue, idx, attr, arrayField, nestedIdx, field) {
-      this.updateNestedAttribute({ target: { value: this.normalizeInputValue(rawValue) } }, idx, attr, arrayField, nestedIdx, field)
+    updateNestedAttributeValue(rawValue, idx, attr, arrayField, nestedIdx, field, fieldsGroup) {
+      this.updateNestedAttribute(
+        { target: { value: this.normalizeInputValue(rawValue) } },
+        idx,
+        attr,
+        arrayField,
+        nestedIdx,
+        field,
+        fieldsGroup
+      )
+    },
+    applyOperatorDefault(container, fieldsGroup, changedField) {
+      if (!container || !Array.isArray(fieldsGroup) || !this.isItemField(changedField)) {
+        return
+      }
+      if (!this.hasDisplayValue(this.fieldValue(container, changedField))) {
+        return
+      }
+      const fieldIndex = fieldsGroup.indexOf(changedField)
+      if (fieldIndex < 0) {
+        return
+      }
+      const operatorField = this.adjacentField(fieldsGroup, fieldIndex, 1)
+      if (!operatorField || !this.isOperatorField(operatorField)) {
+        return
+      }
+      const operatorKey = this.fieldKey(operatorField)
+      if (!this.hasDisplayValue(container[operatorKey])) {
+        container[operatorKey] = '=='
+      }
     },
     removeAttribute(idx) {
       this.widget[this.attribute].splice(idx, 1)

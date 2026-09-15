@@ -71,6 +71,14 @@
         </ul>
         <ul id="additional" class="additional-controls">
           <!-- additional controls -->
+          <f7-list-item v-if="supports('confirmCmd')" title="Confirm" :disabled="!editable || widget.confirmCmdRules?.length > 0">
+            <template #after>
+              <f7-toggle
+                tooltip="openHAB will ask for confirmation before executing a command"
+                :checked="widget.confirmCmd && !widget.confirmCmdRules?.length"
+                @toggle:change="widget.confirmCmd = $event" />
+            </template>
+          </f7-list-item>
           <f7-list-input
             v-if="supports('url')"
             label="URL"
