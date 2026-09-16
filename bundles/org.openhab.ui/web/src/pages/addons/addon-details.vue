@@ -65,7 +65,7 @@
               <f7-link @click="descriptionExpanded = true"> more </f7-link>
             </div>
           </f7-block>
-          <f7-block v-else class="skeleton-text skeleton-effect-blink">
+          <f7-block v-else class="skeleton-text skeleton-effect-blink" v-deferred>
             <p>
               Lorem ipsum dolor sit amet, an labore inermis est. Mel ut dicant tamquam commune, duo id accumsan eleifend tractatos, ius
               purto vitae fabulas cu. Te his vide omnis qualisque, in duo soluta persecuti instructior. Ex dicit detraxit voluptaria est.

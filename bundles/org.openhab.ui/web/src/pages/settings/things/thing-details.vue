@@ -56,7 +56,7 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink" strong>
+        <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink" strong v-deferred>
           <f7-col class="padding-horizontal">
             ______:
             <f7-chip class="margin-left" text="________" />
@@ -220,7 +220,7 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink">
+        <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink" v-deferred>
           <f7-col>
             <thing-general-settings :thing="{}" :thing-type="{}" :ready="false" />
             <f7-block-title medium> ____ _______ </f7-block-title>
