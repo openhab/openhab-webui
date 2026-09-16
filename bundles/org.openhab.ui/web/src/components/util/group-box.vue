@@ -233,9 +233,9 @@ import { f7 } from 'framework7-vue'
 
 const props = withDefaults(
   defineProps<{
-    title: string
-    description: string
-    accordion: boolean
+    title?: string
+    description?: string
+    accordion?: boolean
     accordionOpened?: boolean
   }>(),
   {

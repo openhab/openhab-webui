@@ -20,6 +20,18 @@ const outpath = './src/api'
 
 let openApi = null
 
+function patchComponentSchema(schemaName, schemaFile) {
+  try {
+    process.stdout.write(`Updating ${schemaName} in ${file} ... `)
+    execSync(`jq '.components.schemas.${schemaName} = input' ${file} ${schemaFile} > tmp.json &&  mv tmp.json ${file}`, {
+      stdio: 'ignore'
+    })
+    process.stdout.write('DONE\n')
+  } catch (updateError) {
+    process.stderr.write(`ERROR updating ${schemaName}: ${updateError}\n`)
+  }
+}
+
 if (url) {
   process.stdout.write(`Fetching OpenAPI spec from URL ${url.href} ... `)
 
@@ -34,28 +46,6 @@ if (url) {
   process.stdout.write(`Saving OpenAPI spec to file ${file} ... `)
   fs.writeFileSync(file, JSON.stringify(openApi, null, 2))
   process.stdout.write('DONE\n')
-
-  try {
-    // TODO: temporary fix for UIComponent schema in OpenAPI spec - see https://github.com/openhab/openhab-core/issues/5686
-    process.stdout.write(`Updating UIComponent in ${file} ... `)
-    execSync(`jq '.components.schemas.UIComponent = input' ${file} ./build/UIComponent.json > tmp.json &&  mv tmp.json ${file}`, {
-      stdio: 'ignore'
-    })
-    process.stdout.write('DONE\n')
-  } catch (updateError) {
-    process.stderr.write(`ERROR updating UIComponent: ${updateError}\n`)
-  }
-
-  try {
-    // TODO: temporary fix for RootUIComponent schema in OpenAPI spec
-    process.stdout.write(`Updating RootUIComponent in ${file} ... `)
-    execSync(`jq '.components.schemas.RootUIComponent = input' ${file} ./build/RootUIComponent.json > tmp.json &&  mv tmp.json ${file}`, {
-      stdio: 'ignore'
-    })
-    process.stdout.write('DONE\n')
-  } catch (updateError) {
-    process.stderr.write(`ERROR updating RootUIComponent: ${updateError}\n`)
-  }
 
   try {
     process.stdout.write(`Applying oxfmt to ${file} ... `)
