@@ -122,15 +122,7 @@ export function isAdmin(): boolean {
 
 // As Framework7 RouteCallbackCtx uses Function type:
 // oxlint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export function enforceAdminForRoute({
-  resolve,
-  reject
-}: {
-  // oxlint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  resolve: Function
-  // oxlint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  reject: Function
-}): void {
+export function enforceAdminForRoute({ resolve, reject }: { resolve: Function; reject: Function }): void {
   if (!isAdmin()) {
     reject()
     void authorize()

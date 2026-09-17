@@ -207,10 +207,7 @@ export const useThingEditStore = defineStore('thingEditStore', () => {
     if (configDirty.value && !thingDirty.value && !forceSaveThing) {
       successMessage = 'Thing configuration updated'
       // otherwise (for example, channels or label) use the regular PUT /rest/thing/:thingId
-      promise = api.updateThingConfig({
-        thingUID: thing.value.UID,
-        body: thing.value.configuration
-      })
+      promise = api.updateThingConfig({ thingUID: thing.value.UID, body: thing.value.configuration })
     } else {
       successMessage = 'Thing updated'
       promise = api.updateThing({ thingUID: thing.value.UID, thing: thing.value })

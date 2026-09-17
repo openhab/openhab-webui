@@ -742,15 +742,8 @@ export default {
       let chartPage = Object.assign({ uid }, this.page)
 
       const promise = !overwrite
-        ? api.addUiComponentToNamespace({
-            namespace: 'ui:page',
-            rootUiComponent: chartPage as api.RootUiComponent
-          })
-        : api.updateUiComponentInNamespace({
-            namespace: 'ui:page',
-            componentUID: uid,
-            rootUiComponent: chartPage as api.RootUiComponent
-          })
+        ? api.addUiComponentToNamespace({ namespace: 'ui:page', rootUiComponent: chartPage as api.RootUiComponent })
+        : api.updateUiComponentInNamespace({ namespace: 'ui:page', componentUID: uid, rootUiComponent: chartPage as api.RootUiComponent })
       promise.then((data) => {
         if (overwrite) {
           showToast(this.t('analyzer.page.updated'))

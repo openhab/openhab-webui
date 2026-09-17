@@ -11,12 +11,7 @@
         <f7-list-item
           :title="'Widget'"
           smart-select
-          :smart-select-params="{
-            openIn: 'popup',
-            searchbar: true,
-            closeOnSelect: true,
-            scrollToSelectedItem: true
-          }"
+          :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: true, scrollToSelectedItem: true }"
           ref="widgets">
           <select name="widgets" @change="updateComponent">
             <option value="">Default ({{ defaultComponent.component }})</option>

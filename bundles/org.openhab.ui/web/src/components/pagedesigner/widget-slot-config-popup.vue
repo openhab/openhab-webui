@@ -96,10 +96,7 @@ export default {
       f7.emit('widgetSlotConfigUpdate', this.slotConfig)
     },
     addComponentToSlot() {
-      this.slotConfig.push({
-        component: this.currentSlotDefaultComponentType,
-        config: Object.assign({}, this.initialConfig)
-      })
+      this.slotConfig.push({ component: this.currentSlotDefaultComponentType, config: Object.assign({}, this.initialConfig) })
       this.switchTab(this.slotConfig.length - 1)
     }
   }

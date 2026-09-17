@@ -122,7 +122,7 @@ describe('oh-chart-component.vue', () => {
     })
 
     await nextTick()
-    const vm = wrapper.vm
+    const vm = wrapper.vm as any
     vm.forceRerender()
     expect(mockDispose).toHaveBeenCalledTimes(1)
   })

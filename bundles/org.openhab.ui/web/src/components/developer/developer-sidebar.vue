@@ -1153,9 +1153,7 @@ export default {
                           }
                           this.$oh.api.postPlain('/rest/rules', JSON.stringify(scratchpad), 'text/plain', 'application/json').then(() => {
                             showToast('Scratchpad script created')
-                            f7.views.main.router.navigate('/settings/scripts/scratchpad', {
-                              animate: false
-                            })
+                            f7.views.main.router.navigate('/settings/scripts/scratchpad', { animate: false })
                           })
                         }
                       }

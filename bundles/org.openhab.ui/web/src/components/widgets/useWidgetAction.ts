@@ -54,10 +54,7 @@ function showActionFeedback(prefix: string, actionConfig: ActionConfig, text?: s
   }
 }
 
-export type WidgetActionConfig = ActionConfig & {
-  actionPropsParameterGroup?: string
-  taphold_actionPropsParameterGroup?: string
-}
+export type WidgetActionConfig = ActionConfig & { actionPropsParameterGroup?: string; taphold_actionPropsParameterGroup?: string }
 
 /**
  * useWidgetAction implements the execution of widget actions.

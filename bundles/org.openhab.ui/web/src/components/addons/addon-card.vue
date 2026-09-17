@@ -124,12 +124,7 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
 const uiOptionsStore = useUIOptionsStore()
 
 // props
-const props = defineProps<{
-  addon: api.Addon
-  headline?: string
-  installActionText?: string
-  lazyLogo?: boolean
-}>()
+const props = defineProps<{ addon: api.Addon; headline?: string; installActionText?: string; lazyLogo?: boolean }>()
 
 // emits
 const emit = defineEmits<{

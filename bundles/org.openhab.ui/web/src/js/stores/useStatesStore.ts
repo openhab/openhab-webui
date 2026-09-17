@@ -222,14 +222,9 @@ export const useStatesStore = defineStore('states', () => {
       const trackingListJson = JSON.stringify(trackingList.value)
       console.debug(`Updating tracking list (${trackingList.value.length} tracked Items): `, trackingList.value)
 
-      api
-        .updateItemListForStateUpdates({
-          connectionId: trackerConnectionId,
-          body: trackingList.value
-        })
-        .catch((e) => {
-          console.error('Failed to update tracking list for state tracker', e)
-        })
+      api.updateItemListForStateUpdates({ connectionId: trackerConnectionId, body: trackingList.value }).catch((e) => {
+        console.error('Failed to update tracking list for state tracker', e)
+      })
     })
   }
 

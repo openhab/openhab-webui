@@ -78,9 +78,7 @@
                         <f7-icon :f7="item.icon" color="gray" />
                       </template>
                       <select :value="developerSelectValue(item.controlId)" @change="onDeveloperSelectChange(item.controlId, $event)">
-                        <option v-for="option in item.options" :key="option.value" :value="option.value">
-                          {{ option.label }}
-                        </option>
+                        <option v-for="option in item.options" :key="option.value" :value="option.value">{{ option.label }}</option>
                       </select>
                     </f7-list-item>
                   </template>

@@ -57,10 +57,7 @@ export default {
               useUserStore().setUser(resp.user)
 
               const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
-              f7.views.main.router.navigate(nextRoute, {
-                animate: false,
-                clearPreviousHistory: true
-              })
+              f7.views.main.router.navigate(nextRoute, { animate: false, clearPreviousHistory: true })
 
               resolve(resp.user)
             })

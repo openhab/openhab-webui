@@ -261,12 +261,7 @@ export default {
             title,
             text,
             buttons: [
-              {
-                text: 'Cancel',
-                color: 'gray',
-                close: true,
-                onClick: () => this.$refs.itemForm.revertChange()
-              },
+              { text: 'Cancel', color: 'gray', close: true, onClick: () => this.$refs.itemForm.revertChange() },
               { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.doSave() }
             ],
             destroyOnClose: true

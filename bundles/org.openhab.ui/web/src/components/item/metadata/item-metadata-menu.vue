@@ -134,11 +134,7 @@ export default {
             ],
             [
               { label: true, text: 'Custom namespaces' },
-              {
-                color: 'theme-alt',
-                text: 'Enter Custom Namespace...',
-                onClick: this.editCustomMetadata
-              }
+              { color: 'theme-alt', text: 'Enter Custom Namespace...', onClick: this.editCustomMetadata }
             ],
             [{ color: 'red', text: 'Cancel', close: true }]
           ]

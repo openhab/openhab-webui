@@ -443,18 +443,8 @@ export default {
             text: 'Insert "' + this.itemLabel(node.item) + '" into "' + this.itemLabel(parentNode.item) + '" as',
             verticalButtons: true,
             buttons: [
-              {
-                text: 'Cancel',
-                color: 'gray',
-                keycodes: [27],
-                onClick: () => this.restoreModelUpdate()
-              },
-              {
-                text: 'Location',
-                strong: true,
-                keycodes: [13],
-                onClick: () => this.addLocation(node, parentNode)
-              },
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
+              { text: 'Location', strong: true, keycodes: [13], onClick: () => this.addLocation(node, parentNode) },
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) }
             ]
           })
@@ -466,19 +456,9 @@ export default {
             text: 'Insert "' + this.itemLabel(node.item) + '" into "' + this.itemLabel(parentNode.item) + '" as',
             verticalButtons: true,
             buttons: [
-              {
-                text: 'Cancel',
-                color: 'gray',
-                keycodes: [27],
-                onClick: () => this.restoreModelUpdate()
-              },
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
-              {
-                text: 'Point',
-                strong: true,
-                keycodes: [13],
-                onClick: () => this.addPoint(node, parentNode)
-              }
+              { text: 'Point', strong: true, keycodes: [13], onClick: () => this.addPoint(node, parentNode) }
             ]
           })
           .open()
@@ -505,19 +485,9 @@ export default {
             text: 'Insert "' + this.itemLabel(node.item) + '" into "' + this.itemLabel(parentNode.item) + '" as',
             verticalButtons: true,
             buttons: [
-              {
-                text: 'Cancel',
-                color: 'gray',
-                keycodes: [27],
-                onClick: () => this.restoreModelUpdate()
-              },
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
-              {
-                text: 'Point',
-                strong: true,
-                keycodes: [13],
-                onClick: () => this.addPoint(node, parentNode)
-              }
+              { text: 'Point', strong: true, keycodes: [13], onClick: () => this.addPoint(node, parentNode) }
             ]
           })
           .open()
@@ -552,20 +522,10 @@ export default {
             text: 'Insert "' + this.itemLabel(node.item) + '" into "' + this.itemLabel(parentNode.item) + '" as',
             verticalButtons: true,
             buttons: [
-              {
-                text: 'Cancel',
-                color: 'gray',
-                keycodes: [27],
-                onClick: () => this.restoreModelUpdate()
-              },
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
               { text: 'Location', onClick: () => this.addLocation(node, parentNode) },
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
-              {
-                text: 'Non Semantic',
-                strong: true,
-                keycodes: [13],
-                onClick: () => this.addNonSemantic(node, parentNode)
-              }
+              { text: 'Non Semantic', strong: true, keycodes: [13], onClick: () => this.addNonSemantic(node, parentNode) }
             ]
           })
           .open()
@@ -576,20 +536,10 @@ export default {
             text: 'Insert "' + this.itemLabel(node.item) + '" into "' + this.itemLabel(parentNode.item) + '" as',
             verticalButtons: true,
             buttons: [
-              {
-                text: 'Cancel',
-                color: 'gray',
-                keycodes: [27],
-                onClick: () => this.restoreModelUpdate()
-              },
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
               { text: 'Equipment', onClick: () => this.addEquipment(node, parentNode) },
               { text: 'Point', onClick: () => this.addPoint(node, parentNode) },
-              {
-                text: 'Non Semantic',
-                strong: true,
-                keycodes: [13],
-                onClick: () => this.addNonSemantic(node, parentNode)
-              }
+              { text: 'Non Semantic', strong: true, keycodes: [13], onClick: () => this.addNonSemantic(node, parentNode) }
             ]
           })
           .open()
@@ -717,18 +667,8 @@ export default {
               this.itemLabel(newParentNode.item) +
               '", keep original?',
             buttons: [
-              {
-                text: 'Cancel',
-                color: 'gray',
-                keycodes: [27],
-                onClick: () => this.restoreModelUpdate()
-              },
-              {
-                text: 'Yes',
-                strong: true,
-                keycodes: [13],
-                onClick: () => this.updateAfterRemove()
-              },
+              { text: 'Cancel', color: 'gray', keycodes: [27], onClick: () => this.restoreModelUpdate() },
+              { text: 'Yes', strong: true, keycodes: [13], onClick: () => this.updateAfterRemove() },
               { text: 'No', onClick: () => this.remove(node, parentNode, oldIndex) }
             ]
           })

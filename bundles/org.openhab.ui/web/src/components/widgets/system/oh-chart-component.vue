@@ -124,9 +124,7 @@ use([
   LabelLayout
 ])
 
-const echartsLocalesGlob = import.meta.glob('../../../../node_modules/echarts/lib/i18n/lang*.js', {
-  import: 'default'
-})
+const echartsLocalesGlob = import.meta.glob('../../../../node_modules/echarts/lib/i18n/lang*.js', { import: 'default' })
 
 const props = defineProps<{
   context: WidgetContext

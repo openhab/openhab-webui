@@ -42,8 +42,7 @@
 
       <f7-col v-else>
         <f7-block-title>
-          {{ semanticsProblems.length }} semantic model configuration conflict{{ plural(semanticsProblems.length) }}
-          found
+          {{ semanticsProblems.length }} semantic model configuration conflict{{ plural(semanticsProblems.length) }} found
         </f7-block-title>
         <f7-list class="col" contacts-list>
           <f7-list-item

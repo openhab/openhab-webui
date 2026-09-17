@@ -74,9 +74,7 @@
               v-if="disabled || !isArrayEditing(idx)"
               style="display: flex; align-items: center; width: 100%; min-height: 32px; cursor: pointer"
               @click="!disabled && startArrayEditing(idx)">
-              <div :style="collapsedFieldValueStyle(attr.value)">
-                {{ fieldDisplayValue(attr.value) }}
-              </div>
+              <div :style="collapsedFieldValueStyle(attr.value)">{{ fieldDisplayValue(attr.value) }}</div>
             </div>
             <div v-else :style="gridStyle(fields)">
               <field-input

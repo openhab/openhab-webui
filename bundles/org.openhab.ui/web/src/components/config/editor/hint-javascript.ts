@@ -31,11 +31,7 @@ function getPath(read: (n: any) => string, callNode: any, name: string | null) {
   let path: string[] = []
   let member = callNode
   let callExpression = false
-  const Literals: Record<string, string> = {
-    Number: 'Number()',
-    String: 'String()',
-    ArrayExpression: 'Array()'
-  }
+  const Literals: Record<string, string> = { Number: 'Number()', String: 'String()', ArrayExpression: 'Array()' }
   for (;;) {
     const obj = member.firstChild
     if (!obj) return null

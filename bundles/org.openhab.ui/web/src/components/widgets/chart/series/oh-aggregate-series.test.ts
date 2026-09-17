@@ -24,30 +24,10 @@ describe('dimensionFromDate', () => {
 
   describe('Basic Time Dimensions', () => {
     it.each([
-      {
-        dim: OhAggregateSeries.Dimension.minute,
-        time: '2025-10-23 10:15:00',
-        invert: false,
-        expected: 15
-      },
-      {
-        dim: OhAggregateSeries.Dimension.minute,
-        time: '2025-10-23 10:15:00',
-        invert: true,
-        expected: 44
-      }, // 59 - 15
-      {
-        dim: OhAggregateSeries.Dimension.hour,
-        time: '2025-10-23 10:15:00',
-        invert: false,
-        expected: 10
-      },
-      {
-        dim: OhAggregateSeries.Dimension.hour,
-        time: '2025-10-23 10:15:00',
-        invert: true,
-        expected: 13
-      } // 23 - 10
+      { dim: OhAggregateSeries.Dimension.minute, time: '2025-10-23 10:15:00', invert: false, expected: 15 },
+      { dim: OhAggregateSeries.Dimension.minute, time: '2025-10-23 10:15:00', invert: true, expected: 44 }, // 59 - 15
+      { dim: OhAggregateSeries.Dimension.hour, time: '2025-10-23 10:15:00', invert: false, expected: 10 },
+      { dim: OhAggregateSeries.Dimension.hour, time: '2025-10-23 10:15:00', invert: true, expected: 13 } // 23 - 10
     ])('should handle $dim (invert: $invert)', ({ dim, time, invert, expected }) => {
       const d = dayjs(time)
       expect(dimensionFromDate(chartType, startTime, endTime, d, dim, invert)).toBe(expected)

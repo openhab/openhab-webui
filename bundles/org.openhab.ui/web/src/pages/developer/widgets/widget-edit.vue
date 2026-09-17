@@ -331,19 +331,13 @@ export default {
 
       const promise = this.createMode
         ? api.addUiComponentToNamespace({ namespace: 'ui:widget', rootUiComponent: this.widget })
-        : api.updateUiComponentInNamespace({
-            namespace: 'ui:widget',
-            componentUID: this.widget.uid,
-            rootUiComponent: this.widget
-          })
+        : api.updateUiComponentInNamespace({ namespace: 'ui:widget', componentUID: this.widget.uid, rootUiComponent: this.widget })
       promise
         .then(() => {
           this.dirty = false
           if (this.createMode) {
             showToast('Widget created')
-            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.widget.uid), {
-              reloadCurrent: true
-            })
+            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.widget.uid), { reloadCurrent: true })
             this.load()
           } else {
             showToast('Widget updated')

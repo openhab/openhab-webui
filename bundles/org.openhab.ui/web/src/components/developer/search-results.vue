@@ -501,18 +501,7 @@ export default {
         : this.searchResults.persistenceConfigs
           ? this.searchResults.persistenceConfigs.slice(0, 5)
           : []
-      return {
-        items,
-        things,
-        rules,
-        scenes,
-        scripts,
-        pages,
-        widgets,
-        sitemaps,
-        transformations,
-        persistenceConfigs
-      }
+      return { items, things, rules, scenes, scripts, pages, widgets, sitemaps, transformations, persistenceConfigs }
     }
   },
   watch: {

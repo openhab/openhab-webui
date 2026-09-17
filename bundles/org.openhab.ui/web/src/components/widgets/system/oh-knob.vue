@@ -63,12 +63,9 @@ export default {
         tooltipColor: cfg.tooltipColor !== undefined ? cfg.tooltipColor : cfg.textColor,
         width: cfg.width !== undefined ? cfg.width : cfg.strokeWidth,
         // oxlint-disable-next-line no-constant-binary-expression
-        startAngle:
-          // oxlint-disable-next-line no-constant-binary-expression
-          !cfg.circleShape !== undefined ? (cfg.startAngle !== undefined ? cfg.startAngle : -50) : null,
-        endAngle:
-          // oxlint-disable-next-line no-constant-binary-expression
-          !cfg.circleShape !== undefined ? (cfg.endAngle !== undefined ? cfg.endAngle : -130) : null
+        startAngle: !cfg.circleShape !== undefined ? (cfg.startAngle !== undefined ? cfg.startAngle : -50) : null,
+        // oxlint-disable-next-line no-constant-binary-expression
+        endAngle: !cfg.circleShape !== undefined ? (cfg.endAngle !== undefined ? cfg.endAngle : -130) : null
       }
     }
   },

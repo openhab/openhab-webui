@@ -140,9 +140,7 @@ export default {
       const pageType = pageClone.component.replace(/^oh-|-page$/g, '')
       pageClone.uid = pageClone.uid + '_copy'
       delete pageClone.editable
-      this.f7router.navigate(`/settings/pages/${pageType}/duplicate`, {
-        props: { pageCopy: pageClone }
-      })
+      this.f7router.navigate(`/settings/pages/${pageType}/duplicate`, { props: { pageCopy: pageClone } })
     },
     deletePage() {
       f7.dialog.confirm(`Are you sure you want to delete ${this.page.uid}?`, 'Delete Page', () => {

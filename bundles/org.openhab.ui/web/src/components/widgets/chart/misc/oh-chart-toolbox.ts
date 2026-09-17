@@ -9,10 +9,7 @@ const presetFeatures = {
   restore: { title: 'Restore' },
   dataView: { title: 'Data Table', lang: ['Data Table', 'Close', 'Refresh'] },
   dataZoom: { title: { zoom: 'Area Zooming', back: 'Restore Area Zoom' } },
-  magicType: {
-    title: { line: 'Line', bar: 'Bar', stack: 'Stack', tiled: 'Tiled' },
-    type: ['line', 'bar', 'stack', 'tiled']
-  }
+  magicType: { title: { line: 'Line', bar: 'Bar', stack: 'Stack', tiled: 'Tiled' }, type: ['line', 'bar', 'stack', 'tiled'] }
 }
 
 const chartToolbox: MiscChartComponent = {
