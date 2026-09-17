@@ -12,7 +12,6 @@ import { vDeferred } from '@/js/directives/vDeferred'
 
 // Import globally registered components
 import OhNavContent from '@/components/navigation/oh-nav-content.vue'
-import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
 import OhIconComponent from './components/widgets/system/oh-icon.vue'
 import GenericWidgetComponent from './components/widgets/generic-widget-component.vue'
 import GroupBox from './components/util/group-box.vue'
@@ -74,7 +73,6 @@ app.use(VueClipboard, {
 
 // Register key components prior to mounting the app to ensure they are available to eliminate warnings
 app.component('OhNavContent', OhNavContent)
-app.component('DeveloperDockIcon', DeveloperDockIcon)
 app.component('OhIcon', OhIconComponent)
 app.component('GenericWidgetComponent', GenericWidgetComponent)
 app.component('GroupBox', GroupBox)
