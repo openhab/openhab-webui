@@ -160,7 +160,9 @@ describe('SitemapEdit', () => {
     wrapper.vm.load()
     await flushPromises()
 
-    expect(api.getSitemapDefinitionByName).toHaveBeenCalledWith({ sitemapname: 'existing_sitemap' })
+    expect(api.getSitemapDefinitionByName).toHaveBeenCalledWith({
+      sitemapname: 'existing_sitemap'
+    })
     expect(wrapper.vm.ready).toBe(true)
     expect(wrapper.vm.sitemap.name).toBe('existing_sitemap')
     expect(wrapper.vm.selectedWidget).toBe(wrapper.vm.sitemap)
@@ -184,9 +186,14 @@ describe('SitemapEdit', () => {
     wrapper.vm.save(null, true)
     await flushPromises()
 
-    expect(api.addOrUpdateSitemapInRegistry).toHaveBeenCalledWith({ sitemapname: 'copied_sitemap', sitemapDefinition: expect.any(Object) })
+    expect(api.addOrUpdateSitemapInRegistry).toHaveBeenCalledWith({
+      sitemapname: 'copied_sitemap',
+      sitemapDefinition: expect.any(Object)
+    })
     expect(wrapper.vm.dirty).toBe(false)
-    expect(navigateMock).toHaveBeenCalledWith('/settings/sitemaps/copied_sitemap', { reloadCurrent: true })
+    expect(navigateMock).toHaveBeenCalledWith('/settings/sitemaps/copied_sitemap', {
+      reloadCurrent: true
+    })
   })
 
   it('validates frame does not contain frames', async () => {
@@ -709,8 +716,14 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     wrapper.vm.selectedWidget.valueColorRules = [
-      { conditions: [{ item: 'Heat_Warning', condition: '==', value: 'It is hot' }], argument: 'gray' },
-      { conditions: [{ item: 'Last_Update', condition: '==', value: 'Uninitialized' }], argument: 'grey' },
+      {
+        conditions: [{ item: 'Heat_Warning', condition: '==', value: 'It is hot' }],
+        argument: 'gray'
+      },
+      {
+        conditions: [{ item: 'Last_Update', condition: '==', value: 'Uninitialized' }],
+        argument: 'grey'
+      },
       { conditions: [{ item: 'Item_Name', condition: '>=', value: 25 }], argument: 'orange' },
       {
         conditions: [
@@ -769,12 +782,18 @@ describe('SitemapEdit', () => {
     expect(widget.valueColorRules[0]).not.toHaveProperty('conditions')
 
     // Partial condition: item survives, empty fields are dropped
-    expect(widget.valueColorRules[1]).toEqual({ conditions: [{ item: 'MyItem' }], argument: 'blue' })
+    expect(widget.valueColorRules[1]).toEqual({
+      conditions: [{ item: 'MyItem' }],
+      argument: 'blue'
+    })
     expect(widget.valueColorRules[1].conditions[0]).not.toHaveProperty('condition')
     expect(widget.valueColorRules[1].conditions[0]).not.toHaveProperty('value')
 
     // Fully populated condition: preserved unchanged
-    expect(widget.valueColorRules[2]).toEqual({ conditions: [{ item: 'MyItem', condition: '==', value: 'ON' }], argument: 'green' })
+    expect(widget.valueColorRules[2]).toEqual({
+      conditions: [{ item: 'MyItem', condition: '==', value: 'ON' }],
+      argument: 'green'
+    })
 
     // Mixed conditions: empty condition object is removed, valid one survives
     expect(widget.valueColorRules[3]).toEqual({
@@ -789,7 +808,10 @@ describe('SitemapEdit', () => {
     expect(widget.iconRules[1]).not.toHaveProperty('conditions')
 
     // Whitespace-only strings are preserved
-    expect(widget.iconRules[2]).toEqual({ conditions: [{ item: '   ', condition: ' ', value: '  ' }], argument: ' ' })
+    expect(widget.iconRules[2]).toEqual({
+      conditions: [{ item: '   ', condition: ' ', value: '  ' }],
+      argument: ' '
+    })
 
     // Rule with empty conditions and no argument is stripped entirely
     expect(widget.labelColorRules).toBeUndefined()

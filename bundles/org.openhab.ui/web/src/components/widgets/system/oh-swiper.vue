@@ -5,7 +5,10 @@
       v-for="(slide, idx) in slides"
       :key="'editmode-' + idx"
       class="oh-swiper-slide"
-      :class="{ 'unset-width': mergedConfig.slidesPerView === 'auto', 'edit-mode': context.editmode }">
+      :class="{
+        'unset-width': mergedConfig.slidesPerView === 'auto',
+        'edit-mode': context.editmode
+      }">
       <f7-menu v-if="context.editmode" class="configure-layout-menu padding-horizontal">
         <f7-menu-item style="margin-left: auto" icon-f7="rectangle_on_rectangle" dropdown>
           <f7-menu-dropdown right>

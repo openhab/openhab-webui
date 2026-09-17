@@ -55,7 +55,9 @@
             @update:value="updateFormatJava"
             @validation-message="javaFormatValidationMessage = $event" />
         </div>
-        <div v-if="javaFormatValidationMessage" class="format-editor-error">{{ javaFormatValidationMessage }}</div>
+        <div v-if="javaFormatValidationMessage" class="format-editor-error">
+          {{ javaFormatValidationMessage }}
+        </div>
       </div>
     </template>
   </f7-list-item>

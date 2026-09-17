@@ -82,7 +82,12 @@ export default {
             } else {
               return {
                 link: l,
-                thing: { label: '(unknown)', channels: [], statusInfo: { status: 'UNKNOWN' }, _invalid: true },
+                thing: {
+                  label: '(unknown)',
+                  channels: [],
+                  statusInfo: { status: 'UNKNOWN' },
+                  _invalid: true
+                },
                 channel: { UID: l.channelUID, label: 'Invalid Link', _invalid: true },
                 _invalid: true
               }

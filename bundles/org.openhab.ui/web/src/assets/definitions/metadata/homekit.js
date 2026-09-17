@@ -357,7 +357,10 @@ const dimmerFilterType = {
     { value: 'normal', label: 'no filter, all events from iOS home app accepted' },
     { value: 'filterOn', label: 'Filter out "ON" event' },
     { value: 'filterBrightness100', label: 'Filter out "set brightness to 100%" event' },
-    { value: 'filterOnExceptBrightness100', label: 'Filter out "ON" events except of combination with "set brightness to 100%"' }
+    {
+      value: 'filterOnExceptBrightness100',
+      label: 'Filter out "ON" events except of combination with "set brightness to 100%"'
+    }
   ]
 }
 

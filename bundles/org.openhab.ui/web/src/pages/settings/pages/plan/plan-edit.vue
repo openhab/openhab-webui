@@ -14,10 +14,8 @@
     </f7-toolbar>
     <f7-toolbar bottom class="toolbar-details">
       <div style="margin-left: auto">
-        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" /> Run mode<span
-          v-if="$device.desktop"
-          >&nbsp;(Ctrl-R)</span
-        >
+        <f7-toggle :checked="previewMode ? true : null" @toggle:change="(value) => togglePreviewMode(value)" />
+        Run mode<span v-if="$device.desktop">&nbsp;(Ctrl-R)</span>
       </div>
     </f7-toolbar>
 

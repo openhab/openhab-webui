@@ -2,7 +2,9 @@
   <div
     ref="tableContainer"
     class="table-container resizable-table-container"
-    :class="{ 'resize-hovering': columnResizeEnabled && (hoveredResizeHandle >= 0 || activeResizeHandle >= 0) }"
+    :class="{
+      'resize-hovering': columnResizeEnabled && (hoveredResizeHandle >= 0 || activeResizeHandle >= 0)
+    }"
     @scroll="handleScroll"
     @mousemove="handleTableMouseMove"
     @mouseleave="handleTableMouseLeave"
@@ -37,7 +39,11 @@
       v-if="columnResizeEnabled && resizeGuideLeft !== null"
       class="resizable-table-guide"
       :class="{ 'resizable-table-guide-active': activeResizeHandle >= 0 }"
-      :style="{ left: resizeGuideLeft + 'px', top: tableScrollTop + 'px', height: tableViewportHeight + 'px' }"
+      :style="{
+        left: resizeGuideLeft + 'px',
+        top: tableScrollTop + 'px',
+        height: tableViewportHeight + 'px'
+      }"
       aria-hidden="true" />
   </div>
 </template>

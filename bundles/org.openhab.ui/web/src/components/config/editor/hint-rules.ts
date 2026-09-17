@@ -133,7 +133,13 @@ async function hintTemplateConfig(
       return {
         from: completionStart(context),
         validFor: /\w+/,
-        options: [{ label: 'Default: ' + defaultStr, info: parameter.description ? parameter.description : parameter.label, apply }]
+        options: [
+          {
+            label: 'Default: ' + defaultStr,
+            info: parameter.description ? parameter.description : parameter.label,
+            apply
+          }
+        ]
       }
     }
     return result

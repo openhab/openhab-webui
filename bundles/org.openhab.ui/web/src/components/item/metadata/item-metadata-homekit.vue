@@ -137,7 +137,13 @@ export default {
             options.push(opt)
           })
         })
-        options.push({ name: 'primary', label: 'Primary Accessory Type', type: 'TEXT', limitToOptions: true, options: primaryOptions })
+        options.push({
+          name: 'primary',
+          label: 'Primary Accessory Type',
+          type: 'TEXT',
+          limitToOptions: true,
+          options: primaryOptions
+        })
         return options
       }
       return []

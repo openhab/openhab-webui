@@ -1,5 +1,23 @@
 import { defineConfig } from 'oxlint'
-import * as globals from 'globals'
+import globals from 'globals'
+
+// converts globals package booleans (false/true) to Oxlint-compatible "readonly"/"writable" values
+const oxlintGlobals = Object.fromEntries(
+  Object.entries({ ...globals.browser, ...globals.node }).map(([name, value]) => [
+    name,
+    value === false ? 'readonly' : value === true ? 'writable' : value
+  ] as const)
+)
+
+const vueGlobals = {
+  "defineProps": 'readonly',
+  "defineEmits": 'readonly',
+  "defineExpose": 'readonly',
+  "withDefaults": 'readonly',
+  "defineOptions": 'readonly',
+  "defineSlots": 'readonly',
+  "defineModel": 'readonly'
+} as const
 
 export default defineConfig({
   "$schema": "./node_modules/oxlint/configuration_schema.json",
@@ -10,7 +28,6 @@ export default defineConfig({
     "unicorn"
   ],
   "jsPlugins": [
-    // "@intlify/eslint-plugin-vue-i18n",
     "eslint-plugin-jsonc"
   ],
   "categories": {
@@ -50,16 +67,17 @@ export default defineConfig({
     "import-x/resolver": {
       "typescript": true
     },
-    "vue-i18n": {
-      "localeDir": "./src/assets/i18n/**/*.json",
-      "messageSyntaxVersion": "^11.0.0"
-    }
   },
   "ignorePatterns": [
     "dist",
     "build",
     "public",
     "**/*.parser.js",
+    "**/*.test.js",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
     "src/api/**"
   ],
   "rules": {
@@ -99,18 +117,6 @@ export default defineConfig({
     "vue/require-prop-types": "warn",
     "vue/no-multiple-slot-args": "warn",
     "vue/no-required-prop-with-default": "warn",
-    // "@intlify/vue-i18n/no-deprecated-i18n-component": "warn",
-    // "@intlify/vue-i18n/no-deprecated-i18n-place-attr": "warn",
-    // "@intlify/vue-i18n/no-deprecated-i18n-places-prop": "warn",
-    // "@intlify/vue-i18n/no-deprecated-modulo-syntax": "warn",
-    // "@intlify/vue-i18n/no-deprecated-tc": "warn",
-    // "@intlify/vue-i18n/no-deprecated-v-t": "warn",
-    // "@intlify/vue-i18n/no-html-messages": "warn",
-    // "@intlify/vue-i18n/no-i18n-t-path-prop": "warn",
-    // "@intlify/vue-i18n/no-missing-keys": "warn",
-    // "@intlify/vue-i18n/no-raw-text": "warn",
-    // "@intlify/vue-i18n/no-v-html": "warn",
-    // "@intlify/vue-i18n/valid-message-syntax": "warn",
     "constructor-super": "error",
     "for-direction": "error",
     "getter-return": "error",
@@ -354,8 +360,6 @@ export default defineConfig({
         "prefer-const": "off",
         "vue/require-default-prop": "off",
         "vue/require-prop-types": "off",
-        // "@intlify/vue-i18n/no-raw-text": "off",
-        // "@intlify/vue-i18n/no-html-messages": "off",
         "import/extensions": "off",
         "import/first": "off",
         "import/named": "error",
@@ -367,9 +371,7 @@ export default defineConfig({
         "typescript/no-this-alias": "off",
         "typescript/no-empty-object-type": "off"
       },
-      "jsPlugins": [
-        // "@intlify/eslint-plugin-vue-i18n"
-      ]
+      "globals": vueGlobals
     },
     {
       "files": [
@@ -394,8 +396,6 @@ export default defineConfig({
         "prefer-const": "off",
         "vue/require-default-prop": "off",
         "vue/require-prop-types": "off",
-        // "@intlify/vue-i18n/no-raw-text": "off",
-        // "@intlify/vue-i18n/no-html-messages": "off",
         "import/extensions": "off",
         "import/first": "off",
         "import/named": "error",
@@ -407,12 +407,8 @@ export default defineConfig({
         "typescript/no-this-alias": "off",
         "typescript/no-empty-object-type": "off"
       },
-      "jsPlugins": [
-        // "@intlify/eslint-plugin-vue-i18n"
-      ],
       "globals": {
-        ...globals.browser,
-        ...globals.node,
+        ...oxlintGlobals,
         "process": "writable",
         "ga": "writable",
         "__statics": "writable"
@@ -427,12 +423,8 @@ export default defineConfig({
         "src/assets/i18n/**/*.json"
       ],
       "rules": {
-        // "@intlify/vue-i18n/no-html-messages": "off",
         "no-irregular-whitespace": "off"
-      },
-      "jsPlugins": [
-        // "@intlify/eslint-plugin-vue-i18n"
-      ]
+      }
     },
     {
       "files": [

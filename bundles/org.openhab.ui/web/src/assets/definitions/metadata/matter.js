@@ -55,8 +55,16 @@ export const deviceTypes = {
     attributes: [
       { label: 'Local Temperature', name: 'thermostat.localTemperature', mandatory: true },
       { label: 'Outdoor Temperature', name: 'thermostat.outdoorTemperature', mandatory: false },
-      { label: 'Occupied Heating Setpoint', name: 'thermostat.occupiedHeatingSetpoint', mandatory: false },
-      { label: 'Occupied Cooling Setpoint', name: 'thermostat.occupiedCoolingSetpoint', mandatory: false },
+      {
+        label: 'Occupied Heating Setpoint',
+        name: 'thermostat.occupiedHeatingSetpoint',
+        mandatory: false
+      },
+      {
+        label: 'Occupied Cooling Setpoint',
+        name: 'thermostat.occupiedCoolingSetpoint',
+        mandatory: false
+      },
       {
         label: 'System Mode',
         name: 'thermostat.systemMode',

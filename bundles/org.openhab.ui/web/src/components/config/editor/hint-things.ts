@@ -27,6 +27,7 @@ function hintThingConfig(
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+
 function findChannelTypeUID(context: CompletionContext, configLine: Line, configIndent: number): string | null {
   const channelUidLine = findParent(context, configLine)
   if (!channelUidLine) return null

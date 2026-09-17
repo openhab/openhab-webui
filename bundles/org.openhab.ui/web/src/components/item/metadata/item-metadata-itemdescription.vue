@@ -72,7 +72,12 @@ export default {
         })
         .sort((a, b) => a.label.localeCompare(b.label))
       return [
-        { type: 'BOOLEAN', name: 'readOnly', label: 'Read only', description: 'Item is read-only and should not accept commands' },
+        {
+          type: 'BOOLEAN',
+          name: 'readOnly',
+          label: 'Read only',
+          description: 'Item is read-only and should not accept commands'
+        },
         {
           type: 'TEXT',
           name: 'pattern',
@@ -83,7 +88,12 @@ export default {
         },
         { type: 'TEXT', name: 'min', label: 'Min', description: 'Minimum allowed value' },
         { type: 'TEXT', name: 'max', label: 'Max', description: 'Maximum allowed value' },
-        { type: 'TEXT', name: 'step', label: 'Step', description: 'Minimum interval between values' }
+        {
+          type: 'TEXT',
+          name: 'step',
+          label: 'Step',
+          description: 'Minimum interval between values'
+        }
       ]
     },
     options() {

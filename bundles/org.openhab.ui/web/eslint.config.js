@@ -1,6 +1,5 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import globals from 'globals'
-import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import pluginJsonc from 'eslint-plugin-jsonc'
 import parserVue from 'vue-eslint-parser'
@@ -21,12 +20,8 @@ const rules = {
     'space-before-function-paren': ['error', 'always'], // add to main
     'arrow-parens': ['error', 'always'],    // add to main
     // 'brace-style': ['error', '1tbs'], // add to main
-    'import-x/default': 'error',
-    'import-x/export': 'error',
     'import-x/extensions': 'off',
     'import-x/first': 'off',
-    'import-x/named': 'error',
-    'import-x/namespace': 'error',
     'import-x/no-extraneous-dependencies': 'off',
     'import-x/no-unresolved': 'error',
     'import-x/no-dynamic-require': 'warn',
@@ -43,7 +38,6 @@ const rules = {
     'no-irregular-whitespace': 'off',
     // 'es/no-regexp-lookbehind-assertions': 'error', // Supported in Safari  >= 16.4, which breaks iOS 15.x.
     'no-trailing-spaces': 'error',
-    'no-unsafe-optional-chaining': 'error',
     'no-whitespace-before-property': 'error',
     'one-var': 'off',
     'prefer-promise-reject-errors': 'off',
@@ -102,60 +96,28 @@ const rules = {
     '@typescript-eslint/no-empty-object-type': 'off'
 }
 
-const typeCheckedRuleOverrides = {
-  '@typescript-eslint/no-unsafe-call': 'off',
-  '@typescript-eslint/promise-function-async': 'error',
-  'unicorn/no-useless-promise-resolve-reject': 'error'
+const oxlintOwnedImportRules = {
+  'import-x/default': 'off',
+  'import-x/export': 'off',
+  'import-x/named': 'off',
+  'import-x/namespace': 'off',
+  'import-x/no-duplicates': 'off'
 }
 
-// Type-checked configs for TypeScript files, which require type information and thus are separated from the main config to avoid performance issues for JavaScript files.
-const tsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((config) => ({
-  ...config,
-  files: ['**/*.{ts,tsx}'],
-  ignores: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
-  rules: {
-    ...config.rules,
-    ...typeCheckedRuleOverrides
-  }
-}))
-
-// Type-checked configs for Vue files with TypeScript, which require type information and thus are separated from the main config to avoid performance issues for JavaScript files.
-const vueTsTypeCheckedConfigs = tseslint.configs.recommendedTypeChecked.map((config) => ({
-  ...config,
-  files: [
-    '**/*.vue?vue&type=script&lang=ts',
-    '**/*.vue?vue&type=script&lang.ts',
-    '**/*.vue?vue&type=script&lang=tsx',
-    '**/*.vue?vue&type=script&lang.tsx'
-  ],
-  languageOptions: {
-    parser: tseslint.parser,
-    parserOptions: {
-      project: './tsconfig.eslint.json',
-      tsconfigRootDir: import.meta.dirname,
-      extraFileExtensions: ['.vue']
-    }
-  },
-  rules: {
-    ...config.rules,
-    ...typeCheckedRuleOverrides
-  }
-}))
-
 export default defineConfig([
-  ...pluginVue.configs['flat/recommended'],
   ...pluginVueI18n.configs.recommended,
-  eslint.configs.recommended,
-  tseslint.configs.recommended,
-  ...tsTypeCheckedConfigs,
-  ...vueTsTypeCheckedConfigs,
   pluginImport.flatConfigs.recommended,
   pluginImport.flatConfigs.typescript,
   ...pluginJsonc.configs['flat/recommended-with-jsonc'],
   {
     plugins: {
+      '@typescript-eslint': tseslint.plugin,
+      vue: pluginVue,
       unicorn: pluginUnicorn
     }
+  },
+  {
+    rules: oxlintOwnedImportRules
   },
   {
     settings: {

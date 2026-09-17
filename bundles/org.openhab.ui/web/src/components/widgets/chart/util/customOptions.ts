@@ -13,7 +13,7 @@ function applyMarkers(series: OhSeriesOption) {
         data: [],
         tooltip: {
           // @ts-expect-error ECharts provides no type def for MarkLineOption::formatter
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // oxlint-disable-next-line @typescript-eslint/no-unsafe-member-access
           formatter: (params: unknown) => formatTimestamp(dayjs(params.data.xAxis as string))
         }
       }
@@ -92,7 +92,7 @@ function applyXAxisStyle(axis: OhAxisOption) {
         // remove line
         if (!axis.axisLine) axis.axisLine = {}
         axis.axisLine.show = false
-      // eslint-disable-next-line no-fallthrough
+      // oxlint-disable-next-line no-fallthrough
       case Style.label_line:
         // remove tick
         if (!axis.axisTick) axis.axisTick = {}

@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": false,
-    "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "exclude": ["node_modules", "node", "build", "assets-src", "public", "test"]

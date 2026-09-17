@@ -13,7 +13,12 @@
           :title="'Alexa Device Type' + (itemType !== 'Group' ? (!multiple ? '/Attribute' : '/Attributes') : '')"
           :disabled="!editable ? true : null"
           smart-select
-          :smart-select-params="{ openIn: 'popup', searchbar: true, closeOnSelect: !multiple, scrollToSelectedItem: true }"
+          :smart-select-params="{
+            openIn: 'popup',
+            searchbar: true,
+            closeOnSelect: !multiple,
+            scrollToSelectedItem: true
+          }"
           ref="classes">
           <select v-if="itemType === 'Group'" name="classes" @change="updateClasses">
             <option value="" />
@@ -112,7 +117,10 @@ export default {
       ...this.item.groupNames.map((groupName) => this.$oh.api.get(`/rest/items/${groupName}?metadata=alexa`))
     ]).then(([regional, ...groups]) => {
       this.item.groups = groups
-        .map((g) => ({ ...g, members: g.members.filter((mbr) => mbr.name !== this.item.name && mbr.metadata) }))
+        .map((g) => ({
+          ...g,
+          members: g.members.filter((mbr) => mbr.name !== this.item.name && mbr.metadata)
+        }))
         .filter((g) => g.metadata && !g.groupType)
       this.item.settings = { regional }
       this.ready = true

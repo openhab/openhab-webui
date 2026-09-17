@@ -919,7 +919,10 @@ export default {
       if (this.currentTab === 'code' && this.codeDirty) {
         const editor = this.$refs.codeEditor
         try {
-          await editor.parseCode(undefined, undefined, { editorType: this.uiOptionsStore.codeEditorType, showAll: editor.isShowAll })
+          await editor.parseCode(undefined, undefined, {
+            editorType: this.uiOptionsStore.codeEditorType,
+            showAll: editor.isShowAll
+          })
           this.codeDirty = false
           this.$refs.codeEditor.generateCode()
         } catch (e) {
@@ -1274,7 +1277,9 @@ export default {
 
       const updatePromise = (this.rule.editable || this.createMode) && this.dirty ? this.save() : Promise.resolve()
       updatePromise.then(() => {
-        this.f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, { transition: theme.aurora ? 'f7-cover-v' : '' })
+        this.f7router.navigate('/settings/rules/' + this.rule.uid + '/script/' + mod.id, {
+          transition: theme.aurora ? 'f7-cover-v' : ''
+        })
       })
     },
     /**

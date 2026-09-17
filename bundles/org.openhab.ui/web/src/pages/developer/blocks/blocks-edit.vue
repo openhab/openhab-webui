@@ -359,7 +359,9 @@ export default {
           this.dirty = false
           if (this.createMode) {
             showToast('Block library created')
-            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.blocks.uid), { reloadCurrent: true })
+            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.blocks.uid), {
+              reloadCurrent: true
+            })
             this.load()
           } else {
             showToast('Block library updated')

@@ -21,7 +21,10 @@
             icon-md="material:pause_fill"
             :icon-color="!logViewerCore?.stateConnected || !logViewerCore?.stateProcessing ? 'gray' : ''"
             :tooltip="!device.ios ? 'Pause processing new logs' : ''"
-            :class="{ 'disabled-link': !logViewerCore?.stateConnected || !logViewerCore?.stateProcessing, 'no-margin-left': device.ios }"
+            :class="{
+              'disabled-link': !logViewerCore?.stateConnected || !logViewerCore?.stateProcessing,
+              'no-margin-left': device.ios
+            }"
             @click="logViewerCore?.loggingPause" />
           <f7-link
             icon-ios="f7:stop_fill"
@@ -29,7 +32,10 @@
             icon-md="material:stop_fill"
             :icon-color="!logViewerCore?.stateConnected && !logViewerCore?.stateConnecting ? 'gray' : ''"
             :tooltip="!device.ios ? 'Stop receiving logs' : ''"
-            :class="{ 'disabled-link': !logViewerCore?.stateConnected && !logViewerCore?.stateConnecting, 'no-margin-left': device.ios }"
+            :class="{
+              'disabled-link': !logViewerCore?.stateConnected && !logViewerCore?.stateConnecting,
+              'no-margin-left': device.ios
+            }"
             @click="logViewerCore?.loggingStop" />
         </template>
       </oh-nav-content>

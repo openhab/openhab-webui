@@ -52,7 +52,9 @@ import { PredefinedStrategies } from '@/assets/definitions/persistence'
 import type * as api from '@/api'
 
 // Props and emits
-const cronStrategies = defineModel<api.PersistenceCronStrategy[]>('cron-strategies', { required: true })
+const cronStrategies = defineModel<api.PersistenceCronStrategy[]>('cron-strategies', {
+  required: true
+})
 const selected = defineModel<string[]>('selected-strategies', { required: true })
 const props = defineProps<{ title?: string }>()
 const attrs = useAttrs()

@@ -158,7 +158,10 @@ const timeCoordSystem: CoordSystem = {
     if (categoryGrid) {
       slots.grid.push({
         component: 'oh-chart-grid',
-        config: { includeLabels: true, top: valueGrid ? `${100 - categoryGridSize}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX }
+        config: {
+          includeLabels: true,
+          top: valueGrid ? `${100 - categoryGridSize}%` : GRID_CONFIG.DEFAULT_BOTTOM_MARGIN_PIX
+        }
       })
       slots.xAxis.push({ component: 'oh-time-axis', config: { gridIndex: categoryGridIndex } })
       slots.yAxis.push({

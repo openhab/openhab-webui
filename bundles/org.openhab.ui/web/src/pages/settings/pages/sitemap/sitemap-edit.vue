@@ -767,7 +767,9 @@ export default {
           if (this.createMode) {
             showToast('Sitemap created')
             const targetUrl = (this.f7route?.url || '').replace(/\/(add|duplicate)(?:\/)?$/, '/' + sitemap.name)
-            this.f7router.navigate(targetUrl || '/settings/sitemaps/' + sitemap.name, { reloadCurrent: true })
+            this.f7router.navigate(targetUrl || '/settings/sitemaps/' + sitemap.name, {
+              reloadCurrent: true
+            })
           } else {
             showToast('Sitemap updated')
             this.lastCleanSitemap = this.stripClosed(this.sitemap)
@@ -1033,7 +1035,12 @@ export default {
             content: '<ul style="max-height: 200px; overflow-y: scroll"><li>' + validationWarnings.join('</li><li>') + '</li></ul>',
             buttons: [
               { text: 'Cancel', color: 'gray', close: true },
-              { text: 'Save Anyway', color: 'red', close: true, onClick: () => this.save(stay, true) }
+              {
+                text: 'Save Anyway',
+                color: 'red',
+                close: true,
+                onClick: () => this.save(stay, true)
+              }
             ],
             destroyOnClose: true
           })

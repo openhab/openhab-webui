@@ -130,7 +130,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   const darkMode = computed({
     get: (): 'dark' | 'light' => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      // oxlint-disable-next-line @typescript-eslint/no-unused-expressions
       darkModeChange.value // darkModeChange to force re-computation
       if (storedDarkMode.value === 'auto') {
         if (typeof window.OHApp?.preferDarkMode === 'function') {

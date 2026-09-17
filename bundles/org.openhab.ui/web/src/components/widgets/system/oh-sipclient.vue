@@ -361,7 +361,9 @@ export default {
     },
     call(target) {
       console.info(this.LOGGER_PREFIX + ': Calling ' + this.remoteParty + ' ...')
-      this.phone.call(target, { mediaConstraints: { audio: true, video: this.config.enableVideo } })
+      this.phone.call(target, {
+        mediaConstraints: { audio: true, video: this.config.enableVideo }
+      })
       this.attachMedia()
       this.playTone(ringBackFile)
     },

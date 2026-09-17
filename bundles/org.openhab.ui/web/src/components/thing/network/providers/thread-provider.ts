@@ -41,10 +41,11 @@ enum RoleSizes {
   border_router = 50,
   router = 45,
   reed = 38,
+  // oxlint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   end_device = 30,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   sleepy_end_device = 30,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   unknown = 30
 }
 
@@ -61,8 +62,9 @@ enum LqiColors {
 enum LqiWidths {
   _3 = 4,
   _2 = 3,
+  // oxlint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   _1 = 2,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   _0 = 2
 }
 
@@ -110,17 +112,32 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
   private static readonly LEGEND: NetworkLegend = {
     nodeRoles: [
       { id: 'leader', label: 'Leader', color: RoleColors.leader, size: RoleSizes.leader },
-      { id: 'border_router', label: 'Border Router', color: RoleColors.border_router, size: RoleSizes.border_router },
+      {
+        id: 'border_router',
+        label: 'Border Router',
+        color: RoleColors.border_router,
+        size: RoleSizes.border_router
+      },
       { id: 'router', label: 'Router', color: RoleColors.router, size: RoleSizes.router },
       { id: 'reed', label: 'REED', color: RoleColors.reed, size: RoleSizes.reed },
-      { id: 'end_device', label: 'End Device', color: RoleColors.end_device, size: RoleSizes.end_device },
+      {
+        id: 'end_device',
+        label: 'End Device',
+        color: RoleColors.end_device,
+        size: RoleSizes.end_device
+      },
       {
         id: 'sleepy_end_device',
         label: 'Sleepy End Device',
         color: RoleColors.sleepy_end_device,
         size: RoleSizes.sleepy_end_device
       },
-      { id: 'unknown', label: 'Non-Fabric Device', color: RoleColors.unknown, size: RoleSizes.unknown }
+      {
+        id: 'unknown',
+        label: 'Non-Fabric Device',
+        color: RoleColors.unknown,
+        size: RoleSizes.unknown
+      }
     ],
     linkQualities: [
       { value: 3, label: 'Excellent', color: LqiColors._3, width: LqiWidths._3 },
@@ -131,8 +148,18 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     linkTypes: [
       { id: 'peer', label: 'Router Link', symbol: 'double_arrow' },
       { id: 'hierarchical', label: 'Parent → Child', symbol: 'arrow' },
-      { id: 'route_table', label: 'Inferred (Route Table)', symbol: 'double_arrow', lineStyle: 'dashed' },
-      { id: 'non_fabric', label: 'Non-Fabric / Offline', symbol: 'double_arrow', lineStyle: 'dashed' }
+      {
+        id: 'route_table',
+        label: 'Inferred (Route Table)',
+        symbol: 'double_arrow',
+        lineStyle: 'dashed'
+      },
+      {
+        id: 'non_fabric',
+        label: 'Non-Fabric / Offline',
+        symbol: 'double_arrow',
+        lineStyle: 'dashed'
+      }
     ]
   }
 

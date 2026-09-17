@@ -12,10 +12,10 @@ const EcmascriptDefs = JSON.parse(String(EcmascriptRaw)) as Definitions
 import NashornDefs from '@/assets/nashorn-tern-defs.json'
 import OpenhabJsDefs from '@/assets/openhab-js-tern-defs.json'
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* oxlint-disable @typescript-eslint/no-unsafe-assignment */
+/* oxlint-disable @typescript-eslint/no-unsafe-member-access */
+/* oxlint-disable @typescript-eslint/no-unsafe-argument */
+/* oxlint-disable @typescript-eslint/no-unsafe-return */
 
 type Definitions = Record<string, any>
 
@@ -31,7 +31,11 @@ function getPath(read: (n: any) => string, callNode: any, name: string | null) {
   let path: string[] = []
   let member = callNode
   let callExpression = false
-  const Literals: Record<string, string> = { Number: 'Number()', String: 'String()', ArrayExpression: 'Array()' }
+  const Literals: Record<string, string> = {
+    Number: 'Number()',
+    String: 'String()',
+    ArrayExpression: 'Array()'
+  }
   for (;;) {
     const obj = member.firstChild
     if (!obj) return null

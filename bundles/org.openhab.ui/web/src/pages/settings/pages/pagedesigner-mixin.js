@@ -178,7 +178,9 @@ export default {
           this.savedPage = cloneDeep(this.page)
           if (this.createMode) {
             showToast('Page created')
-            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.page.uid), { reloadCurrent: true })
+            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.page.uid), {
+              reloadCurrent: true
+            })
             this.load()
           } else {
             showToast('Page updated')

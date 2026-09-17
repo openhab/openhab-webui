@@ -220,7 +220,10 @@ const availableSortOptions = computed(() => ({
 }))
 
 const sortOptions = computed(() => {
-  const options: Array<{ value: 'default' | 'ascending' | 'descending' | 'likes' | 'views' | 'comments'; label: string }> = [
+  const options: Array<{
+    value: 'default' | 'ascending' | 'descending' | 'likes' | 'views' | 'comments'
+    label: string
+  }> = [
     { value: 'default', label: 'Default' },
     { value: 'ascending', label: 'Name (A-Z)' },
     { value: 'descending', label: 'Name (Z-A)' }

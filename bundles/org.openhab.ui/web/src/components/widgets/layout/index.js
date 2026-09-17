@@ -1,5 +1,8 @@
 /* Add any new widget to this file - the name of the export should be "OhSomething" */
 
+/* oxlint-disable import/named */
+// Oxlint cannot resolve the generated default exports from some Vue <script setup> components, so the standard re-export syntax was a false positive.
+
 export { default as OhBlock } from './oh-block.vue'
 export { default as OhGridRow } from './oh-grid-row.vue'
 export { default as OhGridCol } from './oh-grid-col.vue'

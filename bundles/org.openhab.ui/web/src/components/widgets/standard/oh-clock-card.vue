@@ -6,7 +6,10 @@
         <f7-col>
           <oh-clock
             :context="clockContext"
-            :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }"
+            :style="{
+              'font-size': config.dateFontSize || '1vw',
+              'font-weight': config.dateFontWeight || 'normal'
+            }"
             :format="config.dateFormat"
             :timezone="config.timezone" />
         </f7-col>
@@ -15,7 +18,10 @@
         <f7-col>
           <oh-clock
             :context="clockContext"
-            :style="{ 'font-size': config.timeFontSize || '2vw', 'font-weight': config.timeFontWeight || 'normal' }"
+            :style="{
+              'font-size': config.timeFontSize || '2vw',
+              'font-weight': config.timeFontWeight || 'normal'
+            }"
             :format="config.timeFormat"
             :timezone="config.timezone" />
         </f7-col>
@@ -24,7 +30,10 @@
         <f7-col>
           <oh-clock
             :context="clockContext"
-            :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }"
+            :style="{
+              'font-size': config.dateFontSize || '1vw',
+              'font-weight': config.dateFontWeight || 'normal'
+            }"
             :format="config.dateFormat"
             :timezone="config.timezone" />
         </f7-col>

@@ -53,7 +53,7 @@ export default {
         }
         return variableLocation[this.config.variable]
       }
-      if (!this.context.store[this.config.item]) return
+      if (!this.context.store[this.config.item]) return null
       const value = this.context.store[this.config.item].state
       if (value === 'ON') return true
       if (value === 'OFF') return false

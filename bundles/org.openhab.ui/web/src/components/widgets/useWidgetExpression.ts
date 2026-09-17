@@ -99,8 +99,8 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
   const viewAreaHeight = inject('viewAreaHeight', null) as Ref<number> | null
 
   // computed
-  const appWidth = computed(() => (global?.$f7dim as { width: number }).width ?? 0)
-  const appHeight = computed(() => (global?.$f7dim as { height: number }).height ?? 0)
+  const appWidth = computed(() => (global?.$f7dim as { width: number })?.width ?? 0)
+  const appHeight = computed(() => (global?.$f7dim as { height: number })?.height ?? 0)
 
   const screenInfo = computed<ScreenInfo>(() => {
     return {

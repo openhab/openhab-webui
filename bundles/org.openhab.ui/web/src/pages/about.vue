@@ -175,7 +175,9 @@ export default {
         systemInfo: this.systemInfo,
         addons: this.addons,
         clientInfo: {
-          device: Object.assign({}, this.$device, { prefersColorScheme: this.$device.prefersColorScheme() }),
+          device: Object.assign({}, this.$device, {
+            prefersColorScheme: this.$device.prefersColorScheme()
+          }),
           isSecureContext: window.isSecureContext,
           locationbarVisible: window.locationbar ? window.locationbar.visible : 'N/A',
           menubarVisible: window.menubar ? window.menubar.visible : 'N/A',
@@ -188,7 +190,11 @@ export default {
             onLine: navigator.onLine,
             platform: navigator.platform
           },
-          screen: { width: window.screen.width, height: window.screen.height, colorDepth: window.screen.colorDepth },
+          screen: {
+            width: window.screen.width,
+            height: window.screen.height,
+            colorDepth: window.screen.colorDepth
+          },
           support: f7.support,
           themeOptions: useUIOptionsStore().themeOptions(),
           userAgent: window.navigator.userAgent

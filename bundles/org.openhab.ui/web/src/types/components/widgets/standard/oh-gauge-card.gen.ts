@@ -1,6 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
-import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'
+import { guardConfig, guardComponent, type ConfigGuardFn } from "@/types/widget-ts-template";
 import {
   GaugeType,
   Action,
@@ -8,75 +8,74 @@ import {
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation
-} from '../common.gen.ts'
-
+  ActionAnalyzerAggregation,
+} from "../common.gen.ts";
 
 export interface Config {
-  title?: string
-  footer?: string
-  noBorder?: boolean
-  noShadow?: boolean
-  outline?: boolean
-  item?: string
-  min?: number
-  max?: number
-  type?: GaugeType
-  value?: string
-  size?: number
-  bgColor?: string
-  borderBgColor?: string
-  borderColor?: string
-  borderWidth?: string
-  valueText?: string
-  valueTextColor?: string
-  valueFontSize?: string
-  valueFontWeight?: string
-  labelText?: string
-  labelTextColor?: string
-  labelFontSize?: string
-  labelFontWeight?: string
-  action?: Action | Action[]
-  actionUrl?: string
-  actionUrlSameWindow?: boolean
-  actionHttpMethod?: ActionHttpMethod
-  actionHttpBody?: string
-  actionItem?: string
-  actionCommand?: string
-  actionCommandAlt?: string
-  actionOptions?: string
-  actionRule?: string
-  actionRuleContext?: string
-  actionPage?: string
-  actionPageDefineVars?: Record<string, unknown>[]
-  actionPageTransition?: ActionPageTransition
-  actionModal?: string
-  actionModalConfig?: string
-  actionPhotos?: string
-  actionPhotoBrowserConfig?: string
-  actionGroupPopupItem?: string
-  actionAnalyzerItems?: string | string[]
-  actionAnalyzerChartType?: ActionAnalyzerChartType
-  actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem
-  actionAnalyzerAggregation?: ActionAnalyzerAggregation
-  actionConfirmation?: string
-  actionFeedback?: string
-  actionVariable?: string
-  actionVariableValue?: string
-  actionVariableKey?: string
+  title?: string;
+  footer?: string;
+  noBorder?: boolean;
+  noShadow?: boolean;
+  outline?: boolean;
+  item?: string;
+  min?: number;
+  max?: number;
+  type?: GaugeType;
+  value?: string;
+  size?: number;
+  bgColor?: string;
+  borderBgColor?: string;
+  borderColor?: string;
+  borderWidth?: string;
+  valueText?: string;
+  valueTextColor?: string;
+  valueFontSize?: string;
+  valueFontWeight?: string;
+  labelText?: string;
+  labelTextColor?: string;
+  labelFontSize?: string;
+  labelFontWeight?: string;
+  action?: Action | Action[];
+  actionUrl?: string;
+  actionUrlSameWindow?: boolean;
+  actionHttpMethod?: ActionHttpMethod;
+  actionHttpBody?: string;
+  actionItem?: string;
+  actionCommand?: string;
+  actionCommandAlt?: string;
+  actionOptions?: string;
+  actionRule?: string;
+  actionRuleContext?: string;
+  actionPage?: string;
+  actionPageDefineVars?: Record<string, unknown>[];
+  actionPageTransition?: ActionPageTransition;
+  actionModal?: string;
+  actionModalConfig?: string;
+  actionPhotos?: string;
+  actionPhotoBrowserConfig?: string;
+  actionGroupPopupItem?: string;
+  actionAnalyzerItems?: string | string[];
+  actionAnalyzerChartType?: ActionAnalyzerChartType;
+  actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem;
+  actionAnalyzerAggregation?: ActionAnalyzerAggregation;
+  actionConfirmation?: string;
+  actionFeedback?: string;
+  actionVariable?: string;
+  actionVariableValue?: string;
+  actionVariableKey?: string;
 }
 export interface Component {
-  component: 'oh-gauge-card'
-  config: Config
+  component: "oh-gauge-card";
+  config: Config;
 }
 
 export const isConfig: ConfigGuardFn<Config> = (config: unknown): config is Config => {
-  return guardConfig<Config>(config, isConfig.validationFn)
-}
+  return guardConfig<Config>(config, isConfig.validationFn);
+};
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>('oh-gauge-card', component, isConfig, defaultConfig)
-}
+  return guardComponent<Component, Config>("oh-gauge-card", component, isConfig, defaultConfig);
+};
 
 export {
   GaugeType,
@@ -85,5 +84,5 @@ export {
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation
-}
+  ActionAnalyzerAggregation,
+};

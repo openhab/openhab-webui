@@ -61,8 +61,12 @@
                       <div v-text="configurationItemsTitle(cfg.items, true)" />
                     </template>
                     <template #footer>
-                      <div v-if="cfg.strategies?.length">{{ configurationStrategiesTitle(cfg.strategies) }}</div>
-                      <div v-if="cfg.filters?.length">{{ configurationFiltersTitle(cfg.filters) }}</div>
+                      <div v-if="cfg.strategies?.length">
+                        {{ configurationStrategiesTitle(cfg.strategies) }}
+                      </div>
+                      <div v-if="cfg.filters?.length">
+                        {{ configurationFiltersTitle(cfg.filters) }}
+                      </div>
                     </template>
                     <f7-swipeout-actions v-if="editable" right>
                       <f7-swipeout-button

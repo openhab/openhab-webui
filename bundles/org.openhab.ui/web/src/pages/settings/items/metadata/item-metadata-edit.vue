@@ -214,7 +214,11 @@ export default {
         })
     },
     remove() {
-      let nslabel = ([...MetadataNamespaces].find((ns) => ns.name === this.namespace) || { label: this.namespace }).label
+      let nslabel = (
+        [...MetadataNamespaces].find((ns) => ns.name === this.namespace) || {
+          label: this.namespace
+        }
+      ).label
       f7.dialog.confirm(`Are you sure you want to remove all metadata for "${nslabel}"?`, 'Remove metadata', () => {
         this.deleteMetadata(this.item, this.namespace)
           .then(() => {

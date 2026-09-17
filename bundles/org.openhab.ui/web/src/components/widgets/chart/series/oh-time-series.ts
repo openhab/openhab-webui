@@ -32,7 +32,10 @@ const timeSeries: SeriesComponent = {
       const itemSeries = points.find((p) => p.name === series.item)
       const itemPoints = itemSeries?.data ?? []
 
-      const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
+      const formatter = new Intl.NumberFormat('en', {
+        useGrouping: false,
+        maximumFractionDigits: 3
+      })
       series.data = itemPoints.map((p) => {
         return [new Date(p.time), formatter.format(Number(p.state))]
       })

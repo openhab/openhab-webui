@@ -1,52 +1,52 @@
 // note: this file is generated and should not be edited by hand
 
-import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'
-import {
-  Orient
-} from '../common.gen.ts'
-
+import { guardConfig, guardComponent, type ConfigGuardFn } from "@/types/widget-ts-template";
+import { Orient } from "../common.gen.ts";
 
 export enum Type {
-  continuous = 'continuous',
-  piecewise = 'piecewise'
+  continuous = "continuous",
+  piecewise = "piecewise",
 }
 
 export enum PresetPalette {
-  yellowred = 'yellowred',
-  greenred = 'greenred',
-  whiteblue = 'whiteblue',
-  bluered = 'bluered'
+  yellowred = "yellowred",
+  greenred = "greenred",
+  whiteblue = "whiteblue",
+  bluered = "bluered",
 }
 
 export interface Config {
-  show?: boolean
-  min?: string
-  max?: string
-  type?: Type
-  orient?: Orient
-  calculable?: boolean
-  pieces?: number
-  presetPalette?: PresetPalette
-  top?: string
-  bottom?: string
-  left?: string
-  right?: string
-  width?: string
-  height?: string
+  show?: boolean;
+  min?: string;
+  max?: string;
+  type?: Type;
+  orient?: Orient;
+  calculable?: boolean;
+  pieces?: number;
+  presetPalette?: PresetPalette;
+  top?: string;
+  bottom?: string;
+  left?: string;
+  right?: string;
+  width?: string;
+  height?: string;
 }
 export interface Component {
-  component: 'oh-chart-visualmap'
-  config: Config
+  component: "oh-chart-visualmap";
+  config: Config;
 }
 
 export const isConfig: ConfigGuardFn<Config> = (config: unknown): config is Config => {
-  return guardConfig<Config>(config, isConfig.validationFn)
-}
+  return guardConfig<Config>(config, isConfig.validationFn);
+};
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>('oh-chart-visualmap', component, isConfig, defaultConfig)
-}
+  return guardComponent<Component, Config>(
+    "oh-chart-visualmap",
+    component,
+    isConfig,
+    defaultConfig,
+  );
+};
 
-export {
-  Orient
-}
+export { Orient };

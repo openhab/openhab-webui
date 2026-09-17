@@ -39,7 +39,8 @@
 
       <f7-col v-else>
         <f7-block-title>
-          {{ persistenceProblems.length }} persistence configuration problem{{ plural(persistenceProblems.length) }} found
+          {{ persistenceProblems.length }} persistence configuration problem{{ plural(persistenceProblems.length) }}
+          found
         </f7-block-title>
         <f7-list class="col" contacts-list>
           <f7-list-item

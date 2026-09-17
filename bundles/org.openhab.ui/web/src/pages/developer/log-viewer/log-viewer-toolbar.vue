@@ -187,7 +187,11 @@ function setupToolbarScrollIndicators() {
     toolbarResizeObserver.observe(toolbarEl)
 
     toolbarMutationObserver = new MutationObserver(() => nextTick(updateToolbarScrollIndicators))
-    toolbarMutationObserver.observe(toolbarEl, { childList: true, subtree: true, attributes: true })
+    toolbarMutationObserver.observe(toolbarEl, {
+      childList: true,
+      subtree: true,
+      attributes: true
+    })
 
     updateToolbarScrollIndicators()
   })
