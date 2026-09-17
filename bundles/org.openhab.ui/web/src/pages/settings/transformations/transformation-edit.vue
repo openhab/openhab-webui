@@ -117,12 +117,12 @@
             </f7-list>
             <p class="text-align-center">
               Tip: Use <code>{{ itemStateTransformationCode }}</code>
-              <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" />
-              as pattern for Item state description metadata.
+              <clipboard-icon :value="itemStateTransformationCode" tooltip="Copy transformation" /> as pattern for Item state description
+              metadata.
               <br />
               Tip: Use <code>{{ channelTransformationCode }}</code>
-              <clipboard-icon :value="channelTransformationCode" tooltip="Copy transformation" />
-              for channel transformations, e.g. in the MQTT binding.
+              <clipboard-icon :value="channelTransformationCode" tooltip="Copy transformation" /> for channel transformations, e.g. in the
+              MQTT binding.
             </p>
           </f7-col>
         </f7-block>
@@ -283,9 +283,7 @@ export default {
       this.$oh.api.put('/rest/transformations/' + this.transformation.uid, this.transformation).then(() => {
         this.dirty = false
         showToast('Transformation created')
-        this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.transformation.uid), {
-          reloadCurrent: true
-        })
+        this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.transformation.uid), { reloadCurrent: true })
       })
     },
     load() {

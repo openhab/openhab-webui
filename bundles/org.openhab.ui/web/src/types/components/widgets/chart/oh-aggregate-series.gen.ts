@@ -1,6 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
-import { guardConfig, guardComponent, type ConfigGuardFn } from "@/types/widget-ts-template";
+import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'
 import {
   OffsetUnit,
   Type,
@@ -11,92 +11,88 @@ import {
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation,
-} from "../common.gen.ts";
+  ActionAnalyzerAggregation
+} from '../common.gen.ts'
+
 
 export enum Markers {
-  avg = "avg",
-  min = "min",
-  max = "max",
+  avg = 'avg',
+  min = 'min',
+  max = 'max'
 }
 
 export enum Dimension {
-  minute = "minute",
-  hour = "hour",
-  isoWeekday = "isoWeekday",
-  weekday = "weekday",
-  date = "date",
-  month = "month",
-  year = "year",
+  minute = 'minute',
+  hour = 'hour',
+  isoWeekday = 'isoWeekday',
+  weekday = 'weekday',
+  date = 'date',
+  month = 'month',
+  year = 'year'
 }
 
 export interface Config {
-  name?: string;
-  item?: string;
-  service?: string;
-  noBoundary?: boolean;
-  noItemState?: boolean;
-  displayState?: boolean;
-  offsetAmount?: number;
-  offsetUnit?: OffsetUnit;
-  markers?: Markers[];
-  type?: Type;
-  labelPosition?: LabelPosition;
-  color?: string;
-  showSymbol?: boolean;
-  barBorderRadius?: number;
-  dimension1?: Dimension;
-  dimension2?: Dimension;
-  transpose?: boolean;
-  aggregationFunction?: AggregationFunction;
-  xAxisIndex?: number;
-  yAxisIndex?: number;
-  action?: Action | Action[];
-  actionUrl?: string;
-  actionUrlSameWindow?: boolean;
-  actionHttpMethod?: ActionHttpMethod;
-  actionHttpBody?: string;
-  actionItem?: string;
-  actionCommand?: string;
-  actionCommandAlt?: string;
-  actionOptions?: string;
-  actionRule?: string;
-  actionRuleContext?: string;
-  actionPage?: string;
-  actionPageDefineVars?: Record<string, unknown>[];
-  actionPageTransition?: ActionPageTransition;
-  actionModal?: string;
-  actionModalConfig?: string;
-  actionPhotos?: string;
-  actionPhotoBrowserConfig?: string;
-  actionGroupPopupItem?: string;
-  actionAnalyzerItems?: string | string[];
-  actionAnalyzerChartType?: ActionAnalyzerChartType;
-  actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem;
-  actionAnalyzerAggregation?: ActionAnalyzerAggregation;
-  actionConfirmation?: string;
-  actionFeedback?: string;
-  actionVariable?: string;
-  actionVariableValue?: string;
-  actionVariableKey?: string;
+  name?: string
+  item?: string
+  service?: string
+  noBoundary?: boolean
+  noItemState?: boolean
+  displayState?: boolean
+  offsetAmount?: number
+  offsetUnit?: OffsetUnit
+  markers?: Markers[]
+  type?: Type
+  labelPosition?: LabelPosition
+  color?: string
+  showSymbol?: boolean
+  barBorderRadius?: number
+  dimension1?: Dimension
+  dimension2?: Dimension
+  transpose?: boolean
+  aggregationFunction?: AggregationFunction
+  xAxisIndex?: number
+  yAxisIndex?: number
+  action?: Action | Action[]
+  actionUrl?: string
+  actionUrlSameWindow?: boolean
+  actionHttpMethod?: ActionHttpMethod
+  actionHttpBody?: string
+  actionItem?: string
+  actionCommand?: string
+  actionCommandAlt?: string
+  actionOptions?: string
+  actionRule?: string
+  actionRuleContext?: string
+  actionPage?: string
+  actionPageDefineVars?: Record<string, unknown>[]
+  actionPageTransition?: ActionPageTransition
+  actionModal?: string
+  actionModalConfig?: string
+  actionPhotos?: string
+  actionPhotoBrowserConfig?: string
+  actionGroupPopupItem?: string
+  actionAnalyzerItems?: string | string[]
+  actionAnalyzerChartType?: ActionAnalyzerChartType
+  actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem
+  actionAnalyzerAggregation?: ActionAnalyzerAggregation
+  actionConfirmation?: string
+  actionFeedback?: string
+  actionVariable?: string
+  actionVariableValue?: string
+  actionVariableKey?: string
 }
 export interface Component {
-  component: "oh-aggregate-series";
-  config: Config;
+  component: 'oh-aggregate-series'
+  config: Config
 }
 
 export const isConfig: ConfigGuardFn<Config> = (config: unknown): config is Config => {
-  return guardConfig<Config>(config, isConfig.validationFn);
-};
+  return guardConfig<Config>(config, isConfig.validationFn)
+}
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>(
-    "oh-aggregate-series",
-    component,
-    isConfig,
-    defaultConfig,
-  );
-};
+  return guardComponent<Component, Config>('oh-aggregate-series', component, isConfig, defaultConfig)
+}
 
 export {
   OffsetUnit,
@@ -108,5 +104,5 @@ export {
   ActionPageTransition,
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
-  ActionAnalyzerAggregation,
-};
+  ActionAnalyzerAggregation
+}

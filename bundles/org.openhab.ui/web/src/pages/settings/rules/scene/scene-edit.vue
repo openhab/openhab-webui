@@ -389,9 +389,7 @@ export default {
           this.dirty = false
           if (this.createMode) {
             showToast('Scene created')
-            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.rule.uid), {
-              reloadCurrent: true
-            })
+            this.f7router.navigate(this.f7route.url.replace('/add', '/' + this.rule.uid), { reloadCurrent: true })
             this.load()
           } else {
             if (!noToast) {

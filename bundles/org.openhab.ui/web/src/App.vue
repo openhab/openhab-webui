@@ -474,9 +474,7 @@ import { getRoot } from '@/api'
 import { isUnauthorized } from '@/js/hey-api'
 import { request } from 'framework7'
 
-const dayjsLocalesGlob = import.meta.glob('../node_modules/dayjs/esm/locale/*.js', {
-  import: 'default'
-})
+const dayjsLocalesGlob = import.meta.glob('../node_modules/dayjs/esm/locale/*.js', { import: 'default' })
 
 export default {
   mixins: [auth, connectionHealth, sseEvents],
@@ -488,9 +486,7 @@ export default {
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
   setup() {
-    const { locale, mergeLocaleMessage: globalMergeLocaleMessage } = useI18n({
-      useScope: 'global'
-    })
+    const { locale, mergeLocaleMessage: globalMergeLocaleMessage } = useI18n({ useScope: 'global' })
     const { t, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
     const { startAudioWebSocket, triggerDialog } = useDialog()
     // required for notReachable error screen:

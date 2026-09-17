@@ -48,8 +48,7 @@
                 <f7-link :href="'/settings/things/' + thing.bridgeUID"> View Bridge </f7-link>
               </template>
               <template v-else-if="offerInstallBinding">
-                - Binding is not installed.
-                <f7-link @click="installBinding"> Install Binding </f7-link>
+                - Binding is not installed. <f7-link @click="installBinding"> Install Binding </f7-link>
               </template>
               <template v-else-if="bindingHasErrors"> - Binding is installed but failed to load. Check the logs for errors. </template>
               <div v-if="thingStatusDescription(thing.statusInfo)" v-html="thingStatusDescription(thing.statusInfo)" />

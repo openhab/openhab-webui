@@ -1,41 +1,41 @@
 // note: this file is generated and should not be edited by hand
 
-import { guardConfig, guardComponent, type ConfigGuardFn } from "@/types/widget-ts-template";
+import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'
 
 export interface Config {
-  title?: string;
-  footer?: string;
-  noBorder?: boolean;
-  noShadow?: boolean;
-  outline?: boolean;
-  iconSize?: number;
-  websocketUrl: string;
-  domain: string;
-  username?: string;
-  password?: string;
-  authorizationUser?: string;
-  enableTones?: boolean;
-  phonebook: string;
-  dtmfString?: string;
-  hideCallerId?: boolean;
-  enableVideo?: boolean;
-  enableLocalVideo?: boolean;
-  defaultVideoAspectRatio?: string;
-  disableRegister?: boolean;
-  autoAnswer?: string;
-  autoDial?: string;
-  sipStateItem?: string;
-  enableSIPDebug?: boolean;
+  title?: string
+  footer?: string
+  noBorder?: boolean
+  noShadow?: boolean
+  outline?: boolean
+  iconSize?: number
+  websocketUrl: string
+  domain: string
+  username?: string
+  password?: string
+  authorizationUser?: string
+  enableTones?: boolean
+  phonebook: string
+  dtmfString?: string
+  hideCallerId?: boolean
+  enableVideo?: boolean
+  enableLocalVideo?: boolean
+  defaultVideoAspectRatio?: string
+  disableRegister?: boolean
+  autoAnswer?: string
+  autoDial?: string
+  sipStateItem?: string
+  enableSIPDebug?: boolean
 }
 export interface Component {
-  component: "oh-sipclient-card";
-  config: Config;
+  component: 'oh-sipclient-card'
+  config: Config
 }
 
 export const isConfig: ConfigGuardFn<Config> = (config: unknown): config is Config => {
-  return guardConfig<Config>(config, isConfig.validationFn);
-};
+  return guardConfig<Config>(config, isConfig.validationFn)
+}
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>("oh-sipclient-card", component, isConfig, defaultConfig);
-};
+  return guardComponent<Component, Config>('oh-sipclient-card', component, isConfig, defaultConfig)
+}

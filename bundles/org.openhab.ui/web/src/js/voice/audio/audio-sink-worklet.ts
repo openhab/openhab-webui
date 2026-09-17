@@ -1,3 +1,5 @@
+/* oxlint-disable no-undef */
+
 /**
  * The {@link AudioSinkWorklet} is the {@link AudioWorkletProcessor} implementation used by the {@link AudioSink} class,
  * it caches the data received through its {@link MessagePort} and feeds it to the connected {@link AudioProcessor}.

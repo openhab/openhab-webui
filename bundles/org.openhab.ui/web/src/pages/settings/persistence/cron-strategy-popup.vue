@@ -59,9 +59,7 @@ const cronExpressionRef = useTemplateRef('cronExpression')
 
 // Props and emits
 const opened = defineModel<boolean>('opened')
-const cronStrategy = defineModel<api.PersistenceCronStrategy | null>('cronStrategy', {
-  required: true
-})
+const cronStrategy = defineModel<api.PersistenceCronStrategy | null>('cronStrategy', { required: true })
 const emits = defineEmits<{
   (e: 'add:cronStrategy', cronStrategy: api.PersistenceCronStrategy): void
 }>()

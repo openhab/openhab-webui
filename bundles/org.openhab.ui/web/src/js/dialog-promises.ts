@@ -1,6 +1,6 @@
 import { f7 } from 'framework7-vue'
 
-/* eslint-disable @typescript-eslint/promise-function-async */
+/* oxlint-disable typescript/promise-function-async */
 
 /**
  * Shows a Framework7 confirm dialog and returns a promise that resolves to

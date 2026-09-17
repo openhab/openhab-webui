@@ -2,12 +2,12 @@
 
 import { WebSocketInCmd, WebSocketOutCmd, type WebSocketOutMessage, WorkerInCmd, WorkerOutCmd, type WorkerOutMessage } from './types.ts'
 
-/* oxlint-disable @typescript-eslint/no-unsafe-member-access */
-/* oxlint-disable @typescript-eslint/no-unsafe-argument */
-/* oxlint-disable @typescript-eslint/no-unsafe-assignment */
-/* oxlint-disable @typescript-eslint/require-await */
-/* oxlint-disable @typescript-eslint/restrict-plus-operands */
-/* oxlint-disable @typescript-eslint/no-misused-promises */
+/* oxlint-disable typescript/no-unsafe-member-access */
+/* oxlint-disable typescript/no-unsafe-argument */
+/* oxlint-disable typescript/no-unsafe-assignment */
+/* oxlint-disable typescript/require-await */
+/* oxlint-disable typescript/restrict-plus-operands */
+/* oxlint-disable typescript/no-misused-promises */
 
 /** WebSocket reconnection timeout */
 const RECONNECT_MS = 5000
@@ -413,11 +413,7 @@ function generateAudioPacketHeader(sampleRate: number, bitDepth: number, channel
   return view.buffer
 }
 
-function parseAudioFormat(buffer: ArrayBuffer): {
-  sampleRate: number
-  bitDepth: number
-  channels: number
-} {
+function parseAudioFormat(buffer: ArrayBuffer): { sampleRate: number; bitDepth: number; channels: number } {
   const view = new DataView(buffer)
   const sampleRate = view.getInt32(2, true)
   const bitDepth = view.getUint8(6)

@@ -1,6 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
-import { guardConfig, guardComponent, type ConfigGuardFn } from "@/types/widget-ts-template";
+import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'
 import {
   Action,
   ActionHttpMethod,
@@ -8,64 +8,65 @@ import {
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation,
-  TrendGradientDirection,
-} from "../../common.gen.ts";
+  TrendGradientDirection
+} from '../../common.gen.ts'
+
 
 export interface Config {
-  header?: string;
-  title?: string;
-  subtitle?: string;
-  footer?: string;
-  icon?: string;
-  color?: string;
-  on?: string;
-  action?: Action | Action[];
-  actionUrl?: string;
-  actionUrlSameWindow?: boolean;
-  actionHttpMethod?: ActionHttpMethod;
-  actionHttpBody?: string;
-  actionItem?: string;
-  actionCommand?: string;
-  actionCommandAlt?: string;
-  actionOptions?: string;
-  actionRule?: string;
-  actionRuleContext?: string;
-  actionPage?: string;
-  actionPageDefineVars?: Record<string, unknown>[];
-  actionPageTransition?: ActionPageTransition;
-  actionModal?: string;
-  actionModalConfig?: string;
-  actionPhotos?: string;
-  actionPhotoBrowserConfig?: string;
-  actionGroupPopupItem?: string;
-  actionAnalyzerItems?: string | string[];
-  actionAnalyzerChartType?: ActionAnalyzerChartType;
-  actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem;
-  actionAnalyzerAggregation?: ActionAnalyzerAggregation;
-  actionConfirmation?: string;
-  actionFeedback?: string;
-  actionVariable?: string;
-  actionVariableValue?: string;
-  actionVariableKey?: string;
-  trendItem?: string;
-  trendStrokeWidth?: string;
-  trendWidth?: string;
-  trendGradient?: string;
-  trendGradientDirection?: TrendGradientDirection;
-  trendSampling?: number;
+  header?: string
+  title?: string
+  subtitle?: string
+  footer?: string
+  icon?: string
+  color?: string
+  on?: string
+  action?: Action | Action[]
+  actionUrl?: string
+  actionUrlSameWindow?: boolean
+  actionHttpMethod?: ActionHttpMethod
+  actionHttpBody?: string
+  actionItem?: string
+  actionCommand?: string
+  actionCommandAlt?: string
+  actionOptions?: string
+  actionRule?: string
+  actionRuleContext?: string
+  actionPage?: string
+  actionPageDefineVars?: Record<string, unknown>[]
+  actionPageTransition?: ActionPageTransition
+  actionModal?: string
+  actionModalConfig?: string
+  actionPhotos?: string
+  actionPhotoBrowserConfig?: string
+  actionGroupPopupItem?: string
+  actionAnalyzerItems?: string | string[]
+  actionAnalyzerChartType?: ActionAnalyzerChartType
+  actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem
+  actionAnalyzerAggregation?: ActionAnalyzerAggregation
+  actionConfirmation?: string
+  actionFeedback?: string
+  actionVariable?: string
+  actionVariableValue?: string
+  actionVariableKey?: string
+  trendItem?: string
+  trendStrokeWidth?: string
+  trendWidth?: string
+  trendGradient?: string
+  trendGradientDirection?: TrendGradientDirection
+  trendSampling?: number
 }
 export interface Component {
-  component: "oh-cell";
-  config: Config;
+  component: 'oh-cell'
+  config: Config
 }
 
 export const isConfig: ConfigGuardFn<Config> = (config: unknown): config is Config => {
-  return guardConfig<Config>(config, isConfig.validationFn);
-};
+  return guardConfig<Config>(config, isConfig.validationFn)
+}
 
 export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
-  return guardComponent<Component, Config>("oh-cell", component, isConfig, defaultConfig);
-};
+  return guardComponent<Component, Config>('oh-cell', component, isConfig, defaultConfig)
+}
 
 export {
   Action,
@@ -74,5 +75,5 @@ export {
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation,
-  TrendGradientDirection,
-};
+  TrendGradientDirection
+}

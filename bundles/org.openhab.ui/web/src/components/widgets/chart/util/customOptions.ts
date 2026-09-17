@@ -13,7 +13,7 @@ function applyMarkers(series: OhSeriesOption) {
         data: [],
         tooltip: {
           // @ts-expect-error ECharts provides no type def for MarkLineOption::formatter
-          // oxlint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          // oxlint-disable-next-line typescript/no-unsafe-member-access
           formatter: (params: unknown) => formatTimestamp(dayjs(params.data.xAxis as string))
         }
       }

@@ -137,10 +137,7 @@
           <f7-list-group>
             <parameter-location
               :value="updatedLocation"
-              :config-description="{
-                label: t('setupwizard.' + currentStep + '.parameterLabel'),
-                name: 'Location'
-              }"
+              :config-description="{ label: t('setupwizard.' + currentStep + '.parameterLabel'), name: 'Location' }"
               :f7router
               @input="(value) => (updatedLocation = value)"
               :placeholder="t('setupwizard.' + currentStep + '.placeholder')" />
@@ -352,9 +349,7 @@
               :fill="setupWizardStepsDone.modelLinkClicked && !setupWizardStepsDone.inboxLinkClicked"
               color="theme-alt"
               :text="t('setupwizard.welcome.inboxLink')"
-              :class="{
-                'margin-bottom': setupWizardStepsDone.modelLinkClicked && !setupWizardStepsDone.inboxLinkClicked
-              }"
+              :class="{ 'margin-bottom': setupWizardStepsDone.modelLinkClicked && !setupWizardStepsDone.inboxLinkClicked }"
               @click="handler({ ...next, link: '/settings/things/inbox' })" />
             <f7-button
               v-if="next"
@@ -472,16 +467,7 @@ export default {
   setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('setup-wizard', mergeLocaleMessage)
-    return {
-      t,
-      theme,
-      mergeLocaleMessage,
-      conceptsImage,
-      rulesImage,
-      uiImage,
-      persistenceImage,
-      semanticsImage
-    }
+    return { t, theme, mergeLocaleMessage, conceptsImage, rulesImage, uiImage, persistenceImage, semanticsImage }
   },
   data() {
     return {
@@ -574,10 +560,7 @@ export default {
         },
         'persistence-config': {
           icon: 'download_circle',
-          show: {
-            isInvisible: () => !this.persistenceInstalled,
-            handler: () => (this.persistenceConfigConfirm = false)
-          },
+          show: { isInvisible: () => !this.persistenceInstalled, handler: () => (this.persistenceConfigConfirm = false) },
           prev: { step: 'persistence' },
           next: { handler: () => (this.persistenceConfigConfirm = true), step: 'semantics-intro' },
           skip: { step: 'semantics-intro' }
@@ -1059,14 +1042,9 @@ export default {
           const addon = addons.shift()
           const addonDeadline = getNowSeconds() + perAddonTimeoutSeconds
           this.waitingProgress = ((addonsCount - addons.length) / addonsCount) * 100
-          this.waitingProgressText = this.t('setupwizard.addons.progress', {
-            current: addonsCount - addons.length,
-            total: addonsCount
-          })
+          this.waitingProgressText = this.t('setupwizard.addons.progress', { current: addonsCount - addons.length, total: addonsCount })
           console.log('Installing add-on: ' + addon.uid)
-          this.waitingProgressTitle = this.t('setupwizard.addons.installingAddon', {
-            addon: addon.label
-          })
+          this.waitingProgressTitle = this.t('setupwizard.addons.installingAddon', { addon: addon.label })
 
           this.$oh.api
             .post('/rest/addons/' + addon.uid + '/install', {}, 'text')
@@ -1129,10 +1107,7 @@ export default {
 
       f7.panel.get('left').enableVisibleBreakpoint()
       nextTick(() => {
-        f7.views.main.router.navigate(target, {
-          transition: 'f7-circle',
-          clearPreviousHistory: true
-        })
+        f7.views.main.router.navigate(target, { transition: 'f7-circle', clearPreviousHistory: true })
         if (this.$f7dim.width >= 1280) {
           f7.emit('selectDeveloperDock', { dock: 'help', helpTab: 'quick' })
         }

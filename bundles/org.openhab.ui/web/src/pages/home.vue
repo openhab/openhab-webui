@@ -17,13 +17,7 @@
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
       <f7-nav-title-large v-if="!simpleNavbar" class="home-title-large">
-        <span class="today">{{
-          new Date().toLocaleString(runtimeStore.locale, {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long'
-          })
-        }}</span>
+        <span class="today">{{ new Date().toLocaleString(runtimeStore.locale, { weekday: 'long', day: 'numeric', month: 'long' }) }}</span>
         {{ title }}
       </f7-nav-title-large>
       <f7-nav-title>

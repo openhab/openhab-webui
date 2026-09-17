@@ -45,9 +45,7 @@ const svgLogoError = ref<boolean>(false)
 const pngLogoError = ref<boolean>(false)
 
 // computed
-const imgStyle = computed<StyleValue>(() => ({
-  visibility: logoLoaded.value ? 'visible' : 'hidden'
-}))
+const imgStyle = computed<StyleValue>(() => ({ visibility: logoLoaded.value ? 'visible' : 'hidden' }))
 
 // methods
 type LogoType = 'svg' | 'png'

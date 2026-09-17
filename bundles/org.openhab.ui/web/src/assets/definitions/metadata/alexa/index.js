@@ -24,10 +24,7 @@ for (const type of Object.keys(deviceTypes)) {
     const { itemTypes = [], customTypes = [], parameters = [], ...properties } = deviceAttributes[attribute]
     classes[`${type}.${attribute}`] = {}
     for (const itemType of [...itemTypes, ...customTypes]) {
-      classes[`${type}.${attribute}`][itemType] = {
-        parameters: [defaultParameters].concat(parameters),
-        ...properties
-      }
+      classes[`${type}.${attribute}`][itemType] = { parameters: [defaultParameters].concat(parameters), ...properties }
     }
   }
 }

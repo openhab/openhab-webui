@@ -120,9 +120,7 @@ import { showConfirmDialog } from '@/js/dialog-promises'
 
 // Props and emits
 const opened = defineModel<boolean>('opened')
-const persistence = defineModel<api.PersistenceServiceConfiguration>('persistence', {
-  required: true
-})
+const persistence = defineModel<api.PersistenceServiceConfiguration>('persistence', { required: true })
 const props = defineProps<{
   editable: boolean
 }>()

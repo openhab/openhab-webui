@@ -66,7 +66,7 @@ app.use(pinia)
 app.use(i18n)
 app.use(AsyncComputed)
 app.use(fullscreen)
-// oxlint-disable-next-line @typescript-eslint/no-unsafe-argument
+// oxlint-disable-next-line typescript/no-unsafe-argument
 app.use(VueClipboard, {
   autoSetContainer: true, // add this line to enable auto setting container
   appendToBody: true // add this line to append the popup to body

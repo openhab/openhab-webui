@@ -85,21 +85,9 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
           f7.actions
             .create({
               buttons: [
-                [
-                  {
-                    text: confirmConfig.text,
-                    color: confirmConfig.color || 'theme-alt',
-                    onClick: () => resolve()
-                  }
-                ],
-                [
-                  {
-                    text: t('dialogs.cancel'),
-                    color: 'red',
-                    // oxlint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-                    onClick: () => reject('action confirmation rejected')
-                  }
-                ]
+                [{ text: confirmConfig.text, color: confirmConfig.color || 'theme-alt', onClick: () => resolve() }],
+                // oxlint-disable-next-line typescript/prefer-promise-reject-errors
+                [{ text: t('dialogs.cancel'), color: 'red', onClick: () => reject('action confirmation rejected') }]
               ]
             })
             .open()
@@ -112,7 +100,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
             confirmConfig.text,
             confirmConfig.title || 'openHAB',
             () => resolve(),
-            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+            // oxlint-disable-next-line typescript/prefer-promise-reject-errors
             () => reject('action confirmation rejected')
           )
           .open()
@@ -123,7 +111,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
         .confirm(
           confirmText,
           () => resolve(),
-          // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+          // oxlint-disable-next-line typescript/prefer-promise-reject-errors
           () => reject('action confirmation rejected')
         )
         .open()
@@ -189,9 +177,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
                 actionResult = false
                 break
               }
-              let navigateOptions: Router.RouteOptions & {
-                props: { deep: boolean; defineVars?: unknown }
-              } = { props: { deep: true } }
+              let navigateOptions: Router.RouteOptions & { props: { deep: boolean; defineVars?: unknown } } = { props: { deep: true } }
               if (actionPageTransition) navigateOptions.transition = actionPageTransition
               if (actionPageVars) navigateOptions.props.defineVars = actionPageVars
               console.log('Navigating to ' + actionPage)
@@ -406,9 +392,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
                 }
               }
               console.log(`Opening ${actionGroupItem} details in popup`)
-              f7.views.main.router.navigate(groupPopupRoute as any as string, {
-                props: { groupItem: actionGroupItem }
-              })
+              f7.views.main.router.navigate(groupPopupRoute as any as string, { props: { groupItem: actionGroupItem } })
               break
             case Action.analyzer:
               let actionAnalyzerItems = actionConfig[`${processedPrefix}actionAnalyzerItems`]
