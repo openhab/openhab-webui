@@ -207,7 +207,7 @@
     font-weight: 300
 
 .searchbar-found
-  @media (min-width 960px)
+  @media (--media-MD-up)
     padding-left 0 !important
     padding-right 0 !important
 </style>

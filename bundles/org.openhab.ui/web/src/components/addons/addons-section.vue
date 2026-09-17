@@ -127,7 +127,7 @@
     cursor pointer
     opacity 0
     z-index 2
-  @media (max-width 767px)
+  @media (--media-SM-down)
     .addons-section-footer
       align-items flex-start
     .addons-section-sort-control
@@ -155,15 +155,15 @@
     &::-webkit-scrollbar
       display none
       opacity 0
-    @media (min-width 768px)
+    @media (--media-SM-up)
       scroll-padding-left calc(20px + var(--f7-safe-area-left))
     li
       width 100%
-      @media (min-width 768px)
+      @media (--media-SM-up)
         width 50%
-      @media (min-width 1281px)
+      @media (--media-LG-up)
         width 33.333%
-      @media (min-width 1601px)
+      @media (--media-XL-down)
         width 25%
 .addons-swiper
     margin-top 1rem

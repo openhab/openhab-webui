@@ -352,7 +352,7 @@
     right 0
     margin 12px 10px
     opacity 0
-  @media (min-width 960px)
+  @media (--media-MD-up)
     .breakpoint-pin
       opacity 0.75
 

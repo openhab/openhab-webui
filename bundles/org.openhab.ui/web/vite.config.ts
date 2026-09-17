@@ -7,6 +7,8 @@ import { resolve } from 'path'
 import vueDevtools from 'vite-plugin-vue-devtools'
 import { visualizer } from 'rollup-plugin-visualizer'
 import webpackStats from 'rollup-plugin-webpack-stats'
+import postcssGlobalData from '@csstools/postcss-global-data'
+import postcssCustomMedia from 'postcss-custom-media'
 
 const projectRootDir = resolve(import.meta.dirname)
 
@@ -99,6 +101,16 @@ export default defineConfig({
       : [vueDevtools()]),
     ...(stats ? [visualizer(), webpackStats()] : [])
   ],
+  css: {
+    postcss: {
+      plugins: [
+        postcssGlobalData({
+          files: ['./src/css/breakpoint.css']
+        }),
+        postcssCustomMedia(),
+      ]
+    }
+  },
   define: {
     // __VUE_I18N_LEGACY_API__: false // tree-shake legacy mode
   },

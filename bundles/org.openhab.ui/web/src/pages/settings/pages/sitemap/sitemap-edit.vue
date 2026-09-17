@@ -375,7 +375,7 @@
 .sitemap-details-no-spinners input[type=number]
   -moz-appearance textfield !important
 
-@media (min-width: 768px)
+@media (--media-SM-up)
   .sitemap-tree-wrapper
     .row
       height 100%
@@ -399,7 +399,7 @@
   .add-to-sitemap-fab
     visibility hidden !important
 
-@media (max-width: 767px)
+@media (--media-SM-down)
   .details-pane
     display none
   .sitemap-tree

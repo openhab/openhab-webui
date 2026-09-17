@@ -358,7 +358,7 @@
 .popup
   &.copy-definition-popup
 
-    @media (min-width: 630px) and (min-height: 630px)
+    @media (--media-SM-up) and (min-height: 630px)
       width 90%
       max-width 450px
       height auto

@@ -251,7 +251,7 @@
 .md .model-details-sheet .toolbar .link
   width 17%
 
-@media (min-width: 768px)
+@media (--media-SM-up)
   .semantic-tree-wrapper
     height calc(100% - var(--f7-toolbar-height))
     .row
@@ -267,7 +267,7 @@
   .add-to-model-fab
     visibility hidden !important
 
-@media (max-width: 767px)
+@media (--media-SM-down)
   .semantic-tree-wrapper.block:first-child
     margin-top 5px
   .semantic-tree-wrapper

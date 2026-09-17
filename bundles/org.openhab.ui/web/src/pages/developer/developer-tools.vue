@@ -162,7 +162,7 @@
 </template>
 
 <style lang="stylus">
-@media (max-width 1279px)
+@media (--media-LG-down)
   .developer-sidebar-toggle
     display none
 </style>

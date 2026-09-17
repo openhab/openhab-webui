@@ -124,7 +124,7 @@
       .logo
         max-width 100px
         max-height 100px
-    @media (min-width 768px)
+    @media (--media-SM-up)
       .logo-container
         width 191px
         height 191px
@@ -141,7 +141,7 @@
       .addon-header-title
         font-size 22px
         font-weight 600
-      @media (min-width 768px)
+      @media (--media-SM-up)
         .addon-header-title
           font-size 27px
           line-height normal
@@ -151,7 +151,7 @@
         color var(--f7-list-item-after-text-color)
         i
           font-size 16px
-      @media (min-width 768px)
+      @media (--media-SM-up)
         .addon-header-author
           font-size 20px
           i
