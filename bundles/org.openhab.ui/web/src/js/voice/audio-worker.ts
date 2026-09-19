@@ -2,12 +2,12 @@
 
 import { WebSocketInCmd, WebSocketOutCmd, type WebSocketOutMessage, WorkerInCmd, WorkerOutCmd, type WorkerOutMessage } from './types.ts'
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-/* eslint-disable @typescript-eslint/no-misused-promises */
+/* oxlint-disable typescript/no-unsafe-member-access */
+/* oxlint-disable typescript/no-unsafe-argument */
+/* oxlint-disable typescript/no-unsafe-assignment */
+/* oxlint-disable typescript/require-await */
+/* oxlint-disable typescript/restrict-plus-operands */
+/* oxlint-disable typescript/no-misused-promises */
 
 /** WebSocket reconnection timeout */
 const RECONNECT_MS = 5000

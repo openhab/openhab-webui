@@ -296,8 +296,13 @@ const editPage = () => {
         {
           text: 'Edit Current Tab',
           onClick: () => {
-            const tabPageUid = (page.value!.slots?.default![currentTab.value]!.config.page as string).replace('page:', '')
-            const tabPage = componentStore.page(tabPageUid)!
+            const tab = page.value?.slots?.default?.[currentTab.value]
+            if (!tab || typeof tab === 'string' || typeof tab.config.page !== 'string') return
+
+            const tabPageUid = tab.config.page.replace('page:', '')
+            const tabPage = componentStore.page(tabPageUid)
+            if (!tabPage) return
+
             const tabPageType = getPageType(tabPage).type
             props.f7router.navigate('/settings/pages/' + tabPageType + '/' + tabPageUid)
           }
