@@ -87,7 +87,7 @@
   align-items center
   justify-content space-between
 
-  @media (max-width 767px)
+  @media (--media-SM-down)
     &.toolbar-scrollable-mobile
       justify-content flex-start
       gap 4px

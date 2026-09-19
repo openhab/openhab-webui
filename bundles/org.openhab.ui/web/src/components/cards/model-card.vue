@@ -92,7 +92,7 @@
     font-weight normal
     font-size normal
     line-height 0.7
-@media (min-width: 768px)
+@media (--media-SM-up)
   .model-card
     --card-offset calc(675px - 200px + var(--f7-safe-area-left) + var(--f7-safe-area-right))
 </style>

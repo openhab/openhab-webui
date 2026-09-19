@@ -55,7 +55,7 @@
           &nbsp;Approve
         </f7-button>
         <!-- buttons for wider screen -->
-        <template v-if="$f7dim.width >= 500">
+        <template v-if="$f7dim.width >= BREAKPOINTS.XS">
           <f7-button
             @click="copyFileDefinitionToClipboard(ObjectType.THING, selectedItems)"
             color="theme-alt"
@@ -207,7 +207,7 @@
     font-weight: 300
 
 .searchbar-found
-  @media (min-width 960px)
+  @media (--media-MD-up)
     padding-left 0 !important
     padding-right 0 !important
 </style>
@@ -225,6 +225,7 @@ import { f7, theme } from 'framework7-vue'
 import ThingInboxMixin from '@/pages/settings/things/thing-inbox-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { showToast } from '@/js/dialog-promises'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 export default {
   mixins: [ThingInboxMixin],
@@ -235,7 +236,7 @@ export default {
     EmptyStatePlaceholder
   },
   setup() {
-    return { f7, theme }
+    return { f7, theme, BREAKPOINTS }
   },
   data() {
     return {

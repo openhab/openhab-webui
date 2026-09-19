@@ -31,21 +31,18 @@
 import { computed, getCurrentInstance } from 'vue'
 import AddonCard from '@/components/addons/addon-card.vue'
 import * as api from '@/api'
+import { useBreakpoints } from '@/js/composables/useBreakpoints.ts'
 
-const instance = getCurrentInstance()
-const global = instance?.appContext.config.globalProperties
-
-// props
+// --- Defines ---
 defineProps<{ addonsList: api.Addon[]; installActionText?: string; headline?: string }>()
-
-// emits
 const emit = defineEmits(['addon-button-click'])
 
-// computed
-const appWidth = computed(() => (global?.$f7dim as { width: number })?.width ?? 0)
-const appHeight = computed(() => (global?.$f7dim as { height: number })?.height ?? 0)
-const slidesPerView = computed(() => (appWidth.value > appHeight.value ? 3.5 : 1.5))
+// --- Composables ---
+const { width, height } = useBreakpoints()
 
-// methods
+// --- Computed ---
+const slidesPerView = computed(() => (width.value > height.value ? 3.5 : 1.5))
+
+// --- Methods ---
 const addonButtonClick = (addon: api.Addon) => emit('addon-button-click', addon)
 </script>

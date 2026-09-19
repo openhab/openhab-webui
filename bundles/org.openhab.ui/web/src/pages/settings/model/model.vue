@@ -26,7 +26,7 @@
     </f7-navbar>
 
     <!-- Toolbar -->
-    <f7-toolbar v-if="$f7dim.width >= 500" bottom class="toolbar-details">
+    <f7-toolbar v-if="$f7dim.width >= BREAKPOINTS.XS" bottom class="toolbar-details">
       <f7-link class="left" :class="{ disabled: selectedItem == null }" @click="selectedItem = null"> Clear </f7-link>
       <div class="padding-right text-align-right">
         <label class="advanced-label">
@@ -251,7 +251,7 @@
 .md .model-details-sheet .toolbar .link
   width 17%
 
-@media (min-width: 768px)
+@media (--media-SM-up)
   .semantic-tree-wrapper
     height calc(100% - var(--f7-toolbar-height))
     .row
@@ -267,7 +267,7 @@
   .add-to-model-fab
     visibility hidden !important
 
-@media (max-width: 767px)
+@media (--media-SM-down)
   .semantic-tree-wrapper.block:first-child
     margin-top 5px
   .semantic-tree-wrapper
@@ -314,6 +314,7 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 export default {
   props: {
@@ -332,7 +333,8 @@ export default {
   setup() {
     return {
       f7,
-      theme
+      theme,
+      BREAKPOINTS
     }
   },
   data() {
@@ -357,7 +359,7 @@ export default {
       }
     },
     searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     ...mapWritableState(useRuntimeStore, {
       expanded: 'modelExpanded',
