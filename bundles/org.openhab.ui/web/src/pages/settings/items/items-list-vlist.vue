@@ -141,7 +141,7 @@
 
     <f7-block v-if="ready && !items.length" class="block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
-      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < BREAKPOINTS.LG" class="display-flex justify-content-center">
         <f7-button
           large
           fill
@@ -177,6 +177,7 @@
 import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
@@ -202,7 +203,7 @@ export default {
     EmptyStatePlaceholder
   },
   setup() {
-    return { f7, theme }
+    return { f7, theme, BREAKPOINTS }
   },
   data() {
     return {
@@ -495,7 +496,7 @@ export default {
   },
   computed: {
     searchbarPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
       return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0

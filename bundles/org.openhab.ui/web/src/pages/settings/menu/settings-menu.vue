@@ -64,7 +64,7 @@
               <f7-list-item v-for="n in 9" :key="n" :class="`skeleton-text skeleton-effect-blink`" title="Service Label" />
             </f7-list>
           </group-box>
-          <div v-show="$f7dim.width < 1450">
+          <div v-show="$f7dim.width < BREAKPOINTS.XL">
             <addon-section
               v-show="addonsLoaded && addonsInstalled.length > 0"
               class="add-on-section"
@@ -80,7 +80,7 @@
             </group-box>
           </div>
         </f7-col>
-        <f7-col v-show="$f7dim.width >= 1450" width="33" class="add-on-col">
+        <f7-col v-show="$f7dim.width >= BREAKPOINTS.XL" width="33" class="add-on-col">
           <addon-section
             v-show="addonsLoaded && addonsInstalled.length > 0"
             :addonsInstalled="addonsInstalled"
@@ -139,6 +139,7 @@ import { getAdminMenuPageSections } from '@/js/admin-menu'
 
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import * as api from '@/api'
 
@@ -150,7 +151,7 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme }
+    return { theme, BREAKPOINTS }
   },
   data() {
     return {
@@ -186,7 +187,7 @@ export default {
       ],
 
       expandedTypes: {
-        systemSettingsExpanded: this.$f7dim.width >= 1450,
+        systemSettingsExpanded: this.$f7dim.width >= BREAKPOINTS.XL,
         addonsExpanded: false
       }
     }

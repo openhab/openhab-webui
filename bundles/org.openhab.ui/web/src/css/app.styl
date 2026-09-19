@@ -132,22 +132,22 @@ html
 .dialog.dialog-medium
   --f7-dialog-width: 360px
 
-  @media (max-width: 599px) {
+  @media (--media-SM-down) {
     --f7-dialog-width: 75vw
   }
 
-  @media (min-width: 768px) {
+  @media (--media-MD-up) {
     --f7-dialog-width: 500px
   }
 
 .dialog.dialog-wide
   --f7-dialog-width: 560px
 
-  @media (max-width: 599px) {
+  @media (--media-SM-down) {
     --f7-dialog-width: 95vw
   }
 
-  @media (min-width: 768px) {
+  @media (--media-MD-up) {
     --f7-dialog-width: 700px
   }
 
@@ -432,7 +432,7 @@ html
   z-index auto
   overflow hidden !important
 
-@media (min-width 1024px)
+@media (--media-MD-up)
     .block-narrow
         display flex
         flex-direction column
@@ -452,7 +452,7 @@ html
         max-width 100%
         display initial
 
-@media (max-width 1023px)
+@media (--media-MD-down)
   .block-narrow
     // use insets from env because f7-safe-area CSS vars are not available due the fix in nomini.css
     padding-left env(safe-area-inset-left)
@@ -536,7 +536,7 @@ html
   --f7-dialog-width 80%
 
 // Align smart-select item with f7-list-input fields
-@media (min-width 1024px)
+@media (--media-MD-up)
   .aligned-smart-select
     .item-title
       // f7-input-item uses 35% for the item-title,

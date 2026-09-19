@@ -167,7 +167,7 @@
     margin-right 3px
 .developer-sidebar-tip
     visibility visible
-@media(max-width: 1279px)
+@media(--media-LG-down)
   .developer-sidebar-tip
     visibility hidden
 .model-treeview.no-selection-style

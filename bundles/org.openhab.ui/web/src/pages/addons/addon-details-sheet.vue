@@ -86,13 +86,13 @@
   background: #666;
 }
 
-@media (min-width: 1024px)
+@media (--media-MD-up)
   .demo-sheet-swipe-to-close, .demo-sheet-swipe-to-step
     margin-left 15%
     margin-right 15%
     width calc(100% - 30%)
 
-@media (min-width: 1280px)
+@media (--media-LG-up)
   .demo-sheet-swipe-to-close, .demo-sheet-swipe-to-step
     margin-left 30%
     margin-right 30%

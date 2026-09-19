@@ -110,7 +110,7 @@
 
     <f7-block v-if="ready && !transformations.length" class="block-narrow">
       <empty-state-placeholder icon="arrow_2_squarepath" title="transformations.title" text="transformations.text" />
-      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < BREAKPOINTS.LG" class="display-flex justify-content-center">
         <f7-button
           large
           fill
@@ -132,7 +132,7 @@
 
 <style lang="stylus">
 .searchbar-found
-  @media (min-width 960px)
+  @media (--media-MD-up)
     padding-left 0 !important
     padding-right 0 !important
 </style>
@@ -150,6 +150,7 @@ import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 
 import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 export default {
   props: {
@@ -161,7 +162,7 @@ export default {
   },
   setup() {
     const lastSearchQueryStore = useLastSearchQueryStore()
-    return { f7, theme, lastSearchQueryStore }
+    return { f7, theme, lastSearchQueryStore, BREAKPOINTS }
   },
   data() {
     return {
