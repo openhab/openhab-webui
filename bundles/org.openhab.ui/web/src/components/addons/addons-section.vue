@@ -163,7 +163,7 @@
         width 50%
       @media (--media-LG-up)
         width 33.333%
-      @media (--media-XL-down)
+      @media (--media-XL-up)
         width 25%
 .addons-swiper
     margin-top 1rem

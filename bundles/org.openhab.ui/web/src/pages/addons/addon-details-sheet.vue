@@ -92,7 +92,7 @@
     margin-right 15%
     width calc(100% - 30%)
 
-@media (--media-XL-up)
+@media (--media-LG-up)
   .demo-sheet-swipe-to-close, .demo-sheet-swipe-to-step
     margin-left 30%
     margin-right 30%
