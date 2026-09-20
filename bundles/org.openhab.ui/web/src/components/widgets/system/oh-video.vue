@@ -9,7 +9,9 @@
       :startMuted="config.startMuted"
       :hideControls="config.hideControls"
       :posterURL="posterSrc"
-      :sendAudio="config.sendAudio" />
+      :sendAudio="config.sendAudio"
+      :micActive="config.micActive"
+      :muteActive="config.muteActive" />
     <oh-video-videojs
       v-else
       :src="src"
