@@ -48,14 +48,14 @@
           :tooltip="$t('home.pinToHome')"
           @click="pinToHome" />
         <f7-link
-          v-if="showExitToApp"
+          v-if="showExitToApp && !runtimeStore.appMenu"
           icon-ios="f7:square_arrow_right"
           icon-aurora="f7:square_arrow_right"
           icon-md="material:exit_to_app"
           :tooltip="$t('home.exitToApp')"
           @click="exitToApp" />
         <f7-link
-          v-else
+          v-else-if="!showExitToApp"
           icon-ios="f7:sidebar_right"
           icon-aurora="f7:sidebar_right"
           icon-md="material:exit_to_app"
