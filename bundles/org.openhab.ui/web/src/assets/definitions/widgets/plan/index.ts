@@ -2,6 +2,7 @@
 
 import { WidgetDefinition, pt, pi, pg, pb, pn, po, pd } from '../helpers.ts'
 import { actionGroup, actionParams } from '../actions.ts'
+import { svgEmbeddedGroup, svgEmbeddedParams } from '../svgEmbedded.ts'
 
 export const OhPlanPageDefinition = () =>
   new WidgetDefinition('oh-plan-page', 'Floor plan', 'Displays markers on an image overlay')
@@ -51,21 +52,7 @@ export const OhPlanPageDefinition = () =>
         ]
       )
     ])
-    .paramGroup(
-      pg(
-        'svgEmbedding',
-        'SVG Embedding',
-        'When the Image URL points to an SVG file, it can be embedded directly into the plan so its elements can reflect Item states and trigger actions. Elements must have an <code>id</code> and an <code>openhab</code> attribute to become interactive.'
-      ),
-      [
-        pb(
-          'embedSvg',
-          'Embed SVG',
-          'Embed the SVG image (from Image URL) directly into the plan so its elements can reflect Item states and trigger actions (default false)'
-        ),
-        pb('embedSvgFlashing', 'Embed SVG Flashing in Run-Mode', 'Flash SVG elements on hover in run-mode as well (default false)')
-      ]
-    )
+    .paramGroup(svgEmbeddedGroup, svgEmbeddedParams)
 
 export const OhPlanMarkerDefinition = () =>
   new WidgetDefinition('oh-plan-marker', 'Floor Plan Marker', 'A marker on a floor plan', 'map_pin')
