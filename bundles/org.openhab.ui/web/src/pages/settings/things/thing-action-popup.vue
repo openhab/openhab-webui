@@ -152,6 +152,10 @@ export default {
       this.$oh.api.post(`/rest/actions/${this.thingUID}/${encodeURIComponent(this.action.actionUid)}`, this.actionInput).then((data) => {
         this.actionOutput = data
         this.executing = false
+      }).catch((err) => {
+        this.executing = false
+        f7.dialog.alert('Action execution failed: ' + err)
+        console.error('Action execution failed: ' + err)
       })
     },
     close() {
