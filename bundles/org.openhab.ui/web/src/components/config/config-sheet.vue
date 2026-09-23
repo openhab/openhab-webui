@@ -294,9 +294,24 @@ export default {
       const configValue = this.configuration[parameter.name]
       const defaultValue = parameter.default
 
-      // Using != null (instead of !==) to concisely check that neither
-      // value is null or undefined in a single expression.
-      return defaultValue != null && configValue != null && configValue.toString() !== defaultValue
+      // If both are empty/null, they match.
+      // Check using == instead of === to also catch undefined.
+      if (configValue == null && defaultValue == null) {
+        return false
+      }
+
+      // If a value is configured, but no default exists at all, it's custom
+      if (configValue != null && defaultValue == null) {
+        return true
+      }
+
+      // Fallback safety if configValue is still null for some reason
+      if (configValue == null) {
+        return false
+      }
+
+      // Compare string representations
+      return configValue.toString() !== defaultValue.toString()
     }
   }
 }
