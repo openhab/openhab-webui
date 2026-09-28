@@ -674,6 +674,30 @@ html.flexbox-legacy {
 	}
 }
 
+// Confirm dialog
+$confirm-desktop-size: 300px;
+$confirm-mobile-size: 270px;
+
+.confirm {
+	&__content {
+		display: block;
+		width: $confirm-desktop-size;
+		@media screen and (max-width: $layout-mobile-size-threshold) {
+			width: $confirm-mobile-size;
+		}
+		text-align: center;
+		padding: 15px;
+		border-bottom: 1px solid $item-separator-color;
+	}
+	&__buttons {
+		padding: 5px;
+		display: flex;
+		justify-content: center;
+		gap: 8px;
+	}
+	position: relative;
+}
+
 // Colorpicker
 $slider-height: 20px;
 $colorpicker-desktop-size: 300px;
@@ -918,6 +942,12 @@ h5 {
 }
 
 .mdl-modal {
+	&--confirm {
+		max-width: $confirm-desktop-size;
+		@media screen and (max-width: $layout-mobile-size-threshold) {
+			max-width: $confirm-mobile-size;
+		}
+	}
 	&--colorpicker {
 		max-width: $colorpicker-desktop-size;
 		@media screen and (max-width: $layout-mobile-size-threshold) {

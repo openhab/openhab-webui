@@ -8,3 +8,6 @@ src/main/resources/web/smarthome.js
 src/main/resources/web/settings.js
 src/main/resources/web/static.js
 src/main/resources/web/fonts/*
+src/main/resources/web/smarthome.js.map
+src/main/resources/web/settings.js.map
+src/main/resources/web/static.js.map
