@@ -1,3 +1,5 @@
+/* oxlint-disable no-undef */
+
 /**
  * Merges multiple audio channels into a single channel using Quadratic Mean/Equal Power Scaling.
  * @param input

@@ -24,9 +24,10 @@ function hintThingConfig(
 }
 
 // TODO: Re-enable ESLint rules
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* oxlint-disable typescript/no-unsafe-assignment */
+/* oxlint-disable typescript/no-unsafe-member-access */
+/* oxlint-disable typescript/no-unsafe-return */
+
 function findChannelTypeUID(context: CompletionContext, configLine: Line, configIndent: number): string | null {
   const channelUidLine = findParent(context, configLine)
   if (!channelUidLine) return null
@@ -44,9 +45,9 @@ function findChannelTypeUID(context: CompletionContext, configLine: Line, config
   const bindingId = (context.view as ExtendedEditorView)?.hintContext?.thingType?.UID.split(':')[0]
   return bindingId + ':' + type
 }
-/* eslint-enable @typescript-eslint/no-unsafe-assignment */
-/* eslint-enable @typescript-eslint/no-unsafe-member-access */
-/* eslint-enable @typescript-eslint/no-unsafe-return */
+/* oxlint-enable typescript/no-unsafe-assignment */
+/* oxlint-enable typescript/no-unsafe-member-access */
+/* oxlint-enable typescript/no-unsafe-return */
 
 function hintChannelConfig(
   context: CompletionContext,

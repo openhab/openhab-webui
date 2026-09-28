@@ -437,7 +437,7 @@ export default {
         .map(this.modelItem)
         .sort(compareModelItems)
       newModel.forEach(this.getChildren)
-      this.currentModel = newModel // eslint-disable-line vue/no-side-effects-in-computed-properties
+      this.currentModel = newModel // oxlint-disable-line vue/no-side-effects-in-computed-properties
 
       return newModel
     }

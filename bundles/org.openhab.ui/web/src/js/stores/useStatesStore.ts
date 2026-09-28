@@ -65,7 +65,7 @@ export const useStatesStore = defineStore('states', () => {
   /* global ProxyHandler:readonly */
   const handler: ProxyHandler<TrackedItems> = {
     get(obj: TrackedItems, prop: string | symbol): ItemState {
-      /* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access */
+      /* oxlint-disable typescript/no-unsafe-return, typescript/no-unsafe-member-access */
       if (prop === '_keys') return Array.from(itemStates.value.keys()) as any
       if (prop === '__ob__') return (obj as any).__ob__
       if (prop === 'toString') return (() => '[object TrackedItems]') as any
@@ -73,7 +73,7 @@ export const useStatesStore = defineStore('states', () => {
       // to avoid the Vue devtools requesting invalid items in development
       if (INVALID_PROPS.has(prop.toString())) return {} as any
       if (typeof prop !== 'string') return {} as any
-      /* eslint-enable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access */
+      /* oxlint-enable typescript/no-unsafe-return, typescript/no-unsafe-member-access */
 
       const itemName = prop
       return ensureItemTracking(itemName)
