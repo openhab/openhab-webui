@@ -1,5 +1,6 @@
-import { WidgetDefinition, pt, pb } from '../helpers.ts'
+import { WidgetDefinition, pt, pb, pg } from '../helpers.ts'
 import { actionGroup, actionParams } from '../actions.ts'
+import { svgEmbeddedGroup, svgEmbeddedParams } from '../svgEmbedded.ts'
 
 const VariableParameter = pt('variable', 'Variable', 'Name of the variable to set on input change')
 const VariableKeyParameter = pt(
@@ -57,6 +58,7 @@ export const OhImageDefinition = () =>
   new WidgetDefinition('oh-image', 'Image', 'Displays an image from a URL or an item')
     .paramGroup(actionGroup(), actionParams())
     .params(ImageParameters())
+    .paramGroup(svgEmbeddedGroup, svgEmbeddedParams)
 
 import VideoParameters from './video.ts'
 export const OhVideoDefinition = () =>
@@ -144,3 +146,9 @@ export const OhClockDefinition = () =>
 import SIPClientParameters from './sipclient.ts'
 export const OhSIPClientDefinition = () =>
   new WidgetDefinition('oh-sipclient', 'SIP Client', 'SIP Client to start and answer SIP calls').params(SIPClientParameters())
+
+import SVGElementParameteters from './svgelement.ts'
+export const OhSVGElementDefinition = () =>
+  new WidgetDefinition('oh-svg-element', 'SVG Element Settings for ${id}', 'Control an element within an embedded SVG')
+    .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), SVGElementParameteters())
+    .paramGroup(actionGroup(), actionParams())
