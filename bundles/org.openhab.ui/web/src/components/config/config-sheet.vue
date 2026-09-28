@@ -11,20 +11,18 @@
         @searchbar:search="onSearch"
         @searchbar:clear="clearSearch" />
       <div class="advanced-filter-container">
-        <f7-chip
+        <div
           v-if="hasAdvanced"
-          media-bg-color="theme-alt"
-          :color="chipColor"
-          :outline="chipOutline"
-          class="advanced-chip not-selectable"
-          text="Advanced"
-          @click="toggleAdvancedMode">
-          <template #media>
-            <span class="dropdown-trigger" @click.stop="isDropdownOpen = !isDropdownOpen">
-              <f7-icon ios="f7:chevron_down" md="material:arrow_drop_down" aurora="f7:chevron_down" />
-            </span>
-          </template>
-        </f7-chip>
+          class="advanced-split-chip"
+          :class="{
+            'is-active': advancedMode !== 'hidden',
+            'is-filled': advancedMode === 'all'
+          }">
+          <button type="button" class="chip-label-btn" @click="toggleAdvancedMode">Advanced</button>
+          <button type="button" class="dropdown-trigger" aria-label="Filter options" @click.stop="isDropdownOpen = !isDropdownOpen">
+            <f7-icon ios="f7:chevron_down" md="material:arrow_drop_down" aurora="f7:chevron_down" size="14" />
+          </button>
+        </div>
 
         <div v-if="isDropdownOpen" class="dropdown-backdrop" @click="isDropdownOpen = false"></div>
 
@@ -151,32 +149,53 @@
     display flex
     align-items center
 
-  .advanced-chip
+  .advanced-split-chip
+    display inline-flex
+    align-items stretch
+    height 32px             /* Exact 1:1 height match with search input */
+    border-radius 16px      /* Half of 32px height */
+    border 1px solid var(--f7-chip-border-color, rgba(255, 255, 255, 0.2))
+    background-color var(--f7-chip-bg-color, rgba(0, 0, 0, 0.06))
+    color var(--f7-text-color, inherit)
+    overflow hidden
+    user-select none
     margin-left auto
-    cursor pointer
-    border 1px solid var(--f7-chip-border-color, rgba(0, 0, 0, 0.2)) !important
+    transition background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease
 
-    &:not(.color-theme-alt)
-      background-color var(--f7-chip-bg-color, rgba(0, 0, 0, 0.06)) !important
-      color var(--f7-text-color, inherit)
+    &.is-active
+      border-color var(--f7-theme-color-alt, #2196f3)
 
-    &.color-theme-alt
-      border-color var(--f7-theme-color-alt, #2196f3) !important
+    &.is-filled
+      background-color var(--f7-theme-color-alt, #2196f3)
+      color #ffffff
 
+    .chip-label-btn,
     .dropdown-trigger
+      appearance none
+      background transparent
+      border none
+      color inherit
+      font-family inherit
+      font-size 13px
+      font-weight 500
+      line-height 1
+      padding 0
+      margin 0
+      cursor pointer
       display inline-flex
       align-items center
       justify-content center
-      padding 0 2px
-      border-radius 50%
-      &:hover
-        background rgba(0, 0, 0, 0.12)
+      transition background-color 0.15s ease
 
-  .not-selectable
-    -webkit-user-select none
-    -moz-user-select none
-    -ms-user-select none
-    user-select none
+      &:hover
+        background-color color-mix(unquote('in') srgb, currentColor 12%, transparent)
+
+    .chip-label-btn
+      padding 0 8px 0 12px
+
+    .dropdown-trigger
+      padding 0 8px
+      border-left 1px solid color-mix(unquote('in') srgb, currentColor 35%, transparent)
 
 .dropdown-backdrop
   position fixed
@@ -228,7 +247,7 @@
     overflow-y hidden
 
 .item-input-info
-    white-space normal
+  white-space normal
 </style>
 
 <script>
@@ -294,13 +313,6 @@ export default {
       }
       // Prevent dropping to 'hidden' mode while active session edits are being retained
       return this.advancedNonDefaultCount > 0 || this.retainedKeys.length > 0 ? 'modified' : 'hidden'
-    },
-    chipColor() {
-      if (this.advancedMode === 'hidden') return undefined
-      return 'theme-alt'
-    },
-    chipOutline() {
-      return this.advancedMode !== 'all'
     },
     showSearchbar() {
       return this.allParameters.length > 1
