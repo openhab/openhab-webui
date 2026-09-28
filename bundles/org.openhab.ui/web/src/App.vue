@@ -48,6 +48,50 @@
           </f7-list-item>
         </f7-list>
 
+        <!-- Entries provided by the native app -->
+        <f7-block-title v-if="runtimeStore.appMenu">
+          {{ runtimeStore.appMenu.title }}
+        </f7-block-title>
+        <f7-list v-if="runtimeStore.appMenu" class="admin-links">
+          <template v-for="item in runtimeStore.appMenu.items" :key="item.id">
+            <f7-list-item
+              link="#"
+              :title="item.title"
+              :footer="item.footer"
+              :badge="item.badge"
+              :class="{ currentsection: item.active }"
+              :panel-close="!item.children"
+              no-chevron
+              @click="appMenuItemSelected(item)">
+              <template v-if="item.icon" #media>
+                <f7-icon :ios="item.icon" :aurora="item.icon" :md="item.icon" color="gray" />
+              </template>
+              <template v-if="item.children" #after>
+                <f7-icon class="section-toggle" :f7="isOpen('app:' + item.id) ? 'chevron_up' : 'chevron_down'" />
+              </template>
+            </f7-list-item>
+            <li v-if="item.children && isOpen('app:' + item.id)">
+              <ul class="menu-sublinks">
+                <f7-list-item
+                  v-for="child in item.children"
+                  :key="child.id"
+                  link="#"
+                  :title="child.title"
+                  :footer="child.footer"
+                  :badge="child.badge"
+                  :class="{ currentsection: child.active }"
+                  panel-close
+                  no-chevron
+                  @click="appMenuItemSelected(child)">
+                  <template v-if="child.icon" #media>
+                    <f7-icon :ios="child.icon" :aurora="child.icon" :md="child.icon" color="gray" />
+                  </template>
+                </f7-list-item>
+              </ul>
+            </li>
+          </template>
+        </f7-list>
+
         <!-- Chat -->
         <f7-list class="admin-links">
           <f7-list-item link="/chat" :title="t('chat.title')" no-chevron panel-close :class="{ currentsection: currentPath.chat }">
@@ -450,6 +494,7 @@ import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import SidebarAdminSubmenu from '@/components/navigation/sidebar-admin-submenu.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { parseAppMenu } from '@/js/openhab/app-menu'
 
 import auth from '@/components/auth-mixin'
 import connectionHealth from '@/components/connection-health-mixin'
@@ -685,6 +730,22 @@ export default {
     }
   },
   methods: {
+    /**
+     * Called by native apps to add their own entries to the sidebar, see OHApp.d.ts.
+     * @param {string|object|null} menu { title, items: [...] } as object or JSON string, null to remove the entries
+     */
+    setAppMenu(menu) {
+      useRuntimeStore().appMenu = parseAppMenu(menu)
+    },
+    appMenuItemSelected(item) {
+      if (item.children) {
+        this.toggleSection('app:' + item.id)
+        return
+      }
+      if (typeof window.OHApp?.menuItemSelected === 'function') {
+        window.OHApp.menuItemSelected(item.id)
+      }
+    },
     refreshLogDockLayout() {
       const mainViewEl = document.querySelector('.view-main.safe-areas')
       if (!mainViewEl) {
@@ -1099,10 +1160,16 @@ export default {
         try {
           window.OHApp.goFullscreen()
         } catch {}
-        // expose external calls
-        window.MainUI = {
-          handleCommand: this.handleCommand
-        }
+      }
+      // expose external calls
+      window.MainUI = {
+        handleCommand: this.handleCommand,
+        setAppMenu: this.setAppMenu
+      }
+      if (typeof window.OHApp.menuReady === 'function') {
+        try {
+          window.OHApp.menuReady()
+        } catch {}
       }
     }
 

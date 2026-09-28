@@ -26,6 +26,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const showLogDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
   const voiceIcon = ref<string | null>(null)
+  const appMenu = ref<OHAppMenu | null>(null)
   const modelExpanded = ref<boolean>(false)
   const modelPickerExpanded = ref<boolean>(false)
   const modelSelectedItem = ref<object | null>(null)
@@ -70,6 +71,7 @@ export const useRuntimeStore = defineStore('runtime', () => {
     showLogDock,
     pagePath,
     voiceIcon,
+    appMenu,
     modelExpanded,
     modelPickerExpanded,
     modelSelectedItem,
