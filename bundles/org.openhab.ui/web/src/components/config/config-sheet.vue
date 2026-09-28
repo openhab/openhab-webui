@@ -149,93 +149,93 @@
     display flex
     align-items center
 
-  .advanced-split-chip
-    display inline-flex
-    align-items stretch
-    height 32px             /* Exact 1:1 height match with search input */
-    border-radius 16px      /* Half of 32px height */
-    border 1px solid var(--f7-chip-border-color, rgba(255, 255, 255, 0.2))
-    background-color var(--f7-chip-bg-color, rgba(0, 0, 0, 0.06))
-    color var(--f7-text-color, inherit)
-    overflow hidden
-    user-select none
-    margin-left auto
-    transition background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease
-
-    &.is-active
-      border-color var(--f7-theme-color-alt, #2196f3)
-
-    &.is-filled
-      background-color var(--f7-theme-color-alt, #2196f3)
-      color #ffffff
-
-    .chip-label-btn,
-    .dropdown-trigger
-      appearance none
-      background transparent
-      border none
-      color inherit
-      font-family inherit
-      font-size 13px
-      font-weight 500
-      line-height 1
-      padding 0
-      margin 0
-      cursor pointer
+    .advanced-split-chip
       display inline-flex
-      align-items center
-      justify-content center
-      transition background-color 0.15s ease
+      align-items stretch
+      height 32px
+      border-radius 16px
+      border 1px solid var(--f7-chip-border-color, rgba(255, 255, 255, 0.2))
+      background-color var(--f7-chip-bg-color, rgba(0, 0, 0, 0.06))
+      color var(--f7-text-color, inherit)
+      overflow hidden
+      user-select none
+      margin-left auto
+      transition background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease
 
-      &:hover
-        background-color color-mix(unquote('in') srgb, currentColor 12%, transparent)
+      &.is-active
+        border-color var(--f7-theme-color-alt, #2196f3)
 
-    .chip-label-btn
-      padding 0 8px 0 12px
+      &.is-filled
+        background-color var(--f7-theme-color-alt, #2196f3)
+        color #ffffff
 
-    .dropdown-trigger
-      padding 0 8px
-      border-left 1px solid color-mix(unquote('in') srgb, currentColor 35%, transparent)
+      .chip-label-btn,
+      .dropdown-trigger
+        appearance none
+        background transparent
+        border none
+        color inherit
+        font-family inherit
+        font-size 13px
+        font-weight 500
+        line-height 1
+        padding 0
+        margin 0
+        cursor pointer
+        display inline-flex
+        align-items center
+        justify-content center
+        transition background-color 0.15s ease
 
-.dropdown-backdrop
-  position fixed
-  top 0
-  left 0
-  width 100vw
-  height 100vh
-  z-index 400
-  background transparent
+        &:hover
+          background-color color-mix(unquote('in') srgb, currentColor 12%, transparent)
 
-.advanced-dropdown-menu
-  position absolute
-  top calc(100% + 6px)
-  right 0
-  z-index 500
-  min-width 180px
-  background var(--f7-popover-bg-color, var(--f7-card-bg-color))
-  box-shadow 0 4px 20px rgba(0, 0, 0, 0.15)
-  border-radius var(--f7-card-border-radius, 10px)
-  overflow hidden
+      .chip-label-btn
+        padding 0 8px 0 12px
 
-  .list .item-title
-    font-size 14px
+      .dropdown-trigger
+        padding 0 8px
+        border-left 1px solid color-mix(unquote('in') srgb, currentColor 35%, transparent)
 
-  .selected-item
-    color var(--f7-theme-color-alt, #2196f3)
-    background-color color-mix(unquote('in') srgb, var(--f7-theme-color-alt, #2196f3) 8%, transparent)
+    .dropdown-backdrop
+      position fixed
+      top 0
+      left 0
+      width 100vw
+      height 100vh
+      z-index 400
+      background transparent
 
-  .item-media
-    min-width 0 !important
-    padding 0 !important
-    margin-right 2px !important
-    justify-content center
+    .advanced-dropdown-menu
+      position absolute
+      top calc(100% + 6px)
+      right 0
+      z-index 500
+      min-width 180px
+      background var(--f7-popover-bg-color, var(--f7-card-bg-color))
+      box-shadow 0 4px 20px rgba(0, 0, 0, 0.15)
+      border-radius var(--f7-card-border-radius, 10px)
+      overflow hidden
 
-  .selection-dot
-    width 6px
-    height 6px
-    border-radius 50%
-    background-color var(--f7-theme-color-alt, #2196f3)
-    transition opacity 0.15s ease
+      .list .item-title
+        font-size 14px
+
+      .selected-item
+        color var(--f7-theme-color-alt, #2196f3)
+        background-color color-mix(unquote('in') srgb, var(--f7-theme-color-alt, #2196f3) 8%, transparent)
+
+      .item-media
+        min-width 0 !important
+        padding 0 !important
+        margin-right 2px !important
+        justify-content center
+
+      .selection-dot
+        width 6px
+        height 6px
+        border-radius 50%
+        background-color var(--f7-theme-color-alt, #2196f3)
+        transition opacity 0.15s ease
 
 .parameter-group
   padding-right 0 !important
