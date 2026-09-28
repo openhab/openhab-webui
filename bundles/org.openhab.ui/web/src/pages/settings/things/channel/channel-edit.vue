@@ -16,7 +16,7 @@
           :channel="channel"
           :channelType="channelType"
           :createMode="false"
-          :disabled="!thing.editable ? true : null" />
+          :read-only="!thing.editable ? true : null" />
       </f7-col>
       <f7-col v-if="channelType != null">
         <group-box v-if="!configDescription.parameters || noConfig" title="Configuration">
