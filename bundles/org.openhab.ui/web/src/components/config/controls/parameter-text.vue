@@ -80,13 +80,13 @@
   </f7-popover>
 </template>
 
-<style lang="stylus">
+<style scoped lang="stylus">
 .parameter-text
   .network-address-text
     &:hover
       cursor pointer
 
-  :deep(.item-content)
+  ::deep(.item-content)
     align-items flex-start !important
   .password-toggle-wrapper
     display flex
