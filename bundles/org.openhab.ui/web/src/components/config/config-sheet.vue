@@ -10,20 +10,60 @@
         :disable-button-text="null"
         @searchbar:search="onSearch"
         @searchbar:clear="clearSearch" />
-      <f7-chip
-        v-if="hasAdvanced"
-        media-bg-color="theme-alt"
-        :color="showAdvanced ? 'theme-alt' : ''"
-        class="advanced-chip not-selectable"
-        text="Advanced"
-        @click="showAdvanced = !showAdvanced">
-        <template #media>
-          <f7-icon v-if="showAdvanced" ios="f7:checkmark_circle_fill" md="material:check_circle" aurora="f7:checkmark_circle_fill" />
-        </template>
-      </f7-chip>
-      <f7-badge v-if="advancedNonDefaultCount" color="theme-alt" class="count-badge" tooltip="Non-default advanced parameter">
-        {{ advancedNonDefaultCount }}
-      </f7-badge>
+      <div class="advanced-filter-container">
+        <div
+          v-if="hasAdvanced"
+          class="advanced-split-chip"
+          :class="{
+            'is-active': advancedMode !== 'hidden',
+            'is-filled': advancedMode === 'all'
+          }">
+          <button type="button" class="chip-label-btn" @click="toggleAdvancedMode">Advanced</button>
+          <button type="button" class="dropdown-trigger" aria-label="Filter options" @click.stop="isDropdownOpen = !isDropdownOpen">
+            <f7-icon ios="f7:chevron_down" md="material:arrow_drop_down" aurora="f7:chevron_down" size="14" />
+          </button>
+        </div>
+
+        <div v-if="isDropdownOpen" class="dropdown-backdrop" @click="isDropdownOpen = false"></div>
+
+        <div v-if="isDropdownOpen" class="advanced-dropdown-menu">
+          <f7-list list-strong inset-ios class="no-margin no-hairlines">
+            <f7-list-item
+              :title="`Modified only (${advancedNonDefaultCount})`"
+              link
+              no-chevron
+              :disabled="advancedNonDefaultCount === 0"
+              :class="{ 'selected-item': advancedMode === 'modified' && advancedNonDefaultCount > 0 }"
+              @click="setAdvancedMode('modified')">
+              <template #media>
+                <span class="selection-dot" :style="{ opacity: advancedMode === 'modified' && advancedNonDefaultCount > 0 ? 1 : 0 }" />
+              </template>
+            </f7-list-item>
+
+            <f7-list-item
+              title="Show all"
+              link
+              no-chevron
+              :class="{ 'selected-item': advancedMode === 'all' }"
+              @click="setAdvancedMode('all')">
+              <template #media>
+                <span class="selection-dot" :style="{ opacity: advancedMode === 'all' ? 1 : 0 }" />
+              </template>
+            </f7-list-item>
+
+            <f7-list-item
+              title="Hide all"
+              link
+              no-chevron
+              :class="{ 'selected-item': advancedMode === 'hidden' }"
+              @click="setAdvancedMode('hidden')">
+              <template #media>
+                <span class="selection-dot" :style="{ opacity: advancedMode === 'hidden' ? 1 : 0 }" />
+              </template>
+            </f7-list-item>
+          </f7-list>
+        </div>
+      </div>
     </div>
 
     <group-box v-if="searchQuery && !filteredDisplayedParameters.length" class="text-color-gray">
@@ -104,15 +144,98 @@
   .searchbar-input-wrap
     margin 0
 
-  .advanced-chip
-    margin-left auto
-    cursor pointer
+  .advanced-filter-container
+    position relative
+    display flex
+    align-items center
 
-  .not-selectable
-    -webkit-user-select none
-    -moz-user-select none
-    -ms-user-select none
-    user-select none
+    .advanced-split-chip
+      display inline-flex
+      align-items stretch
+      height 32px
+      border-radius 16px
+      border 1px solid var(--f7-chip-border-color, rgba(255, 255, 255, 0.2))
+      background-color var(--f7-chip-bg-color, rgba(0, 0, 0, 0.06))
+      color var(--f7-text-color, inherit)
+      overflow hidden
+      user-select none
+      margin-left auto
+      transition background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease
+
+      &.is-active
+        border-color var(--f7-theme-color-alt, #2196f3)
+
+      &.is-filled
+        background-color var(--f7-theme-color-alt, #2196f3)
+        color #ffffff
+
+      .chip-label-btn,
+      .dropdown-trigger
+        appearance none
+        background transparent
+        border none
+        color inherit
+        font-family inherit
+        font-size 13px
+        font-weight 500
+        line-height 1
+        padding 0
+        margin 0
+        cursor pointer
+        display inline-flex
+        align-items center
+        justify-content center
+        transition background-color 0.15s ease
+
+        &:hover
+          background-color color-mix(unquote('in') srgb, currentColor 12%, transparent)
+
+      .chip-label-btn
+        padding 0 8px 0 12px
+
+      .dropdown-trigger
+        padding 0 8px
+        border-left 1px solid color-mix(unquote('in') srgb, currentColor 35%, transparent)
+
+    .dropdown-backdrop
+      position fixed
+      top 0
+      left 0
+      width 100vw
+      height 100vh
+      z-index 400
+      background transparent
+
+    .advanced-dropdown-menu
+      position absolute
+      top calc(100% + 6px)
+      right 0
+      z-index 500
+      min-width 180px
+      background var(--f7-popover-bg-color, var(--f7-card-bg-color))
+      box-shadow 0 4px 20px rgba(0, 0, 0, 0.15)
+      border-radius var(--f7-card-border-radius, 10px)
+      overflow hidden
+
+      .list .item-title
+        font-size 14px
+
+      .selected-item
+        color var(--f7-theme-color-alt, #2196f3)
+        background-color color-mix(unquote('in') srgb, var(--f7-theme-color-alt, #2196f3) 8%, transparent)
+
+      .item-media
+        min-width 0 !important
+        padding 0 !important
+        margin-right 2px !important
+        justify-content center
+
+      .selection-dot
+        width 6px
+        height 6px
+        border-radius 50%
+        background-color var(--f7-theme-color-alt, #2196f3)
+        transition opacity 0.15s ease
 
 .parameter-group
   padding-right 0 !important
@@ -124,7 +247,7 @@
     overflow-y hidden
 
 .item-input-info
-    white-space normal
+  white-space normal
 </style>
 
 <script>
@@ -157,8 +280,12 @@ export default {
   },
   data() {
     return {
-      showAdvanced: false,
-      searchQuery: ''
+      userAdvancedMode: null, // null = smart default based on modified count
+      isDropdownOpen: false,
+      searchQuery: '',
+      // Keeps advanced fields visible while editing—even if reverted back to default values—
+      // to prevent Vue from unmounting the field out from under the user's cursor.
+      retainedKeys: []
     }
   },
   computed: {
@@ -180,6 +307,13 @@ export default {
     hasAdvanced() {
       return this.parameters.length > 0 && this.parameters.some((p) => p.advanced)
     },
+    advancedMode() {
+      if (this.userAdvancedMode !== null) {
+        return this.userAdvancedMode
+      }
+      // Prevent dropping to 'hidden' mode while active session edits are being retained
+      return this.advancedNonDefaultCount > 0 || this.retainedKeys.length > 0 ? 'modified' : 'hidden'
+    },
     showSearchbar() {
       return this.allParameters.length > 1
     },
@@ -188,8 +322,8 @@ export default {
     },
     displayedParameterGroups() {
       if (!this.parameterGroups || !this.parameterGroups.length) return []
-      if (this.showAdvanced) return this.parameterGroups
-      return this.parameterGroups.filter((pg) => !pg.advanced)
+      if (this.advancedMode === 'hidden') return this.parameterGroups.filter((pg) => !pg.advanced)
+      return this.parameterGroups
     },
     allParameters() {
       if (!this.parameters.length) return []
@@ -214,8 +348,9 @@ export default {
       return this.advancedParameters.filter((p) => this.isNonDefault(p)).length
     },
     displayedParameters() {
-      if (this.showAdvanced) return this.allParameters // show all parameters
-      return this.baseParameters
+      if (this.advancedMode === 'all') return this.allParameters
+      if (this.advancedMode === 'hidden') return this.baseParameters
+      return [...this.baseParameters, ...this.advancedParameters.filter((p) => this.isNonDefault(p) || this.retainedKeys.includes(p.name))]
     },
     filteredDisplayedParameters() {
       const query = this.searchQuery.trim().toLowerCase()
@@ -237,6 +372,15 @@ export default {
     }
   },
   methods: {
+    toggleAdvancedMode() {
+      this.userAdvancedMode = this.advancedMode === 'all' ? null : 'all'
+      this.retainedKeys = []
+    },
+    setAdvancedMode(newMode) {
+      this.userAdvancedMode = newMode
+      this.isDropdownOpen = false
+      this.retainedKeys = []
+    },
     onSearch(searchbar, query) {
       this.searchQuery = (query || '').trim()
     },
@@ -265,6 +409,10 @@ export default {
       return f7.input.validateInputs(this.$refs.sheet.$el)
     },
     updateParameter(parameter, value) {
+      // Retain field visibility during active editing session
+      if (parameter.advanced && !this.retainedKeys.includes(parameter.name)) {
+        this.retainedKeys.push(parameter.name)
+      }
       if (
         (typeof value === 'number' && isNaN(value)) ||
         value === '' ||
@@ -294,9 +442,23 @@ export default {
       const configValue = this.configuration[parameter.name]
       const defaultValue = parameter.default
 
-      // Using != null (instead of !==) to concisely check that neither
-      // value is null or undefined in a single expression.
-      return defaultValue != null && configValue != null && configValue.toString() !== defaultValue
+      // If both are empty/null, they match.
+      // Check using == instead of === to also catch undefined.
+      if (configValue == null && defaultValue == null) {
+        return false
+      }
+
+      // If a value is configured, but no default exists at all, it's custom
+      if (configValue != null && defaultValue == null) {
+        return true
+      }
+
+      // Fallback safety if configValue is still null for some reason
+      if (configValue == null) {
+        return false
+      }
+
+      return configValue.toString() !== defaultValue.toString()
     }
   }
 }
