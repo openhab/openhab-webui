@@ -18,8 +18,8 @@
   "chat.settingsTitle": "Impostazioni Chat",
   "chat.llmTools": "Selezione Strumenti",
   "chat.showGenericToolVisualisation": "Mostra tutti gli strumenti per le chiamate",
-  "chat.noLlmInterpreterTitle": "Richiesto HLI basato su LLM",
-  "chat.noLlmInterpreterText": "La funzione di chat richiede un interprete Large Language Model (LLM) della lingua umana per funzionare.",
-  "chat.noLlmInterpreterHint": "È possibile installare il binding Gemini dal negozio di addon per iniziare. Assicurati di impostarlo come HLI predefinito dopo l'installazione! Il supporto per altri provider LLM sarà aggiunto in futuro.",
-  "chat.installGeminiBinding": "Installa Binding Gemini"
+  "chat.noLlmInterpreterTitle": "AI non disponibile",
+  "chat.noLlmInterpreterText": "Chat ha bisogno di un servizio AI per capire le tue richieste e interagire con la tua casa.",
+  "chat.noLlmInterpreterHint": "Installa un binding al servizio AI dal add-on store per connetterti a un servizio a tua scelta. Assicurati di impostarlo come interprete di lingua umana predefinito nelle impostazioni vocali dopo l'installazione!",
+  "chat.installHliBinding": "Apri Add-on Store"
 }
