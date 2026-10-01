@@ -188,21 +188,21 @@
     "postcss-custom-media": "^12.0.1",
     "process": "^0.11.10",
     "rimraf": "^6.1.3",
-    "rollup": "^4.62.4",
+    "rollup": "^4.63.3",
     "rollup-plugin-visualizer": "^7.1.1",
     "rollup-plugin-webpack-stats": "^3.1.3",
     "stylus": "^0.64.0",
     "tar": "^7.5.22",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.67.0",
-    "vite": "^8.2.2",
+    "vite": "^8.3.0",
     "vite-plugin-compression2": "^2.5.3",
     "vite-plugin-pwa": "^1.3.0",
     "vite-plugin-top-level-await": "^1.6.0",
     "vite-plugin-vue-devtools": "^8.2.1",
     "vitest": "^4.1.11",
     "vue-eslint-parser": "^10.4.1",
-    "vue-tsc": "^3.3.10"
+    "vue-tsc": "^3.3.11"
   },
   "overrides": {
     "rollup-plugin-visualizer": {
