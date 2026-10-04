@@ -12,13 +12,7 @@ import { f7 } from 'framework7-vue'
 import { computed, nextTick, watch } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhContextDefinition } from '@/assets/definitions/widgets/system'
-import { useStatesStore } from '@/js/stores/useStatesStore'
-
-const INVALID_ITEM_STORE_PROPS = new Set(['_keys', '__ob__', 'toString', 'undefined', 'constructor', 'getters', 'effect', '_vm', 'toJSON'])
-
-function isTrackableItemStoreProp(prop) {
-  return typeof prop === 'string' && !INVALID_ITEM_STORE_PROPS.has(prop) && !prop.startsWith('__v_')
-}
+import { isTrackableProp, useStatesStore } from '@/js/stores/useStatesStore'
 
 export default {
   inheritAttrs: false,
@@ -79,7 +73,7 @@ export default {
       const accessedItems = new Set()
       const trackingStore = new Proxy(this.context.store, {
         get(target, prop) {
-          if (isTrackableItemStoreProp(prop)) accessedItems.add(prop)
+          if (isTrackableProp(prop)) accessedItems.add(prop)
           return target[prop]
         }
       })

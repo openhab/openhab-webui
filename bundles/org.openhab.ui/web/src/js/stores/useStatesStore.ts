@@ -25,19 +25,16 @@ const UndefinedItemState: ItemState = {
 
 const PendingItemsProcessingInterval = 100
 
-const INVALID_PROPS = new Set([
-  'constructor',
-  'getters',
-  'effect',
-  '_vm',
-  'toJSON',
-  '__v_isRef',
-  '__v_isReadonly',
-  '__v_skip',
-  '__v_isShallow',
-  '__v_raw',
-  '__v_isReactive'
-])
+const INVALID_PROPS = new Set(['undefined', 'null', 'constructor', 'getters', 'effect', 'toJSON', 'toString', '_vm', '_keys', '__ob__'])
+
+/**
+ * Check whether a property is trackable, i.e. a valid Item name.
+ *
+ * @param prop the prop name
+ */
+export function isTrackableProp(prop: unknown): boolean {
+  return typeof prop === 'string' && !prop.startsWith('__v') && !INVALID_PROPS.has(prop)
+}
 
 export const useStatesStore = defineStore('states', () => {
   const itemStates = ref<Map<string, ItemState>>(new Map())
@@ -70,12 +67,10 @@ export const useStatesStore = defineStore('states', () => {
       if (prop === '__ob__') return (obj as any).__ob__
       if (prop === 'toString') return (() => '[object TrackedItems]') as any
 
-      // to avoid the Vue devtools requesting invalid items in development
-      if (INVALID_PROPS.has(prop.toString())) return {} as any
-      if (typeof prop !== 'string') return {} as any
+      if (!isTrackableProp(prop)) return {} as any
       /* eslint-enable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access */
 
-      const itemName = prop
+      const itemName = prop as string
       return ensureItemTracking(itemName)
     },
     set(_target: TrackedItems, prop: string | symbol, value: string, _receiver: TrackedItems): boolean {
