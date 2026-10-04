@@ -70,6 +70,8 @@ export default {
       return ctx
     },
     collectMissingItems(evaluateDefaults) {
+      if (!this.context?.store) return []
+
       const accessedItems = new Set()
       const trackingStore = new Proxy(this.context.store, {
         get(target, prop) {
