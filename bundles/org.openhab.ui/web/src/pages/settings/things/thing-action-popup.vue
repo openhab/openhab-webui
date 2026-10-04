@@ -48,20 +48,15 @@
             <div v-if="Object.keys(actionOutput).length === 0" class="margin">
               There is either no output for this action or something went wrong - please check the logs.
             </div>
-            <f7-list v-else media-list>
+            <f7-list v-else media-list class="action-output-list">
               <template v-for="key of Object.keys(actionOutput)" :key="key + '-list-item'">
                 <!-- Render result as a list item, works without action output definition from REST -->
                 <f7-list-item
                   v-if="key === 'result'"
                   :floating-label="theme.md"
                   :title="action.outputs.find((o) => o.name === key)?.label || 'Result'"
-                  :footer="action.outputs.find((o) => o.name === key)?.description">
-                  <template #after>
-                    <div>
-                      {{ actionOutput[key] }}
-                    </div>
-                  </template>
-                </f7-list-item>
+                  :footer="action.outputs.find((o) => o.name === key)?.description"
+                  :after="actionOutput[key]" />
                 <!-- Render QR code if the key is qrCode -->
                 <!-- Render QR code if the action output type is qrCode in the action output definition from REST -->
                 <f7-list-item
@@ -78,13 +73,8 @@
                   v-else
                   :floating-label="theme.md"
                   :title="action.outputs.find((o) => o.name === key)?.label || key"
-                  :footer="action.outputs.find((o) => o.name === key)?.description">
-                  <template #after>
-                    <div>
-                      {{ actionOutput[key] }}
-                    </div>
-                  </template>
-                </f7-list-item>
+                  :footer="action.outputs.find((o) => o.name === key)?.description"
+                  :after="actionOutput[key]" />
               </template>
               <f7-list-item accordion-item title="Raw Output Value">
                 <f7-accordion-content class="raw-value">
@@ -103,8 +93,15 @@
 
 <style lang="stylus">
 .thing-action-popup
+  .action-output-list
+    .item-after
+      width 100%
+      padding-left 0
+      overflow-wrap break-word
+      white-space normal
   .raw-value
     padding-left calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left) - var(--menu-list-offset))
+    padding-right calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-right))
     div
       padding-bottom calc(var(--f7-list-item-padding-vertical))
 </style>
