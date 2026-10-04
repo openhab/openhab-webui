@@ -56,12 +56,7 @@ const props = defineProps<{
 const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
-const { config, defaultSlots, childContext, visible } = useWidgetContext(computed(() => props.context))
-
-let configValue = config.value
-if (!OhCanvasLayerType.isConfig(configValue)) {
-  throw new Error('Invalid config for oh-canvas-layer')
-}
+const { config, defaultSlots, childContext, visible } = useWidgetContext(computed(() => props.context), OhCanvasLayerType.isConfig)
 
 // data and state
 const canvasItemRuntimeIds = new WeakMap<UiComponent, string>()
