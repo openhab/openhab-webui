@@ -147,8 +147,8 @@ import SIPClientParameters from './sipclient.ts'
 export const OhSIPClientDefinition = () =>
   new WidgetDefinition('oh-sipclient', 'SIP Client', 'SIP Client to start and answer SIP calls').params(SIPClientParameters())
 
-import SVGElementParameteters from './svgelement.ts'
+import SVGElementParameters from './svgelement.ts'
 export const OhSVGElementDefinition = () =>
   new WidgetDefinition('oh-svg-element', 'SVG Element Settings for ${id}', 'Control an element within an embedded SVG')
-    .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), SVGElementParameteters())
+    .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), SVGElementParameters())
     .paramGroup(actionGroup(), actionParams())

@@ -9,7 +9,7 @@
       :grid-pitch="gridPitch"
       :prevent-deactivation="preventDeactivation"
       :context="childContext(obj.item)"
-      @oci-selected="(cid) => emit('oci-selected', cid)"
+      @oci-selected="(sel) => emit('oci-selected', sel)"
       @oci-deselected="(cid) => emit('oci-deselected', cid)"
       @oci-drag-stop="(cid) => emit('oci-drag-stop', cid)"
       @oci-dragged="(cid, x, y) => emit('oci-dragged', cid, x, y)" />

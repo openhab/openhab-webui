@@ -1,4 +1,4 @@
-import { ref, type ComputedRef, type Ref, type WatchHandle } from 'vue'
+import { ref, type Ref, watch, type WatchHandle } from 'vue'
 import type { Router } from 'framework7'
 import { f7 } from 'framework7-vue'
 import WidgetConfigPopup from '@/components/pagedesigner/widget-config-popup.vue'
@@ -6,8 +6,8 @@ import { OhSVGElementDefinition } from '@/assets/definitions/widgets/system/inde
 
 import createDOMPurify from 'dompurify'
 
+import type { ItemState } from '@/js/stores/useStatesStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'
-import { watch } from 'vue'
 import { showToast } from '@/js/dialog-promises'
 import * as api from '@/api'
 
@@ -15,23 +15,13 @@ import media from '@/js/openhab/media'
 import { hsbToRgb } from '@/js/openhab/utils'
 
 import { OhSvgElement } from '@/types/components/widgets'
-import type { ItemState } from '@/js/stores/useStatesStore'
-import { StateType, isStateType } from '@/types/openhab'
+import { isStateType, StateType, stateTypeForItemType } from '@/assets/definitions/items/state-types.ts'
 
 import type { Framework7Events } from '@/types/framework7-extensions'
+import { isItemType, ItemType } from '@/assets/item-types.ts'
 
 // Constants & Type definitions
 type SVGElementWithHandlers = SVGElement & { _ohSvgHandlers?: { mouseover: () => void; click: (evt: Event) => void }; flashing?: boolean }
-
-const ITEM_TYPE_TO_STATE_TYPE: Record<string, StateType> = {
-  Switch: StateType.OnOff,
-  Contact: StateType.OpenClosed,
-  Dimmer: StateType.Percent,
-  Rollershutter: StateType.Percent,
-  Color: StateType.HSB,
-  Player: StateType.PlayPause,
-  Number: StateType.Decimal
-}
 
 function toStateType(stateType: string | undefined): StateType {
   return isStateType(stateType) ? stateType : StateType.String
@@ -50,6 +40,9 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
   const { editmode, embeddedSvgActions, embedSvgFlashing, f7router } = options
 
   // state/data
+  /**
+   * The root <code>svg</code> element of the embedded SVG.
+   */
   const embeddedSvgRoot = ref<SVGSVGElement | null>(null)
   const embeddedSvgReady = ref(false)
   const embeddedSvgStateTrackingUnsubscribes: WatchHandle[] = []
@@ -57,6 +50,8 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
   /**
    * Internal function to fetch and validates the SVG markup from the configured Image URL.
    *
+   * @param imageUrl
+   * @param cacheBust whether to avoid caching by adding random value to the URL
    * @returns {Promise<string>}
    */
   async function fetchEmbeddedSvgText(imageUrl: string, cacheBust?: boolean): Promise<string> {
@@ -82,8 +77,8 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
    * Loads and either embeds the SVG into the given parent element or passes the SVG markup to a custom embedSvg function (function should return the embedded SVG element).
    * This should be called by the component that wants to embed the SVG (typically onMounted or when the imageUrl changes), passing in the parent element and/or a custom embedSvg function.
    *
-   * @param imageUrl string
-   * @param parentElement parentElement to embed the SVG into (optional if embedSvg function is provided)
+   * @param imageUrl
+   * @param parentElement parent element to embed the SVG into (optional if embedSvg function is provided)
    * @param embedSvg function to call with the SVG markup to embed it (optional if parentElement is provided). Should return the embedded SVG DOM element.
    *
    * @returns {Promise<void>}
@@ -107,7 +102,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
       embeddedSvgRoot.value = parentElement.querySelector<SVGSVGElement>('svg')
       embeddedSvgRoot.value?.classList.add('oh-canvas-background', 'disable-user-drag')
     } else {
-      throw new Error('No parent element provided for embedding SVG')
+      throw new Error('Neither parentElement nor embedSvg function provided for embedding SVG')
     }
 
     if (embeddedSvgRoot.value) {
@@ -153,7 +148,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
 
     if (!f7router) return
 
-    // @ts-expect-error f7router.navigate is missing the type definition for the below call
+    // @ts-expect-error: f7router.navigate is missing the type definition for the below call
     f7router.navigate(
       { url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } },
       {
@@ -252,24 +247,17 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
         store.setItemState(itemName, {
           state: item.state,
           displayState: item.transformedState ?? item.state,
-          type: cachedType && cachedType !== '-' ? cachedType : stateTypeForItemType(item.type)
+          type:
+            cachedType && cachedType !== '-'
+              ? cachedType
+              : isItemType(item.type)
+                ? stateTypeForItemType(item.type as ItemType)
+                : StateType.String
         })
       } catch (error) {
         console.warn(`Failed to refresh state for embedded SVG Item ${itemName}:`, error)
       }
     }
-  }
-
-  /**
-   * Maps an openHAB Item type (e.g. Contact, Dimmer, Number:Temperature) to the corresponding state
-   * type used by {@link isStateOn}. Used as a fallback when no SSE state type is cached yet.
-   *
-   * @param {string} itemType the Item type
-   * @returns {string} the state type
-   */
-  function stateTypeForItemType(itemType: string): StateType {
-    const baseType = (itemType || '').split(':')[0]
-    return ITEM_TYPE_TO_STATE_TYPE[baseType] ?? StateType.String
   }
 
   /**
@@ -467,10 +455,8 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
         return isNaN(brightness) || brightness > 0
       }
       case StateType.Percent:
-      case StateType.Dimmer:
       case StateType.Decimal:
-      case StateType.Quantity:
-      case StateType.Number: {
+      case StateType.Quantity: {
         const value = parseFloat(state)
         return !isNaN(value) && value > 0
       }
@@ -562,7 +548,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     const stateOffColorRgbStyle = toRGBStyle(svgElementConfig.stateOffColor)
     // for Color Items with no explicit on-color, use the Item's own color
     const onColorRgbStyle = stateOnColorRgbStyle || (stateType === StateType.HSB ? toRGBStyle(state) : undefined)
-    const proportional = [StateType.Percent, StateType.Dimmer, StateType.Decimal, StateType.Quantity, StateType.Number].includes(stateType)
+    const proportional = [StateType.Percent, StateType.Decimal, StateType.Quantity].includes(stateType)
 
     if (tagName === 'tspan') {
       // textContent (not innerHTML) so an Item state containing markup is rendered as plain text

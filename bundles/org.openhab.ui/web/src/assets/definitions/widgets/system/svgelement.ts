@@ -5,12 +5,12 @@ export default () => [
   pb(
     'useProxyElementForState',
     'Use State Proxy Element',
-    'Use "flash" element to highlight the active state. The element is marked with the attribute flash: true and must be part of the elements group'
+    'Use "flash" element to highlight the active state. The element is marked with the attribute <code>flash: true</code> and must be part of the elements group'
   ).a(),
   pt(
     'stateOnColor',
     'State ON Color',
-    'Color to use when the State is "on". Any CSS color (#rgb, rgb(), named, …) or openHAB HSB (h,s,b) is supported. Applied to the fill, or the stroke for fill:none outline shapes.'
+    'Color to use when the State is "on". Any CSS color (#rgb, rgb(), named, …) or openHAB HSB (h,s,b) is supported. Applied to the fill, or the stroke for outline shapes (<code>fill: none</code>).'
   ).a(),
   pt(
     'stateOffColor',
@@ -20,7 +20,7 @@ export default () => [
   po(
     'colorProperty',
     'Apply Color To',
-    'Which property the State ON/OFF colors are applied to. "Auto" uses the stroke for outline shapes (fill:none) and the fill otherwise.',
+    'Which property the State ON/OFF colors are applied to. "Auto" uses the stroke for outline shapes (<code>fill: none</code>) and the fill otherwise.',
     [
       { value: '', label: 'Auto' },
       { value: 'fill', label: 'Fill' },
@@ -38,12 +38,12 @@ export default () => [
   pt(
     'stateOnAsStyleClass',
     'Set Style Class based on On State ',
-    'Provide element-id:classname, separate multiple entries with comma. ON sets the class, if OFF is not provided, OFF removes the class of given element'
+    'Provide <code>element-id:classname</code>, separate multiple entries with comma. ON sets the class, if OFF is not provided, OFF removes the class of given element'
   ).a(),
   pt(
     'stateOffAsStyleClass',
     'Set Style Class based on Off State ',
-    'Provide element-id:classname, separate multiple entries with comma. OFF sets the class'
+    'Provide <code>element-id:classname</code>, separate multiple entries with comma. OFF sets the class'
   ).a(),
-  pb('useDisplayState', 'Use displayState as Text', 'Use the formatted state value to write into tspan').a()
+  pb('useDisplayState', 'Use displayState as Text', 'Use the formatted state value to write into <code>tspan</code> element').a()
 ]

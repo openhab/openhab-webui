@@ -268,9 +268,8 @@ onMounted(async () => {
     try {
       await loadAndEmbedSvg(config.value.imageUrl, canvasBackground.value)
     } catch (err) {
-      nextTick(() => {
-        showToast('Failed to embed SVG: ' + err)
-      })
+      await nextTick()
+      void showToast('Failed to embed SVG: ' + err)
     }
   }
 })
@@ -314,7 +313,7 @@ function addLayer() {
     component: 'oh-canvas-layer',
     config: {},
     slots: { default: [] }
-  } as any) //TODO - fix type
+  })
   actLyrIdx.value = slots.value.canvas.length - 1
   computeLayout()
 }

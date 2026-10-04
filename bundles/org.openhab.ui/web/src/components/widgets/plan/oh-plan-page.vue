@@ -319,7 +319,7 @@ function embedPlanSvg(svgCode: string): SVGSVGElement | null {
     }
     const svgEl = parsedRoot
     svgEl.classList.add('oh-plan-embedded-svg', 'disable-user-drag')
-    // interactive:false stops Leaflet capturing pointer events for the whole SVG; CSS re-enables them per [openhab] element
+    // interactive: false stops Leaflet capturing pointer events for the whole SVG; CSS re-enables them per [openhab] element
     embeddedSvgOverlay = new SVGOverlay(svgEl, bounds.value, { interactive: false })
     embeddedSvgOverlay.addTo(map)
     return svgEl
