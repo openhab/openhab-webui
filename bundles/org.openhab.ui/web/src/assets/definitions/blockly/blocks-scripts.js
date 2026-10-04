@@ -9,6 +9,7 @@ import * as Blockly from 'blockly'
 import { javascriptGenerator } from 'blockly/javascript'
 import { blockGetCheckedInputType, valueToCode } from '@/assets/definitions/blockly/utils.js'
 import { registerFieldMultilineInput, FieldMultilineInput } from '@blockly/field-multilineinput'
+import { showAlertDialog } from '@/js/dialog-promises.ts'
 
 export default function defineOHBlocks_Scripts(f7, transformationServices) {
   /*
@@ -91,7 +92,7 @@ export default function defineOHBlocks_Scripts(f7, transformationServices) {
       this.setNextStatement(true, null)
 
       this.setColour(0)
-      this.setTooltip('Run a rule or script with a certain UID, and optional parameters. To retrive the result, use synchronous mode.')
+      this.setTooltip('Run a rule or script with a certain UID, and optional parameters. To retrieve the result, use synchronous mode.')
       this.setHelpUrl(
         'https://www.openhab.org/docs/configuration/blockly/rules-blockly-run-and-process.html#run-rule-or-script-created-in-ui'
       )
@@ -99,7 +100,12 @@ export default function defineOHBlocks_Scripts(f7, transformationServices) {
 
     validate: function (newValue) {
       if (newValue === 'SYNC') {
-        this.setPreviousStatement(false)
+        try {
+          this.setPreviousStatement(false)
+        } catch (e) {
+          showAlertDialog('Disconnect the block before changing it to synchronous mode.', 'Change Rejected')
+          return false
+        }
         this.setNextStatement(false)
         this.setOutput(true, 'Dictionary')
       } else {
@@ -146,7 +152,7 @@ export default function defineOHBlocks_Scripts(f7, transformationServices) {
    */
   javascriptGenerator.forBlock['oh_javaify'] = function (block) {
     const inputValue = javascriptGenerator.valueToCode(block, 'INPUT_VALUE', javascriptGenerator.ORDER_NONE) || 'null'
-    const code = `javaify(${inputValue})`
+    const code = `utils.javaify(${inputValue})`
     return [code, javascriptGenerator.ORDER_NONE]
   }
 
@@ -169,7 +175,7 @@ export default function defineOHBlocks_Scripts(f7, transformationServices) {
    */
   javascriptGenerator.forBlock['oh_jsify'] = function (block) {
     const inputValue = javascriptGenerator.valueToCode(block, 'INPUT_VALUE', javascriptGenerator.ORDER_NONE) || 'null'
-    const code = `jsify(${inputValue})`
+    const code = `utils.jsify(${inputValue})`
     return [code, javascriptGenerator.ORDER_NONE]
   }
 
