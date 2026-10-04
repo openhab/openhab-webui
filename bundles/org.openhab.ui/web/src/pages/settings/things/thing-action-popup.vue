@@ -149,14 +149,17 @@ export default {
         return
       }
       this.executing = true
-      this.$oh.api.post(`/rest/actions/${this.thingUID}/${encodeURIComponent(this.action.actionUid)}`, this.actionInput).then((data) => {
-        this.actionOutput = data
-        this.executing = false
-      }).catch((err) => {
-        this.executing = false
-        f7.dialog.alert('Action execution failed: ' + err.message)
-        console.error('Action execution failed: ' + err)
-      })
+      this.$oh.api
+        .post(`/rest/actions/${this.thingUID}/${encodeURIComponent(this.action.actionUid)}`, this.actionInput)
+        .then((data) => {
+          this.actionOutput = data
+          this.executing = false
+        })
+        .catch((err) => {
+          this.executing = false
+          f7.dialog.alert('Action execution failed: ' + err.message)
+          console.error('Action execution failed: ' + err)
+        })
     },
     close() {
       this.$refs.modulePopup.$el.f7Modal.close()
