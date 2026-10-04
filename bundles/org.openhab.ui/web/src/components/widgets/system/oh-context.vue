@@ -69,6 +69,14 @@ export default {
 
       return ctx
     },
+    /**
+     * Identifies which items referenced by constants and variable defaults are missing
+     * from the states store during initial evaluation.
+     *
+     * A temporary proxy around the item store records accessed item names.
+     * Reading from the store also invokes ensureItemTracking, which ensures that missing items
+     * are registered with the states store.
+     */
     collectMissingItems(evaluateDefaults) {
       if (!this.context?.store) return []
 
@@ -88,7 +96,10 @@ export default {
     const config = this.context?.component?.config
     if (!config?.constants && !config?.variables) return
 
+    // Track initial evaluated defaults so that post-hydration re-evaluation
+    // avoids overwriting any variables already modified by widget/user actions.
     const initialVars = {}
+
     const evaluateDefaults = (evaluationContext = this.context) => {
       const config = this.context?.component?.config
 
@@ -119,12 +130,15 @@ export default {
     const missingItems = this.collectMissingItems(evaluateDefaults)
     if (missingItems.length === 0) return
 
+    // Watch for missing item states to arrive from the server
     let stop = null
     stop = watch(
       () => missingItems.map((itemName) => this.statesStore.itemStates.has(itemName)).every(Boolean),
       (ready) => {
         if (!ready) return
         evaluateDefaults()
+        // Once hydrated, stop watching so constants and variable defaults remain stable
+        // and do not continuously re-evaluate on subsequent state updates.
         void nextTick(() => {
           if (stop) stop()
         })
