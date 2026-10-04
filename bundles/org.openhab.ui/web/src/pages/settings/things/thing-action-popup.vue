@@ -158,7 +158,7 @@ export default {
         .catch((err) => {
           this.executing = false
           f7.dialog.alert('Action execution failed: ' + err.message)
-          console.error('Action execution failed: ' + err)
+          console.error('Action execution failed', err)
         })
     },
     close() {
