@@ -38,6 +38,29 @@ export function hsbToRgb(h: number, s: number, b: number) {
   const hsl = f7.utils.colorHsbToHsl(h, s, b)
   return f7.utils.colorHslToRgb(hsl[0], hsl[1], hsl[2])
 }
+
+/**
+ * Converts a configured color into a CSS color string:
+ * - `#rgb`/`#rrggbb` values are returned as-is
+ * - openHAB HSB (three comma-separated numbers `h,s,b`) is converted to `rgb(r,g,b)`
+ * - any other value is assumed to already be a valid CSS color (named, `rgb()`, `rgba()`,
+ *   `hsl()`, `transparent`, `none`, …) and is passed through unchanged
+ *
+ * @param color color to convert
+ * @returns {string|undefined} a CSS color string, or undefined when no color is given
+ */
+export function toRGBStyle(color: string | null | undefined): string | undefined {
+  if (!color) return undefined
+  const trimmed = color.trim()
+  if (trimmed.startsWith('#')) return trimmed
+  const parts = trimmed.split(',').map((p) => Number(p.trim()))
+  if (parts.length === 3 && parts.every((p) => !isNaN(p))) {
+    const rgb = hsbToRgb(parts[0], parts[1] / 100, parts[2] / 100)
+    return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
+  }
+  return trimmed
+}
+
 /**
  * A simple hash function based on Java's `String::hashCode()` algorithm.
  *
@@ -66,5 +89,6 @@ export default {
   normalizeInput,
   normalizeInputForThingId,
   hsbToRgb,
+  toRGBStyle,
   simpleHash
 }

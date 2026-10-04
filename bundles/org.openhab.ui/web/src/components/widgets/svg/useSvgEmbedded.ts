@@ -12,7 +12,7 @@ import { showToast } from '@/js/dialog-promises'
 import * as api from '@/api'
 
 import media from '@/js/openhab/media'
-import { hsbToRgb } from '@/js/openhab/utils'
+import { toRGBStyle } from '@/js/openhab/utils'
 
 import { OhSvgElement } from '@/types/components/widgets'
 import { isStateType, StateType, stateTypeForItemType } from '@/assets/definitions/items/state-types.ts'
@@ -88,7 +88,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     parentElement?: HTMLElement | null,
     embedSvg?: (svgText: string) => SVGSVGElement | null
   ): Promise<void> {
-    const svgCode = await fetchEmbeddedSvgText(imageUrl, Boolean(editmode.value))
+    const svgCode = await fetchEmbeddedSvgText(imageUrl, editmode.value)
     if (embedSvg) {
       embeddedSvgRoot.value = embedSvg(svgCode)
     } else if (parentElement) {
@@ -392,28 +392,6 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     for (const subElement of subElements) {
       svgOnMouseOver(subElement)
     }
-  }
-
-  /**
-   * Converts a configured color into a CSS color string:
-   * - `#rgb`/`#rrggbb` values are returned as-is
-   * - openHAB HSB (three comma-separated numbers `h,s,b`) is converted to `rgb(r,g,b)`
-   * - any other value is assumed to already be a valid CSS color (named, `rgb()`, `rgba()`,
-   *   `hsl()`, `transparent`, `none`, …) and is passed through unchanged
-   *
-   * @param color color to convert
-   * @returns {string|undefined} a CSS color string, or undefined when no color is given
-   */
-  function toRGBStyle(color: string | null | undefined): string | undefined {
-    if (!color) return undefined
-    const trimmed = color.trim()
-    if (trimmed.startsWith('#')) return trimmed
-    const parts = trimmed.split(',').map((p) => Number(p.trim()))
-    if (parts.length === 3 && parts.every((p) => !isNaN(p))) {
-      const rgb = hsbToRgb(parts[0], parts[1] / 100, parts[2] / 100)
-      return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`
-    }
-    return trimmed
   }
 
   /**
