@@ -196,8 +196,7 @@ export default {
         props: this.props,
         vars: this.vars,
         ctxVars: this.ctxVars,
-        noExpressionCache: true,
-        editmode: true
+        noExpressionCache: true
       }
     },
     isEditable() {
