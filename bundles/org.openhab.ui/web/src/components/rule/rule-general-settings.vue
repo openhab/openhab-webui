@@ -62,7 +62,7 @@
     </f7-block>
 
     <!-- skeletons for not ready-->
-    <f7-block v-else class="block-narrow">
+    <f7-block v-else class="block-narrow" v-deferred>
       <f7-col class="skeleton-text skeleton-effect-blink">
         <f7-list inline-labels no-hairlines-md>
           <f7-list-input

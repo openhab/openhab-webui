@@ -66,7 +66,7 @@ flush-styles()
   overflow hidden
 
   // Revert to full-width, flush style on smaller screens
-  @media (max-width 1024px)
+  @media (--media-MD-down)
     flush-styles()
 
   // Popups are also narrow; keep containers flush there as well.

@@ -58,7 +58,7 @@
     margin-bottom 0px
 
 .persistence-button
-  @media (max-width 1023px)
+  @media (--media-MD-down)
     margin-left 16px
     margin-right 16px
 
@@ -75,7 +75,7 @@
     border-bottom 1px solid rgba(255, 255, 255, 0.08)
 
     // Snap to side-by-side layout on tablets & desktop screens
-    @media (min-width: 768px)
+    @media (--media-SM-up)
       flex-direction row
       align-items flex-end // Snaps the toggle to the bottom line of the text description
 
@@ -101,7 +101,7 @@
     color var(--f7-theme-color, #ff9500) // Keeps your unified theme tint matching
     white-space nowrap
 
-    @media (min-width: 768px)
+    @media (--media-SM-up)
       padding-bottom 4px // Matches alignment beautifully to description baseline on desktop
 
     input[type="checkbox"]

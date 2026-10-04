@@ -11,7 +11,7 @@
       @save="$emit('save')" />
   </div>
 
-  <f7-toolbar bottom :class="{ 'code-editor-toolbar': true, 'toolbar-narrow': $f7dim.width < 450 }">
+  <f7-toolbar bottom :class="{ 'code-editor-toolbar': true, 'toolbar-narrow': $f7dim.width < BREAKPOINTS.XS }">
     <div class="toolbar-options display-flex flex-direction-row">
       <f7-segmented>
         <f7-button
@@ -139,6 +139,7 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import Editor from '@/components/config/controls/script-editor.vue'
 
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 import MovablePopup from '@/pages/settings/movable-popup-mixin'
 import copyToClipboard from '@/js/clipboard'
 import { DefaultMediaTypes, MediaType, SupportedMediaTypes } from '@/assets/definitions/media-types.ts'
@@ -148,6 +149,11 @@ export default {
   mixins: [MovablePopup],
   components: {
     Editor
+  },
+  setup() {
+    return {
+      BREAKPOINTS
+    }
   },
   props: {
     object: [Object, Array],

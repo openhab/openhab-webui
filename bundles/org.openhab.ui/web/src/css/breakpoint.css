@@ -1,0 +1,17 @@
+@custom-media --media-XS-up (min-width: 480px);
+@custom-media --media-SM-up (min-width: 600px);
+@custom-media --media-MD-up (min-width: 960px);
+@custom-media --media-LG-up (min-width: 1280px);
+@custom-media --media-XL-up (min-width: 1450px);
+
+@custom-media --media-XS-down (max-width: 479px);
+@custom-media --media-SM-down (max-width: 599px);
+@custom-media --media-MD-down (max-width: 959px);
+@custom-media --media-LG-down (max-width: 1279px);
+@custom-media --media-XL-down (max-width: 1449px);
+
+@custom-media --media-XS-only (min-width: 480px) and (max-width: 599px);
+@custom-media --media-SM-only (min-width: 600px) and (max-width: 959px);
+@custom-media --media-MD-only (min-width: 960px) and (max-width: 1279px);
+@custom-media --media-LG-only (min-width: 1280px) and (max-width: 1449px);
+@custom-media --media-XL-only (min-width: 1450px);

@@ -405,7 +405,7 @@
 </template>
 
 <style lang="stylus">
-@media (max-width: 640px)
+@media (--media-SM-down)
   .cron-select-content
     .item-content
       .item-inner

@@ -48,7 +48,7 @@
 
     <f7-block v-show="!nowidgetEngine" class="block-narrow">
       <!-- skeleton for not ready -->
-      <f7-col v-show="!ready">
+      <f7-col v-if="!ready" v-deferred>
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>

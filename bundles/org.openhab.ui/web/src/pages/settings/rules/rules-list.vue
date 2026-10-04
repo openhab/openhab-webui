@@ -23,7 +23,7 @@
     <f7-toolbar
       v-if="showCheckboxes"
       class="contextual-toolbar"
-      :class="{ navbar: theme.md, 'tabbar-labels': $f7dim.width < 480 }"
+      :class="{ navbar: theme.md, 'tabbar-labels': $f7dim.width < BREAKPOINTS.XS }"
       bottom-ios
       bottom-aurora>
       <f7-link
@@ -131,7 +131,7 @@
       title="rules.missingengine.title"
       text="rules.missingengine.text" />
     <!-- rule engine available but not yet ready -->
-    <f7-block v-else-if="!noRuleEngine && !ready" class="block-narrow">
+    <f7-block v-else-if="!noRuleEngine && !ready" class="block-narrow" v-deferred>
       <f7-col v-show="!ready">
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col rules-list">
@@ -154,7 +154,7 @@
       <empty-state-placeholder v-if="showScripts" icon="doc_plaintext" title="scripts.title" text="scripts.text" />
       <empty-state-placeholder v-else-if="showScenes" icon="film" title="scenes.title" text="scenes.text" />
       <empty-state-placeholder v-else icon="wand_stars" title="rules.title" text="rules.text" />
-      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < BREAKPOINTS.LG" class="display-flex justify-content-center">
         <f7-button
           large
           fill
@@ -358,7 +358,7 @@
 .popup
   &.copy-definition-popup
 
-    @media (min-width: 630px) and (min-height: 630px)
+    @media (--media-SM-up) and (min-height: 630px)
       width 90%
       max-width 450px
       height auto
@@ -414,6 +414,7 @@ import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
 import { canSerializeRules, createFileFormatForRules } from '@/api'
 import copyToClipboard from '@/js/clipboard'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 const ITEM_KINDS = {
   editable: 'Editable',
@@ -440,7 +441,7 @@ export default {
       STUB: 'Stub only',
       STRIPPED: 'Strip template'
     })
-    return { f7, theme, serializationOptions }
+    return { f7, theme, serializationOptions, BREAKPOINTS }
   },
   data() {
     return {
@@ -525,7 +526,7 @@ export default {
       }, {})
     },
     searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
       return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0

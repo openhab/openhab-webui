@@ -55,7 +55,7 @@
 
         <group-box title="Add Manually">
           <f7-list class="thing-type-list">
-            <ul v-if="!ready">
+            <ul v-if="!ready" v-deferred>
               <f7-list-item
                 v-for="n in 10"
                 :key="n"

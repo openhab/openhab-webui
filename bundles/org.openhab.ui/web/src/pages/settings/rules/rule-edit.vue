@@ -72,7 +72,8 @@
         <f7-block
           v-else-if="!createMode && !stubMode"
           class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink"
-          strong>
+          strong
+          v-deferred>
           <f7-col>
             ______:
             <f7-chip class="margin-left" text="________" />
@@ -310,7 +311,7 @@
               icon-aurora="f7:pause_circle"
               class="toggle-enabled display-flex flex-direction-row"
               @click="toggleDisabled">
-              &nbsp;{{ $f7dim.width < 550 ? '' : rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable' }}
+              &nbsp;{{ $f7dim.width < BREAKPOINTS.SM ? '' : rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable' }}
             </f7-button>
             <f7-button
               :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
@@ -320,10 +321,10 @@
               icon-aurora="f7:play_round"
               class="run-now display-flex flex-direction-row"
               @click="runNow">
-              &nbsp;{{ $f7dim.width < 550 ? '' : 'Run' }}
+              &nbsp;{{ $f7dim.width < BREAKPOINTS.SM ? '' : 'Run' }}
             </f7-button>
             <f7-chip
-              v-if="$f7dim.width > 600"
+              v-if="$f7dim.width >= BREAKPOINTS.SM"
               class="display-flex flex-direction-row"
               :text="rule.status.status"
               :color="ruleStatusBadgeColor(rule.status)"
@@ -430,7 +431,7 @@
 .popup
   &.copy-definition-popup
 
-    @media (min-width: 630px) and (min-height: 630px)
+    @media (--media-SM-up) and (min-height: 630px)
       width 90%
       max-width 450px
       height auto
@@ -520,6 +521,7 @@ import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 import { canSerializeRules, create } from '@/api'
 import copyToClipboard from '@/js/clipboard'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
@@ -548,7 +550,7 @@ export default {
       STUB: 'Stub only',
       STRIPPED: 'Strip template'
     })
-    return { theme, dirty, dirtyIndicator, serializationOptions }
+    return { theme, dirty, dirtyIndicator, serializationOptions, BREAKPOINTS }
   },
   data() {
     return {

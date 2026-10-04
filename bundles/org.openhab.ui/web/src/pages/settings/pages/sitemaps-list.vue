@@ -101,7 +101,7 @@
 
         <f7-block v-if="!sitemaps.length" class="block-narrow">
           <empty-state-placeholder icon="square_on_circle" title="sitemaps.title" text="sitemaps.text" />
-          <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
+          <f7-row v-if="$f7dim.width < BREAKPOINTS.LG" class="display-flex justify-content-center">
             <f7-button
               large
               fill
@@ -134,6 +134,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListFilter from '@/components/util/list-filter.vue'
 import { showToast } from '@/js/dialog-promises'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import * as api from '@/api'
 
@@ -158,7 +159,8 @@ export default {
     return {
       theme,
       runtimeStore,
-      lastSearchQueryStore
+      lastSearchQueryStore,
+      BREAKPOINTS
     }
   },
   data() {
@@ -197,7 +199,7 @@ export default {
       }, {})
     },
     searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
       return this.selectableSitemapNames.length > 0 && this.selectableSitemapNames.every((name) => this.selectedItems.includes(name))

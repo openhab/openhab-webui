@@ -65,7 +65,7 @@
               <f7-link @click="descriptionExpanded = true"> more </f7-link>
             </div>
           </f7-block>
-          <f7-block v-else class="skeleton-text skeleton-effect-blink">
+          <f7-block v-else class="skeleton-text skeleton-effect-blink" v-deferred>
             <p>
               Lorem ipsum dolor sit amet, an labore inermis est. Mel ut dicant tamquam commune, duo id accumsan eleifend tractatos, ius
               purto vitae fabulas cu. Te his vide omnis qualisque, in duo soluta persecuti instructior. Ex dicit detraxit voluptaria est.
@@ -124,7 +124,7 @@
       .logo
         max-width 100px
         max-height 100px
-    @media (min-width 768px)
+    @media (--media-SM-up)
       .logo-container
         width 191px
         height 191px
@@ -141,7 +141,7 @@
       .addon-header-title
         font-size 22px
         font-weight 600
-      @media (min-width 768px)
+      @media (--media-SM-up)
         .addon-header-title
           font-size 27px
           line-height normal
@@ -151,7 +151,7 @@
         color var(--f7-list-item-after-text-color)
         i
           font-size 16px
-      @media (min-width 768px)
+      @media (--media-SM-up)
         .addon-header-author
           font-size 20px
           i
@@ -329,7 +329,7 @@ export default {
         let addonType = this.addon.type
         if (addonType === 'misc') addonType = 'integration'
         const docSrcUrl = `${useRuntimeStore().docSrcUrl}/addons/${addonType}/${this.addon.id}`
-        fetch(docSrcUrl + '/readme.md')
+        fetch(docSrcUrl + '/index.md')
           .then(async (readme) => {
             let text = await readme.text()
 

@@ -359,7 +359,7 @@
 .md .semantics-details-sheet .toolbar .link
   width 35%
 
-@media (min-width: 768px)
+@media (--media-SM-up)
   .semantics-tree-wrapper
     height 100%
     .row
@@ -384,7 +384,7 @@
   .add-to-semantics-fab
     visibility hidden !important
 
-@media (max-width: 767px)
+@media (--media-SM-down)
   .details-pane
     display none
   .semantics-tree-wrapper.sheet-opened
@@ -392,11 +392,11 @@
   .semantics-details-sheet
     height calc(0.8*var(--f7-sheet-height))
 
-@media (min-width: 450px)
+@media (--media-XS-up)
   .code-editor-toolbar .code-editor-tag-filter
     .button .icon
       display none
-@media (min-width: 768px)
+@media (--media-SM-up)
   .code-editor-toolbar .code-editor-tag-filter
     .button .icon
       display inherit

@@ -20,7 +20,7 @@
       <oh-layout-page v-if="overviewPage" v-show="!inChatSession" :context="overviewPageContext" :class="{ notready: !ready }" :f7router />
       <div v-else-if="!inChatSession" class="empty-overview">
         <empty-state-placeholder icon="house" title="overview.title" text="overview.text" />
-        <f7-row v-if="!userStore.isAdmin() || $f7dim.width < 1280" class="display-flex justify-content-center">
+        <f7-row v-if="!userStore.isAdmin() || $f7dim.width < BREAKPOINTS.LG" class="display-flex justify-content-center">
           <f7-button
             large
             fill
@@ -71,6 +71,7 @@
 import { defineAsyncComponent } from 'vue'
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
@@ -93,7 +94,7 @@ export default {
     habot: defineAsyncComponent(() => import(/* webpackChunkName: "habot" */ '../../components/home/habot.vue'))
   },
   setup() {
-    return { f7 }
+    return { f7, BREAKPOINTS }
   },
   data() {
     return {
