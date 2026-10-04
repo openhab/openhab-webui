@@ -1,0 +1,336 @@
+import { defineConfig } from 'oxlint'
+import globals from 'globals'
+
+// converts globals package booleans (false/true) to Oxlint-compatible "readonly"/"writable" values
+const oxlintGlobals = Object.fromEntries(
+  Object.entries({ ...globals.browser, ...globals.node }).map(([name, value]) => [
+    name,
+    value === false ? 'readonly' : value === true ? 'writable' : value
+  ] as const)
+)
+
+const vueGlobals = {
+  "defineProps": 'readonly',
+  "defineEmits": 'readonly',
+  "defineExpose": 'readonly',
+  "withDefaults": 'readonly',
+  "defineOptions": 'readonly',
+  "defineSlots": 'readonly',
+  "defineModel": 'readonly'
+} as const
+
+const vueRules = {
+  "vue/no-arrow-functions-in-watch": "error",
+  "vue/no-async-in-computed-properties": "error",
+  "vue/no-computed-properties-in-data": "error",
+  "vue/no-deprecated-data-object-declaration": "error",
+  "vue/no-deprecated-delete-set": "error",
+  "vue/no-deprecated-destroyed-lifecycle": "error",
+  "vue/no-deprecated-events-api": "error",
+  "vue/no-deprecated-model-definition": "error",
+  "vue/no-deprecated-props-default-this": "error",
+  "vue/no-deprecated-vue-config-keycodes": "error",
+  "vue/no-dupe-keys": "error",
+  "vue/no-export-in-script-setup": "error",
+  "vue/no-expose-after-await": "error",
+  "vue/no-lifecycle-after-await": "error",
+  "vue/no-reserved-component-names": "error",
+  "vue/no-reserved-keys": "error",
+  "vue/no-reserved-props": "error",
+  "vue/no-shared-component-data": "error",
+  "vue/no-side-effects-in-computed-properties": "error",
+  "vue/no-watch-after-await": "error",
+  "vue/prefer-import-from-vue": "error",
+  "vue/require-prop-type-constructor": "error",
+  "vue/require-render-return": "error",
+  "vue/require-slots-as-functions": "error",
+  "vue/return-in-computed-property": "error",
+  "vue/return-in-emits-validator": "error",
+  "vue/valid-define-emits": "error",
+  "vue/valid-define-options": "error",
+  "vue/valid-define-props": "error",
+  "vue/valid-next-tick": "error",
+  "vue/component-definition-name-casing": "off",
+  "vue/prop-name-casing": "warn",
+  "vue/require-default-prop": "off",
+  "vue/require-prop-types": "warn",
+  "vue/no-multiple-slot-args": "warn",
+  "vue/no-required-prop-with-default": "warn"
+} as const
+
+const typescriptRules = {
+  "typescript/ban-ts-comment": "error",
+  "typescript/no-duplicate-enum-values": "error",
+  "typescript/no-empty-object-type": "off",
+  "typescript/no-explicit-any": "off",
+  "typescript/no-extra-non-null-assertion": "error",
+  "typescript/no-misused-new": "error",
+  "typescript/no-namespace": "error",
+  "typescript/no-non-null-asserted-optional-chain": "error",
+  "typescript/no-require-imports": "error",
+  "typescript/no-this-alias": "off",
+  "typescript/no-unnecessary-type-constraint": "error",
+  "typescript/no-unsafe-declaration-merging": "error",
+  "typescript/no-unsafe-function-type": "error",
+  "typescript/no-wrapper-object-types": "error",
+  "typescript/prefer-as-const": "error",
+  "typescript/prefer-namespace-keyword": "error",
+  "typescript/triple-slash-reference": "error",
+  "typescript/no-unused-vars": "off",
+  "typescript/no-unsafe-call": "off",
+  "typescript/promise-function-async": "error",
+  "typescript/await-thenable": "error",
+  "typescript/no-array-delete": "error",
+  "typescript/no-base-to-string": "error",
+  "typescript/no-duplicate-type-constituents": "error",
+  "typescript/no-floating-promises": "error",
+  "typescript/no-for-in-array": "error",
+  "typescript/no-implied-eval": "error",
+  "typescript/no-misused-promises": "error",
+  "typescript/no-redundant-type-constituents": "error",
+  "typescript/no-unnecessary-type-assertion": "error",
+  "typescript/no-unsafe-argument": "error",
+  "typescript/no-unsafe-assignment": "error",
+  "typescript/no-unsafe-enum-comparison": "error",
+  "typescript/no-unsafe-member-access": "error",
+  "typescript/no-unsafe-return": "error",
+  "typescript/no-unsafe-unary-minus": "error",
+  "typescript/only-throw-error": "error",
+  "typescript/prefer-promise-reject-errors": "error",
+  "typescript/require-await": "error",
+  "typescript/restrict-plus-operands": "error",
+  "typescript/restrict-template-expressions": "error",
+  "typescript/unbound-method": "error",
+  "typescript/dot-notation": "off",
+} as const
+
+const importRules = {
+  "import/extensions": "off",
+  "import/namespace": "error",
+  "import/default": "error",
+  "import/export": "error",
+  "import/no-named-as-default": "warn",
+  "import/no-named-as-default-member": "off",
+  "import/no-duplicates": "warn",
+  "import/first": "off",
+  "import/named": "error",
+  "import/no-dynamic-require": "warn",
+  "import/no-nodejs-modules": "warn"
+} as const
+
+const jsoncRules =  {
+  "jsonc/no-bigint-literals": "error",
+  "jsonc/no-binary-expression": "error",
+  "jsonc/no-binary-numeric-literals": "error",
+  "jsonc/no-dupe-keys": "error",
+  "jsonc/no-escape-sequence-in-identifier": "error",
+  "jsonc/no-floating-decimal": "error",
+  "jsonc/no-hexadecimal-numeric-literals": "error",
+  "jsonc/no-infinity": "error",
+  "jsonc/no-multi-str": "error",
+  "jsonc/no-nan": "error",
+  "jsonc/no-number-props": "error",
+  "jsonc/no-numeric-separators": "error",
+  "jsonc/no-octal-numeric-literals": "error",
+  "jsonc/no-octal": "error",
+  "jsonc/no-parenthesized": "error",
+  "jsonc/no-plus-sign": "error",
+  "jsonc/no-regexp-literals": "error",
+  "jsonc/no-sparse-arrays": "error",
+  "jsonc/no-template-literals": "error",
+  "jsonc/no-undefined-value": "error",
+  "jsonc/no-unicode-codepoint-escapes": "error",
+  "jsonc/no-useless-escape": "error",
+  "jsonc/quote-props": "error",
+  "jsonc/quotes": "error",
+  "jsonc/space-unary-ops": "error",
+  "jsonc/valid-json-number": "error",
+  "jsonc/vue-custom-block/no-parsing-error": "error"
+} as const
+
+const allowEmptyCatchRule = {
+  "no-empty": ["off", { "allowEmptyCatch": true }] as ["off", { allowEmptyCatch: boolean }]
+}
+
+export default defineConfig({
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "vue",
+    "typescript",
+    "import",
+    "unicorn"
+  ],
+  "jsPlugins": [
+    "eslint-plugin-jsonc"
+  ],
+  "categories": {
+    "correctness": "off"
+  },
+  "options": {
+    "typeAware": true
+  },
+  "env": {
+    "builtin": true,
+    "es2018": true,
+    "browser": true
+  },
+  "settings": {
+    "import-x/extensions": [
+      ".ts",
+      ".tsx",
+      ".cts",
+      ".mts",
+      ".js",
+      ".jsx",
+      ".cjs",
+      ".mjs"
+    ],
+    "import-x/external-module-folders": [
+      "node_modules",
+      "node_modules/@types"
+    ],
+    "import-x/parsers": {
+      "@typescript-eslint/parser": [
+        ".ts",
+        ".tsx",
+        ".cts",
+        ".mts"
+      ]
+    },
+    "import-x/resolver": {
+      "typescript": true
+    },
+  },
+  "ignorePatterns": [
+    "dist",
+    "build",
+    "public",
+    "**/*.parser.js",
+    "**/*.test.js",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "src/api/**"
+  ],
+  "rules": {
+    ...importRules,
+    "constructor-super": "error",
+    "for-direction": "error",
+    "getter-return": "error",
+    "no-async-promise-executor": "error",
+    "no-case-declarations": "off",
+    "no-class-assign": "error",
+    "no-compare-neg-zero": "error",
+    "no-cond-assign": "error",
+    "no-const-assign": "error",
+    "no-constant-binary-expression": "error",
+    "no-constant-condition": "error",
+    "no-control-regex": "error",
+    "no-console": "off",
+    "no-debugger": "error",
+    "no-delete-var": "error",
+    "no-dupe-class-members": "error",
+    "no-dupe-else-if": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-case": "error",
+    "no-empty": "error",
+    "no-empty-character-class": "error",
+    "no-empty-pattern": "error",
+    "no-empty-static-block": "error",
+    "no-ex-assign": "error",
+    "no-extra-boolean-cast": "error",
+    "no-fallthrough": "error",
+    "no-func-assign": "error",
+    "no-global-assign": "error",
+    "no-import-assign": "error",
+    "no-invalid-regexp": "error",
+    "no-implied-eval": "error",
+    "no-irregular-whitespace": "off",
+    "no-loss-of-precision": "error",
+    "no-misleading-character-class": "error",
+    "no-new-native-nonconstructor": "error",
+    "no-nonoctal-decimal-escape": "error",
+    "no-obj-calls": "error",
+    "no-prototype-builtins": "error",
+    "no-redeclare": "error",
+    "no-regex-spaces": "error",
+    "no-self-assign": "error",
+    "no-setter-return": "error",
+    "no-shadow-restricted-names": "error",
+    "no-sparse-arrays": "error",
+    "no-this-before-super": "error",
+    "no-undef": "error",
+    "no-unreachable": "error",
+    "no-unsafe-finally": "error",
+    "no-unsafe-negation": "error",
+    "no-unsafe-optional-chaining": "error",
+    "no-unused-labels": "error",
+    "no-unused-private-class-members": "error",
+    "no-unused-vars": "off",
+    "no-useless-backreference": "error",
+    "no-useless-catch": "error",
+    "no-useless-escape": "error",
+    "no-with": "error",
+    "no-var": "error",
+    "require-yield": "error",
+    "prefer-promise-reject-errors": "off",
+    "prefer-spread": "error",
+    "prefer-rest-params": "error",
+    "use-isnan": "error",
+    "valid-typeof": "error",
+    "no-array-constructor": "error",
+    "no-unused-expressions": "error",
+    "no-throw-literal": "error"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.{ts,tsx,mts,cts}",
+        "**/*.vue?vue&type=script&lang=ts",
+        "**/*.vue?vue&type=script&lang.ts",
+        "**/*.vue?vue&type=script&lang=tsx",
+        "**/*.vue?vue&type=script&lang.tsx"
+      ],
+      "rules": {
+        ...typescriptRules
+      }
+    },
+    {
+      "files": [
+        "**/*.{json,json5,jsonc}"
+      ],
+      "rules": {
+        ...jsoncRules
+      }
+    },
+    {
+      "files": [
+        "**/*.vue"
+      ],
+      "rules": {
+        ...vueRules,
+        ...allowEmptyCatchRule
+      },
+      "globals": vueGlobals
+    },
+    {
+      "files": [
+        "**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx}"
+      ],
+      "rules": {
+        ...allowEmptyCatchRule
+      },
+      "globals": {
+        ...oxlintGlobals,
+        "process": "writable",
+        "ga": "writable",
+        "__statics": "writable"
+      },
+      "env": {
+        "es2026": true,
+        "node": true
+      }
+    }
+  ]
+})

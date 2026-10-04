@@ -290,7 +290,7 @@ export default {
       }
     },
     compatibleGroupTypes() {
-      if (!this.itemType) return
+      if (!this.itemType) return null
       let compatibleGroupTypes = []
       compatibleGroupTypes.push(this.item.type)
       if (this.itemType === 'Number') {

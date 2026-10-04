@@ -23,6 +23,7 @@ declare module 'scope-css' {
    */
   export default function scope(
     css: string | null | undefined,
+    // oxlint-disable-next-line no-redeclare
     parent: string | null | undefined,
     options?: ScopeCSSOptions | string
   ): string
