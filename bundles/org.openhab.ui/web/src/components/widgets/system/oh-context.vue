@@ -88,6 +88,7 @@ export default {
     const config = this.context?.component?.config
     if (!config?.constants && !config?.variables) return
 
+    const initialVars = {}
     const evaluateDefaults = (evaluationContext = this.context) => {
       const config = this.context?.component?.config
 
@@ -98,12 +99,19 @@ export default {
         }
       }
 
-      this.localCtxVars = {}
-      const sourceCtxVars = this.context.component.config.variables || {}
-      if (sourceCtxVars) {
-        if (typeof sourceCtxVars !== 'object') return
+      const sourceCtxVars = config.variables
+      if (sourceCtxVars && typeof sourceCtxVars === 'object') {
         for (const key in sourceCtxVars) {
-          this.localCtxVars[key] = this.evaluateExpression(key, sourceCtxVars[key], evaluationContext)
+          const evaluated = this.evaluateExpression(key, sourceCtxVars[key], evaluationContext)
+          if (evaluationContext === this.context) {
+            // On hydration re-evaluation, only update the variable if it has not been modified by a user/widget action
+            if (this.localCtxVars[key] === initialVars[key]) {
+              this.localCtxVars[key] = evaluated
+            }
+          } else {
+            initialVars[key] = evaluated
+            this.localCtxVars[key] = evaluated
+          }
         }
       }
     }
