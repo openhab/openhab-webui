@@ -121,7 +121,7 @@ export default {
 
     let stop = null
     stop = watch(
-      () => missingItems.every((itemName) => this.statesStore.itemStates.has(itemName)),
+      () => missingItems.map((itemName) => this.statesStore.itemStates.has(itemName)).every(Boolean),
       (ready) => {
         if (!ready) return
         evaluateDefaults()
