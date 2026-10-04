@@ -143,6 +143,7 @@ export default function defineOHBlocks_Scripts(f7, transformationServices) {
       this.setOutput(true, null)
       this.setColour(280)
       this.setTooltip('Recursively convert any value, array or object to use Java types. Functions are not supported.')
+      this.setHelpUrl('https://www.openhab.org/addons/automation/jsscripting/#utils-javaify-val')
     }
   }
 
@@ -166,6 +167,7 @@ export default function defineOHBlocks_Scripts(f7, transformationServices) {
       this.setOutput(true, null)
       this.setColour(300)
       this.setTooltip('Recursively convert Java Lists, Sets, and Maps and their entries/values to their JS counterparts.')
+      this.setHelpUrl('https://www.openhab.org/addons/automation/jsscripting/#utils-jsify-val')
     }
   }
 
