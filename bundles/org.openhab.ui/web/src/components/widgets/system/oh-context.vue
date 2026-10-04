@@ -89,12 +89,10 @@ export default {
     if (!config?.constants && !config?.variables) return
 
     const evaluateDefaults = (evaluationContext = this.context) => {
-      this.const = {}
-      const sourceConst = this.context.component.config.constants || {}
-      if (sourceConst) {
-        if (typeof sourceConst !== 'object') return
       const config = this.context?.component?.config
 
+      const sourceConst = config.constants || {}
+      if (sourceConst && typeof sourceConst === 'object') {
         for (const key in sourceConst) {
           this.const[key] = this.evaluateExpression(key, sourceConst[key], evaluationContext)
         }
