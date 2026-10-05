@@ -75,12 +75,12 @@
 import { inject } from 'vue'
 import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 
-import ItemMixin from '@/components/item/item-mixin'
 import ModelDragDropMixin from '@/pages/settings/model/model-dragdrop-mixin'
+import { getNonSemanticTags } from '@/components/item/item-helpers'
 
 export default {
   name: 'model-treeview-item',
-  mixins: [ItemMixin, ModelDragDropMixin],
+  mixins: [ModelDragDropMixin],
   props: {
     model: Object,
     parentNode: Object,
@@ -97,7 +97,8 @@ export default {
   },
   setup() {
     return {
-      moveState: inject('moveState')
+      moveState: inject('moveState'),
+      getNonSemanticTags
     }
   },
   computed: {
