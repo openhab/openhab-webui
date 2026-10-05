@@ -184,7 +184,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import * as Types from '@/assets/item-types'
-import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeAndMetaLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -194,7 +194,7 @@ import { showToast } from '@/js/dialog-promises'
 const ITEM_KINDS = { editable: 'Editable', readonly: 'Non-editable' }
 
 export default {
-  mixins: [ItemMixin, FileDefinition],
+  mixins: [FileDefinition],
   props: {
     f7router: Object
   },
@@ -203,7 +203,7 @@ export default {
     EmptyStatePlaceholder
   },
   setup() {
-    return { f7, theme, BREAKPOINTS }
+    return { f7, theme, BREAKPOINTS, getItemTypeAndMetaLabel, getNonSemanticTags }
   },
   data() {
     return {
