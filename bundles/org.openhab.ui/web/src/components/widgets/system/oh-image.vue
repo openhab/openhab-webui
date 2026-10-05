@@ -81,6 +81,9 @@ export default {
       return this.ts && this.src ? (this.src.indexOf('?') === -1 ? `${this.src}?_ts=${this.ts}` : `${this.src}&_ts=${this.ts}`) : this.src
     }
   },
+  beforeUnmount () {
+    this.removeEmbeddedSvg()
+  },
   methods: {
     async loadItemImage(item) {
       const urlOrData = await api.getItemState1({ itemName: item }, { parseAs: 'text' })
@@ -132,6 +135,7 @@ export default {
     },
     stopForegroundActivity() {
       if (this.refreshInterval) clearInterval(this.refreshInterval)
+      this.removeEmbeddedSvg()
     }
   }
 }
