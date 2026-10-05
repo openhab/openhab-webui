@@ -49,8 +49,8 @@ export function hsbToRgb(h: number, s: number, b: number) {
  * @param color color to convert
  * @returns {string|undefined} a CSS color string, or undefined when no color is given
  */
-export function toRGBStyle(color: string | null | undefined): string | undefined {
-  if (!color) return undefined
+export function toRGBStyle(color: string | null | undefined): string | null {
+  if (!color) return null
   const trimmed = color.trim()
   if (trimmed.startsWith('#')) return trimmed
   const parts = trimmed.split(',').map((p) => Number(p.trim()))

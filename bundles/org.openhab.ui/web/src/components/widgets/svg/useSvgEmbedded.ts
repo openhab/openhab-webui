@@ -528,7 +528,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     const stateOnColorRgbStyle = toRGBStyle(svgElementConfig.stateOnColor)
     const stateOffColorRgbStyle = toRGBStyle(svgElementConfig.stateOffColor)
     // for Color Items with no explicit on-color, use the Item's own color
-    const onColorRgbStyle = stateOnColorRgbStyle || (stateType === StateType.HSB ? toRGBStyle(state) : undefined)
+    const onColorRgbStyle = stateOnColorRgbStyle || (stateType === StateType.HSB ? toRGBStyle(state) : null)
     const proportional = [StateType.Percent, StateType.Decimal, StateType.Quantity].includes(stateType)
 
     if (tagName === 'tspan') {
