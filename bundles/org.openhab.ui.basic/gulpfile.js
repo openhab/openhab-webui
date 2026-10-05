@@ -19,16 +19,16 @@
 		};
 
 	var paths = {
-	        FontLibs: [
+			FontLibs: [
 			'./node_modules/material-icons/iconfont/material-icons.woff*',
 			'./node_modules/framework7-icons/fonts/Framework7Icons-Regular.woff*',
 			'./node_modules/framework7-icons/fonts/Framework7Icons-Regular.ttf'
-	        ]
-	    };
+			]
+		};
 	
 	gulp.task("copyFontLibs", function () {
-	    return gulp.src(paths.FontLibs, { encoding: false })
-	        .pipe(gulp.dest('./src/main/resources/web/fonts'));
+		return gulp.src(paths.FontLibs, { encoding: false })
+			.pipe(gulp.dest('./src/main/resources/web/fonts'));
 	});
 
 	gulp.task("css", function() {
@@ -46,9 +46,13 @@
 			.pipe(eslint.failAfterError());
 	});
 
+	const sourcemaps = require("gulp-sourcemaps");
+
 	gulp.task("js", function() {
 		return gulp.src(sources.js)
+			.pipe(sourcemaps.init())
 			.pipe(uglify())
+			.pipe(sourcemaps.write("."))
 			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 
