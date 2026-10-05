@@ -45,6 +45,8 @@ export interface Config {
   lazy?: boolean
   lazyFadeIn?: boolean
   refreshInterval?: number
+  embedSvg?: boolean
+  embedSvgFlashing?: boolean
 }
 export interface Component {
   component: 'oh-image'
