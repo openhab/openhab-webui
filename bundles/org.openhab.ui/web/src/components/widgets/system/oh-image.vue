@@ -81,7 +81,7 @@ export default {
       return this.ts && this.src ? (this.src.indexOf('?') === -1 ? `${this.src}?_ts=${this.ts}` : `${this.src}&_ts=${this.ts}`) : this.src
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     this.removeEmbeddedSvg()
   },
   methods: {
