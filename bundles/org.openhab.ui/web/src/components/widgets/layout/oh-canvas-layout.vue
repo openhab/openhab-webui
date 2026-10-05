@@ -323,12 +323,11 @@ function removeLayer() {
     return
   }
   slots.value.canvas.splice(actLyrIdx.value, 1)
-  actLyrIdx.value = Math.max(0, actLyrIdx.value - 1)
   if (slots.value.canvas.length === 0) {
-    config.value.activeIdx = 0
+    actLyrIdx.value = context.value.component.config.activeIdx = 0
     return
   }
-  setActiveLayer(actLyrIdx.value)
+  setActiveLayer(Math.max(0, actLyrIdx.value - 1))
   computeLayout()
 }
 
