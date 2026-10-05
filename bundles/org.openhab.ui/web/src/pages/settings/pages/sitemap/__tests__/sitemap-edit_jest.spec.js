@@ -741,7 +741,16 @@ describe('SitemapEdit', () => {
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectedWidget.confirmCmdRules = [{ conditions: [] }, { conditions: [{}], argument: null }]
+    wrapper.vm.selectedWidget.confirmCmdRules = [{ conditions: [] }]
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeTruthy()
+    expect(lastDialogConfig.content).toMatch(/Switch widget Switch Test, syntax error in confirmCmdRules/)
+
+    // should not validate as confirmCmdRules require a condition value or argument
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.confirmCmdRules = [{ conditions: [{}], argument: null }]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
     expect(lastDialogConfig.content).toMatch(/Switch widget Switch Test, syntax error in confirmCmdRules/)

@@ -726,6 +726,9 @@ export default {
       if (!Array.isArray(value[arrayKey])) {
         value[arrayKey] = []
       }
+      if (value[arrayKey].length === 0) {
+        value[arrayKey].push(this.createFieldValue(this.arrayFieldDefinition(arrayField)))
+      }
       value[arrayKey].push(this.createFieldValue(this.arrayFieldDefinition(arrayField)))
       this.widget[this.attribute][idx] = value
       this.$nextTick(() => {

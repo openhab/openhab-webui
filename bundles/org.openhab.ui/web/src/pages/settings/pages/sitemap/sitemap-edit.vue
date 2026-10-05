@@ -560,7 +560,7 @@ export default {
           ]
         },
         '=',
-        { argument: { width: '20%', placeholder: 'confirmCmd' } }
+        { argument: { width: '20%', placeholder: 'message' } }
       ]
     }
   },
@@ -1152,6 +1152,13 @@ export default {
       if (!['visibilityRules', 'confirmCmdRules'].includes(attr)) {
         return !this.isEmptyValue(rule.argument)
       }
+      const hasConditions = Array.isArray(rule.conditions) && rule.conditions.length > 0
+      if (attr === 'visibilityRules' && !hasConditions) {
+        return false
+      }
+      if (attr === 'confirmCmdRules' && !hasConditions && this.isEmptyValue(rule.argument)) {
+        return false
+      }
       if (rule.conditions?.some((condition) => this.isUndefinedValue(condition.value))) {
         return false
       }
@@ -1210,7 +1217,7 @@ export default {
           .map((rule) =>
             this.sanitizeRuleEntry(
               rule,
-              ruleAttribute === 'visibilityRules',
+              ['visibilityRules', 'confirmCmdRules'].includes(ruleAttribute),
               !['visibilityRules', 'confirmCmdRules'].includes(ruleAttribute)
             )
           )
