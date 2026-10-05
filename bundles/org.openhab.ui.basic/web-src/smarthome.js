@@ -389,7 +389,7 @@
 		_t.labelColor = _t.parentNode.getAttribute(o.labelColorAttribute);
 		_t.valueColor = _t.parentNode.getAttribute(o.valueColorAttribute);
 		_t.iconColor = _t.parentNode.getAttribute(o.iconColorAttribute);
-		_t.confirmCmdMessage = _t.parentNode.getAttribute(o.confirmCmdMessageAttribute) || null;
+		_t.commandConfirmMessage = _t.parentNode.getAttribute(o.commandConfirmMessageAttribute) || null;
 
 		_t.findIcon = function() {
 			var
@@ -690,8 +690,8 @@
 		};
 
 		_t.setConfirmMessage = function(message) {
-			_t.confirmCmdMessage = message === null ? "" : message;
-			_t.parentNode.setAttribute(o.confirmCmdMessageAttribute, _t.confirmCmdMessage);
+			_t.commandConfirmMessage = message === null ? "" : message;
+			_t.parentNode.setAttribute(o.commandConfirmMessageAttribute, _t.commandConfirmMessage);
 		};
 
 		function setIconColorScheme(value) {
@@ -1259,7 +1259,7 @@
 			});
 		};
 
-		function emitEvent(value, confirmCmdMessage, confirmedCallback) {
+		function emitEvent(value, commandConfirmMessage, confirmedCallback) {
 			if (_t.item === "") {
 				return;
 			}
@@ -1267,7 +1267,7 @@
 				"control-change", {
 					item: _t.item,
 					value: value,
-					confirmCmdMessage: confirmCmdMessage,
+					commandConfirmMessage: commandConfirmMessage,
 					confirmedCallback: confirmedCallback
 			}));
 		}
@@ -1292,13 +1292,13 @@
 				value = button.getAttribute("data-value") + "",
 				releaseValue = button.getAttribute("data-release-value") + "";
 
-			if (_t.confirmCmdMessage) {
+			if (_t.commandConfirmMessage) {
 				if (releaseValue !== "") {
 					_t.confirmPending = true;
 					_t.pendingRelease = false;
 					_t.pendingReleaseValue = releaseValue;
 				}
-				emitEvent(value, _t.confirmCmdMessage, function() { onConfirmed(button); });
+				emitEvent(value, _t.commandConfirmMessage, function() { onConfirmed(button); });
 			} else {
 				emitEvent(value);
 				if (!_t.ignoreState) {
@@ -1559,12 +1559,12 @@
 		_t.confirmPending = false;
 		_t.pendingRelease = false;
 
-		function emitEvent(value, confirmCmdMessage, revertCallback, confirmedCallback) {
+		function emitEvent(value, commandConfirmMessage, revertCallback, confirmedCallback) {
 			_t.parentNode.dispatchEvent(createEvent(
 				"control-change", {
 					item: _t.item,
 					value: value,
-					confirmCmdMessage: confirmCmdMessage,
+					commandConfirmMessage: commandConfirmMessage,
 					revertCallback: revertCallback,
 					confirmedCallback: confirmedCallback
 			}));
@@ -1591,12 +1591,12 @@
 				this.classList.add(o.buttonActiveClass);
 			}
 
-			if (_t.confirmCmdMessage && _t.releaseCmd !== "") {
+			if (_t.commandConfirmMessage && _t.releaseCmd !== "") {
 				_t.confirmPending = true;
 				_t.pendingRelease = false;
-				emitEvent(_t.cmd, _t.confirmCmdMessage, onCancelled, onConfirmed);
+				emitEvent(_t.cmd, _t.commandConfirmMessage, onCancelled, onConfirmed);
 			} else {
-				emitEvent(_t.cmd, _t.confirmCmdMessage, onCancelled);
+				emitEvent(_t.cmd, _t.commandConfirmMessage, onCancelled);
 			}
 		};
 
@@ -1717,7 +1717,7 @@
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
 					item: _t.item,
 					value: value,
-					confirmCmdMessage: _t.confirmCmdMessage
+					commandConfirmMessage: _t.commandConfirmMessage
 				}));
 			}, 300);
 		}
@@ -1825,7 +1825,7 @@
 				"control-change", {
 					item: _t.item,
 					value: value,
-					confirmCmdMessage: value === "STOP" ? null : _t.confirmCmdMessage
+					commandConfirmMessage: value === "STOP" ? null : _t.commandConfirmMessage
 			}));
 		}
 
@@ -1965,7 +1965,7 @@
 				"control-change", {
 					item: _t.item,
 					value: command,
-					confirmCmdMessage: _t.confirmCmdMessage,
+					commandConfirmMessage: _t.commandConfirmMessage,
 					revertCallback: function() {
 						_t.value = oldValue;
 					}
@@ -2171,7 +2171,7 @@
 			if (_t.interval !== null) {
 				clearInterval(_t.interval);
 				_t.interval = null;
-				if (_t.confirmCmdMessage) {
+				if (_t.commandConfirmMessage) {
 					callback(_t.hsvValue);
 				}
 			}
@@ -2405,7 +2405,7 @@
 				"control-change", {
 					item: _t.item,
 					value: value,
-					confirmCmdMessage: _t.confirmCmdMessage
+					commandConfirmMessage: _t.commandConfirmMessage
 			}));
 		}
 
@@ -2413,7 +2413,7 @@
 			_t.pressed = true;
 			_t.longPress = false;
 
-			if (!_t.confirmCmdMessage) {
+			if (!_t.commandConfirmMessage) {
 				interval = setInterval(function() {
 					_t.longPress = true;
 					emitEvent(command);
@@ -2449,7 +2449,7 @@
 
 			function onClick() {
 				_t.modal.hide();
-				if (_t.confirmCmdMessage && latestColor !== null) {
+				if (_t.commandConfirmMessage && latestColor !== null) {
 					emitEvent(formatColor(latestColor));
 				}
 			}
@@ -2467,7 +2467,7 @@
 			_t.modalControl = new Colorpicker(_t.modal.container, _t.value, function(color) {
 				_t.value = Colorpicker.hsv2rgb(color);
 				latestColor = color;
-				if (!_t.confirmCmdMessage) {
+				if (!_t.commandConfirmMessage) {
 					emitEvent(formatColor(color));
 				}
 			});
@@ -2667,7 +2667,7 @@
 				"control-change", {
 					item: _t.item,
 					value: command,
-					confirmCmdMessage: _t.confirmCmdMessage
+					commandConfirmMessage: _t.commandConfirmMessage
 			}));
 		}
 
@@ -2690,7 +2690,7 @@
 
 			function onClick() {
 				_t.modal.hide();
-				if (_t.confirmCmdMessage && latestColortemperature !== null) {
+				if (_t.commandConfirmMessage && latestColortemperature !== null) {
 					emitEvent(formatColortemperature(latestColortemperature));
 				}
 			}
@@ -2708,7 +2708,7 @@
 			_t.modalControl = new Colortemppicker(_t.modal.container, _t.min, _t.max, _t.value, _t.gradientColors,
 				function(valueKelvin) {
 					latestColortemperature = valueKelvin;
-					if (!_t.confirmCmdMessage) {
+					if (!_t.commandConfirmMessage) {
 						emitEvent(formatColortemperature(valueKelvin));
 					}
 				}
@@ -2747,7 +2747,7 @@
 			_t.parentNode.dispatchEvent(createEvent("control-change", {
 				item: _t.item,
 				value: _t.input.checked ? "ON" : "OFF",
-				confirmCmdMessage: _t.confirmCmdMessage,
+				commandConfirmMessage: _t.commandConfirmMessage,
 				revertCallback: function() {
 					_t.input.checked = !_t.input.checked;
 					if (_t.input.checked) {
@@ -2931,7 +2931,7 @@
 				_t.parentNode.dispatchEvent(createEvent("control-change", {
 					item: _t.item,
 					value: changeValue,
-					confirmCmdMessage: _t.confirmCmdMessage,
+					commandConfirmMessage: _t.commandConfirmMessage,
 					confirmedCallback: function() {
 						waitAndVerify(lastValue);
 					},
@@ -2939,7 +2939,7 @@
 						_t.setValuePrivate(smarthome.UI.escapeHtml(lastValue));
 					}
 				}));
-				if (!_t.confirmCmdMessage) {
+				if (!_t.commandConfirmMessage) {
 					waitAndVerify(lastValue);
 				}
 			}
@@ -3083,13 +3083,13 @@
 			_t.parentNode.dispatchEvent(createEvent("control-change", {
 				item: _t.item,
 				value: command,
-				confirmCmdMessage: _t.confirmCmdMessage,
+				commandConfirmMessage: _t.commandConfirmMessage,
 				revertCallback: function() {
 					_t.input.value = lastValue;
 					_t.input.MaterialSlider.change();
 				}
 			}));
-			if (!_t.confirmCmdMessage) {
+			if (!_t.commandConfirmMessage) {
 				lastValue = value;
 			}
 		}
@@ -3132,7 +3132,7 @@
 		}
 
 		function onInput() {
-			if (!(_t.confirmCmdMessage || _t.releaseOnly)) {
+			if (!(_t.commandConfirmMessage || _t.releaseOnly)) {
 				_t.debounceProxy.call();
 			}
 		}
@@ -3282,7 +3282,7 @@
 	}
 
 	function controlChangeHandler(event) {
-		var message = event.detail.confirmCmdMessage;
+		var message = event.detail.commandConfirmMessage;
 		if (message) {
 			openConfirmModal(message, function(confirmed) {
 				if (confirmed) {
@@ -3881,7 +3881,7 @@
 				labelColor = update.labelcolor,
 				valueColor = update.valuecolor,
 				iconColor = update.iconcolor,
-				confirmCmdMessage = update.confirmCmdMessage,
+				commandConfirmMessage = update.commandConfirmMessage,
 				makeVisible = false;
 
 			if (widget.visible !== update.visibility) {
@@ -3917,7 +3917,7 @@
 				fallback: ""
 			}, {
 				apply: widget.setConfirmMessage,
-				data: confirmCmdMessage,
+				data: commandConfirmMessage,
 				fallback: ""
 			}].forEach(function(e) {
 				if (e.data !== undefined) {
@@ -4007,7 +4007,7 @@
 					valuecolor: data.valuecolor,
 					iconcolor: data.iconcolor,
 					icon: icon,
-					confirmCmdMessage: data.confirmCmdMessage
+					commandConfirmMessage: data.commandConfirmMessage
 				};
 				_t.updateWidget(smarthome.dataModel[data.widgetId], update);
 			}
@@ -4084,7 +4084,7 @@
 							valuecolor: widget.valuecolor,
 							iconcolor: widget.iconcolor,
 							icon: widget.icon,
-							confirmCmdMessage: widget.confirmCmdMessage
+							commandConfirmMessage: widget.commandConfirmMessage
 						};
 						_t.updateWidget(w, update);
 					}
@@ -4331,7 +4331,7 @@
 	labelColorAttribute: "data-label-color",
 	valueColorAttribute: "data-value-color",
 	iconColorAttribute: "data-icon-color",
-	confirmCmdMessageAttribute: "data-confirm-message",
+	commandConfirmMessageAttribute: "data-command-confirm-message",
 	controlButton: "button",
 	buttonActiveClass: "mdl-button--accent",
 	buttonIconClass: "mdl-button-icon",
