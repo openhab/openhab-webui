@@ -69,7 +69,7 @@ function select(e: Event) {
 
 onMounted(async () => {
   try {
-    const data = await api.getSitemaps()
+    const data = (await api.getSitemaps()) ?? []
     sitemaps.value = data
       .map((s): SitemapOption => ({ name: s.name, label: s.label }))
       .sort((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
