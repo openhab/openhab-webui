@@ -10,7 +10,7 @@
       :disabled="disabled">
       <select :name="name" @change="select" :required="required">
         <option value="" />
-        <option v-for="sitemap in sitemaps" :value="sitemap.name" :key="sitemap.name" :selected="value === sitemap.name ? true : null">
+        <option v-for="sitemap in sitemaps" :value="sitemap.name" :key="sitemap.name" :selected="modelValue === sitemap.name">
           {{ sitemap.label ? sitemap.label + ' (' + sitemap.name + ')' : sitemap.name }}
         </option>
       </select>
@@ -37,13 +37,12 @@ export default {
   props: {
     title: String,
     name: String,
-    value: String,
+    modelValue: String,
     required: Boolean,
-    filterType: Array,
     openOnReady: Boolean,
     disabled: Boolean
   },
-  emits: ['input', 'update:value'],
+  emits: ['update:modelValue'],
   data() {
     return {
       ready: false,
@@ -73,13 +72,6 @@ export default {
             const labelB = b.label || b.name
             return labelA.localeCompare(labelB)
           })
-        if (this.filterType) {
-          this.sitemaps = this.sitemaps.filter((i) => this.filterType.indexOf(i.type) >= 0)
-          if (this.sitemaps.length < 5) {
-            this.smartSelectParams.openIn = 'sheet'
-            this.smartSelectParams.searchbar = false
-          }
-        }
         this.ready = true
         if (this.openOnReady) {
           nextTick(() => {
@@ -96,7 +88,7 @@ export default {
     select(e) {
       f7.input.validateInputs(this.$refs.smartSelect.$el)
       const selectedValue = e.target.value || ''
-      this.$emit('update:value', selectedValue)
+      this.$emit('update:modelValue', selectedValue)
     }
   }
 }

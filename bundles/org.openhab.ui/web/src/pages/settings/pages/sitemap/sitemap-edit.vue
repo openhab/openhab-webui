@@ -59,7 +59,6 @@
                   :widget="selectedWidget"
                   :createMode="createMode"
                   :editable="isEditable"
-                  :f7router="f7router"
                   @duplicate="duplicateWidget"
                   @navigate-nested-sitemap="navigateNestedSitemapEditor"
                   @remove="removeWidget"
@@ -152,7 +151,7 @@
               <template #media>
                 <f7-icon :f7="widgetTypeIcon(widgetType.type)" />
               </template>
-              <span>{{ this.widgetTypeLabel(widgetType.type) }}</span>
+              <span>{{ widgetTypeLabel(widgetType.type) }}</span>
             </f7-actions-button>
           </f7-actions-group>
         </f7-actions>
