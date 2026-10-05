@@ -407,7 +407,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import debounce from 'debounce'
-import RuleStatus from '@/components/rule/rule-status-mixin'
+import { ruleStatusBadgeColor, ruleStatusBadgeText, isRuleStatusDisabled } from '@/components/rule/rule-helpers'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListFilter from '@/components/util/list-filter.vue'
@@ -424,7 +424,6 @@ const ITEM_KINDS = {
 }
 
 export default {
-  mixins: [RuleStatus],
   props: {
     showScripts: Boolean,
     showScenes: Boolean,
@@ -441,7 +440,7 @@ export default {
       STUB: 'Stub only',
       STRIPPED: 'Strip template'
     })
-    return { f7, theme, serializationOptions, BREAKPOINTS }
+    return { f7, theme, serializationOptions, BREAKPOINTS, ruleStatusBadgeText, ruleStatusBadgeColor, isRuleStatusDisabled }
   },
   data() {
     return {
