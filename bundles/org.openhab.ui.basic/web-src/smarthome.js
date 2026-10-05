@@ -3809,6 +3809,24 @@
 			_t.closeConnection();
 			_t.connectionError();
 		};
+
+		// Override base pause: actually close the SSE stream so the server
+		// connection is freed while the page is not visible.
+		_t.pause = function() {
+			_t.closeConnection();
+			_t.paused = true;
+		};
+		// Resume from hidden state: re-establish subscription via POST so that
+		// connectionRestored -> startSubscriber flow is used (reload + SSE reopen)
+		_t.resume = function() {
+			_t.paused = false;
+			ajax({
+				url: _t.subscribeRequestURL,
+				type: "POST",
+				callback: _t.connectionRestored,
+				error: _t.subscriberError
+			});
+		};
 	}
 
 	function ChangeListenerLongpolling() {
@@ -4050,6 +4068,42 @@
 
 		_t.closeConnection = function(){};
 
+		// Called when the page becomes hidden (tab switched, browser minimised, etc.).
+		// Closes any open server connection to save resources while the page is idle.
+		_t.handlePageHidden = function() {
+			if (typeof _t.pause === "function") {
+				_t.pause();
+			}
+			// Stop any in-progress reconnect loop – it will be restarted on
+			// visibility-restore which does a full re-sync anyway.
+			if (_t.reconnectInterval !== null) {
+				clearInterval(_t.reconnectInterval);
+				_t.reconnectInterval = null;
+			}
+		};
+
+		// Called when the page becomes visible again.
+		// Re-subscribes to the event stream and reloads the current sitemap page so
+		// that all widget states are immediately up-to-date without the user having
+		// to refresh manually.
+		_t.handlePageVisible = function() {
+			if (_t.reconnectInterval !== null) {
+				clearInterval(_t.reconnectInterval);
+				_t.reconnectInterval = null;
+			}
+			// Call resume() which is implemented by both
+			// ChangeListenerLongpolling and ChangeListenerEventsource.
+			// Long-polling resume restarts the polling loop; SSE resume
+			// triggers the subscribe POST and the normal recovery flow.
+			if (typeof _t.resume === "function") {
+				_t.resume();
+				return;
+			}
+			if (typeof _t.paused !== "undefined") {
+				_t.paused = false;
+			}
+		};
+
 		ajax({
 			url: _t.subscribeRequestURL,
 			type: "POST",
@@ -4082,6 +4136,18 @@
 		}
 
 		window.addEventListener("storage", handleStorageEvent);
+
+		// Pause the event stream when the page is hidden (background tab, minimised
+		// browser) and transparently re-sync when it becomes visible again.
+		if (typeof document.hidden !== "undefined") {
+			document.addEventListener("visibilitychange", function() {
+				if (document.hidden) {
+					smarthome.changeListener.handlePageHidden();
+				} else {
+					smarthome.changeListener.handlePageVisible();
+				}
+			});
+		}
 
 		window.addEventListener("beforeunload", function() {
 			smarthome.changeListener.suppressErrors();
