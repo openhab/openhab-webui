@@ -33,6 +33,17 @@ export default {
     this.LINKABLE_WIDGET_TYPES = ['Sitemap', 'Text', 'Frame', 'Group', 'Image', 'Buttongrid']
     this.WIDGET_TYPES_NOT_REQUIRING_ITEM = ['Frame', 'Text', 'Image', 'Video', 'Webview', 'Buttongrid', 'NestedSitemap']
     this.WIDGET_TYPES_SHOWING_VALUE = ['Text', 'Switch', 'Selection', 'Slider', 'Setpoint', 'Input', 'Default', 'Group']
+    this.WIDGET_TYPES_CAN_COMMAND = [
+      'Button',
+      'Switch',
+      'Selection',
+      'Slider',
+      'Setpoint',
+      'Input',
+      'Colorpicker',
+      'Colortemperaturepicker',
+      'Default'
+    ]
 
     this.REGEX_PERIOD =
       /^((P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])-)?-?(P(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?|\d*[YMWDh])$/
@@ -45,12 +56,15 @@ export default {
       Chart: ['service', 'period', 'refresh', 'legend', 'forceAsItem', 'yAxisDecimalPattern', 'interpolation'],
       Webview: ['url', 'height'],
       Mapview: ['height'],
-      Slider: ['switchSupport', 'releaseOnly', 'minValue', 'maxValue', 'step'],
-      Setpoint: ['minValue', 'maxValue', 'step'],
-      Colortemperaturepicker: ['minValue', 'maxValue'],
-      Input: ['inputHint'],
-      Button: ['row', 'column', 'stateless', 'command', 'releaseCommand'],
-      Default: ['height'],
+      Switch: ['confirmCmd'],
+      Slider: ['switchSupport', 'releaseOnly', 'minValue', 'maxValue', 'step', 'confirmCmd'],
+      Setpoint: ['minValue', 'maxValue', 'step', 'confirmCmd'],
+      Selection: ['confirmCmd'],
+      Colorpicker: ['confirmCmd'],
+      Colortemperaturepicker: ['minValue', 'maxValue', 'confirmCmd'],
+      Input: ['inputHint', 'confirmCmd'],
+      Button: ['row', 'column', 'stateless', 'command', 'releaseCommand', 'confirmCmd'],
+      Default: ['height', 'confirmCmd'],
       NestedSitemap: ['name']
     }
     this.ENCODING_DEFS = [
