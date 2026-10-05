@@ -286,35 +286,35 @@ let resizeObserver: ResizeObserver | null = null
 const x = computed<number>({
   get: () => config.value.x ?? 20,
   set: (val: number) => {
-    config.value.x = val
+    component.value.config.x = val
   }
 })
 
 const y = computed({
   get: () => config.value.y ?? 20,
   set: (val: number) => {
-    config.value.y = val
+    component.value.config.y = val
   }
 })
 
 const w = computed<number | 'auto'>({
   get: () => (config.value.w as number | string as 'auto') ?? 100,
   set: (val: number | 'auto') => {
-    config.value.w = val
+    component.value.config.w = val
   }
 })
 
 const h = computed<number | 'auto'>({
   get: () => (config.value?.h as number | string as 'auto') ?? 100,
   set: (val: number | 'auto') => {
-    config.value.h = val
+    component.value.config.h = val
   }
 })
 
 const shadow = computed({
   get: () => config.value?.noCanvasShadow === false,
   set: (val) => {
-    config.value.noCanvasShadow = val
+    component.value.config.noCanvasShadow = val
   }
 })
 
