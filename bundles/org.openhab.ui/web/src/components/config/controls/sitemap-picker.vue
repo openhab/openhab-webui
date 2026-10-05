@@ -2,16 +2,16 @@
   <ul class="sitemap-picker-container">
     <f7-list-item
       v-if="ready"
+      ref="smartSelect"
       :title="title || 'Sitemap'"
       smart-select
       :smart-select-params="smartSelectParams"
-      ref="smartSelect"
       :no-chevron="disabled"
       :disabled="disabled">
-      <select :name="name" @change="select" :required="required">
+      <select :name="name" :required="required" @change="select">
         <option value="" />
-        <option v-for="sitemap in sitemaps" :value="sitemap.name" :key="sitemap.name" :selected="modelValue === sitemap.name">
-          {{ sitemap.label ? sitemap.label + ' (' + sitemap.name + ')' : sitemap.name }}
+        <option v-for="sitemap in sitemaps" :key="sitemap.name" :value="sitemap.name" :selected="model === sitemap.name">
+          {{ sitemap.label ? `${sitemap.label} (${sitemap.name})` : sitemap.name }}
         </option>
       </select>
     </f7-list-item>
@@ -26,70 +26,62 @@
     display none
 </style>
 
-<script>
+<script setup lang="ts">
+import { ref, nextTick, onMounted } from 'vue'
 import { f7 } from 'framework7-vue'
-import { nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { showToast } from '@/js/dialog-promises'
-
 import * as api from '@/api'
 
-export default {
-  props: {
-    title: String,
-    name: String,
-    modelValue: String,
-    required: Boolean,
-    openOnReady: Boolean,
-    disabled: Boolean
-  },
-  emits: ['update:modelValue'],
-  data() {
-    return {
-      ready: false,
-      sitemaps: [],
-      smartSelectParams: {
-        view: f7.view.main,
-        openIn: 'popup',
-        searchbar: true,
-        searchbarPlaceholder: this.$t('dialogs.search.sitemaps')
-      }
-    }
-  },
-  created() {
-    this.smartSelectParams.closeOnSelect = true
-    api
-      .getSitemaps()
-      .then((data) => {
-        this.sitemaps = data
-          .map((sitemap) => {
-            return {
-              name: sitemap.name,
-              label: sitemap.label
-            }
-          })
-          .sort((a, b) => {
-            const labelA = a.label || a.name
-            const labelB = b.label || b.name
-            return labelA.localeCompare(labelB)
-          })
-        this.ready = true
-        if (this.openOnReady) {
-          nextTick(() => {
-            this.$refs.smartSelect.$el.children[0].f7SmartSelect.open()
-          })
-        }
-      })
-      .catch((err) => {
-        console.error(err)
-        showToast('An error occurred while loading sitemaps: ' + (err?.message || String(err)))
-      })
-  },
-  methods: {
-    select(e) {
-      f7.input.validateInputs(this.$refs.smartSelect.$el)
-      const selectedValue = e.target.value || ''
-      this.$emit('update:modelValue', selectedValue)
-    }
-  }
+interface SitemapOption {
+  name: string
+  label?: string
 }
+
+const props = defineProps<{
+  title?: string
+  name?: string
+  required?: boolean
+  openOnReady?: boolean
+  disabled?: boolean
+}>()
+
+const model = defineModel<string>()
+
+const { t } = useI18n()
+
+const ready = ref(false)
+const sitemaps = ref<SitemapOption[]>([])
+const smartSelect = ref<{ $el: HTMLElement } | null>(null)
+
+const smartSelectParams = {
+  view: f7.view.main,
+  openIn: 'popup',
+  searchbar: true,
+  searchbarPlaceholder: t('dialogs.search.sitemaps'),
+  closeOnSelect: true
+}
+
+function select(e: Event) {
+  if (smartSelect.value) f7.input.validateInputs(smartSelect.value.$el)
+  model.value = (e.target as HTMLSelectElement).value || ''
+}
+
+onMounted(async () => {
+  try {
+    const data = await api.getSitemaps()
+    sitemaps.value = data
+      .map((s): SitemapOption => ({ name: s.name, label: s.label }))
+      .sort((a, b) => (a.label || a.name).localeCompare(b.label || b.name))
+    ready.value = true
+    if (props.openOnReady) {
+      await nextTick()
+      const el = smartSelect.value?.$el.children[0] as (Element & { f7SmartSelect?: { open: () => void } }) | undefined
+      el?.f7SmartSelect?.open()
+    }
+  } catch (err) {
+    console.error(err)
+    showToast('An error occurred while loading sitemaps: ' + ((err as Error)?.message || String(err)))
+  }
+})
 </script>
