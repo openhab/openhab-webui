@@ -314,7 +314,7 @@ const h = computed<number | 'auto'>({
 const shadow = computed({
   get: () => config.value?.noCanvasShadow === false,
   set: (val) => {
-    component.value.config.noCanvasShadow = val
+    component.value.config.noCanvasShadow = !val
   }
 })
 
