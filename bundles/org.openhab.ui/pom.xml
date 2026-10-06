@@ -76,7 +76,6 @@
               <arguments>install --save false</arguments>
             </configuration>
           </execution>
-
           <execution>
             <id>npm run build:mvn</id>
             <goals>
