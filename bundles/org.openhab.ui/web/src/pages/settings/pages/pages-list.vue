@@ -3,7 +3,10 @@
     <f7-navbar>
       <oh-nav-content title="Pages" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="selection.toggleSelectionMode"
+            :text="!theme.md ? (selection.selectionMode ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -18,31 +21,13 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selectedInFilter.size > 0" class="display-flex justify-content-center" style="width: 100%">
-        <f7-link
-          color="red"
-          class="delete display-flex flex-direction-row margin-right"
-          icon-ios="f7:trash"
-          icon-aurora="f7:trash"
-          @click="removeSelected">
-          Remove
-        </f7-link>
-        <f7-link
-          color="theme-alt"
-          class="copy display-flex flex-direction-row"
-          @click="copySelectedItemsToClipboard"
-          icon-ios="f7:square_on_square"
-          icon-aurora="f7:square_on_square">
-          &nbsp;Copy
-        </f7-link>
-      </div>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="toggleCheck()" />
-      <div v-if="theme.md" class="title">{{ selectedInFilter.size }} selected</div>
-      <div v-if="theme.md && selectedInFilter.size > 0" class="right">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
-        <f7-link tooltip="Copy selected" icon-md="material:content_copy" icon-color="white" @click="copySelectedItemsToClipboard" />
-      </div>
+    <f7-toolbar v-if="selection.selectionMode" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <list-selection-actions
+        @close="selection.toggleSelectionMode"
+        :remove-count="selectedDeletable.size"
+        @remove="removeSelected"
+        :copy-count="selection.selectedInFilter.size"
+        @copy="copySelectedItemsToClipboard" />
     </f7-toolbar>
 
     <f7-list-index
@@ -85,9 +70,10 @@
           </f7-segmented>
         </div>
 
-        <group-box :title="getListTitle(search.isFiltered, search.filteredResults.length, pages.length, 'Page', selectedInFilter.size)">
-          <template v-if="showCheckboxes && search.filteredUids.length > 0" #after-title>
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+        <group-box
+          :title="getListTitle(search.isFiltered, search.filteredResults.length, pages.length, 'Page', selection.selectedInFilter.size)">
+          <template v-if="selection.selectionMode && search.filteredUids.length > 0" #after-title>
+            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
           </template>
           <f7-list
             v-show="search.filteredResults.length > 0"
@@ -102,11 +88,11 @@
                 :key="page.uid"
                 media-item
                 class="pagelist-item"
-                :checkbox="showCheckboxes"
-                :checked="isChecked(page.uid) ? true : null"
+                :checkbox="selection.selectionMode"
+                :checked="selection.isSelected(page.uid)"
                 prevent-router
-                @click.ctrl="ctrlClick($event, page)"
-                @click.meta="ctrlClick($event, page)"
+                @click.ctrl="selection.ctrlClick(page.uid)"
+                @click.meta="selection.ctrlClick(page.uid)"
                 @click.exact="click($event, page)"
                 :link="getPageLink(page)"
                 :subtitle="getPageType(page).label"
@@ -158,7 +144,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="theme-alt">
+      <f7-fab v-show="ready && !selection.selectionMode" position="right-bottom" color="theme-alt">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:multiply" md="material:close" aurora="f7:multiply" />
         <f7-fab-buttons position="top">
@@ -188,19 +174,22 @@ import { nextTick, reactive, toRaw, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { showToast } from '@/js/dialog-promises'
+import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { getPageType, getPageIcon } from '@/pages/page-type'
 import { useSearch } from '@/components/useSearch'
+import { useSelection } from '@/components/useSelection'
 import { getListTitle, findElementsInObject, highlightMatches } from '@/pages/list-helpers'
 
 import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 import OhSearchbar from '@/pages/oh-searchbar.vue'
+import ListSelectionActions from '@/components/list/list-selection-actions.vue'
 
 export default {
   components: {
-    OhSearchbar
+    OhSearchbar,
+    ListSelectionActions
   },
   props: {
     f7router: Object
@@ -242,14 +231,14 @@ export default {
       }
     }
 
-    const search = reactive(
-      useSearch(pages, {
-        filtersDefinitions,
-        haystackFields,
-        uidField: 'uid',
-        includeMatches: true
-      })
-    )
+    const searchState = useSearch(pages, {
+      filtersDefinitions,
+      haystackFields,
+      uidField: 'uid',
+      includeMatches: true
+    })
+    const search = reactive(searchState)
+    const selection = reactive(useSelection(searchState.filteredUids))
 
     filtersDefinitions.type.options = () => search.getFuseValuesForField('type')
     filtersDefinitions.tag.options = () => search.getFuseValuesForField('tag')
@@ -259,9 +248,10 @@ export default {
     return {
       theme,
       runtimeStore,
+      search,
+      selection,
       pages,
       filtersDefinitions,
-      search,
       getListTitle,
       ohSearchbarRef,
       haystackFields,
@@ -272,9 +262,7 @@ export default {
     return {
       ready: false,
       initSearchbar: false,
-      loading: false,
-      selected: new Set(),
-      showCheckboxes: false
+      loading: false
     }
   },
   computed: {
@@ -314,11 +302,8 @@ export default {
           }, {})
       }
     },
-    allSelected() {
-      return this.search.filteredUids.length > 0 && this.search.filteredUids.every((uid) => this.selected.has(uid))
-    },
-    selectedInFilter() {
-      return new Set(this.search.filteredUids.filter((uid) => this.selected.has(uid)))
+    selectedDeletable() {
+      return new Set(this.pages.filter((page) => this.selection.selectedInFilter.has(page.uid) && page.editable).map((page) => page.uid))
     }
   },
   methods: {
@@ -334,8 +319,8 @@ export default {
       this.initSearchbar = false
 
       this.pages = []
-      this.selected.clear()
-      this.showCheckboxes = false
+      this.selection.clearSelection()
+      this.selection.selectionMode = false
       await this.$oh.api
         .get('/rest/ui/components/ui:page')
         .then((data) => {
@@ -367,40 +352,12 @@ export default {
       this.groupBy = groupBy
       if (this.groupBy === 'alphabetical') this.$refs.listIndex.update()
     },
-    toggleCheck() {
-      this.showCheckboxes = !this.showCheckboxes
-      if (!this.showCheckboxes) {
-        this.selected.clear()
-      }
-    },
-    isChecked(item) {
-      return this.selected.has(item)
-    },
-    selectDeselectAll() {
-      if (this.allSelected) {
-        this.selected.clear()
-      } else {
-        this.selected = new Set(this.search.filteredUids)
-      }
-    },
     click(event, item) {
-      if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.uid, item)
+      if (this.selection.selectionMode) {
+        this.selection.toggleItemSelection(item.uid)
       } else {
         const pageLink = this.getPageLink(item)
         if (pageLink) this.f7router.navigate(pageLink)
-      }
-    },
-    ctrlClick(event, item) {
-      this.toggleItemCheck(event, item.uid, item)
-      if (!this.selected.size > 0) this.showCheckboxes = false
-    },
-    toggleItemCheck(event, name, item) {
-      if (!this.showCheckboxes) this.showCheckboxes = true
-      if (this.isChecked(name)) {
-        this.selected.delete(name)
-      } else {
-        this.selected.add(name)
       }
     },
     getPageType,
@@ -409,38 +366,32 @@ export default {
       const type = this.getPageType(page)
       return type ? `${encodeURIComponent(type.type)}/${encodeURIComponent(page.uid)}` : null
     },
-    removeSelected() {
-      f7.dialog.confirm(`Remove ${this.selectedInFilter.size} selected pages?`, `Remove Pages`, () => {
-        this.doRemoveSelected()
-      })
-    },
-    doRemoveSelected() {
-      if ([...this.selectedInFilter].some((p) => this.pages.find((page) => page.uid === p)?.editable === false)) {
-        f7.dialog.alert('Some of the selected pages are not modifiable because they have been provisioned by files')
+    async removeSelected() {
+      if (this.selectedDeletable.size === 0) return
+      if (
+        !(await showConfirmDialog(
+          `Remove ${this.selectedDeletable.size} of ${this.selection.selectedInFilter.size} selected pages?`,
+          `Remove Pages`
+        ))
+      )
         return
-      }
 
       let dialog = f7.dialog.progress('Deleting Pages...')
-
-      const promises = [...this.selectedInFilter].map((p) => this.$oh.api.delete('/rest/ui/components/ui:page/' + p))
-      Promise.all(promises)
-        .then((data) => {
-          showToast('Pages removed')
-          this.selected.clear()
-          dialog.close()
-          this.load()
-          f7.emit('sidebarRefresh', null)
-        })
-        .catch((err) => {
-          dialog.close()
-          this.load()
-          console.error(err)
-          showToast('An error occurred while deleting: ' + (err?.message || String(err)))
-          f7.emit('sidebarRefresh', null)
-        })
+      const promises = [...this.selectedDeletable].map((p) => this.$oh.api.delete('/rest/ui/components/ui:page/' + p))
+      try {
+        await Promise.all(promises)
+        showToast('Pages removed')
+      } catch (err) {
+        console.error(err)
+        showToast('An error occurred while deleting: ' + (err?.message || String(err)))
+      } finally {
+        dialog.close()
+        this.load()
+        f7.emit('sidebarRefresh', null)
+      }
     },
     copySelectedItemsToClipboard() {
-      const itemsToCopy = this.pages.filter((page) => this.selectedInFilter.has(page.uid))
+      const itemsToCopy = this.pages.filter((page) => this.selection.selectedInFilter.has(page.uid))
       const yaml = toFileYAMLSyntax('pages', itemsToCopy)
       copyToClipboard(yaml, {
         onSuccess: () => showToast('Selected Page definitions copied to clipboard'),

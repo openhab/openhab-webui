@@ -3,7 +3,10 @@
     <f7-navbar>
       <oh-nav-content :title="showType + 's'" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="selection.toggleSelectionMode"
+            :text="!theme.md ? (selection.selectionMode ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -18,99 +21,64 @@
       </f7-subnavbar>
     </f7-navbar>
     <f7-toolbar
-      v-if="showCheckboxes"
+      v-if="selection.selectionMode"
       class="contextual-toolbar"
       :class="{ navbar: theme.md, 'tabbar-labels': $f7dim.width < BREAKPOINTS.XS }"
       bottom-ios
       bottom-aurora>
-      <f7-link
-        v-if="!theme.md"
-        v-show="selectedDeletableItems.length"
-        color="red"
-        class="delete"
-        icon-ios="f7:trash"
-        icon-aurora="f7:trash"
-        @click="deleteSelected">
-        &nbsp;{{ $t('dialogs.delete') }}&nbsp;{{ selectedDeletableItems.length }}
-      </f7-link>
-      <f7-link
-        v-if="!theme.md && showType !== 'Scene'"
-        v-show="selected.size > 0 && canDisable"
-        color="orange"
-        class="disable"
-        @click="doDisableEnableSelected(false)"
-        icon-ios="f7:pause_circle"
-        icon-aurora="f7:pause_circle">
-        &nbsp;{{ $t('dialogs.disable') }}&nbsp;{{ disablableItems }}
-      </f7-link>
-      <f7-link
-        v-if="!theme.md && showType !== 'Scene'"
-        v-show="selected.size > 0 && canEnable"
-        color="green"
-        class="enable"
-        @click="doDisableEnableSelected(true)"
-        icon-ios="f7:play_circle"
-        icon-aurora="f7:play_circle">
-        &nbsp;{{ $t('dialogs.enable') }}&nbsp;{{ enablableItems }}
-      </f7-link>
-      <f7-link
-        v-if="!theme.md && showType !== 'Scene'"
-        v-show="selected.size > 0"
-        color="blue"
-        class="copy"
-        @click="initRuleDefinitionsPopup()"
-        icon-ios="f7:square_on_square"
-        icon-aurora="f7:square_on_square">
-        &nbsp;{{ $t('dialogs.copy') }}&nbsp;{{ selected.size }}
-      </f7-link>
-      <f7-link
-        v-if="!theme.md && showType !== 'Scene'"
-        v-show="selected.size > 0 && canRegenerate"
-        :color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
-        class="enable"
-        @click="regenerateSelected()"
-        icon-ios="f7:arrow_2_circlepath"
-        icon-aurora="f7:arrow_2_circlepath">
-        &nbsp;{{ $t('dialogs.regenerate') }}&nbsp;{{ regeneratableItemsCount }}
-      </f7-link>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selected.size }} selected</div>
-      <div v-if="theme.md" class="right">
-        <f7-link
-          v-if="showType !== 'Scene'"
-          v-show="selected.size > 0 && canRegenerate"
-          tooltip="Regenerate selected from template"
-          icon-md="material:autorenew"
-          icon-color="white"
-          @click="regenerateSelected()" />
-        <f7-link
-          v-if="showType !== 'Scene'"
-          v-show="selected.size > 0 && canDisable"
-          tooltip="Disable selected"
-          icon-md="material:pause_circle_outline"
-          icon-color="white"
-          @click="doDisableEnableSelected(false)" />
-        <f7-link
-          v-if="showType !== 'Scene'"
-          v-show="selected.size > 0 && canEnable"
-          tooltip="Enable selected"
-          icon-md="material:play_circle_outline"
-          icon-color="white"
-          @click="doDisableEnableSelected(true)" />
-        <f7-link
-          v-if="showType !== 'Scene'"
-          v-show="selected.size > 0"
-          tooltip="Copy selected"
-          icon-md="material:content_copy"
-          icon-color="white"
-          @click="initRuleDefinitionsPopup()" />
-        <f7-link
-          v-show="selectedDeletableItems.length"
-          tooltip="Delete selected"
-          icon-md="material:delete"
-          icon-color="white"
-          @click="deleteSelected" />
-      </div>
+      <list-selection-actions :copy-count="selection.selectedInFilter.size" @close="selection.toggleSelectionMode">
+        <template #extra-actions>
+          <list-selection-action-link
+            v-if="showType !== 'Scene'"
+            :text="$t('dialogs.disable')"
+            tooltip="Disable selected"
+            icon-ios="f7:pause_circle"
+            icon-aurora="f7:pause_circle"
+            icon-md="material:pause_circle_outline"
+            :count="selectedDisablable.size"
+            color="orange"
+            @click="doDisableEnableSelected(false)" />
+          <list-selection-action-link
+            v-if="showType !== 'Scene'"
+            :text="$t('dialogs.enable')"
+            tooltip="Enable selected"
+            icon-ios="f7:play_circle"
+            icon-aurora="f7:play_circle"
+            icon-md="material:play_circle_outline"
+            :count="selectedEnablable.size"
+            color="green"
+            @click="doDisableEnableSelected(true)" />
+          <list-selection-action-link
+            v-if="showType !== 'Scene'"
+            :text="$t('dialogs.copy')"
+            tooltip="Copy selected"
+            icon-ios="f7:square_on_square"
+            icon-aurora="f7:square_on_square"
+            icon-md="material:content_copy"
+            :count="selection.selectedInFilter.size"
+            color="blue"
+            @click="initRuleDefinitionsPopup()" />
+          <list-selection-action-link
+            v-if="showType !== 'Scene'"
+            :text="$t('dialogs.regenerate')"
+            tooltip="Regenerate selected from template"
+            icon-ios="f7:arrow_2_circlepath"
+            icon-aurora="f7:arrow_2_circlepath"
+            icon-md="material:autorenew"
+            :count="selectedRegeneratable.size"
+            color="uiOptionsStore.darkMode === 'dark' ? 'purple' : 'deeppurple'"
+            @click="regenerateSelected()" />
+          <list-selection-action-link
+            :text="$t('dialogs.delete')"
+            tooltip="Delete selected"
+            icon-ios="f7:trash"
+            icon-aurora="f7:trash"
+            icon-md="material:delete"
+            :count="selectedDeletable.size"
+            color="red"
+            @click="removeSelected" />
+        </template>
+      </list-selection-actions>
     </f7-toolbar>
 
     <f7-list-index
@@ -169,9 +137,10 @@
         <f7-list v-if="search.filteredResults.length === 0">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <group-box :title="getListTitle(search.isFiltered, search.filteredResults.length, rules.length, 'Rule', selected.size)">
-          <template v-if="showCheckboxes && search.filteredResults.length > 0" #after-title>
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+        <group-box
+          :title="getListTitle(search.isFiltered, search.filteredResults.length, rules.length, 'Rule', selection.selectedInFilter.size)">
+          <template v-if="selection.selectionMode && search.filteredResults.length > 0" #after-title>
+            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
           </template>
           <f7-list
             v-show="search.filteredResults.length > 0"
@@ -186,14 +155,14 @@
                 :key="rule.uid"
                 media-item
                 class="rulelist-item"
-                :checkbox="showCheckboxes ? true : null"
-                :checked="isChecked(rule.uid) ? true : null"
+                :checkbox="selection.selectionMode"
+                :checked="selection.isSelected(rule.uid)"
                 prevent-router
-                @click.ctrl="ctrlClick($event, rule)"
-                @click.meta="ctrlClick($event, rule)"
+                @click.ctrl="selection.ctrlClick(rule.uid)"
+                @click.meta="selection.ctrlClick(rule.uid)"
                 @click.exact="click($event, rule)"
                 :link="`${encodeURIComponent(rule.uid)}`"
-                :badge="showType == 'Scene' ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
+                :badge="showType === 'Scene' ? '' : ruleStatusBadgeText(ruleStatuses[rule.uid])"
                 :badge-color="ruleStatusBadgeColor(ruleStatuses[rule.uid])">
                 <template #title>
                   <span v-html="highlightMatches(rule.name, matches, 'name')"></span>
@@ -235,7 +204,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="theme-alt" href="add">
+      <f7-fab v-show="ready && !selection.selectionMode" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
         <f7-icon ios="f7:close" md="material:close" aurora="f7:close" />
       </f7-fab>
@@ -362,7 +331,6 @@
 
 .popup
   &.copy-definition-popup
-
     @media (--media-SM-up) and (min-height: 630px)
       width 90%
       max-width 450px
@@ -400,12 +368,14 @@
 
       .block-title
         font-size var(--f7-block-title-font-size)
+
+.disabled
+  color gray !important
 </style>
 
 <script>
 import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
@@ -413,14 +383,19 @@ import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { ruleStatusBadgeColor, ruleStatusBadgeText, isRuleStatusDisabled, getRuleLanguage, ruleType } from '@/components/rule/rule-helpers'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import { showToast } from '@/js/dialog-promises'
-import { canSerializeRules, createFileFormatForRules } from '@/api'
+import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { useSearch } from '@/components/useSearch'
+import { useSelection } from '@/components/useSelection'
 import { getListTitle, highlightMatches } from '@/pages/list-helpers'
 import copyToClipboard from '@/js/clipboard'
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
+import { plural } from '@/js/openhab/utils'
+
+import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import ListSelectionActionLink from '@/components/list/list-selection-action-link.vue'
 
 import OhSearchbar from '@/pages/oh-searchbar.vue'
+import * as api from '@/api'
 
 export default {
   props: {
@@ -432,13 +407,18 @@ export default {
   },
   components: {
     EmptyStatePlaceholder,
-    OhSearchbar
+    OhSearchbar,
+    ListSelectionActions,
+    ListSelectionActionLink
   },
   setup(props) {
     const rules = shallowRef([])
     const ruleStatuses = reactive({})
     const haystackFields = ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
     const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
+    const runtimeStore = useRuntimeStore()
+    const uiOptionsStore = useUIOptionsStore()
 
     function displayedTags(rule) {
       return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
@@ -499,14 +479,14 @@ export default {
       }
     }
 
-    const search = reactive(
-      useSearch(rules, {
-        filtersDefinitions,
-        haystackFields,
-        uidField: 'uid',
-        includeMatches: true
-      })
-    )
+    const searchState = useSearch(rules, {
+      filtersDefinitions,
+      haystackFields,
+      uidField: 'uid',
+      includeMatches: true
+    })
+    const search = reactive(searchState)
+    const selection = reactive(useSelection(searchState.filteredUids))
 
     filtersDefinitions.tag.options = () => search.getFuseValuesForField('tag')
     filtersDefinitions.language.options = () => search.getFuseValuesForField('language')
@@ -526,9 +506,12 @@ export default {
       serializationOptions,
       filtersDefinitions,
       search,
+      selection,
       getListTitle,
       highlightMatches,
-      haystackFields
+      haystackFields,
+      runtimeStore,
+      uiOptionsStore
     }
   },
   data() {
@@ -537,8 +520,6 @@ export default {
       initSearchbar: false,
       loading: false,
       noRuleEngine: false,
-      selected: new Set(), // Rule UIDs
-      showCheckboxes: false,
       eventSource: null,
       templates: [],
 
@@ -554,12 +535,6 @@ export default {
       dslCopyErrors: []
     }
   },
-  watch: {
-    'search.filteredUids'() {
-      // update selected set to include only currently filtered list
-      this.selected = new Set(this.search.filteredUids.filter((uid) => this.selected.has(uid)))
-    }
-  },
   computed: {
     indexedResults() {
       return this.search.filteredResults.reduce((prev, result) => {
@@ -573,54 +548,38 @@ export default {
         return prev
       }, {})
     },
-    allSelected() {
-      return this.selected.size >= this.search.filteredResults.length && this.search.filteredResults.length > 0
+    selectedDeletable() {
+      return new Set(this.rules.filter((r) => this.selection.selectedInFilter.has(r.uid) && r.editable).map((r) => r.uid))
     },
-    selectedDeletableItems() {
-      if (this.selected.size === 0) return []
-      return this.rules.filter((r) => this.selected.has(r.uid) && r.editable).map((r) => r.uid)
+    selectedEnablable() {
+      return new Set([...this.selection.selectedInFilter].filter((uid) => isRuleStatusDisabled(this.ruleStatuses[uid])))
     },
-    enablableItems() {
-      if (this.selected.size === 0) return 0
-      return [...this.selected].filter((i) => isRuleStatusDisabled(this.ruleStatuses[i])).length
+    selectedDisablable() {
+      return new Set(
+        [...this.selection.selectedInFilter].filter((uid) => this.ruleStatuses[uid] && !isRuleStatusDisabled(this.ruleStatuses[uid]))
+      )
     },
-    disablableItems() {
-      if (this.selected.size === 0) return 0
-      return [...this.selected].filter((i) => this.ruleStatuses[i] && !isRuleStatusDisabled(this.ruleStatuses[i])).length
-    },
-    regeneratableItemsCount() {
-      return this.regeneratableItems.length
-    },
-    regeneratableItems() {
-      if (this.selected.size === 0) return []
-      return [...this.selected].filter((i) => {
-        const rule = this.rules.find((r) => r.uid === i)
-        return (
-          rule &&
-          rule.templateUID &&
-          rule.templateState &&
-          rule.templateState !== 'no-template' &&
-          rule.templateState !== 'template-missing' &&
-          this.templates.some((t) => t.uid === rule.templateUID)
-        )
-      })
-    },
-    canEnable() {
-      return this.enablableItems > 0
-    },
-    canDisable() {
-      return this.disablableItems > 0
-    },
-    canRegenerate() {
-      return this.regeneratableItemsCount > 0
+    selectedRegeneratable() {
+      return new Set(
+        [...this.selection.selectedInFilter].filter((i) => {
+          const rule = this.rules.find((r) => r.uid === i)
+          return (
+            rule &&
+            rule.templateUID &&
+            rule.templateState &&
+            rule.templateState !== 'no-template' &&
+            rule.templateState !== 'template-missing' &&
+            this.templates.some((t) => t.uid === rule.templateUID)
+          )
+        })
+      )
     },
     canCopyToYAML() {
       return this.yamlCopyOk?.length && !this.yamlCopyErrors?.length
     },
     canCopyToDSL() {
       return this.dslCopyOk?.length && !this.dslCopyErrors?.length
-    },
-    ...mapStores(useRuntimeStore, useUIOptionsStore)
+    }
   },
   methods: {
     async onPageAfterIn() {
@@ -636,8 +595,9 @@ export default {
 
       this.initSearchbar = false
 
-      this.selected.clear()
-      this.showCheckboxes = false
+      this.selection.clearSelection()
+      this.selection.selectionMode = false
+
       let filter = this.showType != 'Rule' ? '&tags=' + this.showType : ''
 
       const promises = [this.$oh.api.get('/rest/templates'), this.$oh.api.get('/rest/rules?summary=false' + filter)]
@@ -661,7 +621,6 @@ export default {
 
           nextTick(() => {
             if (this.$refs.listIndex) this.$refs.listIndex.$el.f7ListIndex.update()
-            const searchbar = this.$refs.searchbar?.$el.f7Searchbar
             if (this.$device.desktop) {
               this.ohSearchbarRef?.focus()
             }
@@ -704,33 +663,23 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    toggleCheck() {
-      this.showCheckboxes = !this.showCheckboxes
-    },
-    isChecked(item) {
-      return this.selected.has(item)
-    },
     click(event, item) {
-      if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.uid, item)
+      if (this.selection.selectionMode) {
+        this.selection.toggleItemSelection(item.uid, item)
       } else {
         this.f7router.navigate(item.uid)
       }
     },
-    ctrlClick(event, item) {
-      this.toggleItemCheck(event, item.uid, item)
-      if (this.selected.size === 0) this.showCheckboxes = false
-    },
     templateClick(event, ctrl, rule) {
       if (!rule || !rule.templateUID) return
-      if (ctrl || this.showCheckboxes) {
+      if (ctrl || this.selection.selectionMode) {
         event.stopPropagation()
-        if (!this.showCheckboxes) this.showCheckboxes = true
+        if (!this.selection.selectionMode) this.selection.selectionMode = true
         const rules = this.rules.filter((r) => r.templateUID === rule.templateUID)
         let unchecked = 0,
           checked = 0
         rules.forEach((r) => {
-          if (this.isChecked(r.uid)) {
+          if (this.selection.isSelected(r.uid)) {
             checked++
           } else {
             unchecked++
@@ -738,69 +687,51 @@ export default {
         })
         const doCheck = checked < unchecked
         rules.forEach((r) => {
-          this.setItemChecked(r.uid, doCheck)
+          this.selection.setItemChecked(r.uid, doCheck)
         })
-        if (ctrl && this.selected.size === 0) this.showCheckboxes = false
+        if (ctrl && this.selection.selectedInFilter.size === 0) this.selection.selectionMode = false
       }
     },
-    selectDeselectAll() {
-      if (this.allSelected) {
-        this.selected.clear()
-      } else {
-        this.selected = new Set(this.filteredUids)
-      }
-    },
-    toggleItemCheck(event, item) {
-      if (!this.showCheckboxes) this.showCheckboxes = true
-      if (this.isChecked(item)) {
-        this.setItemChecked(item, false)
-      } else {
-        this.setItemChecked(item, true)
-      }
-    },
-    setItemChecked(item, checked) {
+    setItemChecked(uid, checked) {
       if (checked) {
-        if (!this.isChecked(item)) {
-          this.selected.add(item)
+        if (!this.selection.isSelected(uid)) {
+          this.selection.selected.add(uid)
         }
       } else {
-        if (this.isChecked(item)) {
-          this.selected.delete(item)
+        if (this.selection.isSelected(uid)) {
+          this.selection.selected.delete(uid)
         }
       }
     },
-    deleteSelected() {
-      f7.dialog.confirm(
-        `Delete ${this.selectedDeletableItems.length} rule${this.selectedDeletableItems.length === 1 ? '' : 's'}?`,
-        'Delete Rules',
-        () => {
-          this.doDeleteSelected()
-        }
+    async removeSelected() {
+      if (this.selectedDeletable.size === 0) return
+      if (
+        !(await showConfirmDialog(
+          `Delete ${this.selectedDeletable.size} of ${this.selection.selectedInFilter.size} selected ${plural('rule', this.selection.selectedInFilter.size)}?`,
+          'Delete Rules'
+        ))
       )
-    },
-    doDeleteSelected() {
-      let dialog = f7.dialog.progress('Deleting Rules...')
+        return
 
-      const promises = this.selectedDeletableItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
-      Promise.all(promises)
-        .then((data) => {
-          showToast((promises.length === 1 ? 'Rule' : 'Rules') + ' deleted')
-          dialog.close()
-          this.load()
-        })
-        .catch((err) => {
-          dialog.close()
-          this.load()
-          console.error(err)
-          f7.dialog.alert('An error occurred while deleting: ' + err)
-        })
+      let dialog = f7.dialog.progress('Deleting Rules...')
+      const promises = this.selectedDeletable.map((i) => this.$oh.api.delete('/rest/rules/' + i))
+      try {
+        await Promise.all(promises)
+        showToast((promises.length === 1 ? 'Rule' : 'Rules') + ' deleted')
+      } catch (err) {
+        console.error(err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+      } finally {
+        dialog.close()
+        this.load()
+      }
     },
     doDisableEnableSelected(enable) {
-      if (this.selected.size === 0) return
       let dialog = f7.dialog.progress('Please Wait...')
 
-      const items = [...this.selected].filter((i) => Boolean(isRuleStatusDisabled(this.ruleStatuses[i])) === Boolean(enable))
-      const promises = items.map((i) => this.$oh.api.postPlain('/rest/rules/' + i + '/enable', enable.toString()))
+      const selectedSet = enable ? this.selectedEnablable : this.selectedDisablable
+
+      const promises = [...selectedSet].map((uid) => this.$oh.api.postPlain('/rest/rules/' + uid + '/enable', enable.toString()))
       Promise.all(promises)
         .then((data) => {
           showToast((promises.length === 1 ? 'Rule ' : 'Rules ') + (enable ? 'enabled' : 'disabled'))
@@ -815,8 +746,8 @@ export default {
         })
     },
     regenerateSelected() {
-      if (this.selected.size === 0) return
-      const rules = this.regeneratableItems.map((i) => this.rules.find((r) => r.uid === i))
+      if (this.selectedRegeneratable.size === 0) return
+      const rules = [...this.selectedRegeneratable].map((i) => this.rules.find((r) => r.uid === i))
       if (rules.length === 0) return
       if (rules.length === 1 && rules[0].editable) {
         this.$oh.api
@@ -853,16 +784,16 @@ export default {
       return template ? template.label : rule.templateUID
     },
     async initRuleDefinitionsPopup() {
-      const ruleUids = [...this.selected]
+      const ruleUids = [...this.selection.selectedInFilter]
       if (!ruleUids || !ruleUids.length) {
         return
       }
       const [yamlResult, dslResult] = await Promise.allSettled([
-        canSerializeRules({
+        api.canSerializeRules({
           targetFormat: 'application/yaml',
           body: ruleUids
         }),
-        canSerializeRules({
+        api.canSerializeRules({
           targetFormat: 'application/vnd.openhab.dsl.rule',
           body: ruleUids
         })
@@ -948,17 +879,19 @@ export default {
       console.debug("Can't serialize to DSL:", this.dslCopyErrors)
     },
     deselectIncompatibleDsl() {
-      if (this.selected.size === 0) {
-        return
-      }
-      this.selected = new Set(this.dslCopyOk)
+      this.selection.selectedInFilter.forEach((uid) => {
+        if (!this.dslCopyOk.includes(uid)) {
+          this.selected.delete(uid)
+        }
+      })
       this.initRuleDefinitionsPopup()
     },
     deselectIncompatibleYaml() {
-      if (this.selected.size === 0) {
-        return
-      }
-      this.selected = new Set(this.yamlCopyOk)
+      this.selection.selectedInFilter.forEach((uid) => {
+        if (!this.yamlCopyOk.includes(uid)) {
+          this.selected.delete(uid)
+        }
+      })
       this.initRuleDefinitionsPopup()
     },
     exportDslClicked() {
@@ -976,34 +909,39 @@ export default {
       }
     },
     copyRuleDefinitionsToClipboard(type, serializationOption) {
-      if (this.selected.size === 0) {
+      if (this.selection.selectedInFilter.size === 0) {
         return
       }
       const mediaType = type === 'DSL' ? 'application/vnd.openhab.dsl.rule' : 'application/yaml'
-      const progressDialog = f7.dialog.progress(`Loading ${type || 'YAML'} definition${this.selected.size === 1 ? '' : 's'}...`)
-      createFileFormatForRules(
-        {
-          serializationOption: serializationOption || undefined,
-          body: [...this.selected]
-        },
-        {
-          parseAs: 'text',
-          headers: {
-            Accept: mediaType
-          }
-        }
+      const progressDialog = f7.dialog.progress(
+        `Loading ${type || 'YAML'} ${plural('definition', this.selection.selectedInFilter.size)}...`
       )
+      api
+        .createFileFormatForRules(
+          {
+            serializationOption: serializationOption || undefined,
+            body: [...this.selection.selectedInFilter]
+          },
+          {
+            parseAs: 'text',
+            headers: {
+              Accept: mediaType
+            }
+          }
+        )
         .then((ruleDefinition) => {
           progressDialog.close()
           copyToClipboard(ruleDefinition, {
-            dialogTitle: `Copy ${this.selected.size} Rule File Definition${this.selected.size === 1 ? '' : 's'}`,
-            dialogText: `Rule definition${this.selected.size === 1 ? '' : 's'} retrieved successfully. Click OK to copy ${this.selected.size === 1 ? 'it' : 'them'} to the clipboard.`,
+            dialogTitle: `Copy ${this.selection.selectedInFilter.size} Rule File ${plural('Definition', this.selection.selectedInFilter.size)}`,
+            dialogText: `Rule ${plural('definition', this.selection.selectedInFilter.size)} retrieved successfully. Click OK to copy ${this.selection.selectedInFilter.size === 1 ? 'it' : 'them'} to the clipboard.`,
             onSuccess: () => {
-              showToast(`${this.selected.size} ${type || 'YAML'} rule definition${this.selected.size === 1 ? '' : 's'} copied to clipboard`)
+              showToast(
+                `${this.selection.selectedInFilter.size} ${type || 'YAML'} rule ${plural('definition', this.selection.selectedInFilter.size)} copied to clipboard`
+              )
             },
             onError: () => {
               f7.dialog.alert(
-                `Error copying rule ${type || 'YAML'} definition${this.selected.size === 1 ? '' : 's'} to the clipboard`,
+                `Error copying rule ${type || 'YAML'} ${plural('definition', this.selection.selectedInFilter.size)} to the clipboard`,
                 'Error'
               )
             }
@@ -1012,8 +950,11 @@ export default {
         })
         .catch((error) => {
           progressDialog.close()
-          console.error(`Failed to generate rule definition${this.selected.size === 1 ? '' : 's'}`, error)
-          f7.dialog.alert(`Error loading rule ${type || 'YAML'} definition${this.selected.size === 1 ? '' : 's'}: ${error}`, 'Error')
+          console.error(`Failed to generate rule ${plural('definition', this.selection.selectedInFilter.size)}`, error)
+          f7.dialog.alert(
+            `Error loading rule ${type || 'YAML'} ${plural('definition', this.selection.selectedInFilter.size)}: ${error}`,
+            'Error'
+          )
           this.copyPopupOpened = false
         })
     }

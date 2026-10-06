@@ -3,7 +3,10 @@
     <f7-navbar>
       <oh-nav-content title="Sitemaps" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="selection.toggleSelectionMode()"
+            :text="!theme.md ? (selection.selectionMode ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
@@ -18,34 +21,13 @@
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selected.size > 0" class="display-flex justify-content-center" style="width: 100%">
-        <f7-link
-          v-if="!theme.md"
-          v-show="selectedInFilter.size > 0"
-          color="red"
-          class="delete display-flex flex-direction-row margin-right"
-          icon-ios="f7:trash"
-          icon-aurora="f7:trash"
-          @click="removeSelected">
-          Remove
-        </f7-link>
-        <f7-link
-          v-show="selectedInFilter.size > 0"
-          color="theme-alt"
-          class="copy display-flex flex-direction-row"
-          icon-ios="f7:square_on_square"
-          icon-aurora="f7:square_on_square"
-          @click="copySelected">
-          &nbsp;Copy
-        </f7-link>
-      </div>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="toggleCheck()" />
-      <div v-if="theme.md" class="title">{{ selectedInFilter.size }} selected</div>
-      <div v-if="theme.md && selectedInFilter.size > 0" class="right">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
-        <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
-      </div>
+    <f7-toolbar v-if="selection.selectionMode" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <list-selection-actions
+        @close="selection.toggleSelectionMode"
+        :remove-count="selectedDeletable.size"
+        @remove="removeSelected"
+        :copy-count="selection.selectedInFilter.size"
+        @copy="copySelected" />
     </f7-toolbar>
 
     <f7-list-index
@@ -63,9 +45,11 @@
           <f7-list-item title="Nothing found" />
         </f7-list>
         <group-box
-          :title="getListTitle(search.isFiltered, search.filteredResults.length, sitemaps.length, 'Sitemap', selectedInFilter.size)">
-          <template v-if="showCheckboxes && search.filteredUids.length > 0" #after-title>
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+          :title="
+            getListTitle(search.isFiltered, search.filteredResults.length, sitemaps.length, 'Sitemap', selection.selectedInFilter.size)
+          ">
+          <template v-if="selection.selectionMode && search.filteredUids.length > 0" #after-title>
+            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
           </template>
           <f7-list v-show="search.filteredResults.length > 0" class="col sitemaps-list" ref="sitemapsList" :contacts-list="true" media-list>
             <f7-list-group v-for="(resultsWithInitial, initial) in indexedResults" :key="initial">
@@ -74,11 +58,11 @@
                 v-for="{ item: sitemap, matches } in resultsWithInitial"
                 :key="sitemap.name"
                 media-item
-                :checkbox="showCheckboxes"
-                :checked="isChecked(sitemap.name) ? true : null"
+                :checkbox="selection.selectionMode"
+                :checked="selection.isSelected(sitemap.name)"
                 prevent-router
-                @click.ctrl="ctrlClick($event, sitemap)"
-                @click.meta="ctrlClick($event, sitemap)"
+                @click.ctrl="selection.ctrlClick(sitemap.name)"
+                @click.meta="selection.ctrlClick(sitemap.name)"
                 @click.exact="click($event, sitemap)"
                 :link="encodeURIComponent(sitemap.name)">
                 <template #title>
@@ -119,7 +103,7 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="ready && !showCheckboxes" position="right-bottom" color="theme-alt" href="add">
+      <f7-fab v-show="ready && !selection.selectionMode" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
     </template>
@@ -133,13 +117,15 @@ import { f7, theme } from 'framework7-vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import { useSearch } from '@/components/useSearch'
+import { useSelection } from '@/components/useSelection'
 import { getListTitle, highlightMatches } from '@/pages/list-helpers'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import { showToast } from '@/js/dialog-promises'
+import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import OhSearchbar from '@/pages/oh-searchbar.vue'
+import ListSelectionActions from '@/components/list/list-selection-actions.vue'
 
 import * as api from '@/api'
 
@@ -150,7 +136,8 @@ export default {
   },
   components: {
     EmptyStatePlaceholder,
-    OhSearchbar
+    OhSearchbar,
+    ListSelectionActions
   },
   setup() {
     const sitemaps = shallowRef([])
@@ -172,14 +159,14 @@ export default {
       }
     }
 
-    const search = reactive(
-      useSearch(sitemaps, {
-        filtersDefinitions,
-        haystackFields,
-        uidField: 'name',
-        includeMatches: true
-      })
-    )
+    const searchState = useSearch(sitemaps, {
+      filtersDefinitions,
+      haystackFields,
+      uidField: 'name',
+      includeMatches: true
+    })
+    const search = reactive(searchState)
+    const selection = reactive(useSelection(searchState.filteredUids))
 
     return {
       theme,
@@ -188,6 +175,7 @@ export default {
       runtimeStore,
       filtersDefinitions,
       search,
+      selection,
       getListTitle,
       haystackFields,
       highlightMatches,
@@ -198,9 +186,7 @@ export default {
     return {
       ready: false,
       initSearchbar: false,
-      loading: false,
-      selected: new Set(),
-      showCheckboxes: false
+      loading: false
     }
   },
   computed: {
@@ -214,11 +200,12 @@ export default {
         return prev
       }, {})
     },
-    allSelected() {
-      return this.search.filteredUids.length > 0 && this.search.filteredUids.every((name) => this.selected.has(name))
-    },
-    selectedInFilter() {
-      return new Set(this.search.filteredUids.filter((name) => this.selected.has(name)))
+    selectedDeletable() {
+      return new Set(
+        this.sitemaps
+          .filter((sitemap) => this.selection.selectedInFilter.has(sitemap.name) && sitemap.editable)
+          .map((sitemap) => sitemap.name)
+      )
     }
   },
   methods: {
@@ -236,8 +223,8 @@ export default {
       this.initSearchbar = false
 
       this.sitemaps = []
-      this.selected.clear()
-      this.showCheckboxes = false
+      this.selection.clearSelection()
+      this.selection.selectionMode = false
 
       try {
         const _sitemaps = await api.getSitemapDefinitions()
@@ -260,85 +247,51 @@ export default {
         }
       })
     },
-    toggleCheck() {
-      this.showCheckboxes = !this.showCheckboxes
-      if (!this.showCheckboxes) {
-        this.selected.clear()
-      }
-    },
-    isChecked(item) {
-      return this.selected.has(item)
-    },
-    selectDeselectAll() {
-      if (this.allSelected) {
-        this.selected.clear()
-      } else {
-        this.selected = new Set(this.search.filteredUids)
-      }
-    },
     copySelected() {
-      if (this.selectedInFilter.size === 0) {
+      if (this.selection.selectedInFilter.size === 0) {
         showToast('No sitemaps selected to copy')
         return
       }
-      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, [...this.selectedInFilter])
+      this.copyFileDefinitionToClipboard(this.ObjectType.SITEMAP, [...this.selection.selectedInFilter])
     },
     click(event, item) {
-      if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.name, item)
+      if (this.selection.selectionMode) {
+        // Calling preventDefault() is necessary to prevent the default label-click behavior of toggling the checkbox,
+        // which would cause it to go out of sync with Vue's state.
+        // This is because f7-list-item renders a <label> that wraps the checkbox <input>.
+        // without this, the browser's native label click would toggle el.checked independently of Vue's binding.
+        // This issue only occurs when the list item has no link (i.e. is not editable)
+        event.preventDefault()
+        this.selection.toggleItemSelection(item.name)
       } else {
         this.f7router.navigate(encodeURIComponent(item.name))
       }
     },
-    ctrlClick(event, item) {
-      this.toggleItemCheck(event, item.name, item)
-      if (!this.selected.size) this.showCheckboxes = false
-    },
-    toggleItemCheck(event, name, item) {
-      if (!this.showCheckboxes) this.showCheckboxes = true
-      if (this.isChecked(name)) {
-        this.selected.delete(name)
-      } else {
-        this.selected.add(name)
-      }
-      // Calling preventDefault() is necessary to prevent the default label-click behavior of toggling the checkbox,
-      // which would cause it to go out of sync with Vue's state.
-      // This is because f7-list-item renders a <label> that wraps the checkbox <input>.
-      // without this, the browser's native label click would toggle el.checked independently of Vue's binding.
-      // This issue only occurs when the list item has no link (i.e. is not editable)
-      event.preventDefault()
-    },
-    removeSelected() {
-      f7.dialog.confirm(`Remove ${this.selectedInFilter.size} selected sitemaps?`, `Remove Sitemaps`, () => {
-        this.doRemoveSelected()
-      })
-    },
-    doRemoveSelected() {
-      if ([...this.selectedInFilter].some((i) => !this.sitemaps.find((s) => s.name === i)?.editable)) {
-        f7.dialog.alert('Some of the selected sitemaps are not modifiable because they have been created by textual configuration')
+    async removeSelected() {
+      if (this.selectedDeletable.size === 0) return
+      if (
+        !(await showConfirmDialog(
+          `Remove ${this.selectedDeletable.size} of ${this.selection.selectedInFilter.size} selected sitemaps?`,
+          `Remove Sitemaps`
+        ))
+      )
         return
-      }
 
       let dialog = f7.dialog.progress(`Deleting Sitemaps...`)
-
-      const promises = [...this.selectedInFilter].map((p) => {
+      const promises = [...this.selectedDeletable].map((p) => {
         return api.removeSitemapFromRegistry({ sitemapname: p })
       })
-      Promise.all(promises)
-        .then((data) => {
-          showToast('Sitemaps removed')
-          this.selected.clear()
-          dialog.close()
-          this.load()
-          f7.emit('sidebarRefresh', null)
-        })
-        .catch((err) => {
-          dialog.close()
-          this.load()
-          console.error(err)
-          showToast('An error occurred while deleting: ' + (err?.message || String(err)))
-          f7.emit('sidebarRefresh', null)
-        })
+      try {
+        await Promise.all(promises)
+        showToast('Sitemaps removed')
+      } catch (err) {
+        console.error(err)
+        showToast('An error occurred while deleting: ' + (err?.message || String(err)))
+      } finally {
+        dialog.close()
+        this.load()
+        f7.emit('sidebarRefresh', null)
+      }
     }
   }
 }
