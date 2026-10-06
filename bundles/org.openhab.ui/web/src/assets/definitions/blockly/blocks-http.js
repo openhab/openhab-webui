@@ -15,7 +15,7 @@ export default function (f7) {
     'data:image/png;base64,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'
 
   /*
-   * Provides block to perform GET, DELETE, POST and PUT requests
+   * Provides block to perform GET, POST, PUT, PATCH, and DELETE requests
    */
   Blockly.Blocks['oh_httprequest'] = {
     init: function () {
@@ -39,6 +39,7 @@ export default function (f7) {
               ['send HTTP GET to', 'HttpGetRequest'],
               ['send HTTP POST to', 'HttpPostRequest'],
               ['send HTTP PUT to', 'HttpPutRequest'],
+              ['send HTTP PATCH to', 'HttpPatchRequest'],
               ['send HTTP DELETE to', 'HttpDeleteRequest']
             ],
             this.handleRequestTypeSelection.bind(this)
@@ -122,7 +123,7 @@ export default function (f7) {
         this.removeInput('query')
       }
 
-      if (['HttpPostRequest', 'HttpPutRequest'].includes(this.requestType)) {
+      if (['HttpPostRequest', 'HttpPutRequest', 'HttpPatchRequest'].includes(this.requestType)) {
         let payloadInput = this.getInput('payload')
         let hasPayload = this.contentType !== 'none'
         if (!hasPayload && payloadInput && payloadInput.type === Blockly.inputs.inputTypes.VALUE) {
@@ -229,14 +230,14 @@ export default function (f7) {
   }
 
   /**
-   * Implements GET, DELETE, POST and PUT requests
+   * Implements GET, DELETE, POST, PUT, and PATCH requests
    *
    * @param block
    * @returns {[string,number]}
    */
   javascriptGenerator.forBlock['oh_httprequest'] = function (block, generator) {
     const requestType = block.getFieldValue('requestType')
-    const isPayloadRequest = ['HttpPostRequest', 'HttpPutRequest'].includes(requestType)
+    const isPayloadRequest = ['HttpPostRequest', 'HttpPutRequest', 'HttpPatchRequest'].includes(requestType)
 
     let url = valueToCode(block, 'url', javascriptGenerator.ORDER_ATOMIC)
 
