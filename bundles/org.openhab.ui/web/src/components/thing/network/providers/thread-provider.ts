@@ -717,26 +717,40 @@ function selfRoute(node: ThreadNode): RouteEntry | undefined {
   return match ?? (candidates.length === 1 ? candidates[0] : undefined)
 }
 
-/** Every device on the map, found by extended address across all networks */
+/**
+ * Every device on the map. openHAB devices are drawn once whichever network reports them, other devices once per
+ * network that reports them.
+ */
 class NodeIndex {
   readonly nodes: ThreadNode[] = []
-  private readonly byExt = new Map<string, ThreadNode>()
+  private readonly fabricByExt = new Map<string, ThreadNode>()
+  private readonly othersByExt = new Map<string, ThreadNode>()
 
   constructor(fabricNodes: ThreadNode[]) {
-    fabricNodes.forEach((n) => this.add(n))
+    for (const node of fabricNodes) {
+      this.nodes.push(node)
+      if (node.extAddress && !this.fabricByExt.has(node.extAddress)) this.fabricByExt.set(node.extAddress, node)
+    }
   }
 
-  get(extAddress: string): ThreadNode | undefined {
-    return this.byExt.get(extAddress)
+  /**
+   * The node with this extended address in the given network. Returns null for an openHAB device that is in another
+   * network or has Thread turned off, as we know where it really is.
+   */
+  find(extAddress: string, networkKey: string | null): ThreadNode | null | undefined {
+    const fabric = this.fabricByExt.get(extAddress)
+    if (fabric) return fabric.networkKey === networkKey ? fabric : null
+    return this.othersByExt.get(`${networkKey}|${extAddress}`)
   }
 
-  add(node: ThreadNode): void {
+  addOther(node: ThreadNode): void {
     this.nodes.push(node)
     this.setExtAddress(node)
   }
 
   setExtAddress(node: ThreadNode): void {
-    if (node.extAddress && !this.byExt.has(node.extAddress)) this.byExt.set(node.extAddress, node)
+    const key = `${node.networkKey}|${node.extAddress}`
+    if (node.extAddress && !this.othersByExt.has(key)) this.othersByExt.set(key, node)
   }
 }
 
@@ -765,7 +779,10 @@ class NodeResolver {
     hints: { router?: boolean; rxOnWhenIdle?: boolean }
   ): ThreadNode | undefined {
     const validRloc = validRloc16(rloc16, extAddress)
-    let node = extAddress ? this.index.get(extAddress) : undefined
+    const found = extAddress ? this.index.find(extAddress, reporter.networkKey) : undefined
+    // The entry points at an openHAB device known to be elsewhere, so it is left over from before
+    if (found === null) return undefined
+    let node = found
     if (!node && validRloc !== null) {
       const candidate = this.byRloc.get(validRloc)
       // RLOC16s get reassigned, so a match is ignored when the extended addresses disagree
@@ -774,7 +791,7 @@ class NodeResolver {
     if (!node) {
       if (!extAddress && validRloc === null) return undefined
       node = {
-        id: extAddress ? `thread_${extAddress}` : `rloc_${reporter.networkKey}_${formatRloc(validRloc as number)}`,
+        id: `thread_${reporter.networkKey}_${extAddress ?? formatRloc(validRloc as number)}`,
         label: 'Thread Device (not in openHAB)',
         networkKey: reporter.networkKey,
         networkName: reporter.networkName,
@@ -788,7 +805,7 @@ class NodeResolver {
         seenBy: new Set(),
         routerHint: false
       }
-      this.index.add(node)
+      this.index.addOther(node)
       this.addRloc(node)
     }
     if (!node.thing) {

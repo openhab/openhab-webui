@@ -188,7 +188,7 @@ describe('ThreadNetworkProvider', () => {
         '[{"extAddress":"0000000000000000","rloc16":2048,"routerId":2,"nextHop":5,"pathCost":2,"allocated":true,"linkEstablished":false}]'
     })
     const graph = provider.buildGraph([tbr], BRIDGE)
-    expect(graph.nodes.find((n) => n.id === 'rloc_B8C2D9E4F08A5B65_0x0800')?.role).toBe('router')
+    expect(graph.nodes.find((n) => n.id === 'thread_B8C2D9E4F08A5B65_0x0800')?.role).toBe('router')
   })
 
   it('reads hex extended addresses written by the binding', () => {
@@ -224,6 +224,57 @@ describe('ThreadNetworkProvider', () => {
     expect(graph.links.some((l) => l.source === '6034757055397416245' || l.target === '6034757055397416245')).toBe(false)
   })
 
+  it('does not link to a border router with Thread turned off that others still list', () => {
+    const disabled = thing('6034757055397416245', 'OTBR 2', {
+      ...otbr2.properties,
+      'ThreadNetworkDiagnostics-extAddress': '7A530ACD62A8B459'
+    })
+    const remembers = thing('5', 'Remembers OTBR 2', {
+      'ThreadNetworkDiagnostics-routingRole': 'ROUTER',
+      'ThreadNetworkDiagnostics-extendedPanId': OPENHAB_XPAN,
+      'ThreadNetworkDiagnostics-extAddress': '0000000000000005',
+      'ThreadNetworkDiagnostics-neighborTable': '[{"extAddress":"7A530ACD62A8B459","rloc16":56320,"lqi":3,"isChild":false}]'
+    })
+    const graph = provider.buildGraph([remembers, disabled], BRIDGE)
+    expect(graph.links).toHaveLength(0)
+    expect(graph.nodes.map((n) => n.id).sort()).toEqual(['5', '6034757055397416245'])
+  })
+
+  it('does not link across networks to a device that moved', () => {
+    const moved = thing('8', 'Moved', {
+      'ThreadNetworkDiagnostics-routingRole': 'ROUTER',
+      'ThreadNetworkDiagnostics-networkName': 'Other-Thread',
+      'ThreadNetworkDiagnostics-extendedPanId': '1',
+      'ThreadNetworkDiagnostics-extAddress': '0000000000000008',
+      'ThreadNetworkDiagnostics-neighborTable': '[]'
+    })
+    const remembers = thing('5', 'Remembers Moved', {
+      'ThreadNetworkDiagnostics-routingRole': 'ROUTER',
+      'ThreadNetworkDiagnostics-extendedPanId': OPENHAB_XPAN,
+      'ThreadNetworkDiagnostics-extAddress': '0000000000000005',
+      'ThreadNetworkDiagnostics-neighborTable': '[{"extAddress":"0000000000000008","rloc16":2048,"lqi":3,"isChild":false}]'
+    })
+    const graph = provider.buildGraph([remembers, moved], BRIDGE)
+    expect(graph.links).toHaveLength(0)
+    expect(graph.nodes.map((n) => n.id).sort()).toEqual(['5', '8'])
+  })
+
+  it('draws a device not in openHAB once per network that sees it', () => {
+    const observer = (id: string, xpan: string, name: string) =>
+      thing(id, `Observer ${id}`, {
+        'ThreadNetworkDiagnostics-routingRole': 'ROUTER',
+        'ThreadNetworkDiagnostics-networkName': name,
+        'ThreadNetworkDiagnostics-extendedPanId': xpan,
+        'ThreadNetworkDiagnostics-extAddress': `000000000000000${id}`,
+        'ThreadNetworkDiagnostics-neighborTable': '[{"extAddress":"00000000000000FF","rloc16":2048,"lqi":3,"isChild":false}]'
+      })
+    const graph = provider.buildGraph([observer('1', OPENHAB_XPAN, 'A'), observer('2', '1', 'B')], BRIDGE)
+    const unknownIds = graph.nodes.filter((n) => n.status === 'unknown').map((n) => n.id)
+    expect(unknownIds).toHaveLength(2)
+    expect(new Set(unknownIds).size).toBe(2)
+    expect(graph.links).toHaveLength(2)
+  })
+
   it('puts a device that only reports its network name in the same network', () => {
     const nameOnly = thing('7', 'Name Only', {
       'ThreadNetworkDiagnostics-routingRole': 'ROUTER',
@@ -255,8 +306,8 @@ describe('ThreadNetworkProvider', () => {
     })
     const graph = provider.buildGraph([oldParent, promoted], BRIDGE)
     const linkTo = (other: string) => graph.links.find((l) => [l.source, l.target].sort().join() === ['2', other].sort().join())
-    expect(linkTo('thread_00000000000000C1')).toMatchObject({ type: 'peer' })
-    expect(linkTo('thread_00000000000000C2')).toMatchObject({ type: 'peer' })
+    expect(linkTo('thread_B8C2D9E4F08A5B65_00000000000000C1')).toMatchObject({ type: 'peer' })
+    expect(linkTo('thread_B8C2D9E4F08A5B65_00000000000000C2')).toMatchObject({ type: 'peer' })
     expect(linkTo('1')).toMatchObject({ type: 'asymmetric', lineStyle: 'dashed', properties: { stale: true } })
   })
 
@@ -271,7 +322,7 @@ describe('ThreadNetworkProvider', () => {
     })
     const graph = provider.buildGraph([leader], BRIDGE)
     expect(graph.nodes.find((n) => n.id === '1')!.properties!.rloc16).toBe('0x0000')
-    expect(graph.links[0]).toMatchObject({ source: '1', target: 'thread_000000000000000B', type: 'hierarchical' })
+    expect(graph.links[0]).toMatchObject({ source: '1', target: 'thread_B8C2D9E4F08A5B65_000000000000000B', type: 'hierarchical' })
   })
 
   it('draws the same map whatever order the things come in', () => {
