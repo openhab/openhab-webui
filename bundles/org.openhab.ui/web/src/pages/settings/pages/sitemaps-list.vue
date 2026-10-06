@@ -44,13 +44,20 @@
         <f7-list v-if="sitemaps.length > 0 && search.filteredResults.length === 0" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <group-box
-          :title="
-            getListTitle(search.isFiltered, search.filteredResults.length, sitemaps.length, 'Sitemap', selection.selectedInFilter.size)
-          ">
-          <template v-if="selection.selectionMode && search.filteredUids.length > 0" #after-title>
-            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
+        <group-box>
+          <list-header>
+            <template v-if="selection.selectionMode && search.filteredResults.length > 0" #before-title>
+              <f7-checkbox
+                :indeterminate="selection.someSelected && !selection.allSelected"
+                :checked="selection.allSelected"
+                @change="selection.selectDeselectAll" />
+            </template>
+            <template #title>
+              {{
+                getListTitle(search.isFiltered, search.filteredResults.length, sitemaps.length, 'Sitemap', selection.selectedInFilter.size)
+              }}
+            </template>
+          </list-header>
           <f7-list v-show="search.filteredResults.length > 0" class="col sitemaps-list" ref="sitemapsList" :contacts-list="true" media-list>
             <f7-list-group v-for="(resultsWithInitial, initial) in indexedResults" :key="initial">
               <f7-list-item v-if="resultsWithInitial.length > 0" :title="initial" group-title />
@@ -126,6 +133,7 @@ import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import OhSearchbar from '@/pages/oh-searchbar.vue'
 import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import ListHeader from '@/components/list/list-header.vue'
 
 import * as api from '@/api'
 
@@ -137,7 +145,8 @@ export default {
   components: {
     EmptyStatePlaceholder,
     OhSearchbar,
-    ListSelectionActions
+    ListSelectionActions,
+    ListHeader
   },
   setup() {
     const sitemaps = shallowRef([])

@@ -52,7 +52,18 @@
           <f7-list-item title="Nothing found" />
         </f7-list>
 
-        <group-box v-if="ready" :title="blocks.length + ' block libraries'">
+        <group-box v-if="ready && blocks.length > 0">
+          <list-header>
+            <template v-if="selection.selectionMode" #before-title>
+              <f7-checkbox
+                :indeterminate="selection.someSelected && !selection.allSelected"
+                :checked="selection.allSelected"
+                @change="selection.selectDeselectAll" />
+            </template>
+            <template #title>
+              {{ blocks.length + ' block libraries' }}
+            </template>
+          </list-header>
           <f7-list v-show="blocks.length > 0" class="searchbar-found col blocks-list" ref="blocksList" media-list>
             <f7-list-item
               v-for="(b, index) in blocks"
@@ -110,13 +121,15 @@ import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 import { useSelection } from '@/components/useSelection'
 import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import ListHeader from '@/components/list/list-header.vue'
 
 export default {
   props: {
     f7router: Object
   },
   components: {
-    ListSelectionActions
+    ListSelectionActions,
+    ListHeader
   },
   setup() {
     const blocks = shallowRef([])

@@ -63,18 +63,24 @@
       </f7-col>
 
       <f7-col v-show="ready">
-        <div v-show="ready && pages.length > 0" class="padding-left padding-right">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
-            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')"> By type </f7-button>
-          </f7-segmented>
-        </div>
-
-        <group-box
-          :title="getListTitle(search.isFiltered, search.filteredResults.length, pages.length, 'Page', selection.selectedInFilter.size)">
-          <template v-if="selection.selectionMode && search.filteredUids.length > 0" #after-title>
-            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
+        <group-box>
+          <list-header>
+            <template v-if="selection.selectionMode && search.filteredResults.length > 0" #before-title>
+              <f7-checkbox
+                :indeterminate="selection.someSelected && !selection.allSelected"
+                :checked="selection.allSelected"
+                @change="selection.selectDeselectAll" />
+            </template>
+            <template #title>
+              {{ getListTitle(search.isFiltered, search.filteredResults.length, pages.length, 'Page', selection.selectedInFilter.size) }}
+            </template>
+            <template #view>
+              <f7-segmented strong class="grouping-switch">
+                <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'">A-Z</f7-button>
+                <f7-button :active="groupBy === 'type'" @click="groupBy = 'type'">Type</f7-button>
+              </f7-segmented>
+            </template>
+          </list-header>
           <f7-list
             v-show="search.filteredResults.length > 0"
             class="col pages-list"
@@ -173,9 +179,9 @@
 import { nextTick, reactive, toRaw, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
-import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { getPageType, getPageIcon } from '@/pages/page-type'
+import { useStorage } from '@vueuse/core'
 import { useSearch } from '@/components/useSearch'
 import { useSelection } from '@/components/useSelection'
 import { getListTitle, findElementsInObject, highlightMatches } from '@/pages/list-helpers'
@@ -185,20 +191,27 @@ import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 
 import OhSearchbar from '@/pages/oh-searchbar.vue'
 import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import ListHeader from '@/components/list/list-header.vue'
+
+const storagePrefix = 'openhab.ui:pages:'
 
 export default {
   components: {
     OhSearchbar,
-    ListSelectionActions
+    ListSelectionActions,
+    ListHeader
   },
   props: {
     f7router: Object
   },
   setup() {
-    const runtimeStore = useRuntimeStore()
     const pages = shallowRef([])
     const haystackFields = ['uid', 'label', 'tag']
     const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
+    const groupBy = useStorage(storagePrefix + 'pagesGroupBy', 'alphabetical', sessionStorage, {
+      writeDefaults: false
+    })
 
     const filtersDefinitions = {
       is: {
@@ -247,7 +260,6 @@ export default {
 
     return {
       theme,
-      runtimeStore,
       search,
       selection,
       pages,
@@ -255,7 +267,8 @@ export default {
       getListTitle,
       ohSearchbarRef,
       haystackFields,
-      highlightMatches
+      highlightMatches,
+      groupBy
     }
   },
   data() {
@@ -266,14 +279,6 @@ export default {
     }
   },
   computed: {
-    groupBy: {
-      get() {
-        return this.runtimeStore.pagesGroupOrder
-      },
-      set(value) {
-        this.runtimeStore.pagesGroupOrder = value
-      }
-    },
     indexedResults() {
       if (this.groupBy === 'alphabetical') {
         return this.search.filteredResults.reduce((prev, result) => {
@@ -304,6 +309,13 @@ export default {
     },
     selectedDeletable() {
       return new Set(this.pages.filter((page) => this.selection.selectedInFilter.has(page.uid) && page.editable).map((page) => page.uid))
+    }
+  },
+  watch: {
+    groupBy(newValue, oldValue) {
+      if (newValue === 'alphabetical' && this.$refs.listIndex) {
+        this.$refs.listIndex.update()
+      }
     }
   },
   methods: {
@@ -347,10 +359,6 @@ export default {
         .finally(() => {
           this.loading = false
         })
-    },
-    switchGroupOrder(groupBy) {
-      this.groupBy = groupBy
-      if (this.groupBy === 'alphabetical') this.$refs.listIndex.update()
     },
     click(event, item) {
       if (this.selection.selectionMode) {

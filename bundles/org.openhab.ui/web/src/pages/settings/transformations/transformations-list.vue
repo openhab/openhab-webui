@@ -56,17 +56,27 @@
       </f7-col>
 
       <f7-col v-show="transformations.length > 0">
-        <div class="searchbar-found padding-left padding-right">
-          <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="switchGroupOrder('alphabetical')"> Alphabetical </f7-button>
-            <f7-button :active="groupBy === 'type'" @click="switchGroupOrder('type')"> By type </f7-button>
-          </f7-segmented>
-        </div>
-
         <f7-list class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <group-box :title="transformations.length + ' transformations'" full-width>
+        <group-box full-width>
+          <list-header>
+            <template v-if="selection.selectionMode" #before-title>
+              <f7-checkbox
+                :indeterminate="selection.someSelected && !selection.allSelected"
+                :checked="selection.allSelected"
+                @change="selection.selectDeselectAll" />
+            </template>
+            <template #title>
+              {{ transformations.length + ' transformations' }}
+            </template>
+            <template #view>
+              <f7-segmented strong class="grouping-switch">
+                <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'">A-Z</f7-button>
+                <f7-button :active="groupBy === 'type'" @click="groupBy = 'type'">Type</f7-button>
+              </f7-segmented>
+            </template>
+          </list-header>
           <f7-list
             class="searchbar-found col transformations-list"
             ref="transformationsList"
@@ -138,6 +148,7 @@ import { f7, theme } from 'framework7-vue'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import ListHeader from '@/components/list/list-header.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useSelection } from '@/components/useSelection'
@@ -155,7 +166,8 @@ export default {
   components: {
     EmptyStatePlaceholder,
     ClipboardIcon,
-    ListSelectionActions
+    ListSelectionActions,
+    ListHeader
   },
   setup() {
     const transformations = shallowRef([])
@@ -211,6 +223,13 @@ export default {
       }
     }
   },
+  watch: {
+    groupBy(newValue, oldValue) {
+      if (newValue === 'alphabetical' && this.$refs.listIndex) {
+        this.$refs.listIndex.update()
+      }
+    }
+  },
   methods: {
     async onPageAfterIn() {
       this.load()
@@ -238,18 +257,6 @@ export default {
         if (this.$refs.listIndex) this.$refs.listIndex.update()
         if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
         this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQuery || '')
-      })
-    },
-    switchGroupOrder(groupBy) {
-      this.groupBy = groupBy
-      const searchbar = this.$refs.searchbar.$el.f7Searchbar
-      const filterQuery = searchbar.query
-      nextTick(() => {
-        if (filterQuery) {
-          searchbar.clear()
-          searchbar.search(filterQuery)
-        }
-        if (groupBy === 'alphabetical') this.$refs.listIndex.update()
       })
     },
     click(event, transformation) {

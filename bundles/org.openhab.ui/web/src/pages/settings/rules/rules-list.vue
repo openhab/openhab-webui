@@ -83,7 +83,7 @@
 
     <f7-list-index
       v-if="$refs.rulesList"
-      v-show="!$device.desktop"
+      v-show="groupBy === 'alphabetical' && !$device.desktop"
       ref="listIndex"
       :listEl="$refs.rulesList ? $$($refs.rulesList.$el) : undefined"
       :scroll-list="true"
@@ -137,17 +137,30 @@
         <f7-list v-if="search.filteredResults.length === 0">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <group-box
-          :title="getListTitle(search.isFiltered, search.filteredResults.length, rules.length, 'Rule', selection.selectedInFilter.size)">
-          <template v-if="selection.selectionMode && search.filteredResults.length > 0" #after-title>
-            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
+        <group-box>
+          <list-header>
+            <template v-if="selection.selectionMode && search.filteredResults.length > 0" #before-title>
+              <f7-checkbox
+                :indeterminate="selection.someSelected && !selection.allSelected"
+                :checked="selection.allSelected"
+                @change="selection.selectDeselectAll" />
+            </template>
+            <template #title>
+              {{ getListTitle(search.isFiltered, search.filteredResults.length, rules.length, 'Rule', selection.selectedInFilter.size) }}
+            </template>
+            <template #view>
+              <f7-segmented strong class="grouping-switch">
+                <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'">A-Z</f7-button>
+                <f7-button :active="groupBy === 'language'" @click="groupBy = 'language'">Language</f7-button>
+              </f7-segmented>
+            </template>
+          </list-header>
           <f7-list
             v-show="search.filteredResults.length > 0"
             class="searchbar-found col rules-list"
             ref="rulesList"
             media-list
-            contacts-list>
+            :contacts-list="groupBy === 'alphabetical'">
             <f7-list-group v-for="(resultsWithInitial, initial) in indexedResults" :key="initial">
               <f7-list-item v-if="resultsWithInitial.length > 0" :title="initial" group-title />
               <f7-list-item
@@ -376,6 +389,7 @@
 <script>
 import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
+import { useStorage } from '@vueuse/core'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
@@ -393,9 +407,12 @@ import { plural } from '@/js/openhab/utils'
 
 import ListSelectionActions from '@/components/list/list-selection-actions.vue'
 import ListSelectionActionLink from '@/components/list/list-selection-action-link.vue'
+import ListHeader from '@/components/list/list-header.vue'
 
 import OhSearchbar from '@/pages/oh-searchbar.vue'
 import * as api from '@/api'
+
+const storagePrefix = 'openhab.ui:rules:'
 
 export default {
   props: {
@@ -409,7 +426,8 @@ export default {
     EmptyStatePlaceholder,
     OhSearchbar,
     ListSelectionActions,
-    ListSelectionActionLink
+    ListSelectionActionLink,
+    ListHeader
   },
   setup(props) {
     const rules = shallowRef([])
@@ -419,6 +437,8 @@ export default {
 
     const runtimeStore = useRuntimeStore()
     const uiOptionsStore = useUIOptionsStore()
+
+    const groupBy = useStorage(storagePrefix + 'pagesGroupBy', 'alphabetical', sessionStorage)
 
     function displayedTags(rule) {
       return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
@@ -511,7 +531,8 @@ export default {
       highlightMatches,
       haystackFields,
       runtimeStore,
-      uiOptionsStore
+      uiOptionsStore,
+      groupBy
     }
   },
   data() {
@@ -537,16 +558,33 @@ export default {
   },
   computed: {
     indexedResults() {
-      return this.search.filteredResults.reduce((prev, result) => {
-        const rule = result.item
-        const initial = rule.name.substring(0, 1).toUpperCase()
-        if (!prev[initial]) {
-          prev[initial] = []
-        }
-        prev[initial].push(result)
+      if (this.groupBy === 'alphabetical') {
+        return this.search.filteredResults.reduce((prev, result) => {
+          const rule = result.item
+          const initial = rule.name.substring(0, 1).toUpperCase()
+          if (!prev[initial]) {
+            prev[initial] = []
+          }
+          prev[initial].push(result)
 
-        return prev
-      }, {})
+          return prev
+        }, {})
+      } else {
+        const languageGroups = this.search.filteredResults.reduce((prev, result) => {
+          const rule = result.item
+          const language = getRuleLanguage(rule)?.shortName || 'Unknown'
+          if (!prev[language]) prev[language] = []
+          prev[language].push(result)
+
+          return prev
+        }, {})
+        return Object.keys(languageGroups)
+          .sort((a, b) => a.localeCompare(b))
+          .reduce((objEntries, key) => {
+            objEntries[key] = languageGroups[key]
+            return objEntries
+          }, {})
+      }
     },
     selectedDeletable() {
       return new Set(this.rules.filter((r) => this.selection.selectedInFilter.has(r.uid) && r.editable).map((r) => r.uid))
@@ -579,6 +617,13 @@ export default {
     },
     canCopyToDSL() {
       return this.dslCopyOk?.length && !this.dslCopyErrors?.length
+    }
+  },
+  watch: {
+    groupBy(newValue, oldValue) {
+      if (newValue === 'alphabetical' && this.$refs.listIndex) {
+        this.$refs.listIndex.update()
+      }
     }
   },
   methods: {

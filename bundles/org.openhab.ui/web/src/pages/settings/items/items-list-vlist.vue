@@ -32,14 +32,6 @@
     </f7-toolbar>
 
     <f7-block class="block-narrow margin-top-half">
-      <f7-col>
-        <div>
-          <f7-block-footer class="no-margin-top margin-bottom" style="padding-left: 16px; padding-right: 16px">
-            Note: Item states are not updated in real-time. Click the refresh button to update.
-          </f7-block-footer>
-        </div>
-      </f7-col>
-
       <!-- skeleton for not ready -->
       <f7-col v-if="!ready" v-deferred>
         <f7-block-title class="no-margin-top"> &nbsp;Loading... </f7-block-title>
@@ -63,11 +55,31 @@
       </f7-col>
 
       <f7-col v-if="ready && items.length > 0">
-        <group-box
-          :title="getListTitle(search.isFiltered, search.filteredResults.length, items.length, 'Item', selection.selectedInFilter.size)">
-          <template v-if="selection.selectionMode && search.filteredResults.length > 0" #after-title>
-            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
+        <group-box>
+          <list-header>
+            <template v-if="selection.selectionMode && search.filteredResults.length > 0" #before-title>
+              <f7-checkbox
+                :indeterminate="selection.someSelected && !selection.allSelected"
+                :checked="selection.allSelected"
+                @change="selection.selectDeselectAll" />
+            </template>
+            <template #title>
+              {{ getListTitle(search.isFiltered, search.filteredResults.length, items.length, 'Item', selection.selectedInFilter.size) }}
+            </template>
+            <template v-if="lastUpdate" #updated>
+              Last state update: {{ lastUpdate.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }) }}
+            </template>
+            <template #refresh>
+              <f7-link
+                icon-ios="f7:arrow_clockwise"
+                icon-md="material:refresh"
+                icon-aurora="f7:arrow_clockwise"
+                size="1rem"
+                color="theme"
+                @click="load()"
+                tooltip="Item states are not updated in real time. Click to refresh." />
+            </template>
+          </list-header>
           <f7-list class="searchbar-found col" ref="itemsList" media-list virtual-list :virtual-list-params="vlParams">
             <ul>
               <f7-list-item
@@ -150,9 +162,6 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="!selection.selectionMode" position="center-bottom" text="Refresh" color="theme-alt" @click="load()">
-        <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
-      </f7-fab>
       <f7-fab v-show="!selection.selectionMode" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
@@ -182,6 +191,7 @@ import FileDefinition from '@/pages/settings/file-definition-mixin'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
 import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import ListHeader from '@/components/list/list-header.vue'
 import { showToast, showConfirmDialog } from '@/js/dialog-promises'
 import { useSearch } from '@/components/useSearch'
 import { useSelection } from '@/components/useSelection'
@@ -195,7 +205,8 @@ export default {
   components: {
     EmptyStatePlaceholder,
     OhSearchbar,
-    ListSelectionActions
+    ListSelectionActions,
+    ListHeader
   },
   setup() {
     const items = shallowRef([])
@@ -287,6 +298,7 @@ export default {
   data() {
     return {
       ready: false,
+      lastUpdate: null,
       initSearchbar: false,
       loading: false,
       vlData: {
@@ -339,6 +351,7 @@ export default {
 
         if (!this.eventSource) this.startEventSource()
         this.ready = true
+        this.lastUpdate = new Date()
 
         nextTick(() => {
           this.syncVirtualList()

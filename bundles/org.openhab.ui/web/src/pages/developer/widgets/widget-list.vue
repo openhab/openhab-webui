@@ -51,13 +51,20 @@
         <f7-list v-if="search.filteredResults.length === 0 && widgets.length" class="searchbar-not-found">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <group-box
-          :title="
-            getListTitle(search.isFiltered, search.filteredResults.length, widgets.length, 'Widget', selection.selectedInFilter.size)
-          ">
-          <template v-if="selection.selectionMode && search.filteredResults.length" #after-title>
-            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
-          </template>
+        <group-box>
+          <list-header>
+            <template v-if="selection.selectionMode && search.filteredResults.length > 0" #before-title>
+              <f7-checkbox
+                :indeterminate="selection.someSelected && !selection.allSelected"
+                :checked="selection.allSelected"
+                @change="selection.selectDeselectAll" />
+            </template>
+            <template #title>
+              {{
+                getListTitle(search.isFiltered, search.filteredResults.length, widgets.length, 'Widget', selection.selectedInFilter.size)
+              }}
+            </template>
+          </list-header>
           <f7-list v-show="search.filteredResults.length > 0" class="col widgets-list" ref="widgetsList" media-list>
             <f7-list-item
               v-for="{ item: widget, matches } in search.filteredResults"
@@ -116,6 +123,7 @@ import copyToClipboard from '@/js/clipboard'
 import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
 import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import ListHeader from '@/components/list/list-header.vue'
 
 import { useSearch } from '@/components/useSearch'
 import { useSelection } from '@/components/useSelection'
@@ -124,7 +132,8 @@ import { getListTitle, findElementsInObject, highlightMatches } from '@/pages/li
 export default {
   components: {
     OhSearchbar,
-    ListSelectionActions
+    ListSelectionActions,
+    ListHeader
   },
   props: {
     f7router: Object

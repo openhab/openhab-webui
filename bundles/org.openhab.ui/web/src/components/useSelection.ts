@@ -11,6 +11,7 @@ export function useSelection(filteredUids: Ref<string[]>) {
   /** Selected UIDs that are also visible; use for counts and bulk actions. */
   const selectedInFilter = computed(() => new Set(filteredUids.value.filter((uid) => selected.value.has(uid))))
   const allSelected = computed(() => filteredUids.value.length > 0 && filteredUids.value.every((uid) => selected.value.has(uid)))
+  const someSelected = computed(() => selected.value.size > 0)
 
   const isSelected = (uid: string) => selected.value.has(uid)
 
@@ -46,6 +47,7 @@ export function useSelection(filteredUids: Ref<string[]>) {
     selectionMode,
     selectedInFilter,
     allSelected,
+    someSelected,
     isSelected,
     clearSelection,
     toggleSelectionMode,
