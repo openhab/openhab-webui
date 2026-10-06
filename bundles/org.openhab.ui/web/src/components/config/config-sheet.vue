@@ -10,7 +10,7 @@
         :disable-button-text="null"
         @searchbar:search="onSearch"
         @searchbar:clear="clearSearch" />
-      <div class="advanced-filter-container">
+      <div class="advanced-filter-container" @keydown.esc.stop="closeAdvancedDropdown">
         <div
           v-if="hasAdvanced"
           class="advanced-split-chip"
@@ -19,7 +19,13 @@
             'is-filled': advancedMode === 'all'
           }">
           <button type="button" class="chip-label-btn" @click="toggleAdvancedMode">Advanced</button>
-          <button type="button" class="dropdown-trigger" aria-label="Filter options" @click.stop="isDropdownOpen = !isDropdownOpen">
+          <button
+            type="button"
+            class="dropdown-trigger"
+            aria-label="Filter options"
+            aria-haspopup="true"
+            :aria-expanded="isDropdownOpen"
+            @click.stop="isDropdownOpen = !isDropdownOpen">
             <f7-icon ios="f7:chevron_down" md="material:arrow_drop_down" aurora="f7:chevron_down" size="14" />
           </button>
         </div>
@@ -380,6 +386,11 @@ export default {
       this.userAdvancedMode = newMode
       this.isDropdownOpen = false
       this.retainedKeys = []
+    },
+    closeAdvancedDropdown(event) {
+      if (!this.isDropdownOpen) return
+      this.isDropdownOpen = false
+      event.currentTarget.querySelector('.dropdown-trigger')?.blur()
     },
     onSearch(searchbar, query) {
       this.searchQuery = (query || '').trim()
