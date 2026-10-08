@@ -451,7 +451,12 @@ export default {
     },
     isNonDefault(parameter) {
       const configValue = this.configuration[parameter.name]
-      const defaultValue = parameter.default
+      let defaultValue = parameter.default
+      if (typeof defaultValue === 'function') {
+        defaultValue = defaultValue(this.configuration)
+      } else if (parameter.multiple && defaultValue == null) {
+        defaultValue = parameter.defaultValues
+      }
 
       // If both are empty/null, they match.
       // Check using == instead of === to also catch undefined.
@@ -467,6 +472,14 @@ export default {
       // Fallback safety if configValue is still null for some reason
       if (configValue == null) {
         return false
+      }
+
+      if (parameter.multiple && (Array.isArray(configValue) || Array.isArray(defaultValue))) {
+        const configValues = Array.isArray(configValue) ? configValue : [configValue]
+        const defaultValues = Array.isArray(defaultValue) ? defaultValue : [defaultValue]
+        if (configValues.length !== defaultValues.length) return true
+
+        return configValues.some((value, index) => value?.toString() !== defaultValues[index]?.toString())
       }
 
       return configValue.toString() !== defaultValue.toString()
