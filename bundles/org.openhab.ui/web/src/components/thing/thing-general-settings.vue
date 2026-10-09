@@ -86,10 +86,9 @@
 <script>
 import ThingPicker from '@/components/config/controls/thing-picker.vue'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
-import ThingMixin from '@/components/thing/thing-mixin'
+import { validateThingUID } from '@/components/thing/thing-helpers'
 
 export default {
-  mixins: [ThingMixin],
   props: {
     thing: Object,
     thingType: Object,
@@ -107,7 +106,7 @@ export default {
       return this.createMode || (this.thing && this.thing.editable)
     },
     idErrorMessage() {
-      return this.validateThingUID(this.thing.UID, this.thing.ID)
+      return validateThingUID(this.thing.UID, this.thing.ID, this.things)
     }
   },
   methods: {

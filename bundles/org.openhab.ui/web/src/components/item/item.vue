@@ -6,7 +6,7 @@
     :link="link"
     :title="item.label ? item.label : item.name"
     :footer="item.label ? item.name : '\xa0'"
-    :subtitle="noType ? '' : getItemTypeAndMetaLabel(item)"
+    :subtitle="noType ? '' : getItemTypeAndSemanticLabel(item)"
     :after="state">
     <template #media>
       <oh-icon
@@ -34,10 +34,9 @@
 </template>
 
 <script>
-import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeAndSemanticLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 
 export default {
-  mixins: [ItemMixin],
   props: {
     item: Object,
     context: Object,
@@ -46,6 +45,9 @@ export default {
     noIcon: Boolean,
     noTags: Boolean,
     link: String
+  },
+  setup() {
+    return { getItemTypeAndSemanticLabel, getNonSemanticTags }
   },
   computed: {
     state() {

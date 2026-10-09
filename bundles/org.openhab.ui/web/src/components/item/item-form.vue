@@ -194,11 +194,11 @@ import TagInput from '@/components/tags/tag-input.vue'
 import * as types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
-import ItemMixin from '@/components/item/item-mixin'
+import { validateItemName } from '@/components/item/item-helpers'
 import uomMixin from '@/components/item/uom-mixin'
 
 export default {
-  mixins: [ItemMixin, uomMixin],
+  mixins: [uomMixin],
   props: {
     item: Object,
     items: Array,
@@ -278,7 +278,7 @@ export default {
       }
     },
     nameErrorMessage() {
-      return this.validateItemName(this.item.name)
+      return validateItemName(this.item.name, this.items)
     },
     stateDescriptionPattern: {
       get() {

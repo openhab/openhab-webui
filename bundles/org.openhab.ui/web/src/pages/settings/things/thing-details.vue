@@ -417,7 +417,7 @@ import NetworkPopup from '@/pages/settings/things/network/network-popup.vue'
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
 
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { thingStatusBadgeColor, thingStatusDescription } from '@/components/thing/thing-helpers'
 
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
@@ -430,7 +430,7 @@ import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingStatus, FileDefinition],
+  mixins: [FileDefinition],
   components: {
     ConfigSheet,
     ChannelList,
@@ -447,7 +447,9 @@ export default {
 
     return {
       dirty,
-      dirtyIndicator
+      dirtyIndicator,
+      thingStatusBadgeColor,
+      thingStatusDescription
     }
   },
   data() {
