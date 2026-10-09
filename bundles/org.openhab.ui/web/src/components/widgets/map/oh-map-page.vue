@@ -63,7 +63,7 @@ Icon.Default.mergeOptions({
   shadowUrl: import('leaflet/dist/images/marker-shadow.png')
 })
 
-const DEFAULT_TILE_PROVIDER = 'CartoDB.Voyager'
+const DEFAULT_TILE_PROVIDER = 'OpenStreetMap.Mapnik'
 
 export default {
   props: {
@@ -159,7 +159,7 @@ export default {
 
       const tilePane = this.$refs.map.leafletObject.getPane('tilePane')
       if (tilePane) {
-        if (this.uiOptionsStore.darkMode === 'dark' && tileProvider === 'CartoDB.Voyager') {
+        if (this.uiOptionsStore.darkMode === 'dark' && tileProvider === DEFAULT_TILE_PROVIDER) {
           tilePane.style.filter = 'invert(1) hue-rotate(180deg) brightness(120%) contrast(80%)'
         } else {
           tilePane.style.filter = 'unset'

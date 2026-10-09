@@ -54,8 +54,7 @@ export default {
       showMap: false,
       zoom: 1,
       center: latLng(48, 6),
-      // url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      url: `https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png`,
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
         '&copy; <a class="external" target="_blank" href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a class="external" target="_blank" href="https://carto.com/attributions">CARTO</a>',
       marker: null,
