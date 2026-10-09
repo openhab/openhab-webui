@@ -3,49 +3,32 @@
     <f7-navbar>
       <oh-nav-content title="Items" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="selection.toggleSelectionMode"
+            :text="!theme.md ? (selection.selectionMode ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
         <!-- Only render searchbar, if page is ready. Otherwise searchbar is broken after changes to the Items list. -->
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
+          ref="oh-searchbar"
           class="searchbar-items"
-          search-container=".virtual-list"
-          @searchbar:search="searchbarSearch"
-          :placeholder="searchbarPlaceholder"
-          :disable-button="!theme.aurora" />
+          :persist-search-string-key="'items-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="search.onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
 
-    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <div v-if="!theme.md && selectedItems.length > 0" class="display-flex justify-content-center" style="width: 100%">
-        <f7-link
-          v-show="selectedItems.length"
-          color="red"
-          class="delete display-flex flex-direction-row margin-right"
-          icon-ios="f7:trash"
-          icon-aurora="f7:trash"
-          @click="removeSelected">
-          Remove
-        </f7-link>
-        <f7-link
-          v-show="selectedItems.length"
-          color="theme-alt"
-          class="copy display-flex flex-direction-row"
-          icon-ios="f7:square_on_square"
-          icon-aurora="f7:square_on_square"
-          @click="copySelected">
-          &nbsp;Copy
-        </f7-link>
-      </div>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
-      <div v-if="theme.md && selectedItems.length" class="right">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
-        <f7-link icon-md="material:content_copy" icon-color="white" @click="copySelected" />
-      </div>
+    <f7-toolbar v-if="selection.selectionMode" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <list-selection-actions
+        @close="selection.toggleSelectionMode"
+        :remove-count="selectedDeletable.size"
+        @remove="removeSelected"
+        :copy-count="selection.selectedInFilter.size"
+        @copy="copySelected" />
     </f7-toolbar>
 
     <f7-block class="block-narrow margin-top-half">
@@ -80,30 +63,38 @@
       </f7-col>
 
       <f7-col v-if="ready && items.length > 0">
-        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="processFilter" @reset="resetFilter" />
-        <group-box :title="listTitle">
-          <template v-if="showCheckboxes && listedItems.length" #after-title>
-            <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
+        <group-box
+          :title="getListTitle(search.isFiltered, search.filteredResults.length, items.length, 'Item', selection.selectedInFilter.size)">
+          <template v-if="selection.selectionMode && search.filteredResults.length > 0" #after-title>
+            <f7-link @click="selection.selectDeselectAll" :text="selection.allSelected ? 'Deselect all' : 'Select all'" />
           </template>
           <f7-list class="searchbar-found col" ref="itemsList" media-list virtual-list :virtual-list-params="vlParams">
             <ul>
               <f7-list-item
-                v-for="(item, index) in vlData.items"
+                v-for="({ item, fuseMatches }, index) in vlData.items"
                 :key="index"
                 media-item
                 class="itemlist-item"
-                :checkbox="showCheckboxes"
-                :checked="isChecked(item.name)"
+                :checkbox="selection.selectionMode"
+                :checked="selection.isSelected(item.name)"
                 prevent-router
-                @click.ctrl="ctrlClick($event, item)"
-                @click.meta="ctrlClick($event, item)"
+                @click.ctrl="selection.ctrlClick(item.name)"
+                @click.meta="selection.ctrlClick(item.name)"
                 @click.exact="click($event, item)"
                 :link="`${encodeURIComponent(item.name)}`"
-                :title="item.label ? item.label : item.name"
-                :footer="item.label ? item.name : '\xa0'"
-                :subtitle="getItemTypeAndMetaLabel(item)"
-                :style="`top: ${vlData.topPosition}px`"
-                :after="item.state ? item.state : '\xa0'">
+                :style="`top: ${vlData.topPosition}px`">
+                <template #title>
+                  <span
+                    v-html="
+                      item.label ? highlightMatches(item.label, fuseMatches, 'label') : highlightMatches(item.name, fuseMatches, 'name')
+                    "></span>
+                </template>
+                <template #footer>
+                  <span v-html="item.label ? highlightMatches(item.name, fuseMatches, 'name') : '\xa0'"></span>
+                </template>
+                <template #after>
+                  <span v-html="item.state ? highlightMatches(item.state, fuseMatches, 'state') : '\xa0'"></span>
+                </template>
                 <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
                 <template #media>
                   <oh-icon
@@ -119,6 +110,11 @@
                 </template>
                 <!-- <f7-button color="theme-alt" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
                 <template #subtitle>
+                  <span v-html="highlightMatches(getItemTypeLabel(item), fuseMatches, 'type')"></span>
+                  <span
+                    v-if="getItemSemanticLabel(item)"
+                    v-html="' · ' + highlightMatches(getItemSemanticLabel(item), fuseMatches, 'semantics')"></span>
+                  <!-- {{  getItemTypeLabel(item) + ' · ' + getItemSemanticLabel(item) }} -->
                   <div>
                     <f7-chip
                       v-for="tag in getNonSemanticTags(item)"
@@ -154,10 +150,10 @@
     </f7-block>
 
     <template #fixed>
-      <f7-fab v-show="!showCheckboxes" position="center-bottom" text="Refresh" color="theme-alt" @click="load()">
+      <f7-fab v-show="!selection.selectionMode" position="center-bottom" text="Refresh" color="theme-alt" @click="load()">
         <f7-icon ios="f7:arrow_clockwise" md="material:refresh" aurora="f7:arrow_clockwise" />
       </f7-fab>
-      <f7-fab v-show="!showCheckboxes" position="right-bottom" color="theme-alt" href="add">
+      <f7-fab v-show="!selection.selectionMode" position="right-bottom" color="theme-alt" href="add">
         <f7-icon ios="f7:plus" md="material:add" aurora="f7:plus" />
       </f7-fab>
     </template>
@@ -174,43 +170,125 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
-import { mapStores } from 'pinia'
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import * as Types from '@/assets/item-types'
-import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeLabel, getItemSemanticLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
-import ListFilter from '@/components/util/list-filter.vue'
-import { showToast } from '@/js/dialog-promises'
-
-const ITEM_KINDS = { editable: 'Editable', readonly: 'Non-editable' }
+import OhSearchbar from '@/pages/oh-searchbar.vue'
+import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import { showToast, showConfirmDialog } from '@/js/dialog-promises'
+import { useSearch } from '@/components/useSearch'
+import { useSelection } from '@/components/useSelection'
+import { getListTitle, highlightMatches } from '@/pages/list-helpers'
 
 export default {
-  mixins: [ItemMixin, FileDefinition],
+  mixins: [FileDefinition],
   props: {
     f7router: Object
   },
   components: {
-    ListFilter,
-    EmptyStatePlaceholder
+    EmptyStatePlaceholder,
+    OhSearchbar,
+    ListSelectionActions
   },
   setup() {
-    return { f7, theme, BREAKPOINTS }
+    const items = shallowRef([])
+    const haystackFields = ['name', 'label', 'type', 'semantics']
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
+    const runtimeStore = useRuntimeStore()
+
+    const filtersDefinitions = {
+      is: {
+        label: 'Kind',
+        singleSelect: true,
+        getFn: (item) => (item.editable ? 'editable' : 'readonly'),
+        options: ['Editable', 'Readonly']
+      },
+      name: {
+        label: 'Name',
+        path: 'name'
+      },
+      label: {
+        label: 'Label',
+        path: 'label'
+      },
+      type: {
+        label: 'Item Type',
+        getFn: (item) => getItemTypeLabel(item)
+      },
+      group: {
+        label: 'Members of Group',
+        path: 'groupNames'
+      },
+      tag: {
+        label: 'Tag',
+        path: 'tags'
+      },
+      state: {
+        // test
+        label: 'State',
+        getFn: (item) => item.state + (item.displayState ? ' ' + item.displayState : '')
+      },
+      unit: {
+        label: 'Unit',
+        path: 'unitSymbol'
+      },
+      semantics: {
+        label: 'Semantics',
+        getFn: (item) => getItemSemanticLabel(item)
+      },
+      metadata: {
+        label: 'Metadata',
+        getFn: (item) => (item.metadata ? Object.keys(item.metadata) : [])
+      }
+    }
+
+    const searchState = useSearch(items, {
+      filtersDefinitions,
+      haystackFields,
+      uidField: 'name',
+      includeMatches: true
+    })
+    const search = reactive(searchState)
+    const selection = reactive(useSelection(searchState.filteredUids))
+
+    filtersDefinitions.type.options = () => search.getFuseValuesForField('type')
+    filtersDefinitions.group.options = () => search.getFuseValuesForField('group')
+    filtersDefinitions.tag.options = () => search.getFuseValuesForField('tag')
+    filtersDefinitions.unit.options = () => search.getFuseValuesForField('unit')
+    filtersDefinitions.semantics.options = () => search.getFuseValuesForField('semantics')
+    filtersDefinitions.metadata.options = () => search.getFuseValuesForField('metadata')
+
+    return {
+      f7,
+      theme,
+      runtimeStore,
+      BREAKPOINTS,
+      items,
+      filtersDefinitions,
+      search,
+      selection,
+      getListTitle,
+      getNonSemanticTags,
+      getItemTypeLabel,
+      getItemSemanticLabel,
+      highlightMatches,
+      ohSearchbarRef,
+      haystackFields
+    }
   },
   data() {
     return {
       ready: false,
       initSearchbar: false,
       loading: false,
-      items: [], // [{ label: 'Staircase', name: 'Staircase'}],
       vlData: {
         items: []
       },
@@ -220,64 +298,55 @@ export default {
         renderExternal: this.renderExternal,
         height: this.height
       },
-      searchQuery: '',
-      filters: {
-        kinds: {
-          label: 'Kind',
-          options: ITEM_KINDS
-        },
-        types: {
-          label: 'Item Type',
-          options: Object.fromEntries(Types.ItemTypes.map((type) => [type, type]))
-        }
-      },
-      selectedItems: [],
-      listedItems: [],
-      excludedUids: new Set(),
-      showCheckboxes: false,
       eventSource: null
     }
   },
+  computed: {
+    selectedDeletable() {
+      return new Set(this.items.filter((item) => this.selection.selectedInFilter.has(item.name) && item.editable).map((item) => item.name))
+    }
+  },
   methods: {
-    onPageAfterIn(event) {
-      this.load()
+    async onPageAfterIn(event) {
+      await this.load()
     },
     onPageBeforeOut(event) {
       this.stopEventSource()
-      useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.ohSearchbarRef?.persistSearchbarQuery()
     },
-    load() {
+    syncVirtualList() {
+      const f7VirtualList = this.$refs.itemsList?.$el.f7VirtualList
+      if (!f7VirtualList) return
+
+      f7VirtualList.replaceAllItems(
+        this.search.filteredResults.map((result) => ({ item: { ...result.item }, fuseMatches: result.matches }))
+      )
+    },
+    async load() {
       if (this.loading) return
       this.loading = true
-
-      if (this.initSearchbar) useLastSearchQueryStore().lastItemSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
-      this.$oh.api.get('/rest/items?metadata=semantics').then((data) => {
+      await this.$oh.api.get('/rest/items').then((data) => {
         this.items = data.sort((a, b) => {
           const labelA = a.label || a.name
           const labelB = b.label || b.name
           return labelA.localeCompare(labelB)
         })
+
         this.initSearchbar = true
         this.loading = false
+
         if (!this.eventSource) this.startEventSource()
         this.ready = true
 
         nextTick(() => {
-          this.$refs.itemsList.$el.f7VirtualList.replaceAllItems(this.items)
-          this.updateListedItems()
-          this.processFilter()
-
-          const searchbar = this.$refs.searchbar?.$el.f7Searchbar
-          if (this.$device.desktop && searchbar) {
-            searchbar.$inputEl[0].focus()
-          }
-          const lastQuery = useLastSearchQueryStore().lastItemSearchQuery || ''
-          if (lastQuery) {
-            searchbar?.search(lastQuery)
+          this.syncVirtualList()
+          if (this.$device.desktop) {
+            this.ohSearchbarRef?.focus()
           }
 
+          // This should no longer be needed now that we are awaiting the load() function, but leaving it in for now just in case.
           // Hard refresh can leave the virtual list measured at zero height until
           // the page is fully visible, so trigger one delayed remeasure.
           setTimeout(() => {
@@ -306,16 +375,10 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    searchbarSearch(event) {
-      this.searchQuery = event?.query
-      if (!this.searchQuery && this.$refs.filters?.filtered) {
-        this.applyFilter()
-      }
-    },
     renderExternal(vl, vlData) {
       this.vlData = vlData
     },
-    height(item) {
+    height({ item }) {
       let vlHeight
       if (theme.ios) vlHeight = 79.19
       if (theme.aurora) vlHeight = 66.37
@@ -324,7 +387,10 @@ export default {
         if (window.navigator.userAgent.includes('Safari') && !window.navigator.userAgent.includes('Chrome')) vlHeight -= 0.77
       }
 
-      const nonSemanticTags = this.getNonSemanticTags(item)
+      // Virtual list can briefly request height for missing rows while data/filter state updates.
+      if (!item) return vlHeight
+
+      const nonSemanticTags = getNonSemanticTags(item)
       if (nonSemanticTags.length > 0) {
         vlHeight += 28
         if (theme.ios) vlHeight += 4
@@ -332,188 +398,44 @@ export default {
       }
       return vlHeight
     },
-    toggleCheck() {
-      this.showCheckboxes = !this.showCheckboxes
-    },
-    isChecked(item) {
-      return this.selectedItems.indexOf(item) >= 0
-    },
     click(event, item) {
-      if (this.showCheckboxes) {
-        this.toggleItemCheck(event, item.name, item)
+      if (this.selection.selectionMode) {
+        this.selection.toggleItemSelection(item.name)
       } else {
         this.f7router.navigate(item.name)
       }
     },
-    ctrlClick(event, item) {
-      this.toggleItemCheck(event, item.name, item)
-      if (!this.selectedItems.length) this.showCheckboxes = false
-    },
-    toggleItemCheck(event, item) {
-      if (!this.showCheckboxes) this.showCheckboxes = true
-      if (this.isChecked(item)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
-      } else {
-        this.selectedItems.push(item)
-      }
-    },
-    selectDeselectAll() {
-      if (this.allSelected) {
-        this.selectedItems = []
-      } else {
-        this.selectedItems = this.listedItems.map((i) => i.name)
-      }
-    },
     copySelected() {
-      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, this.selectedItems)
+      this.copyFileDefinitionToClipboard(this.ObjectType.ITEM, [...this.selection.selectedInFilter])
     },
-    removeSelected() {
-      const vm = this
-
-      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected items?`, 'Remove Items', () => {
-        vm.doRemoveSelected()
-      })
-    },
-    doRemoveSelected() {
-      if (this.selectedItems.some((i) => i.editable === false)) {
-        f7.dialog.alert('Some of the selected items are not modifiable because they have been created by textual configuration')
+    async removeSelected() {
+      if (this.selectedDeletable.size === 0) return
+      if (
+        !(await showConfirmDialog(
+          `Remove ${this.selectedDeletable.size} of ${this.selection.selectedInFilter.size} selected items?`,
+          'Remove Items'
+        ))
+      )
         return
-      }
 
       let dialog = f7.dialog.progress('Deleting Items...')
-
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/items/' + i))
-      Promise.all(promises)
-        .then((data) => {
-          showToast('Items removed')
-          this.selectedItems = []
-          dialog.close()
-          this.load()
-        })
-        .catch((err) => {
-          dialog.close()
-          this.load()
-          console.error(err)
-          f7.dialog.alert('An error occurred while deleting: ' + err)
-        })
-    },
-    searchAll(query, items) {
-      query = query.toLowerCase()
-      const found = []
-      const foundUids = new Set()
-      items.forEach((item, index) => {
-        if (this.excludedUids.has(item.name)) {
-          return // skip items excluded by filter
-        }
-        const haystack = [item.name, item.label, ...(item.tags || []), this.getItemTypeAndMetaLabel(item)]
-        if (haystack.join(' ').toLowerCase().includes(query)) {
-          found.push(index)
-          foundUids.add(item.name)
-        }
-      })
-
-      if (foundUids.size === 0) {
-        this.selectedItems = []
-      } else {
-        this.selectedItems = this.selectedItems.filter((uid) => foundUids.has(uid))
+      const promises = [...this.selectedDeletable].map((i) => this.$oh.api.delete('/rest/items/' + i))
+      try {
+        await Promise.all(promises)
+        showToast('Items removed')
+      } catch (err) {
+        console.error(err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+      } finally {
+        dialog.close()
+        this.load()
       }
-      return found // return array with matched indexes
-    },
-    reapplySearch() {
-      const query = this.searchQuery
-      if (!query) {
-        return
-      }
-      this.$refs.searchbar?.$el.f7Searchbar.search('')
-      this.$refs.searchbar?.$el.f7Searchbar.search(query)
-    },
-    resetFilter() {
-      this.excludedUids.clear()
-      if (this.searchQuery) {
-        this.reapplySearch()
-      } else {
-        this.$refs.itemsList.$el.f7VirtualList.resetFilter()
-      }
-    },
-    applyFilter() {
-      let filteredIndexes = null
-      const selected = this.$refs.filters?.selected
-
-      this.excludedUids.clear()
-      if (selected && this.$refs.filters.filtered) {
-        filteredIndexes = []
-        this.items.forEach((item, index) => {
-          const typeMatch = !selected.types.size || selected.types.has(item.type.split(':')[0])
-          const kind = item.editable ? 'editable' : 'readonly'
-          const kindMatch = !selected.kinds.size || selected.kinds.has(kind)
-          if (kindMatch && typeMatch) {
-            filteredIndexes.push(index)
-          } else {
-            this.excludedUids.add(item.name)
-          }
-        })
-      }
-
-      if (this.excludedUids.size > 0) {
-        this.selectedItems = this.selectedItems.filter((uid) => !this.excludedUids.has(uid))
-      }
-
-      if (this.searchQuery) {
-        this.reapplySearch()
-      } else if (filteredIndexes !== null) {
-        this.$refs.itemsList.$el.f7VirtualList.filterItems(filteredIndexes)
-      } else {
-        this.$refs.itemsList.$el.f7VirtualList.resetFilter()
-      }
-    },
-    processFilter() {
-      const filters = this.$refs.filters
-      if (filters?.filtered) {
-        this.applyFilter()
-      } else {
-        this.resetFilter()
-      }
-    },
-    updateListedItems() {
-      this.$nextTick(() => {
-        this.listedItems = this.$refs.itemsList.$el.f7VirtualList.filteredItems || this.$refs.itemsList.$el.f7VirtualList.items || []
-      })
     }
   },
   watch: {
-    ready() {
-      this.updateListedItems()
-    },
-    searchQuery() {
-      this.updateListedItems()
-    },
-    excludedUids: {
-      handler: function () {
-        this.updateListedItems()
-      },
-      deep: true
+    'search.filteredResults'() {
+      this.syncVirtualList()
     }
-  },
-  computed: {
-    searchbarPlaceholder() {
-      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
-    },
-    allSelected() {
-      return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0
-    },
-    listTitle() {
-      let title = this.listedItems.length
-      if (this.searchQuery || this.$refs.filters?.filtered) {
-        title += ` of ${this.items.length} Items found`
-      } else {
-        title += ' Items'
-      }
-      if (this.selectedItems.length > 0) {
-        title += `, ${this.selectedItems.length} selected`
-      }
-      return title
-    },
-    ...mapStores(useRuntimeStore, useUIOptionsStore)
   }
 }
 </script>

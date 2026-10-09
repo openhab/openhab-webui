@@ -1,4 +1,11 @@
-export default {
+export interface AutomationLanguage {
+  name: string
+  shortName: string
+  commentChar: string
+  documentationLink?: string
+}
+
+const AUTOMATION_LANGUAGES: Record<string, AutomationLanguage> = {
   'application/vnd.openhab.dsl.rule': {
     name: 'Rules DSL',
     shortName: 'DSL',
@@ -38,3 +45,5 @@ export default {
     commentChar: '#'
   }
 }
+
+export default AUTOMATION_LANGUAGES

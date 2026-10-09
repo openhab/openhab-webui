@@ -3,37 +3,28 @@
     <f7-navbar>
       <oh-nav-content title="Schedule" back-link="Settings" back-link-url="/settings/" :f7router>
         <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
+          <f7-link
+            icon-md="material:done_all"
+            @click="selection.toggleSelectionMode"
+            :text="!theme.md ? (selection.selectionMode ? 'Done' : 'Select') : ''" />
         </template>
       </oh-nav-content>
       <f7-subnavbar v-show="initSearchbar" :inner="false">
-        <f7-searchbar
+        <oh-searchbar
           v-if="initSearchbar"
-          ref="searchbar"
-          class="searchbar-schedule"
-          search-container=".timeline"
-          search-item=".timeline-item-inner"
-          search-in=".timeline-item-title"
-          :placeholder="searchPlaceholder"
-          :disable-button="!theme.aurora" />
+          ref="oh-searchbar"
+          class="searchbar-schedules"
+          :persist-search-string-key="'schedules-search-string'"
+          :haystack-fields="haystackFields"
+          :filters-definitions="filtersDefinitions"
+          @update:tokenized-search="search.onUpdateTokenizedSearch" />
       </f7-subnavbar>
     </f7-navbar>
-    <f7-toolbar v-if="showCheckboxes" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
-      <f7-link
-        v-if="!theme.md"
-        v-show="selectedItems.length"
-        class="delete"
-        icon-ios="f7:trash"
-        icon-aurora="f7:trash"
-        @click="removeSelected">
-        Remove {{ selectedItems.length }}
-      </f7-link>
-      <f7-link v-if="theme.md" icon-md="material:close" icon-color="white" @click="showCheckboxes = false" />
-      <div v-if="theme.md" class="title">{{ selectedItems.length }} selected</div>
-      <div v-if="theme.md" class="right">
-        <f7-link icon-md="material:delete" icon-color="white" @click="removeSelected" />
-        <f7-link icon-md="material:more_vert" icon-color="white" @click="removeSelected" />
-      </div>
+    <f7-toolbar v-if="selection.selectionMode" class="contextual-toolbar" :class="{ navbar: theme.md }" bottom-ios bottom-aurora>
+      <list-selection-actions
+        @close="selection.toggleSelectionMode"
+        @remove="removeSelected"
+        :copy-count="selection.selectedInFilter.size" />
     </f7-toolbar>
 
     <empty-state-placeholder
@@ -56,16 +47,24 @@
               <span>{{ day }}</span>
             </div>
             <div class="timeline-item-content">
-              <div v-for="(occurrence, $idx) in calendar[year][month][day]" class="timeline-item-inner" :key="$idx">
-                <div class="timeline-item-time">
-                  {{ occurrence[0].toTimeString().substring(0, 5) }}
-                </div>
-                <div class="timeline-item-title">
-                  {{ occurrence[1].name }}
-                </div>
-                <!-- <div class="timeline-item-text">{{occurrence[1].description}}</div> -->
-                <f7-link :href="'/settings/rules/' + occurrence[1].uid" small text="edit" />
-              </div>
+              <template v-for="(occurrence, idx) in calendar[year][month][day]">
+                <template v-if="search.filteredIndices.indexOf(occurrence.index) >= 0">
+                  <div class="timeline-item-inner" :key="idx">
+                    <div class="timeline-item-time">
+                      {{ occurrence.date.toTimeString().substring(0, 5) }}
+                    </div>
+                    <div class="timeline-item-title">
+                      <f7-checkbox
+                        v-if="selection.selectionMode"
+                        :checked="selection.isSelected(occurrence.rule.uid)"
+                        @change="selection.toggleItemSelection(occurrence.rule.uid)" />
+                      {{ occurrence.rule.name }}
+                    </div>
+                    <!-- <div class="timeline-item-text">{{occurrence[1].description}}</div> -->
+                    <f7-link :href="'/settings/rules/' + occurrence.rule.uid" small text="edit" />
+                  </div>
+                </template>
+              </template>
             </div>
           </div>
         </div>
@@ -90,96 +89,160 @@
 </style>
 
 <script>
-import { nextTick } from 'vue'
+import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
-import { showToast } from '@/js/dialog-promises'
+import { showToast, showConfirmDialog } from '@/js/dialog-promises'
+import OhSearchbar from '@/pages/oh-searchbar.vue'
+import ListSelectionActions from '@/components/list/list-selection-actions.vue'
+import { useSearch } from '@/components/useSearch'
+import { useSelection } from '@/components/useSelection'
 
 export default {
   components: {
-    'empty-state-placeholder': EmptyStatePlaceholder
+    'empty-state-placeholder': EmptyStatePlaceholder,
+    OhSearchbar,
+    ListSelectionActions
   },
   props: {
     f7router: Object
   },
   setup() {
-    return { theme }
+    const rules = shallowRef([])
+    const haystackFields = ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
+    const ohSearchbarRef = useTemplateRef('oh-searchbar')
+
+    function displayedTags(rule) {
+      return rule.tags.filter((t) => t !== 'Script' && t !== 'Scene')
+    }
+
+    const filtersDefinitions = {
+      name: {
+        label: 'Name',
+        path: 'rule.name'
+      },
+      uid: {
+        label: 'UID',
+        path: 'rule.uid'
+      },
+      description: {
+        label: 'Description',
+        path: 'rule.description'
+      },
+      tag: {
+        label: 'Tag',
+        getFn: (rule) => displayedTags(rule.rule)
+      },
+      status: {
+        label: 'Status',
+        options: {
+          uninitialized: 'Uninitialized',
+          initializing: 'Initializing',
+          idle: 'Idle',
+          running: 'Running',
+          disabled: 'Disabled'
+        },
+        getFn: (rule) => [rule.rule.status?.status, rule.rule.status?.statusDetail]
+      }
+    }
+
+    const searchState = useSearch(rules, {
+      filtersDefinitions,
+      haystackFields,
+      uidField: (item) => item.rule.uid
+    })
+    const search = reactive(searchState)
+    const selection = reactive(useSelection(searchState.filteredUids))
+
+    filtersDefinitions.tag.options = () => search.getFuseValuesForField('tag')
+
+    return {
+      theme,
+      rules,
+      ohSearchbarRef,
+      filtersDefinitions,
+      search,
+      selection,
+      haystackFields
+    }
   },
   data() {
     return {
       ready: false,
       initSearchbar: false,
       loading: false,
-      rules: [],
       noRuleEngine: false,
-      calendar: {},
-      selectedItems: [],
-      showCheckboxes: false,
-      eventSource: null
+      eventSource: null,
+      start: new Date(new Date().setHours(0, 0, 0, 0))
+    }
+  },
+  computed: {
+    calendar() {
+      const limit = new Date()
+      limit.setDate(this.start.getDate() + 31)
+      const cal = {}
+
+      const occurrences = []
+      this.rules.forEach((rule, idx) => {
+        occurrences.push({ date: new Date(rule.date), rule: rule.rule, index: idx })
+      })
+
+      let day = new Date(this.start)
+      while (day < limit) {
+        const year = day.getFullYear()
+        const month = day.toLocaleString('default', { month: 'long' })
+        const dayofmonth = day.toLocaleString('default', { weekday: 'short' }) + ' ' + day.getDate()
+        const monthIndex = day.getMonth()
+        const dayIndex = day.getDate()
+        if (!cal[year]) cal[year] = {}
+        if (!cal[year][month]) cal[year][month] = {}
+        cal[year][month][dayofmonth] = occurrences.filter((o) => {
+          return o.date.getFullYear() === year && o.date.getMonth() === monthIndex && o.date.getDate() === dayIndex
+        })
+        day.setDate(day.getDate() + 1)
+      }
+
+      return cal
+    },
+    filteredIndicesSet() {
+      return new Set(this.filteredIndices)
     }
   },
   methods: {
-    onPageAfterIn() {
-      this.load()
+    async onPageAfterIn() {
+      await this.load()
     },
     onPageBeforeOut() {
       this.stopEventSource()
-      useLastSearchQueryStore().lastScheduleSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.ohSearchbarRef?.persistSearchbarQuery()
+      this.ohSearchbarRef?.persistSearchbarQuery()
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) useLastSearchQueryStore().lastScheduleSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
+      this.selection.clearSelection()
+      this.selection.selectionMode = false
 
-      let occurrences = []
-
-      let start = new Date(),
-        limit = new Date()
-      limit.setDate(start.getDate() + 31)
-
-      this.$oh.api
-        .get('/rest/rules/schedule/simulations?from=' + start.toISOString() + '&until=' + limit.toISOString())
+      const limit = new Date()
+      limit.setDate(this.start.getDate() + 31)
+      await this.$oh.api
+        .get('/rest/rules/schedule/simulations?from=' + this.start.toISOString() + '&until=' + limit.toISOString())
         .then((data) => {
           this.rules = data
           this.loading = false
           this.initSearchbar = true
 
-          // map RulesExecutions per time
-          this.rules.forEach((rule) => {
-            occurrences.push([new Date(rule.date), rule.rule])
-          })
-
-          this.calendar = {}
-
-          let day = start
-          while (day < limit) {
-            const year = day.getFullYear()
-            const month = day.toLocaleString('default', { month: 'long' })
-            const dayofmonth = day.toLocaleString('default', { weekday: 'short' }) + ' ' + day.getDate()
-            const monthIndex = day.getMonth()
-            const dayIndex = day.getDate()
-            const cal = this.calendar
-            if (!cal[year]) cal[year] = {}
-            if (!cal[year][month]) cal[year][month] = {}
-            cal[year][month][dayofmonth] = occurrences.filter((o) => {
-              return o[0].getFullYear() === year && o[0].getMonth() === monthIndex && o[0].getDate() === dayIndex
-            })
-            day.setDate(day.getDate() + 1)
-          }
-
           this.ready = true
           if (!this.eventSource) this.startEventSource()
 
           nextTick(() => {
-            if (this.$device.desktop && this.$refs.searchbar) {
-              this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+            if (this.$device.desktop) {
+              this.ohSearchbarRef?.focus()
             }
-            this.$refs.searchbar?.$el.f7Searchbar.search(useLastSearchQueryStore().lastScheduleSearchQuery || '')
           })
         })
         .catch((err, status) => {
@@ -204,48 +267,22 @@ export default {
       this.$oh.sse.close(this.eventSource)
       this.eventSource = null
     },
-    toggleCheck() {
-      this.showCheckboxes = !this.showCheckboxes
-    },
-    isChecked(item) {
-      return this.selectedItems.indexOf(item) >= 0
-    },
-    toggleItemCheck(event, item) {
-      if (this.isChecked(item)) {
-        this.selectedItems.splice(this.selectedItems.indexOf(item), 1)
-      } else {
-        this.selectedItems.push(item)
-      }
-    },
-    removeSelected() {
-      const vm = this
+    async removeSelected() {
+      if (this.selection.selectedInFilter.size === 0) return
+      if (!(await showConfirmDialog(`Remove ${this.selection.selectedInFilter.size} selected rules?`, 'Remove Rules'))) return
 
-      f7.dialog.confirm(`Remove ${this.selectedItems.length} selected rules?`, 'Remove Rules', () => {
-        vm.doRemoveSelected()
-      })
-    },
-    doRemoveSelected() {
       let dialog = f7.dialog.progress('Deleting Rules...')
-
-      const promises = this.selectedItems.map((i) => this.$oh.api.delete('/rest/rules/' + i))
-      Promise.all(promises)
-        .then((data) => {
-          showToast('Rules removed')
-          this.selectedItems = []
-          dialog.close()
-          this.load()
-        })
-        .catch((err) => {
-          dialog.close()
-          this.load()
-          console.error(err)
-          f7.dialog.alert('An error occurred while deleting: ' + err)
-        })
-    }
-  },
-  computed: {
-    searchPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      const promises = [...this.selection.selectedInFilter].map((i) => this.$oh.api.delete('/rest/rules/' + i))
+      try {
+        await Promise.all(promises)
+        showToast('Rules removed')
+      } catch (err) {
+        console.error(err)
+        f7.dialog.alert('An error occurred while deleting: ' + err)
+      } finally {
+        dialog.close()
+        this.load()
+      }
     }
   }
 }

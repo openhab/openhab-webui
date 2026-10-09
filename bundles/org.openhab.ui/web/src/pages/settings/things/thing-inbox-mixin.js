@@ -1,6 +1,6 @@
 import { f7 } from 'framework7-vue'
 
-import ThingMixin from '@/components/thing/thing-mixin'
+import { validateThingUID } from '@/components/thing/thing-helpers'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 import { showToast } from '@/js/dialog-promises'
 
@@ -8,7 +8,7 @@ export default {
   props: {
     f7router: Object
   },
-  mixins: [ThingMixin, FileDefinition],
+  mixins: [FileDefinition],
   methods: {
     /**
      * Approve the given entry from the inbox.
@@ -80,7 +80,7 @@ export default {
             const newThingId = dialog.$el.find('.id-input').val()
             const newThingUID = uidPrefix + newThingId
 
-            const error = this.validateThingUID(newThingUID, newThingId)
+            const error = validateThingUID(newThingUID, newThingId, this.things)
             const label = dialog.$el.find('.label-input').val()
             if (!error && label) {
               dialog.close()
@@ -137,7 +137,7 @@ export default {
                   id.focus()
 
                   id.on('input', () => {
-                    const error = this.validateThingUID(uidPrefix + id.val(), id.val())
+                    const error = validateThingUID(uidPrefix + id.val(), id.val(), this.things)
                     const info = dialog.$el.find('.id-info')
                     info.text(error)
                     info[0].style.color = error ? 'red' : ''
