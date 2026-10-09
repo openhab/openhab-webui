@@ -767,6 +767,7 @@ export default {
         {
           props: {
             bridgeUID: this.thing.bridgeUID || this.thing.UID,
+            thingUID: this.thing.UID,
             networkType
           }
         }
