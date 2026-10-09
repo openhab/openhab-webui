@@ -34,10 +34,9 @@
 </template>
 
 <script>
-import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeAndMetaLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 
 export default {
-  mixins: [ItemMixin],
   props: {
     item: Object,
     context: Object,
@@ -46,6 +45,9 @@ export default {
     noIcon: Boolean,
     noTags: Boolean,
     link: String
+  },
+  setup() {
+    return { getItemTypeAndMetaLabel, getNonSemanticTags }
   },
   computed: {
     state() {

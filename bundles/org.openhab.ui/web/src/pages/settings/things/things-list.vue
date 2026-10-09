@@ -239,7 +239,7 @@ import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
@@ -261,7 +261,7 @@ const ITEM_STATUSES = {
 }
 
 export default {
-  mixins: [ThingStatus, FileDefinition],
+  mixins: [FileDefinition],
   props: {
     searchFor: String,
     f7route: Object,
@@ -273,7 +273,7 @@ export default {
     ClipboardIcon
   },
   setup() {
-    return { f7, theme, BREAKPOINTS }
+    return { f7, theme, BREAKPOINTS, thingStatusBadgeColor, thingStatusBadgeText }
   },
   data() {
     return {
