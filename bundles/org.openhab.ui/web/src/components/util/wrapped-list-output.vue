@@ -39,6 +39,7 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 withDefaults(
   defineProps<{
+    label?: string
     value?: string
     clipboard?: boolean
     tooltip?: string
