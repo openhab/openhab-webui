@@ -49,7 +49,7 @@
               :value="channel.description"
               @input="channel.description = $event.target.value"
               clear-button />
-            <wrapped-list-output v-else label="Description" :value="channel.description" />
+            <wrapped-list-output v-else label="Description" :value="channel.description || channelType?.description" />
           </f7-list-group>
 
           <f7-list-item
