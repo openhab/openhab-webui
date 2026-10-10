@@ -26,7 +26,7 @@
 
   .text-content
     white-space normal !important
-    word-break break-all !important
+    overflow-wrap anywhere !important
     display inline-flex
     gap 8px
 
