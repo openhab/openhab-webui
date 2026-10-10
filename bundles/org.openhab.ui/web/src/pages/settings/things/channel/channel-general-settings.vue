@@ -40,7 +40,7 @@
               :info="createMode ? 'Required.' : ''"
               @input="channel.label = $event.target.value"
               clear-button />
-            <wrapped-list-output v-else label="Label" :value="channel.label" />
+            <wrapped-list-output v-else label="Label" :value="channel.label || channelType?.label" />
             <f7-list-input
               v-if="!readOnly"
               label="Description"
