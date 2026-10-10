@@ -177,7 +177,7 @@
 </template>
 
 <style lang="stylus">
-.quick-link-form
+.item-form
   .item-inner
     display inherit !important
   .item-title
