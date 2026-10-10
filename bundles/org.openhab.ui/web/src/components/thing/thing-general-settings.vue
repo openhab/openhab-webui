@@ -29,7 +29,7 @@
                         @click="$oh.utils.normalizeInputForThingId('#input')" />
                     </template>
                   </f7-list-input>
-                  <wrapped-list-output v-else label="Thing UID" :value="thing.UID" clipboard />
+                  <wrapped-list-output label="Thing UID" :value="thing.UID" clipboard />
                   <f7-list-input
                     v-if="!readOnly"
                     label="Label"
