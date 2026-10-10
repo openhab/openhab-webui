@@ -113,7 +113,10 @@ export default {
     this.isMuted = this.muteActive !== undefined ? this.muteActive : (this.startMuted || false)
     if (this.sendAudio === true && this.micActive === true) {
       this.isMicOn = true
-      if (this.inForeground && this.src && !this.webrtc) {
+      if (this.webrtc) {
+        // the foregroundService mixin already started the stream before isMicOn was set
+        this.enableMicrophone(this.webrtc, this.audioTransceiver)
+      } else if (this.inForeground && this.src) {
         this.startStream()
       }
     }
@@ -147,10 +150,14 @@ export default {
       this.popupElement = null
     },
     onPopupClose() {
+      // prevents onVisibilityChange() from resuming the stream while the popup is closed
+      this.inForeground = false
       this.stopStream()
     },
     onPopupOpened() {
-      if (this.inForeground && this.src && !this.webrtc) {
+      // inForeground may still be false if the widget was mounted while the popup was closed
+      this.inForeground = true
+      if (this.src && !this.webrtc) {
         this.startStream()
       }
     },
@@ -187,6 +194,7 @@ export default {
         this.offerAbortController ||
         this.webrtc ||
         this.webrtcSendChannel ||
+        this.localAudioStream ||
         (this.$refs.videoPlayer && this.$refs.videoPlayer.srcObject)
       )
       if (!hasActiveStream) {
@@ -210,11 +218,9 @@ export default {
           } catch (e) {}
           this.webrtcSendChannel = null
         }
+        this.disableMicrophone()
         if (this.webrtc) {
           this.webrtc.isClosed = true
-          try {
-            this.disableMicrophone()
-          } catch (e) {}
           try {
             this.webrtc.ontrack = null
             this.webrtc.onnegotiationneeded = null
@@ -367,6 +373,11 @@ export default {
           return
         }
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        // teardown or mic toggle-off may have happened while the permission prompt was pending
+        if (!this.isMicOn || !this.webrtc || this.webrtc !== webrtc || webrtc.isClosed) {
+          stream.getTracks().forEach((track) => track.stop())
+          return
+        }
         this.localAudioStream = stream
         const [audioTrack] = stream.getAudioTracks()
         if (!audioTrack) return

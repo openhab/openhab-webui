@@ -53,6 +53,8 @@ export interface Config {
   stunServer?: string
   candidatesTimeout?: number
   sendAudio?: boolean
+  micActive?: boolean
+  muteActive?: boolean
 }
 export interface Component {
   component: 'oh-video'
