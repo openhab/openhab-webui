@@ -2,7 +2,7 @@
   <div>
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
-        <group-box title="Rule Properties">
+        <group-box :title="`${type} Properties`">
           <f7-list inline-labels no-hairlines-md>
             <f7-list-group>
               <f7-list-input
@@ -16,7 +16,7 @@
                 info="Required. Note: cannot be changed after the creation"
                 input-id="input"
                 :pattern="uidPattern"
-                error-message="Invalid rule UID. It can't contain '/', '\' or have leading or trailing whitespace"
+                :error-message="`Invalid ${type} UID. It can't contain '/', '\' or have leading or trailing whitespace`"
                 @input="rule.uid = $event.target.value || undefined"
                 clear-button>
                 <template #inner>
@@ -28,7 +28,7 @@
                     @click="normalizeUid()" />
                 </template>
               </f7-list-input>
-              <wrapped-list-output v-else label="Rule UID" :value="rule.uid" clipboard />
+              <wrapped-list-output v-else :label="`${type} UID`" :value="rule.uid" clipboard />
               <f7-list-input v-if="!createMode && templateName" label="Template" type="text" :value="templateName" disabled />
               <f7-list-input
                 v-if="editable"
