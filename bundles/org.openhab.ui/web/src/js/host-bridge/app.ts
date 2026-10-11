@@ -5,12 +5,14 @@ import { BridgeError, hasSaidHello, hostDarkMode, hostInfo, hostTakesOver, onHos
 import { UNLOCK_ID } from './menu'
 import { hostNavbarVersion, navbarStateFor, runNavbarAction, runNavbarBack } from './navbar'
 import { captureNavState, isModalRoute, restoreProps, takeSeededHistory, type RouterLike } from './routes'
-import type { MenuState } from './protocol'
+import type { LayoutInfo, MenuState } from './protocol'
 
 interface F7Page {
-  el?: Element
+  el?: Element | null
   route?: { url?: string }
 }
+
+const MODAL_EVENTS = ['popupOpen', 'popupClose', 'popupClosed', 'sheetOpen', 'sheetClosed', 'popoverOpen', 'popoverClosed'] as const
 
 export interface HostAppOptions {
   version: string
@@ -32,6 +34,7 @@ export function useHostApp(options: HostAppOptions) {
   const hostMenu = hostTakesOver('menu')
 
   const navbarHeight = ref(hostInfo()?.layout?.navbarHeight)
+  const insets = ref<LayoutInfo['insets'] | undefined>(hostInfo()?.layout?.insets)
   const scrolledAway = ref(false)
   const collapsed = ref(false)
   const popups = ref(0)
@@ -41,20 +44,40 @@ export function useHostApp(options: HostAppOptions) {
   const mainRouter = () => f7.views.main?.router as unknown as RouterLike | undefined
 
   let page: Element | null = null
-  let modalOpen = false
+  // Set when the current route is a popup, sheet or popover.
+  let modalRoute = false
   let restore = takeSeededHistory()
   const sent = { nav: '', navbar: '', menu: '' }
 
   // Set on <html>, because f7-app ignores class and style bindings.
   document.documentElement.classList.toggle('host-navbar', hostNavbar)
   document.documentElement.classList.toggle('host-menu', hostMenu)
+  // 0: the app's bar sits above the web view, and pages leave no room for it.
   watch(
     navbarHeight,
     (height) => {
-      if (hostNavbar && height) document.documentElement.style.setProperty('--f7-navbar-height', height + 'px')
+      if (!hostNavbar || height === undefined) return
+      document.documentElement.classList.toggle('host-navbar-outside', height === 0)
+      if (height > 0) document.documentElement.style.setProperty('--f7-navbar-height', height + 'px')
     },
     { immediate: true }
   )
+  // Leave room for the app's bars. The web view's own safe area still counts: the app can report
+  // its insets before it knows them.
+  watch(
+    insets,
+    (value) => {
+      if (!value) return
+      const root = document.documentElement.style
+      root.setProperty('--f7-safe-area-top', `max(env(safe-area-inset-top), ${value.top}px)`)
+      root.setProperty('--f7-safe-area-bottom', `max(env(safe-area-inset-bottom), ${value.bottom}px)`)
+    },
+    { immediate: true }
+  )
+
+  function modalOpen() {
+    return modalRoute || openModals().length > 0
+  }
 
   function sendMenu() {
     const menu = options.menu()
@@ -69,7 +92,8 @@ export function useHostApp(options: HostAppOptions) {
     if (!hostNavbar || !hasSaidHello()) return
     // Hide the app's bar while a popup or an expanded searchbar shows its own bar.
     const hidden = scrolledAway.value || popups.value > 0 || searching.value
-    const state = navbarStateFor(page, { hidden, collapsed: collapsed.value })
+    // Main UI's large title is part of its bar, which isn't shown when the app's bar is outside.
+    const state = navbarStateFor(page, { hidden, collapsed: collapsed.value || navbarHeight.value === 0 })
     const json = JSON.stringify(state)
     if (json === sent.navbar) return
     sent.navbar = json
@@ -78,7 +102,7 @@ export function useHostApp(options: HostAppOptions) {
 
   function sendNav() {
     if (!hasSaidHello() || restore) return
-    const state = captureNavState(mainRouter()!, modalOpen)
+    const state = captureNavState(mainRouter()!, modalOpen())
     if (!state) return
     const json = JSON.stringify(state)
     if (json === sent.nav) return
@@ -90,7 +114,7 @@ export function useHostApp(options: HostAppOptions) {
   function pageShown(shown: F7Page) {
     if (!shown.el || shown.el.closest('.popup')) return
     page = shown.el
-    modalOpen = false
+    modalRoute = false
     scrolledAway.value = false
     collapsed.value = false
     // Restore props only if the first page is the last saved page. A redirect can land elsewhere.
@@ -112,7 +136,7 @@ export function useHostApp(options: HostAppOptions) {
     (connected) => send('connection.state', { sseConnected: !!connected }),
     { immediate: true }
   )
-  watch([scrolledAway, collapsed, popups, searching], sendNavbar)
+  watch([scrolledAway, collapsed, popups, searching, navbarHeight], sendNavbar)
   watch(hostNavbarVersion, () => {
     void nextTick(sendNavbar)
   })
@@ -145,15 +169,16 @@ export function useHostApp(options: HostAppOptions) {
       options.openModal(kind + ':' + target)
     })
     onHostCommand('nav.closeModals', () => openModals().forEach(closeModal))
-    onHostCommand('nav.getState', () => captureNavState(mainRouter()!, modalOpen))
+    onHostCommand('nav.getState', () => captureNavState(mainRouter()!, modalOpen()))
     onHostCommand('navbar.activate', ({ id }: { id: string }) => {
       if (!runNavbarAction(page, id)) throw new BridgeError('not_found')
     })
     onHostCommand('menu.activate', ({ id }: { id: string }) => {
       if (id !== UNLOCK_ID || !options.unlock()) throw new BridgeError('not_found')
     })
-    onHostCommand('layout.changed', ({ navbarHeight: height }: { navbarHeight?: number }) => {
-      if (height && height > 0) navbarHeight.value = height
+    onHostCommand('layout.changed', (layout: Partial<LayoutInfo>) => {
+      if (layout.insets) insets.value = layout.insets
+      if (typeof layout.navbarHeight === 'number' && layout.navbarHeight >= 0) navbarHeight.value = layout.navbarHeight
     })
     onHostCommand('settings.changed', ({ darkMode }: { darkMode?: string }) => {
       if (darkMode === 'light' || darkMode === 'dark') hostDarkMode.value = darkMode
@@ -166,7 +191,7 @@ export function useHostApp(options: HostAppOptions) {
   /** Adds the Framework7 listeners and command handlers. Call once Framework7 is ready. */
   function start() {
     f7.on('routeChange', (route) => {
-      modalOpen = !!route && isModalRoute(route)
+      modalRoute = !!route && isModalRoute(route)
       void nextTick(() => {
         sendNav()
         sendNavbar()
@@ -181,14 +206,20 @@ export function useHostApp(options: HostAppOptions) {
       f7.on('navbarShow', () => (scrolledAway.value = false))
       f7.on('navbarCollapse', () => (collapsed.value = true))
       f7.on('navbarExpand', () => (collapsed.value = false))
-      const countPopups = () => (popups.value = document.querySelectorAll('.popup.modal-in').length)
-      f7.on('popupOpen', countPopups)
-      f7.on('popupClose', countPopups)
-      f7.on('popupClosed', countPopups)
       f7.on('searchbarEnable', (searchbar) => (searching.value = !!searchbar?.expandable))
       f7.on('searchbarDisable', () => (searching.value = false))
     }
+    // Popups, sheets and popovers opened from code don't change the route.
+    for (const event of MODAL_EVENTS) {
+      f7.on(event, () => {
+        popups.value = document.querySelectorAll('.popup.modal-in').length
+        void nextTick(sendNav)
+      })
+    }
     registerCommands()
+    // The first page may already be in before these listeners were added.
+    const current = document.querySelector('.view-main .page-current')
+    if (current) pageShown({ el: current, route: f7.views.main?.router?.currentRoute })
   }
 
   return { hostNavbar, hostMenu, start }

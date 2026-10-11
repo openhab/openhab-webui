@@ -78,6 +78,20 @@ describe('host bridge', () => {
     expect(replyTo('h3')).toMatchObject({ ok: false, error: { code: 'failed', message: 'boom' } })
   })
 
+  it('runs a resent command once and answers it again', async () => {
+    const { deliver, posted } = fakeHost()
+    const handler = vi.fn(() => 'done')
+    onHostCommand('nav.back', handler)
+    deliver({ type: 'nav.back', id: 'h7', payload: {} })
+    deliver({ type: 'nav.back', id: 'h7', payload: {} })
+    await flush()
+    deliver({ type: 'nav.back', id: 'h7', payload: {} })
+    expect(handler).toHaveBeenCalledTimes(1)
+    const replies = posted.filter((m) => m.replyTo === 'h7')
+    expect(replies).toHaveLength(2)
+    expect(replies.every((m) => m.payload.ok && m.payload.result === 'done')).toBe(true)
+  })
+
   it('matches a request with its reply', async () => {
     const { posted, deliver } = fakeHost()
     const answer = request('auth.getCredentials')

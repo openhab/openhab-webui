@@ -6,6 +6,7 @@ function fakeRouter(history: string[], propsHistory?: object[]) {
     history,
     propsHistory,
     findMatchingRoute: (url: string) => {
+      if (url === '/') return { route: { path: url, redirect: '/overview/' } }
       if (url.endsWith('/popup')) return { route: { path: url, popup: {} } }
       if (url.startsWith('/missing')) return { route: { path: '(.*)' } }
       return { route: { path: url } }
@@ -63,6 +64,11 @@ describe('nav.changed', () => {
       props: [{}, { deep: true, defineVars: { a: 1 } }],
       modal: false
     })
+  })
+
+  it('leaves out an address that only redirects', () => {
+    const router = fakeRouter(['/', '/overview/'], [{}, {}])
+    expect(captureNavState(router, false)?.history).toEqual(['/overview/'])
   })
 
   it('leaves out popups and addresses with nothing behind them', () => {

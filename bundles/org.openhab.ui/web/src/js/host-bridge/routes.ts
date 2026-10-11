@@ -87,7 +87,7 @@ export function isModalRoute(match: { route?: Record<string, any> }) {
 
 function navigable(router: RouterLike, url: string) {
   const match = matchRoute(router, url)
-  if (!match || isModalRoute(match)) return false
+  if (!match || isModalRoute(match) || match.route.redirect) return false
   if (PROPS_ONLY.test(url.split('#')[0].split('?')[0])) return false
   return match.route.path !== '(.*)'
 }

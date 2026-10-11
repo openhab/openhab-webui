@@ -272,14 +272,21 @@
 
 <style lang="stylus">
 // The app draws the top bar: hide Main UI's bar on pages but keep its height.
+// The app's bar sits above the web view (navbarHeight 0): keep no height either.
 // The app shows the menu: hide the sidebar.
 .host-navbar
   .view-main .navbar:not(.popup .navbar)
     > .navbar-bg, > .navbar-inner > .left, > .navbar-inner > .title, > .navbar-inner > .right
       opacity 0 !important
       pointer-events none !important
-  .panel, .panel-backdrop
-    --f7-appbar-app-offset var(--f7-navbar-height)
+  &:not(.host-navbar-outside)
+    .panel, .panel-backdrop
+      --f7-appbar-app-offset var(--f7-navbar-height)
+.host-navbar-outside .view-main
+  --f7-navbar-height 0px
+  --f7-navbar-large-title-height 0px
+  .navbar .title-large
+    display none
 .host-menu .panel-left
   display none !important
 .panel-left::-webkit-scrollbar /* WebKit */
@@ -502,7 +509,7 @@ export default {
   },
   setup() {
     const { locale, mergeLocaleMessage: globalMergeLocaleMessage } = useI18n({ useScope: 'global' })
-    const { t, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
+    const { t, te, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
     const { startAudioWebSocket, triggerDialog } = useDialog()
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
@@ -512,6 +519,7 @@ export default {
 
     return {
       t,
+      te,
       localMergeLocaleMessage,
       globalMergeLocaleMessage,
       locale,
@@ -633,6 +641,8 @@ export default {
     // Returns the menu structure/state for native apps to render
     hostMenuState() {
       if (!this.hostMenu || !this.ready) return null
+      // Wait for the translations, or the app would show the raw keys.
+      if (!this.te('chat.title') || !this.$te('sidebar.helpAbout')) return null
       return sidebarMenuState({ t: this.t, globalT: this.$t, pages: this.pages, currentUrl: this.currentUrl, loggedIn: this.loggedIn })
     },
     showDockedLogViewer() {

@@ -35,6 +35,10 @@ const handlers = new Map<string, CommandHandler>()
 const requests = new Map<string, { resolve: (result: unknown) => void; reject: (error: Error) => void }>()
 let nextId = 0
 let helloSent = false
+// Replies to recent commands, by id. The app resends a command it got no reply to, and a resent
+// command gets the same reply instead of running again. Null while the command runs.
+const answered = new Map<string, ReplyPayload | null>()
+const ANSWERED_KEPT = 50
 
 /** Dark mode set by the app, from its startup info or settings.changed. */
 export const hostDarkMode = ref<'light' | 'dark' | undefined>()
@@ -145,13 +149,30 @@ function receive(data: string) {
     reply(message.id, { ok: false, error: { code: COMMANDS.includes(message.type) ? 'not_ready' : 'unknown_type' } })
     return
   }
+  const id = message.id
+  if (id && answered.has(id)) {
+    const previous = answered.get(id)
+    if (previous) reply(id, previous)
+    return
+  }
+  if (id) remember(id, null)
+  const finish = (payload: ReplyPayload) => {
+    if (id) remember(id, payload)
+    reply(id, payload)
+  }
   Promise.resolve()
     .then(() => handler(message.payload ?? {}))
-    .then((result) => reply(message.id, result === undefined ? { ok: true } : { ok: true, result }))
+    .then((result) => finish(result === undefined ? { ok: true } : { ok: true, result }))
     .catch((e: unknown) => {
       const code = e instanceof BridgeError ? e.code : 'failed'
-      reply(message.id, { ok: false, error: { code, message: e instanceof Error ? e.message : String(e) } })
+      finish({ ok: false, error: { code, message: e instanceof Error ? e.message : String(e) } })
     })
+}
+
+function remember(id: string, payload: ReplyPayload | null) {
+  answered.delete(id)
+  answered.set(id, payload)
+  if (answered.size > ANSWERED_KEPT) answered.delete(answered.keys().next().value!)
 }
 
 /** Resets all state. For tests. */
@@ -159,6 +180,7 @@ export function resetHostBridge() {
   port = null
   handlers.clear()
   requests.clear()
+  answered.clear()
   nextId = 0
   helloSent = false
   hostDarkMode.value = undefined

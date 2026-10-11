@@ -8,7 +8,10 @@ export type UIFeature = 'navbar' | 'menu' | 'routeRestore' | 'layout'
 export interface LayoutInfo {
   /** How much of the page the app's bars cover, in CSS pixels. */
   insets: { top: number; bottom: number }
-  /** Height of the app's top bar, when the app draws one. */
+  /**
+   * How much of the page the app's top bar covers. 0 when the bar sits above the web view; Main UI
+   * then leaves no room for it. Left out: Main UI keeps its own bar height.
+   */
   navbarHeight?: number
 }
 
