@@ -23,7 +23,7 @@ const calendarSeries: SeriesComponent = {
       component.config,
       OhCalendarSeriesDefinition
     )
-    const itemSeries = points?.find((p) => p.name === series.item)
+    const itemSeries = points.find((p) => p.name === series.item)
     const itemPoints = itemSeries?.data ?? []
 
     type Group = [Dayjs, string[]]

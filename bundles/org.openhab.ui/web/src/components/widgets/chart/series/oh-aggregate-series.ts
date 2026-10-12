@@ -150,7 +150,7 @@ const aggregateSeries: SeriesComponent = {
     const dimension2 = series.dimension2
     const boundary = includeBoundaryAndItemStateFor(component.config)
 
-    const itemSeries = points?.find((p) => p.name === series.item)
+    const itemSeries = points.find((p) => p.name === series.item)
     const itemPoints = itemSeries?.data ?? []
 
     // we'll suppose dimension2 always more granular than dimension1
