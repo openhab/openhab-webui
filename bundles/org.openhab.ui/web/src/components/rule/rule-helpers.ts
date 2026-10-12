@@ -33,7 +33,7 @@ export function getRuleLanguage(rule: EnrichedRule) {
 
   // @ts-expect-error-next-line
   if (action?.configuration?.type === 'application/javascript' && action.configuration?.blockSource) {
-    return { name: 'Javascript+Blockly', shortName: 'Blockly', commentChar: '//' }
+    return { name: 'Blockly', shortName: 'Blockly', commentChar: '//' }
   }
 
   if (language && automation_languages[language]) {
