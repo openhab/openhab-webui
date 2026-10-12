@@ -72,10 +72,10 @@ export interface SeriesComponent {
   get(
     context: ChartContext,
     component: api.UiComponent,
-    items?: (api.EnrichedItem | null)[],
-    points?: api.ItemHistory[],
-    startTime?: Dayjs,
-    endTime?: Dayjs
+    items: (api.EnrichedItem | null)[],
+    points: api.ItemHistory[],
+    startTime: Dayjs,
+    endTime: Dayjs
   ): OhSeriesOption
   includeBoundary?(context: ChartContext, component: api.UiComponent): boolean | null
   includeItemState?(context: ChartContext, component: api.UiComponent): boolean | null
