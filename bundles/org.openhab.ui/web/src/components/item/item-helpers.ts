@@ -45,7 +45,7 @@ export function getNonSemanticTags(item: api.EnrichedItem | api.EnrichedGroupIte
 }
 
 /**
- * Validate the Item name against valid characters and (if existing Items are available on `this.items`) names of existing Items.
+ * Validate the Item name against valid characters and (if `items` is passed) names of existing Items.
  *
  * @param {string} name Item name to validate
  * @param {api.EnrichedItem[] | api.EnrichedGroupItem[] | api.GroupItem[]} [items] Existing items to check for name conflicts
