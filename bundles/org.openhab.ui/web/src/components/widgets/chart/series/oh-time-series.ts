@@ -24,7 +24,7 @@ const timeSeries: SeriesComponent = {
     const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config, OhTimeSeriesDefinition)
     return series.item ? [series.item, ...markAreaItems] : markAreaItems
   },
-  get(context, component, points, startTime, endTime) {
+  get(context, component, items, points, startTime, endTime) {
     const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config, OhTimeSeriesDefinition)
     series.data = []
 
