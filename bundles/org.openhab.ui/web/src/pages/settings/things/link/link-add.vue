@@ -182,6 +182,7 @@ import { f7, theme } from 'framework7-vue'
 
 import * as Types from '@/assets/item-types.js'
 import ItemMixin from '@/components/item/item-mixin'
+import { validateItemName } from '@/components/item/item-helpers'
 import uomMixin from '@/components/item/uom-mixin'
 import LinkMixin from '@/pages/settings/things/link/link-mixin'
 
@@ -349,7 +350,7 @@ export default {
 
       // checks
       if (this.createMode) {
-        const errorMessage = this.validateItemName(this.newItem.name)
+        const errorMessage = validateItemName(this.newItem.name, this.items)
         if (errorMessage !== '') {
           f7.dialog.alert('Please correct the item name: ' + errorMessage)
           return
