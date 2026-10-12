@@ -95,7 +95,7 @@ export default {
         .join('\n')
     },
     docLink() {
-      const docUrl = `${useRuntimeStore().websiteUrl}/link/thing`
+      const docUrl = `${useRuntimeStore().websiteUrl}/link/thingxml#state-description`
       if (this.namespace === 'stateDescription') {
         return docUrl + '#state-description'
       } else {

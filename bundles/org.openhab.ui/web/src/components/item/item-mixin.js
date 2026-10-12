@@ -1,7 +1,6 @@
-import TagMixin from '@/components/tags/tag-mixin'
+import { isSemanticTag } from '@/components/tags/tag-helpers'
 
 export default {
-  mixins: [TagMixin],
   methods: {
     getItemTypeLabel(item) {
       let ret = item.type
@@ -35,7 +34,7 @@ export default {
     },
     getNonSemanticTags(item) {
       if (!item.tags) return []
-      return item.tags.filter((t) => !this.isSemanticTag(t))
+      return item.tags.filter((t) => !isSemanticTag(t))
     },
     /**
      * Validate the Item name against valid characters and (if existing Items are available on `this.items`) names of existing Items.

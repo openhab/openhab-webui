@@ -114,15 +114,9 @@ const stateSeries: SeriesComponent = {
     series.data = []
 
     if (series.item) {
-      const itemIndex = points!.findIndex((p) => p.name === series.item)
-      const itemPoints = points?.[itemIndex]?.data ?? []
-      const item = items?.[itemIndex]
-
-      if ('mapState' in series) {
-        for (let i = 0; i < itemPoints.length; i++) {
-          itemPoints[i].state = (series.mapState as MapStateFunction)(itemPoints[i].state)
-        }
-      }
+      const itemPoints = (points.find((p) => p.name === series.item)?.data ?? []).map((p) =>
+        'mapState' in series ? { ...p, state: (series.mapState as MapStateFunction)(p.state) } : p
+      )
 
       let data = []
       let itemStartTime: Date | null = null
