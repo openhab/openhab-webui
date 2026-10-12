@@ -53,7 +53,7 @@ export default defineConfig({
               /*
                * Content-Security Policy Explanation:
                * - default: allow loading resources from same origin
-               * - scripts: same origin
+               * - scripts: same origin & unsafe-eval (required by eslint-linter-browserify in code editor)
                * - styles: same source & inline style (<style> tags and style attributes)
                * - fonts: same source & data: URIs
                * - images: any origin & data: URIs
@@ -64,7 +64,7 @@ export default defineConfig({
                * - objects (browser plugins, Flash, etc.): blocked
                * - base: only allow same origin to set <base href="...">
                */
-              content: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:; object-src 'none'; base-uri 'self';"
+              content: "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:; object-src 'none'; base-uri 'self';"
             }
           }
         ]

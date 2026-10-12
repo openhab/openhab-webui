@@ -9,7 +9,7 @@
       :grid-pitch="gridPitch"
       :prevent-deactivation="preventDeactivation"
       :context="childContext(obj.item)"
-      @oci-selected="(cid) => emit('oci-selected', cid)"
+      @oci-selected="(sel) => emit('oci-selected', sel)"
       @oci-deselected="(cid) => emit('oci-deselected', cid)"
       @oci-drag-stop="(cid) => emit('oci-drag-stop', cid)"
       @oci-dragged="(cid, x, y) => emit('oci-dragged', cid, x, y)" />
@@ -29,9 +29,18 @@ import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import OhCanvasItem from './oh-canvas-item.vue'
 import { OhCanvasLayerDefinition } from '@/assets/definitions/widgets/layout'
+import { OhCanvasLayer as OhCanvasLayerType, OhCanvasItem as OhCanvasItemType } from '@/types/components/widgets'
 import type { WidgetContext } from '@/components/widgets/types'
 import type { UiComponent } from '@/api'
 import type { OhCanvasItemEmits } from '@/components/widgets/layout/oh-canvas-item.vue'
+
+interface Layer {
+  item: UiComponent
+  selected: boolean
+  id: string
+}
+
+let nextCanvasItemRuntimeId = 0
 
 defineOptions({ widget: OhCanvasLayerDefinition })
 
@@ -47,26 +56,35 @@ const props = defineProps<{
 const emit = defineEmits<OhCanvasItemEmits>()
 
 // composables
-const { config, defaultSlots, childContext, visible } = useWidgetContext(computed(() => props.context))
+const { config, defaultSlots, childContext, visible } = useWidgetContext(
+  computed(() => props.context),
+  OhCanvasLayerType.isConfig
+)
+
+// data and state
+const canvasItemRuntimeIds = new WeakMap<UiComponent, string>()
 
 // computed
 const layerPreload = computed(() => config.value?.preload === true)
 const layerVisible = computed(() => (!props.context.editmode && visible.value) || (props.context.editmode && editVisible.value))
 const editVisible = computed(() => !(config.value && config.value.editVisible === false))
 
-interface Layer {
-  item: UiComponent
-  selected: boolean
-  id: string
-}
-
 const layer = computed<Layer[]>(() => {
   return defaultSlots.value
-    .filter((item: UiComponent) => item.component === 'oh-canvas-item')
-    .map((item: UiComponent) => ({
+    .filter((component) => OhCanvasItemType.isComponent(component))
+    .map((item) => ({
       item,
       selected: false,
-      id: Math.random().toString(36).substring(2)
+      id: getCanvasItemRuntimeId(item)
     }))
 })
+
+function getCanvasItemRuntimeId(item: UiComponent) {
+  let itemId = canvasItemRuntimeIds.get(item)
+  if (!itemId) {
+    itemId = `${props.id}:canvas-item-${++nextCanvasItemRuntimeId}`
+    canvasItemRuntimeIds.set(item, itemId)
+  }
+  return itemId
+}
 </script>

@@ -329,7 +329,7 @@ export default {
         let addonType = this.addon.type
         if (addonType === 'misc') addonType = 'integration'
         const docSrcUrl = `${useRuntimeStore().docSrcUrl}/addons/${addonType}/${this.addon.id}`
-        fetch(docSrcUrl + '/readme.md')
+        fetch(docSrcUrl + '/index.md')
           .then(async (readme) => {
             let text = await readme.text()
 

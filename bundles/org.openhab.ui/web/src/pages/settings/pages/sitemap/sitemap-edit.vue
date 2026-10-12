@@ -60,6 +60,7 @@
                   :createMode="createMode"
                   :editable="isEditable"
                   @duplicate="duplicateWidget"
+                  @navigate-nested-sitemap="navigateNestedSitemapEditor"
                   @remove="removeWidget"
                   @movedown="moveWidgetDown"
                   @moveup="moveWidgetUp"
@@ -112,6 +113,19 @@
               <f7-block v-if="selectedWidget && selectedWidget.type !== 'Sitemap' && (isEditable || selectedWidget.iconColorRules?.length)">
                 <div><f7-block-title>Icon Color</f7-block-title></div>
                 <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
+              </f7-block>
+              <f7-block
+                v-if="
+                  selectedWidget &&
+                  WIDGET_TYPES_CAN_COMMAND.includes(selectedWidget.type) &&
+                  (isEditable || selectedWidget.confirmCmdRules?.length)
+                ">
+                <div><f7-block-title>Confirm Rules</f7-block-title></div>
+                <attribute-details
+                  :widget="selectedWidget"
+                  attribute="confirmCmdRules"
+                  :fields="confirmCmdRulesFields"
+                  :disabled="!isEditable" />
               </f7-block>
               <f7-block v-if="isEditable && selectedWidget && canAddChildren(selectedWidget) && selectedWidget.type !== 'Buttongrid'">
                 <div><f7-block-title>Add Child Widget</f7-block-title></div>
@@ -236,6 +250,17 @@
           <f7-link
             v-if="
               selectedWidget &&
+              WIDGET_TYPES_CAN_COMMAND.includes(selectedWidget.type) &&
+              (isEditable || selectedWidget.confirmCmdRules?.length)
+            "
+            class="padding-left padding-right"
+            :tab-link-active="detailsTab === 'confirmCmdRules'"
+            @click="detailsTab = 'confirmCmdRules'">
+            Confirm
+          </f7-link>
+          <f7-link
+            v-if="
+              selectedWidget &&
               selectedWidget.type !== 'Sitemap' &&
               (isEditable ||
                 selectedWidget.labelColorRules?.length ||
@@ -253,6 +278,7 @@
             :widget="selectedWidget"
             :createMode="createMode"
             :editable="isEditable"
+            @navigate-nested-sitemap="navigateNestedSitemapEditor"
             @duplicate="duplicateWidget"
             @remove="removeWidget"
             @movedown="moveWidgetDown"
@@ -285,6 +311,9 @@
             <f7-block-title>Icon Color</f7-block-title>
             <attribute-details :widget="selectedWidget" attribute="iconColorRules" :fields="colorRulesFields" :disabled="!isEditable" />
           </div>
+        </f7-block>
+        <f7-block v-if="selectedWidget && detailsTab === 'confirmCmdRules'" style="margin-bottom: 6rem">
+          <attribute-details :widget="selectedWidget" attribute="confirmCmdRules" :fields="confirmCmdRulesFields" :disabled="!isEditable" />
         </f7-block>
       </f7-page>
     </f7-sheet>
@@ -474,7 +503,7 @@ export default {
       detailsTab: 'widget',
       currentTab: 'tree',
       eventSource: null,
-      defaultFalseWidgetBooleans: ['staticIcon', 'switchSupport', 'releaseOnly', 'forceAsItem', 'stateless'],
+      defaultFalseWidgetBooleans: ['staticIcon', 'switchSupport', 'releaseOnly', 'forceAsItem', 'stateless', 'confirmCmd'],
       switchMappingFields: [
         { command: { width: '10%', placeholder: 'cmd', required: true } },
         ':',
@@ -521,6 +550,17 @@ export default {
         },
         '=',
         { argument: { width: '20%', placeholder: 'color', required: true } }
+      ],
+      confirmCmdRulesFields: [
+        {
+          conditions: [
+            { item: { width: '30%', type: 'item', placeholder: '[item]' } },
+            { condition: { width: '0%', type: 'operator' } },
+            { value: { placeholder: 'value', required: true } }
+          ]
+        },
+        '=',
+        { argument: { width: '20%', placeholder: 'message' } }
       ]
     }
   },
@@ -721,6 +761,13 @@ export default {
           })
       }
     },
+    navigateNestedSitemapEditor(target) {
+      if (!target) {
+        this.f7router.navigate('/settings/sitemaps/add')
+        return
+      }
+      this.f7router.navigate('/settings/sitemaps/' + encodeURIComponent(target))
+    },
     save(stay, force) {
       if (!this.isEditable) return
       if (this.currentTab === 'code' && this.codeDirty) {
@@ -832,7 +879,7 @@ export default {
           .forEach((widget) => {
             if (!widget.widgets?.length) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ' should not be empty')
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ' should not be empty')
             }
           })
         // Check widget has item configured if required
@@ -841,7 +888,7 @@ export default {
           .forEach((widget) => {
             if (!widget.item) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', no item configured')
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', no item configured')
             }
           })
         // Check configured widget item exists in item registry
@@ -850,7 +897,7 @@ export default {
           .forEach((widget) => {
             if (registeredItemNames && !registeredItemNames.has(widget.item)) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', invalid item configured: ' + widget.item)
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid item configured: ' + widget.item)
             }
           })
         // Check Video and Webview widgets have url configured
@@ -859,7 +906,7 @@ export default {
           .forEach((widget) => {
             if (!widget.url) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', no url configured')
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', no url configured')
             }
           })
         // Check Chart widget has valid period and decimal pattern configured
@@ -868,12 +915,18 @@ export default {
           .forEach((widget) => {
             if (!(widget.period && this.REGEX_PERIOD.test(widget.period))) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', invalid period configured: ' + widget.period)
+              validationWarnings.push(
+                this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid period configured: ' + widget.period
+              )
             }
             if (widget.yAxisDecimalPattern && !this.REGEX_DECIMAL_PATTERN.test(widget.yAxisDecimalPattern)) {
               const label = scope.widgetErrorLabel(widget)
               validationWarnings.push(
-                widget.type + ' widget ' + label + ', invalid Y-axis decimal pattern configured: ' + widget.yAxisDecimalPattern
+                this.widgetTypeLabel(widget.type) +
+                  ' widget ' +
+                  label +
+                  ', invalid Y-axis decimal pattern configured: ' +
+                  widget.yAxisDecimalPattern
               )
             }
           })
@@ -883,7 +936,9 @@ export default {
           .forEach((widget) => {
             if (widget.inputHint && !['text', 'number', 'date', 'time', 'datetime'].includes(widget.inputHint)) {
               const label = scope.widgetErrorLabel(widget)
-              validationWarnings.push(widget.type + ' widget ' + label + ', invalid inputHint configured: ' + widget.inputHint)
+              validationWarnings.push(
+                this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid inputHint configured: ' + widget.inputHint
+              )
             }
           })
         // Check Slider, Setpoint and Colortemperaturepicker widgets have valid step, minValue and maxValue if configured
@@ -892,7 +947,9 @@ export default {
           .forEach((widget) => {
             const label = scope.widgetErrorLabel(widget)
             if (widget.step !== undefined && widget.step !== null && widget.step !== '' && Number(widget.step) <= 0) {
-              validationWarnings.push(widget.type + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.step)
+              validationWarnings.push(
+                this.widgetTypeLabel(widget.type) + ' widget ' + label + ', step size cannot be 0 or negative: ' + widget.step
+              )
             }
             const hasMinValue = widget.minValue !== undefined && widget.minValue !== null && widget.minValue !== ''
             const hasMaxValue = widget.maxValue !== undefined && widget.maxValue !== null && widget.maxValue !== ''
@@ -900,7 +957,13 @@ export default {
             const maxValue = hasMaxValue ? parseFloat(widget.maxValue) : 100
             if (minValue > maxValue) {
               validationWarnings.push(
-                widget.type + ' widget ' + label + ', minValue must be less than or equal maxValue: ' + minValue + ' > ' + maxValue
+                this.widgetTypeLabel(widget.type) +
+                  ' widget ' +
+                  label +
+                  ', minValue must be less than or equal maxValue: ' +
+                  minValue +
+                  ' > ' +
+                  maxValue
               )
             }
           })
@@ -911,7 +974,7 @@ export default {
           .forEach((widget) => {
             const label = scope.widgetErrorLabel(widget)
             if (!widget.widgets?.length) {
-              validationWarnings.push(widget.type + ' widget ' + label + ', no buttons defined')
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', no buttons defined')
             }
             const noVisibilityRulePositions = new Set()
             const visibilityRulePositions = new Set()
@@ -921,7 +984,7 @@ export default {
                 return
               }
               if (child.type !== 'Button') {
-                validationWarnings.push(widget.type + ' widget ' + label + ', Buttongrid must contain only Buttons')
+                validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', Buttongrid must contain only Buttons')
                 invalidChildFound = true
                 return
               }
@@ -983,42 +1046,79 @@ export default {
               return undefined
             })
             if (!(parentWidget?.type === 'Buttongrid')) {
-              validationWarnings.push(widget.type + ' widget ' + label + ', can only be defined inside a Buttongrid widget')
+              validationWarnings.push(
+                this.widgetTypeLabel(widget.type) + ' widget ' + label + ', can only be defined inside a Buttongrid widget'
+              )
               if (!widget.row || isNaN(widget.row) || widget.row <= 0) {
-                validationWarnings.push(widget.type + ' widget ' + label + ', invalid row configured: ' + widget.row)
+                validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid row configured: ' + widget.row)
               }
               if (!widget.column || isNaN(widget.column) || widget.column <= 0) {
-                validationWarnings.push(widget.type + ' widget ' + label + ', invalid column configured: ' + widget.column)
+                validationWarnings.push(
+                  this.widgetTypeLabel(widget.type) + ' widget ' + label + ', invalid column configured: ' + widget.column
+                )
               }
               if (widget.command === null || widget.command === undefined || widget.command === '') {
-                validationWarnings.push(widget.type + ' widget ' + label + ', no click command defined')
+                validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', no click command defined')
               }
             } else {
               if (widget.column && !isNaN(widget.column) && widget.column > this.MAX_BUTTONGRID_COLUMNS) {
                 validationWarnings.push(
-                  widget.type + ' widget ' + label + ', more than ' + this.MAX_BUTTONGRID_COLUMNS + ' configured: ' + widget.column
+                  this.widgetTypeLabel(widget.type) +
+                    ' widget ' +
+                    label +
+                    ', more than ' +
+                    this.MAX_BUTTONGRID_COLUMNS +
+                    ' configured: ' +
+                    widget.column
                 )
               }
+            }
+          })
+        // Check NestedSitemap widget has name or item configured
+        widgetList
+          .filter((widget) => widget.type === 'NestedSitemap')
+          .forEach((widget) => {
+            const label = scope.widgetErrorLabel(widget)
+            if (!widget.name && !widget.item) {
+              validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', must have either name or item configured')
             }
           })
         widgetList.forEach((widget) => {
           const label = scope.widgetErrorLabel(widget)
           Object.keys(widget)
             .filter((attr) =>
-              ['mappings', 'visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr)
+              [
+                'mappings',
+                'visibilityRules',
+                'valueColorRules',
+                'labelColorRules',
+                'iconColorRules',
+                'iconRules',
+                'confirmCmdRules'
+              ].includes(attr)
             )
             .forEach((attr) => {
               widget[attr].forEach((param) => {
                 if (attr === 'mappings' && !this.validateMapping(param)) {
                   validationWarnings.push(
-                    widget.type + ' widget ' + label + ', syntax error in ' + attr + ': ' + param.command + '=' + param.label
+                    this.widgetTypeLabel(widget.type) +
+                      ' widget ' +
+                      label +
+                      ', syntax error in ' +
+                      attr +
+                      ': ' +
+                      param.command +
+                      '=' +
+                      param.label
                   )
                 }
                 if (
-                  ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules'].includes(attr) &&
+                  ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules', 'confirmCmdRules'].includes(
+                    attr
+                  ) &&
                   !this.validateRule(attr, param)
                 ) {
-                  validationWarnings.push(widget.type + ' widget ' + label + ', syntax error in ' + attr)
+                  validationWarnings.push(this.widgetTypeLabel(widget.type) + ' widget ' + label + ', syntax error in ' + attr)
                 }
               })
             })
@@ -1046,70 +1146,81 @@ export default {
       return widget.label ?? (widget.item ? 'for item ' + widget.item : 'without label')
     },
     validateMapping(mapping) {
-      return this.isDefinedValue(mapping.command) && (this.isNonEmptyValue(mapping.label) || this.isNonEmptyValue(mapping.icon))
+      return !(this.isUndefinedValue(mapping.command) || (this.isEmptyValue(mapping.label) && this.isEmptyValue(mapping.icon)))
     },
     validateRule(attr, rule) {
-      if (attr !== 'visibilityRules') {
-        return this.isNonEmptyValue(rule.argument)
+      if (!['visibilityRules', 'confirmCmdRules'].includes(attr)) {
+        return !this.isEmptyValue(rule.argument)
       }
-      if (rule.conditions?.some((condition) => !this.isDefinedValue(condition.value))) {
+      const hasConditions = Array.isArray(rule.conditions) && rule.conditions.length > 0
+      if (attr === 'visibilityRules' && !hasConditions) {
+        return false
+      }
+      if (attr === 'confirmCmdRules' && !hasConditions && this.isEmptyValue(rule.argument)) {
+        return false
+      }
+      if (rule.conditions?.some((condition) => this.isUndefinedValue(condition.value))) {
         return false
       }
       return true
     },
-    isNonEmptyValue(value) {
+    isEmptyValue(value) {
       if (typeof value === 'string') {
-        return value !== ''
+        return value === ''
       }
-      return this.isDefinedValue(value)
+      return this.isUndefinedValue(value)
     },
-    isDefinedValue(value) {
-      return value !== null && value !== undefined
+    isUndefinedValue(value) {
+      return value === null || value === undefined
     },
-    sanitizeRuleCondition(condition, visibilityRule) {
+    sanitizeRuleCondition(condition, requiresValue) {
       if (!condition || typeof condition !== 'object' || Array.isArray(condition)) {
         return null
       }
-      if (visibilityRule && !this.isDefinedValue(condition.value)) {
+      if (requiresValue && this.isUndefinedValue(condition.value)) {
         return null
       }
       const sanitizedCondition = {}
       ;['item', 'condition', 'value'].forEach((key) => {
-        if (this.isDefinedValue(condition[key])) {
+        if (!this.isUndefinedValue(condition[key])) {
           sanitizedCondition[key] = condition[key]
         }
       })
       return Object.keys(sanitizedCondition).length ? sanitizedCondition : null
     },
-    sanitizeRuleEntry(rule, visibilityRule) {
+    sanitizeRuleEntry(rule, requiresValue, requiresArgument) {
       if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
         return null
       }
       const sanitizedRule = {}
       if (Array.isArray(rule.conditions)) {
-        const sanitizedConditions = rule.conditions
-          .map((condition) => this.sanitizeRuleCondition(condition, visibilityRule))
-          .filter(Boolean)
+        const sanitizedConditions = rule.conditions.map((condition) => this.sanitizeRuleCondition(condition, requiresValue)).filter(Boolean)
         if (sanitizedConditions.length) {
           sanitizedRule.conditions = sanitizedConditions
         }
       }
-      if (this.isNonEmptyValue(rule.argument)) {
+      if (!this.isEmptyValue(rule.argument)) {
         sanitizedRule.argument = rule.argument
       }
-      if (!visibilityRule && !sanitizedRule.argument) {
+      if (requiresArgument && !sanitizedRule.argument) {
         return null
       }
       return Object.keys(sanitizedRule).length ? sanitizedRule : null
     },
     sanitizeRuleAttributes(widget) {
-      const ruleAttributes = ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules']
+      const ruleAttributes = ['visibilityRules', 'valueColorRules', 'labelColorRules', 'iconColorRules', 'iconRules', 'confirmCmdRules']
       ruleAttributes.forEach((ruleAttribute) => {
         if (!Array.isArray(widget[ruleAttribute])) {
           return
         }
         widget[ruleAttribute] = widget[ruleAttribute]
-          .map((rule) => this.sanitizeRuleEntry(rule, ruleAttribute === 'visibilityRules'))
+          .map((rule) =>
+            this.sanitizeRuleEntry(
+              rule,
+              ['visibilityRules', 'confirmCmdRules'].includes(ruleAttribute),
+              !['visibilityRules', 'confirmCmdRules'].includes(ruleAttribute)
+            )
+          )
           .filter(Boolean)
         if (!widget[ruleAttribute].length) {
           delete widget[ruleAttribute]
@@ -1122,7 +1233,7 @@ export default {
       }
       const sanitizedMapping = {}
       Object.keys(mapping).forEach((key) => {
-        if (this.isDefinedValue(mapping[key])) {
+        if (!this.isUndefinedValue(mapping[key])) {
           sanitizedMapping[key] = mapping[key]
         }
       })
@@ -1164,6 +1275,9 @@ export default {
       return processed
     },
     preProcessWidgetLoad(widget) {
+      if (widget.type === 'Sitemap') {
+        widget.type = 'NestedSitemap' // avoid conflict with main Sitemap type
+      }
       if (widget.label) {
         const labelMatch = widget.label.match(/^(.*)\s\[(.*?)\]\s*$/)
         if (labelMatch) {
@@ -1192,6 +1306,9 @@ export default {
       return processed
     },
     preProcessWidgetSave(widget) {
+      if (widget.type === 'NestedSitemap') {
+        widget.type = 'Sitemap' // convert back to Sitemap type for NestedSitemap widgets when saving
+      }
       if (widget.itemFormatOverride || widget.format?.length) {
         const label = widget.label?.trim() || ''
         widget.label = label + (label ? ' ' : '') + '[' + (widget.format?.trim() || '') + ']'

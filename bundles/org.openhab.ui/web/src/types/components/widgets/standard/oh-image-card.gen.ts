@@ -50,6 +50,8 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
+  embedSvg?: boolean
+  embedSvgFlashing?: boolean
 }
 export interface Component {
   component: 'oh-image-card'
