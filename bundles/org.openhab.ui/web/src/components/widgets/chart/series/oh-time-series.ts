@@ -24,12 +24,12 @@ const timeSeries: SeriesComponent = {
     const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config, OhTimeSeriesDefinition)
     return series.item ? [series.item, ...markAreaItems] : markAreaItems
   },
-  get(context, component, points, startTime, endTime) {
+  get(context, component, items, points, startTime, endTime) {
     const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config, OhTimeSeriesDefinition)
     series.data = []
 
     if (series.item) {
-      const itemSeries = points.find((p) => p.name === series.item)
+      const itemSeries = points?.find((p) => p.name === series.item)
       const itemPoints = itemSeries?.data ?? []
 
       const formatter = new Intl.NumberFormat('en', { useGrouping: false, maximumFractionDigits: 3 })
@@ -43,7 +43,7 @@ const timeSeries: SeriesComponent = {
     if (Array.isArray(component.slots?.markArea)) {
       const markAreaComponent = component.slots.markArea[0]
       if (markAreaComponent) {
-        series.markArea = MarkArea.get(context, markAreaComponent, points, startTime, endTime)
+        series.markArea = MarkArea.get(context, markAreaComponent, points ?? [], startTime!, endTime!)
         series.id += '#mark-area'
       }
     }

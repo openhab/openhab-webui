@@ -130,7 +130,7 @@ const aggregateSeries: SeriesComponent = {
 
     return dayjs(startTime).subtract(1, groupStart as dayjs.ManipulateType)
   },
-  get(context, component, points, startTime, endTime) {
+  get(context, component, items, points, startTime, endTime) {
     const series = context.evaluateExpression<OhAggregateSeriesOption>(
       ComponentId.get(component)!,
       component.config,
@@ -150,7 +150,7 @@ const aggregateSeries: SeriesComponent = {
     const dimension2 = series.dimension2
     const boundary = includeBoundaryAndItemStateFor(component.config)
 
-    const itemSeries = points.find((p) => p.name === series.item)
+    const itemSeries = points?.find((p) => p.name === series.item)
     const itemPoints = itemSeries?.data ?? []
 
     // we'll suppose dimension2 always more granular than dimension1
@@ -193,15 +193,15 @@ const aggregateSeries: SeriesComponent = {
           const axisX = series.transpose ? dimension2 : dimension1
           const axisY = series.transpose ? dimension1 : dimension2
           return [
-            dimensionFromDate(chartType, startTime, endTime, arr[0], axisX),
-            dimensionFromDate(chartType, startTime, endTime, arr[0], axisY, true),
+            dimensionFromDate(chartType, startTime!, endTime!, arr[0], axisX),
+            dimensionFromDate(chartType, startTime!, endTime!, arr[0], axisY, true),
             formatter.format(value)
           ]
         } else {
           if (series.transpose) {
-            return [formatter.format(value), dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1, true)]
+            return [formatter.format(value), dimensionFromDate(chartType, startTime!, endTime!, arr[0], dimension1, true)]
           } else {
-            return [dimensionFromDate(chartType, startTime, endTime, arr[0], dimension1), formatter.format(value)]
+            return [dimensionFromDate(chartType, startTime!, endTime!, arr[0], dimension1), formatter.format(value)]
           }
         }
       })

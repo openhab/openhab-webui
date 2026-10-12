@@ -17,13 +17,13 @@ const calendarSeries: SeriesComponent = {
     )
     return series.item ? [series.item] : []
   },
-  get(context, component, points) {
+  get(context, component, items, points) {
     let series = context.evaluateExpression<OhCalendarSeriesOption>(
       ComponentId.get(component)!,
       component.config,
       OhCalendarSeriesDefinition
     )
-    const itemSeries = points.find((p) => p.name === series.item)
+    const itemSeries = points?.find((p) => p.name === series.item)
     const itemPoints = itemSeries?.data ?? []
 
     type Group = [Dayjs, string[]]
