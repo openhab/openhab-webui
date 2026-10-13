@@ -79,7 +79,7 @@ import ItemMixin from '@/components/item/item-mixin'
 import ModelDragDropMixin from '@/pages/settings/model/model-dragdrop-mixin'
 
 export default {
-  name: 'model-treeview-item',
+  name: 'model-treeview-item', // eslint-disable-line vue/component-definition-name-casing
   mixins: [ItemMixin, ModelDragDropMixin],
   props: {
     model: Object,

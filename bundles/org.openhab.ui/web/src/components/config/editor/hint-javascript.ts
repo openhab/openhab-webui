@@ -43,8 +43,6 @@ function getPath(read: (n: any) => string, callNode: any, name: string | null) {
     const literal = Literals[obj.name]
     if (literal) {
       path.push(literal) // resolve the literal to its prototype
-      if (obj.name === 'ArrayExpression') {
-      }
       if (!obj.firstChild || obj.name === 'ArrayExpression') {
         return { path: path.reverse(), name: '' }
       }

@@ -1,19 +1,24 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import globals from 'globals'
-import tseslint from 'typescript-eslint';
+import tseslint, { plugin } from 'typescript-eslint';
+import pluginJsonc from 'eslint-plugin-jsonc'
 import parserVue from 'vue-eslint-parser'
 import pluginVue from 'eslint-plugin-vue'
 import pluginVueI18n from '@intlify/eslint-plugin-vue-i18n'
 import pluginImport from 'eslint-plugin-import-x'
 
 import eslintConfigPrettier from 'eslint-config-prettier/flat'
+import pluginOxlint from 'eslint-plugin-oxlint'
 
 const rules = {
     // Import-x rules not in oxlint
     'import-x/no-unresolved': 'error',
     'import-x/no-unused-modules': 'warn',
+    'vue/no-v-html': 'off',
+    'vue/require-default-prop': 'off',
+    'vue/multi-word-component-names': 'off',
+    'vue/attribute-hyphenation': 'off',
 
-    // Vue rules not covered in oxlint
     'vue/attributes-order': ['error', {
       'order': ['DEFINITION', 'LIST_RENDERING', 'CONDITIONALS', 'RENDER_MODIFIERS', [ 'GLOBAL', 'UNIQUE', 'SLOT', 'TWO_WAY_BINDING', 'OTHER_DIRECTIVES', 'OTHER_ATTR', 'EVENTS', 'CONTENT' ]],
       'alphabetical': false,
@@ -57,9 +62,11 @@ const oxlintOwnedImportRules = {
 }
 
 export default defineConfig([
+  ...pluginVue.configs['flat/recommended'],
   ...pluginVueI18n.configs.recommended,
   pluginImport.flatConfigs.recommended,
   pluginImport.flatConfigs.typescript,
+  ...pluginJsonc.configs['flat/recommended-with-jsonc'],
   {
     plugins: {
       vue: pluginVue
@@ -117,5 +124,13 @@ export default defineConfig([
     }
   },
   globalIgnores(['dist', 'build', 'public', '**/*.parser.js', 'src/api/**']),
-  eslintConfigPrettier // Disables all ESLint rules that conflict with Prettier/oxfmt
+  eslintConfigPrettier, // Disables all ESLint rules that conflict with Prettier/oxfmt
+  ...pluginOxlint.buildFromOxlintConfig({
+    categories: {
+      correctness: true
+    },
+    rules: {
+      eqeqeq: 'warn'
+    }
+  })
 ])
