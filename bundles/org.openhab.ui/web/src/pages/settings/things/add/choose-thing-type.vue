@@ -232,7 +232,7 @@ export default {
             this.discoverySupported = false
             return
           } else {
-            throw e;
+            throw e
           }
         })
     },
@@ -263,7 +263,7 @@ export default {
           Promise.resolve()
         })
         .catch((e) => {
-          throw new Error('Failed to load inbox: ' + e);
+          throw new Error('Failed to load inbox: ' + e)
         })
     },
     openEntryActions(entry) {
