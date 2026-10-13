@@ -34,8 +34,7 @@ export function thingStatusDescription(statusInfo: api.ThingStatusInfo) {
 }
 
 /**
- * Validate the Thing ID against valid characters and
- * if existing Things are available on `this.things`,
+ * Validate the Thing ID against valid characters and if existing Things are passed via `things`,
  * ensures that the Thing UID doesn't match an existing UID.
  *
  * @param {string} uid The Thing UID to validate
