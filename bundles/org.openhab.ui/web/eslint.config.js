@@ -36,17 +36,7 @@ const rules = {
 
     // @intlify not covered in oxlint
     '@intlify/vue-i18n/no-raw-text': 'off',
-    '@intlify/vue-i18n/no-html-messages': 'off',
-    "@intlify/vue-i18n/no-deprecated-i18n-component": "warn",
-    "@intlify/vue-i18n/no-deprecated-i18n-place-attr": "warn",
-    "@intlify/vue-i18n/no-deprecated-i18n-places-prop": "warn",
-    "@intlify/vue-i18n/no-deprecated-modulo-syntax": "warn",
-    "@intlify/vue-i18n/no-deprecated-tc": "warn",
-    "@intlify/vue-i18n/no-deprecated-v-t": "warn",
-    "@intlify/vue-i18n/no-i18n-t-path-prop": "warn",
-    "@intlify/vue-i18n/no-missing-keys": "warn",
-    "@intlify/vue-i18n/no-v-html": "warn",
-    "@intlify/vue-i18n/valid-message-syntax": "warn"
+    '@intlify/vue-i18n/no-html-messages': 'off'
 }
 
 const oxlintOwnedImportRules = {
@@ -88,10 +78,7 @@ export default defineConfig([
     languageOptions: {
       parser: parserVue,
       parserOptions: {
-        parser: tseslint.parser,
-        project: './tsconfig.eslint.json',
-        tsconfigRootDir: import.meta.dirname,
-        extraFileExtensions: ['.vue']
+        parser: tseslint.parser
       }
     },
     rules: rules

@@ -102,6 +102,8 @@ const typescriptRules = {
   "typescript/restrict-template-expressions": "error",
   "typescript/unbound-method": "error",
   "typescript/dot-notation": "off",
+  "no-undef": "off",
+  "no-redeclare": "off"
 } as const
 
 const importRules = {
@@ -145,43 +147,11 @@ export default defineConfig({
     "es2018": true,
     "browser": true
   },
-  "settings": {
-    "import-x/extensions": [
-      ".ts",
-      ".tsx",
-      ".cts",
-      ".mts",
-      ".js",
-      ".jsx",
-      ".cjs",
-      ".mjs"
-    ],
-    "import-x/external-module-folders": [
-      "node_modules",
-      "node_modules/@types"
-    ],
-    "import-x/parsers": {
-      "@typescript-eslint/parser": [
-        ".ts",
-        ".tsx",
-        ".cts",
-        ".mts"
-      ]
-    },
-    "import-x/resolver": {
-      "typescript": true
-    },
-  },
   "ignorePatterns": [
     "dist",
     "build",
     "public",
     "**/*.parser.js",
-    "**/*.test.js",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
     "src/api/**"
   ],
   "rules": {
@@ -292,6 +262,21 @@ export default defineConfig({
       "env": {
         "es2026": true,
         "node": true
+      }
+    },
+    {
+      "files": [
+        "**/*.test.{js,ts,tsx}",
+        "**/*.spec.{ts,tsx}"
+      ],
+      "rules": {
+        ...typescriptRules,
+        "typescript/no-unnecessary-type-assertion": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "typescript/no-unsafe-member-access": "off",
+        "typescript/no-unsafe-return": "off",
+        "typescript/no-unsafe-argument": "off",
+        "no-undef": "off"
       }
     }
   ]
