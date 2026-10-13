@@ -158,7 +158,7 @@ export default {
               if (b.bridge && !a.bridge) return 1
               return a.label.localeCompare(b.label)
             })
-          return Promise.resolve()
+          return
         })
         .then(() => {
           Promise.all([this.loadDiscoveryInfo(), this.loadInbox()]).then(() => {
@@ -225,14 +225,14 @@ export default {
               }
             ]
           }
-          return Promise.resolve()
+          return
         })
         .catch((e) => {
           if (e === 404 || e === 'Not Found') {
             this.discoverySupported = false
-            return Promise.resolve()
+            return
           } else {
-            return Promise.reject(e)
+            throw e;
           }
         })
     },
@@ -263,7 +263,7 @@ export default {
           Promise.resolve()
         })
         .catch((e) => {
-          Promise.reject('Failed to load inbox: ' + e)
+          throw new Error('Failed to load inbox: ' + e);
         })
     },
     openEntryActions(entry) {

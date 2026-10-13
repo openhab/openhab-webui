@@ -257,11 +257,7 @@ export default defineConfig({
   "overrides": [
     {
       "files": [
-        "**/*.{ts,tsx,mts,cts}",
-        "**/*.vue?vue&type=script&lang=ts",
-        "**/*.vue?vue&type=script&lang.ts",
-        "**/*.vue?vue&type=script&lang=tsx",
-        "**/*.vue?vue&type=script&lang.tsx"
+        "**/*.{ts,tsx,mts,cts}"
       ],
       "rules": {
         ...typescriptRules,
@@ -274,7 +270,9 @@ export default defineConfig({
       ],
       "rules": {
         ...vueRules,
-        ...allowEmptyCatchRule
+        ...allowEmptyCatchRule,
+        ...typescriptRules,
+        ...unicornRules
       },
       "globals": vueGlobals
     },
@@ -283,8 +281,7 @@ export default defineConfig({
         "**/*.{js,mjs,cjs,jsx,mjsx}"
       ],
       "rules": {
-        ...allowEmptyCatchRule,
-        ...unicornRules
+        ...allowEmptyCatchRule
       },
       "globals": {
         ...oxlintGlobals,
