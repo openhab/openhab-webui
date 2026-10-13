@@ -1,7 +1,10 @@
 /**
  * Thread Network Graph Provider
  *
- * Transforms Matter/Thread thing data into a unified NetworkGraph format
+ * Transforms Matter/Thread thing data into a unified NetworkGraph format.
+ *
+ * Only Thread devices commissioned to openHAB report diagnostics. The rest of the mesh, such as border routers
+ * without Matter, is rebuilt from what those devices see in their neighbor and route tables.
  */
 
 import type { NetworkGraph, NetworkGraphProvider, NetworkNode, NetworkLink, NetworkLegend } from '../types'
@@ -20,9 +23,6 @@ enum RoutingRole {
   LEADER = 6
 }
 
-/**
- * Color constants for node borders based on device role
- */
 enum RoleColors {
   leader = '#FFD700',
   border_router = '#FF9800',
@@ -30,12 +30,10 @@ enum RoleColors {
   reed = '#00BCD4',
   end_device = '#9C27B0',
   sleepy_end_device = '#673AB7',
+  detached = '#616161',
   unknown = '#9E9E9E'
 }
 
-/**
- * Size constants for nodes based on role
- */
 enum RoleSizes {
   leader = 55,
   border_router = 50,
@@ -45,12 +43,11 @@ enum RoleSizes {
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   sleepy_end_device = 30,
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  detached = 38,
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   unknown = 30
 }
 
-/**
- * LQI color mapping
- */
 enum LqiColors {
   _3 = '#4CAF50',
   _2 = '#8BC34A',
@@ -66,39 +63,220 @@ enum LqiWidths {
   _0 = 2
 }
 
-interface Route {
-  allocated: boolean
-  linkEstablished: boolean
-  nextHop: number
-  lqiIn?: number
-  lqiOut?: number
-  pathCost?: number
-  rloc16: number
-  extAddress: string
+const STATUS_COLORS: Record<string, string> = {
+  ONLINE: '#4CAF50',
+  OFFLINE: '#F44336'
+}
+const NON_FABRIC_COLOR = '#FFC107'
+
+/** Route table next hop value for "no next hop", used for the device itself and its direct links */
+const NO_NEXT_HOP = 63
+
+const PROP = {
+  routingRole: 'ThreadNetworkDiagnostics-routingRole',
+  neighborTable: 'ThreadNetworkDiagnostics-neighborTable',
+  routeTable: 'ThreadNetworkDiagnostics-routeTable',
+  networkName: 'ThreadNetworkDiagnostics-networkName',
+  extendedPanId: 'ThreadNetworkDiagnostics-extendedPanId',
+  extAddress: 'ThreadNetworkDiagnostics-extAddress',
+  rloc16: 'ThreadNetworkDiagnostics-rloc16',
+  leaderRouterId: 'ThreadNetworkDiagnostics-leaderRouterId',
+  networkInterfaces: 'GeneralDiagnostics-networkInterfaces',
+  threadFeatures: 'NetworkCommissioning-supportedThreadFeatures',
+  brInterfaceEnabled: 'ThreadBorderRouterManagement-interfaceEnabled'
 }
 
-interface UnknownDevice {
-  extAddress: string
-  seenBy: string[]
-  isRouter: boolean
-  isChild: boolean
+interface NeighborEntry {
+  extAddress: string | null
   rloc16: number | null
-  bestLqi: number | null
   lqi?: number
   averageRssi?: number
   lastRssi?: number
   rxOnWhenIdle?: boolean
-  fullThreadDevice?: boolean
+  isChild?: boolean
 }
 
-interface ProcessedNode extends NetworkNode {
-  ownRloc16: number | null
-  ownExtAddress: string | null
-  isRouter: boolean
-  isBorderRouter: boolean
+interface RouteEntry {
+  extAddress: string | null
+  rloc16: number | null
+  nextHop?: number
+  pathCost?: number
+  lqiIn?: number
+  lqiOut?: number
+  allocated?: boolean
+  linkEstablished?: boolean
+}
+
+interface ThreadNode {
+  id: string
+  label: string
+  thing?: api.EnrichedThing
+  networkKey: string | null
+  networkName?: string
+  extAddress: string | null
+  rloc16: number | null
   routingRole: RoutingRole
-  neighbors: UnknownDevice[]
-  routes: Route[]
+  isBorderRouter: boolean
+  /** Border router with its Thread interface turned off, so it is not part of any mesh */
+  detached: boolean
+  neighbors: NeighborEntry[]
+  routes: RouteEntry[]
+  /** Fabric node ids that reported this device, for devices not in openHAB */
+  seenBy: Set<string>
+  /** A device not in openHAB that was reported as a router */
+  routerHint: boolean
+  rxOnWhenIdle?: boolean
+}
+
+interface EdgeSide {
+  quality?: number
+  rssi?: number
+  /** The reporting side lists the other side as its child */
+  parentOfOther?: boolean
+  /** The RLOC16 the reporting side has for the other side differs from its current one */
+  stale?: boolean
+  pathCost?: number
+}
+
+interface Edge {
+  a: ThreadNode
+  b: ThreadNode
+  fromA?: EdgeSide
+  fromB?: EdgeSide
+}
+
+/**
+ * Converts the forms an extended address takes in thing properties into 16 uppercase hex digits.
+ * Current bindings write hex strings. Older ones wrote decimal numbers, which lose precision when parsed as
+ * JSON numbers, so those are a best effort only.
+ */
+export function normalizeExtAddress(value: unknown): string | null {
+  if (value === undefined || value === null) return null
+  let big: bigint | null = null
+  if (typeof value === 'bigint') {
+    big = value
+  } else if (typeof value === 'number') {
+    if (Number.isFinite(value)) big = BigInt(Math.round(value))
+  } else if (typeof value === 'string') {
+    const str = value.trim()
+    if (/^[0-9a-fA-F]{16}$/.test(str)) big = BigInt('0x' + str)
+    else if (/^\d+$/.test(str)) big = BigInt(str)
+  }
+  if (big === null || big <= 0n) return null
+  return big.toString(16).toUpperCase().padStart(16, '0')
+}
+
+/**
+ * Parses a neighbor or route table property. Older bindings wrote extended addresses as JSON numbers, which are
+ * converted to hex from the raw text, as JSON.parse would round them and a decimal string could look like hex.
+ */
+export function parseTable(value: string | undefined): Record<string, unknown>[] {
+  const parsed = parseJson(
+    value?.replace(
+      /("extAddress"\s*:\s*)(\d+)(?:\.0+)?(?=\s*[,}])/g,
+      (_match, key: string, digits: string) => `${key}"${BigInt(digits).toString(16).toUpperCase().padStart(16, '0')}"`
+    )
+  )
+  return Array.isArray(parsed) ? parsed.filter((e): e is Record<string, unknown> => !!e && typeof e === 'object') : []
+}
+
+function toInt(value: unknown): number | null {
+  if (value === undefined || value === null || value === '') return null
+  const n = typeof value === 'number' ? value : Number(value)
+  return Number.isFinite(n) ? Math.round(n) : null
+}
+
+function toBool(value: unknown): boolean | undefined {
+  return typeof value === 'boolean' ? value : undefined
+}
+
+function routerIdOf(rloc16: number): number {
+  return rloc16 >> 10
+}
+
+function isRouterRloc(rloc16: number): boolean {
+  return (rloc16 & 0x1ff) === 0
+}
+
+function formatRloc(rloc16: number): string {
+  return `0x${rloc16.toString(16).toUpperCase().padStart(4, '0')}`
+}
+
+function parseRoutingRole(value: string | undefined): RoutingRole {
+  if (!value) return RoutingRole.UNSPECIFIED
+  const str = String(value).toUpperCase().trim()
+  const num = parseInt(str, 10)
+  if (!isNaN(num) && num >= 0 && num <= 6) return num
+  return str in RoutingRole ? RoutingRole[str as keyof typeof RoutingRole] : RoutingRole.UNSPECIFIED
+}
+
+function parseJson(value: string | undefined): unknown {
+  if (!value) return null
+  try {
+    return JSON.parse(value)
+  } catch {
+    return null
+  }
+}
+
+/** Reads the extended address of the Thread interface from the GeneralDiagnostics NetworkInterfaces property. */
+export function threadInterfaceExtAddress(value: string | undefined): string | null {
+  const interfaces = parseJson(value)
+  if (!Array.isArray(interfaces)) return null
+  for (const iface of interfaces as { type?: unknown; hardwareAddress?: unknown }[]) {
+    if (!iface || (iface.type !== 'THREAD' && iface.type !== 4)) continue
+    const hw = iface.hardwareAddress as string | number[] | { value?: unknown; data?: unknown } | undefined
+    if (typeof hw === 'string') return normalizeExtAddress(hw)
+    const bytes = Array.isArray(hw) ? hw : (hw?.value ?? hw?.data)
+    if (Array.isArray(bytes) && bytes.length >= 8) {
+      return bytes
+        .slice(-8)
+        .map((b) => (Number(b) & 0xff).toString(16).padStart(2, '0'))
+        .join('')
+        .toUpperCase()
+    }
+  }
+  return null
+}
+
+/**
+ * The extended PAN ID of the thing's Thread network, in hex. The diagnostics property is always decimal. A border
+ * router that just joined may not have reported diagnostics yet, so the extended PAN ID of its operational dataset,
+ * kept in the thing configuration in hex, is used instead.
+ */
+function extendedPanIdOf(thing: api.EnrichedThing): string | null {
+  const xpan = thing.properties[PROP.extendedPanId]
+  if (xpan && /^\d+$/.test(xpan)) return BigInt(xpan).toString(16).toUpperCase().padStart(16, '0')
+  const datasetXpan = datasetConfig(thing).extendedPanId
+  if (typeof datasetXpan === 'string' && /^[0-9a-fA-F]{16}$/.test(datasetXpan)) return datasetXpan.toUpperCase()
+  return null
+}
+
+function datasetNetworkName(thing: api.EnrichedThing): string | undefined {
+  const name = datasetConfig(thing).networkName
+  return typeof name === 'string' && name ? name : undefined
+}
+
+/** Border router things keep their operational dataset in the thing configuration */
+function datasetConfig(thing: api.EnrichedThing): Record<string, unknown> {
+  return thing.configuration ?? {}
+}
+
+/**
+ * Gives every device a network key, so devices on the same network end up in one group. Devices that only report a
+ * network name take the extended PAN ID of another device with that name, so one network is never split in two.
+ */
+function assignNetworkKeys(nodes: ThreadNode[], xpans: Map<ThreadNode, string | null>): void {
+  const xpanByName = new Map<string, string>()
+  nodes.forEach((n) => {
+    const xpan = xpans.get(n)
+    if (xpan && n.networkName && !xpanByName.has(n.networkName)) xpanByName.set(n.networkName, xpan)
+  })
+  nodes.forEach((n) => {
+    if (n.detached) return
+    const xpan = xpans.get(n)
+    n.networkKey = xpan ?? (n.networkName ? (xpanByName.get(n.networkName) ?? `name:${n.networkName}`) : null)
+  })
 }
 
 /**
@@ -120,7 +298,8 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
         color: RoleColors.sleepy_end_device,
         size: RoleSizes.sleepy_end_device
       },
-      { id: 'unknown', label: 'Non-Fabric Device', color: RoleColors.unknown, size: RoleSizes.unknown }
+      { id: 'detached', label: 'Thread Disabled', color: RoleColors.detached, size: RoleSizes.detached },
+      { id: 'unknown', label: 'Unknown Role', color: RoleColors.unknown, size: RoleSizes.unknown }
     ],
     linkQualities: [
       { value: 3, label: 'Excellent', color: LqiColors._3, width: LqiWidths._3 },
@@ -131,80 +310,81 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     linkTypes: [
       { id: 'peer', label: 'Router Link', symbol: 'double_arrow' },
       { id: 'hierarchical', label: 'Parent → Child', symbol: 'arrow' },
-      { id: 'route_table', label: 'Inferred (Route Table)', symbol: 'double_arrow', lineStyle: 'dashed' },
-      { id: 'non_fabric', label: 'Non-Fabric / Offline', symbol: 'double_arrow', lineStyle: 'dashed' }
+      { id: 'asymmetric', label: 'One-sided or Stale', symbol: 'double_arrow', lineStyle: 'dashed' }
     ]
   }
 
-  buildGraph(things: api.EnrichedThing[], bridgeUID: string): NetworkGraph {
-    const matterNodes = things.filter(
-      (t) =>
-        (t.bridgeUID === bridgeUID || t.UID === bridgeUID) &&
-        t.UID.startsWith('matter:node') &&
-        t.properties &&
-        (t.properties['ThreadNetworkDiagnostics-neighborTable'] || t.properties['ThreadNetworkDiagnostics-routingRole'] !== undefined)
-    )
+  buildGraph(things: api.EnrichedThing[], bridgeUID: string, focusUID?: string): NetworkGraph {
+    const xpans = new Map<ThreadNode, string | null>()
+    const fabricNodes = things
+      .filter(
+        (t) =>
+          (t.bridgeUID === bridgeUID || t.UID === bridgeUID) &&
+          t.UID.startsWith('matter:node') &&
+          t.properties &&
+          (t.properties[PROP.neighborTable] !== undefined ||
+            t.properties[PROP.routingRole] !== undefined ||
+            t.properties[PROP.brInterfaceEnabled] !== undefined)
+      )
+      .map((t) => {
+        const node = this.createFabricNode(t)
+        xpans.set(node, node.detached ? null : extendedPanIdOf(t))
+        return node
+      })
+    assignNetworkKeys(fabricNodes, xpans)
 
-    const processedNodes: ProcessedNode[] = []
-    const nodesByRloc16 = new Map<number, ProcessedNode>()
-    const nodesByExtAddr = new Map<string, ProcessedNode>()
-
-    matterNodes.forEach((thing) => {
-      const node = this.createNode(thing)
-      processedNodes.push(node)
-
-      if (node.ownRloc16 && !nodesByRloc16.has(node.ownRloc16)) {
-        nodesByRloc16.set(node.ownRloc16, node)
-      }
-      if (node.ownExtAddress) {
-        nodesByExtAddr.set(node.ownExtAddress, node)
-      }
+    // RLOC16s are only unique within a network, so each network is resolved on its own
+    const networks = new Map<string | null, ThreadNode[]>()
+    for (const node of fabricNodes) {
+      const members = networks.get(node.networkKey)
+      if (members) members.push(node)
+      else networks.set(node.networkKey, [node])
+    }
+    networks.forEach((members, networkKey) => {
+      if (networkKey !== null) resolveOwnRloc16(members)
     })
+    // Extended addresses are unique across networks, so a device is only ever drawn once
+    const index = new NodeIndex(fabricNodes)
 
-    // Infer rloc16 for end devices
-    this.inferEndDeviceRloc16(processedNodes, nodesByRloc16)
-
-    // Discover unknown devices from neighbor tables and create nodes for them
-    const unknowns = this.discoverUnknownDevices(processedNodes, nodesByExtAddr, nodesByRloc16)
-    const unknownNodes = this.createUnknownNodes(unknowns, nodesByExtAddr, nodesByRloc16)
-    const allProcessedNodes = [...processedNodes, ...unknownNodes]
-
-    // Create neighbor-table links (unknown nodes are now in the maps)
-    const processedLinkKeys = new Set<string>()
-    const neighborLinks = this.createLinks(allProcessedNodes, nodesByRloc16, nodesByExtAddr, processedLinkKeys)
-
-    // Create route-table links for connections not already found in neighbor tables
-    const routeTableLinks = this.createRouteTableLinks(processedNodes, nodesByRloc16, nodesByExtAddr, processedLinkKeys)
-
-    const allLinks = [...neighborLinks, ...routeTableLinks]
-
-    // Find the primary (most common) network name and annotate cross-network nodes
-    const networkName = this.getPrimaryNetworkName(processedNodes)
-    processedNodes.forEach((n) => {
-      const nodeNetwork = n.properties?.network as string | undefined
-      if (nodeNetwork && nodeNetwork !== networkName) {
-        n.label = `${n.label} (${nodeNetwork})`
+    const edges = new Map<string, Edge>()
+    networks.forEach((members, networkKey) => {
+      // Devices in no network have Thread turned off, their tables are left over from before
+      if (networkKey === null) return
+      const resolver = new NodeResolver(members, index)
+      for (const node of members) {
+        this.addNeighborEdges(node, resolver, edges)
+        this.addRouteEdges(node, resolver, edges)
       }
+      // Route tables list every router in the partition, also those only reachable through other routers
+      for (const node of members.filter((n) => !isEndDevice(n))) {
+        for (const route of node.routes) {
+          if (route.allocated && route.nextHop !== NO_NEXT_HOP) {
+            resolver.resolve(route.extAddress, route.rloc16, node, { router: true })
+          }
+        }
+      }
+      this.markLeader(members, resolver)
     })
+    this.dropSupersededParentLinks(edges)
 
-    // Convert to output format
-    const nodes: NetworkNode[] = allProcessedNodes.map((n) => ({
-      id: n.id,
-      label: n.label,
-      role: n.role,
-      secondaryRole: n.secondaryRole,
-      status: n.status,
-      statusColor: n.statusColor,
-      properties: n.properties
-    }))
+    const networkKeys = [...networks.keys()].filter((key): key is string => key !== null)
+    const primaryKey = this.largestNetwork(networks)
+    const primaryName = networks.get(primaryKey)?.find((n) => n.networkName)?.networkName
 
     return {
       networkType: 'thread',
       networkId: bridgeUID,
-      title: `${networkName} Network Map`,
+      title: networkKeys.length === 1 && primaryName ? `${primaryName} Network Map` : 'Thread Network Map',
       legend: ThreadNetworkProvider.LEGEND,
-      nodes,
-      links: allLinks,
+      nodes: index.nodes.map((n) =>
+        this.toNetworkNode(
+          n,
+          // Only name the network on the map when there is more than one to tell apart
+          networkKeys.length > 1 && n.networkKey !== null && n.networkKey !== primaryKey,
+          !!focusUID && n.thing?.UID === focusUID
+        )
+      ),
+      links: [...edges.values()].map((e) => this.toNetworkLink(e)),
       displayOptions: {
         gravity: 0.4,
         repulsion: 4000,
@@ -219,397 +399,436 @@ export class ThreadNetworkProvider implements NetworkGraphProvider {
     }
   }
 
-  private createNode(thing: api.EnrichedThing): ProcessedNode {
+  private createFabricNode(thing: api.EnrichedThing): ThreadNode {
     const props = thing.properties
-    const routingRole = this.parseRoutingRole(props['ThreadNetworkDiagnostics-routingRole'] || '')
-    const isBorderRouter = props['ThreadBorderRouterManagement-interfaceEnabled'] !== undefined
-
     const uidParts = thing.UID.split(':')
-    const matterNodeId = uidParts.length >= 4 && uidParts[3] ? uidParts[3] : thing.UID
-
-    const neighbors = this.parseJsonProperty<UnknownDevice>(props['ThreadNetworkDiagnostics-neighborTable'] || '')
-    const routes = this.parseJsonProperty<Route>(props['ThreadNetworkDiagnostics-routeTable'] || '')
-    const networkName = props['ThreadNetworkDiagnostics-networkName']
-
-    const ownIdentity = this.getOwnIdentity(routes)
-    const ownRloc16 = ownIdentity?.rloc16 || null
-    const thingExtAddress = this.normalizeExtAddress(props['ThreadNetworkDiagnostics-extAddress'] || '') as string
-    const ownExtAddress = thingExtAddress || ownIdentity?.extAddress || null
-
-    const isRouter = isBorderRouter || routingRole >= RoutingRole.ROUTER || ownRloc16 !== null
-
-    const { role, secondaryRole } = this.getRoleInfo(routingRole, isBorderRouter, isRouter)
+    const id = uidParts.length >= 4 && uidParts[3] ? uidParts[3] : thing.UID
+    const routingRole = parseRoutingRole(props[PROP.routingRole])
+    const features = parseJson(props[PROP.threadFeatures]) as { isBorderRouterCapable?: boolean } | null
+    const brEnabled = props[PROP.brInterfaceEnabled]
 
     return {
-      id: matterNodeId,
-      label: thing.label || matterNodeId,
-      role,
-      secondaryRole,
-      status: thing.statusInfo?.status === 'ONLINE' ? 'online' : 'offline',
-      statusColor: this.getStatusColor(thing.statusInfo),
-      properties: {
-        thingUID: thing.UID,
-        nodeId: matterNodeId,
-        ...(networkName && { network: networkName }),
-        ...(ownRloc16 && { rloc16: `0x${ownRloc16.toString(16).toUpperCase().padStart(4, '0')}` })
-      },
-      ownRloc16,
-      ownExtAddress,
-      isRouter,
-      isBorderRouter,
+      id,
+      label: thing.label || id,
+      thing,
+      networkKey: null,
+      networkName: props[PROP.networkName] || datasetNetworkName(thing),
+      extAddress: normalizeExtAddress(props[PROP.extAddress]) || threadInterfaceExtAddress(props[PROP.networkInterfaces]),
+      rloc16: toInt(props[PROP.rloc16]),
       routingRole,
-      neighbors,
-      routes
+      isBorderRouter: brEnabled !== undefined || features?.isBorderRouterCapable === true,
+      detached: brEnabled === 'false' && routingRole <= RoutingRole.UNASSIGNED,
+      neighbors: parseTable(props[PROP.neighborTable]).map((n) => ({
+        extAddress: normalizeExtAddress(n.extAddress),
+        rloc16: toInt(n.rloc16),
+        lqi: toInt(n.lqi) ?? undefined,
+        averageRssi: toInt(n.averageRssi) ?? undefined,
+        lastRssi: toInt(n.lastRssi) ?? undefined,
+        rxOnWhenIdle: toBool(n.rxOnWhenIdle),
+        isChild: toBool(n.isChild)
+      })),
+      routes: parseTable(props[PROP.routeTable]).map((r) => ({
+        extAddress: normalizeExtAddress(r.extAddress),
+        rloc16: toInt(r.rloc16),
+        nextHop: toInt(r.nextHop) ?? undefined,
+        pathCost: toInt(r.pathCost) ?? undefined,
+        lqiIn: toInt(r.lqiIn) ?? undefined,
+        lqiOut: toInt(r.lqiOut) ?? undefined,
+        allocated: toBool(r.allocated),
+        linkEstablished: toBool(r.linkEstablished)
+      })),
+      seenBy: new Set(),
+      routerHint: false
     }
   }
 
-  private getRoleInfo(routingRole: RoutingRole, isBorderRouter: boolean, isRouter: boolean): { role: string; secondaryRole?: string } {
-    if (routingRole === RoutingRole.LEADER) {
-      return isBorderRouter ? { role: 'leader', secondaryRole: 'border_router' } : { role: 'leader' }
-    }
-    if (isBorderRouter) return { role: 'border_router' }
-    if (isRouter && routingRole < RoutingRole.ROUTER) return { role: 'router' }
+  /**
+   * The network with the most openHAB devices, whose nodes are not labelled with their network name. Ties go to the
+   * lowest key, so the result does not depend on the order things are listed in.
+   */
+  private largestNetwork(networks: Map<string | null, ThreadNode[]>): string | null {
+    let best: string | null = null
+    let max = 0
+    networks.forEach((members, key) => {
+      if (key === null) return
+      if (members.length > max || (members.length === max && best !== null && key < best)) {
+        max = members.length
+        best = key
+      }
+    })
+    return best
+  }
 
-    switch (routingRole) {
+  private addNeighborEdges(node: ThreadNode, resolver: NodeResolver, edges: Map<string, Edge>): void {
+    for (const neighbor of node.neighbors) {
+      const target = resolver.resolve(neighbor.extAddress, neighbor.rloc16, node, {
+        router: neighbor.rloc16 !== null && isRouterRloc(neighbor.rloc16),
+        rxOnWhenIdle: neighbor.rxOnWhenIdle
+      })
+      if (!target || target === node) continue
+      const rssi = neighbor.averageRssi ?? neighbor.lastRssi
+      this.addSide(edges, node, target, {
+        quality: neighbor.lqi,
+        // 127 is the "no measurement" value for RSSI
+        rssi: rssi !== undefined && rssi !== 127 ? rssi : undefined,
+        parentOfOther: neighbor.isChild === true,
+        stale: isStale(neighbor.rloc16, target)
+      })
+    }
+  }
+
+  /** Route table entries with an established link are direct router-to-router links. */
+  private addRouteEdges(node: ThreadNode, resolver: NodeResolver, edges: Map<string, Edge>): void {
+    if (isEndDevice(node)) return
+    for (const route of node.routes) {
+      if (!route.allocated || !route.linkEstablished || route.rloc16 === node.rloc16) continue
+      const target = resolver.resolve(route.extAddress, route.rloc16, node, { router: true })
+      if (!target || target === node) continue
+      const lqis = [route.lqiIn, route.lqiOut].filter((q): q is number => q !== undefined && q > 0)
+      this.addSide(edges, node, target, {
+        quality: lqis.length ? Math.min(...lqis) : undefined,
+        pathCost: route.pathCost,
+        stale: isStale(route.rloc16, target)
+      })
+    }
+  }
+
+  private addSide(edges: Map<string, Edge>, from: ThreadNode, to: ThreadNode, side: EdgeSide): void {
+    const key = [from.id, to.id].sort().join('|')
+    let edge = edges.get(key)
+    if (!edge) {
+      edge = { a: from, b: to }
+      edges.set(key, edge)
+    }
+    const slot = edge.a === from ? 'fromA' : 'fromB'
+    const existing = edge[slot]
+    // A device can list the same peer in both its neighbor and route table
+    edge[slot] = existing
+      ? {
+          quality: existing.quality ?? side.quality,
+          rssi: existing.rssi ?? side.rssi,
+          parentOfOther: existing.parentOfOther || side.parentOfOther,
+          stale: existing.stale || side.stale,
+          pathCost: existing.pathCost ?? side.pathCost
+        }
+      : side
+  }
+
+  /**
+   * An end device has exactly one parent, and a router listing it as a child is authoritative. Sleepy devices are
+   * rarely re-read, so links that only the child reports, to any other router, are left over from an earlier parent.
+   */
+  private dropSupersededParentLinks(edges: Map<string, Edge>): void {
+    const parentOf = new Map<ThreadNode, ThreadNode>()
+    edges.forEach((e) => {
+      if (e.fromA?.parentOfOther && canBeChild(e.b)) parentOf.set(e.b, e.a)
+      if (e.fromB?.parentOfOther && canBeChild(e.a)) parentOf.set(e.a, e.b)
+    })
+    edges.forEach((e, key) => {
+      for (const [child, other, fromChild, fromOther] of [
+        [e.a, e.b, e.fromA, e.fromB],
+        [e.b, e.a, e.fromB, e.fromA]
+      ] as const) {
+        const parent = parentOf.get(child)
+        if (parent && parent !== other && fromChild && !fromOther) edges.delete(key)
+      }
+    })
+  }
+
+  /** Devices not in openHAB do not report a role, so the leader is found through the reported leader router id. */
+  private markLeader(members: ThreadNode[], resolver: NodeResolver): void {
+    if (members.some((n) => n.routingRole === RoutingRole.LEADER)) return
+    for (const member of members) {
+      const leaderId = toInt(member.thing?.properties[PROP.leaderRouterId])
+      const leader = leaderId !== null ? resolver.byRouterId(leaderId) : undefined
+      if (leader && !leader.thing) {
+        leader.routingRole = RoutingRole.LEADER
+        return
+      }
+    }
+  }
+
+  private roleOf(node: ThreadNode): { role: string; secondaryRole?: string } {
+    if (node.detached) return { role: 'detached', secondaryRole: 'border_router' }
+    switch (node.routingRole) {
+      case RoutingRole.LEADER:
+        return { role: 'leader', secondaryRole: node.isBorderRouter ? 'border_router' : undefined }
       case RoutingRole.ROUTER:
-        return { role: 'router' }
+        return { role: node.isBorderRouter ? 'border_router' : 'router' }
       case RoutingRole.REED:
         return { role: 'reed' }
       case RoutingRole.END_DEVICE:
         return { role: 'end_device' }
       case RoutingRole.SLEEPY_END_DEVICE:
         return { role: 'sleepy_end_device' }
-      default:
-        return { role: 'end_device' }
+    }
+    if (node.isBorderRouter) return { role: 'border_router' }
+    if (node.routerHint || (node.rloc16 !== null && isRouterRloc(node.rloc16))) return { role: 'router' }
+    if (node.rxOnWhenIdle === false) return { role: 'sleepy_end_device' }
+    if (node.rloc16 !== null || node.rxOnWhenIdle === true) return { role: 'end_device' }
+    return { role: 'unknown' }
+  }
+
+  private toNetworkNode(node: ThreadNode, showNetwork: boolean, focused: boolean): NetworkNode {
+    const { role, secondaryRole } = this.roleOf(node)
+    const properties: Record<string, string | number | boolean> = {}
+    if (node.thing) {
+      properties.thingUID = node.thing.UID
+      properties.nodeId = node.id
+    } else {
+      properties.seenBy = node.seenBy.size
+    }
+    if (node.networkName) properties.network = node.networkName
+    if (node.rloc16 !== null) properties.rloc16 = formatRloc(node.rloc16)
+    if (node.extAddress) properties.extAddress = node.extAddress
+
+    let label = node.label
+    if (node.detached) label = `${label} (Thread disabled)`
+    else if (showNetwork && node.networkName) label = `${label} (${node.networkName})`
+
+    const thingStatus = node.thing?.statusInfo?.status
+    return {
+      id: node.id,
+      label,
+      role,
+      secondaryRole,
+      status: node.thing ? (thingStatus === 'ONLINE' ? 'online' : 'offline') : 'unknown',
+      statusColor: node.thing ? STATUS_COLORS[thingStatus ?? ''] || '#9E9E9E' : NON_FABRIC_COLOR,
+      ...(focused && { focused }),
+      properties
     }
   }
 
-  private parseRoutingRole(value: string): RoutingRole {
-    if (value === undefined || value === null || value === '') {
-      return RoutingRole.UNSPECIFIED
-    }
-
-    const valueString = String(value).toUpperCase().trim()
-
-    const parsed = parseInt(valueString, 10)
-    if (!isNaN(parsed) && parsed >= 0 && parsed <= 6) {
-      return parsed
-    }
-
-    const strValue = valueString as keyof typeof RoutingRole
-    if (strValue in RoutingRole) {
-      return RoutingRole[strValue]
-    }
-
-    return RoutingRole.UNSPECIFIED
-  }
-
-  private parseJsonProperty<T>(value: string): T[] {
-    if (!value) return []
-    if (Array.isArray(value)) return value
-    try {
-      return JSON.parse(value) as T[]
-    } catch {
-      return []
-    }
-  }
-
-  private normalizeExtAddress(extAddr: string): string | null {
-    if (!extAddr) return null
-    const str = String(extAddr)
-    return str === '0' || str === '' || str === 'null' ? null : str
-  }
-
-  private getOwnIdentity(routes: Route[]): { rloc16: number; extAddress: string | null } | null {
-    if (!routes || routes.length === 0) return null
-
-    for (const route of routes) {
-      if (route.allocated && route.nextHop === 63) {
-        return {
-          rloc16: route.rloc16,
-          extAddress: this.normalizeExtAddress(route.extAddress)
-        }
-      }
-    }
-    return null
-  }
-
-  private isNeighborSelf(node: ProcessedNode, neighbor: UnknownDevice): boolean {
-    if (node.ownRloc16 && neighbor.rloc16 === node.ownRloc16) return true
-    if (node.ownExtAddress) {
-      const neighborExt = this.normalizeExtAddress(neighbor.extAddress)
-      if (neighborExt && neighborExt === node.ownExtAddress) return true
-    }
-    return false
-  }
-
-  private getStatusColor(statusInfo: api.ThingStatusInfo): string {
-    if (!statusInfo) return '#9E9E9E'
-    switch (statusInfo.status) {
-      case 'ONLINE':
-        return '#4CAF50'
-      case 'OFFLINE':
-        return '#F44336'
-      case 'UNKNOWN':
-        return '#9E9E9E'
-      default:
-        return '#9E9E9E'
-    }
-  }
-
-  private getPrimaryNetworkName(nodes: ProcessedNode[]): string {
-    const counts = new Map<string, number>()
-    nodes.forEach((n) => {
-      const name = n.properties?.network as string | undefined
-      if (name) counts.set(name, (counts.get(name) || 0) + 1)
-    })
-    let primary = 'Thread'
-    let max = 0
-    counts.forEach((count, name) => {
-      if (count > max) {
-        max = count
-        primary = name
-      }
-    })
-    return primary
-  }
-
-  private inferEndDeviceRloc16(nodes: ProcessedNode[], nodesByRloc16: Map<number, ProcessedNode>): void {
-    nodes.forEach((nodeData) => {
-      if (nodeData.ownRloc16) return
-      if (!nodeData.neighbors || nodeData.neighbors.length === 0) return
-
-      const parentNeighbor = nodeData.neighbors[0]
-      if (!parentNeighbor || parentNeighbor.rloc16 == null) {
-        return
-      }
-      const parentRloc16 = parentNeighbor.rloc16
-      const parentNode = nodesByRloc16.get(parentRloc16)
-
-      if (parentNode && parentNode.neighbors) {
-        const childEntry = parentNode.neighbors.find((n) => n.isChild && n.rloc16 !== null && !nodesByRloc16.has(n.rloc16))
-        if (childEntry && childEntry.rloc16 !== null) {
-          nodeData.ownRloc16 = childEntry.rloc16
-          nodesByRloc16.set(childEntry.rloc16, nodeData)
-        }
-      }
-    })
-  }
-
-  private createLinks(
-    nodes: ProcessedNode[],
-    nodesByRloc16: Map<number, ProcessedNode>,
-    nodesByExtAddr: Map<string, ProcessedNode>,
-    processedLinkKeys: Set<string>
-  ): NetworkLink[] {
-    const links: NetworkLink[] = []
-
-    nodes.forEach((nodeData) => {
-      if (!nodeData.neighbors) return
-
-      nodeData.neighbors.forEach((neighbor) => {
-        if (this.isNeighborSelf(nodeData, neighbor)) return
-
-        const neighborExtAddr = this.normalizeExtAddress(neighbor.extAddress)
-        let targetNode = neighborExtAddr ? nodesByExtAddr.get(neighborExtAddr) : undefined
-        if (!targetNode) {
-          targetNode = nodesByRloc16.get(neighbor.rloc16 || -1)
-        }
-
-        if (!targetNode) return
-        if (targetNode.id === nodeData.id) return
-
-        const linkKey = [nodeData.id, targetNode.id].sort().join('|')
-        if (processedLinkKeys.has(linkKey)) return
-        processedLinkKeys.add(linkKey)
-
-        const link = this.createLinkData(nodeData, targetNode, neighbor)
-        links.push(link)
-      })
-    })
-
-    return links
-  }
-
-  private createLinkData(sourceNode: ProcessedNode, targetNode: ProcessedNode, neighbor: UnknownDevice): NetworkLink {
+  private toNetworkLink(edge: Edge): NetworkLink {
+    const { a, b, fromA, fromB } = edge
+    let source = a
+    let target = b
     let type: NetworkLink['type'] = 'peer'
-    let source = sourceNode.id
-    let target = targetNode.id
 
-    if (neighbor.isChild) {
+    const aIsChild = this.isChildOf(a, b, fromA, fromB)
+    const bIsChild = this.isChildOf(b, a, fromB, fromA)
+    if (aIsChild !== bIsChild) {
       type = 'hierarchical'
-    } else if (sourceNode.isRouter && targetNode.isRouter) {
-      type = 'peer'
-    } else if (!sourceNode.isRouter && targetNode.isRouter) {
-      type = 'hierarchical'
-      source = targetNode.id
-      target = sourceNode.id
+      if (aIsChild) {
+        source = b
+        target = a
+      }
     }
 
-    const involvesUnknown = sourceNode.status === 'unknown' || targetNode.status === 'unknown'
-    const involvesOffline = sourceNode.status === 'offline' || targetNode.status === 'offline'
+    const qualities = [fromA?.quality, fromB?.quality].filter((q): q is number => q !== undefined)
+    const rssis = [fromA?.rssi, fromB?.rssi].filter((r): r is number => r !== undefined)
+    const stale = !!(fromA?.stale || fromB?.stale)
+    // Only devices in openHAB report tables, so links to other devices are always one-sided.
+    // A parent's child entry needs no confirmation from the child.
+    const confirmedByParent = !!((fromA?.parentOfOther && canBeChild(b)) || (fromB?.parentOfOther && canBeChild(a)))
+    const oneSided = (!fromA || !fromB) && !!a.thing && !!b.thing && !confirmedByParent
+    const offline = [a, b].some((n) => n.thing && n.thing.statusInfo?.status !== 'ONLINE')
+    const dashed = stale || oneSided || offline
+
+    const properties: Record<string, string | number | boolean> = {}
+    if (rssis.length) properties.rssi = Math.min(...rssis)
+    const pathCost = fromA?.pathCost ?? fromB?.pathCost
+    if (pathCost !== undefined) properties.pathCost = pathCost
+    if (stale) properties.stale = true
+    if (oneSided) properties.reportedBy = (fromA ? a : b).label
 
     return {
-      source,
-      target,
-      type,
-      quality: neighbor.lqi,
-      ...((involvesUnknown || involvesOffline) && { lineStyle: 'dashed' as const }),
-      properties: {
-        rssi: neighbor.averageRssi || neighbor.lastRssi || -1
-      }
+      source: source.id,
+      target: target.id,
+      type: dashed && type === 'peer' ? 'asymmetric' : type,
+      // Show the weaker direction, as that limits the link
+      quality: qualities.length ? Math.min(...qualities) : undefined,
+      ...(dashed && { lineStyle: 'dashed' as const }),
+      properties
     }
   }
 
-  private discoverUnknownDevices(
-    processedNodes: ProcessedNode[],
-    nodesByExtAddr: Map<string, ProcessedNode>,
-    nodesByRloc16: Map<number, ProcessedNode>
-  ): Map<string, UnknownDevice> {
-    const unknowns = new Map<string, UnknownDevice>()
+  /** Whether `node` is the child in its link to `other`. */
+  private isChildOf(node: ThreadNode, other: ThreadNode, fromNode?: EdgeSide, fromOther?: EdgeSide): boolean {
+    if (fromOther?.parentOfOther && canBeChild(node)) return true
+    if (fromNode?.parentOfOther && canBeChild(other)) return false
+    if (isEndDevice(node) || node.routingRole === RoutingRole.REED) return true
+    return (
+      node.rloc16 !== null &&
+      other.rloc16 !== null &&
+      !isRouterRloc(node.rloc16) &&
+      isRouterRloc(other.rloc16) &&
+      routerIdOf(node.rloc16) === routerIdOf(other.rloc16)
+    )
+  }
+}
 
-    processedNodes.forEach((node) => {
-      if (!node.neighbors) return
+function isEndDevice(node: ThreadNode): boolean {
+  return node.routingRole === RoutingRole.SLEEPY_END_DEVICE || node.routingRole === RoutingRole.END_DEVICE
+}
 
-      node.neighbors.forEach((neighbor) => {
-        if (this.isNeighborSelf(node, neighbor)) return
+/**
+ * Routers keep child entries until they time out, so a device that has since become a router can still be listed as
+ * a child of its old parent.
+ */
+function canBeChild(node: ThreadNode): boolean {
+  if (node.routingRole === RoutingRole.ROUTER || node.routingRole === RoutingRole.LEADER) return false
+  return node.rloc16 === null || !isRouterRloc(node.rloc16)
+}
 
-        const extAddr = this.normalizeExtAddress(neighbor.extAddress)
-        if (!extAddr) return
+/** Only openHAB devices have an RLOC16 of their own to compare with, others take it from whoever reported them */
+function isStale(reportedRloc16: number | null, target: ThreadNode): boolean {
+  return !!target.thing && reportedRloc16 !== null && target.rloc16 !== null && reportedRloc16 !== target.rloc16
+}
 
-        // Skip if this ext address belongs to a known node
-        if (nodesByExtAddr.has(extAddr)) return
+/** RLOC16 0 is router 0, but tables also use 0 for unused entries, which then have no extended address either */
+function validRloc16(rloc16: number | null, extAddress: string | null): number | null {
+  return rloc16 !== null && (rloc16 !== 0 || extAddress !== null) ? rloc16 : null
+}
 
-        // Also skip if the RLOC16 matches a known node
-        if (neighbor.rloc16 && nodesByRloc16.has(neighbor.rloc16)) return
+/**
+ * Fills in the RLOC16 of devices that do not report it (the attribute is optional before Matter 1.4).
+ * The device's own route table entry is trusted first, then what routers report for its extended address.
+ */
+function resolveOwnRloc16(members: ThreadNode[]): void {
+  for (const node of members) {
+    if (node.rloc16 !== null) continue
+    const self = selfRoute(node)
+    const rloc16 = self ? validRloc16(self.rloc16, self.extAddress ?? node.extAddress) : null
+    if (self && rloc16 !== null) {
+      node.rloc16 = rloc16
+      node.extAddress ??= self.extAddress
+    }
+  }
+  const routers = members.filter((n) => n.routingRole >= RoutingRole.ROUTER)
+  for (const node of members) {
+    if (node.rloc16 !== null || !node.extAddress) continue
+    const observed = routers
+      .filter((r) => r !== node)
+      .flatMap((r) => r.neighbors)
+      .find((n) => n.extAddress === node.extAddress && n.rloc16 !== null)
+    if (observed) node.rloc16 = observed.rloc16
+  }
+}
 
-        const existing = unknowns.get(extAddr)
-        if (existing) {
-          if (!existing.seenBy.includes(node.id)) {
-            existing.seenBy.push(node.id)
-          }
-          if (neighbor.lqi !== undefined && (existing.bestLqi === null || neighbor.lqi > existing.bestLqi)) {
-            existing.bestLqi = neighbor.lqi
-          }
-        } else {
-          unknowns.set(extAddr, {
-            extAddress: extAddr,
-            seenBy: [node.id],
-            isRouter: neighbor.rxOnWhenIdle === true && neighbor.fullThreadDevice === true,
-            rloc16: neighbor.rloc16 ?? null,
-            bestLqi: neighbor.lqi ?? null,
-            isChild: neighbor.isChild === true
-          })
-        }
-      })
-    })
+/**
+ * A router lists itself with no next hop and no link. Direct neighbors also have no next hop but do have a link.
+ * An allocated but unreachable router looks the same as the device itself, so the entry is only trusted when it
+ * matches the known extended address or is the only candidate.
+ */
+function selfRoute(node: ThreadNode): RouteEntry | undefined {
+  const candidates = node.routes.filter((r) => r.allocated && r.nextHop === NO_NEXT_HOP && !r.linkEstablished)
+  const match = node.extAddress ? candidates.find((r) => r.extAddress === node.extAddress) : undefined
+  return match ?? (candidates.length === 1 ? candidates[0] : undefined)
+}
 
-    return unknowns
+/**
+ * Every device on the map. openHAB devices are drawn once whichever network reports them, other devices once per
+ * network that reports them.
+ */
+class NodeIndex {
+  readonly nodes: ThreadNode[] = []
+  private readonly fabricByExt = new Map<string, ThreadNode>()
+  private readonly othersByExt = new Map<string, ThreadNode>()
+
+  constructor(fabricNodes: ThreadNode[]) {
+    for (const node of fabricNodes) {
+      this.nodes.push(node)
+      if (node.extAddress && !this.fabricByExt.has(node.extAddress)) this.fabricByExt.set(node.extAddress, node)
+    }
   }
 
-  private createUnknownNodes(
-    unknowns: Map<string, UnknownDevice>,
-    nodesByExtAddr: Map<string, ProcessedNode>,
-    nodesByRloc16: Map<number, ProcessedNode>
-  ): ProcessedNode[] {
-    const nodes: ProcessedNode[] = []
+  /**
+   * The node with this extended address in the given network. Returns null for an openHAB device that is in another
+   * network or has Thread turned off, as we know where it really is.
+   */
+  find(extAddress: string, networkKey: string | null): ThreadNode | null | undefined {
+    const fabric = this.fabricByExt.get(extAddress)
+    if (fabric) return fabric.networkKey === networkKey ? fabric : null
+    return this.othersByExt.get(`${networkKey}|${extAddress}`)
+  }
 
-    unknowns.forEach((device, extAddr) => {
-      const nodeId = `unknown_${extAddr}`
-      const role = device.isRouter ? 'router' : 'unknown'
+  addOther(node: ThreadNode): void {
+    this.nodes.push(node)
+    this.setExtAddress(node)
+  }
 
-      const node: ProcessedNode = {
-        id: nodeId,
-        label: device.isRouter ? 'Non-Fabric Router' : 'Non-Fabric Device',
-        role,
-        secondaryRole: undefined,
-        status: 'unknown',
-        statusColor: '#FFC107',
-        properties: {
-          extAddress: extAddr,
-          ...(device.rloc16 && {
-            rloc16: `0x${device.rloc16.toString(16).toUpperCase().padStart(4, '0')}`
-          }),
-          seenBy: device.seenBy.length
-        },
-        ownRloc16: device.rloc16,
-        ownExtAddress: extAddr,
-        isRouter: device.isRouter,
+  setExtAddress(node: ThreadNode): void {
+    const key = `${node.networkKey}|${node.extAddress}`
+    if (node.extAddress && !this.othersByExt.has(key)) this.othersByExt.set(key, node)
+  }
+}
+
+/**
+ * Maps extended addresses and RLOC16s seen in the tables of one Thread network to nodes, and creates nodes for
+ * devices not in openHAB. RLOC16 values are only unique within a partition, so they are looked up per network.
+ */
+class NodeResolver {
+  private readonly byRloc = new Map<number, ThreadNode>()
+
+  constructor(
+    members: ThreadNode[],
+    private readonly index: NodeIndex
+  ) {
+    members.forEach((n) => this.addRloc(n))
+  }
+
+  byRouterId(routerId: number): ThreadNode | undefined {
+    return this.byRloc.get(routerId << 10)
+  }
+
+  resolve(
+    extAddress: string | null,
+    rloc16: number | null,
+    reporter: ThreadNode,
+    hints: { router?: boolean; rxOnWhenIdle?: boolean }
+  ): ThreadNode | undefined {
+    const validRloc = validRloc16(rloc16, extAddress)
+    const found = extAddress ? this.index.find(extAddress, reporter.networkKey) : undefined
+    // The entry points at an openHAB device known to be elsewhere, so it is left over from before
+    if (found === null) return undefined
+    let node = found
+    if (!node && validRloc !== null) {
+      const candidate = this.byRloc.get(validRloc)
+      // RLOC16s get reassigned, so a match is ignored when the extended addresses disagree
+      if (candidate && !(extAddress && candidate.extAddress && candidate.extAddress !== extAddress)) node = candidate
+    }
+    if (!node) {
+      if (!extAddress && validRloc === null) return undefined
+      node = {
+        id: `thread_${reporter.networkKey}_${extAddress ?? formatRloc(validRloc as number)}`,
+        label: 'Thread Device (not in openHAB)',
+        networkKey: reporter.networkKey,
+        networkName: reporter.networkName,
+        extAddress,
+        rloc16: validRloc,
+        routingRole: RoutingRole.UNSPECIFIED,
         isBorderRouter: false,
-        routingRole: device.isRouter ? RoutingRole.ROUTER : RoutingRole.UNSPECIFIED,
+        detached: false,
         neighbors: [],
-        routes: []
+        routes: [],
+        seenBy: new Set(),
+        routerHint: false
       }
-
-      nodes.push(node)
-      nodesByExtAddr.set(extAddr, node)
-      if (device.rloc16) {
-        nodesByRloc16.set(device.rloc16, node)
+      this.index.addOther(node)
+      this.addRloc(node)
+    }
+    if (!node.thing) {
+      node.seenBy.add(reporter.id)
+      if (hints.router) {
+        node.routerHint = true
+        node.label = 'Thread Router (not in openHAB)'
       }
-    })
-
-    return nodes
+      if (hints.rxOnWhenIdle !== undefined) node.rxOnWhenIdle = hints.rxOnWhenIdle
+      if (!node.extAddress && extAddress) {
+        node.extAddress = extAddress
+        this.index.setExtAddress(node)
+      }
+      if (node.rloc16 === null && validRloc !== null) {
+        node.rloc16 = validRloc
+        this.addRloc(node)
+      }
+    }
+    return node
   }
 
-  private createRouteTableLinks(
-    processedNodes: ProcessedNode[],
-    nodesByRloc16: Map<number, ProcessedNode>,
-    nodesByExtAddr: Map<string, ProcessedNode>,
-    processedLinkKeys: Set<string>
-  ): NetworkLink[] {
-    const links: NetworkLink[] = []
-
-    processedNodes.forEach((nodeData) => {
-      if (!nodeData.routes || nodeData.routes.length === 0) return
-
-      nodeData.routes.forEach((route) => {
-        // Skip the node's own identity entry
-        if (route.nextHop === 63) return
-
-        // Only process established, allocated routes
-        if (!route.linkEstablished || !route.allocated) return
-
-        const targetRloc16 = route.rloc16
-        if (!targetRloc16) return
-
-        const routeExtAddr = this.normalizeExtAddress(route.extAddress)
-        let targetNode = routeExtAddr ? nodesByExtAddr.get(routeExtAddr) : undefined
-        if (!targetNode) {
-          targetNode = nodesByRloc16.get(targetRloc16)
-        }
-
-        if (!targetNode) return
-        if (targetNode.id === nodeData.id) return
-
-        const linkKey = [nodeData.id, targetNode.id].sort().join('|')
-        if (processedLinkKeys.has(linkKey)) return
-        processedLinkKeys.add(linkKey)
-
-        // Compute average of lqiIn and lqiOut
-        let quality: number | undefined
-        if (route.lqiIn !== undefined && route.lqiOut !== undefined && route.lqiIn > 0 && route.lqiOut > 0) {
-          quality = Math.round((route.lqiIn + route.lqiOut) / 2)
-        } else if (route.lqiIn !== undefined && route.lqiIn > 0) {
-          quality = route.lqiIn
-        } else if (route.lqiOut !== undefined && route.lqiOut > 0) {
-          quality = route.lqiOut
-        }
-
-        links.push({
-          source: nodeData.id,
-          target: targetNode.id,
-          type: 'peer',
-          quality,
-          lineStyle: 'dashed',
-          properties: {
-            fromRouteTable: true,
-            ...(route.pathCost !== undefined && { pathCost: route.pathCost })
-          }
-        })
-      })
-    })
-
-    return links
+  private addRloc(node: ThreadNode): void {
+    if (node.rloc16 !== null && !this.byRloc.has(node.rloc16)) this.byRloc.set(node.rloc16, node)
   }
 }
 
