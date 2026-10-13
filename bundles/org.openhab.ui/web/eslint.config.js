@@ -14,6 +14,7 @@ const rules = {
     // Import-x rules not in oxlint
     'import-x/no-unresolved': 'error',
     'import-x/no-unused-modules': 'warn',
+    'import-x/no-named-as-default-member': "off",
     'vue/no-v-html': 'off',
     'vue/require-default-prop': 'off',
     'vue/multi-word-component-names': 'off',
@@ -39,18 +40,6 @@ const rules = {
     '@intlify/vue-i18n/no-html-messages': 'off'
 }
 
-const oxlintOwnedImportRules = {
-  'import-x/default': 'off',
-  'import-x/export': 'off',
-  'import-x/named': 'off',
-  'import-x/namespace': 'off',
-  'import-x/no-duplicates': 'off',
-  'import-x/extensions': 'off',
-  'import-x/first': 'off',
-  'import-x/no-named-as-default-member': 'off',
-  'import-x/no-named-as-default': 'off'
-}
-
 export default defineConfig([
   ...pluginVue.configs['flat/recommended'],
   ...pluginVueI18n.configs.recommended,
@@ -61,9 +50,6 @@ export default defineConfig([
     plugins: {
       vue: pluginVue
     }
-  },
-  {
-    rules: oxlintOwnedImportRules
   },
   {
     settings: {
