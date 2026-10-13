@@ -324,13 +324,13 @@ export default {
                 onSuccessCallback(object[0])
               }
             }
-            return Promise.resolve()
+            return
           } else {
             if (onFailureCallback) {
               onFailureCallback()
             }
             showAlertDialog(`Error parsing ${this.uiOptionsStore.codeEditorType}: no ${this.objectType} found`)
-            return Promise.reject()
+            throw new Error(`Error parsing ${this.uiOptionsStore.codeEditorType}: no ${this.objectType} found`)
           }
         })
         .catch((err) => {
@@ -363,7 +363,7 @@ export default {
           } else {
             showAlertDialog(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`)
           }
-          return Promise.reject()
+          throw new Error(`Error parsing ${this.uiOptionsStore.codeEditorType}: ${err.message || err.status}`)
         })
     },
     onEditorInput(value) {
