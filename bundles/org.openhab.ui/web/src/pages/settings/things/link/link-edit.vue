@@ -111,7 +111,7 @@ import { mapStores } from 'pinia'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import LinkMixin from '@/pages/settings/things/link/link-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -123,7 +123,7 @@ import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [ThingStatus, LinkMixin],
+  mixins: [LinkMixin],
   components: {
     ConfigSheet,
     Item,
@@ -139,7 +139,7 @@ export default {
   setup() {
     const { dirty, dirtyIndicator } = useDirty('link-edit-page')
 
-    return { dirty, dirtyIndicator }
+    return { dirty, dirtyIndicator, thingStatusBadgeColor, thingStatusBadgeText }
   },
   data() {
     return {

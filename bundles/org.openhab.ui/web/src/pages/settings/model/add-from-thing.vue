@@ -130,7 +130,7 @@ import ItemPicker from '@/components/config/controls/item-picker.vue'
 
 import Item from '@/components/item/item.vue'
 
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import ItemMixin from '@/components/item/item-mixin'
 
 import generateTextualDefinition from './generate-textual-definition'
@@ -141,7 +141,7 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingStatus, ItemMixin],
+  mixins: [ItemMixin],
   components: {
     Item,
     ThingPicker,
@@ -156,7 +156,7 @@ export default {
     f7router: Object // Added for navigation
   },
   setup() {
-    return { theme }
+    return { theme, thingStatusBadgeColor, thingStatusBadgeText }
   },
   data() {
     return {

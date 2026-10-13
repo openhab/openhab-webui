@@ -508,7 +508,7 @@ import RuleModulePopup from './rule-module-popup.vue'
 
 import RuleMixin from './rule-edit-mixin'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
-import RuleStatus from '@/components/rule/rule-status-mixin'
+import { ruleStatusBadgeColor } from '@/components/rule/rule-helpers.ts'
 import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -526,7 +526,7 @@ import { BREAKPOINTS } from '@/js/constants/breakpoints'
 const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
 export default {
-  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus, FileDefinition],
+  mixins: [RuleMixin, ModuleDescriptionSuggestions, FileDefinition],
   components: {
     RuleGeneralSettings,
     ConfigSheet,
@@ -550,7 +550,7 @@ export default {
       STUB: 'Stub only',
       STRIPPED: 'Strip template'
     })
-    return { theme, dirty, dirtyIndicator, serializationOptions, BREAKPOINTS }
+    return { theme, dirty, dirtyIndicator, serializationOptions, ruleStatusBadgeColor, BREAKPOINTS }
   },
   data() {
     return {

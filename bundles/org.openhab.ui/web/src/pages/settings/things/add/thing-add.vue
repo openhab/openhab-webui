@@ -55,11 +55,10 @@ import { f7, theme } from 'framework7-vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
-import ThingMixin from '@/components/thing/thing-mixin'
+import { validateThingUID } from '@/components/thing/thing-helpers'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingMixin],
   props: {
     thingTypeId: String,
     thingCopy: Object,
@@ -146,7 +145,7 @@ export default {
         f7.dialog.alert('Please give a unique identifier')
         return
       }
-      const uidValidationError = this.validateThingUID(this.thing.UID, this.thing.ID)
+      const uidValidationError = validateThingUID(this.thing.UID, this.thing.ID, this.things)
       if (uidValidationError !== '') {
         f7.dialog.alert('Invalid Thing ID: ' + uidValidationError)
         return

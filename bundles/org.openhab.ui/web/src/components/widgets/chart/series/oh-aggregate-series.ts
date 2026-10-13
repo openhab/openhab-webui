@@ -130,7 +130,7 @@ const aggregateSeries: SeriesComponent = {
 
     return dayjs(startTime).subtract(1, groupStart as dayjs.ManipulateType)
   },
-  get(context, component, points, startTime, endTime) {
+  get(context, component, items, points, startTime, endTime) {
     const series = context.evaluateExpression<OhAggregateSeriesOption>(
       ComponentId.get(component)!,
       component.config,

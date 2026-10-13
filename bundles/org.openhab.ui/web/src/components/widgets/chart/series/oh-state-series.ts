@@ -3,6 +3,27 @@ import ComponentId from '../../component-id'
 import type { OhStateSeriesOption, SeriesComponent } from '../types.ts'
 import type { CustomSeriesRenderItem } from 'echarts'
 import { OhStateSeriesDefinition } from '@/assets/definitions/widgets/chart'
+import { StateType, stateTypeForItemType } from '@/assets/definitions/items/state-types.ts'
+import { ItemType } from '@/assets/item-types.ts'
+
+const stateColorDefaultMaps: Partial<Record<StateType, StateColorMap>> = {
+  [StateType.OpenClosed]: {
+    OPEN: '#fac858',
+    CLOSED: '#5470c6'
+  },
+  [StateType.OnOff]: {
+    ON: '#91cc75',
+    OFF: '#ee6666'
+  },
+  [StateType.UpDown]: {
+    UP: '#fc8452',
+    DOWN: '#73c0de'
+  },
+  [StateType.PlayPause]: {
+    PLAY: '#91cc75',
+    PAUSE: '#ee6666'
+  }
+}
 
 const renderState: CustomSeriesRenderItem = (_params, api) => {
   const yValue = api.value(0)
@@ -57,7 +78,7 @@ const stateSeries: SeriesComponent = {
     const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config, OhStateSeriesDefinition)
     return series.item ? [series.item] : []
   },
-  get(context, component, points) {
+  get(context, component, items, points) {
     const series = context.evaluateExpression<OhStateSeriesOption>(ComponentId.get(component)!, component.config, OhStateSeriesDefinition)
     series.type = 'custom'
     series.renderItem = renderState
@@ -93,13 +114,11 @@ const stateSeries: SeriesComponent = {
     series.data = []
 
     if (series.item) {
-      let itemPoints = points.find((p) => p.name === series.item)?.data ?? []
-
-      if ('mapState' in series) {
-        for (let i = 0; i < itemPoints.length; i++) {
-          itemPoints[i].state = (series.mapState as MapStateFunction)(itemPoints[i].state)
-        }
-      }
+      const itemIndex = points.findIndex((p) => p.name === series.item)
+      const itemPoints = (points.find((p) => p.name === series.item)?.data ?? []).map((p) =>
+        'mapState' in series ? { ...p, state: (series.mapState as MapStateFunction)(p.state) } : p
+      )
+      const item = items[itemIndex]
 
       let data = []
       let itemStartTime: Date | null = null
@@ -112,7 +131,10 @@ const stateSeries: SeriesComponent = {
 
         itemStartTime = itemStartTime || new Date(itemPoints[i].time)
         const itemEndTime = new Date(itemPoints[i + 1] ? itemPoints[i + 1].time : itemPoints[itemPoints.length - 1].time)
-        const stateColor = 'stateColor' in series ? (series.stateColor as StateColorMap)[itemPoints[i].state] : undefined
+
+        const stateType = stateTypeForItemType(item?.type as ItemType)
+        const stateColorMap = 'stateColor' in series ? (series.stateColor as StateColorMap) : (stateColorDefaultMaps[stateType] ?? null)
+        const stateColor = stateColorMap?.[itemPoints[i].state] ?? undefined
         data.push({
           value: [series.yValue || 0, itemStartTime, itemEndTime, itemPoints[i].state, series.yHeight || 0.6],
           itemStyle: {
