@@ -13,7 +13,7 @@
       :transparent="!simpleNavbar"
       class="home-nav disable-user-select"
       ref="navbar">
-      <f7-nav-left>
+      <f7-nav-left v-if="!hostMenu">
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
       <f7-nav-title-large v-if="!simpleNavbar" class="home-title-large">
@@ -154,6 +154,7 @@
 </style>
 
 <script>
+import { ref } from 'vue'
 import { f7 } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -166,6 +167,8 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
+import { hostTakesOver } from '@/js/host-bridge/bridge'
+import { useHostNavbar } from '@/js/host-bridge/navbar'
 
 export default {
   props: {
@@ -174,6 +177,11 @@ export default {
     f7router: Object
   },
   mixins: [HomeCards],
+  setup() {
+    const hostBar = ref(null)
+    useHostNavbar(() => hostBar.value)
+    return { hostBar, hostNavbar: hostTakesOver('navbar'), hostMenu: hostTakesOver('menu') }
+  },
   components: {
     OverviewTab,
     ModelTab
@@ -260,9 +268,37 @@ export default {
           return this.$t('home.overview.title')
       }
     },
+    hostBarDescription() {
+      if (!this.hostNavbar || this.homePageComponent?.config?.hideNavbar === true) return null
+      const trailing = []
+      if (this.runtimeStore.voiceIcon) {
+        trailing.push({
+          id: 'voice',
+          label: this.$t('home.triggerVoice'),
+          icon: { name: this.runtimeStore.voiceIcon },
+          run: this.triggerDialog
+        })
+      }
+      if (this.userStore.isAdmin()) {
+        const editUrl = this.homePageComponent ? '/settings/pages/home/home' : '/settings/pages/home/add'
+        trailing.push({
+          id: 'edit',
+          label: this.$t('home.editHome'),
+          icon: { name: 'f7:pencil', md: 'material:edit' },
+          run: () => this.f7router.navigate(editUrl)
+        })
+      }
+      return { title: this.title, large: !this.simpleNavbar, back: null, trailing }
+    },
     ...mapStores(useUIOptionsStore, useUserStore, useRuntimeStore)
   },
   watch: {
+    hostBarDescription: {
+      immediate: true,
+      handler(bar) {
+        this.hostBar = bar
+      }
+    },
     ready(val, oldVal) {
       if (val && !oldVal) {
         useStatesStore().startTrackingStates()

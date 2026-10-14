@@ -1,6 +1,12 @@
 <template>
   <f7-nav-left class="oh-nav-content">
-    <f7-link v-if="menuIcon" class="menu-icon" icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
+    <f7-link
+      v-if="menuIcon && !hostMenu"
+      class="menu-icon"
+      icon-ios="f7:menu"
+      icon-aurora="f7:menu"
+      icon-md="material:menu"
+      panel-open="left" />
     <f7-link v-if="!theme.md" icon-f7="chevron_left" :href="backLinkUrl" @click="back">
       {{ $f7dim.width > 500 ? backLink || t('dialogs.back') : null }}
     </f7-link>
@@ -28,7 +34,16 @@
         {{ saveLink }}
       </f7-link>
     </template>
-    <slot name="right" />
+    <f7-link
+      v-for="action in actions"
+      :key="action.id"
+      :icon-ios="action.icon?.name"
+      :icon-aurora="action.icon?.name"
+      :icon-md="action.icon?.md ?? action.icon?.name"
+      :text="hasIcon(action) ? undefined : action.label"
+      :tooltip="hasIcon(action) && !$device.ios ? action.label : undefined"
+      :class="[action.class, { disabled: action.disabled }]"
+      @click="action.run()" />
   </f7-nav-right>
   <slot name="after" />
 </template>
@@ -50,7 +65,10 @@
  * It includes a (working - F7 doesn't work properly) back button, a title, and a prefilled <f7-nav-right>:
  * - a lock icon if editable is false
  * - a save button if saveLink is provided and editable is not false - a click on this button emits a 'save' event and navigates to the saveLinkUrl if configured
- * - additional content can be added into <f7-nav-right> through the right slot
+ * - the buttons in the actions prop
+ *
+ * All buttons must come from these props. The iOS and Android apps draw the bar from them.
+ * See js/host-bridge/navbar.ts.
  *
  * By setting the backLinkUrl property to null, the included back navigation can be disabled.
  * Instead, the 'back' event is emitted and navigation has to be implemented explicitly.
@@ -61,6 +79,8 @@ import { f7, theme } from 'framework7-vue'
 import type { Router } from 'framework7'
 import DeveloperDockIcon from '@/components/developer/developer-dock-icon.vue'
 import { useI18n } from 'vue-i18n'
+import { hostTakesOver } from '@/js/host-bridge/bridge'
+import { useHostNavbar, type HostNavbarAction } from '@/js/host-bridge/navbar'
 
 const props = withDefaults(
   defineProps<{
@@ -75,8 +95,10 @@ const props = withDefaults(
     disableSaveLink?: boolean
     large?: boolean
     f7router?: Router.Router
+    actions?: HostNavbarAction[]
   }>(),
   {
+    actions: () => [],
     menuIcon: true,
     editable: undefined,
     large: false,
@@ -87,13 +109,52 @@ const props = withDefaults(
 const emit = defineEmits(['back', 'save'])
 
 defineSlots<{
-  right: void
   after: void
 }>()
 
 const { t } = useI18n({ useScope: 'local' })
 
 console.log('nav router', props.f7router)
+
+// Does a native host take over our menu
+const hostMenu = hostTakesOver('menu')
+
+function hasIcon(action: HostNavbarAction) {
+  return !!(theme.md ? (action.icon?.md ?? action.icon?.name) : action.icon?.name)
+}
+
+function router(): Router.Router {
+  return props.f7router || f7.views.main.router
+}
+
+// Returns the top menu bar structure/state for native apps to render
+useHostNavbar(() => {
+  if (!hostTakesOver('navbar')) return null
+  const trailing: HostNavbarAction[] = []
+  if (props.editable === false) {
+    trailing.push({ id: 'locked', label: 'Not editable', icon: { name: 'f7:lock_fill' }, disabled: true, run: () => {} })
+  }
+  if (props.saveLink && props.editable !== false) {
+    trailing.push({
+      id: 'save',
+      label: props.saveLink,
+      disabled: props.disableSaveLink,
+      run: () => {
+        emit('save')
+        if (props.saveLinkUrl) router().navigate(props.saveLinkUrl)
+      }
+    })
+  }
+  let runBack: (() => void) | undefined
+  if (props.backLinkUrl) runBack = () => router().navigate(props.backLinkUrl!)
+  else if (props.backLinkUrl === null) runBack = () => emit('back')
+  return {
+    title: props.title,
+    large: props.large,
+    back: { label: props.backLink || t('dialogs.back'), run: runBack },
+    trailing: [...trailing, ...props.actions]
+  }
+})
 
 function back() {
   if (props.backLinkUrl) return

@@ -1,38 +1,7 @@
 <template>
   <f7-page name="logviewer" class="log-viewer log-viewer-page" @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" :f7router>
-        <template #right>
-          <f7-link
-            icon-ios="f7:play_fill"
-            icon-f7="play_fill"
-            icon-md="material:play_arrow"
-            :icon-color="logViewerCore?.stateConnected && logViewerCore?.stateProcessing ? 'gray' : ''"
-            :tooltip="!device.ios ? 'Continue receiving logs' : ''"
-            :class="{
-              'disabled-link': logViewerCore?.stateConnected && logViewerCore?.stateProcessing,
-              'no-margin-left': device.ios,
-              'connecting-flash': logViewerCore?.isConnecting
-            }"
-            @click="logViewerCore?.loggingContinue" />
-          <f7-link
-            icon-ios="f7:pause_fill"
-            icon-aurora="f7:pause_fill"
-            icon-md="material:pause_fill"
-            :icon-color="!logViewerCore?.stateConnected || !logViewerCore?.stateProcessing ? 'gray' : ''"
-            :tooltip="!device.ios ? 'Pause processing new logs' : ''"
-            :class="{ 'disabled-link': !logViewerCore?.stateConnected || !logViewerCore?.stateProcessing, 'no-margin-left': device.ios }"
-            @click="logViewerCore?.loggingPause" />
-          <f7-link
-            icon-ios="f7:stop_fill"
-            icon-aurora="f7:stop_fill"
-            icon-md="material:stop_fill"
-            :icon-color="!logViewerCore?.stateConnected && !logViewerCore?.stateConnecting ? 'gray' : ''"
-            :tooltip="!device.ios ? 'Stop receiving logs' : ''"
-            :class="{ 'disabled-link': !logViewerCore?.stateConnected && !logViewerCore?.stateConnecting, 'no-margin-left': device.ios }"
-            @click="logViewerCore?.loggingStop" />
-        </template>
-      </oh-nav-content>
+      <oh-nav-content title="Log Viewer" back-link="Developer Tools" back-link-url="/developer/" :f7router :actions="actions" />
       <f7-subnavbar :inner="false" style="padding-right: var(--f7-safe-area-right)">
         <f7-searchbar
           ref="searchbar"
@@ -78,7 +47,7 @@
       background-color #12cc00
 
   .navbar
-    .connecting-flash:not(.disabled-link)
+    .connecting-flash:not(.disabled)
       .icon
         animation opacity-pulse 0.5s cubic-bezier(1, 0, 0.4, 1) infinite alternate
 
@@ -90,10 +59,11 @@
 </style>
 
 <script setup lang="ts">
-import { useTemplateRef } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { type Router, getDevice } from 'framework7'
 import LogViewerCore from './log-viewer-core.vue'
 import LogViewerToolbar from './log-viewer-toolbar.vue'
+import type { HostNavbarAction } from '@/js/host-bridge/navbar'
 
 // Constants
 const device = getDevice()
@@ -105,6 +75,36 @@ defineProps<{
 
 // State/Data
 const logViewerCore = useTemplateRef('logViewerCore')
+
+const actions = computed<HostNavbarAction[]>(() => {
+  const core = logViewerCore.value
+  return [
+    {
+      id: 'continue',
+      label: 'Continue receiving logs',
+      icon: { name: 'f7:play_fill', md: 'material:play_arrow' },
+      disabled: !!(core?.stateConnected && core?.stateProcessing),
+      class: { 'no-margin-left': !!device.ios, 'connecting-flash': !!core?.isConnecting },
+      run: () => core?.loggingContinue()
+    },
+    {
+      id: 'pause',
+      label: 'Pause processing new logs',
+      icon: { name: 'f7:pause_fill', md: 'material:pause_fill' },
+      disabled: !core?.stateConnected || !core?.stateProcessing,
+      class: { 'no-margin-left': !!device.ios },
+      run: () => core?.loggingPause()
+    },
+    {
+      id: 'stop',
+      label: 'Stop receiving logs',
+      icon: { name: 'f7:stop_fill', md: 'material:stop_fill' },
+      disabled: !core?.stateConnected && !core?.stateConnecting,
+      class: { 'no-margin-left': !!device.ios },
+      run: () => core?.loggingStop()
+    }
+  ]
+})
 
 // Lifecycle Hooks
 function onPageAfterIn() {

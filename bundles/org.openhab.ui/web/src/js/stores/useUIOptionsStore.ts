@@ -4,6 +4,7 @@ import { Dom7 } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
 import { isAdminMenuSection, type AdminMenuSection } from '@/js/admin-menu.ts'
+import { hostDarkMode } from '@/js/host-bridge/bridge'
 
 type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
@@ -133,6 +134,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       darkModeChange.value // darkModeChange to force re-computation
       if (storedDarkMode.value === 'auto') {
+        if (hostDarkMode.value) return hostDarkMode.value
         if (typeof window.OHApp?.preferDarkMode === 'function') {
           return window.OHApp.preferDarkMode() == 'dark' ? 'dark' : 'light'
         }
@@ -159,6 +161,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     darkModeChange.value++ // trigger computed darkMode now f7 is ready
     updateClasses()
     f7.on('darkModeChange', () => {
+      darkModeChange.value++
+      updateClasses()
+    })
+    watch(hostDarkMode, () => {
       darkModeChange.value++
       updateClasses()
     })
