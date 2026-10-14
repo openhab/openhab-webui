@@ -38,6 +38,7 @@ export type useSvgEmbeddedOptions = {
 
 export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
   const { editmode, embeddedSvgActions, embedSvgFlashing, f7router } = options
+  const statesStore = useStatesStore()
 
   // state/data
   /**
@@ -45,7 +46,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
    */
   const embeddedSvgRoot = ref<SVGSVGElement | null>(null)
   const embeddedSvgReady = ref(false)
-  const embeddedSvgStateTrackingUnsubscribes: WatchHandle[] = []
+  const watchHandles: WatchHandle[] = []
 
   /**
    * Internal function to fetch and validates the SVG markup from the configured Image URL.
@@ -107,8 +108,8 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
 
     if (embeddedSvgRoot.value) {
       const svgElements = embeddedSvgRoot.value.querySelectorAll<SVGElementWithHandlers>('[openhab]')
-      subscribeEmbeddedSvgListeners(svgElements)
-      void setupEmbeddedSvgStateTracking(svgElements)
+      subscribeSvgElementListeners(svgElements)
+      setupStateWatches(svgElements)
     }
     embeddedSvgReady.value = true
   }
@@ -120,8 +121,8 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
    */
   function removeEmbeddedSvg(unEmbedSvg?: (svgRoot: Ref<SVGSVGElement | null>) => void) {
     if (embeddedSvgRoot.value && embeddedSvgReady.value) {
-      unsubscribeEmbeddedSvgListeners()
-      unsubscribeEmbeddedSvgStateTracking()
+      unsubscribeSvgElementListeners()
+      unWatchsStates()
       if (unEmbedSvg) {
         unEmbedSvg(embeddedSvgRoot)
       } else {
@@ -175,29 +176,17 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     })
   }
 
-  /**
-   * Setups the state tracking for the Items linked to embedded SVG elements.
-   *
-   * This method adds the stateItem or actionItem to the tracking list and subscribes to the Item state mutations.
-   * Remember to unsubscribe from the mutations using {@link unsubscribeEmbeddedSvgStateTracking} when the component is destroyed.
-   */
-  async function setupEmbeddedSvgStateTracking(svgElements: NodeListOf<SVGElementWithHandlers>) {
-    const boundItems = new Set<string>()
+  function setupStateWatches(svgElements: NodeListOf<SVGElementWithHandlers>) {
     for (const svgElement of svgElements) {
       const svgElementConfig: OhSvgElement.Config | undefined = embeddedSvgActions.value[svgElement.id]
       const stateItems = svgElementConfig?.stateItems
       const actionItem = svgElementConfig?.actionItem
       const items = stateItems || (actionItem ? [actionItem] : [])
       if (items.length === 0) continue
-      for (const item of items) {
-        boundItems.add(item)
-        if (!useStatesStore().isItemTracked(item)) useStatesStore().addToTrackingList(item)
 
-        // immediate: seed styling from the already-cached state on (re)mount - on SPA navigation the
-        // SSE stream stays connected and won't re-push unchanged states, so a change-only watcher would
-        // never re-apply class/color/opacity to the freshly recreated element
-        const stop = watch(
-          () => useStatesStore().itemStates.get(item),
+      for (const item of items) {
+        const watchHandle = watch(
+          () => statesStore.trackedItems[item],
           (newState) => {
             const svgElementConfig = embeddedSvgActions.value[svgElement.id]
             if (newState && svgElementConfig) {
@@ -207,66 +196,37 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
           { deep: true, immediate: true }
         )
 
-        embeddedSvgStateTrackingUnsubscribes.push(stop)
+        watchHandles.push(watchHandle)
       }
     }
-
-    useStatesStore().updateTrackingList()
-    // The states SSE only snapshots the item list present when it connects. Items bound to a
-    // late-loaded SVG are registered afterwards, so they may never receive a fresh state and the
-    // retained cache can be stale across SPA navigation. Fetch authoritative state once on (re)mount
-    // so styling reflects the current Item state regardless of cache/SSE timing.
-    await refreshEmbeddedSvgItemStates(boundItems)
-    console.debug('Successfully setup embedded SVG state tracking.')
   }
 
   /**
-   * Unsubscribes from the state tracking for the Items linked to embedded SVG elements.
+   * Unwatches state tracking for the Items linked to embedded SVG elements.
    */
-  function unsubscribeEmbeddedSvgStateTracking() {
-    for (const unsubscribe of embeddedSvgStateTrackingUnsubscribes) {
-      unsubscribe()
+  function unWatchsStates() {
+    for (const unwatch of watchHandles) {
+      unwatch()
     }
-    embeddedSvgStateTrackingUnsubscribes.length = 0
-    console.debug('Unsubscribed from embedded SVG state tracking.')
+    watchHandles.length = 0
   }
 
-  /**
-   * Fetches the authoritative current state of each bound Item from the REST API and pushes it into
-   * the states store. This updates the cache (firing the state watchers) so the embedded SVG reflects
-   * the live Item state on (re)mount, even when the SSE has not re-snapshotted these late-added Items.
-   *
-   * @param {Set<string>} items the Item names bound to embedded SVG elements
-   */
-  async function refreshEmbeddedSvgItemStates(items: Set<string>) {
-    const store = useStatesStore()
-    for (const itemName of items) {
-      try {
-        const item = await api.getItemByName({ itemName: itemName })
+  function pauseWatchStates() {
+    for (const watch of watchHandles) {
+      watch.pause?.()
+    }
+  }
 
-        if (!item || item.state === undefined || item.state === null) continue
-        // prefer the accurate state type from a previous SSE update; fall back to the Item type
-        const cachedType = store.itemStates.get(itemName)?.type
-        store.setItemState(itemName, {
-          state: item.state,
-          displayState: item.transformedState ?? item.state,
-          type:
-            cachedType && cachedType !== '-'
-              ? cachedType
-              : isItemType(item.type)
-                ? stateTypeForItemType(item.type as ItemType)
-                : StateType.String
-        })
-      } catch (error) {
-        console.warn(`Failed to refresh state for embedded SVG Item ${itemName}:`, error)
-      }
+  function resumeWatchStates() {
+    for (const watch of watchHandles) {
+      watch.resume?.()
     }
   }
 
   /**
    * Subscribes to the mouseover and click events for the embedded SVG elements with the `openhab` attribute.
    */
-  function subscribeEmbeddedSvgListeners(svgElements: NodeListOf<SVGElementWithHandlers>) {
+  function subscribeSvgElementListeners(svgElements: NodeListOf<SVGElementWithHandlers>) {
     for (const svgElement of svgElements) {
       svgElement.setAttribute('cursor', 'pointer')
       // make the whole element clickable, including the interior of fill:none outline shapes
@@ -285,7 +245,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
   /**
    * Unsubscribes from the mouseover and click events for the embedded SVG elements with the `openhab` attribute.
    */
-  function unsubscribeEmbeddedSvgListeners() {
+  function unsubscribeSvgElementListeners() {
     const svg = embeddedSvgRoot.value
     if (!svg) return
     const subElements = svg.querySelectorAll<SVGElementWithHandlers>('[openhab]')
@@ -589,6 +549,8 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     loadAndEmbedSvg,
     removeEmbeddedSvg,
     flashEmbeddedSvgComponents,
-    embeddedSvgReady
+    embeddedSvgReady,
+    pauseWatchStates,
+    resumeWatchStates
   }
 }
