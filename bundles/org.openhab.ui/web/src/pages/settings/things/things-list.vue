@@ -115,9 +115,9 @@
       <f7-col v-else-if="things.length > 0">
         <div class="padding-left padding-right">
           <f7-segmented strong tag="p">
-            <f7-button :active="groupBy === 'alphabetical'" @click="groupBy='alphabetical'"> Alphabetical </f7-button>
-            <f7-button :active="groupBy === 'binding'" @click="groupBy='binding'"> By binding </f7-button>
-            <f7-button :active="groupBy === 'location'" @click="groupBy='location'"> By location </f7-button>
+            <f7-button :active="groupBy === 'alphabetical'" @click="groupBy = 'alphabetical'"> Alphabetical </f7-button>
+            <f7-button :active="groupBy === 'binding'" @click="groupBy = 'binding'"> By binding </f7-button>
+            <f7-button :active="groupBy === 'location'" @click="groupBy = 'location'"> By location </f7-button>
           </f7-segmented>
         </div>
         <group-box :title="getListTitle(search.isFiltered, search.filteredResults.length, things.length, 'Thing', selected.size)">
