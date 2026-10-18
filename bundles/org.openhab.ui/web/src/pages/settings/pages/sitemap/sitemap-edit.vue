@@ -525,7 +525,7 @@ export default {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
             { condition: { width: '0%', type: 'operator' } },
-            { value: { placeholder: 'value', required: true } }
+            { argument: { placeholder: 'arg', required: true } }
           ]
         }
       ],
@@ -534,33 +534,33 @@ export default {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
             { condition: { width: '0%', type: 'operator' } },
-            { value: { placeholder: 'value', required: true } }
+            { argument: { placeholder: 'arg', required: true } }
           ]
         },
         '=',
-        { argument: { width: '20%', placeholder: 'icon', required: true } }
+        { value: { width: '20%', placeholder: 'icon', required: true } }
       ],
       colorRulesFields: [
         {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
             { condition: { width: '0%', type: 'operator' } },
-            { value: { placeholder: 'value', required: true } }
+            { argument: { placeholder: 'arg', required: true } }
           ]
         },
         '=',
-        { argument: { width: '20%', placeholder: 'color', required: true } }
+        { value: { width: '20%', placeholder: 'color', required: true } }
       ],
       confirmCmdRulesFields: [
         {
           conditions: [
             { item: { width: '30%', type: 'item', placeholder: '[item]' } },
             { condition: { width: '0%', type: 'operator' } },
-            { value: { placeholder: 'value', required: true } }
+            { argument: { placeholder: 'arg', required: true } }
           ]
         },
         '=',
-        { argument: { width: '20%', placeholder: 'message' } }
+        { value: { width: '20%', placeholder: 'message' } }
       ]
     }
   },
@@ -1150,16 +1150,16 @@ export default {
     },
     validateRule(attr, rule) {
       if (!['visibilityRules', 'confirmCmdRules'].includes(attr)) {
-        return !this.isEmptyValue(rule.argument)
+        return !this.isEmptyValue(rule.value)
       }
       const hasConditions = Array.isArray(rule.conditions) && rule.conditions.length > 0
       if (attr === 'visibilityRules' && !hasConditions) {
         return false
       }
-      if (attr === 'confirmCmdRules' && !hasConditions && this.isEmptyValue(rule.argument)) {
+      if (attr === 'confirmCmdRules' && !hasConditions && this.isEmptyValue(rule.value)) {
         return false
       }
-      if (rule.conditions?.some((condition) => this.isUndefinedValue(condition.value))) {
+      if (rule.conditions?.some((condition) => this.isUndefinedValue(condition.argument))) {
         return false
       }
       return true
@@ -1173,36 +1173,38 @@ export default {
     isUndefinedValue(value) {
       return value === null || value === undefined
     },
-    sanitizeRuleCondition(condition, requiresValue) {
+    sanitizeRuleCondition(condition, requiresArgument) {
       if (!condition || typeof condition !== 'object' || Array.isArray(condition)) {
         return null
       }
-      if (requiresValue && this.isUndefinedValue(condition.value)) {
+      if (requiresArgument && this.isUndefinedValue(condition.argument)) {
         return null
       }
       const sanitizedCondition = {}
-      ;['item', 'condition', 'value'].forEach((key) => {
+      ;['item', 'condition', 'argument'].forEach((key) => {
         if (!this.isUndefinedValue(condition[key])) {
           sanitizedCondition[key] = condition[key]
         }
       })
       return Object.keys(sanitizedCondition).length ? sanitizedCondition : null
     },
-    sanitizeRuleEntry(rule, requiresValue, requiresArgument) {
+    sanitizeRuleEntry(rule, requiresArgument, requiresValue) {
       if (!rule || typeof rule !== 'object' || Array.isArray(rule)) {
         return null
       }
       const sanitizedRule = {}
       if (Array.isArray(rule.conditions)) {
-        const sanitizedConditions = rule.conditions.map((condition) => this.sanitizeRuleCondition(condition, requiresValue)).filter(Boolean)
+        const sanitizedConditions = rule.conditions
+          .map((condition) => this.sanitizeRuleCondition(condition, requiresArgument))
+          .filter(Boolean)
         if (sanitizedConditions.length) {
           sanitizedRule.conditions = sanitizedConditions
         }
       }
-      if (!this.isEmptyValue(rule.argument)) {
-        sanitizedRule.argument = rule.argument
+      if (!this.isEmptyValue(rule.value)) {
+        sanitizedRule.value = rule.value
       }
-      if (requiresArgument && !sanitizedRule.argument) {
+      if (requiresValue && !sanitizedRule.value) {
         return null
       }
       return Object.keys(sanitizedRule).length ? sanitizedRule : null
@@ -1217,7 +1219,7 @@ export default {
           .map((rule) =>
             this.sanitizeRuleEntry(
               rule,
-              ['visibilityRules', 'confirmCmdRules'].includes(ruleAttribute),
+              ['visibilityRules'].includes(ruleAttribute),
               !['visibilityRules', 'confirmCmdRules'].includes(ruleAttribute)
             )
           )
