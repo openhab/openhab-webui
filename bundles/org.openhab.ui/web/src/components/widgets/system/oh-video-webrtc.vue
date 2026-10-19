@@ -110,7 +110,7 @@ export default {
     }
   },
   mounted() {
-    this.isMuted = this.muteActive !== undefined ? this.muteActive : (this.startMuted || false)
+    this.isMuted = this.muteActive !== undefined ? this.muteActive : this.startMuted || false
     if (this.sendAudio === true && this.micActive === true) {
       this.isMicOn = true
       if (this.webrtc) {
@@ -368,8 +368,13 @@ export default {
           return
         }
         // If already enabled, do nothing
-        if (this.localAudioStream && this.localAudioStream.getAudioTracks().some((t) => t.enabled)
-            && audioTransceiver && audioTransceiver.sender && audioTransceiver.sender.track) {
+        if (
+          this.localAudioStream &&
+          this.localAudioStream.getAudioTracks().some((t) => t.enabled) &&
+          audioTransceiver &&
+          audioTransceiver.sender &&
+          audioTransceiver.sender.track
+        ) {
           return
         }
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
