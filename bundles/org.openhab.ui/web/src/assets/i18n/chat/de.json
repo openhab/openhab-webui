@@ -18,8 +18,8 @@
   "chat.settingsTitle": "Chat-Einstellungen",
   "chat.llmTools": "Tool-Auswahl",
   "chat.showGenericToolVisualisation": "Alle Tool-Aufrufe anzeigen",
-  "chat.noLlmInterpreterTitle": "LLM-basierter Sprachinterpreter erforderlich",
-  "chat.noLlmInterpreterText": "Die Chat-Funktion erfordert einen Sprachmodel (LLM)-basierten Sprachinterpreter.",
-  "chat.noLlmInterpreterHint": "Installiere das Gemini Binding aus dem Add-on Store, um loszulegen. Konfiguriere Gemini nach der Installation als Standard-Sprachinterpreter! Unterstützung für weitere LLM-Anbieter wird in Zukunft hinzugefügt.",
-  "chat.installGeminiBinding": "Gemini Bindung installieren"
+  "chat.noLlmInterpreterTitle": "Keine KI verfügbar",
+  "chat.noLlmInterpreterText": "Chat benötigt einen KI-Dienst, um deine Anfragen zu verstehen und mit deinem zu Hause zu interagieren.",
+  "chat.noLlmInterpreterHint": "Installiere einen KI-Dienst aus dem Add-on-Store, um mit einem Dienst deiner Wahl zu verbinden. Stelle sicher es als Standard Sprachinterpreter in den Spracheinstellungen nach der Installation zu setzen!",
+  "chat.installHliBinding": "Add-on-Store öffnen"
 }
