@@ -712,9 +712,9 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     wrapper.vm.selectedWidget.visibilityRules = [
-      { conditions: [{ item: 'Day_time', condition: '==', value: 'Morning Time' }] },
-      { conditions: [{ item: 'Battery', condition: '>', value: 50 }] },
-      { conditions: [{ item: 'Battery_Level', condition: '>=', value: 20 }] }
+      { conditions: [{ item: 'Day_time', condition: '==', argument: 'Morning Time' }] },
+      { conditions: [{ item: 'Battery', condition: '>', argument: 50 }] },
+      { conditions: [{ item: 'Battery_Level', condition: '>=', argument: 20 }] }
     ]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
@@ -737,7 +737,7 @@ describe('SitemapEdit', () => {
     expect(lastDialogConfig).toBeTruthy()
     expect(lastDialogConfig.content).toMatch(/Switch widget Switch Test, syntax error in confirmCmdRules/)
 
-    // should not validate as confirmCmdRules require a condition value or argument
+    // should not validate as confirmCmdRules require a condition argument or value
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
@@ -746,23 +746,39 @@ describe('SitemapEdit', () => {
     expect(lastDialogConfig).toBeTruthy()
     expect(lastDialogConfig.content).toMatch(/Switch widget Switch Test, syntax error in confirmCmdRules/)
 
-    // should not validate as confirmCmdRules require a condition value or argument
+    // should not validate as confirmCmdRules require a condition argument or value
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
-    wrapper.vm.selectedWidget.confirmCmdRules = [{ conditions: [{}], argument: null }]
+    wrapper.vm.selectedWidget.confirmCmdRules = [{ conditions: [{}], value: null }]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeTruthy()
     expect(lastDialogConfig.content).toMatch(/Switch widget Switch Test, syntax error in confirmCmdRules/)
+
+    // configure correct confirmCmdRules with only condition
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.confirmCmdRules = [{ conditions: [{ item: 'Day_time', condition: '==', argument: 'Morning Time' }] }]
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
+
+    // configure correct confirmCmdRules with only value
+    lastDialogConfig = null
+    wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
+    await wrapper.vm.$nextTick()
+    wrapper.vm.selectedWidget.confirmCmdRules = [{ value: 'Are you very sure?' }]
+    wrapper.vm.validateWidgets()
+    expect(lastDialogConfig).toBeFalsy()
 
     // configure correct confirmCmdRules and check that there are no validation errors anymore
     lastDialogConfig = null
     wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     wrapper.vm.selectedWidget.confirmCmdRules = [
-      { conditions: [{ item: 'Day_time', condition: '==', value: 'Morning Time' }], argument: 'Are you very sure?' },
-      { conditions: [{ item: 'Battery', condition: '>', value: 50 }] },
-      { argument: 'No doubts?' }
+      { conditions: [{ item: 'Day_time', condition: '==', argument: 'Morning Time' }], value: 'Are you very sure?' },
+      { conditions: [{ item: 'Battery', condition: '>', argument: 50 }] },
+      { value: 'No doubts?' }
     ]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
@@ -790,18 +806,18 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectWidget([wrapper.vm.sitemap.widgets[0], wrapper.vm.sitemap])
     await wrapper.vm.$nextTick()
     wrapper.vm.selectedWidget.valueColorRules = [
-      { conditions: [{ item: 'Heat_Warning', condition: '==', value: 'It is hot' }], argument: 'gray' },
-      { conditions: [{ item: 'Last_Update', condition: '==', value: 'Uninitialized' }], argument: 'grey' },
-      { conditions: [{ item: 'Item_Name', condition: '>=', value: 25 }], argument: 'orange' },
+      { conditions: [{ item: 'Heat_Warning', condition: '==', argument: 'It is hot' }], value: 'gray' },
+      { conditions: [{ item: 'Last_Update', condition: '==', argument: 'Uninitialized' }], value: 'grey' },
+      { conditions: [{ item: 'Item_Name', condition: '>=', argument: 25 }], value: 'orange' },
       {
         conditions: [
-          { item: 'Item', condition: '==', value: 15 },
-          { item: 'Heat_Warning', condition: '==', value: 'It is a nice temperature' }
+          { item: 'Item', condition: '==', argument: 15 },
+          { item: 'Heat_Warning', condition: '==', argument: 'It is a nice temperature' }
         ],
-        argument: 'green'
+        value: 'green'
       },
-      { conditions: [{ item: 'Temperature', condition: '==', value: 20 }], argument: 'white' },
-      { conditions: [{ item: 'Status', condition: '==', value: 'online' }], argument: 'blue' }
+      { conditions: [{ item: 'Temperature', condition: '==', argument: 20 }], value: 'white' },
+      { conditions: [{ item: 'Status', condition: '==', argument: 'online' }], value: 'blue' }
     ]
     wrapper.vm.validateWidgets()
     expect(lastDialogConfig).toBeFalsy()
@@ -818,61 +834,61 @@ describe('SitemapEdit', () => {
     wrapper.vm.selectedWidget.label = 'Sanitize Test'
 
     wrapper.vm.selectedWidget.valueColorRules = [
-      { argument: 'red' },
+      { value: 'red' },
       // Only value set
-      { conditions: [{ value: 'ON' }], argument: 'blue' },
+      { conditions: [{ argument: 'ON' }], value: 'blue' },
       // Fully populated condition — should be preserved as-is
-      { conditions: [{ item: 'MyItem', condition: '==', value: 'ON' }], argument: 'green' },
+      { conditions: [{ item: 'MyItem', condition: '==', argument: 'ON' }], value: 'green' },
       // Multiple conditions, some with empty fields
       {
-        conditions: [{ item: 'MyItem', condition: '>=', value: 10 }, { value: '' }],
-        argument: 'orange'
+        conditions: [{ item: 'MyItem', condition: '>=', argument: 10 }, { argument: '' }],
+        value: 'orange'
       }
     ]
     wrapper.vm.selectedWidget.iconRules = [
-      // Argument-only rule (no conditions at all) — should survive
-      { argument: 'lightbulb' },
-      // Empty conditions array — should survive as argument-only
-      { conditions: [], argument: 'switch' },
+      // Value-only rule (no conditions at all) — should survive
+      { value: 'lightbulb' },
+      // Empty conditions array — should survive as value-only
+      { conditions: [], value: 'switch' },
       // Whitespace-only strings are not considered empty
-      { conditions: [{ item: '   ', condition: ' ', value: '  ' }], argument: ' ' }
+      { conditions: [{ item: '   ', condition: ' ', argument: '  ' }], value: ' ' }
     ]
     wrapper.vm.selectedWidget.labelColorRules = [
-      // Rule with no argument, no value should be removed entirely
-      { conditions: [{ item: '', condition: '' }] }
+      // Rule with no value, no argument should be removed entirely
+      { conditions: [{ item: '', condition: '' }], value: '' }
     ]
 
     const saved = wrapper.vm.preProcessSitemapSave(wrapper.vm.sitemap)
     const widget = saved.widgets[0]
 
-    // All-empty condition → becomes argument-only rule (conditions omitted)
-    expect(widget.valueColorRules[0]).toEqual({ argument: 'red' })
+    // All-empty condition → becomes value-only rule (conditions omitted)
+    expect(widget.valueColorRules[0]).toEqual({ value: 'red' })
     expect(widget.valueColorRules[0]).not.toHaveProperty('conditions')
 
     // Partial condition: item survives, empty fields are dropped
-    expect(widget.valueColorRules[1]).toEqual({ conditions: [{ value: 'ON' }], argument: 'blue' })
+    expect(widget.valueColorRules[1]).toEqual({ conditions: [{ argument: 'ON' }], value: 'blue' })
     expect(widget.valueColorRules[1].conditions[0]).not.toHaveProperty('item')
     expect(widget.valueColorRules[1].conditions[0]).not.toHaveProperty('condition')
 
     // Fully populated condition: preserved unchanged
-    expect(widget.valueColorRules[2]).toEqual({ conditions: [{ item: 'MyItem', condition: '==', value: 'ON' }], argument: 'green' })
+    expect(widget.valueColorRules[2]).toEqual({ conditions: [{ item: 'MyItem', condition: '==', argument: 'ON' }], value: 'green' })
 
     // Mixed conditions: empty condition object is removed, valid one survives
     expect(widget.valueColorRules[3]).toEqual({
-      conditions: [{ item: 'MyItem', condition: '>=', value: 10 }, { value: '' }],
-      argument: 'orange'
+      conditions: [{ item: 'MyItem', condition: '>=', argument: 10 }, { argument: '' }],
+      value: 'orange'
     })
 
-    // Argument-only iconRule (no conditions key) preserved
-    expect(widget.iconRules[0]).toEqual({ argument: 'lightbulb' })
-    // Empty conditions array → argument-only rule
-    expect(widget.iconRules[1]).toEqual({ argument: 'switch' })
+    // Value-only iconRule (no conditions key) preserved
+    expect(widget.iconRules[0]).toEqual({ value: 'lightbulb' })
+    // Empty conditions array → value-only rule
+    expect(widget.iconRules[1]).toEqual({ value: 'switch' })
     expect(widget.iconRules[1]).not.toHaveProperty('conditions')
 
     // Whitespace-only strings are preserved
-    expect(widget.iconRules[2]).toEqual({ conditions: [{ item: '   ', condition: ' ', value: '  ' }], argument: ' ' })
+    expect(widget.iconRules[2]).toEqual({ conditions: [{ item: '   ', condition: ' ', argument: '  ' }], value: ' ' })
 
-    // Rule with empty conditions and no argument is stripped entirely
+    // Rule with empty conditions and no value is stripped entirely
     expect(widget.labelColorRules).toBeUndefined()
   })
 
