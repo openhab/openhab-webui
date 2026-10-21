@@ -10,7 +10,6 @@ interface OHApp {
   getBasicCredentialsPassword?: () => string
 }
 
-// oxlint-disable-next-line no-redeclare
 interface Window {
   OHApp?: OHApp
 }

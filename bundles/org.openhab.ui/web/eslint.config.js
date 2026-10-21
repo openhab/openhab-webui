@@ -1,6 +1,6 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import globals from 'globals'
-import tseslint, { plugin } from 'typescript-eslint';
+import tseslint from 'typescript-eslint';
 import pluginJsonc from 'eslint-plugin-jsonc'
 import parserVue from 'vue-eslint-parser'
 import pluginVue from 'eslint-plugin-vue'
@@ -40,6 +40,18 @@ const rules = {
     '@intlify/vue-i18n/no-html-messages': 'off'
 }
 
+const oxlintOwnedImportRules = {
+  'import-x/default': 'off',
+  'import-x/export': 'off',
+  'import-x/named': 'off',
+  'import-x/namespace': 'off',
+  'import-x/no-duplicates': 'off',
+  'import-x/extensions': 'off',
+  'import-x/first': 'off',
+  'import-x/no-named-as-default': 'off',
+  'import-x/no-named-as-default-member': 'off'
+}
+
 export default defineConfig([
   ...pluginVue.configs['flat/recommended'],
   ...pluginVueI18n.configs.recommended,
@@ -67,7 +79,10 @@ export default defineConfig([
         parser: tseslint.parser
       }
     },
-    rules: rules
+    rules: {
+      ...rules,
+      ...oxlintOwnedImportRules
+    }
   },
   {
     files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx}'],
@@ -75,10 +90,6 @@ export default defineConfig([
       parser: tseslint.parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parserOptions: {
-        project: './tsconfig.eslint.json', // Path to your tsconfig.json
-        tsconfigRootDir: import.meta.dirname
-      },
       globals: {
         ...globals.browser,
         ...globals.node,
@@ -87,7 +98,10 @@ export default defineConfig([
         process: true
       }
     },
-    rules: rules
+    rules: {
+      ...rules,
+      ...oxlintOwnedImportRules
+    }
   },
   {
     files: ['src/assets/i18n/**/*.json'],
@@ -101,9 +115,6 @@ export default defineConfig([
   ...pluginOxlint.buildFromOxlintConfig({
     categories: {
       correctness: true
-    },
-    rules: {
-      eqeqeq: 'warn'
     }
   })
 ])
