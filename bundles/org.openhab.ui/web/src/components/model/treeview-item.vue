@@ -79,7 +79,7 @@ import ModelDragDropMixin from '@/pages/settings/model/model-dragdrop-mixin'
 import { getNonSemanticTags } from '@/components/item/item-helpers'
 
 export default {
-  name: 'model-treeview-item',
+  name: 'model-treeview-item', // eslint-disable-line vue/component-definition-name-casing
   mixins: [ModelDragDropMixin],
   props: {
     model: Object,

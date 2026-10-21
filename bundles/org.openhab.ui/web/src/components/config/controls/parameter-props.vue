@@ -39,14 +39,14 @@ export default {
         const page = useComponentsStore().page(this.configureTarget.substring(5))
         if (!page) {
           console.warn('Page not found: ' + this.configureTarget)
-          return
+          return null
         }
         return page.props
       } else if (this.configureTarget.indexOf('widget:') === 0) {
         const widget = useComponentsStore().widget(this.configureTarget.substring(7))
         if (!widget) {
           console.warn('Widget not found: ' + this.configureTarget)
-          return
+          return null
         }
         return widget.props
       }

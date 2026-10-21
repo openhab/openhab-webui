@@ -433,6 +433,7 @@
 </style>
 
 <script>
+// oxlint-disable unicorn/no-useless-promise-resolve-reject
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, f7ready } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
