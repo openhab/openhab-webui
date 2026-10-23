@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vitePluginTopLevelAwait from 'vite-plugin-top-level-await'
 import { compression } from 'vite-plugin-compression2'
 import { VitePWA } from 'vite-plugin-pwa'
 import { resolve } from 'path'
@@ -70,7 +69,6 @@ export default defineConfig({
         ]
       }
     },
-    vitePluginTopLevelAwait(),
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
@@ -115,7 +113,7 @@ export default defineConfig({
     // __VUE_I18N_LEGACY_API__: false // tree-shake legacy mode
   },
   optimizeDeps: {
-    // ensure these alre always pre-bundled, including esbuild in the dev server
+    // ensure these alre always pre-bundled in the dev server
     include: ['echarts', 'vue-echarts', 'dayjs']
   },
   server: {
