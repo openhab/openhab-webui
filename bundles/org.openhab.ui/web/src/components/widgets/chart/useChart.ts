@@ -201,7 +201,8 @@ export function useChart(
     if (!slots.value?.tooltip) return []
     const tooltipContext = {
       ...chartContext.value,
-      items: _items
+      items: _items,
+      series: series.value
     }
     return slots.value.tooltip.map((c) => OhChartTooltip.get(tooltipContext, c, startTime.value, endTime.value))
   })
