@@ -175,9 +175,7 @@ export default {
           const addonBundles = addon?.loggerPackages ?? []
           this.thingTypes = data
             .filter((tt) => tt.UID.split(':')[0] === this.resolvedBindingId && tt.listed)
-            .filter(
-              (tt) => !addonBundles.length || !tt.bundleSymbolicName || addonBundles.includes(tt.bundleSymbolicName)
-            )
+            .filter((tt) => !addonBundles.length || !tt.bundleSymbolicName || addonBundles.includes(tt.bundleSymbolicName))
             .sort((a, b) => {
               if (a.bridge && !b.bridge) return -1
               if (b.bridge && !a.bridge) return 1
@@ -211,21 +209,23 @@ export default {
       }
       this.scanning = true
       const query = this.inputConfig.input ? `?input=${encodeURIComponent(this.inputConfig.input)}` : ''
-      this.$oh.api.postPlain(`/rest/discovery/bindings/${this.resolvedBindingId}/scan${query}`, null, 'text/plain', 'text/plain').then((data) => {
-        try {
-          this.scanTimeout = parseInt(data)
-          this.scanProgress = 0
-          let progressBarEl = f7.progressbar.show('#scan-progress', 0, 'theme-alt')
-          this.intervalId = setInterval(() => {
-            this.scanProgress += 1
-            f7.progressbar.set(progressBarEl, (this.scanProgress * 100) / this.scanTimeout)
-            this.loadInbox()
-          }, 1000)
-          this.scanTimeoutId = setTimeout(this.finishScanning, this.scanTimeout * 1000)
-        } catch (e) {
-          this.scanning = false
-        }
-      })
+      this.$oh.api
+        .postPlain(`/rest/discovery/bindings/${this.resolvedBindingId}/scan${query}`, null, 'text/plain', 'text/plain')
+        .then((data) => {
+          try {
+            this.scanTimeout = parseInt(data)
+            this.scanProgress = 0
+            let progressBarEl = f7.progressbar.show('#scan-progress', 0, 'theme-alt')
+            this.intervalId = setInterval(() => {
+              this.scanProgress += 1
+              f7.progressbar.set(progressBarEl, (this.scanProgress * 100) / this.scanTimeout)
+              this.loadInbox()
+            }, 1000)
+            this.scanTimeoutId = setTimeout(this.finishScanning, this.scanTimeout * 1000)
+          } catch (e) {
+            this.scanning = false
+          }
+        })
     },
     /**
      * Load discovery information for the binding.
