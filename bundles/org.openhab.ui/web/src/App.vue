@@ -11,7 +11,7 @@
       left
       :cover="showSidebar ? true : null"
       class="sidebar"
-      :visible-breakpoint="BREAKPOINTS.MD"
+      :visible-breakpoint="hostMenu ? null : BREAKPOINTS.MD"
       :swipe="!uiOptionsStore.disableLeftPanelSwipe">
       <f7-page>
         <!-- openHAB Logo -->
@@ -271,6 +271,24 @@
 </template>
 
 <style lang="stylus">
+// The app draws the top bar: hide Main UI's bar on pages but keep its height.
+// The app's bar sits above the web view (navbarHeight 0): keep no height either.
+// The app shows the menu: hide the sidebar.
+.host-navbar
+  .view-main .navbar:not(.popup .navbar)
+    > .navbar-bg, > .navbar-inner > .left, > .navbar-inner > .title, > .navbar-inner > .right
+      opacity 0 !important
+      pointer-events none !important
+  &:not(.host-navbar-outside)
+    .panel, .panel-backdrop
+      --f7-appbar-app-offset var(--f7-navbar-height)
+.host-navbar-outside .view-main
+  --f7-navbar-height 0px
+  --f7-navbar-large-title-height 0px
+  .navbar .title-large
+    display none
+.host-menu .panel-left
+  display none !important
 .panel-left::-webkit-scrollbar /* WebKit */
   width 0
   height 0
@@ -471,6 +489,9 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
 
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
+import { useHostApp } from '@/js/host-bridge/app'
+import { hostInfo, hostTakesOver } from '@/js/host-bridge/bridge'
+import { sidebarMenuState } from '@/js/host-bridge/sidebar'
 import { getRoot } from '@/api'
 import { isUnauthorized } from '@/js/hey-api'
 import { request } from 'framework7'
@@ -488,7 +509,7 @@ export default {
   },
   setup() {
     const { locale, mergeLocaleMessage: globalMergeLocaleMessage } = useI18n({ useScope: 'global' })
-    const { t, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
+    const { t, te, mergeLocaleMessage: localMergeLocaleMessage } = useI18n({ useScope: 'local' })
     const { startAudioWebSocket, triggerDialog } = useDialog()
     // required for notReachable error screen:
     loadLocaleMessages('common', globalMergeLocaleMessage)
@@ -498,6 +519,7 @@ export default {
 
     return {
       t,
+      te,
       localMergeLocaleMessage,
       globalMergeLocaleMessage,
       locale,
@@ -508,6 +530,10 @@ export default {
   },
   data() {
     let theme = localStorage.getItem('openhab.ui:theme')
+
+    if ((!theme || theme === 'auto') && hostInfo()?.theme) {
+      theme = hostInfo().theme
+    }
 
     if ((!theme || theme === 'auto') && typeof window.OHApp?.preferTheme === 'function') {
       theme = window.OHApp.preferTheme()
@@ -536,7 +562,7 @@ export default {
         routes,
         // Enable panel left visibility breakpoint
         panel: {
-          leftBreakpoint: BREAKPOINTS.MD,
+          leftBreakpoint: hostTakesOver('menu') ? undefined : BREAKPOINTS.MD,
           rightBreakpoint: BREAKPOINTS.LG
         },
         card: {
@@ -576,6 +602,9 @@ export default {
 
       logDockFullscreen: false,
 
+      // Does a native host take over our side menu
+      hostMenu: hostTakesOver('menu'),
+
       // Tracks whether the log-viewer page is active. Updated at pageBeforeIn (entering
       // log-viewer) and pageAfterIn (leaving log-viewer) so the dock is only shown after
       // the page transition completes, avoiding interference with F7's router.
@@ -609,6 +638,13 @@ export default {
     serverDisplayUrl() {
       return window.location.origin
     },
+    // Returns the menu structure/state for native apps to render
+    hostMenuState() {
+      if (!this.hostMenu || !this.ready) return null
+      // Wait for the translations, or the app would show the raw keys.
+      if (!this.te('chat.title') || !this.$te('sidebar.helpAbout')) return null
+      return sidebarMenuState({ t: this.t, globalT: this.$t, pages: this.pages, currentUrl: this.currentUrl, loggedIn: this.loggedIn })
+    },
     showDockedLogViewer() {
       return this.runtimeStore.showLogDock && !this.logViewerPageActive
     },
@@ -619,7 +655,7 @@ export default {
         right: `${right}px`
       }
     },
-    ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore),
+    ...mapStores(useUIOptionsStore, useComponentsStore, useUserStore, useRuntimeStore, useStatesStore),
     ...mapWritableState(useUIOptionsStore, ['logDockHeight']),
     ...mapWritableState(useRuntimeStore, {
       modelSelectedItem: 'modelSelectedItem'
@@ -1091,8 +1127,20 @@ export default {
   created() {
     this.AddonIcons = AddonIcons
     this.AddonTitles = AddonTitles
+    // Support for native wrappers like Android or IOS (supersedes OHApp)
+    this._host = useHostApp({
+      version: buildInfo.version,
+      menu: () => this.hostMenuState,
+      openModal: this.handleCommand,
+      unlock: () => {
+        if (this.loggedIn) return false
+        this.authorize()
+        return true
+      }
+    })
 
-    // load 2-way communication for native wrappers
+    // load 2-way communication for native (legacy) wrappers
+    // newer versions of our mobile apps should use the OHBridge
     if (window.OHApp) {
       // tell the app to go fullscreen (if the OHApp is supported)
       if (typeof window.OHApp.goFullscreen === 'function') {
@@ -1201,6 +1249,8 @@ export default {
         this.updateUrl(newRoute.url)
         nextTick(this.updateTitle)
       })
+
+      this._host.start()
 
       f7.on('sidebarRefresh', () => {
         this.loadData()

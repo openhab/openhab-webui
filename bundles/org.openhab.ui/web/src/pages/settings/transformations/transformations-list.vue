@@ -1,11 +1,11 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content title="Transformations" back-link="Settings" back-link-url="/settings/">
-        <template #right>
-          <f7-link icon-md="material:done_all" @click="toggleCheck()" :text="!theme.md ? (showCheckboxes ? 'Done' : 'Select') : ''" />
-        </template>
-      </oh-nav-content>
+      <oh-nav-content
+        title="Transformations"
+        back-link="Settings"
+        back-link-url="/settings/"
+        :actions="[{ id: 'select', label: showCheckboxes ? 'Done' : 'Select', icon: { md: 'material:done_all' }, run: toggleCheck }]" />
       <f7-subnavbar v-show="initSearchbar" :inner="false">
         <f7-searchbar
           v-if="initSearchbar"

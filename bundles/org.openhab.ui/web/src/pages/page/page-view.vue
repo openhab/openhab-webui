@@ -10,7 +10,7 @@
       v-if="!page || !page.config.hideNavbar"
       :back-link="showBackButton ? $t('page.navbar.back') : undefined"
       class="disable-user-select">
-      <f7-nav-left v-if="!showBackButton">
+      <f7-nav-left v-if="!showBackButton && !hostMenu">
         <f7-link icon-ios="f7:menu" icon-aurora="f7:menu" icon-md="material:menu" panel-open="left" />
       </f7-nav-left>
       <f7-nav-title>
@@ -26,7 +26,7 @@
     </f7-navbar>
     <template v-else>
       <f7-link
-        v-if="!page.config.hideSidebarIcon"
+        v-if="!page.config.hideSidebarIcon && !hostMenu"
         class="sidebar-icon"
         icon-ios="f7:menu"
         icon-aurora="f7:menu"
@@ -96,6 +96,9 @@ import { useUserStore } from '@/js/stores/useUserStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
+import { useI18n } from 'vue-i18n'
+import { hostTakesOver } from '@/js/host-bridge/bridge'
+import { useHostNavbar, type HostNavbarAction } from '@/js/host-bridge/navbar'
 
 import * as api from '@/api'
 import { getPageType } from '@/pages/page-type'
@@ -125,6 +128,9 @@ const userStore = useUserStore()
 const uiOptionsStore = useUIOptionsStore()
 
 const theme = f7.theme
+const { t } = useI18n({ useScope: 'global' })
+const hostNavbar = hostTakesOver('navbar')
+const hostMenu = hostTakesOver('menu')
 
 // composables
 useViewArea()
@@ -324,4 +330,20 @@ const toggleFullscreen = () => {
     }
   })
 }
+
+useHostNavbar(() => {
+  if (!hostNavbar || page.value?.config?.hideNavbar) return null
+  const trailing: HostNavbarAction[] = []
+  if (editable.value) {
+    trailing.push({ id: 'edit', label: t('page.navbar.edit'), icon: { name: 'f7:pencil', md: 'material:edit' }, run: editPage })
+  }
+  if (fullscreenIcon.value) {
+    trailing.push({ id: 'fullscreen', label: 'Fullscreen', icon: { name: 'f7:' + fullscreenIcon.value }, run: toggleFullscreen })
+  }
+  return {
+    title: String(pageLabel.value ?? ''),
+    back: showBackButton.value ? { label: t('page.navbar.back') } : null,
+    trailing
+  }
+})
 </script>

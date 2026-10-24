@@ -49,8 +49,18 @@ import fullscreen from 'vue-fullscreen'
 // Import clipboard plugin
 import VueClipboard from 'vue3-clipboard'
 
+// The bridge to the iOS and Android apps
+import { hostInfo, hostTakesOver, installHostBridge } from '@/js/host-bridge/bridge'
+import { seedInitialHistory } from '@/js/host-bridge/routes'
+
 import { createPinia } from 'pinia'
 const pinia = createPinia()
+
+// Connect to the iOS or Android app before Vue starts, and restore the app's saved pages.
+installHostBridge()
+if (hostTakesOver('routeRestore')) {
+  seedInitialHistory(hostInfo()?.initialHistory, window.location, window.history, window.localStorage)
+}
 
 const app = createApp(App)
 
