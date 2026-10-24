@@ -39,6 +39,7 @@
     "webpack-visualizer-plugin": "^0.1.11"
   },
   "overrides": {
+    "stylus": "0.54.8",
     "webpack": "4.47.0"
   },
   "engines": {

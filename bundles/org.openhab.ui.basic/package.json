@@ -14,5 +14,8 @@
     "gulp-uglify": "^3.0.2",
     "material-icons": "^1.13.12",
     "sass": "^1.106.1"
+  },
+  "allowScripts": {
+    "@parcel/watcher": false
   }
 }
