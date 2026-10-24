@@ -33,7 +33,7 @@
 
 	gulp.task("css", function() {
 		return gulp.src(sources.sass)
-			.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+			.pipe(sass({style: 'compressed'}).on('error', sass.logError))
 			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 

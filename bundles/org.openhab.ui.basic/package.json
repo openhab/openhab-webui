@@ -10,7 +10,7 @@
     "gulp": "^5.0.0",
     "gulp-eslint": "^6.0.0",
     "gulp-replace": "^1.1.4",
-    "gulp-sass": "^5.1.0",
+    "gulp-sass": "^6.0.1",
     "gulp-uglify": "^3.0.2",
     "material-icons": "^1.13.12",
     "sass": "^1.106.1"
