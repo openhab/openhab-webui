@@ -66,8 +66,8 @@
         <artifactId>frontend-maven-plugin</artifactId>
 
         <configuration>
-          <nodeVersion>v12.16.1</nodeVersion>
-          <npmVersion>6.14.3</npmVersion>
+          <nodeVersion>v24.22.1</nodeVersion>
+          <npmVersion>11.19.1</npmVersion>
           <workingDirectory>web</workingDirectory>
         </configuration>
 
@@ -97,6 +97,10 @@
             </goals>
             <configuration>
               <arguments>run build</arguments>
+              <environmentVariables>
+                <!-- webpack 4 uses MD4 hashes (removed in OpenSSL 3), see node-compat.cjs for the preload -->
+                <NODE_OPTIONS>--openssl-legacy-provider --require ./node-compat.cjs</NODE_OPTIONS>
+              </environmentVariables>
             </configuration>
           </execution>
         </executions>

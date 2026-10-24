@@ -4,7 +4,7 @@
 	var
 		gulp = require("gulp"),
 		replace = require('gulp-replace'),
-		sass = require('gulp-sass')(require('node-sass')),
+		sass = require('gulp-sass')(require('sass')),
 		uglify = require("gulp-uglify"),
 		eslint = require("gulp-eslint");
 
