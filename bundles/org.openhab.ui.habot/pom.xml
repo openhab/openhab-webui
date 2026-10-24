@@ -98,8 +98,8 @@
             <configuration>
               <arguments>run build</arguments>
               <environmentVariables>
-                <!-- webpack 4 uses MD4 hashes (removed in OpenSSL 3), see node-compat.cjs for the preload -->
-                <NODE_OPTIONS>--openssl-legacy-provider --require ./node-compat.cjs</NODE_OPTIONS>
+                <!-- see node-compat.cjs -->
+                <NODE_OPTIONS>--require ./node-compat.cjs</NODE_OPTIONS>
               </environmentVariables>
             </configuration>
           </execution>
