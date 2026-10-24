@@ -81,6 +81,13 @@ module.exports = function (ctx) {
             plugin.definitions['process.env']['BUILD_TIMESTAMP'] = Date.now().toString()
           }
         }
+
+        // the uglify cache keys use MD4 hashes, which are not supported by OpenSSL 3 (Node.js 17+)
+        for (let minimizer of (cfg.optimization && cfg.optimization.minimizer) || []) {
+          if (minimizer.options && minimizer.options.uglifyOptions) {
+            minimizer.options.cache = false
+          }
+        }
       }
     },
     devServer: {

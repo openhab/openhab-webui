@@ -1,23 +1,26 @@
+@use "mixins";
+@use "variables";
+
 
 .mdl-layout {
 	&__header-button {
 		display: block;
-		height: $layout-header-button-desktop-size;
-		width: $layout-header-button-desktop-size;
+		height: variables.$layout-header-button-desktop-size;
+		width: variables.$layout-header-button-desktop-size;
 		position: absolute;
 		top: 0;
 		left: 0;
 		z-index: 3;
 		margin: 8px 12px;
 		border: 0;
-		line-height: $layout-header-button-desktop-size + 2;
+		line-height: variables.$layout-header-button-desktop-size + 2;
 		font-size: 26px;
 		line-height: 50px;
 		text-align: center;
 		cursor: pointer;
-		@include user-select(none);
-		@include flex-shrink(0);
-		@media screen and (max-width: $layout-desktop-size-threshold) {
+		@include mixins.user-select(none);
+		@include mixins.flex-shrink(0);
+		@media screen and (max-width: variables.$layout-desktop-size-threshold) {
 			margin: 4px;
 		}
 	}
@@ -57,43 +60,43 @@
 	html.ui-large-window & {
 		max-width: 1620px;
 	}
-	@media screen and (max-width: $layout-tablet-size-threshold) {
+	@media screen and (max-width: variables.$layout-tablet-size-threshold) {
 		padding: 0;
 	}
 }
 
 .mdl-form {
 	padding: 0;
-	@media screen and (max-width: $layout-mobile-size-threshold) {
+	@media screen and (max-width: variables.$layout-mobile-size-threshold) {
 		margin-top: 0;
 		margin-left: 0;
 		margin-right: 0;
 		width: 100%;
 	}
 	&__row {
-		@include flex-display();
+		@include mixins.flex-display();
 		flex-direction: row;
-		@include flex-wrap(nowrap);
-		@include align-items(center);
-		@include align-items-2011(center);
+		@include mixins.flex-wrap(nowrap);
+		@include mixins.align-items(center);
+		@include mixins.align-items-2011(center);
 		white-space: nowrap;
-		height: $form-row-desktop-height;
+		height: variables.$form-row-desktop-height;
 		html.ui-layout-condensed & {
-			height: $form-row-desktop-height-condensed;
+			height: variables.$form-row-desktop-height-condensed;
 		}
 		box-sizing: content-box;
 		padding: 4px 0;
-		margin: 0 $mdl-grid-spacing;
-		border-bottom: 1px solid $item-separator-color;
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			height: $form-row-mobile-height;
-			padding: 4px $mdl-grid-spacing;
+		margin: 0 variables.$mdl-grid-spacing;
+		border-bottom: 1px solid variables.$item-separator-color;
+		@media screen and (max-width: variables.$layout-tablet-size-threshold) {
+			height: variables.$form-row-mobile-height;
+			padding: 4px variables.$mdl-grid-spacing;
 			margin: 0;
 			html.ui-layout-condensed & {
-				height: $form-row-mobile-height-condensed;
+				height: variables.$form-row-mobile-height-condensed;
 			}
 		}
-		@media screen and (min-width: $layout-tablet-size-threshold) {
+		@media screen and (min-width: variables.$layout-tablet-size-threshold) {
 			&:last-child,
 			&:nth-last-child(2):nth-child(even) {
 				border: none;
@@ -104,7 +107,7 @@
 		}
 		&--height-auto {
 			height: auto;
-			@include justify-content(center);
+			@include mixins.justify-content(center);
 			html.ui-layout-condensed &.mdl-form__row {
 				height: auto;
 			}
@@ -114,13 +117,13 @@
 			padding-bottom: 0;
 			padding-left: 48px;
 			padding-right: 48px;
-			@media screen and (max-width: $layout-tablet-size-threshold) {
-				padding-left: $mdl-grid-spacing + 16px;
-				padding-right: $mdl-grid-spacing + 16px;
+			@media screen and (max-width: variables.$layout-tablet-size-threshold) {
+				padding-left: variables.$mdl-grid-spacing + 16px;
+				padding-right: variables.$mdl-grid-spacing + 16px;
 			}
 		}
 		&--setting {
-			height: $form-row-desktop-height-condensed;
+			height: variables.$form-row-desktop-height-condensed;
 			border-bottom: none;
 			html.ui-bigger-font & {
 				font-size: 18px;
@@ -159,14 +162,14 @@
 		cursor: pointer;
 	}
 	&__icon {
-		@include flex-shrink(0);
+		@include mixins.flex-shrink(0);
 		width: 32px;
-		padding-left: $form-row-desktop-padding;
+		padding-left: variables.$form-row-desktop-padding;
 		html.ui-layout-condensed & {
-			padding-left: $form-row-desktop-padding-condensed;
+			padding-left: variables.$form-row-desktop-padding-condensed;
 		}
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			padding-left: $form-row-mobile-padding;
+		@media screen and (max-width: variables.$layout-tablet-size-threshold) {
+			padding-left: variables.$form-row-mobile-padding;
 			html.ui-layout-condensed & {
 				padding-left: 0; // there's already padding in .mdl-form__row
 			}
@@ -212,19 +215,19 @@
 		}
 	}
 	&__label {
-		padding-left: $form-row-desktop-padding;
+		padding-left: variables.$form-row-desktop-padding;
 		html.ui-layout-condensed & {
-			padding-left: $form-row-desktop-padding-condensed;
+			padding-left: variables.$form-row-desktop-padding-condensed;
 		}
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			padding-left: $form-row-mobile-padding;
+		@media screen and (max-width: variables.$layout-tablet-size-threshold) {
+			padding-left: variables.$form-row-mobile-padding;
 			html.ui-layout-condensed & {
-				padding-left: $form-row-mobile-padding-condensed;
+				padding-left: variables.$form-row-mobile-padding-condensed;
 			}
 		}
-		@include flex-shrink(0);
-		@include flex-grow(2);
-		@include flex-2011(2 2 auto);
+		@include mixins.flex-shrink(0);
+		@include mixins.flex-grow(2);
+		@include mixins.flex-2011(2 2 auto);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -235,22 +238,22 @@
 	&__label:has(+ .mdl-form__text) {
 		// this applies only to labels for sitemap text elements
 		// Set flex-basis to 0 to prioritize __text over __label (see __text below)
-		@include flex-2011(2 0 0);
+		@include mixins.flex-2011(2 0 0);
 	}
 	&__label-multiline {
 		min-width: 3em;
 	}
 	&__control {
-		padding-right: $form-row-desktop-padding;
+		padding-right: variables.$form-row-desktop-padding;
 		padding-left: 4px;
 		html.ui-layout-condensed & {
 			padding-left: 0;
-			padding-right: $form-row-desktop-padding-condensed;
+			padding-right: variables.$form-row-desktop-padding-condensed;
 		}
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			padding-right: $form-row-mobile-padding;
+		@media screen and (max-width: variables.$layout-tablet-size-threshold) {
+			padding-right: variables.$form-row-mobile-padding;
 			html.ui-layout-condensed & {
-				padding-right: $form-row-mobile-padding-condensed;
+				padding-right: variables.$form-row-mobile-padding-condensed;
 			}
 		}
 		font-weight: 700;
@@ -382,9 +385,9 @@
 	}
 	&__header {
 		padding-left: 8px;
-		padding-right: $form-row-desktop-padding;
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			padding-right: $form-row-mobile-padding;
+		padding-right: variables.$form-row-desktop-padding;
+		@media screen and (max-width: variables.$layout-tablet-size-threshold) {
+			padding-right: variables.$form-row-mobile-padding;
 		}
 		.mdl-button {
 			box-shadow: none;
@@ -420,7 +423,7 @@
 		align-items: center;
 		box-sizing: border-box;
 		padding: 0 16px 0 0;
-		@media screen and (max-width: $layout-tablet-size-threshold) {
+		@media screen and (max-width: variables.$layout-tablet-size-threshold) {
 			padding: 0 12px 0 0;
 		}
 		&-container {
@@ -467,18 +470,18 @@
 	}
 	&__title {
 		margin: 0;
-		padding-left: $form-row-desktop-padding + $mdl-grid-spacing;
+		padding-left: variables.$form-row-desktop-padding + variables.$mdl-grid-spacing;
 		padding-top: 25px;
 		padding-bottom: 10px;
 		html.ui-layout-condensed & {
-			padding-left: $form-row-desktop-padding-condensed + $mdl-grid-spacing;
+			padding-left: variables.$form-row-desktop-padding-condensed + variables.$mdl-grid-spacing;
 			padding-top: 15px;
 			padding-bottom: 5px;
 		}
-		@media screen and (max-width: $layout-tablet-size-threshold) {
-			padding-left: $form-row-mobile-padding + $mdl-grid-spacing;
+		@media screen and (max-width: variables.$layout-tablet-size-threshold) {
+			padding-left: variables.$form-row-mobile-padding + variables.$mdl-grid-spacing;
 			html.ui-layout-condensed & {
-				padding-left: $form-row-mobile-padding-condensed + $mdl-grid-spacing;
+				padding-left: variables.$form-row-mobile-padding-condensed + variables.$mdl-grid-spacing;
 			}
 		}
 	}
@@ -560,12 +563,12 @@
 	position: absolute;
 	background: rgba(50, 50, 50, 0.3);
 	z-index: 10;
-	@include expand();
-	@include flex-display(flex);
+	@include mixins.expand();
+	@include mixins.flex-display(flex);
 	overflow-y: auto;
-	@include align-items(center);
-	@include align-items-2011(center);
-	@include justify-content(center);
+	@include mixins.align-items(center);
+	@include mixins.align-items-2011(center);
+	@include mixins.justify-content(center);
 	&--overflow {
 		display: block;
 	}
@@ -578,7 +581,7 @@
 		.ui-layout-condensed & {
 			padding: 10px;
 		}
-		@media screen and (max-width: $layout-tablet-size-threshold) {
+		@media screen and (max-width: variables.$layout-tablet-size-threshold) {
 			padding: 20px;
 		}
 	}
@@ -590,7 +593,7 @@
 .mdl-radio {
 	width: 100%;
 	&__item {
-		border-bottom: 1px solid $item-separator-color;
+		border-bottom: 1px solid variables.$item-separator-color;
 		padding-left: 20px;
 		&:last-child {
 			border: none;
@@ -600,7 +603,7 @@
 		padding-top: 17px;
 		width: 100%;
 		display: inline-block;
-		height: $form-row-desktop-height + 14px;
+		height: variables.$form-row-desktop-height + 14px;
 		box-sizing: border-box;
 	}
 	&__group & {
@@ -646,7 +649,7 @@ html.flexbox-legacy {
 	}
 	.mdl-form {
 		display: block;
-		border-bottom: 1px solid $item-separator-color;
+		border-bottom: 1px solid variables.$item-separator-color;
 		&__row {
 			// 2009 syntax
 			display: -webkit-box;
@@ -710,13 +713,13 @@ $colorpicker-mobile-size: 270px;
 		position: relative;
 		width: $colorpicker-desktop-size;
 		height: $colorpicker-desktop-size;
-		@media screen and (max-width: $layout-mobile-size-threshold) {
+		@media screen and (max-width: variables.$layout-mobile-size-threshold) {
 			width: $colorpicker-mobile-size;
 			height: $colorpicker-mobile-size;
 		}
 		background: url("images/colorwheel.png") no-repeat;
 		background-size: 100%;
-		@include user-select(none);
+		@include mixins.user-select(none);
 		overflow: hidden;
 		cursor: pointer;
 	}
@@ -728,7 +731,7 @@ $colorpicker-mobile-size: 270px;
 		padding: 0;
 		margin: 0;
 		width: $colorpicker-desktop-size - 30px;
-		@media screen and (max-width: $layout-mobile-size-threshold) {
+		@media screen and (max-width: variables.$layout-mobile-size-threshold) {
 			width: $colorpicker-mobile-size - 30px;
 		}
 		height: $slider-height;
@@ -767,7 +770,7 @@ $colorpicker-mobile-size: 270px;
 		z-index: 2;
 		bottom: 0;
 		width: $colorpicker-desktop-size - 30px;
-		@media screen and (max-width: $layout-mobile-size-threshold) {
+		@media screen and (max-width: variables.$layout-mobile-size-threshold) {
 			width: $colorpicker-mobile-size - 30px;
 		}
 		height: $slider-height;
@@ -780,7 +783,7 @@ $colorpicker-mobile-size: 270px;
 		border: 4px solid white;
 		width: $handle-size;
 		height: $handle-size;
-		border-radius: $handle-size / 2;
+		border-radius: $handle-size * 0.5;
 		box-shadow: 0 0 0 2px #aaa inset, 0 0 0 2px #aaa;
 		pointer-events: none;
 		transform: translate(-50%, -50%);
@@ -788,7 +791,7 @@ $colorpicker-mobile-size: 270px;
 	&__controls {
 		position: relative;
 		padding: 15px;
-		border-bottom: 1px solid $item-separator-color;
+		border-bottom: 1px solid variables.$item-separator-color;
 	}
 	&__buttons {
 		padding: 5px;
@@ -828,9 +831,9 @@ $colortemppicker-mobile-size: 270px;
 		position: relative;
 		padding: 0;
 		margin: 0;
-		border: 1px solid $item-separator-color;
+		border: 1px solid variables.$item-separator-color;
 		width: $colortemppicker-desktop-size - 30px;
-		@media screen and (max-width: $layout-mobile-size-threshold) {
+		@media screen and (max-width: variables.$layout-mobile-size-threshold) {
 			width: $colortemppicker-mobile-size - 30px;
 		}
 		height: $colortemppicker-slider-height;
@@ -866,7 +869,7 @@ $colortemppicker-mobile-size: 270px;
 	&__controls {
 		position: relative;
 		padding: 15px;
-		border-bottom: 1px solid $item-separator-color;
+		border-bottom: 1px solid variables.$item-separator-color;
 	}
 	&__buttons {
 		padding: 5px;
@@ -889,9 +892,9 @@ h5 {
 .page {
 	&-static {
 		&__content {
-			padding: $form-row-desktop-padding;
-			@media screen and (max-width: $layout-tablet-size-threshold) {
-				padding: $form-row-mobile-padding;
+			padding: variables.$form-row-desktop-padding;
+			@media screen and (max-width: variables.$layout-tablet-size-threshold) {
+				padding: variables.$form-row-mobile-padding;
 			}
 		}
 	}
@@ -920,13 +923,13 @@ h5 {
 .mdl-modal {
 	&--colorpicker {
 		max-width: $colorpicker-desktop-size;
-		@media screen and (max-width: $layout-mobile-size-threshold) {
+		@media screen and (max-width: variables.$layout-mobile-size-threshold) {
 			max-width: $colorpicker-mobile-size;
 		}
 	}
 	&--colortemppicker {
 		max-width: $colortemppicker-desktop-size;
-		@media screen and (max-width: $layout-mobile-size-threshold) {
+		@media screen and (max-width: variables.$layout-mobile-size-threshold) {
 			max-width: $colortemppicker-mobile-size;
 		}
 	}
@@ -935,7 +938,7 @@ h5 {
 .mdl-notify {
 	border-radius: 2px 2px 0 0;
 	background: #323232;
-	@media screen and (max-width: $layout-mobile-size-threshold) {
+	@media screen and (max-width: variables.$layout-mobile-size-threshold) {
 		border-radius: 0;
 		width: 100%;
 	}
@@ -951,8 +954,8 @@ h5 {
 		left: 0;
 		right: 0;
 		z-index: 1;
-		@include flex-display();
-		@include justify-content(center);
+		@include mixins.flex-display();
+		@include mixins.justify-content(center);
 	}
 	&--hidden {
 		display: none;

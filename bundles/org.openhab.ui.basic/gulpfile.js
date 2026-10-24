@@ -4,7 +4,7 @@
 	var
 		gulp = require("gulp"),
 		replace = require('gulp-replace'),
-		sass = require('gulp-sass')(require('node-sass')),
+		sass = require('gulp-sass')(require('sass')),
 		uglify = require("gulp-uglify"),
 		eslint = require("gulp-eslint");
 
@@ -33,7 +33,7 @@
 
 	gulp.task("css", function() {
 		return gulp.src(sources.sass)
-			.pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+			.pipe(sass({style: 'compressed'}).on('error', sass.logError))
 			.pipe(gulp.dest("./src/main/resources/web"));
 	});
 
