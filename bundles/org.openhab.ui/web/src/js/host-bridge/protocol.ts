@@ -80,7 +80,7 @@ export interface NavbarAction {
 export interface NavbarState {
   title: string
   titleInContent: boolean
-  /** The app should hide its bar: the page scrolled it away, or a popup or search is open. */
+  /** The app should hide its bar: the page scrolled it away, or a popup, expanded card or search is open. */
   hidden: boolean
   back: { label?: string } | null
   leading: NavbarAction[]

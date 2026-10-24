@@ -12,7 +12,36 @@ interface F7Page {
   route?: { url?: string }
 }
 
-const MODAL_EVENTS = ['popupOpen', 'popupClose', 'popupClosed', 'sheetOpen', 'sheetClosed', 'popoverOpen', 'popoverClosed'] as const
+// Everything that can be open on top of the page.
+const MODALS = {
+  popup: '.popup.modal-in',
+  sheet: '.sheet-modal.modal-in',
+  popover: '.popover.modal-in',
+  actions: '.actions-modal.modal-in',
+  dialog: '.dialog.modal-in',
+  card: '.card-expandable.card-opened'
+}
+const MODAL_SELECTOR = Object.values(MODALS).join(', ')
+// Open on top of the page and showing their own bar.
+const BAR_COVERS = [MODALS.popup, MODALS.card].join(', ')
+const MODAL_EVENTS = [
+  'popupOpen',
+  'popupOpened',
+  'popupClose',
+  'popupClosed',
+  'sheetOpened',
+  'sheetClosed',
+  'popoverOpened',
+  'popoverClosed',
+  'actionsOpened',
+  'actionsClosed',
+  'dialogOpened',
+  'dialogClosed',
+  'cardOpen',
+  'cardOpened',
+  'cardClose',
+  'cardClosed'
+] as const
 
 export interface HostAppOptions {
   version: string
@@ -37,7 +66,7 @@ export function useHostApp(options: HostAppOptions) {
   const insets = ref<LayoutInfo['insets'] | undefined>(hostInfo()?.layout?.insets)
   const scrolledAway = ref(false)
   const collapsed = ref(false)
-  const popups = ref(0)
+  const covered = ref(false)
   const searching = ref(false)
 
   // Cast to the part of the router the route helpers use.
@@ -90,8 +119,8 @@ export function useHostApp(options: HostAppOptions) {
 
   function sendNavbar() {
     if (!hostNavbar || !hasSaidHello()) return
-    // Hide the app's bar while a popup or an expanded searchbar shows its own bar.
-    const hidden = scrolledAway.value || popups.value > 0 || searching.value
+    // Hide the app's bar while a popup, an expanded card or an expanded searchbar shows its own bar.
+    const hidden = scrolledAway.value || covered.value || searching.value
     // Main UI's large title is part of its bar, which isn't shown when the app's bar is outside.
     const state = navbarStateFor(page, { hidden, collapsed: collapsed.value || navbarHeight.value === 0 })
     const json = JSON.stringify(state)
@@ -136,19 +165,22 @@ export function useHostApp(options: HostAppOptions) {
     (connected) => send('connection.state', { sseConnected: !!connected }),
     { immediate: true }
   )
-  watch([scrolledAway, collapsed, popups, searching, navbarHeight], sendNavbar)
+  watch([scrolledAway, collapsed, covered, searching, navbarHeight], sendNavbar)
   watch(hostNavbarVersion, () => {
     void nextTick(sendNavbar)
   })
 
   function openModals() {
-    return Array.from(document.querySelectorAll<HTMLElement>('.popup.modal-in, .popover.modal-in, .sheet-modal.modal-in'))
+    return Array.from(document.querySelectorAll<HTMLElement>(MODAL_SELECTOR))
   }
 
   function closeModal(el: HTMLElement) {
-    if (el.classList.contains('popup')) f7.popup.close(el)
-    else if (el.classList.contains('popover')) f7.popover.close(el)
-    else f7.sheet.close(el)
+    if (el.matches(MODALS.popup)) f7.popup.close(el)
+    else if (el.matches(MODALS.sheet)) f7.sheet.close(el)
+    else if (el.matches(MODALS.popover)) f7.popover.close(el)
+    else if (el.matches(MODALS.actions)) f7.actions.close(el)
+    else if (el.matches(MODALS.dialog)) f7.dialog.close(el)
+    else if (el.matches(MODALS.card)) f7.card.close(el)
   }
 
   function registerCommands() {
@@ -157,7 +189,7 @@ export function useHostApp(options: HostAppOptions) {
       if (!path) throw new BridgeError('not_found')
       router().navigate(path)
     })
-    // Close an open popup, popover or sheet before going back.
+    // Close whatever is open on top of the page before going back.
     onHostCommand('nav.back', () => {
       const open = openModals().pop()
       if (open) closeModal(open)
@@ -209,11 +241,13 @@ export function useHostApp(options: HostAppOptions) {
       f7.on('searchbarEnable', (searchbar) => (searching.value = !!searchbar?.expandable))
       f7.on('searchbarDisable', () => (searching.value = false))
     }
-    // Popups, sheets and popovers opened from code don't change the route.
+    // Modals opened from code don't change the route.
     for (const event of MODAL_EVENTS) {
       f7.on(event, () => {
-        popups.value = document.querySelectorAll('.popup.modal-in').length
-        void nextTick(sendNav)
+        void nextTick(() => {
+          covered.value = !!document.querySelector(BAR_COVERS)
+          sendNav()
+        })
       })
     }
     registerCommands()
