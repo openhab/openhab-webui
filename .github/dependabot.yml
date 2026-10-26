@@ -110,6 +110,7 @@ updates:
           - "@eslint/*"
           - "*eslint-plugin*"
           - "oxfmt"
+          - "oxlint*"
           - "typescript-eslint"
           - "@typescript-eslint/*"
           - "vue-eslint-parser"
