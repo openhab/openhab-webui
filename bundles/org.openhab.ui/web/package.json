@@ -183,7 +183,7 @@
     "oxlint": "^1.83.0",
     "oxlint-tsgolint": "^7.0.2001",
     "patch-package": "^8.0.0",
-    "postcss-custom-media": "^12.0.1",
+    "postcss-custom-media": "^12.0.3",
     "process": "^0.11.10",
     "rimraf": "^6.1.3",
     "rollup-plugin-visualizer": "^7.1.1",
