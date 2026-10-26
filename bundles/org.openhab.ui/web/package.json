@@ -84,7 +84,7 @@
     "@iconify/vue": "^5.0.2",
     "@jsep-plugin/arrow": "^1.0.5",
     "@jsep-plugin/object": "^1.2.1",
-    "@jsep-plugin/regex": "^1.0.3",
+    "@jsep-plugin/regex": "^1.1.0",
     "@jsep-plugin/template": "^1.0.4",
     "@mit-app-inventor/blockly-plugin-workspace-multiselect": "^1.0.2",
     "@replit/codemirror-indentation-markers": "^6.5.3",
