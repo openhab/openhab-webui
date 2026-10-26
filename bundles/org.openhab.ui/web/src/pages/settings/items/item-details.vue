@@ -2,15 +2,7 @@
   <!-- page-with-subnavbar class required on Android -->
   <f7-page class="item-details-page page-with-subnavbar" @page:beforein="onPageBeforeIn" @page:beforeout="onPageBeforeOut">
     <f7-navbar>
-      <oh-nav-content v-if="ready" :title="item.name" :f7router>
-        <template v-if="ready" #right>
-          <f7-link v-if="item.editable" icon-md="material:edit" href="edit">
-            {{ theme.md ? '' : 'Edit' }}
-          </f7-link>
-          <f7-link v-else icon-f7="lock_fill" tooltip="This Item is not editable through the UI" href="edit">
-            {{ theme.md ? '' : 'View' }}
-          </f7-link>
-        </template>
+      <oh-nav-content v-if="ready" :title="item.name" :f7router :actions="[editAction]">
         <template #after>
           <f7-subnavbar class="item-header">
             <div v-if="item.name" class="item-icon">
@@ -216,6 +208,12 @@ export default {
     }
   },
   computed: {
+    editAction() {
+      const open = () => this.f7router.navigate('/settings/items/' + this.item.name + '/edit')
+      return this.item.editable
+        ? { id: 'edit', label: 'Edit', icon: { md: 'material:edit' }, run: open }
+        : { id: 'view', label: 'View', icon: { name: 'f7:lock_fill' }, run: open }
+    },
     context() {
       return {
         store: useStatesStore().trackedItems

@@ -429,12 +429,14 @@
 </style>
 
 <script>
-import { nextTick, defineAsyncComponent } from 'vue'
+import { nextTick, defineAsyncComponent, ref } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
 
 import { useI18n } from 'vue-i18n'
 import { loadLocaleMessages } from '@/js/i18n'
+import { hostTakesOver } from '@/js/host-bridge/bridge'
+import { useHostNavbar } from '@/js/host-bridge/navbar'
 
 import openhabLogo from '@/images/openhab-logo.svg'
 import openhabLogoDark from '@/images/openhab-logo-dark.svg'
@@ -467,7 +469,9 @@ export default {
   setup() {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('setup-wizard', mergeLocaleMessage)
-    return { t, theme, mergeLocaleMessage, conceptsImage, rulesImage, uiImage, persistenceImage, semanticsImage }
+    const hostBar = ref(null)
+    useHostNavbar(() => hostBar.value)
+    return { hostBar, t, theme, mergeLocaleMessage, conceptsImage, rulesImage, uiImage, persistenceImage, semanticsImage }
   },
   data() {
     return {
@@ -628,6 +632,16 @@ export default {
     }
   },
   computed: {
+    hostBarDescription() {
+      if (!hostTakesOver('navbar')) return null
+      return {
+        title: this.currentStep && this.currentStep !== 'welcome' ? this.t('setupwizard.' + this.currentStep + '.title') : '',
+        back: this.prev ? { run: () => this.handler(this.prev) } : null,
+        trailing: [
+          { id: 'skip', label: this.t('setupwizard.skipSetup'), icon: { name: 'f7:xmark', md: 'material:close' }, run: this.skipSetup }
+        ]
+      }
+    },
     logo() {
       return this.uiOptionsStore.darkMode === 'dark' ? openhabLogoDark : openhabLogo
     },
@@ -733,6 +747,12 @@ export default {
     })
   },
   watch: {
+    hostBarDescription: {
+      immediate: true,
+      handler(bar) {
+        this.hostBar = bar
+      }
+    },
     locale(val) {
       useRuntimeStore().locale = this.locale
       loadLocaleMessages('setup-wizard', this.mergeLocaleMessage)

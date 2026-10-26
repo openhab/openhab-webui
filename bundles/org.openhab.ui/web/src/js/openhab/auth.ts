@@ -2,6 +2,8 @@ import { f7 } from 'framework7-vue'
 
 import { useUserStore } from '@/js/stores/useUserStore'
 import { ApiError } from '../hey-api'
+import { hasHost, request } from '@/js/host-bridge/bridge'
+import type { Credentials } from '@/js/host-bridge/protocol'
 export interface BasicCredentials {
   id: string
   password: string
@@ -63,6 +65,13 @@ export async function setBasicCredentials(username: string, password: string): P
     console.log('Using passed credentials')
     basicCredentials = { id: username, password }
     tokenInCustomHeader = true
+    return
+  } else if (hasHost()) {
+    const fromApp = await request<Credentials | null>('auth.getCredentials').catch(() => null)
+    if (fromApp) {
+      basicCredentials = { id: fromApp.username, password: fromApp.password }
+      tokenInCustomHeader = true
+    }
     return
   } else if (
     typeof window.OHApp?.getBasicCredentialsUsername === 'function' &&

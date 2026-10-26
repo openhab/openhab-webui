@@ -1,16 +1,12 @@
 <template>
   <f7-page @page:init="onPageInit" @page:afterin="onPageAfterIn" class="page-settings">
     <f7-navbar large>
-      <oh-nav-content title="Settings" :large="true" back-link-url="/" :f7router>
-        <template #right>
-          <f7-link
-            class="searchbar-enable"
-            data-searchbar=".searchbar-demo"
-            icon-ios="f7:search_strong"
-            icon-aurora="f7:search_strong"
-            icon-md="material:search" />
-        </template>
-      </oh-nav-content>
+      <oh-nav-content
+        title="Settings"
+        :large="true"
+        back-link-url="/"
+        :f7router
+        :actions="[{ id: 'search', label: 'Search', icon: { name: 'f7:search_strong', md: 'material:search' }, run: enableSearch }]" />
       <f7-searchbar
         class="searchbar-demo"
         expandable
@@ -131,7 +127,7 @@
 </style>
 
 <script>
-import { theme } from 'framework7-vue'
+import { f7, theme } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
 
 import AddonSection from './addon-section.vue'
@@ -222,6 +218,9 @@ export default {
     }
   },
   methods: {
+    enableSearch() {
+      f7.searchbar.enable('.searchbar-demo')
+    },
     loadMenu() {
       if (!this.apiEndpoints) return
 
