@@ -214,7 +214,6 @@
     "@swc/wasm": "1.15.30"
   },
   "allowScripts": {
-    "esbuild": true,
     "@swc/core": true,
     "unrs-resolver": true,
     "@scarf/scarf": false,
