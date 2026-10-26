@@ -38,6 +38,7 @@ enum RoleSizes {
   leader = 55,
   border_router = 50,
   router = 45,
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   reed = 38,
   // oxlint-disable-next-line typescript/no-duplicate-enum-values
   end_device = 30,
