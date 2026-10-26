@@ -95,6 +95,11 @@ updates:
       leaflet-ecosystem:
         patterns:
           - "*leaflet*"
+      # jsep (JavaScript expression parser)
+      jsep:
+        patterns:
+          - "jsep"
+          - "@jsep-plugin/*"
       # Vite and related Build tooling
       build-vite:
         patterns:
