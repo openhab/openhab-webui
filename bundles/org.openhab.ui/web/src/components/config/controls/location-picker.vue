@@ -88,7 +88,7 @@ export default {
           .catch((err) => {
             // silently ignore if the request is not permitted for the user
             if (!(err.response?.statusText === 'Forbidden' || err.response?.status === 403)) {
-              return Promise.reject(err)
+              throw err
             }
           })
       }

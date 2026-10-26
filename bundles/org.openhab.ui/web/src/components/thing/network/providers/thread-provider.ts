@@ -38,13 +38,15 @@ enum RoleSizes {
   leader = 55,
   border_router = 50,
   router = 45,
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   reed = 38,
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   end_device = 30,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   sleepy_end_device = 30,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   detached = 38,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   unknown = 30
 }
 
@@ -58,8 +60,9 @@ enum LqiColors {
 enum LqiWidths {
   _3 = 4,
   _2 = 3,
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   _1 = 2,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   _0 = 2
 }
 

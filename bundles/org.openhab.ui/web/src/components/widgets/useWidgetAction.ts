@@ -86,7 +86,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
             .create({
               buttons: [
                 [{ text: confirmConfig.text, color: confirmConfig.color || 'theme-alt', onClick: () => resolve() }],
-                // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+                // oxlint-disable-next-line typescript/prefer-promise-reject-errors
                 [{ text: t('dialogs.cancel'), color: 'red', onClick: () => reject('action confirmation rejected') }]
               ]
             })
@@ -100,7 +100,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
             confirmConfig.text,
             confirmConfig.title || 'openHAB',
             () => resolve(),
-            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+            // oxlint-disable-next-line typescript/prefer-promise-reject-errors
             () => reject('action confirmation rejected')
           )
           .open()
@@ -111,7 +111,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
         .confirm(
           confirmText,
           () => resolve(),
-          // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+          // oxlint-disable-next-line typescript/prefer-promise-reject-errors
           () => reject('action confirmation rejected')
         )
         .open()
