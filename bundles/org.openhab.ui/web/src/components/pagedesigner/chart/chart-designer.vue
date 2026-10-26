@@ -221,7 +221,7 @@
                 </f7-link>
               </f7-col>
               <f7-col class="elevation-2 elevation-hover-6 elevation-pressed-1 chartdesigner-big-button" width="33">
-                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlot('dataZoom')">
+                <f7-link color="theme-alt" class="display-flex flex-direction-column padding" @click="configureSlotByName('dataZoom')">
                   <f7-badge v-if="context.component.slots.dataZoom" color="theme-alt" class="count-badge">
                     {{ context.component.slots.dataZoom.length }}
                   </f7-badge>
