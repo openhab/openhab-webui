@@ -17,5 +17,6 @@
   "about.reload.purgeExplanation2": "Selecione Limpar Memórias Cache e Atualizar para limpar todas as memórias cache, cancelar os registos dos serviços e descarregar novamente tudo do servidor.",
   "about.reload.purgeCachesAndRefresh": "Limpar Cache e Atualizar",
   "about.reload.confirmPurge": "Limpar todas as memórias cache da aplicação e cancelar o registo dos serviços? Esta opção também irá recarregar a página do servidor, o que pode demorar alguns segundos.",
-  "about.reload.reloadApp": "Recarregar Aplicação"
+  "about.reload.reloadApp": "Recarregar Aplicação",
+  "about.reload.setupWizard": "Assistente de configuração"
 }
