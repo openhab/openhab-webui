@@ -628,12 +628,18 @@ export default {
   },
   watch: {
     'statesStore.sseConnected': {
-      handler: function (connected) {
+      handler: function (connected, wasConnected) {
         console.debug('sseConnected', connected)
         if (typeof window.OHApp?.sseConnected === 'function') {
           try {
             window.OHApp.sseConnected(connected)
           } catch {}
+        }
+        // after a reconnect (e.g. server restart), the semantic model (tags, properties) may have changed
+        if (connected && wasConnected === false && this.ready) {
+          useModelStore()
+            .loadSemanticModel()
+            .catch((e) => console.error('Error while reloading semantic model after SSE reconnect', e))
         }
       },
       immediate: true // provides initial (not changed yet) state
