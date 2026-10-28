@@ -178,6 +178,22 @@ export const useModelStore = defineStore('model', () => {
       filteredItems.equipment.push(item)
     }
 
+    // An item can be a direct member of a Location and of an Equipment at the same time (hasLocation and isPointOf/isPartOf).
+    // The Location is then its parent in the model tree, but the item must also be listed on the Equipment.
+    const equipmentParentName = config.hasLocation ? config.isPointOf || config.isPartOf : undefined
+    const equipmentParent = equipmentParentName ? items.find((i) => i.name === equipmentParentName) : undefined
+    if (equipmentParent && equipmentParent !== parent) {
+      if (semanticsValue.startsWith('Point')) {
+        equipmentParent.points.push(item)
+        equipmentParent.equipmentOrPoints.push(item)
+      }
+      if (config.relatesTo) equipmentParent.properties.push(item)
+      if (semanticsValue.startsWith('Equipment')) {
+        equipmentParent.equipment.push(item)
+        equipmentParent.equipmentOrPoints.push(item)
+      }
+    }
+
     return item.modelPath
   }
 
