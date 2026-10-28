@@ -82,6 +82,10 @@ export function simpleHash(obj: object | string): string {
   return (hash >>> 0).toString(36)
 }
 
+export function plural(text: string, count: number): string {
+  return text + (count === 1 ? '' : 's')
+}
+
 export default {
   normalizeLabel,
   normalizeLabelForThingId,
@@ -89,5 +93,6 @@ export default {
   normalizeInputForThingId,
   hsbToRgb,
   toRGBStyle,
-  simpleHash
+  simpleHash,
+  plural
 }
