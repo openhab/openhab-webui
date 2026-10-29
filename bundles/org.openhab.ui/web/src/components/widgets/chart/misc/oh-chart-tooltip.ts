@@ -29,13 +29,14 @@ const chartTooltip: MiscChartComponent = {
         let tooltip = ''
         if (!Array.isArray(params)) {
           if (!params.seriesId) return ''
-          const [_seriesType, _itemName, unit, _id] = params.seriesId.split('#')
+          const [_seriesType, _itemName, unit, _id, transpose] = params.seriesId.split('#')
           // tooltip for aggregate & calendar series:
           // - header: series name
           // - content: category label and formatted value
           if (params.componentType === 'series') {
             if (!Array.isArray(params.data)) return ''
-            let state = context.numberFormatter!.format(params.data[1] as number)
+            // transposed aggregate series (rotated chart) have the data layout [value, category]
+            let state = context.numberFormatter!.format(params.data[transpose ? 0 : 1] as number)
             if (unit) state += ' ' + unit
             tooltip += `<div>${params.seriesName}</div>`
             if (params.name) {
