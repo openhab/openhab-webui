@@ -55,9 +55,9 @@ const nameGapParameter = pn('nameGap', 'Name Gap', 'Gap between axis name and ax
 
 const nameRotateParameter = pt('nameRotate', 'Name Rotate', 'Rotation of axis name').g('nameDisplay')
 
-const minParameter = () => pt('min', 'Min', 'Minimum boundary')
+const minParameter = () => pd('min', 'Min', 'Minimum boundary')
 
-const maxParameter = () => pt('max', 'Max', 'Maximum boundary')
+const maxParameter = () => pd('max', 'Max', 'Maximum boundary')
 
 const gridIndexParameter = pn('gridIndex', 'Grid Index', 'The index of the grid for this axis').c('chartGrid').g('componentRelations')
 
