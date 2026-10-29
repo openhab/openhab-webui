@@ -217,7 +217,8 @@ const aggregateSeries: SeriesComponent = {
     }
 
     if (series.item) {
-      series.id = `oh-aggregate-series#${series.item}#${itemSeries?.unit ?? ''}#${f7.utils.id()}`
+      // 5th id segment flags series whose data is [value, category] (transposed 1-dimension series), see oh-chart-tooltip
+      series.id = `oh-aggregate-series#${series.item}#${itemSeries?.unit ?? ''}#${f7.utils.id()}${series.transpose && !dimension2 ? '#transpose' : ''}`
     }
 
     series.data = data
