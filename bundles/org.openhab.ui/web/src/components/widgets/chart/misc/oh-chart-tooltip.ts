@@ -1,6 +1,8 @@
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+
 import ComponentId from '../../component-id'
+
 import type { MiscChartComponent } from '../types'
 import type { OhChartTooltip } from '@/types/components/widgets'
 import type { TooltipComponentOption } from 'echarts'
@@ -18,12 +20,10 @@ const chartTooltip: MiscChartComponent = {
       OhChartTooltipDefinition
     )
     if (options.confine === undefined) options.confine = true
-
     if (!options.valueFormatter && context.numberFormatter) {
       // @ts-expect-error our value formatter is sufficient for our use cases, but doesn't match the generic ECharts requirements
       options.valueFormatter = (value: number) => context.numberFormatter!.format(value)
     }
-
     if (options.smartFormatter && context.numberFormatter) {
       options.formatter = (params: TopLevelFormatterParams): string => {
         let tooltip = ''
@@ -57,7 +57,6 @@ const chartTooltip: MiscChartComponent = {
             const state = item
               ? item.stateDescription?.options.find((o) => o.value === (params.value as string))?.label
               : (params.value as string)
-
             // @ts-expect-error data access
             const time = dayjs((params.data.coord as unknown[][])[0][0])
             const timestamp = formatTimestamp(time)
@@ -71,7 +70,7 @@ const chartTooltip: MiscChartComponent = {
         }
         // time series tooltip:
         // - header: x-axis time in 'dd DD.MM.YYYY HH:mm'
-        // - content: for each oh-time-series marker color, series name and formatted value
+        // - content: for each oh-time-series / oh-state-series marker color, series name and formatted value
         if (Array.isArray(params)) {
           const param = params[0]
           if (!param || !('axisType' in param)) return ''
@@ -84,7 +83,7 @@ const chartTooltip: MiscChartComponent = {
                 // ECharts always passes the data point nearest to the pointer to the tooltip. For a chart without data in
                 // the displayed period, that is the boundary point from before the period (or one after it), which would
                 // be shown with its own, unrelated date. Only show points within the displayed period.
-                if (seriesType === 'oh-time-series' && Array.isArray(p.data)) {
+                if ((seriesType === 'oh-time-series' || seriesType === 'oh-state-series') && Array.isArray(p.data)) {
                   const option = context.series?.find((s) => s.id === p.seriesId) as
                     | { offsetAmount?: number; offsetUnit?: dayjs.ManipulateType }
                     | undefined
@@ -106,11 +105,9 @@ const chartTooltip: MiscChartComponent = {
           if (hoveredTime) tooltip += `<div>${formatTimestamp(hoveredTime)}</div>`
           tooltip += rows
         }
-
         return tooltip
       }
     }
-
     return options
   }
 }
