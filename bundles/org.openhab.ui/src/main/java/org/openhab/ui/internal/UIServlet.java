@@ -30,6 +30,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.util.resource.EmptyResource;
 import org.eclipse.jetty.util.resource.Resource;
 import org.openhab.core.OpenHAB;
 import org.ops4j.pax.web.service.WebContainer;
@@ -119,7 +120,8 @@ public class UIServlet extends DefaultServlet {
             }
             try {
                 logger.debug("getResource bundle file returning {}", url);
-                return url == null ? null : new ResourceWrapper(contextHandler.newResource(url));
+                // a missing compressed version must not be null, Jetty expects a non-existing resource
+                return url == null ? EmptyResource.INSTANCE : new ResourceWrapper(contextHandler.newResource(url));
             } catch (IOException e) {
                 logger.error("Error while serving content: {}", e.getMessage());
                 return null;
