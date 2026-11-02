@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $layout-header-button-desktop-size: 48px;
 $layout-header-button-mobile-size: 32px;
 $layout-desktop-size-threshold: 1024px;
@@ -12,4 +14,4 @@ $form-row-mobile-padding: 12px;
 $form-row-desktop-padding-condensed: 10px;
 $form-row-mobile-padding-condensed: 4px;
 $mdl-grid-spacing: 8px;
-$item-separator-color: lighten(black, 80);
+$item-separator-color: color.adjust(black, $lightness: 80%, $space: hsl);
