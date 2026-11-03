@@ -14,21 +14,21 @@ import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 import { type ConfigGuardFn } from '@/types/widget-ts-template'
 
 /**
- * Merges the widget's own slots with slots passed down from the wrapping component (context).
- * A shallow `{ ...a, ...b }` merge would let an empty wrapper slot (e.g. `default: []`, present
- * whenever a card is used without content) unconditionally overwrite a non-empty widget slot.
- * Only wrapper slots that actually contain components take precedence; empty ones are ignored
- * so the widget's own default content is preserved.
+ * Merges the widget's own slots with slots passed down from the component referencing the widget (context).
+ * The referencing component may carry empty slots, e.g. the list items generated for `listWidget` metadata
+ * on the home page always have `default: []`. A shallow `{ ...a, ...b }` merge would let such an empty slot
+ * overwrite a non-empty widget slot. Therefore, only non-empty context slots take precedence; empty ones are
+ * ignored so the widget's own slot content is preserved.
  */
-export function mergeWidgetSlots(
-  widgetSlots: Readonly<Record<string, readonly unknown[]>> | undefined,
-  contextSlots: Readonly<Record<string, readonly unknown[]>> | undefined
-): Record<string, api.UiComponent[]> {
-  const merged: Record<string, api.UiComponent[]> = { ...(widgetSlots as Record<string, api.UiComponent[]>) }
+export function mergeWidgetSlots<W extends readonly unknown[], C extends readonly unknown[]>(
+  widgetSlots: Readonly<Record<string, W>> | undefined,
+  contextSlots: Readonly<Record<string, C>> | undefined
+): Record<string, W | C> {
+  const merged: Record<string, W | C> = { ...widgetSlots }
   if (contextSlots) {
     for (const [key, value] of Object.entries(contextSlots)) {
       if (value && value.length > 0) {
-        merged[key] = value as api.UiComponent[]
+        merged[key] = value
       }
     }
   }

@@ -7,10 +7,10 @@ function makeSlotComponent(component: string): api.UiComponent {
 }
 
 describe('mergeWidgetSlots', () => {
-  it('keeps the widget default slot when the wrapper has an empty default slot', () => {
-    // Regression test for the listWidget/Slot bug (5.2.0): a card wrapping a widget always
-    // provides a `default` slot, empty when the card itself has no children. A shallow merge
-    // used to let that empty slot overwrite the widget's own non-empty default slot.
+  it('keeps the widget default slot when the context has an empty default slot', () => {
+    // The list items generated for `listWidget` metadata on the home page always carry an empty
+    // `default` slot. A shallow merge used to let that empty slot overwrite the widget's own
+    // non-empty default slot, rendering the widget as an empty list item.
     const widgetSlots = { default: [makeSlotComponent('oh-label-item')] }
     const contextSlots = { default: [] }
 
@@ -19,7 +19,7 @@ describe('mergeWidgetSlots', () => {
     expect(result.default).toEqual(widgetSlots.default)
   })
 
-  it('lets a non-empty wrapper slot take precedence over the widget slot', () => {
+  it('lets a non-empty context slot take precedence over the widget slot', () => {
     const widgetSlots = { default: [makeSlotComponent('oh-label-item')] }
     const contextSlots = { default: [makeSlotComponent('oh-toggle-item')] }
 
