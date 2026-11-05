@@ -51,7 +51,7 @@ updates:
     directory: "/bundles/org.openhab.ui/web/" # Location of package manifests
     schedule:
       interval: "cron"
-      cronjob: "0 0 14 1,4,7,10 *" # 14th at the begin of each quarter
+      cronjob: "23 7 14 1,4,7,10 *" # 07:23, 14th at the begin of each quarter
     open-pull-requests-limit: 15
     labels:
       - "main ui"
