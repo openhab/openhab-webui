@@ -34,6 +34,7 @@ import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction'
 import { OhSlideButtonDefinition } from '@/assets/definitions/widgets/system'
 import type { WidgetContext } from '@/components/widgets/types'
+import type { Config as SlideButtonConfig } from '@/types/components/widgets/system/oh-slide-button.gen'
 
 import { subscribeItemUpdates } from '@/js/openhab/itemUpdateEvents'
 
@@ -48,7 +49,12 @@ const props = defineProps<{
 const locked = ref(false)
 const latch = computed(() => config.value.latch === true)
 const context = computed(() => props.context)
-const { config, evaluateExpression } = useWidgetContext(context)
+const { config, evaluateExpression } = useWidgetContext<
+  SlideButtonConfig & {
+    style?: import('vue').StyleValue
+    thumbAspectRatio?: number
+  }
+>(context)
 const { performAction } = useWidgetAction(context, config, evaluateExpression)
 
 const orientation = computed(() => config.value.orientation || 'right')
