@@ -1,4 +1,3 @@
-
 import sse from './sse'
 
 interface ItemUpdateEvent {
@@ -43,17 +42,17 @@ function updateConnection() {
     .map((item) => `openhab/items/${item}/stateupdated`)
     .join(',')
 
-    if (topics === activeTopics && connection) return
+  if (topics === activeTopics && connection) return
 
-    // Invalidate callbacks belonging to the previous connection.
-    const generation = ++connectionGeneration
+  // Invalidate callbacks belonging to the previous connection.
+  const generation = ++connectionGeneration
 
-    if (connection) {
+  if (connection) {
     sse.close(connection)
     connection = null
-    }
+  }
 
-    activeTopics = topics
+  activeTopics = topics
 
   if (!topics) {
     console.debug('[ItemUpdateEvents] No subscriptions, connection closed')
@@ -64,18 +63,18 @@ function updateConnection() {
 
   console.debug('[ItemUpdateEvents] Connecting:', path)
 
-    connection = sse.connect(
+  connection = sse.connect(
     path,
     [],
     (event: ItemUpdateEvent) => {
-        if (generation !== connectionGeneration) return
-        handleEvent(event)
+      if (generation !== connectionGeneration) return
+      handleEvent(event)
     },
     () => {
-        if (generation !== connectionGeneration) return
-        console.warn('[ItemUpdateEvents] SSE connection error')
+      if (generation !== connectionGeneration) return
+      console.warn('[ItemUpdateEvents] SSE connection error')
     }
-    )
+  )
 }
 
 function scheduleConnectionUpdate() {
@@ -84,10 +83,7 @@ function scheduleConnectionUpdate() {
   reconnectTimer = setTimeout(updateConnection, 100)
 }
 
-export function subscribeItemUpdates(
-  itemName: string,
-  callback: ItemUpdateCallback
-): () => void {
+export function subscribeItemUpdates(itemName: string, callback: ItemUpdateCallback): () => void {
   if (!itemName) return () => {}
 
   let callbacks = subscribers.get(itemName)

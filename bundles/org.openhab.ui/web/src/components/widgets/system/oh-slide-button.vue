@@ -284,9 +284,7 @@ const slideIcon = computed(() => {
 })
 
 const thumbStyle = computed(() => {
-  const offset = isReversed.value
-    ? 1 - displayedPosition.value
-    : displayedPosition.value
+  const offset = isReversed.value ? 1 - displayedPosition.value : displayedPosition.value
 
   const thumbLength = `min(
     calc(var(--slide-thumb-size) * ${thumbAspectRatio.value}),
@@ -305,13 +303,9 @@ const thumbStyle = computed(() => {
     left: isVertical.value ? '50%' : travel,
     top: isVertical.value ? travel : '50%',
 
-    transform: isVertical.value
-      ? 'translateX(-50%)'
-      : 'translateY(-50%)',
+    transform: isVertical.value ? 'translateX(-50%)' : 'translateY(-50%)',
 
-    transition: dragging.value
-      ? 'left 100ms ease-out, top 100ms ease-out'
-      : 'left 180ms ease, top 180ms ease',
+    transition: dragging.value ? 'left 100ms ease-out, top 100ms ease-out' : 'left 180ms ease, top 180ms ease',
 
     backgroundColor: thumbColor.value
   }
@@ -356,15 +350,11 @@ const hasResetCommand = computed(() => {
   if (!cfg.resetAction) return false
 
   if (cfg.action === 'command') {
-    return cfg.actionCommandAlt !== undefined &&
-           cfg.actionCommandAlt !== null &&
-           cfg.actionCommandAlt !== ''
+    return cfg.actionCommandAlt !== undefined && cfg.actionCommandAlt !== null && cfg.actionCommandAlt !== ''
   }
 
   if (cfg.action === 'variable') {
-    return cfg.actionVariableValueAlt !== undefined &&
-           cfg.actionVariableValueAlt !== null &&
-           cfg.actionVariableValueAlt !== ''
+    return cfg.actionVariableValueAlt !== undefined && cfg.actionVariableValueAlt !== null && cfg.actionVariableValueAlt !== ''
   }
 
   return false
@@ -401,17 +391,14 @@ const completeSlide = (event: PointerEvent, target: 0 | 1) => {
       const timeout = Math.max(0, Number(config.value.stateTimeout ?? 2000))
 
       if (timeout > 0) {
-        resetTimer = setTimeout(
-          () => {
-            if (pendingPosition.value !== target) return
+        resetTimer = setTimeout(() => {
+          if (pendingPosition.value !== target) return
 
-            pendingPosition.value = null
-            position.value = lastKnownPosition.value ?? 0
-            locked.value = false
-            resetTimer = undefined
-          },
-          timeout
-        )
+          pendingPosition.value = null
+          position.value = lastKnownPosition.value ?? 0
+          locked.value = false
+          resetTimer = undefined
+        }, timeout)
       }
     }
   } else {

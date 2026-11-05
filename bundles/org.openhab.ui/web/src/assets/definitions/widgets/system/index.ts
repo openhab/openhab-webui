@@ -154,13 +154,6 @@ export const OhSVGElementDefinition = () =>
     .paramGroup(actionGroup(), actionParams())
 import SlideButtonParameters from './slide-button.ts'
 export const OhSlideButtonDefinition = () =>
-  new WidgetDefinition(
-    'oh-slide-button',
-    'Slide Button',
-    'Sliding button with optional latching and state feedback'
-  )
-    .paramGroup(
-      actionGroup(),
-      actionParams()
-    )
+  new WidgetDefinition('oh-slide-button', 'Slide Button', 'Sliding button with optional latching and state feedback')
+    .paramGroup(actionGroup(), actionParams())
     .params(SlideButtonParameters())
