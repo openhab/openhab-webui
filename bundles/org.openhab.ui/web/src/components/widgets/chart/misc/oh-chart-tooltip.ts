@@ -35,7 +35,7 @@ const chartTooltip: MiscChartComponent = {
           // - content: category label and formatted value
           if (params.componentType === 'series') {
             if (!Array.isArray(params.data)) return ''
-            // transposed aggregate series (rotated chart) have the data layout [value, category]
+            // transposed oh-aggregate-series (rotated chart) have the data layout [value, category]
             let state = context.numberFormatter!.format(params.data[transpose ? 0 : 1] as number)
             if (unit) state += ' ' + unit
             tooltip += `<div>${params.seriesName}</div>`

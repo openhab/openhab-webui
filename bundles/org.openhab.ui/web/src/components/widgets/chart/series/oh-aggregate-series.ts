@@ -217,7 +217,7 @@ const aggregateSeries: SeriesComponent = {
     }
 
     if (series.item) {
-      // 5th id segment flags series whose data is [value, category] (transposed 1-dimension series), see oh-chart-tooltip
+      // the 5th segment flags whether transposed 1-dimension series, so oh-chart-tooltip knows whether category and value are swapped
       series.id = `oh-aggregate-series#${series.item}#${itemSeries?.unit ?? ''}#${f7.utils.id()}${series.transpose && !dimension2 ? '#transpose' : ''}`
     }
 
