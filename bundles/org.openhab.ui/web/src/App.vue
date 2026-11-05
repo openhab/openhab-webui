@@ -324,6 +324,16 @@
   .submenu-enter-to, .submenu-leave-from
     max-height: 1000px !important
 
+  .list.admin-links .link.section-toggle i.icon.f7-icons
+    font-family 'framework7-core-icons' !important
+    font-size var(--f7-list-chevron-icon-font-size)
+    position absolute
+    right 16px
+    top 50%
+    transform translateY(-50%)
+    width 8px
+    height 14px
+
   .account
     z-index 300
     height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
