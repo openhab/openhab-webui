@@ -139,7 +139,7 @@ export default function (f7) {
       let input = valueToCode(block, 'OPER' + i, javascriptGenerator.ORDER_ATOMIC) || 'false'
       code += '(' + input + ')'
     }
-    return [code, javascriptGenerator.ORDER_ATOMIC]
+    return ['(' + code + ')', javascriptGenerator.ORDER_ATOMIC]
   }
 
   /*
