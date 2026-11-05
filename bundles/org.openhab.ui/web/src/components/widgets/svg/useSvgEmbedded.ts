@@ -176,6 +176,10 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     })
   }
 
+  /**
+   * Adds a watch for the state items configured for each SVG element and when the value changes, updates the SVG element accordingly.
+   * @param svgElements SVG elements whose configured state items should be watched.
+   */
   function setupStateWatches(svgElements: NodeListOf<SVGElementWithHandlers>) {
     for (const svgElement of svgElements) {
       const svgElementConfig: OhSvgElement.Config | undefined = embeddedSvgActions.value[svgElement.id]
@@ -436,7 +440,7 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     setClasses(svgElementConfig.stateOffAsStyleClass, !isOn)
   }
 
-  /*
+  /**
    * Applies an Item state to the svg element based on the given configuration.
    *
    * The state is first normalized into an on/off boolean (see {@link isStateOn}) so the same
