@@ -128,6 +128,9 @@ html
   --f7-input-padding-left 8px
   --f7-input-padding-right 24px
 
+:root.dark
+  --f7-list-group-title-bg-color rgba(255,255,255,0.08) !important
+
 /* Custom Dialog Sizes */
 .dialog.dialog-medium
   --f7-dialog-width: 360px
@@ -581,3 +584,16 @@ html
 .toast .toast-content
   justify-content:  center
 
+mark
+  background-color var(--oh-theme-alt-color)
+  color black
+
+.dark mark
+  background-color var(--oh-theme-alt-color)
+  color white
+
+// prevent cursor from showing in list group titles
+li.list-group-title.media-item {
+  cursor: default !important;
+  user-select: none !important;
+}
