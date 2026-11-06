@@ -185,7 +185,13 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
       const svgElementConfig: OhSvgElement.Config | undefined = embeddedSvgActions.value[svgElement.id]
       const stateItems = svgElementConfig?.stateItems
       const actionItem = svgElementConfig?.actionItem
-      const items = stateItems || (actionItem ? [actionItem] : [])
+      const items = stateItems
+        ? Array.isArray(stateItems)
+          ? stateItems
+          : stateItems.split(',').map(s => s.trim())
+        : actionItem
+          ? [actionItem]
+          : []
       if (items.length === 0) continue
 
       for (const item of items) {

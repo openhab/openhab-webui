@@ -22,8 +22,9 @@ const chartToolbox: MiscChartComponent = {
 
     if (options.presetFeatures && !options.feature) {
       options.feature = Object.assign({}, presetFeatures) as ToolboxComponentOption['feature']
+      const presetFeaturesConfig = Array.isArray(options.presetFeatures) ? options.presetFeatures:  options.presetFeatures.split(',').map(s => s.trim())
       for (const featureName in options.feature) {
-        options.feature[featureName]!.show = options.presetFeatures.indexOf(featureName) >= 0
+        options.feature[featureName]!.show = presetFeaturesConfig.indexOf(featureName) >= 0
       }
     }
 

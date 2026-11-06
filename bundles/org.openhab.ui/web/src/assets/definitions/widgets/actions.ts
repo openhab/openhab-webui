@@ -176,7 +176,6 @@ export const actionParams = (groupName?: string, paramPrefix?: string) => {
     ),
     pi(paramPrefix + 'actionAnalyzerItems', 'Item(s) to Analyze', 'Start analyzing with the specified (set of) Item(s)')
       .m()
-      .r()
       .v((_value, configuration) => {
         return actionSelected(configuration, 'analyzer')
       }),

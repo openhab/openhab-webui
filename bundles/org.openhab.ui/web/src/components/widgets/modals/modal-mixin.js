@@ -85,8 +85,9 @@ export default {
       if (!this.page || !this.page.config || !this.page.config.visibleTo) return true
       const user = useUserStore().user
       if (!user) return false
-      if (user.roles && user.roles.some((r) => this.page.config.visibleTo.indexOf('role:' + r) >= 0)) return true
-      if (this.page.config.visibleTo.indexOf('user:' + user.name) >= 0) return true
+      const visibleTo = Array.isArray(this.page.config.visibleTo) ? this.page.config.visibleTo : this.page.config.visibleTo.split(',').map(s => s.trim())
+      if (user.roles && user.roles.some((r) => visibleTo.indexOf('role:' + r) >= 0)) return true
+      if (visibleTo.indexOf('user:' + user.name) >= 0) return true
       return false
     }
   },

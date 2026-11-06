@@ -30,7 +30,7 @@ export interface Config {
   displayState?: boolean
   offsetAmount?: number
   offsetUnit?: OffsetUnit
-  markers?: Markers[]
+  markers?: Markers | Markers[]
   type?: Type
   labelPosition?: LabelPosition
   color?: string

@@ -86,7 +86,8 @@ export function getCategoryAxisData(config: OhCategoryAxis.Config, startTime: Da
       break
     case OhCategoryAxis.CategoryType.values:
       // pass through
-      return { data: config.data ?? [], name: undefined }
+      const values = config.data ? (Array.isArray(config.data) ? config.data : config.data.split(',').map(s => s.trim())) : []
+      return { data: values, name: undefined }
     default:
       const exhaustiveCheck: never = config.categoryType
       console.warn('oh-category-axis: Unknown categoryType', exhaustiveCheck)

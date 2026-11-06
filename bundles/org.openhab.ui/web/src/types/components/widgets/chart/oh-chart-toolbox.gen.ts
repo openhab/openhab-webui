@@ -12,7 +12,7 @@ export enum PresetFeatures {
 
 export interface Config {
   show?: boolean
-  presetFeatures: PresetFeatures
+  presetFeatures: PresetFeatures | PresetFeatures[]
   top?: string
   bottom?: string
   left?: string

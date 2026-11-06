@@ -33,7 +33,7 @@ export interface Config {
   backgroundImage?: string
   invertText?: boolean
   disableBadges?: boolean
-  badges?: Badges
+  badges?: Badges | Badges[]
 }
 export interface Component {
   component: 'oh-location-card'

@@ -18,7 +18,7 @@ export enum ColorProperty {
 }
 
 export interface Config {
-  stateItems?: string
+  stateItems?: string | string[]
   useProxyElementForState?: boolean
   stateOnColor?: string
   stateOffColor?: string

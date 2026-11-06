@@ -245,6 +245,10 @@ function generateActionTS(mapCommonOptions) {
       }
     }
 
+    if (p.multiple) {
+      typeStr = `${typeStr} | ${typeStr}[]`
+    }
+
     const name = p.name.includes('-') ? `'${p.name}'` : p.name
     configStr += `  ${name}${optionalMark}: ${typeStr}\n`
   })
@@ -359,6 +363,10 @@ function generateComponentTS(mapCommonOptions) {
             default:
               console.log(`Unknown type ${p.type} for property ${p.name} in widget ${widgetName}`)
           }
+        }
+        
+        if (p.multiple) {
+          typeStr = `${typeStr} | ${typeStr}[]`
         }
 
         const name = p.name.includes('-') ? `'${p.name}'` : p.name

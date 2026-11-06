@@ -8,7 +8,7 @@ import {
 
 export interface Config {
   item?: string
-  modules?: Modules
+  modules?: Modules | Modules[]
 }
 export interface Component {
   component: 'oh-colorpicker'

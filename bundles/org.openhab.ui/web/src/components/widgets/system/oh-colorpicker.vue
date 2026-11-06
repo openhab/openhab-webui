@@ -78,6 +78,11 @@ export default {
       }
     }
   },
+  computed: {
+    modules() {
+      return Array.isArray(this.config.modules) ? this.config.modules : this.config.modules?.split(',').map(s => s.trim()) 
+    }
+  },
   methods: {
     initColorPicker() {
       const vm = this
@@ -87,7 +92,7 @@ export default {
           targetEl: this.config.openIn ? this.$refs.swatch : undefined,
           targetElSetBackgroundColor: true,
           openIn: this.config.openIn,
-          modules: this.config.modules || (this.config.openIn ? ['wheel'] : ['hsb-sliders']),
+          modules: this.modules || (this.config.openIn ? ['wheel'] : ['hsb-sliders']),
           value: {
             hsb: this.color
           },

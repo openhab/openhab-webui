@@ -21,7 +21,7 @@ export interface Config {
   color?: string
   on?: string
   item?: string
-  modules?: Modules
+  modules?: Modules | Modules[]
   action?: Action | Action[]
   actionUrl?: string
   actionUrlSameWindow?: boolean
