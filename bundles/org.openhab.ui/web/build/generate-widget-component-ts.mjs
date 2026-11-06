@@ -333,12 +333,13 @@ function generateComponentTS(mapCommonOptions) {
         const optionalMark = p.required ? '' : '?'
 
         const pCommon = { name: p.name.split('_')[1] ?? p.name, options: p.options }
+        const key = optionsMapKey(pCommon)
 
         let typeStr = 'any'
         if (p.name === '') return
-        if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(optionsMapKey(pCommon))) {
+        if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(key)) {
           typeStr = kebabToPascalCase(pCommon.name)
-          if (mapCommonOptions.get(optionsMapKey(pCommon)).length > 1) {
+          if (mapCommonOptions.get(key).length > 1) {
             if (!commonComponents.includes(typeStr)) {
               commonComponents.push(typeStr)
             }
