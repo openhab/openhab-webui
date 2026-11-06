@@ -22,7 +22,7 @@ export interface Config {
   activeIdx?: number
   boxShadow?: string
   textShadow?: string
-  filterShadow?: string
+  filterShadow?: string | string[]
 }
 export interface Component {
   component: 'oh-canvas-layout'

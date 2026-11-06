@@ -144,6 +144,8 @@ function createCommonOptionsMap() {
 
       widget.props.parameters.forEach((p) => {
         if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options) {
+          // if a parameter name contains an underscore, use the part after the underscore as the common type name
+          p.name = p.name.split('_')[1] ?? p.name
           const key = optionsMapKey(p)
 
           if (mapCommonOptions.has(key)) {
@@ -155,22 +157,6 @@ function createCommonOptionsMap() {
         }
       })
     })
-  })
-
-  // Add ActionParams to common options map
-  ActionParams.forEach((p) => {
-    if (p.options) {
-      const key = optionsMapKey(p)
-
-      if (mapCommonOptions.has(key)) {
-        const componentsPresent = mapCommonOptions.get(key)
-        if (!componentsPresent.includes('ActionConfig')) {
-          componentsPresent.push('ActionConfig')
-        }
-      } else {
-        mapCommonOptions.set(key, ['ActionConfig'])
-      }
-    }
   })
 
   return mapCommonOptions
@@ -209,7 +195,8 @@ function generateActionTS(mapCommonOptions) {
   // Action specific options
   ActionParams.forEach((p) => {
     if (p.options) {
-      const key = optionsMapKey(p)
+      const pCommon = { name: p.name.split('_')[1] ?? p.name, options: p.options }
+      const key = optionsMapKey(pCommon)
 
       if (mapCommonOptions.has(key) && mapCommonOptions.get(key).length === 1) {
         const pascalCaseName = kebabToPascalCase(p.name)
@@ -229,12 +216,14 @@ function generateActionTS(mapCommonOptions) {
   let configStr = 'export interface ActionConfig {\n'
   ActionParams.forEach((p) => {
     const optionalMark = p.required ? '' : '?'
+    const pCommon = { name: p.name.split('_')[1] ?? p.name, options: p.options }
+    const key = optionsMapKey(pCommon)
 
     let typeStr = 'any'
     if (p.name === '') return
-    if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(optionsMapKey(p))) {
-      typeStr = kebabToPascalCase(p.name)
-      if (mapCommonOptions.get(optionsMapKey(p)).length > 1) {
+    if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(key)) {
+      typeStr = kebabToPascalCase(pCommon.name)
+      if (mapCommonOptions.get(key).length > 1) {
         if (!commonComponents.includes(typeStr)) {
           commonComponents.push(typeStr)
         }
@@ -254,6 +243,11 @@ function generateActionTS(mapCommonOptions) {
         default:
           console.log(`Unknown type ${p.type} for property ${p.name} in ActionParams`)
       }
+    }
+
+    if (p.multiple) {
+      if (typeStr === 'string') typeStr = `${typeStr} | ${typeStr}[]`
+      else typeStr = `${typeStr} | ${typeStr}[] | string`
     }
 
     const name = p.name.includes('-') ? `'${p.name}'` : p.name
@@ -321,7 +315,8 @@ function generateComponentTS(mapCommonOptions) {
       // component specific options
       widget.props.parameters.forEach((p) => {
         if (p.options) {
-          const key = optionsMapKey(p)
+          const pCommon = { name: p.name.split('_')[1] ?? p.name, options: p.options }
+          const key = optionsMapKey(pCommon)
 
           if (mapCommonOptions.has(key) && mapCommonOptions.get(key).length === 1) {
             const pascalCaseName = kebabToPascalCase(p.name)
@@ -342,11 +337,14 @@ function generateComponentTS(mapCommonOptions) {
       widget.props.parameters.forEach((p) => {
         const optionalMark = p.required ? '' : '?'
 
+        const pCommon = { name: p.name.split('_')[1] ?? p.name, options: p.options }
+        const key = optionsMapKey(pCommon)
+
         let typeStr = 'any'
         if (p.name === '') return
-        if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(optionsMapKey(p))) {
-          typeStr = kebabToPascalCase(p.name)
-          if (mapCommonOptions.get(optionsMapKey(p)).length > 1) {
+        if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(key)) {
+          typeStr = kebabToPascalCase(pCommon.name)
+          if (mapCommonOptions.get(key).length > 1) {
             if (!commonComponents.includes(typeStr)) {
               commonComponents.push(typeStr)
             }
@@ -366,6 +364,11 @@ function generateComponentTS(mapCommonOptions) {
             default:
               console.log(`Unknown type ${p.type} for property ${p.name} in widget ${widgetName}`)
           }
+        }
+
+        if (p.multiple) {
+          if (typeStr === 'string') typeStr = `${typeStr} | ${typeStr}[]`
+          else typeStr = `${typeStr} | ${typeStr}[] | string`
         }
 
         const name = p.name.includes('-') ? `'${p.name}'` : p.name

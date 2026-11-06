@@ -9,6 +9,7 @@ import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhLocationCardParameters } from '@/assets/definitions/widgets/home'
 
 import { useModelStore } from '@/js/stores/useModelStore'
+import { ensureArray } from '@/js/openhab/utils'
 
 export default {
   components: { LocationCard },
@@ -17,6 +18,7 @@ export default {
   },
   setup(props) {
     const { config } = useWidgetContext(computed(() => props.context))
+    config.badges = ensureArray(config.badges)
     return { config }
   },
   computed: {
