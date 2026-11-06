@@ -195,7 +195,8 @@ function generateActionTS(mapCommonOptions) {
   // Action specific options
   ActionParams.forEach((p) => {
     if (p.options) {
-      const key = optionsMapKey(p)
+      const pCommon = { name: p.name.split('_')[1] ?? p.name, options: p.options }
+      const key = optionsMapKey(pCommon)
 
       if (mapCommonOptions.has(key) && mapCommonOptions.get(key).length === 1) {
         const pascalCaseName = kebabToPascalCase(p.name)
@@ -215,12 +216,14 @@ function generateActionTS(mapCommonOptions) {
   let configStr = 'export interface ActionConfig {\n'
   ActionParams.forEach((p) => {
     const optionalMark = p.required ? '' : '?'
+    const pCommon = { name: p.name.split('_')[1] ?? p.name, options: p.options }
+    const key = optionsMapKey(pCommon)
 
     let typeStr = 'any'
     if (p.name === '') return
-    if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(optionsMapKey(p))) {
-      typeStr = kebabToPascalCase(p.name)
-      if (mapCommonOptions.get(optionsMapKey(p)).length > 1) {
+    if (p.type !== 'DECIMAL' && p.type !== 'INTEGER' && p.options && mapCommonOptions.has(key)) {
+      typeStr = kebabToPascalCase(pCommon.name)
+      if (mapCommonOptions.get(key).length > 1) {
         if (!commonComponents.includes(typeStr)) {
           commonComponents.push(typeStr)
         }
