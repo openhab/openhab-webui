@@ -333,6 +333,7 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
               if (action === Action.popover) modalRoute.route.popup = { component: OhPopover }
               if (action === Action.sheet) modalRoute.route.popup = { component: OhSheet }
               let modalProps: Router.RouteOptions = {
+                browserHistory: false,
                 props: {
                   uid: actionModal,
                   el: evt?.target && '_icon' in evt.target ? evt.target._icon : evt ? evt.target : null,
