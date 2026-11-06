@@ -38,10 +38,10 @@ export interface ActionConfig {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
-  taphold_action?: string
+  taphold_action?: Action | Action[]
   taphold_actionUrl?: string
   taphold_actionUrlSameWindow?: boolean
-  taphold_actionHttpMethod?: string
+  taphold_actionHttpMethod?: ActionHttpMethod
   taphold_actionHttpBody?: string
   taphold_actionItem?: string
   taphold_actionCommand?: string
@@ -51,16 +51,16 @@ export interface ActionConfig {
   taphold_actionRuleContext?: string
   taphold_actionPage?: string
   taphold_actionPageDefineVars?: Record<string, unknown>[]
-  taphold_actionPageTransition?: string
+  taphold_actionPageTransition?: ActionPageTransition
   taphold_actionModal?: string
   taphold_actionModalConfig?: string
   taphold_actionPhotos?: string
   taphold_actionPhotoBrowserConfig?: string
   taphold_actionGroupPopupItem?: string
   taphold_actionAnalyzerItems?: string | string[]
-  taphold_actionAnalyzerChartType?: string
-  taphold_actionAnalyzerCoordSystem?: string
-  taphold_actionAnalyzerAggregation?: string
+  taphold_actionAnalyzerChartType?: ActionAnalyzerChartType
+  taphold_actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem
+  taphold_actionAnalyzerAggregation?: ActionAnalyzerAggregation
   taphold_actionConfirmation?: string
   taphold_actionFeedback?: string
   taphold_actionVariable?: string
