@@ -151,7 +151,6 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
     const actionValue = actionConfig[`${processedPrefix}action`]
     const actionList = ensureArray(actionValue)
     
-    normalizeActionList(actionValue) as Action[]
     if (!actionList.length) return false
     if (ctx.editmode) {
       showActionFeedback(prefix, actionConfig, `Action '${actionList.join(', ')}' not performed while in edit mode`)
