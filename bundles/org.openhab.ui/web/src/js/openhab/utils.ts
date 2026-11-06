@@ -92,7 +92,11 @@ export function simpleHash(obj: object | string): string {
 export function ensureArray<T>(input: T[] | T | string | undefined): T[] {
   if (!input) return []
   if (Array.isArray(input)) return input
-  if (typeof input === 'string') return input.split(',').map((s) => s.trim()).filter(Boolean) as unknown as T[]
+  if (typeof input === 'string')
+    return input
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean) as unknown as T[]
   return [input]
 }
 
