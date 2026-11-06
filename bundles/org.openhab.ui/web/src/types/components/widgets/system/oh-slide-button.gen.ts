@@ -1,5 +1,6 @@
 // note: this file is generated and should not be edited by hand
 
+import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-ts-template'
 import {
   Action,
   ActionHttpMethod,
@@ -8,6 +9,7 @@ import {
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation
 } from '../common.gen.ts'
+
 
 export enum Orientation {
   right = 'right',
@@ -47,6 +49,7 @@ export interface Config {
   actionVariableKey?: string
   text?: string
   orientation?: Orientation
+  thumbAspectRatio?: number
   latch?: boolean
   resetAction?: boolean
   stateItem?: string
@@ -61,6 +64,18 @@ export interface Config {
   colorOff?: string
   colorDragging?: string
   colorUnknown?: string
+}
+export interface Component {
+  component: 'oh-slide-button'
+  config: Config
+}
+
+export const isConfig: ConfigGuardFn<Config> = (config: unknown): config is Config => {
+  return guardConfig<Config>(config, isConfig.validationFn)
+}
+
+export const isComponent = (component: unknown, defaultConfig?: Config): component is Component => {
+  return guardComponent<Component, Config>('oh-slide-button', component, isConfig, defaultConfig)
 }
 
 export {

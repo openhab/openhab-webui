@@ -4,11 +4,9 @@
     :class="{
       vertical: isVertical,
       dragging,
-      active: position === 1,
-      'state-on': visualState === 'on',
-      'state-off': visualState === 'off',
-      'state-unknown': visualState === 'unknown'
+      active: position === 1
     }"
+    :data-state="visualState"
     :style="config.style"
     @pointerdown="onPointerDown"
     @pointermove="onPointerMove"
@@ -28,8 +26,136 @@
   </div>
 </template>
 
+<style scoped lang="stylus">
+.oh-slide-button
+  /* Geometry */
+  --slide-length: var(--oh-slide-length, 160px)
+  --slide-thickness: var(--oh-slide-thickness, 48px)
+  --slide-padding: var(--oh-slide-padding, 4px)
+  --slide-thumb-size: calc(var(--slide-thickness) - 2 * var(--slide-padding))
+
+  /* Colors */
+  --slide-track-color: var(--oh-slide-track-color, var(--f7-bars-bg-color, #d0d0d0))
+  --slide-thumb-color: var(--oh-slide-thumb-color, var(--f7-theme-color, #007aff))
+  --slide-text-color: var(--oh-slide-text-color, var(--f7-text-color, #222))
+  --slide-confirmed-color: var(--oh-slide-confirmed-color, var(--f7-color-green, #4cd964))
+  --slide-unknown-color: var(--oh-slide-unknown-color, var(--f7-color-gray, #8e8e93))
+
+  position: relative
+  display: inline-block
+  width: var(--slide-length)
+  height: var(--slide-thickness)
+
+  user-select: none
+  -webkit-user-select: none
+  touch-action: none
+  cursor: grab
+
+.oh-slide-button.vertical
+  width: var(--slide-thickness)
+  height: var(--slide-length)
+
+.oh-slide-button.dragging
+  cursor: grabbing
+
+/* Track */
+.oh-slide-button-track
+  position: relative
+  width: 100%
+  height: 100%
+  box-sizing: border-box
+  border: 1px solid var(--f7-theme-color)
+  border-radius: calc(var(--slide-thickness) / 2)
+  background: var(--slide-track-color)
+  overflow: hidden
+
+/* Label: horizontal orientation */
+.oh-slide-button-label
+  position: absolute
+  top: 0
+  bottom: 0
+  left: calc(var(--slide-thumb-size) + var(--slide-padding) + 4px)
+  right: var(--slide-padding)
+
+  display: flex
+  align-items: center
+  justify-content: center
+
+  min-width: 0
+  overflow: hidden
+  white-space: nowrap
+
+  font-size: 14px
+  color: var(--slide-text-color)
+  opacity: 0.7
+  pointer-events: none
+
+.oh-slide-button-label.label-reversed
+  left: var(--slide-padding)
+  right: calc(var(--slide-thumb-size) + var(--slide-padding) + 4px)
+
+/* Label text */
+.oh-slide-button-label-text
+  display: block
+  min-width: 0
+  max-width: 100%
+  max-height: 100%
+  overflow: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+
+/* Label: vertical orientation */
+.oh-slide-button.vertical .oh-slide-button-label
+  left: 0
+  right: 0
+  top: calc(var(--slide-thumb-size) + var(--slide-padding) + 4px)
+  bottom: var(--slide-padding)
+
+  writing-mode: vertical-rl
+  text-orientation: sideways
+  transform: rotate(180deg)
+
+.oh-slide-button.vertical .oh-slide-button-label.label-reversed
+  top: var(--slide-padding)
+  bottom: calc(var(--slide-thumb-size) + var(--slide-padding) + 4px)
+
+/* Thumb */
+.oh-slide-button-thumb
+  position: absolute
+  width: var(--slide-thumb-size)
+  height: var(--slide-thumb-size)
+  border-radius: 9999px
+
+  display: flex
+  align-items: center
+  justify-content: center
+
+  background: var(--slide-thumb-color)
+  color: white
+  pointer-events: none
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
+
+/* Thumb states */
+.oh-slide-button[data-state='on'] .oh-slide-button-thumb
+  background: var(--slide-confirmed-color)
+
+.oh-slide-button[data-state='off'] .oh-slide-button-thumb
+  background: var(--slide-thumb-color)
+
+.oh-slide-button[data-state='unknown'] .oh-slide-button-thumb
+  background: var(--slide-unknown-color)
+
+/* Scale the chevron proportionally with the thumb */
+.oh-slide-button-icon
+  --f7-icons-size: calc(var(--slide-thumb-size) * 0.55)
+  font-size: var(--f7-icons-size)
+  width: var(--f7-icons-size)
+  height: var(--f7-icons-size)
+  line-height: 1
+</style>
+
 <script setup lang="ts">
-import { computed, ref, watch, onBeforeUnmount } from 'vue'
+import { computed, ref, watch, onBeforeUnmount, type StyleValue } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction'
 import { OhSlideButtonDefinition } from '@/assets/definitions/widgets/system'
@@ -51,8 +177,7 @@ const latch = computed(() => config.value.latch === true)
 const context = computed(() => props.context)
 const { config, evaluateExpression } = useWidgetContext<
   SlideButtonConfig & {
-    style?: import('vue').StyleValue
-    thumbAspectRatio?: number
+    style?: StyleValue
   }
 >(context)
 const { performAction } = useWidgetAction(context, config, evaluateExpression)
@@ -561,154 +686,3 @@ onBeforeUnmount(() => {
   unsubscribeItemUpdates?.()
 })
 </script>
-
-<style scoped>
-.oh-slide-button {
-  /* Geometry */
-  --slide-length: var(--oh-slide-length, 160px);
-  --slide-thickness: var(--oh-slide-thickness, 48px);
-  --slide-padding: var(--oh-slide-padding, 4px);
-
-  --slide-thumb-size: calc(var(--slide-thickness) - 2 * var(--slide-padding));
-
-  /* Colors */
-  --slide-track-color: var(--oh-slide-track-color, var(--f7-bars-bg-color, #d0d0d0));
-
-  --slide-thumb-color: var(--oh-slide-thumb-color, var(--f7-theme-color, #007aff));
-
-  --slide-text-color: var(--oh-slide-text-color, var(--f7-text-color, #222));
-
-  --slide-confirmed-color: var(--oh-slide-confirmed-color, var(--f7-color-green, #4cd964));
-
-  --slide-unknown-color: var(--oh-slide-unknown-color, var(--f7-color-gray, #8e8e93));
-
-  position: relative;
-  display: inline-block;
-  width: var(--slide-length);
-  height: var(--slide-thickness);
-
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: none;
-  cursor: grab;
-}
-
-.oh-slide-button.vertical {
-  width: var(--slide-thickness);
-  height: var(--slide-length);
-}
-
-.oh-slide-button.dragging {
-  cursor: grabbing;
-}
-
-/* Track */
-
-.oh-slide-button-track {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  border: 1px solid var(--f7-theme-color);
-  border-radius: calc(var(--slide-thickness) / 2);
-  background: var(--slide-track-color);
-  overflow: hidden;
-}
-
-/* Label: horizontal orientation */
-
-.oh-slide-button-label {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--slide-thumb-size) + var(--slide-padding) + 4px);
-  right: var(--slide-padding);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-
-  font-size: 14px;
-  color: var(--slide-text-color);
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.oh-slide-button-label.label-reversed {
-  left: var(--slide-padding);
-  right: calc(var(--slide-thumb-size) + var(--slide-padding) + 4px);
-}
-
-.oh-slide-button-label-text {
-  display: block;
-  min-width: 0;
-  max-width: 100%;
-  max-height: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-/* Label: vertical orientation */
-
-.oh-slide-button.vertical .oh-slide-button-label {
-  left: 0;
-  right: 0;
-  top: calc(var(--slide-thumb-size) + var(--slide-padding) + 4px);
-  bottom: var(--slide-padding);
-
-  writing-mode: vertical-rl;
-  text-orientation: sideways;
-  transform: rotate(180deg);
-}
-
-.oh-slide-button.vertical .oh-slide-button-label.label-reversed {
-  top: var(--slide-padding);
-  bottom: calc(var(--slide-thumb-size) + var(--slide-padding) + 4px);
-}
-
-/* Thumb */
-
-.oh-slide-button-thumb {
-  position: absolute;
-  width: var(--slide-thumb-size);
-  height: var(--slide-thumb-size);
-  border-radius: 9999px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: var(--slide-thumb-color);
-  color: white;
-  pointer-events: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-/* Thumb states */
-
-.oh-slide-button.state-on .oh-slide-button-thumb {
-  background: var(--slide-confirmed-color);
-}
-
-.oh-slide-button.state-off .oh-slide-button-thumb {
-  background: var(--slide-thumb-color);
-}
-
-.oh-slide-button.state-unknown .oh-slide-button-thumb {
-  background: var(--slide-unknown-color);
-}
-
-/* Scale the chevron proportionally with the thumb */
-.oh-slide-button-icon {
-  --f7-icons-size: calc(var(--slide-thumb-size) * 0.55);
-  font-size: var(--f7-icons-size);
-  width: var(--f7-icons-size);
-  height: var(--f7-icons-size);
-  line-height: 1;
-}
-</style>
