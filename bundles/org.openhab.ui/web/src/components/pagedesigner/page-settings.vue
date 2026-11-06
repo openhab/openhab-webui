@@ -122,14 +122,9 @@ export default {
   data() {
     return {}
   },
-  computed: {
-    visibleTo() {
-      return Array.isArray(this.page.config.visibleTo) ? this.page.config.visibleTo : this.page.config.visibleTo?.split(',').map(s => s.trim()) || []
-    }
-  },
   methods: {
     isVisibleTo(userrole) {
-      return this.visibleTo.indexOf(userrole) >= 0
+      return Array.isArray(this.page.config.visibleTo) && this.page.config.visibleTo.indexOf(userrole) >= 0
     },
     updatePageVisibility(userrole) {
       let value = this.$refs.pageVisibility.$el.children[0].f7SmartSelect.getValue()

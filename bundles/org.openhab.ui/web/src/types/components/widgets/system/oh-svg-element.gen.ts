@@ -30,7 +30,7 @@ export interface Config {
   stateOnAsStyleClass?: string
   stateOffAsStyleClass?: string
   useDisplayState?: boolean
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

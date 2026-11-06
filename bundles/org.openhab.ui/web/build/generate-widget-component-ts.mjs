@@ -246,7 +246,8 @@ function generateActionTS(mapCommonOptions) {
     }
 
     if (p.multiple) {
-      typeStr = `${typeStr} | ${typeStr}[]`
+      if (typeStr === 'string') typeStr = `${typeStr} | ${typeStr}[]`
+      else typeStr = `${typeStr} | ${typeStr}[] | string`
     }
 
     const name = p.name.includes('-') ? `'${p.name}'` : p.name
@@ -364,9 +365,10 @@ function generateComponentTS(mapCommonOptions) {
               console.log(`Unknown type ${p.type} for property ${p.name} in widget ${widgetName}`)
           }
         }
-        
+
         if (p.multiple) {
-          typeStr = `${typeStr} | ${typeStr}[]`
+          if (typeStr === 'string') typeStr = `${typeStr} | ${typeStr}[]`
+          else typeStr = `${typeStr} | ${typeStr}[] | string`
         }
 
         const name = p.name.includes('-') ? `'${p.name}'` : p.name

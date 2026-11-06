@@ -14,7 +14,7 @@ export interface Config {
   iconColor?: string
   iconUseState?: boolean
   item?: string
-  modules?: Modules | Modules[]
+  modules?: Modules | Modules[] | string
 }
 export interface Component {
   component: 'oh-colorpicker-item'

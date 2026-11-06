@@ -1,7 +1,7 @@
 import { f7 } from 'framework7-vue'
 import { useI18n } from 'vue-i18n'
 
-import { normalizeActionList } from '@/assets/definitions/widgets/actions.ts'
+import { ensureArray } from '@/js/openhab/utils'
 import { getVariableScope, setVariableKeyValues } from '@/components/widgets/variable'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore.ts'
@@ -149,7 +149,9 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
     prefix = prefix ? (prefix += '_') : ''
     processedPrefix = processPrefix(prefix)
     const actionValue = actionConfig[`${processedPrefix}action`]
-    const actionList = normalizeActionList(actionValue) as Action[]
+    const actionList = ensureArray(actionValue)
+    
+    normalizeActionList(actionValue) as Action[]
     if (!actionList.length) return false
     if (ctx.editmode) {
       showActionFeedback(prefix, actionConfig, `Action '${actionList.join(', ')}' not performed while in edit mode`)

@@ -18,7 +18,7 @@ export interface Config {
   noBorder?: boolean
   noShadow?: boolean
   outline?: boolean
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod
@@ -46,7 +46,7 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
-  taphold_action?: Action | Action[]
+  taphold_action?: Action | Action[] | string
   taphold_actionUrl?: string
   taphold_actionUrlSameWindow?: boolean
   taphold_actionHttpMethod?: ActionHttpMethod

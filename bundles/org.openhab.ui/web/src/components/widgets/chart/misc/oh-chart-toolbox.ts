@@ -3,6 +3,7 @@ import type { MiscChartComponent } from '../types'
 import type { ToolboxComponentOption } from 'echarts'
 import type { OhChartToolbox } from '@/types/components/widgets'
 import { OhChartToolboxDefinition } from '@/assets/definitions/widgets/chart'
+import { ensureArray } from '@/js/openhab/utils'
 
 const presetFeatures = {
   saveAsImage: { title: 'Save as Image' },
@@ -22,9 +23,9 @@ const chartToolbox: MiscChartComponent = {
 
     if (options.presetFeatures && !options.feature) {
       options.feature = Object.assign({}, presetFeatures) as ToolboxComponentOption['feature']
-      const presetFeaturesConfig = Array.isArray(options.presetFeatures) ? options.presetFeatures:  options.presetFeatures.split(',').map(s => s.trim())
+      const presetFeaturesList = ensureArray<OhChartToolbox.PresetFeatures>(options.presetFeatures)
       for (const featureName in options.feature) {
-        options.feature[featureName]!.show = presetFeaturesConfig.indexOf(featureName) >= 0
+        options.feature[featureName]!.show = presetFeaturesList.indexOf(featureName as OhChartToolbox.PresetFeatures) >= 0
       }
     }
 

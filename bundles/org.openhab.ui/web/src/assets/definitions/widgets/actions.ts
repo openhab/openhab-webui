@@ -4,6 +4,7 @@ import type { ConfigDescriptionParameterGroup } from '@/api'
 import { po, pt, pi, pb } from './helpers.ts'
 import { aggregationTypeOptions } from './chart/options.ts'
 
+// TODO: Replace normalizeActionList with ensureArray from utils.ts for consistency and code reuse
 export const normalizeActionList = (value: string | string[] | undefined): string[] => {
   if (value === undefined) return []
   const values = Array.isArray(value) ? value : [value]

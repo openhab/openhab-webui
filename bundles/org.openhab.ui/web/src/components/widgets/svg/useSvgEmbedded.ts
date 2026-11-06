@@ -9,16 +9,14 @@ import createDOMPurify from 'dompurify'
 import type { ItemState } from '@/js/stores/useStatesStore'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 import { showToast } from '@/js/dialog-promises'
-import * as api from '@/api'
 
 import media from '@/js/openhab/media'
-import { toRGBStyle } from '@/js/openhab/utils'
+import { toRGBStyle, ensureArray } from '@/js/openhab/utils'
 
 import { OhSvgElement } from '@/types/components/widgets'
 import { isStateType, StateType, stateTypeForItemType } from '@/assets/definitions/items/state-types.ts'
 
 import type { Framework7Events } from '@/types/framework7-extensions'
-import { isItemType, ItemType } from '@/assets/item-types.ts'
 
 // Constants & Type definitions
 type SVGElementWithHandlers = SVGElement & { _ohSvgHandlers?: { mouseover: () => void; click: (evt: Event) => void }; flashing?: boolean }
@@ -183,15 +181,9 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
   function setupStateWatches(svgElements: NodeListOf<SVGElementWithHandlers>) {
     for (const svgElement of svgElements) {
       const svgElementConfig: OhSvgElement.Config | undefined = embeddedSvgActions.value[svgElement.id]
-      const stateItems = svgElementConfig?.stateItems
+      const stateItems = ensureArray(svgElementConfig?.stateItems)
       const actionItem = svgElementConfig?.actionItem
-      const items = stateItems
-        ? Array.isArray(stateItems)
-          ? stateItems
-          : stateItems.split(',').map(s => s.trim())
-        : actionItem
-          ? [actionItem]
-          : []
+      const items = stateItems.length > 0 ? stateItems : (actionItem ?? [])
       if (items.length === 0) continue
 
       for (const item of items) {

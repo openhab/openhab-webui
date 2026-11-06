@@ -4,5 +4,6 @@
   },
   "eslint.validate": ["vue", "html", "javascript"],
   "oxc.fmt.experimental": true,
-  "editor.defaultFormatter": "oxc.oxc-vscode"
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

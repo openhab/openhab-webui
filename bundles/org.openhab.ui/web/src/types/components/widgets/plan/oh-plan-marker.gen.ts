@@ -43,7 +43,7 @@ export interface Config {
   tooltipOpacity?: number
   zoomVisibilityMin?: number
   zoomVisibilityMax?: number
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

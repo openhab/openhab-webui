@@ -29,8 +29,7 @@ export default {
       modifier: (e) => ''
     },
     _All: {
-      modifier: (e) =>
-        e.replace('Dimension1', 'Dimension').replace('Dimension2', 'Dimension').replace('markers?: Markers', 'markers?: Markers[]')
+      modifier: (e) => e.replace('Dimension1', 'Dimension').replace('Dimension2', 'Dimension')
     }
   },
   OhGauge: {

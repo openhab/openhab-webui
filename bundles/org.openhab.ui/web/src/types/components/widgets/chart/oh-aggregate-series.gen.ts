@@ -40,7 +40,7 @@ export interface Config {
   displayState?: boolean
   offsetAmount?: number
   offsetUnit?: OffsetUnit
-  markers?: Markers[] | Markers[]
+  markers?: Markers | Markers[] | string
   type?: Type
   labelPosition?: LabelPosition
   color?: string
@@ -52,7 +52,7 @@ export interface Config {
   aggregationFunction?: AggregationFunction
   xAxisIndex?: number
   yAxisIndex?: number
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod
