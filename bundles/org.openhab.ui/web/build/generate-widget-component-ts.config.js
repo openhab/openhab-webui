@@ -5,7 +5,7 @@ export default {
     modifier: (e) =>
       e
         .replace('action?: Action', 'action?: Action | Action[]') // Fix array type
-        .replace('taphold_action?: Taphold_action', 'taphold_action?: Taphold_action | Taphold_action[]') // Fix array type
+        .replace('taphold_action?: Action', 'taphold_action?: Action | Action[]') // Fix array type
         .replace('actionAnalyzerItems: string', 'actionAnalyzerItems?: string | string[]') // Fix array type
         .replace('taphold_actionAnalyzerItems: string', 'taphold_actionAnalyzerItems?: string | string[]') // Fix array type
         .replace('actionPageDefineVars?: string', 'actionPageDefineVars?: Record<string, unknown>[]')
