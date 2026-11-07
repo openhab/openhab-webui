@@ -2,15 +2,11 @@ import { utils } from 'framework7'
 import { f7 } from 'framework7-vue'
 
 import { authorize, setBasicCredentials, clearBasicCredentials, storeBasicCredentials } from '@/js/openhab/auth'
+import { scheduleTokenRefresh, cancelTokenRefresh } from '@/js/openhab/token-refresh'
 
 import { useUserStore } from '@/js/stores/useUserStore'
 
 export default {
-  data() {
-    return {
-      currentTokenExpireTime: null
-    }
-  },
   methods: {
     authorize,
     getRefreshToken() {
@@ -51,9 +47,7 @@ export default {
               const resp = JSON.parse(data)
               localStorage.setItem('openhab.ui:refreshToken', resp.refresh_token)
               this.$oh.auth.setAccessToken(resp.access_token)
-
-              // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
-              setTimeout(this.refreshAccessToken, resp.expires_in * 950)
+              scheduleTokenRefresh(resp.expires_in, this.refreshAccessToken)
               useUserStore().setUser(resp.user)
 
               const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
@@ -86,12 +80,7 @@ export default {
           .then((data) => {
             const resp = JSON.parse(data)
             this.$oh.auth.setAccessToken(resp.access_token)
-
-            // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
-            setTimeout(this.refreshAccessToken, resp.expires_in * 950)
-            // also make sure to check the token and renew it when the app becomes visible again
-            this.currentTokenExpireTime = new Date().getTime() + resp.expires_in * 950
-            document.addEventListener('visibilitychange', this.checkTokenAfterVisibilityChange)
+            scheduleTokenRefresh(resp.expires_in, this.refreshAccessToken)
             useUserStore().setUser(resp.user)
 
             resolve(resp)
@@ -102,18 +91,13 @@ export default {
           })
       })
     },
-    checkTokenAfterVisibilityChange(evt) {
-      if (!document.hidden && this.currentTokenExpireTime && this.currentTokenExpireTime < new Date().getTime()) {
-        console.log('Refreshing expired token')
-        this.refreshAccessToken()
-      }
-    },
     cleanSession() {
       return new Promise((resolve, reject) => {
         const refreshToken = this.getRefreshToken()
         const payload = utils.serializeObject({
           refresh_token: refreshToken
         })
+        cancelTokenRefresh()
         localStorage.removeItem('openhab.ui:refreshToken')
         this.$oh.api
           .postPlain('/rest/auth/logout', payload, 'application/json', 'application/x-www-form-urlencoded')
