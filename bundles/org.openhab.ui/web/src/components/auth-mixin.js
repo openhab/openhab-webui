@@ -1,16 +1,15 @@
 import { utils } from 'framework7'
 import { f7 } from 'framework7-vue'
 
-import { authorize, setBasicCredentials, clearBasicCredentials, storeBasicCredentials } from '@/js/openhab/auth'
+import { authorize, getAccessToken, setBasicCredentials, clearBasicCredentials, storeBasicCredentials } from '@/js/openhab/auth'
+import { scheduleTokenRefresh, cancelTokenRefresh } from '@/js/openhab/token-refresh'
 
 import { useUserStore } from '@/js/stores/useUserStore'
 
+/** Expiry of the current access token, used to keep it after a failed refresh as long as it is valid. */
+let accessTokenExpireTime = 0
+
 export default {
-  data() {
-    return {
-      currentTokenExpireTime: null
-    }
-  },
   methods: {
     authorize,
     getRefreshToken() {
@@ -22,15 +21,16 @@ export default {
         if (queryParams.code && queryParams.state) {
           const authState = sessionStorage.getItem('openhab.ui:authState')
           sessionStorage.removeItem('openhab.ui:authState')
-          if (authState !== queryParams.state) {
-            reject('Invalid state')
-          }
           if (window.history) {
             window.history.replaceState(
               null,
               window.title,
-              window.location.href.replace('?code=' + queryParams.code, '').replace('&state=' + authState, '')
+              window.location.href.replace('?code=' + queryParams.code, '').replace('&state=' + queryParams.state, '')
             )
+          }
+          if (authState !== queryParams.state) {
+            reject('Invalid state')
+            return
           }
 
           const codeVerifier = sessionStorage.getItem('openhab.ui:codeVerifier')
@@ -51,9 +51,8 @@ export default {
               const resp = JSON.parse(data)
               localStorage.setItem('openhab.ui:refreshToken', resp.refresh_token)
               this.$oh.auth.setAccessToken(resp.access_token)
-
-              // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
-              setTimeout(this.refreshAccessToken, resp.expires_in * 950)
+              accessTokenExpireTime = Date.now() + resp.expires_in * 1000
+              scheduleTokenRefresh(resp.expires_in, this.refreshAccessToken)
               useUserStore().setUser(resp.user)
 
               const nextRoute = authState.indexOf('setup') === 0 ? '/setup-wizard/' : '/'
@@ -80,33 +79,39 @@ export default {
           refresh_token: refreshToken
         })
 
+        // the token request must not carry an expired access token, as it would be rejected
+        const previousAccessToken = getAccessToken()
+        const previousAccessTokenExpireTime = accessTokenExpireTime
         this.$oh.auth.clearAccessToken()
         this.$oh.api
           .postPlain('/rest/auth/token', payload, 'application/json', 'application/x-www-form-urlencoded')
           .then((data) => {
+            if (this.getRefreshToken() !== refreshToken) {
+              reject('Session has been closed during token refresh')
+              return
+            }
             const resp = JSON.parse(data)
             this.$oh.auth.setAccessToken(resp.access_token)
-
-            // schedule the next token refresh when 95% of this token's lifetime has elapsed, i.e. 3 minutes before a 1-hour token is due to expire
-            setTimeout(this.refreshAccessToken, resp.expires_in * 950)
-            // also make sure to check the token and renew it when the app becomes visible again
-            this.currentTokenExpireTime = new Date().getTime() + resp.expires_in * 950
-            document.addEventListener('visibilitychange', this.checkTokenAfterVisibilityChange)
+            accessTokenExpireTime = Date.now() + resp.expires_in * 1000
+            scheduleTokenRefresh(resp.expires_in, this.refreshAccessToken)
             useUserStore().setUser(resp.user)
 
             resolve(resp)
           })
           .catch((err) => {
             console.log('Refreshing access token failed', err)
+            // keep using the previous access token while it is valid, e.g. if the network is temporarily unavailable
+            if (
+              previousAccessToken &&
+              !getAccessToken() &&
+              this.getRefreshToken() === refreshToken &&
+              Date.now() < previousAccessTokenExpireTime
+            ) {
+              this.$oh.auth.setAccessToken(previousAccessToken)
+            }
             reject(err)
           })
       })
-    },
-    checkTokenAfterVisibilityChange(evt) {
-      if (!document.hidden && this.currentTokenExpireTime && this.currentTokenExpireTime < new Date().getTime()) {
-        console.log('Refreshing expired token')
-        this.refreshAccessToken()
-      }
     },
     cleanSession() {
       return new Promise((resolve, reject) => {
@@ -114,6 +119,7 @@ export default {
         const payload = utils.serializeObject({
           refresh_token: refreshToken
         })
+        cancelTokenRefresh()
         localStorage.removeItem('openhab.ui:refreshToken')
         this.$oh.api
           .postPlain('/rest/auth/logout', payload, 'application/json', 'application/x-www-form-urlencoded')
