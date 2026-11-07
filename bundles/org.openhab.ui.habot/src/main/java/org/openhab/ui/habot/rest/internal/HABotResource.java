@@ -20,20 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.openhab.core.auth.Role;
 import org.openhab.core.io.rest.LocaleService;
@@ -54,11 +40,11 @@ import org.openhab.ui.habot.notification.internal.webpush.Subscription;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.jaxrs.whiteboard.JaxrsWhiteboardConstants;
-import org.osgi.service.jaxrs.whiteboard.propertytypes.JSONRequired;
-import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsApplicationSelect;
-import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsName;
-import org.osgi.service.jaxrs.whiteboard.propertytypes.JaxrsResource;
+import org.osgi.service.jakartars.whiteboard.JakartarsWhiteboardConstants;
+import org.osgi.service.jakartars.whiteboard.propertytypes.JSONRequired;
+import org.osgi.service.jakartars.whiteboard.propertytypes.JakartarsApplicationSelect;
+import org.osgi.service.jakartars.whiteboard.propertytypes.JakartarsName;
+import org.osgi.service.jakartars.whiteboard.propertytypes.JakartarsResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +57,19 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response.Status;
 
 /**
  * This class describes the /habot resource of the REST API.
@@ -80,9 +79,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * @author Wouter Born - Migrated to OpenAPI annotations
  */
 @Component
-@JaxrsResource
-@JaxrsName(HABotResource.PATH_HABOT)
-@JaxrsApplicationSelect("(" + JaxrsWhiteboardConstants.JAX_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
+@JakartarsResource
+@JakartarsName(HABotResource.PATH_HABOT)
+@JakartarsApplicationSelect("(" + JakartarsWhiteboardConstants.JAKARTA_RS_NAME + "=" + RESTConstants.JAX_RS_NAME + ")")
 @JSONRequired
 @RolesAllowed({ Role.USER, Role.ADMIN })
 @Path(HABotResource.PATH_HABOT)
