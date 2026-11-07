@@ -11,6 +11,8 @@
 export const TOKEN_CHECK_INTERVAL_MS = 10_000
 /** Upper bound for the retry delay, so a revoked session does not flood the server with refresh requests. */
 export const TOKEN_REFRESH_MAX_RETRY_DELAY_MS = 300_000
+/** Time after which a pending refresh is considered failed, e.g. if its connection did not survive a suspend. */
+export const TOKEN_REFRESH_TIMEOUT_MS = 30_000
 
 /** Share of the token lifetime after which it is refreshed, i.e. 3 minutes before a 1-hour token expires. */
 const REFRESH_AT_LIFETIME_SHARE = 0.95
@@ -18,21 +20,40 @@ const REFRESH_AT_LIFETIME_SHARE = 0.95
 let refreshDueTime: number | null = null
 let retryDelay = TOKEN_CHECK_INTERVAL_MS
 let refreshFn: (() => Promise<unknown>) | null = null
-let refreshInProgress = false
+/** Identifies the current refresh attempt, so outcomes of abandoned or superseded attempts are ignored. */
+let attempt = 0
+let attemptStartTime: number | null = null
 let checkTimer: ReturnType<typeof setInterval> | null = null
 
+function refreshFailed(): void {
+  attempt++
+  attemptStartTime = null
+  refreshDueTime = Date.now() + retryDelay
+  retryDelay = Math.min(retryDelay * 2, TOKEN_REFRESH_MAX_RETRY_DELAY_MS)
+}
+
 function checkTokenRefresh(): void {
-  if (refreshInProgress || refreshFn === null || refreshDueTime === null || Date.now() < refreshDueTime) return
-  refreshInProgress = true
-  refreshFn()
-    .catch(() => {
-      // e.g. the network is not yet available after a resume: retry with backoff
-      refreshDueTime = Date.now() + retryDelay
-      retryDelay = Math.min(retryDelay * 2, TOKEN_REFRESH_MAX_RETRY_DELAY_MS)
-    })
-    .finally(() => {
-      refreshInProgress = false
-    })
+  if (refreshFn === null || refreshDueTime === null) return
+  if (attemptStartTime !== null) {
+    if (Date.now() - attemptStartTime < TOKEN_REFRESH_TIMEOUT_MS) return
+    refreshFailed()
+  }
+  if (Date.now() < refreshDueTime) return
+
+  const currentAttempt = ++attempt
+  attemptStartTime = Date.now()
+  refreshFn().then(
+    () => {
+      if (currentAttempt === attempt) attemptStartTime = null
+    },
+    () => {
+      if (currentAttempt === attempt) refreshFailed()
+    }
+  )
+}
+
+function onVisibilityChange(): void {
+  if (!document.hidden) checkTokenRefresh()
 }
 
 /**
@@ -42,13 +63,15 @@ function checkTokenRefresh(): void {
  * @param refresh function refreshing the access token; it has to call this function again on success, and reject on failure
  */
 export function scheduleTokenRefresh(expiresIn: number, refresh: () => Promise<unknown>): void {
+  attempt++
+  attemptStartTime = null
   refreshDueTime = Date.now() + expiresIn * 1000 * REFRESH_AT_LIFETIME_SHARE
   retryDelay = TOKEN_CHECK_INTERVAL_MS
   refreshFn = refresh
   if (checkTimer === null) {
     checkTimer = setInterval(checkTokenRefresh, TOKEN_CHECK_INTERVAL_MS)
     // refresh right away when the app becomes visible again, as timers of hidden pages may be throttled
-    document.addEventListener('visibilitychange', checkTokenRefresh)
+    document.addEventListener('visibilitychange', onVisibilityChange)
   }
 }
 
@@ -59,8 +82,10 @@ export function cancelTokenRefresh(): void {
   if (checkTimer !== null) {
     clearInterval(checkTimer)
     checkTimer = null
-    document.removeEventListener('visibilitychange', checkTokenRefresh)
+    document.removeEventListener('visibilitychange', onVisibilityChange)
   }
+  attempt++
+  attemptStartTime = null
   refreshDueTime = null
   retryDelay = TOKEN_CHECK_INTERVAL_MS
   refreshFn = null

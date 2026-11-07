@@ -1,5 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { scheduleTokenRefresh, cancelTokenRefresh, TOKEN_CHECK_INTERVAL_MS, TOKEN_REFRESH_MAX_RETRY_DELAY_MS } from './token-refresh'
+import {
+  scheduleTokenRefresh,
+  cancelTokenRefresh,
+  TOKEN_CHECK_INTERVAL_MS,
+  TOKEN_REFRESH_MAX_RETRY_DELAY_MS,
+  TOKEN_REFRESH_TIMEOUT_MS
+} from './token-refresh'
 
 const EXPIRES_IN = 3600
 const REFRESH_DUE_MS = EXPIRES_IN * 950
@@ -7,6 +13,11 @@ const REFRESH_DUE_MS = EXPIRES_IN * 950
 /** Simulates a suspended or hibernated device: the wall clock advances, but timers do not. */
 function suspend(ms: number) {
   vi.setSystemTime(Date.now() + ms)
+}
+
+function setVisibility(hidden: boolean) {
+  vi.spyOn(document, 'hidden', 'get').mockReturnValue(hidden)
+  document.dispatchEvent(new Event('visibilitychange'))
 }
 
 describe('token-refresh', () => {
@@ -17,6 +28,7 @@ describe('token-refresh', () => {
   afterEach(() => {
     cancelTokenRefresh()
     vi.useRealTimers()
+    vi.restoreAllMocks()
   })
 
   it('refreshes the token after 95% of its lifetime', async () => {
@@ -45,12 +57,21 @@ describe('token-refresh', () => {
     const refresh = vi.fn<() => Promise<void>>().mockResolvedValue()
     scheduleTokenRefresh(EXPIRES_IN, refresh)
 
-    document.dispatchEvent(new Event('visibilitychange'))
+    setVisibility(false)
     expect(refresh).not.toHaveBeenCalled()
 
     suspend(REFRESH_DUE_MS)
-    document.dispatchEvent(new Event('visibilitychange'))
+    setVisibility(false)
     expect(refresh).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not refresh the token when the page becomes hidden', () => {
+    const refresh = vi.fn<() => Promise<void>>().mockResolvedValue()
+    scheduleTokenRefresh(EXPIRES_IN, refresh)
+
+    suspend(REFRESH_DUE_MS)
+    setVisibility(true)
+    expect(refresh).not.toHaveBeenCalled()
   })
 
   it('schedules the next refresh based on the new token', async () => {
@@ -73,11 +94,46 @@ describe('token-refresh', () => {
     scheduleTokenRefresh(EXPIRES_IN, refresh)
 
     suspend(REFRESH_DUE_MS)
-    await vi.advanceTimersByTimeAsync(TOKEN_CHECK_INTERVAL_MS * 3)
-    document.dispatchEvent(new Event('visibilitychange'))
+    await vi.advanceTimersByTimeAsync(TOKEN_CHECK_INTERVAL_MS * 2)
+    setVisibility(false)
     expect(refresh).toHaveBeenCalledTimes(1)
 
     pending.resolve()
+  })
+
+  it('retries a refresh that does not complete in time', async () => {
+    const pending = Promise.withResolvers<void>()
+    const refresh = vi.fn<() => Promise<void>>().mockReturnValueOnce(pending.promise).mockResolvedValue()
+    scheduleTokenRefresh(EXPIRES_IN, refresh)
+
+    suspend(REFRESH_DUE_MS)
+    await vi.advanceTimersByTimeAsync(TOKEN_CHECK_INTERVAL_MS)
+    expect(refresh).toHaveBeenCalledTimes(1)
+
+    // timed out, retried after the initial retry delay
+    await vi.advanceTimersByTimeAsync(TOKEN_REFRESH_TIMEOUT_MS + TOKEN_CHECK_INTERVAL_MS)
+    expect(refresh).toHaveBeenCalledTimes(2)
+    scheduleTokenRefresh(EXPIRES_IN, refresh)
+
+    // a late failure of the abandoned attempt must not trigger another retry
+    pending.reject(new Error('connection reset'))
+    await vi.advanceTimersByTimeAsync(TOKEN_REFRESH_TIMEOUT_MS * 2)
+    expect(refresh).toHaveBeenCalledTimes(2)
+  })
+
+  it('ignores the failure of a refresh superseded by a new token', async () => {
+    const pending = Promise.withResolvers<void>()
+    const refresh = vi.fn<() => Promise<void>>().mockReturnValue(pending.promise)
+    scheduleTokenRefresh(EXPIRES_IN, refresh)
+
+    suspend(REFRESH_DUE_MS)
+    await vi.advanceTimersByTimeAsync(TOKEN_CHECK_INTERVAL_MS)
+    expect(refresh).toHaveBeenCalledTimes(1)
+
+    scheduleTokenRefresh(EXPIRES_IN, refresh)
+    pending.reject(new Error('network error'))
+    await vi.advanceTimersByTimeAsync(REFRESH_DUE_MS - TOKEN_CHECK_INTERVAL_MS)
+    expect(refresh).toHaveBeenCalledTimes(1)
   })
 
   it('retries a failed refresh with an increasing, bounded delay', async () => {
@@ -119,6 +175,21 @@ describe('token-refresh', () => {
     expect(refresh).toHaveBeenCalledTimes(2)
   })
 
+  it('does not resume refreshing when a pending refresh fails after cancellation', async () => {
+    const pending = Promise.withResolvers<void>()
+    const refresh = vi.fn<() => Promise<void>>().mockReturnValue(pending.promise)
+    scheduleTokenRefresh(EXPIRES_IN, refresh)
+
+    suspend(REFRESH_DUE_MS)
+    await vi.advanceTimersByTimeAsync(TOKEN_CHECK_INTERVAL_MS)
+    expect(refresh).toHaveBeenCalledTimes(1)
+
+    cancelTokenRefresh()
+    pending.reject(new Error('network error'))
+    await vi.advanceTimersByTimeAsync(TOKEN_REFRESH_MAX_RETRY_DELAY_MS * 2)
+    expect(refresh).toHaveBeenCalledTimes(1)
+  })
+
   it('stops refreshing when cancelled', async () => {
     const refresh = vi.fn<() => Promise<void>>().mockResolvedValue()
     scheduleTokenRefresh(EXPIRES_IN, refresh)
@@ -126,7 +197,7 @@ describe('token-refresh', () => {
     cancelTokenRefresh()
     suspend(REFRESH_DUE_MS)
     await vi.advanceTimersByTimeAsync(TOKEN_CHECK_INTERVAL_MS)
-    document.dispatchEvent(new Event('visibilitychange'))
+    setVisibility(false)
 
     expect(refresh).not.toHaveBeenCalled()
   })
