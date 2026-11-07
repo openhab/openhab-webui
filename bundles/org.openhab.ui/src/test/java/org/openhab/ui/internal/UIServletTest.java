@@ -106,6 +106,16 @@ public class UIServletTest {
     }
 
     @Test
+    public void servesSvgzWithGzipEncoding() throws Exception {
+        Files.writeString(confDir.resolve("html").resolve("image.svgz"), "compressed");
+
+        get("/static/image.svgz");
+
+        assertEquals("compressed", body());
+        verify(response).setHeader("Content-Encoding", "gzip");
+    }
+
+    @Test
     public void servesFileWithSpaceInName() throws Exception {
         // the container passes the decoded path, e.g. for /static/My%20Image.txt
         get("/static/My Image.txt");

@@ -122,8 +122,15 @@ public class UIServlet extends HttpServlet {
         if (resource.contentType != null) {
             response.setContentType(resource.contentType);
         }
-        if (resource.contentEncoding != null) {
-            response.setHeader("Content-Encoding", resource.contentEncoding);
+        // .svgz files are gzip compressed SVGs and must be served with Content-Encoding: gzip, as Jetty's
+        // DefaultServlet did
+        @Nullable
+        String contentEncoding = resource.contentEncoding;
+        if (requestPath.endsWith(".svgz")) {
+            contentEncoding = contentEncoding == null ? "gzip" : "gzip, " + contentEncoding;
+        }
+        if (contentEncoding != null) {
+            response.setHeader("Content-Encoding", contentEncoding);
         }
         long length = resource.contentLength;
         ByteRange range = null;
