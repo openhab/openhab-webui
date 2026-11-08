@@ -1,0 +1,17 @@
+ESPHome micro_wake_word Model Collection
+Copyright 2024-2026 Open Home Foundation
+
+This product includes software and model files developed by the
+Open Home Foundation (https://www.openhomefoundation.org/).
+
+Licensed under the Apache License, Version 2.0. See the LICENSE file for the
+full terms. The license covers the entire contents of this repository,
+including the trained model weights (.tflite) and their manifests (.json).
+
+Trademarks
+----------
+
+Wake word names may refer to products, services, or characters owned by third
+parties. Those names are used only to identify what each model detects. No
+affiliation with or endorsement by their owners is claimed, and the Apache
+License grants no rights to any third-party trademark.

@@ -23,14 +23,7 @@
         {{ title }}
       </f7-nav-title>
       <f7-nav-right>
-        <f7-link
-          v-if="runtimeStore.voiceIcon"
-          :icon-aurora="runtimeStore.voiceIcon"
-          :icon-ios="runtimeStore.voiceIcon"
-          :icon-md="runtimeStore.voiceIcon"
-          :tooltip="$t('home.triggerVoice')"
-          style="margin-right: 8px"
-          @click="triggerDialog" />
+        <voice-button />
         <developer-icons />
         <f7-link
           v-if="userStore.isAdmin"
@@ -159,6 +152,7 @@ import { mapStores } from 'pinia'
 import OverviewTab from './home/overview-tab.vue'
 import ModelTab from './home/model-tab.vue'
 import DeveloperIcons from '@/components/developer/developer-icons.vue'
+import VoiceButton from '@/components/voice/voice-button.vue'
 import HomeCards from './home/homecards-mixin'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
@@ -177,7 +171,8 @@ export default {
   components: {
     OverviewTab,
     ModelTab,
-    DeveloperIcons
+    DeveloperIcons,
+    VoiceButton
   },
   data() {
     return {
@@ -302,9 +297,6 @@ export default {
       const hiddenTabs = this.homePageComponent.config.hiddenModelTabs
       if (hiddenTabs === undefined || !hiddenTabs.length) return true
       return hiddenTabs.indexOf(tab) < 0
-    },
-    triggerDialog() {
-      f7.emit('triggerDialog')
     },
     appDrawerClick() {
       if (useRuntimeStore().showDeveloperDock) {

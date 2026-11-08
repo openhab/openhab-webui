@@ -1,4 +1,5 @@
 import sourceWorkletURL from './audio-source-worklet.ts?worker&url'
+import { LevelMeter } from './level-meter.ts'
 
 /**
  * Utility class to encapsulate the creation of a {@link MediaStreamAudioSourceNode}, and handle its connected {@link AudioNode} processors.
@@ -16,6 +17,10 @@ export class AudioSource {
    * The central gain node used to control the volume and share the audio data across the connected nodes.
    */
   private readonly gainNode: GainNode
+  /**
+   * Measures the loudness of the microphone.
+   */
+  private readonly levelMeter: LevelMeter
   /**
    * The raw media stream obtained from the microphone.
    */
@@ -37,6 +42,8 @@ export class AudioSource {
   constructor(volume: number) {
     this.gainNode = this.getAudioContext().createGain()
     this.setVolume(volume)
+    this.levelMeter = new LevelMeter(this.getAudioContext())
+    this.gainNode.connect(this.levelMeter.node)
   }
 
   /**
@@ -126,6 +133,13 @@ export class AudioSource {
    */
   setVolume(value: number) {
     this.gainNode.gain.setValueAtTime(value / 100, this.getAudioContext().currentTime)
+  }
+
+  /**
+   * The loudness of the microphone, from 0 for silence to 1 for loud speech.
+   */
+  getLevel() {
+    return this.levelMeter.level()
   }
 
   /**

@@ -110,6 +110,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
   const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
   const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
+  const dialogWakeWord = ref<string>(localStorage.getItem('openhab.ui:dialog.wakeWord') || '')
+  const dialogWakeWordUrl = ref<string>(localStorage.getItem('openhab.ui:dialog.wakeWordUrl') || '')
   const assistSelectedLlmTools = ref<string[] | null>(localStorage.getItem('openhab.ui:assist.llmtools.selected')?.split(',') ?? null)
   const assistShowGenericToolVisualisation = ref<boolean>(localStorage.getItem('openhab.ui:assist.showGenericToolVisualisation') === 'true')
 
@@ -325,6 +327,14 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     localStorage.setItem('openhab.ui:dialog.triggerOnLaunch', newValue ? 'true' : 'false')
   })
 
+  watch(dialogWakeWord, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.wakeWord', newValue)
+  })
+
+  watch(dialogWakeWordUrl, (newValue) => {
+    localStorage.setItem('openhab.ui:dialog.wakeWordUrl', newValue)
+  })
+
   watch(
     assistSelectedLlmTools,
     (v) => {
@@ -423,6 +433,8 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     dialogLocationItem,
     dialogConnectOnWindowEvent,
     dialogTriggerOnConnect,
+    dialogWakeWord,
+    dialogWakeWordUrl,
     assistSelectedLlmTools,
     assistShowGenericToolVisualisation,
 
