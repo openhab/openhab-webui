@@ -44,12 +44,12 @@
     margin-left calc(0.5 * var(--f7-card-expandable-margin-horizontal))
     margin-right calc(0.5 * var(--f7-card-expandable-margin-horizontal))
 
-@media (max-width 1023px)
+@media (--media-MD-down)
   .model-cards-section
     padding-left var(--f7-safe-area-left)
     padding-right var(--f7-safe-area-right)
 
-@media (min-width 768px)
+@media (--media-SM-up)
   .model-cards-section
     display flex
     flex-wrap wrap
@@ -58,7 +58,7 @@
     flex-shrink 10
     min-width 0
 
-@media (min-width 768px) and (max-width 1023px)
+@media (--media-SM-only)
   .model-cards-section .card
     width 340px
     margin-top 0
@@ -66,7 +66,7 @@
   .model-cards-section .card:nth-child(n + 3)
     margin-top 0
 
-@media (min-width 1024px)
+@media (--media-MD-up)
   .model-cards-section
     .card
       width 340px

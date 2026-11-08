@@ -130,7 +130,7 @@ const aggregateSeries: SeriesComponent = {
 
     return dayjs(startTime).subtract(1, groupStart as dayjs.ManipulateType)
   },
-  get(context, component, points, startTime, endTime) {
+  get(context, component, items, points, startTime, endTime) {
     const series = context.evaluateExpression<OhAggregateSeriesOption>(
       ComponentId.get(component)!,
       component.config,
@@ -217,7 +217,8 @@ const aggregateSeries: SeriesComponent = {
     }
 
     if (series.item) {
-      series.id = `oh-aggregate-series#${series.item}#${itemSeries?.unit ?? ''}#${f7.utils.id()}`
+      // the 5th segment flags whether transposed 1-dimension series, so oh-chart-tooltip knows whether category and value are swapped
+      series.id = `oh-aggregate-series#${series.item}#${itemSeries?.unit ?? ''}#${f7.utils.id()}${series.transpose && !dimension2 ? '#transpose' : ''}`
     }
 
     series.data = data

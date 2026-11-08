@@ -359,7 +359,7 @@
 .md .semantics-details-sheet .toolbar .link
   width 35%
 
-@media (min-width: 768px)
+@media (--media-SM-up)
   .semantics-tree-wrapper
     height 100%
     .row
@@ -384,7 +384,7 @@
   .add-to-semantics-fab
     visibility hidden !important
 
-@media (max-width: 767px)
+@media (--media-SM-down)
   .details-pane
     display none
   .semantics-tree-wrapper.sheet-opened
@@ -392,11 +392,11 @@
   .semantics-details-sheet
     height calc(0.8*var(--f7-sheet-height))
 
-@media (min-width: 450px)
+@media (--media-XS-up)
   .code-editor-toolbar .code-editor-tag-filter
     .button .icon
       display none
-@media (min-width: 768px)
+@media (--media-SM-up)
   .code-editor-toolbar .code-editor-tag-filter
     .button .icon
       display inherit
@@ -404,12 +404,12 @@
 
 <script>
 import { nextTick, defineAsyncComponent } from 'vue'
-import { f7, theme } from 'framework7-vue'
+import { theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
 import fastDeepEqual from 'fast-deep-equal/es6'
 import SemanticsTreeview from '@/components/tags/semantics-treeview.vue'
-import TagMixin from '@/components/tags/tag-mixin'
+import { semanticType } from '@/components/tags/tag-helpers'
 import { useDirty } from '@/pages/useDirty'
 import { useTabs } from '@/pages/useTabs'
 
@@ -419,7 +419,6 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { showToast, showAlertDialog } from '@/js/dialog-promises'
 
 export default {
-  mixins: [TagMixin],
   components: {
     SemanticsTreeview,
     CodeEditor: defineAsyncComponent(() => import(/* webpackChunkName: "code-editor" */ '@/components/config/controls/code-editor.vue'))
@@ -436,7 +435,8 @@ export default {
       dirtyIndicator,
       setupDirtyWatch,
       currentTab,
-      switchTab
+      switchTab,
+      semanticType
     }
   },
   data() {

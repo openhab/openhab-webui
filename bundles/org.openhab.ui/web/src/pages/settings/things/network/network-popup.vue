@@ -54,6 +54,10 @@ export default {
     networkType: {
       type: String,
       required: true
+    },
+    thingUID: {
+      type: String,
+      default: undefined
     }
   },
   data() {
@@ -82,7 +86,7 @@ export default {
 
       try {
         const things = await this.$oh.api.get('/rest/things')
-        this.networkGraph = this.provider.buildGraph(things, this.bridgeUID)
+        this.networkGraph = this.provider.buildGraph(things, this.bridgeUID, this.thingUID)
       } catch (err) {
         console.error(`Failed to load ${this.networkType} network:`, err)
         this.error = `Failed to load network: ${err.message}`

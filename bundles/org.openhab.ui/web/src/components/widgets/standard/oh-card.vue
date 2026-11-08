@@ -55,8 +55,8 @@ export default {
     contentClass: [String, Array],
     header: Object,
     content: Object,
-    // eslint-disable-next-line vue/prop-name-casing
-    'content-root': Object,
+    // oxlint-disable-next-line vue/prop-name-casing
+    'content-root': Object, // eslint-disable-line vue/prop-name-casing
     footer: Object
   },
   setup(props) {

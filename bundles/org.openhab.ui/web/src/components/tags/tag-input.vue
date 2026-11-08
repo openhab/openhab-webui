@@ -34,10 +34,9 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import TagMixin from '@/components/tags/tag-mixin'
+import { isSemanticTag } from '@/components/tags/tag-helpers'
 
 export default {
-  mixins: [TagMixin],
   props: {
     item: Object,
     disabled: Boolean,
@@ -53,9 +52,7 @@ export default {
   },
   computed: {
     tags() {
-      return this.item.tags.filter(
-        (t) => (this.showSemanticTags ? true : !this.isSemanticTag(t)) && !this.isScriptTag(t) && !this.isSceneTag(t)
-      )
+      return this.item.tags.filter((t) => (this.showSemanticTags ? true : !isSemanticTag(t)) && !this.isScriptTag(t) && !this.isSceneTag(t))
     }
   },
   methods: {
@@ -76,7 +73,7 @@ export default {
         return
       }
       if (newTag && this.item.tags.indexOf(newTag) === -1) {
-        if (!this.showSemanticTags && this.isSemanticTag(newTag)) {
+        if (!this.showSemanticTags && isSemanticTag(newTag)) {
           f7.dialog.alert(`The tag '${newTag}' is a semantic tag. A semantic tag cannot be added here.`, 'Cannot add tag')
           return
         }

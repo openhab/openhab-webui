@@ -47,7 +47,7 @@
   width 100%
   margin-bottom 24px
 
-@media (max-width: 480px)
+@media (--media-XS-down)
   .suggestions-grid
     grid-template-columns 1fr
 

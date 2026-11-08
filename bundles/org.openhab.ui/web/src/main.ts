@@ -7,6 +7,9 @@ import '@/js/monkeypatch'
 // Import Vue
 import { createApp, reactive, type Component } from 'vue'
 
+// Import directives
+import { vDeferred } from '@/js/directives/vDeferred'
+
 // Import globally registered components
 import OhNavContent from '@/components/navigation/oh-nav-content.vue'
 import OhIconComponent from './components/widgets/system/oh-icon.vue'
@@ -62,7 +65,7 @@ app.use(pinia)
 app.use(i18n)
 app.use(AsyncComputed)
 app.use(fullscreen)
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+// oxlint-disable-next-line typescript/no-unsafe-argument
 app.use(VueClipboard, {
   autoSetContainer: true, // add this line to enable auto setting container
   appendToBody: true // add this line to append the popup to body
@@ -74,6 +77,9 @@ app.component('OhIcon', OhIconComponent)
 app.component('GenericWidgetComponent', GenericWidgetComponent)
 app.component('GroupBox', GroupBox)
 registerWidgets(app)
+
+// Register custom directives
+app.directive('deferred', vDeferred)
 
 app.mount('#app')
 performance.mark('app-mounted')

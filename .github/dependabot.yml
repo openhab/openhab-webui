@@ -37,6 +37,7 @@ updates:
       - dependency-name: "org.codehaus.mojo:*"
       - dependency-name: "*jacoco*" # code coverage tool, both tool and plugin
       - dependency-name: "*plugin*"
+      - dependency-name: "org.apache.maven:apache-maven" # maven wrapper distribution
       - dependency-name: "org.eclipse.jdt:ecj" # eclipse compiler
     ignore:
       - dependency-name: "com.github.jaxb-xew-plugin:jaxb-xew-plugin" # updated with core
@@ -49,7 +50,8 @@ updates:
   - package-ecosystem: "npm"
     directory: "/bundles/org.openhab.ui/web/" # Location of package manifests
     schedule:
-      interval: "monthly"
+      interval: "cron"
+      cronjob: "23 7 14 1,4,7,10 *" # 07:23, 14th at the begin of each quarter
     open-pull-requests-limit: 15
     labels:
       - "main ui"
@@ -94,6 +96,11 @@ updates:
       leaflet-ecosystem:
         patterns:
           - "*leaflet*"
+      # jsep (JavaScript expression parser)
+      jsep:
+        patterns:
+          - "jsep"
+          - "@jsep-plugin/*"
       # Vite and related Build tooling
       build-vite:
         patterns:
@@ -109,6 +116,7 @@ updates:
           - "@eslint/*"
           - "*eslint-plugin*"
           - "oxfmt"
+          - "oxlint*"
           - "typescript-eslint"
           - "@typescript-eslint/*"
           - "vue-eslint-parser"

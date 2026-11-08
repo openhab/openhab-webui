@@ -273,6 +273,7 @@ export function useChart(
         seriesComponents[component.component].get(
           chartContext.value,
           component,
+          data.map((d) => d[0]),
           data.map((d) => d[1]),
           seriesStartTime,
           seriesEndTime
