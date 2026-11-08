@@ -149,6 +149,24 @@
           <span>{{ t('about.dialog.triggerOnConnect') }}</span>
           <f7-toggle v-model:checked="dialogTriggerOnConnect" />
         </f7-list-item>
+        <f7-list-input
+          :label="t('about.dialog.wakeWord')"
+          :info="t('about.dialog.wakeWord.info')"
+          type="select"
+          :value="dialogWakeWord"
+          @change="dialogWakeWord = $event.target.value">
+          <option value="">{{ t('about.dialog.wakeWord.none') }}</option>
+          <option v-for="wakeWord in builtinWakeWords" :key="wakeWord.id" :value="wakeWord.id">{{ wakeWord.label }}</option>
+          <option :value="customWakeWord">{{ t('about.dialog.wakeWord.custom') }}</option>
+        </f7-list-input>
+        <f7-list-input
+          v-if="dialogWakeWord === customWakeWord"
+          :label="t('about.dialog.wakeWordUrl')"
+          :info="t('about.dialog.wakeWordUrl.info')"
+          type="text"
+          placeholder="/static/microwakeword/hey_computer.json"
+          :value="dialogWakeWordUrl"
+          @change="dialogWakeWordUrl = $event.target.value" />
       </f7-list>
     </group-box>
   </f7-block>
@@ -280,6 +298,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { BUILTIN_WAKE_WORDS, CUSTOM_WAKE_WORD } from '@/js/voice/wakeword/wake-words'
 
 export default {
   components: {
@@ -289,7 +308,9 @@ export default {
     const { t, mergeLocaleMessage } = useI18n({ useScope: 'local' })
     loadLocaleMessages('theme-switcher', mergeLocaleMessage)
     return {
-      t
+      t,
+      builtinWakeWords: BUILTIN_WAKE_WORDS,
+      customWakeWord: CUSTOM_WAKE_WORD
     }
   },
   methods: {
@@ -338,7 +359,9 @@ export default {
       'dialogListeningItem',
       'dialogLocationItem',
       'dialogConnectOnWindowEvent',
-      'dialogTriggerOnConnect'
+      'dialogTriggerOnConnect',
+      'dialogWakeWord',
+      'dialogWakeWordUrl'
     ])
   }
 }

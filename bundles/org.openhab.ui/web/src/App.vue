@@ -258,6 +258,8 @@
       :ios-swipe-back="false"
       :animate="!uiOptionsStore.disablePageTransitionAnimation" />
 
+    <voice-indicator />
+
     <Teleport to="body">
       <div v-if="showDockedLogViewer" class="log-dock" :class="{ fullscreen: logDockFullscreen }" :style="logDockStyle">
         <div class="log-dock-resize-handle" @pointerdown.prevent="startDockResize" />
@@ -459,6 +461,7 @@ import LogViewerEmbedded from '@/pages/developer/log-viewer/log-viewer-embedded.
 import { getPageIcon } from '@/pages/page-type'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import SidebarAdminSubmenu from '@/components/navigation/sidebar-admin-submenu.vue'
+import VoiceIndicator from '@/components/voice/voice-indicator.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
@@ -495,6 +498,7 @@ export default {
     PanelRight,
     LogViewerEmbedded,
     SidebarAdminSubmenu,
+    VoiceIndicator,
     DeveloperDock: defineAsyncComponent(() => import(/* webpackChunkName: "admin-base" */ '@/components/developer/developer-dock.vue'))
   },
   setup() {

@@ -1,4 +1,5 @@
 import sinkWorkletURL from './audio-sink-worklet.ts?worker&url'
+import { LevelMeter } from './level-meter.ts'
 
 /**
  * The {@link AudioSink} class plays the audio transmitted by an AudioNode using the audioContext destination or a MediaStreamDestination + a web AudioElement.
@@ -17,6 +18,10 @@ export class AudioSink {
    * @private
    */
   private static audioElement?: HTMLAudioElement
+  /**
+   * Measures the loudness of all sinks together.
+   */
+  private static levelMeter?: LevelMeter
   /**
    * Counter tracking active sink instances to manage global playback state.
    */
@@ -61,6 +66,7 @@ export class AudioSink {
   static async configure(audioContext: AudioContext, useAudioElement: boolean) {
     await audioContext.audioWorklet.addModule(sinkWorkletURL)
     AudioSink.audioContext = audioContext
+    AudioSink.levelMeter ??= new LevelMeter(audioContext)
     if (useAudioElement) {
       console.debug('Voice: Using audio element to render sound')
       if (!AudioSink.destination) {
@@ -85,6 +91,9 @@ export class AudioSink {
    */
   async start() {
     this.processorNode.connect(this.gainNode)
+    if (AudioSink.levelMeter) {
+      this.gainNode.connect(AudioSink.levelMeter.node)
+    }
     AudioSink.connectedNodes++
     if (!AudioSink.destination || !AudioSink.audioElement) {
       this.gainNode.connect(this.getAudioContext().destination)
@@ -95,6 +104,13 @@ export class AudioSink {
         await AudioSink.audioElement.play()
       }
     }
+  }
+
+  /**
+   * The loudness of the audio that the sinks play, from 0 for silence to 1 for loud speech.
+   */
+  static getLevel() {
+    return AudioSink.levelMeter?.level() ?? 0
   }
 
   /**

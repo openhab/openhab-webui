@@ -1,7 +1,33 @@
 import audioWorkerURL from './audio-worker?worker&url'
+import wakeWordWorkerURL from './wakeword/wakeword-worker?worker&url'
 import { AudioSink } from './audio/audio-sink.ts'
 import { AudioSource } from './audio/audio-source.ts'
-import { WorkerInCmd, WorkerOutCmd, type WorkerOutMessage } from './types.ts'
+import {
+  type WakeWordConfig,
+  WakeWordWorkerInCmd,
+  type WakeWordWorkerInMessage,
+  WakeWordWorkerOutCmd,
+  type WakeWordWorkerOutMessage,
+  type VoiceState,
+  WorkerInCmd,
+  WorkerOutCmd,
+  type WorkerOutMessage
+} from './types.ts'
+
+/** Detections within this time after a spot are ignored, for when the server doesn't start listening. */
+const WAKE_WORD_COOLDOWN_MS = 3000
+
+/**
+ * When the server starts listening within this time after a wake word spot, the audio since the end of the wake word
+ * is sent first. A little below the 5 seconds that the wake word worker keeps.
+ */
+const WAKE_WORD_AUDIO_MS = 4500
+
+/** How long the dialog shows as triggered when the server doesn't start listening. */
+const TRIGGERED_MS = 3000
+
+/** How long the dialog shows as thinking after listening when no reply plays. */
+const THINKING_MS = 8000
 
 /* oxlint-disable typescript/no-unsafe-member-access */
 /* oxlint-disable typescript/no-unsafe-argument */
@@ -12,8 +38,10 @@ import { WorkerInCmd, WorkerOutCmd, type WorkerOutMessage } from './types.ts'
 export interface AudioMainEvents {
   onMessage?: (message: string, level?: 'info' | 'error', duration?: number) => (() => void) | void
   onRunningChange: (instance: AudioMain) => void
-  onSpeakingChange: (instance: AudioMain) => void
-  onListeningChange: (instance: AudioMain) => void
+  onSpeakingChange?: (instance: AudioMain) => void
+  onListeningChange?: (instance: AudioMain) => void
+  /** Called when getState() or isListeningForWakeWord() change. */
+  onStateChange?: (instance: AudioMain) => void
 }
 
 export interface SpeakerConfiguration {
@@ -31,6 +59,7 @@ export class AudioMain {
   // worker & state
   private worker: Worker | null
   private initialized: boolean = false
+  private initializing: Promise<void> | null = null
   private online: boolean = false
   // voice audio context
   private audioContext: AudioContext | null = null
@@ -39,12 +68,27 @@ export class AudioMain {
   private sourceVolume: number = 50
   private micStreaming: boolean = false
   private listening: boolean = false
+  // the processor that streams the microphone to the server while listening
+  private streamingNode: AudioWorkletNode | null = null
+  // wake word detection
+  private wakeWordWorker: Worker | null = null
+  private wakeWordNode: AudioWorkletNode | null = null
+  private wakeWordPaused: boolean = false
+  private lastWakeWordSpot: number = 0
+  // whether the wake word worker streams the microphone to the server, instead of a worklet
+  private streamingViaWakeWord: boolean = false
   // audio sink
   private readonly activeSinks: Map<string, AudioSink> = new Map()
   private sinkVolume: number = 50
+  // what the dialog shows, see updateState
+  private state: VoiceState = 'offline'
+  private spotTime: number = 0
+  private listeningEndTime: number = 0
+  private stateTimer?: ReturnType<typeof setTimeout>
 
   private readonly handleSuspendOnHidden: () => void
   private resolveSourcePort?: () => void
+  private releaseSpeaker?: () => void
   private sourceCheckIntervalRef?: ReturnType<typeof setInterval>
 
   constructor(ohUrl: string, accessTokenGetter: () => string | null, events: AudioMainEvents) {
@@ -87,6 +131,59 @@ export class AudioMain {
 
   isSpeaking() {
     return this.activeSinks.size > 0
+  }
+
+  getState() {
+    return this.state
+  }
+
+  isListeningForWakeWord() {
+    return this.wakeWordNode !== null
+  }
+
+  /**
+   * The loudness of the microphone while listening, or of the reply while speaking, from 0 to 1.
+   */
+  getLevel() {
+    switch (this.state) {
+      case 'listening':
+        return this.audioSource?.getLevel() ?? 0
+      case 'speaking':
+        return AudioSink.getLevel()
+      default:
+        return 0
+    }
+  }
+
+  /**
+   * Works out what the dialog is doing and reports a change. The triggered and thinking states end after a while, for
+   * when the server doesn't go on to the next step.
+   */
+  private updateState() {
+    clearTimeout(this.stateTimer)
+    const now = Date.now()
+    let state: VoiceState = 'idle'
+    let endTime = 0
+    if (!this.isRunning()) {
+      state = 'offline'
+    } else if (this.listening) {
+      state = 'listening'
+    } else if (this.isSpeaking()) {
+      state = 'speaking'
+    } else if (now < this.listeningEndTime + THINKING_MS) {
+      state = 'thinking'
+      endTime = this.listeningEndTime + THINKING_MS
+    } else if (now < this.spotTime + TRIGGERED_MS) {
+      state = 'triggered'
+      endTime = this.spotTime + TRIGGERED_MS
+    }
+    if (endTime) {
+      this.stateTimer = setTimeout(() => this.updateState(), endTime - now)
+    }
+    if (state !== this.state) {
+      this.state = state
+      this.events.onStateChange?.(this)
+    }
   }
 
   /**
@@ -134,14 +231,21 @@ export class AudioMain {
    */
   private async getWorkerAudioProcessor() {
     const _webSocketWorkletNode = this.getAudioSource().createWorkletNode()
+    await this.sendSourcePort(_webSocketWorkletNode.port)
+    return _webSocketWorkletNode
+  }
+
+  /**
+   * Hands the audio worker the port through which it receives the audio to stream to the server.
+   */
+  private async sendSourcePort(port: MessagePort) {
     const portPromise = new Promise<void>((resolve) => (this.resolveSourcePort = resolve))
     const command = {
       cmd: WorkerInCmd.SOURCE_PORT,
-      port: _webSocketWorkletNode.port
+      port
     }
     this.worker!.postMessage(command, [command.port])
     await portPromise
-    return _webSocketWorkletNode
   }
 
   private postToWorker(cmd: WorkerInCmd, args: Record<string, any> = {}) {
@@ -159,6 +263,8 @@ export class AudioMain {
   sendSpot() {
     if (this.online && this.audioSource && !this.audioSource.isSuspended()) {
       this.postToWorker(WorkerInCmd.ON_SPOT)
+      this.spotTime = Date.now()
+      this.updateState()
     }
   }
 
@@ -179,14 +285,17 @@ export class AudioMain {
     if (!this.micStreaming) {
       this.micStreaming = true
       this.events.onMessage?.('Starting microphone audio streaming')
-      const processors = [await this.getWorkerAudioProcessor()]
+      if (this.wakeWordNode) {
+        await this.startWakeWordStream()
+        return
+      }
+      const streamingNode = await this.getWorkerAudioProcessor()
       if (!this.micStreaming) {
         this.events.onMessage?.('Start microphone audio aborted', 'error')
         return
       }
-      this.getAudioSource()
-        .start(...processors)
-        .catch((err) => this.events.onMessage?.(`Failed to start microphone streaming: ${err}`, 'error'))
+      this.streamingNode = streamingNode
+      this.connectSourceNodes().catch((err) => this.events.onMessage?.(`Failed to start microphone streaming: ${err}`, 'error'))
     } else {
       this.events.onMessage?.("trying to start microphone streaming but it's already started!", 'error')
     }
@@ -198,8 +307,10 @@ export class AudioMain {
   private stopMicStreaming() {
     if (this.micStreaming) {
       this.micStreaming = false
+      this.stopWakeWordStream()
       // stop audio node
-      this.audioSource?.stop()
+      this.streamingNode = null
+      this.connectSourceNodes().catch((err) => this.events.onMessage?.(`Failed to stop microphone streaming: ${err}`, 'error'))
     } else {
       this.events.onMessage?.("trying to stop microphone streaming but it's already stopped!", 'error')
     }
@@ -230,15 +341,21 @@ export class AudioMain {
         this.events.onMessage?.('Disconnected, trying to reconnect', 'error', 2000)
         this.resolveSourcePort?.()
         this.resolveSourcePort = undefined
-        this.audioSource?.stop()
+        // stop streaming to the server, the wake word detection stays connected
+        this.stopWakeWordStream()
+        this.streamingNode = null
+        this.connectSourceNodes().catch((err) => this.events.onMessage?.(`Failed to stop microphone streaming: ${err}`, 'error'))
         if (this.listening) {
           this.listening = false
           this.events.onListeningChange?.(this)
+          this.updateWakeWordPaused()
         }
         if (this.online) {
           this.online = false
           this.events.onRunningChange?.(this)
         }
+        this.spotTime = 0
+        this.listeningEndTime = 0
         break
       case WorkerOutCmd.START_SINK: {
         if (!data.id || data.channels === undefined) {
@@ -253,6 +370,8 @@ export class AudioMain {
         }
         this.worker!.postMessage(sinkPortCmd, [sinkPortCmd.port])
         this.activeSinks.set(sink.getId(), sink)
+        this.listeningEndTime = 0
+        this.updateWakeWordPaused()
         const startSpeaking = this.activeSinks.size === 1
         this.events.onMessage?.(`Starting sink stream ${sink.getId()}`)
         sink
@@ -277,6 +396,7 @@ export class AudioMain {
           activeSink.close()
           if (this.activeSinks.size === 0) {
             this.events.onSpeakingChange?.(this)
+            this.updateWakeWordPaused()
           }
         } else {
           this.events.onMessage?.('Unable to stop sink, not found ' + data.id)
@@ -289,8 +409,10 @@ export class AudioMain {
         }
         if (!this.listening) {
           this.listening = true
+          this.spotTime = 0
           this.startMicStreaming()
           this.events.onListeningChange?.(this)
+          this.updateWakeWordPaused()
         }
         break
       case WorkerOutCmd.STOP_LISTENING:
@@ -299,8 +421,10 @@ export class AudioMain {
         }
         if (this.listening) {
           this.listening = false
+          this.listeningEndTime = Date.now()
           this.stopMicStreaming()
           this.events.onListeningChange?.(this)
+          this.updateWakeWordPaused()
         }
         break
       case WorkerOutCmd.SINK_VOLUME: {
@@ -378,21 +502,60 @@ export class AudioMain {
   }
 
   /**
-   * Initializes the workers instance.
+   * Initializes the workers instance. Calls while an initialization is in progress return that initialization, as
+   * one click can both launch the dialog on the first window event and trigger it. While another window of this
+   * browser runs the dialog with the same speaker id, it waits for that window to close.
    *
    * @param speakerId the speaker identifier used by the server.
    * @param listeningItem
    * @param locationItem
+   * @param wakeWord the wake word that triggers the dialog, in addition to clicks
    */
-  async initialize(speakerId: string, listeningItem?: string, locationItem?: string) {
+  async initialize(speakerId: string, listeningItem?: string, locationItem?: string, wakeWord?: WakeWordConfig) {
+    if (!this.initializing) {
+      this.initializing = this.start(speakerId, listeningItem, locationItem, wakeWord).catch((error: unknown) => {
+        this.releaseSpeaker?.()
+        this.initializing = null
+        throw error
+      })
+    }
+    return this.initializing
+  }
+
+  /**
+   * Waits until no other window of this browser uses the speaker id, then keeps it until this window closes. The
+   * windows of a browser share the id, and the server takes only one connection per id.
+   */
+  private async lockSpeaker(speakerId: string) {
+    // only on secure origins, which the microphone needs too
+    if (!('locks' in navigator)) {
+      return
+    }
+    const name = `openhab.ui:dialog.${speakerId}`
+    const { held } = await navigator.locks.query()
+    if (held?.some((lock) => lock.name === name)) {
+      this.events.onMessage?.('The dialog runs in another window, waiting for it to close', 'info')
+    }
+    await new Promise<void>((resolve) => {
+      void navigator.locks.request(name, async () => {
+        resolve()
+        await new Promise<void>((release) => (this.releaseSpeaker = release))
+      })
+    })
+  }
+
+  private async start(speakerId: string, listeningItem?: string, locationItem?: string, wakeWord?: WakeWordConfig) {
     this.events.onMessage?.('Starting ws connection...', 'info', 500)
     this.startVoiceAudioContext()
     const audioContext = this.getVoiceAudioContext()
     audioContext.onstatechange = () => {
       this.events.onMessage?.(`Audio context state '${audioContext.state}'`)
       this.events.onRunningChange?.(this)
+      this.updateState()
     }
     await audioContext.resume()
+    // after the audio context, so it still starts within the click
+    await this.lockSpeaker(speakerId)
     await AudioSource.configure(audioContext)
     this.audioSource = new AudioSource(50)
     await this.audioSource.resume()
@@ -407,6 +570,7 @@ export class AudioMain {
     try {
       this.worker!.onmessage = (ev: MessageEvent) => {
         this.handleWorkerMessage(ev.data.cmd, ev.data)
+        this.updateState()
       }
       this.worker!.onerror = (err: ErrorEvent) => {
         this.events.onMessage?.('Worker error.' + err.message)
@@ -425,12 +589,132 @@ export class AudioMain {
       throw error
     }
     this.initialized = true
+    if (wakeWord) {
+      this.startWakeWord(wakeWord)
+    }
+  }
+
+  /**
+   * Connects the processors that need the microphone: the stream to the server while listening, and the wake word
+   * detection.
+   */
+  private async connectSourceNodes() {
+    const nodes = [this.streamingNode, this.wakeWordNode].filter((node): node is AudioWorkletNode => node !== null)
+    if (nodes.length) {
+      await this.getAudioSource().start(...nodes)
+    } else {
+      this.audioSource?.stop()
+    }
+  }
+
+  /**
+   * Starts a worker that listens for the wake word in the microphone audio and triggers the dialog when it hears it.
+   */
+  private startWakeWord(config: WakeWordConfig) {
+    const worker = new Worker(wakeWordWorkerURL, {
+      name: 'wakeword-worker',
+      type: 'module'
+    })
+    // the worklet is connected once the worker has loaded the model
+    const node = this.getAudioSource().createWorkletNode()
+    worker.onmessage = (ev: MessageEvent<WakeWordWorkerOutMessage>) => this.handleWakeWordMessage(ev.data, node)
+    worker.onerror = (err: ErrorEvent) => this.events.onMessage?.(`Wake word worker error: ${err.message}`, 'error')
+    const command: WakeWordWorkerInMessage = {
+      cmd: WakeWordWorkerInCmd.INITIALIZE,
+      // the worker resolves URLs against its own location, so make the URL absolute
+      manifestUrl: new URL(config.manifestUrl, document.baseURI).href,
+      probabilityCutoff: config.probabilityCutoff,
+      sampleRate: this.getVoiceAudioContext().sampleRate,
+      port: node.port
+    }
+    worker.postMessage(command, [command.port])
+    this.wakeWordWorker = worker
+  }
+
+  private handleWakeWordMessage(data: WakeWordWorkerOutMessage, node: AudioWorkletNode) {
+    switch (data.cmd) {
+      case WakeWordWorkerOutCmd.READY:
+        this.wakeWordNode = node
+        this.connectSourceNodes().catch((err) => this.events.onMessage?.(`Failed to start wake word detection: ${err}`, 'error'))
+        this.updateWakeWordPaused(true)
+        this.events.onMessage?.(`Listening for the wake word "${data.wakeWord}"`, 'info', 2000)
+        this.events.onStateChange?.(this)
+        break
+      case WakeWordWorkerOutCmd.DETECTED: {
+        const now = Date.now()
+        if (this.online && !this.listening && !this.isSpeaking() && now - this.lastWakeWordSpot > WAKE_WORD_COOLDOWN_MS) {
+          this.lastWakeWordSpot = now
+          this.events.onMessage?.('Wake word detected', 'info', 1000)
+          this.sendSpot()
+        }
+        break
+      }
+      case WakeWordWorkerOutCmd.ERROR:
+        this.events.onMessage?.(`Wake word detection unavailable: ${data.message}`, 'error')
+        this.stopWakeWord()
+        break
+    }
+  }
+
+  /**
+   * Pauses the wake word detection while the dialog listens or speaks, so the reply doesn't trigger it.
+   *
+   * @param force send the state to the worker even when it didn't change
+   */
+  private updateWakeWordPaused(force: boolean = false) {
+    const paused = this.listening || this.isSpeaking()
+    if (this.wakeWordWorker && (force || paused !== this.wakeWordPaused)) {
+      this.wakeWordWorker.postMessage({ cmd: paused ? WakeWordWorkerInCmd.PAUSE : WakeWordWorkerInCmd.RESUME })
+    }
+    this.wakeWordPaused = paused
+  }
+
+  /**
+   * Streams the microphone to the server through the wake word worker. After a wake word spot it first sends the audio
+   * since the end of the wake word, so a command spoken without a pause isn't lost while the server starts listening.
+   */
+  private async startWakeWordStream() {
+    const channel = new MessageChannel()
+    await this.sendSourcePort(channel.port1)
+    if (!this.micStreaming || !this.wakeWordWorker) {
+      this.events.onMessage?.('Start microphone audio aborted', 'error')
+      channel.port2.close()
+      return
+    }
+    const command: WakeWordWorkerInMessage = {
+      cmd: WakeWordWorkerInCmd.STREAM,
+      port: channel.port2,
+      fromWakeWord: Date.now() - this.lastWakeWordSpot < WAKE_WORD_AUDIO_MS
+    }
+    this.wakeWordWorker.postMessage(command, [command.port])
+    this.streamingViaWakeWord = true
+  }
+
+  private stopWakeWordStream() {
+    if (this.streamingViaWakeWord) {
+      this.streamingViaWakeWord = false
+      this.wakeWordWorker?.postMessage({ cmd: WakeWordWorkerInCmd.STOP_STREAM })
+    }
+  }
+
+  private stopWakeWord() {
+    this.streamingViaWakeWord = false
+    this.wakeWordWorker?.terminate()
+    this.wakeWordWorker = null
+    if (this.wakeWordNode) {
+      this.wakeWordNode = null
+      this.connectSourceNodes().catch((err) => this.events.onMessage?.(`Failed to stop wake word detection: ${err}`, 'error'))
+      this.events.onStateChange?.(this)
+    }
   }
 
   close() {
+    clearTimeout(this.stateTimer)
     this.stopSourceCheckInterval()
+    this.stopWakeWord()
     this.stopMicStreaming()
     this.worker!.terminate()
     this.worker = null
+    this.releaseSpeaker?.()
   }
 }
