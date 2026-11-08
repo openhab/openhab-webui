@@ -3,6 +3,7 @@ import { ref, reactive, watch } from 'vue'
 
 import buildInfo from '@/assets/build-info'
 import { convertJavaLocale } from '@/js/i18n-utils.ts'
+import type { VoiceState } from '@/js/voice/types'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
@@ -25,7 +26,11 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const showDeveloperDock = ref<boolean>(false)
   const showLogDock = ref<boolean>(false)
   const pagePath = ref<string | null>(null)
-  const voiceIcon = ref<string | null>(null)
+  // null while the voice dialog is off
+  const voiceState = ref<VoiceState | null>(null)
+  // the loudness of the voice dialog's audio, from 0 to 1
+  const voiceLevel = ref<number>(0)
+  const voiceListeningForWakeWord = ref<boolean>(false)
   const modelExpanded = ref<boolean>(false)
   const modelPickerExpanded = ref<boolean>(false)
   const modelSelectedItem = ref<object | null>(null)
@@ -69,7 +74,9 @@ export const useRuntimeStore = defineStore('runtime', () => {
     showDeveloperDock,
     showLogDock,
     pagePath,
-    voiceIcon,
+    voiceState,
+    voiceLevel,
+    voiceListeningForWakeWord,
     modelExpanded,
     modelPickerExpanded,
     modelSelectedItem,

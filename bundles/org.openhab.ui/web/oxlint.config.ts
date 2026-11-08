@@ -152,7 +152,8 @@ export default defineConfig({
     "build",
     "public",
     "**/*.parser.js",
-    "src/api/**"
+    "src/api/**",
+    "src/js/voice/wakeword/micro-wakeword/**"
   ],
   "rules": {
     ...importRules,

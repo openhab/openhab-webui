@@ -29,5 +29,11 @@
   "about.dialog.listeningItem": "Listening Item",
   "about.dialog.locationItem": "Location Item",
   "about.dialog.connectOnWindowEvent": "Launch on first window event",
-  "about.dialog.triggerOnConnect": "Trigger on first click"
+  "about.dialog.triggerOnConnect": "Trigger on first click",
+  "about.dialog.wakeWord": "Wake Word",
+  "about.dialog.wakeWord.info": "Detected in this browser, which then starts the dialog. Needs Chrome 137, Firefox 131 or Safari 18.4 or later. Applies after reloading the page.",
+  "about.dialog.wakeWord.none": "None, click to talk",
+  "about.dialog.wakeWord.custom": "Custom microWakeWord model",
+  "about.dialog.wakeWordUrl": "Model Manifest URL",
+  "about.dialog.wakeWordUrl.info": "The JSON manifest of a version 2 microWakeWord model, for example in $OPENHAB_CONF/html. Its .tflite file must be in the same folder."
 }
