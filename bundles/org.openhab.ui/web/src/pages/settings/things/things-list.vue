@@ -261,7 +261,7 @@ export default {
   },
   setup() {
     const things = shallowRef([])
-    const haystackFields = ['uid', 'label', 'location']
+    const haystackFields = ['uid', 'label', 'location', 'status']
     const ohSearchbarRef = useTemplateRef('oh-searchbar')
 
     const filtersDefinitions = {
@@ -427,7 +427,8 @@ export default {
       this.initSearchbar = false
 
       await this.$oh.api.get('/rest/things?summary=true').then((data) => {
-        this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
+        // Since things is a shallowRef, we need to make statusInfo reactive so status is updated w/o causing the full list to be reactive and causing a full UI re-render of the list
+        this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID)).map((thing) => ({ ...thing, statusInfo: reactive(thing.statusInfo) }))
 
         this.initSearchbar = true
         this.loading = false

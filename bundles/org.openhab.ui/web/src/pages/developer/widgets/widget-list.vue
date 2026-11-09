@@ -129,7 +129,7 @@ import { toFileYAMLSyntax } from '@/pages/yaml-file-format'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
 
 import { useSearch } from '@/components/useSearch'
-import { getListTitle, findElementsInObject, highlightMatches } from '@/pages/list-helpers'
+import { getListTitle, findElementsInObject, highlightMatches, getKinds } from '@/pages/list-helpers'
 
 export default {
   components: {
@@ -147,8 +147,7 @@ export default {
       is: {
         label: 'Kind',
         options: ['Editable', 'Readonly', 'Marketplace', 'Template'],
-        getFn: (widget) =>
-          widget.editable === true ? 'editable' : widget.tags?.some((t) => t.startsWith('marketplace:')) ? 'marketplace' : 'readonly'
+        getFn: (widget) => getKinds(widget, widget.editable !== false)
       },
       uid: {
         label: 'UID'

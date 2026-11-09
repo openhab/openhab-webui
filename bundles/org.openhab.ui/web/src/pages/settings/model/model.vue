@@ -388,7 +388,6 @@ export default {
       } else {
         this.expandedTreeviewItems = []
         await this.load()
-        this.$refs.searchbar?.$el.f7Searchbar.search(this.persistLastSearchQuery || '')
       }
     },
     onPageBeforeOut() {
@@ -431,6 +430,7 @@ export default {
       await this.loadModel().then(() => {
         this.initSearchbar = true
         nextTick(() => {
+          this.$refs.searchbar?.$el.f7Searchbar.search(this.persistLastSearchQuery || '')
           if (this.$device.desktop && this.$refs.searchbar) {
             this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
           }

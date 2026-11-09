@@ -12,7 +12,7 @@
  */
 
 import { ref, shallowRef, type Ref, computed, isRef, watch } from 'vue'
-import { tokensToFuse, type ParsedToken, type FilterDefinition } from '@/components/search-helpers'
+import { searchFuse, tokensToFuse, type ParsedToken, type FilterDefinition, type SearchQuery } from '@/components/search-helpers'
 
 import Fuse, { type FuseResult, type FuseResultMatch } from 'fuse.js'
 
@@ -23,7 +23,8 @@ export interface UseSearchOptions<TItem> {
   haystackFields?: string[]
   uidField?: StringKeyOf<TItem> | ((item: TItem) => string) // only needed if filteredUids are required
   includeMatches?: boolean
-  fuseSearchInterceptor?: (fuseSearch: string | Record<string, unknown>) => string | Record<string, unknown>
+  /** Transforms the query plan; negated tokens use RECORD_NEGATION, which must be preserved when copying the plan. */
+  fuseSearchInterceptor?: (fuseSearch: SearchQuery) => SearchQuery
 }
 
 /** Reactive state and helpers returned by {@link useSearch}. */
@@ -121,7 +122,7 @@ export function useSearch<TItem>(list: Ref<TItem[]> | TItem[], options: UseSearc
     [fuseSearch, fuse],
     ([newFuseSearch, newFuse]) => {
       try {
-        filteredResults.value = newFuse.search(fuseSearch.value)
+        filteredResults.value = searchFuse(newFuse, newFuseSearch)
       } catch (error) {
         console.error('Error performing Fuse search:', error)
         filteredResults.value = []
@@ -141,8 +142,8 @@ export function useSearch<TItem>(list: Ref<TItem[]> | TItem[], options: UseSearc
     console.log(`Last Execution Time (${measureName}): ${lastEntry.duration.toFixed(3)} ms`)
   }
 
-  const isFiltered = computed(
-    () => (typeof fuseSearch.value === 'string' && fuseSearch.value.length > 0) || Object.keys(fuseSearch.value).length > 0
+  const isFiltered = computed(() =>
+    typeof fuseSearch.value === 'string' ? fuseSearch.value.length > 0 : Reflect.ownKeys(fuseSearch.value).length > 0
   )
 
   // Event
@@ -197,20 +198,16 @@ export function useSearch<TItem>(list: Ref<TItem[]> | TItem[], options: UseSearc
       return
     }
 
-    if (capSize) {
+    let results = filteredResults.value
+    if (capSize && fuse.value.getIndex().docs.length > 0) {
       fuse.value.removeAt(0) // remove the first item to keep the list size capped
+      results = results.filter((result) => result.refIndex !== 0).map((result) => ({ ...result, refIndex: result.refIndex - 1 }))
     }
     // fuse adds data to the list, so we don't need to add it to the list manually
     fuse.value.add(newData)
     const newIndex = fuse.value.getIndex().docs.length - 1
-    if (isFiltered.value) {
-      const result = new Fuse<TItem>([newData], fuseOptions.value).search(fuseSearch.value)
-      if (result.length > 0) {
-        filteredResults.value.push({ item: result[0].item, refIndex: newIndex })
-      }
-    } else {
-      filteredResults.value.push({ item: newData, refIndex: newIndex })
-    }
+    const result = searchFuse(new Fuse<TItem>([newData], fuseOptions.value), fuseSearch.value)[0]
+    filteredResults.value = result ? [...results, { ...result, refIndex: newIndex }] : results
   }
 
   return {

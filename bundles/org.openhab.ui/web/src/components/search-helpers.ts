@@ -1,4 +1,18 @@
-import type { FuseResultMatch } from 'fuse.js'
+import type Fuse from 'fuse.js'
+import type { FuseResult, FuseResultMatch } from 'fuse.js'
+
+/**
+ * Marks a query whose matching records must be excluded from the complete Fuse index.
+ * The symbol is an application-only operator, distinct from Fuse's field-level `$not`;
+ * it must be preserved when a query plan is copied and cannot be serialized as JSON.
+ */
+export const RECORD_NEGATION = Symbol('record-level negation')
+
+export interface RecordNegation extends Record<string, unknown> {
+  [RECORD_NEGATION]: SearchQuery
+}
+
+export type SearchQuery = string | Record<string, unknown>
 
 export interface FilterDefinition {
   label: string
@@ -6,7 +20,7 @@ export interface FilterDefinition {
   singleSelect?: boolean
   advanced?: boolean
   path?: string
-  getFn?: (item: unknown) => string
+  getFn?: (item: unknown) => string | readonly string[] | null | undefined
 }
 
 export type TokenType = 'fieldValue' | 'value' | 'AND' | 'OR' | '(' | ')' | undefined
@@ -56,11 +70,31 @@ export function isLogicalToken(token: Token | null): token is LogicalToken {
   return token != null && (token.type === 'AND' || token.type === 'OR')
 }
 
+function splitFieldValues(value: string): string[] {
+  return value.split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
+}
+
+function isQuoted(value: string): boolean {
+  return value.length >= 2 && value.startsWith('"') && value.endsWith('"')
+}
+
+export function formatFieldValueToken(token: FieldValueToken): string {
+  const rawToken = token.rawToken?.replace(/^-/, '') ?? ''
+  const rawValues = splitFieldValues(rawToken.slice(rawToken.indexOf(':') + 1))
+  const quotedValues = new Set(rawValues.filter(isQuoted).map((value) => value.slice(1, -1)))
+  const values = token.values.map((value) => (quotedValues.has(value) || /[\s,]/.test(value) ? `"${value}"` : value))
+  return `${token.negated ? '-' : ''}${token.field}:${values.join(',')}`
+}
+
+export function negateKeywordInput(input: string): string {
+  return (input.match(/("[^"]*(?:"|$)|[^\s"]+)/g) ?? []).map((value) => `-${value}`).join(' ')
+}
+
 // Tokenize a query string into an array of tokens or a single token at the cursor position`
 export function tokenizeString(queryString: string): ParsedToken[]
 export function tokenizeString(queryString: string, cursorPosition: number): ParsedToken | null
 export function tokenizeString(queryString: string, cursorPosition?: number): ParsedToken[] | ParsedToken | null {
-  const regex = /\b(?:AND|OR)\b|[()]|(?:[^\s()"']+|"[^"]*"|'[^']*')+/g
+  const regex = /\b(?:AND|OR)\b|[()]|(?:[^\s()"']+|"[^"]*(?:"|$)|'[^']*')+/g
   const matches = queryString.matchAll(regex)
   const tokens: Token[] = []
   let token: Token | null = null
@@ -119,83 +153,69 @@ export function parseToken(token: Token): ParsedToken | null {
   const isNegated = rawToken.startsWith('-')
   const cleanToken = isNegated ? rawToken.slice(1) : rawToken
 
-  const colonIndex = cleanToken.indexOf(':')
+  const colonIndex = cleanToken.startsWith('"') ? -1 : cleanToken.indexOf(':')
   const valuePart = colonIndex !== -1 ? cleanToken.slice(colonIndex + 1) : cleanToken
   const fieldPart = colonIndex !== -1 ? cleanToken.slice(0, colonIndex) : null
 
   if (fieldPart) {
-    const splitRegex = /,(?=(?:[^"]*"[^"]*")*[^"]*$)/
-    const valueParts = valuePart.split(splitRegex).map((val) => {
-      return val.startsWith('"') && val.endsWith('"') ? val.slice(1, -1) : val
-    })
+    const valueParts = splitFieldValues(valuePart).map((val) => (isQuoted(val) ? val.slice(1, -1) : val))
 
     return { ...token, type: 'fieldValue', field: fieldPart, values: valueParts, negated: isNegated }
   } else {
-    const cleanStandaloneValue = valuePart.startsWith('"') && valuePart.endsWith('"') ? valuePart.slice(1, -1) : valuePart
+    const cleanStandaloneValue = isQuoted(valuePart) ? valuePart.slice(1, -1) : valuePart
 
     return { ...token, type: 'value', values: [cleanStandaloneValue], negated: isNegated }
   }
 }
 
 function getTokenFuseExpression(token: FieldValueToken | ValueToken, haystackFields: string[], fieldAliases?: Record<string, string>) {
-  const isNegated = token.negated
-
+  const rawToken = token.rawToken?.replace(/^-/, '') ?? ''
+  const rawValues = isFieldValueToken(token) ? splitFieldValues(rawToken.slice(rawToken.indexOf(':') + 1)) : [rawToken]
+  const values = token.values.map((value, index) =>
+    isQuoted(rawValues[index] ?? '') && value ? `'"${value.replaceAll('|', '\\|')}"` : value
+  )
+  let expression: Record<string, unknown>
   if (isFieldValueToken(token)) {
-    let fieldPart = fieldAliases?.[token.field] || token.field
+    const fieldPart = fieldAliases?.[token.field] || token.field
 
     if (token.values.length === 1) {
-      return { [fieldPart]: isNegated ? `!${token.values?.[0]}` : token.values?.[0] }
+      expression = { [fieldPart]: values[0] }
+    } else {
+      expression = { $or: values.map((value) => ({ [fieldPart]: value })) }
     }
-
-    return { $or: (token.values ?? []).map((v) => ({ [fieldPart]: isNegated ? `!${v}` : v })) }
   } else if (isValueToken(token)) {
-    // plain text, search across all haystack fields
     if (haystackFields.length === 1) {
-      return { [haystackFields[0]]: isNegated ? `!${token.values?.[0]}` : token.values?.[0] }
+      expression = { [haystackFields[0]]: values[0] }
+    } else {
+      expression = { $or: haystackFields.map((field) => ({ [field]: values[0] ?? '' })) }
     }
-    return {
-      [isNegated ? '$and' : '$or']: haystackFields.map((field) => ({
-        [field]: isNegated ? `!${token.values?.[0]}` : (token.values?.[0] ?? '')
-      }))
-    }
+  } else {
+    return null
   }
 
-  return null
+  return token.negated ? { [RECORD_NEGATION]: expression } : expression
 }
 
 export function tokensToString(tokens: ParsedToken[]): string {
-  let result = ''
-  tokens.forEach((token) => {
-    result += token.rawToken ?? ''
-    if (token.type === 'fieldValue' || token.type === 'value') {
-      result += ' '
-    }
-  })
-
-  return result.trim()
+  return tokens
+    .map((token) => (isLogicalToken(token) || isGroupingToken(token) ? token.type : (token.rawToken ?? '')))
+    .join(' ')
+    .trim()
 }
 
 /**
- * parses a user query string into a robust deep object structure suitable for Fuse.js.
- * This parser supports nested parentheses, AND/OR operators, negation, and field:value pairs with alias resolution.
- *
- * @param queryString
- * @param haystackFields
- * @param fieldAliases
- * @returns
+ * Builds a query plan supporting parentheses, AND/OR, field aliases and quoted phrases.
+ * Negated tokens become {@link RECORD_NEGATION} nodes around the corresponding positive
+ * Fuse expression. Pass the resulting plan to {@link searchFuse}, not directly to Fuse.
  */
-export function tokensToFuse(
-  tokens: ParsedToken[],
-  haystackFields: string[],
-  fieldAliases?: Record<string, string>
-): Record<string, any> | string {
+export function tokensToFuse(tokens: ParsedToken[], haystackFields: string[], fieldAliases?: Record<string, string>): SearchQuery {
   let index = 0
 
-  function processExpression(): Record<string, any> | null {
-    let currentOrGroup: Record<string, any>[] = []
-    let currentAndGroup: Record<string, any>[] = []
+  function processExpression(): SearchQuery | null {
+    let currentOrGroup: SearchQuery[] = []
+    let currentAndGroup: SearchQuery[] = []
 
-    const finish = (): Record<string, any> | null => {
+    const finish = (): SearchQuery | null => {
       if (currentAndGroup.length > 0) {
         currentOrGroup.push(currentAndGroup.length === 1 ? currentAndGroup[0] : { $and: currentAndGroup })
       }
@@ -247,6 +267,66 @@ export function tokensToFuse(
   return processExpression() || ''
 }
 
+/**
+ * Evaluates a query plan, preserving the position of record-level negation in AND/OR groups.
+ *
+ * Fuse's inverse string matcher ! (and its documented field-level `$not`) negates individual
+ * field values, not the record's positive match. For example, `!Kitchen` may match the
+ * `Outdoor` value of `['Kitchen', 'Outdoor']`, while an absent or empty field has no value
+ * to match. For `-tag:Kitchen`, the intended result excludes the first record and includes
+ * the second. We therefore search for the positive expression and complement its result
+ * indices against all indexed documents.
+ *
+ * A global exclusion after searching would break expressions such as
+ * `name:light OR -tag:Kitchen`. Instead, this evaluator recursively intersects or unions
+ * child result sets at each logical node. Subtrees without our marker are passed directly
+ * to Fuse; its own `$not` syntax is not interpreted as record-level negation here.
+ *
+ * Combined results retain positive match details for highlighting and use document order.
+ * Negation-only matches have no positive match details.
+ * 
+ * AI Assisted implementation for handling record-level negation in Fuse search queries.
+ */
+export function searchFuse<T>(fuse: Fuse<T>, expression: SearchQuery): FuseResult<T>[] {
+  function isSearchQuery(value: unknown): value is SearchQuery {
+    return typeof value === 'string' || (value !== null && typeof value === 'object' && !Array.isArray(value))
+  }
+
+  function isRecordNegation(query: SearchQuery): query is RecordNegation {
+    return typeof query !== 'string' && RECORD_NEGATION in query
+  }
+
+  function hasNegation(query: SearchQuery): boolean {
+    if (typeof query === 'string') return false
+    if (isRecordNegation(query)) return true
+    const children = query.$and ?? query.$or
+    return Array.isArray(children) && children.some((child: unknown) => isSearchQuery(child) && hasNegation(child))
+  }
+
+  function evaluate(query: SearchQuery): FuseResult<T>[] {
+    if (!hasNegation(query)) return fuse.search(query)
+    if (typeof query === 'string') return fuse.search(query)
+    if (isRecordNegation(query)) {
+      if (!isSearchQuery(query[RECORD_NEGATION])) throw new TypeError('Invalid negated search expression')
+      const excluded = new Set(evaluate(query[RECORD_NEGATION]).map((result) => result.refIndex))
+      return fuse.getIndex().docs.flatMap((item, refIndex) => (excluded.has(refIndex) ? [] : [{ item, refIndex }]))
+    }
+
+    const isAnd = Array.isArray(query.$and)
+    const children: unknown = isAnd ? query.$and : query.$or
+    if (!Array.isArray(children) || !children.every(isSearchQuery)) throw new TypeError('Invalid logical search expression')
+    const resultSets = children.map((child) => new Map(evaluate(child).map((result) => [result.refIndex, result])))
+    return fuse.getIndex().docs.flatMap((item, refIndex) => {
+      const matches = resultSets.map((results) => results.get(refIndex)).filter((result) => result !== undefined)
+      if (isAnd ? matches.length !== resultSets.length : matches.length === 0) return []
+      const details = matches.flatMap((result) => result.matches ?? [])
+      return [{ item, refIndex, ...(details.length > 0 ? { matches: details } : {}) }]
+    })
+  }
+
+  return evaluate(expression)
+}
+
 export function applySuggestion(
   existingQuery: string,
   token: ParsedToken | null,
@@ -264,11 +344,9 @@ export function applySuggestion(
   } else if (isFieldValueToken(token)) {
     const start = token.start ?? 0
     const end = start + (token.rawToken?.length ?? 0)
-    newToken = { ...token }
-
+    newToken = { ...token, values: [...token.values] }
     newToken.values[token.values.length - 1] = value
-    const valueList = newToken.values.map((v) => (v.includes(' ') ? `"${v}"` : v)).join(',')
-    newToken.rawToken = `${token.negated ? '-' : ''}${token.field}:${valueList}`
+    newToken.rawToken = formatFieldValueToken(newToken)
     newSearchString = existingQuery.slice(0, start) + newToken.rawToken + existingQuery.slice(end)
   } else {
     newSearchString = existingQuery + ' ' + value

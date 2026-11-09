@@ -1,11 +1,50 @@
-import { describe, expect, it } from 'vitest'
-import { tokenizeString, tokensToFuse } from './search-helpers'
+import Fuse from 'fuse.js'
+import { describe, expect, it, vi } from 'vitest'
+import {
+  applySuggestion,
+  formatFieldValueToken,
+  isFieldValueToken,
+  isValueToken,
+  negateKeywordInput,
+  RECORD_NEGATION,
+  searchFuse,
+  tokenizeString,
+  tokensToFuse,
+  tokensToString
+} from './search-helpers'
 
 describe('tokenized', () => {
   it('returns an empty array for an empty query', () => {
     const tokens = tokenizeString('')
     expect(tokens).toEqual([])
     expect(tokensToFuse(tokens, [])).toEqual('')
+  })
+
+  it.each([
+    '(type:Switch OR type:Dimmer) tag:Kitchen',
+    'type:Switch AND (tag:"Living Room" OR (tag:Kitchen AND -tag:Outdoor))',
+    '(type:Switch OR type:Dimmer',
+    '((alpha OR beta) AND gamma)'
+  ])('serializes operators and groups without changing the parsed expression: %s', (query) => {
+    const tokens = tokenizeString(query)
+    const serialized = tokensToString(tokens)
+    expect(tokensToFuse(tokenizeString(serialized), ['name'])).toEqual(tokensToFuse(tokens, ['name']))
+  })
+
+  it('preserves grouped field alternatives when rebuilding include and exclude keywords', () => {
+    const query = '(type:Switch OR type:Dimmer) tag:Kitchen "old phrase" -"old exclusion"'
+    const tokens = tokenizeString(query)
+    const withoutIncluded = tokens.filter((token) => !isValueToken(token) || token.negated)
+    const withoutExcluded = tokens.filter((token) => !isValueToken(token) || !token.negated)
+    const included = `${tokensToString(withoutIncluded)} "new phrase"`
+    const excluded = `${tokensToString(withoutExcluded)} ${negateKeywordInput('"new exclusion"')}`
+
+    expect(tokensToFuse(tokenizeString(included), ['name'])).toEqual(
+      tokensToFuse(tokenizeString('(type:Switch OR type:Dimmer) tag:Kitchen -"old exclusion" "new phrase"'), ['name'])
+    )
+    expect(tokensToFuse(tokenizeString(excluded), ['name'])).toEqual(
+      tokensToFuse(tokenizeString('(type:Switch OR type:Dimmer) tag:Kitchen "old phrase" -"new exclusion"'), ['name'])
+    )
   })
 
   it('tokenizes plain values with correct start positions', () => {
@@ -153,7 +192,7 @@ describe('tokenized', () => {
     expect(tokensToFuse(tokens, ['field1', 'field2'])).toEqual({
       $or: [
         {
-          name: 'Kitchen,Main'
+          name: `'"Kitchen,Main"`
         },
         {
           name: 'Garage'
@@ -162,7 +201,7 @@ describe('tokenized', () => {
     })
   })
 
-  it('splits quoted field values at whitespace due to token regex limitation', () => {
+  it('preserves quoted field values containing spaces and commas', () => {
     const tokens = tokenizeString('name:"Kitchen, Main",Garage')
     expect(tokens).toEqual([
       {
@@ -177,13 +216,23 @@ describe('tokenized', () => {
     expect(tokensToFuse(tokens, ['field1'])).toEqual({
       $or: [
         {
-          name: 'Kitchen, Main'
+          name: `'"Kitchen, Main"`
         },
         {
           name: 'Garage'
         }
       ]
     })
+  })
+
+  it('preserves quoted values when a filter or suggestion is edited', () => {
+    const token = tokenizeString('tag:"Kitchen,Main","Outdoor",Garage')[0]
+    if (!isFieldValueToken(token)) throw new Error('Expected a field value token')
+    expect(formatFieldValueToken({ ...token, values: ['Outdoor', 'Garage', 'Living Room'] })).toBe('tag:"Outdoor",Garage,"Living Room"')
+    expect(formatFieldValueToken({ type: 'fieldValue', field: 'tag', values: ['Kitchen,Main'], negated: false })).toBe('tag:"Kitchen,Main"')
+    const suggestion = applySuggestion(token.rawToken!, token, 'Dining Room')
+    expect(suggestion.newSearchString).toBe('tag:"Kitchen,Main","Outdoor","Dining Room"')
+    expect(token.values).toEqual(['Kitchen,Main', 'Outdoor', 'Garage'])
   })
 
   it('marks negated fielded values as negated', () => {
@@ -199,14 +248,28 @@ describe('tokenized', () => {
       }
     ])
     expect(tokensToFuse(tokens, ['field1'])).toEqual({
-      $or: [
-        {
-          status: '!ONLINE'
-        },
-        {
-          status: '!OFFLINE'
-        }
-      ]
+      [RECORD_NEGATION]: {
+        $or: [{ status: 'ONLINE' }, { status: 'OFFLINE' }]
+      }
+    })
+  })
+
+  it('negates the complete expression for field alternatives', () => {
+    const tokens = tokenizeString('-type:Switch,Dimmer')
+    expect(tokens).toEqual([
+      {
+        rawToken: '-type:Switch,Dimmer',
+        type: 'fieldValue',
+        field: 'type',
+        values: ['Switch', 'Dimmer'],
+        negated: true,
+        start: 0
+      }
+    ])
+    expect(tokensToFuse(tokens, ['field1'])).toEqual({
+      [RECORD_NEGATION]: {
+        $or: [{ type: 'Switch' }, { type: 'Dimmer' }]
+      }
     })
   })
 
@@ -222,8 +285,33 @@ describe('tokenized', () => {
       }
     ])
     expect(tokensToFuse(tokens, ['field1'])).toEqual({
-      field1: '!hello world'
+      [RECORD_NEGATION]: { field1: `'"hello world"` }
     })
+  })
+
+  it('treats a colon inside a quoted plain phrase as part of the value', () => {
+    const tokens = tokenizeString('"hello: world | goodbye"')
+    expect(tokens).toEqual([
+      {
+        rawToken: '"hello: world | goodbye"',
+        type: 'value',
+        values: ['hello: world | goodbye'],
+        negated: false,
+        start: 0
+      }
+    ])
+    expect(tokensToFuse(tokens, ['field1'])).toEqual({ field1: `'"hello: world \\| goodbye"` })
+  })
+
+  it('retains an unfinished quoted phrase while it is being typed', () => {
+    expect(negateKeywordInput('unused "hello world" another')).toBe('-unused -"hello world" -another')
+    expect(negateKeywordInput('"hello world')).toBe('-"hello world')
+    expect(tokenizeString('-"hello world')).toEqual([
+      { rawToken: '-"hello world', type: 'value', values: ['"hello world'], negated: true, start: 0 }
+    ])
+    expect(tokenizeString('name:"hello world')).toEqual([
+      { rawToken: 'name:"hello world', type: 'fieldValue', field: 'name', values: ['"hello world'], negated: false, start: 0 }
+    ])
   })
 
   it('tracks grouping but keeps trailing closing parenthesis in a field token', () => {
@@ -300,8 +388,7 @@ describe('tokenized', () => {
     })
   })
 
-  // TODO - This is incorrect - needs to honor the parentheses and operator precedence, but for now it is a good enough approximation
-  it('handles mixed complex query with operators and documents quoted-value whitespace splitting', () => {
+  it('handles mixed complex queries with quoted values', () => {
     const tokens = tokenizeString('(status:ONLINE OR location:"Living Room") AND -label:"Test Thing"')
     expect(tokens).toEqual([
       { type: '(', start: 0 },
@@ -320,12 +407,12 @@ describe('tokenized', () => {
               status: 'ONLINE'
             },
             {
-              location: 'Living Room'
+              location: `'"Living Room"`
             }
           ]
         },
         {
-          label: '!Test Thing'
+          [RECORD_NEGATION]: { label: `'"Test Thing"` }
         }
       ]
     })

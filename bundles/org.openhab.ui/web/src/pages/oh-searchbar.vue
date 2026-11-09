@@ -158,6 +158,8 @@ import { useStorage, useThrottleFn, useEventListener } from '@vueuse/core'
 import {
   type FilterDefinition,
   tokenizeString,
+  formatFieldValueToken,
+  negateKeywordInput,
   isValueToken,
   isFieldValueToken,
   applySuggestion,
@@ -239,7 +241,7 @@ const tokensByField = computed<Record<string, FieldValueToken>>(() => {
 const includedKeywords = computed({
   get: () => {
     const tokens = tokenizedSearch.value.filter((t): t is ValueToken => isValueToken(t)).filter((t) => !t.negated)
-    return tokens.map((t) => t.values.join(',')).join(' ')
+    return tokens.map((t) => t.rawToken ?? t.values.join(',')).join(' ')
   },
   set: (newValue: string) => {
     // strip out all existing value tokens that are not negated, and append the new value token string to the end of the search string
@@ -254,17 +256,12 @@ const includedKeywords = computed({
 const excludedKeywords = computed({
   get: () => {
     const tokens = tokenizedSearch.value.filter((t): t is ValueToken => isValueToken(t)).filter((t) => t.negated)
-    return tokens.map((t) => t.values.join(',')).join(' ')
+    return tokens.map((t) => t.rawToken?.slice(1) ?? t.values.join(',')).join(' ')
   },
   set: (newValue: string) => {
     // strip out all existing value tokens that are negated, and append the new value token string to the end of the search string
     const tokens = tokenizedSearch.value.filter((t) => !isValueToken(t) || (isValueToken(t) && !t.negated))
-    const newValueNegated = newValue
-      .split(' ')
-      .map((v) => v.trim())
-      .filter((v) => v !== '')
-      .map((v) => '-' + v)
-      .join(' ')
+    const newValueNegated = negateKeywordInput(newValue)
     let newSearchString = tokensToString(tokens)
     if (newSearchString.length > 0) newSearchString += ' '
     newSearchString += newValueNegated
@@ -291,8 +288,8 @@ onMounted(() => {
 
   useEventListener(inputEl, 'keydown', (e) => {
     if (e.key === 'Tab') {
-      e.preventDefault()
       if (highlightedSuggestion) {
+        e.preventDefault()
         onAutocompletionClose({ value: [highlightedSuggestion] })
         highlightedSuggestion = null
       }
@@ -341,7 +338,7 @@ function onTextInput(id: 'include-input' | 'exclude-input', event: Event) {
 
 function addToken(token: FieldValueToken) {
   if (!isFieldValueToken(token)) return
-  const newSearchString = rawSearchString.value + ' ' + `${token.field}:${token.values?.join(',')}`
+  const newSearchString = rawSearchString.value + ' ' + formatFieldValueToken(token)
 
   rawSearchString.value = newSearchString
   if (inputEl) {
@@ -357,7 +354,7 @@ function deleteToken(token: FieldValueToken) {
   const oldSearchString = rawSearchString.value
 
   const start = token.start ?? 0
-  const end = token.start && token.rawToken ? token.start + token.rawToken.length : oldSearchString.length
+  const end = token.rawToken ? start + token.rawToken.length : oldSearchString.length
   const newSearchString = oldSearchString.slice(0, start) + oldSearchString.slice(end)
 
   rawSearchString.value = newSearchString
@@ -374,8 +371,8 @@ function updateToken(token: FieldValueToken) {
   const oldSearchString = rawSearchString.value
 
   const start = token.start ?? 0
-  const end = token.start && token.rawToken ? token.start + token.rawToken.length : oldSearchString.length
-  const newSearchString = oldSearchString.slice(0, start) + `${token.field}:${token.values?.join(',')}` + oldSearchString.slice(end)
+  const end = token.rawToken ? start + token.rawToken.length : oldSearchString.length
+  const newSearchString = oldSearchString.slice(0, start) + formatFieldValueToken(token) + oldSearchString.slice(end)
 
   rawSearchString.value = newSearchString
   if (inputEl) {

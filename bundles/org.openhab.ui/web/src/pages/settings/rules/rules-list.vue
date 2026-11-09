@@ -416,7 +416,7 @@ import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 import { showToast } from '@/js/dialog-promises'
 import { canSerializeRules, createFileFormatForRules } from '@/api'
 import { useSearch } from '@/components/useSearch'
-import { getListTitle, highlightMatches } from '@/pages/list-helpers'
+import { getListTitle, highlightMatches, getKinds } from '@/pages/list-helpers'
 import copyToClipboard from '@/js/clipboard'
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
@@ -437,7 +437,7 @@ export default {
   setup(props) {
     const rules = shallowRef([])
     const ruleStatuses = reactive({})
-    const haystackFields = ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
+    const haystackFields = ['uid', 'name', 'description', 'tag', 'status']
     const ohSearchbarRef = useTemplateRef('oh-searchbar')
 
     function displayedTags(rule) {
@@ -455,12 +455,7 @@ export default {
       is: {
         label: 'Kind',
         options: ['Editable', 'Readonly', 'Marketplace', 'Template'],
-        getFn: (rule) => {
-          if (rule.editable === true) return 'editable'
-          if (rule.tags?.includes('marketplace')) return 'marketplace'
-          if (rule.templateUID) return 'template'
-          return 'readonly'
-        }
+        getFn: (rule) => getKinds(rule, !!rule.editable)
       },
       name: {
         label: 'Name',
@@ -480,13 +475,7 @@ export default {
       },
       status: {
         label: 'Status',
-        options: {
-          uninitialized: 'Uninitialized',
-          initializing: 'Initializing',
-          idle: 'Idle',
-          running: 'Running',
-          disabled: 'Disabled'
-        },
+        options: [ 'Uninitialized', 'Initializing','Idle', 'Running', 'Disabled' ],
         getFn: (rule) => [rule.status?.status, rule.status?.statusDetail, ruleStatusBadgeText(ruleStatuses[rule.uid])]
       },
       language: {
@@ -747,7 +736,7 @@ export default {
       if (this.allSelected) {
         this.selected.clear()
       } else {
-        this.selected = new Set(this.filteredUids)
+        this.selected = new Set(this.search.filteredUids)
       }
     },
     toggleItemCheck(event, item) {

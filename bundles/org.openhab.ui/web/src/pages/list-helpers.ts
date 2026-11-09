@@ -56,3 +56,16 @@ export function highlightMatches(text: string | undefined, matches: readonly Fus
   }
   return result + escapeHtml(text.slice(pos))
 }
+
+interface KindSource {
+  editable?: boolean
+  tags?: readonly string[]
+  templateUID?: string
+}
+
+export function getKinds(item: KindSource, editable: boolean): string[] {
+  const kinds = [editable ? 'editable' : 'readonly']
+  if (item.tags?.some((tag) => tag.startsWith('marketplace:'))) kinds.push('marketplace')
+  if (item.templateUID) kinds.push('template')
+  return kinds
+}

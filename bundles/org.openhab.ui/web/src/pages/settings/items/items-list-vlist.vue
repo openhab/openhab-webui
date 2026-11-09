@@ -212,7 +212,7 @@ export default {
   },
   setup() {
     const items = shallowRef([])
-    const haystackFields = ['name', 'label', 'type', 'semantics']
+    const haystackFields = ['name', 'label', 'type', 'semantics', 'tag']
     const ohSearchbarRef = useTemplateRef('oh-searchbar')
 
     const runtimeStore = useRuntimeStore()
@@ -474,6 +474,7 @@ export default {
   },
   watch: {
     'search.filteredResults'() {
+      this.selected = new Set(this.search.filteredUids.filter((uid) => this.selected.has(uid)))
       this.syncVirtualList()
     }
   },
