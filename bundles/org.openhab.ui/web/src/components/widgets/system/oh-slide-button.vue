@@ -40,6 +40,7 @@
   --slide-text-color: var(--oh-slide-text-color, var(--f7-text-color, #222))
   --slide-confirmed-color: var(--oh-slide-confirmed-color, var(--f7-color-green, #4cd964))
   --slide-unknown-color: var(--oh-slide-unknown-color, var(--f7-color-gray, #8e8e93))
+  --slide-dragging-color: var(--oh-slide-dragging-color, var(--f7-color-orange, #ff9500))
 
   position: relative
   display: inline-block
@@ -130,20 +131,25 @@
   align-items: center
   justify-content: center
 
-  background: var(--slide-thumb-color)
+  background: var(--slide-active-color, var(--slide-thumb-color))
   color: white
   pointer-events: none
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2)
 
 /* Thumb states */
-.oh-slide-button[data-state='on'] .oh-slide-button-thumb
-  background: var(--slide-confirmed-color)
+.oh-slide-button[data-state='on'] .oh-slide-button-thumb,
+.oh-slide-button[data-state='none'].active .oh-slide-button-thumb
+  background: var(--slide-active-color, var(--slide-confirmed-color))
 
 .oh-slide-button[data-state='off'] .oh-slide-button-thumb
-  background: var(--slide-thumb-color)
+  background: var(--slide-active-color, var(--slide-thumb-color))
 
 .oh-slide-button[data-state='unknown'] .oh-slide-button-thumb
-  background: var(--slide-unknown-color)
+  background: var(--slide-active-color, var(--slide-unknown-color))
+
+.oh-slide-button[data-state='pending'] .oh-slide-button-thumb,
+.oh-slide-button.dragging .oh-slide-button-thumb
+  background: var(--slide-active-color, var(--slide-dragging-color))
 
 /* Scale the chevron proportionally with the thumb */
 .oh-slide-button-icon
@@ -159,6 +165,7 @@ import { computed, ref, watch, onBeforeUnmount, type StyleValue } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction'
 import { OhSlideButtonDefinition } from '@/assets/definitions/widgets/system'
+import { OhSlideButton as OhSlideButtonType } from '@/types/components/widgets'
 import type { WidgetContext } from '@/components/widgets/types'
 import type { Config as SlideButtonConfig } from '@/types/components/widgets/system/oh-slide-button.gen'
 
@@ -179,7 +186,7 @@ const { config, evaluateExpression } = useWidgetContext<
   SlideButtonConfig & {
     style?: StyleValue
   }
->(context)
+>(context, OhSlideButtonType.isConfig)
 const { performAction } = useWidgetAction(context, config, evaluateExpression)
 
 const orientation = computed(() => config.value.orientation || 'right')
@@ -355,44 +362,21 @@ const visualState = computed(() => {
 
 const thumbColor = computed(() => {
   const cfg = config.value
-
   const hasFeedback = !!(cfg.stateItem || cfg.stateVariable)
 
-  let color: string | undefined
-
   if (dragging.value || (hasFeedback && visualState.value === 'pending')) {
-    color = cfg.colorDragging ?? 'orange'
-  } else if (!hasFeedback) {
-    color = position.value === 1 ? (cfg.color ?? 'green') : cfg.colorOff
-  } else if (visualState.value === 'unknown') {
-    color = cfg.colorUnknown ?? 'gray'
-  } else if (visualState.value === 'on') {
-    color = cfg.color ?? 'green'
-  } else {
-    color = cfg.colorOff
+    return cfg.colorDragging
   }
 
-  if (!color) return undefined
+  if (!hasFeedback) {
+    return position.value === 1 ? cfg.color : cfg.colorOff
+  }
 
-  const validColors = [
-    'red',
-    'green',
-    'blue',
-    'pink',
-    'yellow',
-    'orange',
-    'purple',
-    'deeppurple',
-    'lightblue',
-    'teal',
-    'lime',
-    'deeporange',
-    'gray',
-    'white',
-    'black'
-  ]
+  if (visualState.value === 'unknown') {
+    return cfg.colorUnknown
+  }
 
-  return validColors.includes(color) ? `var(--f7-color-${color})` : undefined
+  return visualState.value === 'on' ? cfg.color : cfg.colorOff
 })
 
 const displayedPosition = computed(() => (dragging.value ? dragPosition.value : position.value))
@@ -438,7 +422,9 @@ const thumbStyle = computed(() => {
 
     transition: dragging.value ? 'left 100ms ease-out, top 100ms ease-out' : 'left 180ms ease, top 180ms ease',
 
-    backgroundColor: thumbColor.value
+    '--slide-active-color': thumbColor.value
+    ? `var(--f7-color-${thumbColor.value})`
+    : undefined
   }
 })
 

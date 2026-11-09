@@ -18,6 +18,78 @@ export enum Orientation {
   down = 'down'
 }
 
+export enum Color {
+  red = 'red',
+  green = 'green',
+  blue = 'blue',
+  pink = 'pink',
+  yellow = 'yellow',
+  orange = 'orange',
+  purple = 'purple',
+  deeppurple = 'deeppurple',
+  lightblue = 'lightblue',
+  teal = 'teal',
+  lime = 'lime',
+  deeporange = 'deeporange',
+  gray = 'gray',
+  white = 'white',
+  black = 'black'
+}
+
+export enum ColorOff {
+  red = 'red',
+  green = 'green',
+  blue = 'blue',
+  pink = 'pink',
+  yellow = 'yellow',
+  orange = 'orange',
+  purple = 'purple',
+  deeppurple = 'deeppurple',
+  lightblue = 'lightblue',
+  teal = 'teal',
+  lime = 'lime',
+  deeporange = 'deeporange',
+  gray = 'gray',
+  white = 'white',
+  black = 'black'
+}
+
+export enum ColorDragging {
+  red = 'red',
+  green = 'green',
+  blue = 'blue',
+  pink = 'pink',
+  yellow = 'yellow',
+  orange = 'orange',
+  purple = 'purple',
+  deeppurple = 'deeppurple',
+  lightblue = 'lightblue',
+  teal = 'teal',
+  lime = 'lime',
+  deeporange = 'deeporange',
+  gray = 'gray',
+  white = 'white',
+  black = 'black'
+}
+
+export enum ColorUnknown {
+  red = 'red',
+  green = 'green',
+  blue = 'blue',
+  pink = 'pink',
+  yellow = 'yellow',
+  orange = 'orange',
+  purple = 'purple',
+  deeppurple = 'deeppurple',
+  lightblue = 'lightblue',
+  teal = 'teal',
+  lime = 'lime',
+  deeporange = 'deeporange',
+  gray = 'gray',
+  white = 'white',
+  black = 'black'
+}
+
 export interface Config {
   action?: Action | Action[]
   actionUrl?: string
@@ -60,10 +132,10 @@ export interface Config {
   resetDelay?: number
   stateTimeout?: number
   actionVariableValueAlt?: string
-  color?: string
-  colorOff?: string
-  colorDragging?: string
-  colorUnknown?: string
+  color?: Color
+  colorOff?: ColorOff
+  colorDragging?: ColorDragging
+  colorUnknown?: ColorUnknown
 }
 export interface Component {
   component: 'oh-slide-button'

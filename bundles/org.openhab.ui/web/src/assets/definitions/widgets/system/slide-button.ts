@@ -1,5 +1,21 @@
 import { pi, pt, pb, pn, po } from '../helpers.ts'
-
+const colorOptions = [
+  { value: 'red', label: 'Red' },
+  { value: 'green', label: 'Green' },
+  { value: 'blue', label: 'Blue' },
+  { value: 'pink', label: 'Pink' },
+  { value: 'yellow', label: 'Yellow' },
+  { value: 'orange', label: 'Orange' },
+  { value: 'purple', label: 'Purple' },
+  { value: 'deeppurple', label: 'Deep Purple' },
+  { value: 'lightblue', label: 'Light Blue' },
+  { value: 'teal', label: 'Teal' },
+  { value: 'lime', label: 'Lime' },
+  { value: 'deeporange', label: 'Deep Orange' },
+  { value: 'gray', label: 'Gray' },
+  { value: 'white', label: 'White' },
+  { value: 'black', label: 'Black' }
+]
 export default () => [
   pt('text', 'Text', 'Label displayed on the slide button'),
   po('orientation', 'Orientation', 'Direction of activation', [
@@ -19,8 +35,8 @@ export default () => [
   pn('resetDelay', 'Reset Delay', 'Time in milliseconds to wait for confirmation or reset in momentary mode').d('500'),
   pn('stateTimeout', 'State Timeout', 'Maximum time in milliseconds to wait for state confirmation (latching mode)').d('2000'),
   pt('actionVariableValueAlt', 'Alternate Variable Value', 'Variable value assigned when sliding to the inactive position'),
-  pt('color', 'Color', 'Color of the control in the active state'),
-  pt('colorOff', 'Off Color', 'Color of the control in the inactive state'),
-  pt('colorDragging', 'Dragging Color', 'Color of the control while sliding'),
-  pt('colorUnknown', 'Unknown Color', 'Color when the state is unknown')
+  pt('color', 'Color', 'Color of the control in the active state').o(colorOptions),
+  pt('colorOff', 'Off Color', 'Color of the control in the inactive state').o(colorOptions),
+  pt('colorDragging', 'Dragging Color', 'Color of the control while sliding').o(colorOptions),
+  pt('colorUnknown', 'Unknown Color', 'Color when the state is unknown').o(colorOptions)
 ]
