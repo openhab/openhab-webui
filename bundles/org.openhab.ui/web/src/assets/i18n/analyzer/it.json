@@ -1,5 +1,5 @@
 {
-  "analyzer.title": "Analizzato",
+  "analyzer.title": "Analizzare",
   "analyzer.back": "Indietro",
   "analyzer.save": "Salva",
   "analyzer.controls": "Controlli",
@@ -62,7 +62,7 @@
   "analyzer.dialogs.header.markers": "Marcatori",
   "analyzer.dialogs.header.aggregation": "Funzioni di Aggregazione",
   "analyzer.dialogs.header.split": "Dividi Assi",
-  "analyzer.dialogs.save.message": "Inserire l'ID della pagina del grafico che si desidera creare dallo stato corrente dell'Analizzatore",
+  "analyzer.dialogs.save.message": "Inserire l'ID della pagina del grafico che si desidera creare dallo stato corrente dell'Analisi",
   "analyzer.dialogs.save.title": "Salva come Pagina",
   "analyzer.dialogs.save.invalid": "Il UID può contenere solo caratteri alfanumerici e sottolineato (_)",
   "analyzer.dialogs.save.replace.message": "Una pagina con l'ID {uid} esiste già, vuoi sovrascriverla?",

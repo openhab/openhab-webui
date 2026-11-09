@@ -18,7 +18,7 @@ export default {
      * @param {string} [newThingId] Optional custom Thing ID
      * @return {Promise<void>}
      */
-    approveEntry(entry, label, newThingId) {
+    async approveEntry(entry, label, newThingId) {
       return this.$oh.api
         .postPlain(`/rest/inbox/${entry.thingUID}/approve${newThingId ? '?newThingId=' + newThingId : ''}`, label)
         .then(() => {
@@ -27,7 +27,7 @@ export default {
         })
         .catch((err) => {
           showToast('Error during thing creation: ' + err)
-          return Promise.reject(err)
+          throw err
         })
     },
     ignoreEntry(entry, loadFn) {
@@ -86,8 +86,7 @@ export default {
               dialog.close()
               this.approveEntry(entry, label, newThingId)
                 .then(() => {
-                  if (redirect)
-                    this.f7router.navigate('/settings/things/' + newThingUID, {}) // empty options are required
+                  if (redirect) this.f7router.navigate('/settings/things/' + newThingUID, {}) // empty options are required
                   else loadFn()
                 })
                 .catch(() => loadFn())

@@ -30,6 +30,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.util.resource.EmptyResource;
 import org.eclipse.jetty.util.resource.Resource;
 import org.openhab.core.OpenHAB;
 import org.ops4j.pax.web.service.WebContainer;
@@ -37,6 +38,7 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.http.HttpContext;
+import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardContext;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletName;
 import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletPattern;
@@ -50,7 +52,8 @@ import org.slf4j.LoggerFactory;
  * @author Yannick Schaus - Initial contribution
  * @author Dan Cunningham - Convert file serving to a custom servlet
  */
-@Component(immediate = true, service = Servlet.class, name = "org.openhab.ui")
+@Component(immediate = true, service = Servlet.class, name = "org.openhab.ui", property = {
+        HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_INIT_PARAM_PREFIX + "precompressed=true" })
 @NonNullByDefault
 @HttpWhiteboardServletName(UIServlet.SERVLET_PATH)
 @HttpWhiteboardServletPattern(UIServlet.SERVLET_PATH + "*")
@@ -117,7 +120,8 @@ public class UIServlet extends DefaultServlet {
             }
             try {
                 logger.debug("getResource bundle file returning {}", url);
-                return url == null ? null : new ResourceWrapper(contextHandler.newResource(url));
+                // a missing compressed version must not be null, Jetty expects a non-existing resource
+                return url == null ? EmptyResource.INSTANCE : new ResourceWrapper(contextHandler.newResource(url));
             } catch (IOException e) {
                 logger.error("Error while serving content: {}", e.getMessage());
                 return null;

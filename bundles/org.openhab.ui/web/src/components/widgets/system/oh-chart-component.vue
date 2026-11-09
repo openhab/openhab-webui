@@ -71,7 +71,7 @@ import { type ECElementEvent, registerLocale, use } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { ChartType, type Period } from '@/types/components/widgets'
+import { ChartType, type Period, OhChart as OhChartType } from '@/types/components/widgets'
 
 import { BarChart, CustomChart, GaugeChart, HeatmapChart, LineChart, PieChart, ScatterChart } from 'echarts/charts'
 import { LabelLayout } from 'echarts/features'
@@ -96,7 +96,6 @@ import VChart from 'vue-echarts'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { type Calendar } from 'framework7'
 import type { WidgetContext } from '@/components/widgets/types'
-import { OhChart as OhChartType } from '@/types/components/widgets'
 
 dayjs.extend(LocalizedFormat)
 

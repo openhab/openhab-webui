@@ -916,7 +916,7 @@ export default {
       }
     },
     async save(noToast) {
-      if (!this.ready || !this.isEditable) return Promise.reject()
+      if (!this.ready || !this.isEditable) throw new Error('Not ready or not editable')
       if (this.currentTab === 'code' && this.codeDirty) {
         const editor = this.$refs.codeEditor
         try {
@@ -930,19 +930,19 @@ export default {
       }
       if (!this.rule.uid) {
         f7.dialog.alert('Please provide a unique rule UID.', 'UID required').open()
-        return Promise.reject()
+        throw new Error('Rule UID is required')
       }
       if (!this.uidValid) {
         f7.dialog
           .alert("Please provide a valid rule UID. It can't contain '/', '\\' or have leading or trailing whitespace.", 'Invalid UID')
           .open()
-        return Promise.reject()
+        throw new Error('Invalid rule UID')
       }
       if (!this.rule.name) {
         f7.dialog
           .alert('Please provide a rule label. The label is required and will be shown in the UI to identify this rule.', 'Label required')
           .open()
-        return Promise.reject()
+        throw new Error('Rule label is required')
       }
       const promise = this.createMode
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json')

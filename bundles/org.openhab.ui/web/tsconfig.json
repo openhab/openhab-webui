@@ -13,9 +13,8 @@
     "sourceMap": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "types": ["audioworklet", "vite/client", "swagger-ui-dist"]
   },

@@ -1,3 +1,5 @@
 Bundle-SymbolicName: ${project.artifactId}
 Service-Component: OSGI-INF/*.xml
 Bundle-ClassPath: /patch,.
+# /patch is provided by optional fragments to override resources (see #1359)
+-fixupmessages.patch: 'No sub JAR or directory patch';is:=ignore

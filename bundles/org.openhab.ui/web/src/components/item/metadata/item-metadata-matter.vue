@@ -112,7 +112,7 @@ import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  name: 'item-metadata-matter',
+  name: 'item-metadata-matter', // eslint-disable-line vue/component-definition-name-casing
   props: {
     item: Object,
     metadata: Object

@@ -111,6 +111,7 @@ export default {
         this.colorPicker.hueRangeSlider?.calcSize()
         this.colorPicker.saturationRangeSlider?.calcSize()
         this.colorPicker.brightnessRangeSlider?.calcSize()
+        this.colorPicker.updateModules()
       })
     },
     sendCommand(hsb) {

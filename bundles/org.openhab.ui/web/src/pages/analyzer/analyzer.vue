@@ -563,7 +563,7 @@ export default {
           this.showChart = true
         })
 
-        return Promise.resolve()
+        return
       })
     },
     changeSeriesType(options: SeriesOptions, type: SeriesType) {

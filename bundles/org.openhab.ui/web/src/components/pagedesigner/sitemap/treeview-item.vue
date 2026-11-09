@@ -66,7 +66,7 @@ import { showToast } from '@/js/dialog-promises'
 import cloneDeep from 'lodash/cloneDeep'
 
 export default {
-  name: 'sitemap-treeview-item',
+  name: 'sitemap-treeview-item', // eslint-disable-line vue/component-definition-name-casing
   mixins: [SitemapMixin],
   props: {
     includeItemName: Boolean,

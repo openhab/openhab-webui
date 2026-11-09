@@ -4,7 +4,7 @@
  * @author Vlad Ivanov — initial version
  * @author Kuba Wolanin - converted to SASS
  */
-@import 'variables';
-@import 'mixins';
-@import 'layout';
-@import 'theming';
+@use 'variables';
+@use 'mixins';
+@use 'layout';
+@use 'theming';

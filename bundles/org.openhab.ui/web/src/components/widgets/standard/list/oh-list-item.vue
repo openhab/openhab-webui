@@ -166,7 +166,7 @@ import { OhListItemDefinition } from '@/assets/definitions/widgets/standard/list
 import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
 
 export default {
-  name: 'oh-list-item',
+  name: 'oh-list-item', // eslint-disable-line vue/component-definition-name-casing
   props: {
     context: Object
   },

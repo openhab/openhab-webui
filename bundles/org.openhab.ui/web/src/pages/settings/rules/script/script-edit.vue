@@ -579,7 +579,7 @@ export default {
           if (this.isBlockly) languages = languages.filter((l) => l.contentType === this.GRAALJS_MIME_TYPE)
           this.languages = languages
 
-          return Promise.resolve()
+          return
         })
     },
     load() {

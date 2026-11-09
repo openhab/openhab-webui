@@ -87,8 +87,8 @@ const props = withDefaults(
 const emit = defineEmits(['back', 'save'])
 
 defineSlots<{
-  right: void
-  after: void
+  right(): any
+  after(): any
 }>()
 
 const { t } = useI18n({ useScope: 'local' })

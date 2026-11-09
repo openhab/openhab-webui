@@ -46,7 +46,7 @@ export default {
      * @returns {Promise<void>}
      */
     async loadModel(relatedToItem) {
-      if (this.loading) return Promise.resolve()
+      if (this.loading) return
       this.loading = true
 
       // this.saveExpanded() // expanded state is saved directly on expansion
@@ -152,7 +152,7 @@ export default {
           this.loading = false
           this.ready = true
 
-          return Promise.resolve()
+          return
         })
         .catch((error) => {
           return Promise.reject(error)
