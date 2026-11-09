@@ -475,7 +475,7 @@ export default {
       },
       status: {
         label: 'Status',
-        options: [ 'Uninitialized', 'Initializing','Idle', 'Running', 'Disabled' ],
+        options: ['Uninitialized', 'Initializing', 'Idle', 'Running', 'Disabled'],
         getFn: (rule) => [rule.status?.status, rule.status?.statusDetail, ruleStatusBadgeText(ruleStatuses[rule.uid])]
       },
       language: {

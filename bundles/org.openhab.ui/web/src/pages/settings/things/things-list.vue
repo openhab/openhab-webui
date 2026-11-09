@@ -428,7 +428,9 @@ export default {
 
       await this.$oh.api.get('/rest/things?summary=true').then((data) => {
         // Since things is a shallowRef, we need to make statusInfo reactive so status is updated w/o causing the full list to be reactive and causing a full UI re-render of the list
-        this.things = data.sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID)).map((thing) => ({ ...thing, statusInfo: reactive(thing.statusInfo) }))
+        this.things = data
+          .sort((a, b) => (a.label || a.UID).localeCompare(b.label || a.UID))
+          .map((thing) => ({ ...thing, statusInfo: reactive(thing.statusInfo) }))
 
         this.initSearchbar = true
         this.loading = false

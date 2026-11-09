@@ -284,7 +284,7 @@ export function tokensToFuse(tokens: ParsedToken[], haystackFields: string[], fi
  *
  * Combined results retain positive match details for highlighting and use document order.
  * Negation-only matches have no positive match details.
- * 
+ *
  * AI Assisted implementation for handling record-level negation in Fuse search queries.
  */
 export function searchFuse<T>(fuse: Fuse<T>, expression: SearchQuery): FuseResult<T>[] {
