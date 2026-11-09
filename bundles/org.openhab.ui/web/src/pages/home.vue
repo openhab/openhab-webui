@@ -31,7 +31,7 @@
           :tooltip="$t('home.triggerVoice')"
           style="margin-right: 8px"
           @click="triggerDialog" />
-        <developer-dock-icon />
+        <developer-icons />
         <f7-link
           v-if="userStore.isAdmin"
           icon-ios="f7:pencil"
@@ -158,6 +158,7 @@ import { mapStores } from 'pinia'
 
 import OverviewTab from './home/overview-tab.vue'
 import ModelTab from './home/model-tab.vue'
+import DeveloperIcons from '@/components/developer/developer-icons.vue'
 import HomeCards from './home/homecards-mixin'
 
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
@@ -175,7 +176,8 @@ export default {
   mixins: [HomeCards],
   components: {
     OverviewTab,
-    ModelTab
+    ModelTab,
+    DeveloperIcons
   },
   data() {
     return {
