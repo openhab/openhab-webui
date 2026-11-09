@@ -6,6 +6,7 @@ import type { OhTimeSeriesOption, SeriesComponent } from '../types.ts'
 import { OhTimeSeries } from '@/types/components/widgets'
 import * as api from '@/api'
 import { OhTimeSeriesDefinition } from '@/assets/definitions/widgets/chart'
+import { ensureArray } from '@/js/openhab/utils'
 
 const timeSeries: SeriesComponent = {
   neededItems(context, component) {
@@ -27,6 +28,7 @@ const timeSeries: SeriesComponent = {
   get(context, component, items, points, startTime, endTime) {
     const series = context.evaluateExpression<OhTimeSeriesOption>(ComponentId.get(component)!, component.config, OhTimeSeriesDefinition)
     series.data = []
+    series.markers = ensureArray(series.markers)
 
     if (series.item) {
       const itemSeries = points.find((p) => p.name === series.item)

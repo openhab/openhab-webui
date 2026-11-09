@@ -4,10 +4,6 @@ export default {
     // global modifier applied to all components
     modifier: (e) =>
       e
-        .replace('action?: Action', 'action?: Action | Action[]') // Fix array type
-        .replace('taphold_action?: Taphold_action', 'taphold_action?: Taphold_action | Taphold_action[]') // Fix array type
-        .replace('actionAnalyzerItems: string', 'actionAnalyzerItems?: string | string[]') // Fix array type
-        .replace('taphold_actionAnalyzerItems: string', 'taphold_actionAnalyzerItems?: string | string[]') // Fix array type
         .replace('actionPageDefineVars?: string', 'actionPageDefineVars?: Record<string, unknown>[]')
         .replace('taphold_actionPageDefineVars?: string', 'taphold_actionPageDefineVars?: Record<string, unknown>[]')
   },
@@ -25,11 +21,6 @@ export default {
     }
   },
   // component specific modifiers to apply to component files
-  OhValueAxis: {
-    _All: {
-      modifier: (e) => e.replace('split?: Split', 'split?: Split[]')
-    }
-  },
   OhAggregateSeries: {
     Dimension1: {
       modifier: (e) => e.replace('Dimension1', 'Dimension') // Create common Dimension type
@@ -38,18 +29,7 @@ export default {
       modifier: (e) => ''
     },
     _All: {
-      modifier: (e) =>
-        e.replace('Dimension1', 'Dimension').replace('Dimension2', 'Dimension').replace('markers?: Markers', 'markers?: Markers[]')
-    }
-  },
-  OhTimeSeries: {
-    _All: {
-      modifier: (e) => e.replace('markers?: Markers', 'markers?: Markers[]')
-    }
-  },
-  OhCalendarSeries: {
-    _All: {
-      modifier: (e) => e.replace('markers?: Markers', 'markers?: Markers[]')
+      modifier: (e) => e.replace('Dimension1', 'Dimension').replace('Dimension2', 'Dimension')
     }
   },
   OhGauge: {
@@ -65,11 +45,6 @@ export default {
   OhInputCard: {
     _All: {
       modifier: (e) => e.replace(/\s+outline\?: boolean/, '') // OhInputCard has multiple outline params
-    }
-  },
-  OhCategoryAxis: {
-    _All: {
-      modifier: (e) => e.replace('data?: string', 'data?: string[]') // Fix array type
     }
   },
   OhCanvasLayout: {

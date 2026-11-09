@@ -22,7 +22,7 @@ export interface Config {
   on?: string
   item?: string
   label?: string
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

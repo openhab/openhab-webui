@@ -26,6 +26,7 @@ import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhColorpickerDefinition } from '@/assets/definitions/widgets/system'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
+import { ensureArray } from '@/js/openhab/utils'
 
 export default {
   props: {
@@ -81,13 +82,14 @@ export default {
   methods: {
     initColorPicker() {
       const vm = this
+      const modules = ensureArray(this.config.modules)
       this.colorPicker = f7.colorPicker.create(
         Object.assign({}, this.config, {
           containerEl: !this.config.openIn ? this.$refs.container : undefined,
           targetEl: this.config.openIn ? this.$refs.swatch : undefined,
           targetElSetBackgroundColor: true,
           openIn: this.config.openIn,
-          modules: this.config.modules || (this.config.openIn ? ['wheel'] : ['hsb-sliders']),
+          modules: modules.length > 0 ? modules : this.config.openIn ? ['wheel'] : ['hsb-sliders'],
           value: {
             hsb: this.color
           },

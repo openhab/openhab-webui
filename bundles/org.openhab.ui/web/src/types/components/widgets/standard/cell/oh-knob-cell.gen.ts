@@ -47,7 +47,7 @@ export interface Config {
   pathColor?: string
   rangeColor?: string
   tooltipColor?: string
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

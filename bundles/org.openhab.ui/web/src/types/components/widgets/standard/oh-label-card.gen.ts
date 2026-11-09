@@ -8,12 +8,6 @@ import {
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation,
-  Taphold_action,
-  Taphold_actionHttpMethod,
-  Taphold_actionPageTransition,
-  Taphold_actionAnalyzerChartType,
-  Taphold_actionAnalyzerCoordSystem,
-  Taphold_actionAnalyzerAggregation,
   TrendGradientDirection
 } from '../common.gen.ts'
 
@@ -24,7 +18,7 @@ export interface Config {
   noBorder?: boolean
   noShadow?: boolean
   outline?: boolean
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod
@@ -52,10 +46,10 @@ export interface Config {
   actionVariable?: string
   actionVariableValue?: string
   actionVariableKey?: string
-  taphold_action?: Taphold_action | Taphold_action[]
+  taphold_action?: Action | Action[] | string
   taphold_actionUrl?: string
   taphold_actionUrlSameWindow?: boolean
-  taphold_actionHttpMethod?: Taphold_actionHttpMethod
+  taphold_actionHttpMethod?: ActionHttpMethod
   taphold_actionHttpBody?: string
   taphold_actionItem?: string
   taphold_actionCommand?: string
@@ -65,16 +59,16 @@ export interface Config {
   taphold_actionRuleContext?: string
   taphold_actionPage?: string
   taphold_actionPageDefineVars?: Record<string, unknown>[]
-  taphold_actionPageTransition?: Taphold_actionPageTransition
+  taphold_actionPageTransition?: ActionPageTransition
   taphold_actionModal?: string
   taphold_actionModalConfig?: string
   taphold_actionPhotos?: string
   taphold_actionPhotoBrowserConfig?: string
   taphold_actionGroupPopupItem?: string
   taphold_actionAnalyzerItems?: string | string[]
-  taphold_actionAnalyzerChartType?: Taphold_actionAnalyzerChartType
-  taphold_actionAnalyzerCoordSystem?: Taphold_actionAnalyzerCoordSystem
-  taphold_actionAnalyzerAggregation?: Taphold_actionAnalyzerAggregation
+  taphold_actionAnalyzerChartType?: ActionAnalyzerChartType
+  taphold_actionAnalyzerCoordSystem?: ActionAnalyzerCoordSystem
+  taphold_actionAnalyzerAggregation?: ActionAnalyzerAggregation
   taphold_actionConfirmation?: string
   taphold_actionFeedback?: string
   taphold_actionVariable?: string
@@ -117,11 +111,5 @@ export {
   ActionAnalyzerChartType,
   ActionAnalyzerCoordSystem,
   ActionAnalyzerAggregation,
-  Taphold_action,
-  Taphold_actionHttpMethod,
-  Taphold_actionPageTransition,
-  Taphold_actionAnalyzerChartType,
-  Taphold_actionAnalyzerCoordSystem,
-  Taphold_actionAnalyzerAggregation,
   TrendGradientDirection
 }
