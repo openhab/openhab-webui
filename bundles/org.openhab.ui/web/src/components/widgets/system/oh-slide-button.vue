@@ -422,9 +422,7 @@ const thumbStyle = computed(() => {
 
     transition: dragging.value ? 'left 100ms ease-out, top 100ms ease-out' : 'left 180ms ease, top 180ms ease',
 
-    '--slide-active-color': thumbColor.value
-    ? `var(--f7-color-${thumbColor.value})`
-    : undefined
+    '--slide-active-color': thumbColor.value ? `var(--f7-color-${thumbColor.value})` : undefined
   }
 })
 
