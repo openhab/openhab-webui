@@ -153,6 +153,9 @@
   .chat-messagebar
     position relative
     bottom 0
+    padding-left unquote('max(env(safe-area-inset-left, 0px), 12px)')
+    padding-right unquote('max(env(safe-area-inset-right, 0px), 20px)')
+    padding-bottom unquote('max(env(safe-area-inset-bottom, 0px), 8px)')
     textarea
       overflow-y hidden
     .link
