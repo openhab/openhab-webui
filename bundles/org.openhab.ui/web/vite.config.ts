@@ -1,14 +1,15 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vitePluginTopLevelAwait from 'vite-plugin-top-level-await'
 import { compression } from 'vite-plugin-compression2'
 import { VitePWA } from 'vite-plugin-pwa'
 import { resolve } from 'path'
 import vueDevtools from 'vite-plugin-vue-devtools'
 import { visualizer } from 'rollup-plugin-visualizer'
 import webpackStats from 'rollup-plugin-webpack-stats'
+import postcssGlobalData from '@csstools/postcss-global-data'
+import postcssCustomMedia from 'postcss-custom-media'
 
-const projectRootDir = resolve(__dirname)
+const projectRootDir = resolve(import.meta.dirname)
 
 const production: boolean = process.env.NODE_ENV === 'production'
 const apiBaseUrl = process.env.OH_APIBASE || 'http://localhost:8080'
@@ -48,13 +49,26 @@ export default defineConfig({
             injectTo: 'head-prepend',
             attrs: {
               'http-equiv': 'Content-Security-Policy',
-              content: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:;"
+              /*
+               * Content-Security Policy Explanation:
+               * - default: allow loading resources from same origin
+               * - scripts: same origin & unsafe-eval (required by eslint-linter-browserify in code editor)
+               * - styles: same source & inline style (<style> tags and style attributes)
+               * - fonts: same source & data: URIs
+               * - images: any origin & data: URIs
+               * - media: any origin, data:, blob: & media: URIs
+               * - embedding (<iframe> tag): any origin
+               * - connect (fetch, XHR, WebSocket, etc.): same origin, *.openhab.org & raw.githubusercontent.com (add-on logos, READMEs, etc.), Iconify icon sources, and any origin (until we provide a way to set this dynamically)
+               * - web workers: same origin and blob: URIs (required by Video.js)
+               * - objects (browser plugins, Flash, etc.): blocked
+               * - base: only allow same origin to set <base href="...">
+               */
+              content: "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src * data:; media-src * data: blob: media:; frame-src *; connect-src 'self' *.openhab.org raw.githubusercontent.com api.iconify.design api.unisvg.com api.simplesvg.com *; worker-src 'self' blob:; object-src 'none'; base-uri 'self';"
             }
           }
         ]
       }
     },
-    vitePluginTopLevelAwait(),
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
@@ -85,11 +99,21 @@ export default defineConfig({
       : [vueDevtools()]),
     ...(stats ? [visualizer(), webpackStats()] : [])
   ],
+  css: {
+    postcss: {
+      plugins: [
+        postcssGlobalData({
+          files: ['./src/css/breakpoint.css']
+        }),
+        postcssCustomMedia(),
+      ]
+    }
+  },
   define: {
     // __VUE_I18N_LEGACY_API__: false // tree-shake legacy mode
   },
   optimizeDeps: {
-    // ensure these alre always pre-bundled, including esbuild in the dev server
+    // ensure these alre always pre-bundled in the dev server
     include: ['echarts', 'vue-echarts', 'dayjs']
   },
   server: {

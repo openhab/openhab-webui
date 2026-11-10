@@ -1,20 +1,31 @@
-const SharedTypes: string[] = [
-  'Call',
-  'Color',
-  'Contact',
-  'DateTime',
-  'Dimmer',
-  'Image',
-  'Location',
-  'Number',
-  'Player',
-  'Rollershutter',
-  'String',
-  'Switch'
-]
+/**
+ * See {@link https://www.openhab.org/javadoc/latest/org/openhab/core/items/item org.openhab.core.items.Item}
+ */
+export enum ItemType {
+  Call = 'Call',
+  Color = 'Color',
+  Contact = 'Contact',
+  DateTime = 'DateTime',
+  Dimmer = 'Dimmer',
+  Group = 'Group',
+  Image = 'Image',
+  Location = 'Location',
+  Number = 'Number',
+  Player = 'Player',
+  Rollershutter = 'Rollershutter',
+  String = 'String',
+  Switch = 'Switch'
+}
 
-export const ItemTypes = SharedTypes.concat(['Group'])
-export const GroupTypes = ['None'].concat(SharedTypes)
+export const ItemTypes: string[] = Object.values(ItemType)
+
+export function isItemType(itemType: string): boolean {
+  return ItemTypes.includes(itemType)
+}
+
+export type GroupType = 'None' | Exclude<ItemType, ItemType.Group>
+
+export const GroupTypes: string[] = ['None'].concat(ItemTypes.filter((t) => t !== 'Group'))
 
 export const CommonFunctions = [
   {

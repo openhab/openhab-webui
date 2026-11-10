@@ -12,7 +12,6 @@
     </f7-navbar>
     <f7-block class="block-narrow">
       <f7-col v-if="channel">
-        <f7-block-title>Channel</f7-block-title>
         <channel-general-settings
           :channel="channel"
           :channelType="channelType"
@@ -20,15 +19,17 @@
           :disabled="!thing.editable ? true : null" />
       </f7-col>
       <f7-col v-if="channelType != null">
-        <f7-block-title v-if="configDescription.parameters"> Configuration </f7-block-title>
-        <f7-block-footer v-else-if="noConfig" class="padding">
-          This channel has no configuration.<br /><br /><f7-link back> Go Back </f7-link>
-        </f7-block-footer>
+        <group-box v-if="!configDescription.parameters || noConfig" title="Configuration">
+          <f7-block-footer class="padding"> This channel has no configuration. </f7-block-footer>
+        </group-box>
         <config-sheet
           :parameter-groups="configDescription.parameterGroups"
           :parameters="configDescription.parameters"
           :configuration="config"
           :read-only="!thing.editable" />
+      </f7-col>
+      <f7-col>
+        <f7-link back> Go Back </f7-link>
       </f7-col>
     </f7-block>
   </f7-page>

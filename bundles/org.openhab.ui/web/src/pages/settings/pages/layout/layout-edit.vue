@@ -58,42 +58,38 @@
           "
           class="block-narrow no-padding">
           <f7-col>
-            <f7-list accordion-list>
-              <f7-block-title class="margin-left"> Layout Type </f7-block-title>
-              <f7-list-item accordion-item title="Switch to Fixed Layout">
-                <f7-accordion-content>
-                  <f7-block class="margin text-align-center">
-                    Switch to a fixed layout type, suitable for e.g. wall mounted tablets:
-                  </f7-block>
-                  <f7-row class="text-align-center align-items-stretch margin-vertical" no-gap>
-                    <f7-col width="50">
-                      <f7-link
-                        @click="setLayoutType('fixed', 'grid')"
-                        class="flex-direction-column padding margin-left-half elevation-1 elevation-hover-3"
-                        style="color: var(--f7-theme-color-text-color)">
-                        <f7-icon size="70px" f7="grid" />
-                        <div class="margin-bottom">Fixed Grid</div>
-                        <f7-block-footer class="margin-top">
-                          <small>Position and resize widgets on a grid with fixed dimensions.</small>
-                        </f7-block-footer>
-                      </f7-link>
-                    </f7-col>
-                    <f7-col width="50">
-                      <f7-link
-                        @click="setLayoutType('fixed', 'canvas')"
-                        class="flex-direction-column padding margin-right-half elevation-1 elevation-hover-3"
-                        style="color: var(--f7-theme-color-text-color)">
-                        <f7-icon size="70px" f7="rectangle_3_offgrid" />
-                        <div class="margin-bottom">Fixed Canvas</div>
-                        <f7-block-footer class="margin-top">
-                          <small>Position and resize widgets freely over a fixed background.</small>
-                        </f7-block-footer>
-                      </f7-link>
-                    </f7-col>
-                  </f7-row>
-                </f7-accordion-content>
-              </f7-list-item>
-            </f7-list>
+            <!-- <f7-list accordion-list> -->
+            <!-- <f7-block-title class="margin-left"> Layout Type </f7-block-title> -->
+            <group-box title="Switch to Fixed Layout" accordion>
+              <f7-block class="margin text-align-center"> Switch to a fixed layout type, suitable for e.g. wall mounted tablets: </f7-block>
+              <f7-row class="text-align-center align-items-stretch margin-vertical" no-gap>
+                <f7-col width="50">
+                  <f7-link
+                    @click="setLayoutType('fixed', 'grid')"
+                    class="flex-direction-column padding margin-left-half elevation-1 elevation-hover-3"
+                    style="color: var(--f7-theme-color-text-color)">
+                    <f7-icon size="70px" f7="grid" />
+                    <div class="margin-bottom">Fixed Grid</div>
+                    <f7-block-footer class="margin-top">
+                      <small>Position and resize widgets on a grid with fixed dimensions.</small>
+                    </f7-block-footer>
+                  </f7-link>
+                </f7-col>
+                <f7-col width="50">
+                  <f7-link
+                    @click="setLayoutType('fixed', 'canvas')"
+                    class="flex-direction-column padding margin-right-half elevation-1 elevation-hover-3"
+                    style="color: var(--f7-theme-color-text-color)">
+                    <f7-icon size="70px" f7="rectangle_3_offgrid" />
+                    <div class="margin-bottom">Fixed Canvas</div>
+                    <f7-block-footer class="margin-top">
+                      <small>Position and resize widgets freely over a fixed background.</small>
+                    </f7-block-footer>
+                  </f7-link>
+                </f7-col>
+              </f7-row>
+            </group-box>
+            <!-- </f7-list> -->
           </f7-col>
         </f7-block>
 

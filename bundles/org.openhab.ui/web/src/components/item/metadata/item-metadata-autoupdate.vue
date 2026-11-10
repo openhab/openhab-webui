@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <group-box title="Auto Update">
     <f7-list>
       <f7-list-item
         title="Force auto-update"
@@ -12,7 +12,7 @@
     <f7-block-footer class="param-description">
       <small>Force the state to auto-update on command.</small>
     </f7-block-footer>
-  </div>
+  </group-box>
 </template>
 
 <script>

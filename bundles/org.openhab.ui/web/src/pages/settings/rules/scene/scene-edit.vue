@@ -48,7 +48,11 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else-if="!createMode" class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink" strong>
+        <f7-block
+          v-else-if="!createMode"
+          class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink"
+          strong
+          v-deferred>
           <f7-col>
             ______:
             <f7-chip class="margin-left" text="________" />
@@ -61,15 +65,11 @@
 
         <rule-general-settings :rule="rule" :ready="ready" :createMode="createMode" :inSceneEditor="true" />
 
+        <not-editable-notice v-if="!editable" subject="Thing" />
+
         <f7-block v-if="ready" class="block-narrow">
-          <f7-block-footer v-if="!isEditable" class="no-margin padding-left">
-            <f7-icon f7="lock_fill" size="12" color="gray" />&nbsp;Note: this rule is not editable because it has been provisioned from a
-            file.
-          </f7-block-footer>
-          <!-- <f7-col v-if="isEditable" class="text-align-right justify-content-flex-end">
-            </f7-col> -->
           <f7-col class="scene-modules">
-            <div v-if="rule['actions'].length > 0" class="no-padding float-right">
+            <div v-if="rule['actions'].length > 0" class="no-padding float-right margin-top margin-bottom">
               <f7-button
                 @click="toggleModuleControls"
                 small
@@ -85,8 +85,8 @@
                 &nbsp;Reorder
               </f7-button>
             </div>
-            <div>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)"> Configuration </f7-block-title>
+
+            <group-box title="Scene Configuration">
               <f7-list class="scene-items" sortable swipeout media-list @sortable:sort="(ev) => reorderModule(ev, 'actions')">
                 <f7-list-item
                   v-for="mod in rule['actions']"
@@ -160,13 +160,15 @@
                   <!-- <f7-list-button :color="(showModuleControls) ? 'gray' : 'theme-alt'" :title="sectionLabels[section][1]"></f7-list-button> -->
                 </f7-list-group>
               </f7-list>
-            </div>
+            </group-box>
           </f7-col>
           <f7-col v-if="isEditable && !createMode">
-            <f7-list>
-              <f7-list-button color="theme-alt" @click="duplicateRule"> Duplicate Scene </f7-list-button>
-              <f7-list-button color="red" @click="deleteRule"> Remove Scene </f7-list-button>
-            </f7-list>
+            <group-box>
+              <f7-list>
+                <f7-list-button color="theme-alt" @click="duplicateRule"> Duplicate Scene </f7-list-button>
+                <f7-list-button color="red" @click="deleteRule"> Remove Scene </f7-list-button>
+              </f7-list>
+            </group-box>
           </f7-col>
         </f7-block>
       </f7-tab>
@@ -248,7 +250,7 @@ import fastDeepEqual from 'fast-deep-equal/es6'
 import SceneConfigureItemPopup from './scene-configure-item-popup.vue'
 
 import RuleMixin from '../rule-edit-mixin'
-import RuleStatus from '@/components/rule/rule-status-mixin'
+import { ruleStatusBadgeColor } from '@/components/rule/rule-helpers.ts'
 
 import ItemPicker from '@/components/config/controls/item-picker.vue'
 import RuleGeneralSettings from '@/components/rule/rule-general-settings.vue'
@@ -257,7 +259,7 @@ import { useDirty } from '@/pages/useDirty'
 import { useTabs } from '@/pages/useTabs'
 
 export default {
-  mixins: [RuleMixin, RuleStatus],
+  mixins: [RuleMixin],
   components: {
     RuleGeneralSettings,
     ItemPicker,
@@ -273,7 +275,7 @@ export default {
   setup() {
     const { dirty, dirtyIndicator } = useDirty('scene-edit-page')
     const { currentTab, switchTab } = useTabs('design')
-    return { dirty, dirtyIndicator, currentTab, switchTab }
+    return { dirty, dirtyIndicator, currentTab, switchTab, ruleStatusBadgeColor }
   },
   data() {
     return {

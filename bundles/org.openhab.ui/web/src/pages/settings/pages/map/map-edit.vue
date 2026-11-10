@@ -32,8 +32,8 @@
 
         <f7-block v-if="ready && !previewMode" class="block-narrow" style="padding-bottom: 8rem">
           <f7-col>
-            <f7-block-title>Page Configuration</f7-block-title>
             <config-sheet
+              :title="'Map Page Configuration'"
               :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
               :parameters="pageWidgetDefinition.props.parameters || []"
               :configuration="page.config"

@@ -28,8 +28,8 @@
         <f7-block v-if="ready && !previewMode" class="block-narrow">
           <not-editable-notice v-if="!isEditable" subject="chart" />
           <page-settings :page="page" :createMode="createMode" :readOnly="!isEditable" :f7router />
-          <f7-block-title>Chart Configuration</f7-block-title>
           <config-sheet
+            title="Chart Configuration"
             :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
             :parameters="pageWidgetDefinition.props.parameters || []"
             :configuration="page.config"

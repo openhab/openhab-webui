@@ -6,28 +6,26 @@
 
     <f7-block v-if="ready" class="block-narrow">
       <f7-col>
-        <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :things="things" :ready="true" />
         <f7-block-title medium>
           {{ thingType.label }}
         </f7-block-title>
         <div class="margin thing-type-description" v-html="thingType.description" />
+        <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :things="things" :ready="true" />
+        <config-sheet
+          ref="parameters"
+          :f7router="f7router"
+          :parameter-groups="thingType.parameterGroups"
+          :parameters="thingType.configParameters"
+          :configuration="thing.configuration" />
       </f7-col>
     </f7-block>
     <!-- skeletons for not ready -->
-    <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink">
+    <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink" v-deferred>
       <thing-general-settings :thing="thing" :thing-type="thingType" :createMode="true" :ready="false" />
       <f7-col>
         <f7-block-title>____ _______</f7-block-title>
         <div class="margin">____ ____ ____ _____ ___ __ ____ __ ________ __ ____ ___ ____</div>
       </f7-col>
-    </f7-block>
-
-    <f7-block v-if="ready" class="block-narrow">
-      <config-sheet
-        ref="parameters"
-        :parameter-groups="thingType.parameterGroups"
-        :parameters="thingType.configParameters"
-        :configuration="thing.configuration" />
     </f7-block>
 
     <div v-if="ready" class="if-aurora display-flex justify-content-center margin">
@@ -57,11 +55,10 @@ import { f7, theme } from 'framework7-vue'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 
 import ThingGeneralSettings from '@/components/thing/thing-general-settings.vue'
-import ThingMixin from '@/components/thing/thing-mixin'
+import { validateThingUID } from '@/components/thing/thing-helpers'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingMixin],
   props: {
     thingTypeId: String,
     thingCopy: Object,
@@ -148,7 +145,7 @@ export default {
         f7.dialog.alert('Please give a unique identifier')
         return
       }
-      const uidValidationError = this.validateThingUID(this.thing.UID, this.thing.ID)
+      const uidValidationError = validateThingUID(this.thing.UID, this.thing.ID, this.things)
       if (uidValidationError !== '') {
         f7.dialog.alert('Invalid Thing ID: ' + uidValidationError)
         return

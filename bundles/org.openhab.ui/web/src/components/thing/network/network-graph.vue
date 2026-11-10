@@ -1,6 +1,6 @@
 <template>
   <div class="network-fit">
-    <chart v-if="chartOptions" :option="chartOptions" :theme="isDarkMode ? 'dark' : undefined" autoresize />
+    <chart v-if="chartOptions && chartSize" :option="chartOptions" :theme="isDarkMode ? 'dark' : undefined" autoresize />
     <div v-if="graph" class="network-legend" :class="{ dark: isDarkMode }">
       <div class="legend-title">
         {{ graph.title }}
@@ -33,14 +33,6 @@
           }}</span>
           <span>{{ linkType.label }}</span>
         </div>
-      </div>
-
-      <!-- Non-fabric toggle -->
-      <div v-if="hasNonFabricNodes" class="legend-section">
-        <label class="legend-toggle">
-          <input type="checkbox" v-model="showNonFabric" />
-          <span>Show non-fabric devices</span>
-        </label>
       </div>
     </div>
   </div>
@@ -135,17 +127,6 @@
         text-decoration-line underline
         text-decoration-style dashed
         text-underline-offset 4px
-
-    .legend-toggle
-      display flex
-      align-items center
-      gap 6px
-      cursor pointer
-      font-size 11px
-
-      input[type="checkbox"]
-        margin 0
-        cursor pointer
 </style>
 
 <script>
@@ -177,28 +158,13 @@ export default {
   },
   data() {
     return {
-      showNonFabric: false
+      chartSize: null
     }
   },
   computed: {
     ...mapStores(useUIOptionsStore),
     isDarkMode() {
       return this.uiOptionsStore.darkMode === 'dark'
-    },
-    hasNonFabricNodes() {
-      if (!this.graph) return false
-      return this.graph.nodes.some((n) => n.status === 'unknown')
-    },
-    filteredNodes() {
-      if (!this.graph) return []
-      if (this.showNonFabric) return this.graph.nodes
-      return this.graph.nodes.filter((n) => n.status !== 'unknown')
-    },
-    filteredLinks() {
-      if (!this.graph) return []
-      if (this.showNonFabric) return this.graph.links
-      const visibleIds = new Set(this.filteredNodes.map((n) => n.id))
-      return this.graph.links.filter((l) => visibleIds.has(l.source) && visibleIds.has(l.target))
     },
     chartOptions() {
       if (!this.graph) return null
@@ -212,6 +178,24 @@ export default {
         series: [this.buildSeries()]
       }
     }
+  },
+  created() {
+    this.resizeObserver = null
+  },
+  mounted() {
+    // The focused node is pinned to the center, so the chart waits for its size. Only the first size is used, as
+    // later resizes would rebuild the whole chart, and the chart resizes itself.
+    this.resizeObserver = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      if (width && height) {
+        this.chartSize = { width, height }
+        this.resizeObserver.disconnect()
+      }
+    })
+    this.resizeObserver.observe(this.$el)
+  },
+  beforeUnmount() {
+    this.resizeObserver?.disconnect()
   },
   methods: {
     getLinkSymbol(linkType) {
@@ -227,8 +211,8 @@ export default {
       }
     },
     buildSeries() {
-      const nodes = this.filteredNodes.map((node) => this.buildNodeData(node))
-      const links = this.filteredLinks.map((link) => this.buildLinkData(link))
+      const nodes = this.graph.nodes.map((node) => this.buildNodeData(node))
+      const links = this.graph.links.map((link) => this.buildLinkData(link))
 
       const opts = this.graph.displayOptions || {}
 
@@ -236,7 +220,6 @@ export default {
         type: 'graph',
         layout: 'force',
         force: {
-          initLayout: 'force',
           gravity: opts.gravity ?? 0.5,
           repulsion: opts.repulsion ?? 2000,
           edgeLength: opts.edgeLength ?? 150,
@@ -283,12 +266,15 @@ export default {
         role: node.role,
         roleLabel: this.formatRoleLabel(node),
         properties: node.properties,
-        symbolSize: roleInfo.size,
+        symbolSize: node.focused ? roleInfo.size + 15 : roleInfo.size,
         itemStyle: {
           color: node.statusColor || '#4CAF50',
           borderColor: roleInfo.color,
-          borderWidth: node.role === 'leader' ? 5 : 3
+          borderWidth: node.role === 'leader' || node.focused ? 5 : 3,
+          ...(node.focused && { shadowBlur: 20, shadowColor: roleInfo.color })
         },
+        // The force layout leaves fixed nodes where they are placed
+        ...(node.focused && this.chartSize && { fixed: true, x: this.chartSize.width / 2, y: this.chartSize.height / 2 }),
         // Store secondary role info for tooltip
         secondaryRole: secondaryRoleInfo
       }
@@ -401,8 +387,12 @@ export default {
         tooltip += `<br/>Path Cost: ${data.properties.pathCost}`
       }
 
-      if (data.properties?.fromRouteTable) {
-        tooltip += `<br/><span style="color: #888">Source: Route Table</span>`
+      if (data.properties?.reportedBy) {
+        tooltip += `<br/><span style="color: #888">Only reported by ${data.properties.reportedBy}</span>`
+      }
+
+      if (data.properties?.stale) {
+        tooltip += `<br/><span style="color: #888">Stale: the reported address no longer matches</span>`
       }
 
       return tooltip

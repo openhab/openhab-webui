@@ -7,11 +7,14 @@ import '@/js/monkeypatch'
 // Import Vue
 import { createApp, reactive, type Component } from 'vue'
 
+// Import directives
+import { vDeferred } from '@/js/directives/vDeferred'
+
 // Import globally registered components
 import OhNavContent from '@/components/navigation/oh-nav-content.vue'
-import DeveloperDockIcon from './components/developer/developer-dock-icon.vue'
 import OhIconComponent from './components/widgets/system/oh-icon.vue'
 import GenericWidgetComponent from './components/widgets/generic-widget-component.vue'
+import GroupBox from './components/util/group-box.vue'
 
 import { registerWidgets } from '@/components/oh-component-registry'
 
@@ -62,7 +65,7 @@ app.use(pinia)
 app.use(i18n)
 app.use(AsyncComputed)
 app.use(fullscreen)
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+// oxlint-disable-next-line typescript/no-unsafe-argument
 app.use(VueClipboard, {
   autoSetContainer: true, // add this line to enable auto setting container
   appendToBody: true // add this line to append the popup to body
@@ -70,11 +73,13 @@ app.use(VueClipboard, {
 
 // Register key components prior to mounting the app to ensure they are available to eliminate warnings
 app.component('OhNavContent', OhNavContent)
-app.component('DeveloperDockIcon', DeveloperDockIcon)
 app.component('OhIcon', OhIconComponent)
 app.component('GenericWidgetComponent', GenericWidgetComponent)
-
+app.component('GroupBox', GroupBox)
 registerWidgets(app)
+
+// Register custom directives
+app.directive('deferred', vDeferred)
 
 app.mount('#app')
 performance.mark('app-mounted')

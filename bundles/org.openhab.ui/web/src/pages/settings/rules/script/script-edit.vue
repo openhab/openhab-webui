@@ -274,10 +274,12 @@
             @new-language="changeLanguage" />
           <f7-block v-if="editable && isScriptRule" class="block-narrow">
             <f7-col>
-              <f7-list>
-                <f7-list-button color="theme-alt" @click="duplicateRule"> Duplicate Script </f7-list-button>
-                <f7-list-button color="red" @click="deleteRule"> Remove Script </f7-list-button>
-              </f7-list>
+              <group-box>
+                <f7-list>
+                  <f7-list-button color="theme-alt" @click="duplicateRule"> Duplicate Script </f7-list-button>
+                  <f7-list-button color="red" @click="deleteRule"> Remove Script </f7-list-button>
+                </f7-list>
+              </group-box>
             </f7-col>
           </f7-block>
         </f7-page>
@@ -300,7 +302,7 @@ import { mapStores } from 'pinia'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
-import RuleStatus from '@/components/rule/rule-status-mixin'
+import { ruleStatusBadgeColor, ruleStatusBadgeText } from '@/components/rule/rule-helpers.ts'
 import ScriptGeneralSettings from './script-general-settings.vue'
 import ModuleDescriptionSuggestions from '../module-description-suggestions'
 import AUTOMATION_LANGUAGES from '@/assets/automation-languages'
@@ -310,7 +312,7 @@ import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [RuleStatus, ModuleDescriptionSuggestions],
+  mixins: [ModuleDescriptionSuggestions],
   components: {
     ScriptGeneralSettings,
     editor: defineAsyncComponent(() => import(/* webpackChunkName: "script-editor" */ '@/components/config/controls/script-editor.vue')),
@@ -328,7 +330,7 @@ export default {
   },
   setup() {
     const { dirty, dirtyIndicator } = useDirty('script-edit-page')
-    return { theme, dirty, dirtyIndicator }
+    return { theme, dirty, dirtyIndicator, ruleStatusBadgeColor, ruleStatusBadgeText }
   },
   data() {
     return {
@@ -577,7 +579,7 @@ export default {
           if (this.isBlockly) languages = languages.filter((l) => l.contentType === this.GRAALJS_MIME_TYPE)
           this.languages = languages
 
-          return Promise.resolve()
+          return
         })
     },
     load() {

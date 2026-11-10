@@ -65,7 +65,6 @@ import org.openhab.ui.cometvisu.internal.backend.model.config.pure.Video;
 import org.openhab.ui.cometvisu.internal.backend.model.config.pure.Web;
 import org.openhab.ui.cometvisu.internal.backend.sitemap.ConfigHelper.Transform;
 import org.openhab.ui.cometvisu.internal.servlet.CometVisuApp;
-import org.rrd4j.ConsolFun;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -391,14 +390,17 @@ public class VisuConfig {
             bean.setRefresh(new BigInteger(String.valueOf(chart.getRefresh())));
             bean.setHeight(configHelper.defaultChartHeight);
 
+            // ConsolFun.AVERAGE.toString() and ConsolFun.MAX.toString() are replaced with "AVERAGE" and "MAX"
+            // respectively to avoid importing the ConsolFun class and the rrd4j library.
+            // It is a plain enumeration replacement.
             if (item instanceof GroupItem) {
                 for (Item member : ((GroupItem) item).getMembers()) {
                     Rrd rrd = new Rrd();
                     rrd.setValue(member.getName());
                     if (member instanceof NumberItem) {
-                        rrd.setConsolidationFunction(ConsolFun.AVERAGE.toString());
+                        rrd.setConsolidationFunction("AVERAGE");
                     } else {
-                        rrd.setConsolidationFunction(ConsolFun.MAX.toString());
+                        rrd.setConsolidationFunction("MAX");
                     }
                     bean.getRrd().add(rrd);
                 }
@@ -406,9 +408,9 @@ public class VisuConfig {
                 Rrd rrd = new Rrd();
                 rrd.setValue(item.getName());
                 if (item instanceof NumberItem) {
-                    rrd.setConsolidationFunction(ConsolFun.AVERAGE.toString());
+                    rrd.setConsolidationFunction("AVERAGE");
                 } else {
-                    rrd.setConsolidationFunction(ConsolFun.MAX.toString());
+                    rrd.setConsolidationFunction("MAX");
                 }
                 bean.getRrd().add(rrd);
             }

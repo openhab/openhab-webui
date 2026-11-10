@@ -12,8 +12,8 @@
 
     <f7-block v-if="ready && persistenceList.length" form class="block-narrow">
       <f7-col>
-        <f7-block-title medium> General Settings </f7-block-title>
         <config-sheet
+          title="Default Persistence Configuration"
           :parameter-groups="configDescriptions?.parameterGroups"
           :parameters="configDescriptions?.parameters"
           :configuration="config"
@@ -22,21 +22,22 @@
     </f7-block>
     <f7-block v-if="ready && persistenceList.length" class="block-narrow">
       <f7-col>
-        <f7-block-title medium> Configure Persistence Policies </f7-block-title>
-        <f7-list>
-          <f7-list-item
-            v-for="persistence in persistenceList"
-            media-item
-            :key="persistence.id"
-            :link="persistence.id"
-            :title="persistence.label"
-            :footer="persistence.id" />
-          <f7-list-item link="/addons/persistence/" no-chevron media-item subtitle="Install more persistence add-ons">
-            <template #media>
-              <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-            </template>
-          </f7-list-item>
-        </f7-list>
+        <group-box title="Configure Persistence Policies">
+          <f7-list>
+            <f7-list-item
+              v-for="persistence in persistenceList"
+              media-item
+              :key="persistence.id"
+              :link="persistence.id"
+              :title="persistence.label"
+              :footer="persistence.id" />
+            <f7-list-item link="/addons/persistence/" no-chevron media-item subtitle="Install more persistence add-ons">
+              <template #media>
+                <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+              </template>
+            </f7-list-item>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
 

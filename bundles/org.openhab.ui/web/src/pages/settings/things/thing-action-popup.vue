@@ -18,9 +18,10 @@
         </f7-block-footer>
         <!-- Action Inputs -->
         <f7-col>
-          <f7-block-title class="parameter-group-title"> Action Input </f7-block-title>
           <config-sheet
             v-if="inputConfigDescriptions.length > 0"
+            title="Action Input"
+            :accordion="actionOutput"
             ref="configSheet"
             :parameter-groups="[]"
             :parameters="inputConfigDescriptions"
@@ -43,25 +44,19 @@
         </f7-col>
         <!-- Action Outputs -->
         <f7-col v-if="!executing && actionOutput">
-          <f7-block-title class="parameter-group-title"> Action Output </f7-block-title>
-          <div v-if="Object.keys(actionOutput).length === 0" class="margin">
-            There is either no output for this action or something went wrong - please check the logs.
-          </div>
-          <div v-else>
-            <f7-list media-list>
+          <group-box title="Action Output">
+            <div v-if="Object.keys(actionOutput).length === 0" class="margin">
+              There is either no output for this action or something went wrong - please check the logs.
+            </div>
+            <f7-list v-else media-list class="action-output-list">
               <template v-for="key of Object.keys(actionOutput)" :key="key + '-list-item'">
                 <!-- Render result as a list item, works without action output definition from REST -->
                 <f7-list-item
                   v-if="key === 'result'"
                   :floating-label="theme.md"
                   :title="action.outputs.find((o) => o.name === key)?.label || 'Result'"
-                  :footer="action.outputs.find((o) => o.name === key)?.description">
-                  <template #after>
-                    <div>
-                      {{ actionOutput[key] }}
-                    </div>
-                  </template>
-                </f7-list-item>
+                  :footer="action.outputs.find((o) => o.name === key)?.description"
+                  :after="actionOutput[key]" />
                 <!-- Render QR code if the key is qrCode -->
                 <!-- Render QR code if the action output type is qrCode in the action output definition from REST -->
                 <f7-list-item
@@ -78,13 +73,8 @@
                   v-else
                   :floating-label="theme.md"
                   :title="action.outputs.find((o) => o.name === key)?.label || key"
-                  :footer="action.outputs.find((o) => o.name === key)?.description">
-                  <template #after>
-                    <div>
-                      {{ actionOutput[key] }}
-                    </div>
-                  </template>
-                </f7-list-item>
+                  :footer="action.outputs.find((o) => o.name === key)?.description"
+                  :after="actionOutput[key]" />
               </template>
               <f7-list-item accordion-item title="Raw Output Value">
                 <f7-accordion-content class="raw-value">
@@ -94,7 +84,7 @@
                 </f7-accordion-content>
               </f7-list-item>
             </f7-list>
-          </div>
+          </group-box>
         </f7-col>
       </f7-block>
     </f7-page>
@@ -103,8 +93,15 @@
 
 <style lang="stylus">
 .thing-action-popup
+  .action-output-list
+    .item-after
+      width 100%
+      padding-left 0
+      overflow-wrap break-word
+      white-space normal
   .raw-value
     padding-left calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-left) - var(--menu-list-offset))
+    padding-right calc(var(--f7-list-item-padding-horizontal) + var(--f7-safe-area-right))
     div
       padding-bottom calc(var(--f7-list-item-padding-vertical))
 </style>
@@ -149,10 +146,17 @@ export default {
         return
       }
       this.executing = true
-      this.$oh.api.post(`/rest/actions/${this.thingUID}/${encodeURIComponent(this.action.actionUid)}`, this.actionInput).then((data) => {
-        this.actionOutput = data
-        this.executing = false
-      })
+      this.$oh.api
+        .post(`/rest/actions/${this.thingUID}/${encodeURIComponent(this.action.actionUid)}`, this.actionInput)
+        .then((data) => {
+          this.actionOutput = data
+          this.executing = false
+        })
+        .catch((err) => {
+          this.executing = false
+          f7.dialog.alert('Action execution failed: ' + err.message)
+          console.error('Action execution failed', err)
+        })
     },
     close() {
       this.$refs.modulePopup.$el.f7Modal.close()

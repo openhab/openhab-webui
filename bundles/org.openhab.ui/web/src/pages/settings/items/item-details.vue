@@ -36,25 +36,27 @@
     <f7-block v-if="item" class="block-narrow after-item-header">
       <f7-row v-if="item.state">
         <f7-col>
-          <item-state-preview :item="item" :context="context" />
+          <group-box title="Item State">
+            <item-state-preview :item="item" :context="context" />
+          </group-box>
         </f7-col>
       </f7-row>
       <f7-row v-if="nonSemanticTags?.length > 0">
         <f7-col>
-          <f7-block-title>Non-Semantic Tags</f7-block-title>
-          <f7-block strong class="tags-block">
-            <f7-chip v-for="tag in nonSemanticTags" :key="tag" :text="tag" media-bg-color="theme-alt">
-              <template #media>
-                <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
-              </template>
-            </f7-chip>
-          </f7-block>
+          <group-box title="Non-Semantic Tags">
+            <f7-block class="tags-block">
+              <f7-chip v-for="tag in nonSemanticTags" :key="tag" :text="tag" media-bg-color="theme-alt">
+                <template #media>
+                  <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                </template>
+              </f7-chip>
+            </f7-block>
+          </group-box>
         </f7-col>
       </f7-row>
       <f7-row v-if="item?.metadata?.semantics?.value">
         <f7-col>
-          <f7-block-title>Semantic Model</f7-block-title>
-          <f7-card>
+          <group-box title="Semantic Model">
             <model-treeview
               class="model-treeview no-selection-style"
               :rootNodes="rootElements"
@@ -62,54 +64,51 @@
               :includeItemTags="true"
               :selected="modelItem(item)"
               @selected="navigateToItem" />
-          </f7-card>
+          </group-box>
         </f7-col>
       </f7-row>
       <f7-row v-if="item?.groupNames?.length > 0">
         <f7-col>
-          <f7-block-title>Parent Groups</f7-block-title>
-          <f7-card>
+          <group-box title="Parent Groups">
             <f7-list>
               <ul>
                 <item v-for="group in itemGroups" :key="group.name" :item="group" :link="itemLink(group.name)" :context="context" />
               </ul>
             </f7-list>
-          </f7-card>
+          </group-box>
         </f7-col>
       </f7-row>
       <f7-row v-if="item?.type === 'Group'">
         <f7-col>
-          <f7-block-title>Members</f7-block-title>
           <group-members :group-item="item" :context="context" @updated="load" />
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name">
         <f7-col>
-          <f7-block-title>Metadata</f7-block-title>
           <metadata-menu :item="item" :f7router />
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name && item.type !== 'Group'">
         <f7-col>
-          <f7-block-title>Channel Links</f7-block-title>
           <link-details :item="item" :links="links" :f7router />
         </f7-col>
       </f7-row>
       <f7-row v-if="item.name && (item.type !== 'Group' || item.groupType)">
         <f7-col>
-          <f7-block-title>Persistence</f7-block-title>
           <item-persistence-details :item="item" :f7router />
         </f7-col>
       </f7-row>
       <f7-row>
         <f7-col>
-          <f7-list>
-            <f7-list-button color="theme-alt" @click="duplicateItem"> Duplicate Item </f7-list-button>
-            <f7-list-button color="theme-alt" @click="copyFileDefinitionToClipboard(ObjectType.ITEM, [item.name])">
-              Copy File Definition
-            </f7-list-button>
-            <f7-list-button v-if="item.editable" color="red" @click="deleteItem"> Remove Item </f7-list-button>
-          </f7-list>
+          <group-box>
+            <f7-list>
+              <f7-list-button color="theme-alt" @click="duplicateItem"> Duplicate Item </f7-list-button>
+              <f7-list-button color="theme-alt" @click="copyFileDefinitionToClipboard(ObjectType.ITEM, [item.name])">
+                Copy File Definition
+              </f7-list-button>
+              <f7-list-button v-if="item.editable" color="red" @click="deleteItem"> Remove Item </f7-list-button>
+            </f7-list>
+          </group-box>
           <p class="developer-sidebar-tip text-align-center">
             Tip: Use the developer sidebar (Shift+Alt+D) to
             <f7-link text="search for usages of this Item" @click="searchInSidebar" />
@@ -162,14 +161,13 @@
   .after-item-header
     margin-bottom 0 !important
 .tags-block
-  margin-bottom 0
   text-align center
   .chip
     margin-left 3px
     margin-right 3px
 .developer-sidebar-tip
     visibility visible
-@media(max-width: 1279px)
+@media(--media-LG-down)
   .developer-sidebar-tip
     visibility hidden
 .model-treeview.no-selection-style
@@ -197,18 +195,18 @@ import { f7, theme } from 'framework7-vue'
 
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
-import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeLabel } from '@/components/item/item-helpers'
 import ModelMixin from '@/pages/settings/model/model-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 export default {
-  mixins: [ItemMixin, ModelMixin, FileDefinition],
+  mixins: [ModelMixin, FileDefinition],
   props: {
     itemName: String,
     f7router: Object
   },
   setup() {
-    return { theme, utils }
+    return { theme, utils, getItemTypeLabel }
   },
   data() {
     return {

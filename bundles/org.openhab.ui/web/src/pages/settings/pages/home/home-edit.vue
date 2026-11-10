@@ -39,16 +39,14 @@
         <div v-else-if="!previewMode">
           <f7-block class="block-narrow no-padding">
             <not-editable-notice v-if="!isEditable" />
-            <f7-col>
-              <f7-block-title>Page Configuration</f7-block-title>
-              <config-sheet
-                :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
-                :parameters="pageWidgetDefinition.props.parameters || []"
-                :configuration="page.config"
-                :f7router
-                :read-only="!isEditable"
-                @updated="dirty = true" />
-            </f7-col>
+            <config-sheet
+              title="Home Page Configuration"
+              :parameterGroups="pageWidgetDefinition.props.parameterGroups || []"
+              :parameters="pageWidgetDefinition.props.parameters || []"
+              :configuration="page.config"
+              :f7router
+              :read-only="!isEditable"
+              @updated="dirty = true" />
           </f7-block>
 
           <f7-block class="block-narrow no-margin-bottom">
@@ -63,25 +61,25 @@
                   :text="tab.label" />
               </f7-segmented>
 
-              <div class="cards-title-row">
-                <f7-block-title class="no-margin-bottom">Cards</f7-block-title>
-                <f7-button
-                  v-if="isEditable"
-                  @click="showCardControls = !showCardControls"
-                  small
-                  outline
-                  :fill="showCardControls"
-                  sortable-toggle=".sortable"
-                  color="gray"
-                  icon-size="12"
-                  icon-ios="material:wrap_text"
-                  icon-md="material:wrap_text"
-                  icon-aurora="material:wrap_text"
-                  style="margin-left: 8px">
-                  &nbsp;Reorder
-                </f7-button>
-              </div>
-              <div>
+              <group-box title="Cards">
+                <template #after-title>
+                  <f7-button
+                    v-if="isEditable"
+                    @click="showCardControls = !showCardControls"
+                    small
+                    outline
+                    :fill="showCardControls"
+                    sortable-toggle=".sortable"
+                    color="gray"
+                    icon-size="12"
+                    icon-ios="material:wrap_text"
+                    icon-md="material:wrap_text"
+                    icon-aurora="material:wrap_text"
+                    style="margin-left: 8px">
+                    &nbsp;Reorder
+                  </f7-button>
+                </template>
+
                 <f7-list
                   media-list
                   class="homecards-list"
@@ -130,41 +128,38 @@
                     </template>
                   </f7-list-item>
                 </f7-list>
-              </div>
+              </group-box>
             </f7-col>
           </f7-block>
 
           <f7-block class="block-narrow homecards-settings">
             <f7-col>
-              <div v-if="currentModelTab === 'locations'">
-                <config-sheet
-                  :parameterGroups="locationsTabParameters.props.parameterGroups || []"
-                  :parameters="locationsTabParameters.props.parameters || []"
-                  :configuration="page.slots.locations[0].config"
-                  :f7router
-                  :read-only="!isEditable"
-                  @updated="dirty = true" />
-              </div>
+              <config-sheet
+                v-if="currentModelTab === 'locations'"
+                :parameterGroups="locationsTabParameters.props.parameterGroups || []"
+                :parameters="locationsTabParameters.props.parameters || []"
+                :configuration="page.slots.locations[0].config"
+                :f7router
+                :read-only="!isEditable"
+                @updated="dirty = true" />
 
-              <div v-if="currentModelTab === 'equipment'">
-                <config-sheet
-                  :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
-                  :parameters="equipmentTabParameters.props.parameters || []"
-                  :configuration="page.slots.equipment[0].config"
-                  :f7router
-                  :read-only="!isEditable"
-                  @updated="dirty = true" />
-              </div>
+              <config-sheet
+                v-if="currentModelTab === 'equipment'"
+                :parameterGroups="equipmentTabParameters.props.parameterGroups || []"
+                :parameters="equipmentTabParameters.props.parameters || []"
+                :configuration="page.slots.equipment[0].config"
+                :f7router
+                :read-only="!isEditable"
+                @updated="dirty = true" />
 
-              <div v-if="currentModelTab === 'properties'">
-                <config-sheet
-                  :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
-                  :parameters="propertiesTabParameters.props.parameters || []"
-                  :configuration="page.slots.properties[0].config"
-                  :f7router
-                  :read-only="!isEditable"
-                  @updated="dirty = true" />
-              </div>
+              <config-sheet
+                v-if="currentModelTab === 'properties'"
+                :parameterGroups="propertiesTabParameters.props.parameterGroups || []"
+                :parameters="propertiesTabParameters.props.parameters || []"
+                :configuration="page.slots.properties[0].config"
+                :f7router
+                :read-only="!isEditable"
+                @updated="dirty = true" />
             </f7-col>
           </f7-block>
         </div>
@@ -218,10 +213,10 @@
       margin-right 10px
   .homecards-settings
     margin-top 0
-    .parameter-group
-      margin-top 0
-    .parameter-group-title
-      margin-top 0
+//    .parameter-group
+//      margin-top 0
+//    .parameter-group-title
+//      margin-top 0
 </style>
 
 <script>

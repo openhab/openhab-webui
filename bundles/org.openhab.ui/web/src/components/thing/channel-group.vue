@@ -16,7 +16,7 @@
       :checked="isSelected(c.channel) ? true : null"
       name="channel-picker"
       media-item
-      class="channel-item"
+      :class="['channel-item', { 'advanced-channel': c.channelType.advanced }]"
       :subtitle="c.channel.id + ' (' + getItemType(c.channelType) + ')'"
       :badge="getLinkedItems(c.channel).length || ''"
       badge-color="theme-alt"
@@ -62,6 +62,9 @@
   overflow hidden
   .item-title
     font-weight var(--f7-list-group-title-font-weight)
+
+.channel-item.advanced-channel
+  border-left 2px solid var(--f7-color-blue)
 </style>
 
 <script>

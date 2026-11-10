@@ -52,8 +52,8 @@
       :readonly="readOnly || configDescription.readOnly"
       :type="controlType">
       <template #content-end>
-        <div v-if="configDescription.context === 'password'" class="padding-left">
-          <f7-link class="margin" color="gray" @click="showPassword = !showPassword">
+        <div v-if="configDescription.context === 'password'" class="password-toggle-wrapper">
+          <f7-link color="gray" @click="showPassword = !showPassword">
             <f7-icon size="20" :f7="showPassword ? 'eye_slash_fill' : 'eye_fill'" />
           </f7-link>
         </div>
@@ -80,11 +80,16 @@
   </f7-popover>
 </template>
 
-<style lang="stylus">
+<style scoped lang="stylus">
 .parameter-text
   .network-address-text
     &:hover
       cursor pointer
+  .password-toggle-wrapper
+    display flex
+    align-items center
+    padding-right 16px
+    margin-top 18px
 </style>
 
 <script>

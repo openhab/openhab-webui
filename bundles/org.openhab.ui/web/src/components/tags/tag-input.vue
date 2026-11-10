@@ -1,5 +1,5 @@
 <template>
-  <div v-if="item && item.tags" class="tag-editor">
+  <group-box v-if="item && item.tags" class="tag-editor">
     <f7-list>
       <f7-list-item :title="title || 'Tags'" :badge="tags.length.toString()" />
       <f7-list-item v-if="tags.length > 0">
@@ -28,16 +28,15 @@
         </template>
       </f7-list-input>
     </f7-list>
-  </div>
+  </group-box>
 </template>
 
 <script>
 import { f7 } from 'framework7-vue'
 
-import TagMixin from '@/components/tags/tag-mixin'
+import { isSemanticTag } from '@/components/tags/tag-helpers'
 
 export default {
-  mixins: [TagMixin],
   props: {
     item: Object,
     disabled: Boolean,
@@ -53,9 +52,7 @@ export default {
   },
   computed: {
     tags() {
-      return this.item.tags.filter(
-        (t) => (this.showSemanticTags ? true : !this.isSemanticTag(t)) && !this.isScriptTag(t) && !this.isSceneTag(t)
-      )
+      return this.item.tags.filter((t) => (this.showSemanticTags ? true : !isSemanticTag(t)) && !this.isScriptTag(t) && !this.isSceneTag(t))
     }
   },
   methods: {
@@ -76,7 +73,7 @@ export default {
         return
       }
       if (newTag && this.item.tags.indexOf(newTag) === -1) {
-        if (!this.showSemanticTags && this.isSemanticTag(newTag)) {
+        if (!this.showSemanticTags && isSemanticTag(newTag)) {
           f7.dialog.alert(`The tag '${newTag}' is a semantic tag. A semantic tag cannot be added here.`, 'Cannot add tag')
           return
         }

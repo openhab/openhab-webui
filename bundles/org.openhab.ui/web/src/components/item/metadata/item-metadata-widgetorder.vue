@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <group-box title="Widget Order">
     <f7-list>
       <f7-list-input
         label="Order in Lists"
@@ -21,7 +21,7 @@
         last, in alphabetical order.</small
       >
     </f7-block-footer>
-  </div>
+  </group-box>
 </template>
 
 <script>

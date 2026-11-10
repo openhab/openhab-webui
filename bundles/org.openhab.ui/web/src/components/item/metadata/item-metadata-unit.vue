@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <group-box title="Unit Metadata">
     <f7-block-header class="padding-horizontal">
       <b style="color: var(--f7-theme-color) !important">WARNING: Changing the internal unit can corrupt your persisted data!</b>
     </f7-block-header>
@@ -27,7 +27,7 @@
         used for display purpose only, it can contain any compatible unit and will not affect the internal <code>unit</code>.
       </small>
     </f7-block-footer>
-  </div>
+  </group-box>
 </template>
 
 <script>

@@ -31,52 +31,54 @@
           </div>
         </div>
         <p class="margin-left margin-right no-margin-bottom" style="height: 30px" id="scan-progress" />
-        <f7-block-title v-if="inputSupported"> Scan Input </f7-block-title>
         <config-sheet
           v-if="inputSupported"
+          title="Scan Input"
           class="scan-input"
           :parameter-groups="[]"
           :parameters="inputParameters"
           :configuration="inputConfig" />
-        <f7-block-title v-if="discoverySupported && scanResults.length"> Discovered Things </f7-block-title>
-        <f7-list v-if="scanResults.length" class="col thing-type-list">
-          <f7-list-item
-            v-for="entry in scanResults"
-            :key="entry.thingUID"
-            :link="true"
-            @click="openEntryActions(entry)"
-            media-item
-            :title="entry.label"
-            :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
-            :footer="entry.thingUID" />
-          <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="theme-alt" />
-        </f7-list>
+        <group-box v-if="discoverySupported && scanResults.length" title="Discovered Things">
+          <f7-list v-if="scanResults.length" class="col thing-type-list">
+            <f7-list-item
+              v-for="entry in scanResults"
+              :key="entry.thingUID"
+              :link="true"
+              @click="openEntryActions(entry)"
+              media-item
+              :title="entry.label"
+              :subtitle="entry.representationProperty ? entry.properties[entry.representationProperty] : ''"
+              :footer="entry.thingUID" />
+            <f7-list-button v-show="scanResults.length > 1" title="Add All" @click="approveAll" color="theme-alt" />
+          </f7-list>
+        </group-box>
 
-        <f7-block-title>Add Manually</f7-block-title>
-        <f7-list class="thing-type-list">
-          <ul v-if="!ready">
-            <f7-list-item
-              v-for="n in 10"
-              :key="n"
-              :class="`skeleton-text skeleton-effect-blink`"
-              title="Label of the thing type"
-              footer="This contains the description of the thing type"
-              header="thingTypeUID"
-              media-item />
-          </ul>
-          <ul v-else>
-            <f7-list-item
-              v-for="thingType in thingTypes"
-              :key="thingType.UID"
-              :link="thingType.UID"
-              :title="thingType.label"
-              :footer="getHeading(thingType.description)"
-              :header="thingType.UID"
-              :badge="thingType.bridge ? 'Bridge' : ''"
-              badge-color="theme-alt"
-              media-item />
-          </ul>
-        </f7-list>
+        <group-box title="Add Manually">
+          <f7-list class="thing-type-list">
+            <ul v-if="!ready" v-deferred>
+              <f7-list-item
+                v-for="n in 10"
+                :key="n"
+                :class="`skeleton-text skeleton-effect-blink`"
+                title="Label of the thing type"
+                footer="This contains the description of the thing type"
+                header="thingTypeUID"
+                media-item />
+            </ul>
+            <ul v-else>
+              <f7-list-item
+                v-for="thingType in thingTypes"
+                :key="thingType.UID"
+                :link="thingType.UID"
+                :title="thingType.label"
+                :footer="getHeading(thingType.description)"
+                :header="thingType.UID"
+                :badge="thingType.bridge ? 'Bridge' : ''"
+                badge-color="theme-alt"
+                media-item />
+            </ul>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
     <f7-block v-if="!loading && ready && !thingTypes.length" class="block-narrow">
@@ -124,7 +126,7 @@ export default {
       ready: false,
       loading: false,
       initSearchbar: false,
-      things: [], // This is used for Thing UID validation inside thing-mixin.js
+      things: [], // This is needed for Thing UID validation via validateThingUID (in thing-inbox-mixin.js)
       thingTypes: [],
       discoverySupported: false,
       inputSupported: null,
@@ -156,7 +158,7 @@ export default {
               if (b.bridge && !a.bridge) return 1
               return a.label.localeCompare(b.label)
             })
-          return Promise.resolve()
+          return
         })
         .then(() => {
           Promise.all([this.loadDiscoveryInfo(), this.loadInbox()]).then(() => {
@@ -223,14 +225,14 @@ export default {
               }
             ]
           }
-          return Promise.resolve()
+          return
         })
         .catch((e) => {
           if (e === 404 || e === 'Not Found') {
             this.discoverySupported = false
-            return Promise.resolve()
+            return
           } else {
-            return Promise.reject(e)
+            throw e
           }
         })
     },
@@ -261,7 +263,7 @@ export default {
           Promise.resolve()
         })
         .catch((e) => {
-          Promise.reject('Failed to load inbox: ' + e)
+          throw new Error('Failed to load inbox: ' + e)
         })
     },
     openEntryActions(entry) {

@@ -58,7 +58,7 @@
       </f7-col>
 
       <!-- skeleton for not ready -->
-      <f7-col v-show="!ready">
+      <f7-col v-if="!ready" v-deferred>
         <f7-block-title class="no-margin-top"> &nbsp;Loading... </f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>
@@ -80,74 +80,68 @@
       </f7-col>
 
       <f7-col v-if="ready && items.length > 0">
-        <f7-block-title class="no-margin-top">
-          <span>{{ listTitle }}</span>
-          <template v-if="showCheckboxes && listedItems.length">
-            -
+        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="processFilter" @reset="resetFilter" />
+        <group-box :title="listTitle">
+          <template v-if="showCheckboxes && listedItems.length" #after-title>
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
-        </f7-block-title>
-        <list-filter v-if="ready" ref="filters" :filters="filters" @toggled="processFilter" @reset="resetFilter" />
-
-        <f7-list v-if="!listedItems.length">
-          <f7-list-item title="Nothing found" />
-        </f7-list>
-        <f7-list class="searchbar-found col" ref="itemsList" media-list virtual-list :virtual-list-params="vlParams">
-          <ul>
-            <f7-list-item
-              v-for="(item, index) in vlData.items"
-              :key="index"
-              media-item
-              class="itemlist-item"
-              :checkbox="showCheckboxes"
-              :checked="isChecked(item.name)"
-              prevent-router
-              @click.ctrl="ctrlClick($event, item)"
-              @click.meta="ctrlClick($event, item)"
-              @click.exact="click($event, item)"
-              :link="`${encodeURIComponent(item.name)}`"
-              :title="item.label ? item.label : item.name"
-              :footer="item.label ? item.name : '\xa0'"
-              :subtitle="getItemTypeAndMetaLabel(item)"
-              :style="`top: ${vlData.topPosition}px`"
-              :after="item.state ? item.state : '\xa0'">
-              <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
-              <template #media>
-                <oh-icon
-                  v-if="item.category"
-                  :icon="item.category"
-                  :state="item.type === 'Image' ? null : item.state"
-                  height="32"
-                  width="32" />
-                <span v-else class="item-initial">{{ item.name[0] }}</span>
-              </template>
-              <template #after-title>
-                <f7-icon v-if="!item.editable" f7="lock_fill" size="1rem" color="gray" />
-              </template>
-              <!-- <f7-button color="theme-alt" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
-              <template #subtitle>
-                <div>
-                  <f7-chip
-                    v-for="tag in getNonSemanticTags(item)"
-                    :key="tag"
-                    :text="tag"
-                    media-bg-color="theme-alt"
-                    style="margin-right: 6px">
-                    <template #media>
-                      <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
-                    </template>
-                  </f7-chip>
-                </div>
-              </template>
-            </f7-list-item>
-          </ul>
-        </f7-list>
+          <f7-list class="searchbar-found col" ref="itemsList" media-list virtual-list :virtual-list-params="vlParams">
+            <ul>
+              <f7-list-item
+                v-for="(item, index) in vlData.items"
+                :key="index"
+                media-item
+                class="itemlist-item"
+                :checkbox="showCheckboxes"
+                :checked="isChecked(item.name)"
+                prevent-router
+                @click.ctrl="ctrlClick($event, item)"
+                @click.meta="ctrlClick($event, item)"
+                @click.exact="click($event, item)"
+                :link="`${encodeURIComponent(item.name)}`"
+                :title="item.label ? item.label : item.name"
+                :footer="item.label ? item.name : '\xa0'"
+                :subtitle="getItemTypeAndMetaLabel(item)"
+                :style="`top: ${vlData.topPosition}px`"
+                :after="item.state ? item.state : '\xa0'">
+                <!-- Note: Using dynamic states is not possible since state tracking has a heavy performance impact -->
+                <template #media>
+                  <oh-icon
+                    v-if="item.category"
+                    :icon="item.category"
+                    :state="item.type === 'Image' ? null : item.state"
+                    height="32"
+                    width="32" />
+                  <span v-else class="item-initial">{{ item.name[0] }}</span>
+                </template>
+                <template #after-title>
+                  <f7-icon v-if="!item.editable" f7="lock_fill" size="1rem" color="gray" />
+                </template>
+                <!-- <f7-button color="theme-alt" icon-f7="compose" icon-size="24px" :link="`${item.name}/edit`"></f7-button> -->
+                <template #subtitle>
+                  <div>
+                    <f7-chip
+                      v-for="tag in getNonSemanticTags(item)"
+                      :key="tag"
+                      :text="tag"
+                      media-bg-color="theme-alt"
+                      style="margin-right: 6px">
+                      <template #media>
+                        <f7-icon ios="f7:tag_fill" md="material:label" aurora="f7:tag_fill" />
+                      </template>
+                    </f7-chip>
+                  </div>
+                </template>
+              </f7-list-item>
+            </ul>
+          </f7-list>
+        </group-box>
       </f7-col>
     </f7-block>
 
     <f7-block v-if="ready && !items.length" class="block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
-      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < BREAKPOINTS.LG" class="display-flex justify-content-center">
         <f7-button
           large
           fill
@@ -183,13 +177,14 @@
 import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import * as Types from '@/assets/item-types'
-import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeAndMetaLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -199,7 +194,7 @@ import { showToast } from '@/js/dialog-promises'
 const ITEM_KINDS = { editable: 'Editable', readonly: 'Non-editable' }
 
 export default {
-  mixins: [ItemMixin, FileDefinition],
+  mixins: [FileDefinition],
   props: {
     f7router: Object
   },
@@ -208,7 +203,7 @@ export default {
     EmptyStatePlaceholder
   },
   setup() {
-    return { f7, theme }
+    return { f7, theme, BREAKPOINTS, getItemTypeAndMetaLabel, getNonSemanticTags }
   },
   data() {
     return {
@@ -501,7 +496,7 @@ export default {
   },
   computed: {
     searchbarPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
       return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0

@@ -36,129 +36,133 @@
           <f7-col class="modules">
             <!-- Configuration -->
             <f7-block>
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">Configurations</f7-block-title>
-              <f7-block-header style="padding-right: 16px">Items to persist with strategies to use.</f7-block-header>
-              <f7-list v-if="editable || persistence!.configs.length > 0" :media-list="editable" swipeout>
-                <f7-list-item
-                  v-for="(cfg, index) in persistence!.configs"
-                  :key="cfg.items.join()"
-                  :link="editable"
-                  @click="(ev: MouseEvent) => editConfiguration(ev, index, cfg)"
-                  swipeout>
-                  <template #media>
-                    <f7-link
-                      v-if="editable"
-                      icon-color="red"
-                      icon-aurora="f7:minus_circle_filled"
-                      icon-ios="f7:minus_circle_filled"
-                      icon-md="material:remove_circle_outline"
-                      @click.stop="showSwipeout" />
-                  </template>
-                  <template #title>
-                    <div v-text="configurationAllItemsTitle(cfg.items)" />
-                    <div v-text="configurationGroupsTitle(cfg.items)" />
-                    <div v-text="configurationItemsTitle(cfg.items)" />
-                    <div v-text="configurationGroupsTitle(cfg.items, true)" />
-                    <div v-text="configurationItemsTitle(cfg.items, true)" />
-                  </template>
-                  <template #footer>
-                    <div v-if="cfg.strategies?.length">{{ configurationStrategiesTitle(cfg.strategies) }}</div>
-                    <div v-if="cfg.filters?.length">{{ configurationFiltersTitle(cfg.filters) }}</div>
-                  </template>
-                  <f7-swipeout-actions v-if="editable" right>
-                    <f7-swipeout-button
-                      @click.stop="(ev: MouseEvent) => deleteConfiguration(ev, index)"
-                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                      Delete
-                    </f7-swipeout-button>
-                  </f7-swipeout-actions>
-                </f7-list-item>
-              </f7-list>
-              <f7-list v-else-if="!editable">
-                <f7-list-item>No configurations defined</f7-list-item>
-              </f7-list>
-              <f7-list v-if="editable">
-                <f7-list-item
-                  link
-                  no-chevron
-                  media-item
-                  subtitle="Add configuration"
-                  @click="(ev: MouseEvent) => editConfiguration(ev, -1, null)">
-                  <template #media>
-                    <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
-                  </template>
-                </f7-list-item>
-              </f7-list>
+              <group-box title="Configurations" description="Items to persist with strategies to use.">
+                <f7-list v-if="editable || persistence!.configs.length > 0" :media-list="editable" swipeout>
+                  <f7-list-item
+                    v-for="(cfg, index) in persistence!.configs"
+                    :key="cfg.items.join()"
+                    :link="editable"
+                    @click="(ev: MouseEvent) => editConfiguration(ev, index, cfg)"
+                    swipeout>
+                    <template #media>
+                      <f7-link
+                        v-if="editable"
+                        icon-color="red"
+                        icon-aurora="f7:minus_circle_filled"
+                        icon-ios="f7:minus_circle_filled"
+                        icon-md="material:remove_circle_outline"
+                        @click.stop="showSwipeout" />
+                    </template>
+                    <template #title>
+                      <div v-text="configurationAllItemsTitle(cfg.items)" />
+                      <div v-text="configurationGroupsTitle(cfg.items)" />
+                      <div v-text="configurationItemsTitle(cfg.items)" />
+                      <div v-text="configurationGroupsTitle(cfg.items, true)" />
+                      <div v-text="configurationItemsTitle(cfg.items, true)" />
+                    </template>
+                    <template #footer>
+                      <div v-if="cfg.strategies?.length">{{ configurationStrategiesTitle(cfg.strategies) }}</div>
+                      <div v-if="cfg.filters?.length">{{ configurationFiltersTitle(cfg.filters) }}</div>
+                    </template>
+                    <f7-swipeout-actions v-if="editable" right>
+                      <f7-swipeout-button
+                        @click.stop="(ev: MouseEvent) => deleteConfiguration(ev, index)"
+                        style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                        Delete
+                      </f7-swipeout-button>
+                    </f7-swipeout-actions>
+                  </f7-list-item>
+                </f7-list>
+                <f7-list v-else-if="!editable">
+                  <f7-list-item>No configurations defined</f7-list-item>
+                </f7-list>
+                <f7-list v-if="editable">
+                  <f7-list-item
+                    link
+                    no-chevron
+                    media-item
+                    subtitle="Add configuration"
+                    @click="(ev: MouseEvent) => editConfiguration(ev, -1, null)">
+                    <template #media>
+                      <f7-icon color="green" aurora="f7:plus_circle_fill" ios="f7:plus_circle_fill" md="material:control_point" />
+                    </template>
+                  </f7-list-item>
+                </f7-list>
+              </group-box>
             </f7-block>
             <f7-block class="padding-top">
               <!-- Aliases -->
-              <f7-block-title medium style="margin-bottom: var(--f7-list-margin-vertical)">Aliases</f7-block-title>
-              <f7-block-header style="padding-right: 16px">Item names mapped to aliases used in persistence store.</f7-block-header>
-              <f7-list v-if="editable || currentItemsWithAlias.length > 0" :media-list="editable" swipeout no-swipeout-opened>
-                <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
-                  <template #media>
-                    <f7-link
-                      v-if="editable"
-                      icon-color="red"
-                      icon-aurora="f7:minus_circle_filled"
-                      icon-ios="f7:minus_circle_filled"
-                      icon-md="material:remove_circle_outline"
-                      @click.stop="showSwipeout" />
-                  </template>
-                  <div class="alias-label">
-                    {{ i }}
-                  </div>
-                  <div class="alias-input">
-                    <f7-input
-                      type="text"
-                      placeholder="alias"
-                      validate
-                      :read-only="!editable"
-                      pattern="[A-Za-z_][A-Za-z0-9_]*"
-                      error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
-                      :value="persistence?.aliases[i]"
-                      @input="editAlias(i, $event.target.value)"
-                      @blur="checkAliasForDuplicates(i, $event.target.value)"
-                      @keydown.stop.prevent.tab="onAliasTab($event, index)" />
-                  </div>
-                  <f7-swipeout-actions v-if="editable" right>
-                    <f7-swipeout-button
-                      @click.stop="(ev: MouseEvent) => deleteAlias(ev, i)"
-                      style="background-color: var(--f7-swipeout-delete-button-bg-color)">
-                      Delete
-                    </f7-swipeout-button>
-                  </f7-swipeout-actions>
-                </f7-list-item>
-              </f7-list>
-              <f7-list v-else-if="!editable">
-                <f7-list-item> No aliases defined </f7-list-item>
-              </f7-list>
-              <f7-list v-if="editable">
-                <f7-list-group>
-                  <item-picker
-                    class="alias-item-picker"
-                    label="Select Items to Alias"
-                    name="items"
-                    :multiple="true"
-                    :noModelPicker="true"
-                    :setValueText="false"
-                    iconColor="green"
-                    auroraIcon="f7:plus_circle_fill"
-                    iosIcon="f7:plus_circle_fill"
-                    mdIcon="material:control_point"
-                    :value="currentItemsWithAlias"
-                    @input="updateAliasItems($event)" />
-                </f7-list-group>
-              </f7-list>
+              <group-box title="Aliases" description="Item names mapped to aliases used in persistence store.">
+                <f7-list v-if="editable || currentItemsWithAlias.length > 0" :media-list="editable" swipeout no-swipeout-opened>
+                  <f7-list-item v-for="(i, index) in currentItemsWithAlias" class="swipeout list-alias-item" :key="i">
+                    <template #media>
+                      <f7-link
+                        v-if="editable"
+                        icon-color="red"
+                        icon-aurora="f7:minus_circle_filled"
+                        icon-ios="f7:minus_circle_filled"
+                        icon-md="material:remove_circle_outline"
+                        @click.stop="showSwipeout" />
+                    </template>
+                    <div class="alias-label">
+                      {{ i }}
+                    </div>
+                    <div class="alias-input">
+                      <f7-input
+                        type="text"
+                        placeholder="alias"
+                        validate
+                        :read-only="!editable"
+                        pattern="[A-Za-z_][A-Za-z0-9_]*"
+                        error-message="Required. Must not start with a number. A-Z,a-z,0-9,_ only"
+                        :value="persistence?.aliases[i]"
+                        @input="editAlias(i, $event.target.value)"
+                        @blur="checkAliasForDuplicates(i, $event.target.value)"
+                        @keydown.stop.prevent.tab="onAliasTab($event, index)" />
+                    </div>
+                    <f7-swipeout-actions v-if="editable" right>
+                      <f7-swipeout-button
+                        @click.stop="(ev: MouseEvent) => deleteAlias(ev, i)"
+                        style="background-color: var(--f7-swipeout-delete-button-bg-color)">
+                        Delete
+                      </f7-swipeout-button>
+                    </f7-swipeout-actions>
+                  </f7-list-item>
+                </f7-list>
+                <f7-list v-else-if="!editable">
+                  <f7-list-item> No aliases defined </f7-list-item>
+                </f7-list>
+                <f7-list v-if="editable">
+                  <f7-list-group>
+                    <item-picker
+                      class="alias-item-picker"
+                      label="Select Items to Alias"
+                      name="items"
+                      :multiple="true"
+                      :noModelPicker="true"
+                      :setValueText="false"
+                      iconColor="green"
+                      auroraIcon="f7:plus_circle_fill"
+                      iosIcon="f7:plus_circle_fill"
+                      mdIcon="material:control_point"
+                      :value="currentItemsWithAlias"
+                      @input="updateAliasItems($event)" />
+                  </f7-list-group>
+                </f7-list>
+              </group-box>
             </f7-block>
           </f7-col>
           <f7-col v-if="editable" class="persistence-config-links">
-            <f7-list>
-              <f7-list-button color="blue" @click="definitionsPopupOpen = true">
-                {{ 'Manage Definitions' }}
-              </f7-list-button>
-              <f7-list-button v-if="!createMode" color="red" @click="deletePersistence"> Remove persistence configuration </f7-list-button>
-            </f7-list>
+            <group-box>
+              <f7-list>
+                <f7-list-button color="blue" @click="definitionsPopupOpen = true">
+                  {{ 'Manage Definitions' }}
+                </f7-list-button>
+                <f7-list-button v-if="!createMode" color="red" @click="deletePersistence">
+                  Remove persistence configuration
+                </f7-list-button>
+              </f7-list>
+            </group-box>
           </f7-col>
         </f7-block>
       </f7-tab>

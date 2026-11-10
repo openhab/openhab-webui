@@ -11,8 +11,9 @@
       left
       :cover="showSidebar ? true : null"
       class="sidebar"
-      :visible-breakpoint="960"
-      :swipe="!uiOptionsStore.disableLeftPanelSwipe">
+      :visible-breakpoint="BREAKPOINTS.MD"
+      :swipe="!$device.desktop && !uiOptionsStore.disableLeftPanelSwipe"
+      :swipe-active-area="50">
       <f7-page>
         <!-- openHAB Logo -->
         <f7-link href="/overview/" class="openhab-logo no-ripple" panel-close @click.capture="handleSidebarClick">
@@ -217,7 +218,7 @@
       <!-- <f7-view url="/panel-right/"></f7-view> -->
     </f7-panel>
 
-    <f7-panel v-if="runtimeStore.showDeveloperDock" right :visible-breakpoint="1280" resizable>
+    <f7-panel v-if="runtimeStore.showDeveloperDock" right :visible-breakpoint="BREAKPOINTS.LG" resizable>
       <developer-dock :dock="activeDock" :helpTab="activeHelpTab" :toolTab="activeToolTab" :searchFor="developerSearch" />
     </f7-panel>
 
@@ -250,7 +251,7 @@
       :main="true"
       class="safe-areas"
       :class="{ 'log-dock-offset': showDockedLogViewer && !logDockFullscreen }"
-      :master-detail-breakpoint="960"
+      :master-detail-breakpoint="BREAKPOINTS.MD"
       :browser-history="true"
       :browser-history-root="origin"
       browser-history-separator=""
@@ -324,6 +325,16 @@
   .submenu-enter-to, .submenu-leave-from
     max-height: 1000px !important
 
+  .list.admin-links .link.section-toggle i.icon.f7-icons
+    font-family 'framework7-core-icons' !important
+    font-size var(--f7-list-chevron-icon-font-size)
+    position absolute
+    right 16px
+    top 50%
+    transform translateY(-50%)
+    width 8px
+    height 14px
+
   .account
     z-index 300
     height calc(var(--f7-tabbar-labels-height) + var(--f7-safe-area-bottom))
@@ -352,7 +363,7 @@
     right 0
     margin 12px 10px
     opacity 0
-  @media (min-width 960px)
+  @media (--media-MD-up)
     .breakpoint-pin
       opacity 0.75
 
@@ -433,6 +444,7 @@
 </style>
 
 <script>
+// oxlint-disable unicorn/no-useless-promise-resolve-reject
 import { nextTick, defineAsyncComponent } from 'vue'
 import { f7, f7ready } from 'framework7-vue'
 import { mapStores, mapWritableState } from 'pinia'
@@ -470,6 +482,7 @@ import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
 
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 import { getRoot } from '@/api'
 import { isUnauthorized } from '@/js/hey-api'
 import { request } from 'framework7'
@@ -501,7 +514,8 @@ export default {
       globalMergeLocaleMessage,
       locale,
       startAudioWebSocket,
-      triggerDialog
+      triggerDialog,
+      BREAKPOINTS
     }
   },
   data() {
@@ -534,8 +548,8 @@ export default {
         routes,
         // Enable panel left visibility breakpoint
         panel: {
-          leftBreakpoint: 960,
-          rightBreakpoint: 1280
+          leftBreakpoint: BREAKPOINTS.MD,
+          rightBreakpoint: BREAKPOINTS.LG
         },
         card: {
           swipeToClose: true

@@ -73,7 +73,7 @@ import { VueDraggableNext as Draggable } from 'vue-draggable-next'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 export default {
-  name: 'semantics-treeview-item',
+  name: 'semantics-treeview-item', // eslint-disable-line vue/component-definition-name-casing
   props: {
     semanticTags: Array,
     expandedTags: Object,

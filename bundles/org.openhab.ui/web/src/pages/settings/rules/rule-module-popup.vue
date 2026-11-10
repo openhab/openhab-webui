@@ -120,7 +120,6 @@
           </f7-list>
         </f7-col>
         <f7-col v-if="ruleModule && currentRuleModuleType && (!ruleModule.new || advancedTypePicker)" class="margin-top">
-          <f7-block-title style="margin-bottom: 0"> Configuration </f7-block-title>
           <config-sheet
             v-if="!(ruleModule.configuration && ruleModule.configuration.blockSource)"
             :key="currentSection + ruleModule.id"

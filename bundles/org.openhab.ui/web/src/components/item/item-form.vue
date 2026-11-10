@@ -1,5 +1,5 @@
 <template>
-  <div v-if="item" class="quick-link-form no-padding">
+  <group-box v-if="item" class="quick-link-form no-padding" title="Item Details">
     <f7-list inline-labels no-hairlines-md>
       <f7-list-group>
         <f7-list-input
@@ -123,14 +123,22 @@
         </f7-list-input>
       </f7-list-group>
     </f7-list>
+  </group-box>
+
+  <group-box title="Item Semantic">
     <semantics-picker v-if="!hideSemantics" :item="item" :createMode="createMode" :hide-none="forceSemantics" />
-    <f7-list inline-labels no-hairline-md>
-      <div>
-        <tag-input title="Non-Semantic Tags" :disabled="!editable ? true : null" :item="item" />
-      </div>
-    </f7-list>
-    <f7-list inline-labels no-hairline-md>
-      <f7-list-item title="Parent Groups" :badge="numberOfGroups" />
+  </group-box>
+  <!-- <semantics-picker v-if="!hideSemantics" :item="item" :createMode="createMode" :hide-none="forceSemantics" /> -->
+  <!-- <f7-list inline-labels> -->
+  <!-- <div> -->
+  <tag-input title="Non-Semantic Tags" :disabled="!editable ? true : null" :item="item" />
+  <!-- </div> -->
+  <!-- </f7-list> -->
+  <group-box title="Parent Groups">
+    <template #after-title>
+      <f7-badge>{{ numberOfGroups }}</f7-badge>
+    </template>
+    <f7-list inline-labels>
       <!-- make it cosmetically similar to the non-semantic tags above -->
       <f7-list-item v-if="numberOfGroups > 0">
         <template #inner>
@@ -163,7 +171,7 @@
           :set-value-text="false" />
       </f7-list-group>
     </f7-list>
-  </div>
+  </group-box>
 </template>
 
 <style lang="stylus">
@@ -186,11 +194,11 @@ import TagInput from '@/components/tags/tag-input.vue'
 import * as types from '@/assets/item-types.js'
 import { Categories } from '@/assets/categories.js'
 
-import ItemMixin from '@/components/item/item-mixin'
+import { validateItemName } from '@/components/item/item-helpers'
 import uomMixin from '@/components/item/uom-mixin'
 
 export default {
-  mixins: [ItemMixin, uomMixin],
+  mixins: [uomMixin],
   props: {
     item: Object,
     items: Array,
@@ -270,7 +278,7 @@ export default {
       }
     },
     nameErrorMessage() {
-      return this.validateItemName(this.item.name)
+      return validateItemName(this.item.name, this.items)
     },
     stateDescriptionPattern: {
       get() {
@@ -282,7 +290,7 @@ export default {
       }
     },
     compatibleGroupTypes() {
-      if (!this.itemType) return
+      if (!this.itemType) return null
       let compatibleGroupTypes = []
       compatibleGroupTypes.push(this.item.type)
       if (this.itemType === 'Number') {

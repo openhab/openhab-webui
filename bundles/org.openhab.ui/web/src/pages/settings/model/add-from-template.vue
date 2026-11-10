@@ -81,7 +81,7 @@
       font-size var(--f7-chip-font-size)
       color var(--f7-list-item-footer-text-color)
 
-@media (min-width: 768px)
+@media (--media-SM-up)
   .semantic-tree-wrapper
     height calc(100% - var(--f7-navbar-height))
     .row
@@ -94,7 +94,7 @@
           margin 0
           height auto
 
-@media (max-width: 767px)
+@media (--media-SM-down)
   .semantic-tree-wrapper.sheet-opened
     margin-bottom var(--f7-sheet-height)
 </style>

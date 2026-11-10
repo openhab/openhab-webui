@@ -44,7 +44,6 @@
           </f7-list>
         </f7-col>
         <f7-col>
-          <f7-block-title medium>Configuration</f7-block-title>
           <config-sheet
             ref="config-sheet"
             :parameter-groups="[]"

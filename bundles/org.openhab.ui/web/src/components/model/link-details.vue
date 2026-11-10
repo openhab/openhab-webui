@@ -1,47 +1,50 @@
 <template>
-  <f7-card v-if="item.type !== 'Group' && item.created !== false">
-    <f7-card-content v-if="enrichedLinks.length > 0">
-      <f7-list media-list>
-        <ul>
-          <f7-list-item
-            v-for="l in enrichedLinks"
-            :key="l.itemName"
-            media-item
-            :title="l.thing.label"
-            :subtitle="l.channel.label || '?'"
-            :footer="l.link.channelUID"
-            :badge="thingStatusBadgeText(l.thing.statusInfo)"
-            :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
-            :link="!l.link.editable && l._invalid ? undefined : '#'"
-            @click="!l.link.editable && l._invalid ? undefined : editLink(l)">
-            <template #media>
-              <span class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
-            </template>
-            <template #title>
-              <f7-icon v-if="!l.link.editable" f7="lock_fill" size="1rem" color="gray" />
-            </template>
-          </f7-list-item>
-        </ul>
-      </f7-list>
-    </f7-card-content>
+  <group-box v-if="item.type !== 'Group' && item.created !== false" title="Channel Links">
+    <f7-list v-if="enrichedLinks.length > 0" media-list>
+      <ul>
+        <f7-list-item
+          v-for="l in enrichedLinks"
+          :key="l.itemName"
+          media-item
+          :title="l.thing.label"
+          :subtitle="l.channel.label || '?'"
+          :footer="l.link.channelUID"
+          :badge="thingStatusBadgeText(l.thing.statusInfo)"
+          :badge-color="thingStatusBadgeColor(l.thing.statusInfo)"
+          :link="!l.link.editable && l._invalid ? undefined : '#'"
+          @click="!l.link.editable && l._invalid ? undefined : editLink(l)">
+          <template #media>
+            <span class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
+          </template>
+          <template #title>
+            <f7-icon v-if="!l.link.editable" f7="lock_fill" size="1rem" color="gray" />
+          </template>
+        </f7-list-item>
+      </ul>
+    </f7-list>
     <f7-card-footer>
       <f7-button color="theme-alt" @click="addLink"> Add Link </f7-button>
     </f7-card-footer>
-  </f7-card>
+  </group-box>
 </template>
 
 <script>
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import { f7 } from 'framework7-vue'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingStatus],
   props: {
     item: Object,
     links: Array,
     f7router: Object
+  },
+  setup() {
+    return {
+      thingStatusBadgeColor,
+      thingStatusBadgeText
+    }
   },
   data() {
     return {
