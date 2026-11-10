@@ -132,7 +132,7 @@ export default {
         return
       }
 
-      this.f7router.navigate(`/settings/items/${this.item.name}/links/edit/${link.thing.UID}/${link.channel.id.replace('#', '%23')}`)
+      this.f7router.navigate(`/settings/items/${this.item.name}/links/edit/${link.thing.UID}/${encodeURIComponent(link.channel.id)}`)
     }
   },
   watch: {
