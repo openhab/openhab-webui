@@ -51,7 +51,12 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author Dan Cunningham - Convert file serving to a custom servlet
  * @author Holger Friedrich - Serve files without Jetty DefaultServlet, support range requests
  */
-@Component(immediate = true, service = Servlet.class, name = "org.openhab.ui")
+// The ranking makes this servlet win the "/*" mapping against the Jakarta REST whiteboard's default application
+// servlet, which is registered at "/*" in the default context. Pax Web resolves the conflict by context ranking on
+// registration, but only by servlet ranking and service id when re-enabling waiting servlets after any other servlet
+// on "/" is unregistered, which would otherwise let the REST servlet take over and serve 404 for the UI.
+@Component(immediate = true, service = Servlet.class, name = "org.openhab.ui", property = {
+        "service.ranking:Integer=1" })
 @NonNullByDefault
 @HttpWhiteboardServletName(UIServlet.SERVLET_PATH)
 @HttpWhiteboardServletPattern(UIServlet.SERVLET_PATH + "*")
