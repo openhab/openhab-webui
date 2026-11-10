@@ -48,10 +48,9 @@ export default {
       audioTransceiver: null,
       offerAbortController: null,
       webrtcSendChannel: null,
-      popupElement: null,
       isStopping: false,
-      isMicOn: false,
-      isMuted: false
+      isMicOn: this.sendAudio === true && this.micActive === true,
+      isMuted: this.muteActive !== undefined ? this.muteActive : this.startMuted || false
     }
   },
   watch: {
@@ -109,58 +108,7 @@ export default {
         : this.posterURL
     }
   },
-  mounted() {
-    this.isMuted = this.muteActive !== undefined ? this.muteActive : this.startMuted || false
-    if (this.sendAudio === true && this.micActive === true) {
-      this.isMicOn = true
-      if (this.webrtc) {
-        // the foregroundService mixin already started the stream before isMicOn was set
-        this.enableMicrophone(this.webrtc, this.audioTransceiver)
-      } else if (this.inForeground && this.src) {
-        this.startStream()
-      }
-    }
-    this.attachPopupLifecycleListeners()
-  },
-  beforeUnmount() {
-    this.detachPopupLifecycleListeners()
-    this.stopStream()
-  },
   methods: {
-    attachPopupLifecycleListeners() {
-      const wrapper = this.$el
-      if (!wrapper || typeof wrapper.closest !== 'function') {
-        return
-      }
-      const popup = wrapper.closest('.popup')
-      if (!popup) {
-        return
-      }
-      this.popupElement = popup
-      popup.addEventListener('popup:close', this.onPopupClose)
-      popup.addEventListener('popup:opened', this.onPopupOpened)
-    },
-    detachPopupLifecycleListeners() {
-      const popup = this.popupElement
-      if (!popup) {
-        return
-      }
-      popup.removeEventListener('popup:close', this.onPopupClose)
-      popup.removeEventListener('popup:opened', this.onPopupOpened)
-      this.popupElement = null
-    },
-    onPopupClose() {
-      // prevents onVisibilityChange() from resuming the stream while the popup is closed
-      this.inForeground = false
-      this.stopStream()
-    },
-    onPopupOpened() {
-      // inForeground may still be false if the widget was mounted while the popup was closed
-      this.inForeground = true
-      if (this.src && !this.webrtc) {
-        this.startStream()
-      }
-    },
     resetVideoElement() {
       const videoPlayer = this.$refs.videoPlayer
       if (!videoPlayer) {
