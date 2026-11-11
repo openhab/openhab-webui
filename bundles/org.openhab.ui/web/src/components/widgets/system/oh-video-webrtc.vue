@@ -200,7 +200,12 @@ export default {
       webrtc.isClosed = false
       webrtc.ontrack = function (event) {
         console.debug(event.streams.length + ' track is delivered')
-        self.$refs.videoPlayer.srcObject = event.streams[0]
+        const videoPlayer = self.$refs.videoPlayer
+        if (!videoPlayer) {
+          console.warn('Video player element is not available, ignoring incoming track')
+          return
+        }
+        videoPlayer.srcObject = event.streams[0]
       }
       // some cameras require streams to be sendrecv, despite the fact that we don't send video.
       // Since we don't send anything, it does not have any negative effects.
@@ -310,6 +315,7 @@ export default {
     async enableMicrophone(webrtc, audioTransceiver) {
       try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          this.isMicOn = false
           f7.dialog.alert(
             'To enable the microphone, please make sure that HTTPS is in use and WebRTC is supported by this browser, including microphone access.'
           )
@@ -326,14 +332,17 @@ export default {
           return
         }
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-        // teardown or mic toggle-off may have happened while the permission prompt was pending
-        if (!this.isMicOn || !this.webrtc || this.webrtc !== webrtc || webrtc.isClosed) {
+        // teardown, mic toggle-off or a concurrent enableMicrophone() call may have happened while the permission prompt was pending
+        if (!this.isMicOn || !this.webrtc || this.webrtc !== webrtc || webrtc.isClosed || this.localAudioStream) {
           stream.getTracks().forEach((track) => track.stop())
           return
         }
         this.localAudioStream = stream
         const [audioTrack] = stream.getAudioTracks()
-        if (!audioTrack) return
+        if (!audioTrack) {
+          this.isMicOn = false
+          return
+        }
         if (audioTransceiver && audioTransceiver.sender) {
           await audioTransceiver.sender.replaceTrack(audioTrack)
         } else if (webrtc) {
@@ -341,6 +350,8 @@ export default {
         }
       } catch (e) {
         console.warn('Failed to enable microphone:', e)
+        this.isMicOn = false
+        this.disableMicrophone()
         f7.dialog.alert('Microphone could not be enabled: ' + (e.message || 'Unknown error'))
       }
     },
