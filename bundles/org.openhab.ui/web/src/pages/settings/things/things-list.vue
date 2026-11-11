@@ -235,7 +235,7 @@ import { mapStores } from 'pinia'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
-import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
+import { thingStatusBadgeColor, thingStatusBadgeText, thingStatusSearchValues } from '@/components/thing/thing-helpers'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
@@ -250,7 +250,6 @@ import { getListTitle, highlightMatches } from '@/pages/list-helpers'
 export default {
   mixins: [FileDefinition],
   props: {
-    searchFor: String,
     f7route: Object,
     f7router: Object
   },
@@ -284,7 +283,7 @@ export default {
       },
       status: {
         label: 'Status',
-        path: 'statusInfo.status'
+        getFn: (thing) => thingStatusSearchValues(thing.statusInfo)
       },
       location: {
         label: 'Location',
@@ -306,7 +305,7 @@ export default {
       })
     )
 
-    filtersDefinitions.status.options = () => search.getFuseValuesForField('statusInfo.status')
+    filtersDefinitions.status.options = () => search.getFuseValuesForField('status')
     filtersDefinitions.location.options = () => search.getFuseValuesForField('location')
     filtersDefinitions.binding.options = () => search.getFuseValuesForField('thingTypeUID')
 
@@ -344,11 +343,6 @@ export default {
     }
   },
   computed: {
-    emptySearchOrFilterResults() {
-      return (
-        (this.search.isFiltered || this.$refs['list-filter']?.filtered) && this.search.filteredResults.length == 0 && this.things.length
-      )
-    },
     indexedResults() {
       if (this.groupBy === 'alphabetical') {
         return this.search.filteredResults.reduce((prev, result) => {
@@ -539,7 +533,6 @@ export default {
           } else {
             switch (topicParts[3]) {
               case 'status':
-                // console.log('Received status update for thing', topicParts[2], 'with payload', event.payload)
                 const updatedThing = this.things.find((t) => t.UID === topicParts[2])
                 const newStatus = JSON.parse(event.payload)
                 if (updatedThing) {

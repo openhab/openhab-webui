@@ -169,7 +169,7 @@
         <f7-list v-if="search.filteredResults.length === 0">
           <f7-list-item title="Nothing found" />
         </f7-list>
-        <group-box :title="getListTitle(search.isFiltered, search.filteredResults.length, rules.length, 'Rule', selected.size)">
+        <group-box :title="getListTitle(search.isFiltered, search.filteredResults.length, rules.length, showType, selected.size)">
           <template v-if="showCheckboxes && search.filteredResults.length > 0" #after-title>
             <f7-link @click="selectDeselectAll" :text="allSelected ? 'Deselect all' : 'Select all'" />
           </template>
@@ -650,7 +650,6 @@ export default {
 
           nextTick(() => {
             if (this.$refs.listIndex) this.$refs.listIndex.$el.f7ListIndex.update()
-            const searchbar = this.$refs.searchbar?.$el.f7Searchbar
             if (this.$device.desktop) {
               this.ohSearchbarRef?.focus()
             }

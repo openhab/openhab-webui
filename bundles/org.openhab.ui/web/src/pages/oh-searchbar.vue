@@ -94,6 +94,7 @@
     font-size 24px
     align-content center
     cursor pointer
+    user-select none
 
 .oh-searchbar-container
   .filters-popover
@@ -112,6 +113,8 @@
 
   .filters-popover
     .data-table
+      .chip
+        user-select none
       table
         table-layout auto
         width 100%
@@ -170,6 +173,7 @@ import {
 } from '@/components/search-helpers'
 import FilterOptionsList from '@/pages/filter-options-list.vue'
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
+import { useBreakpoints } from '@/js/composables/useBreakpoints'
 
 type F7SearchbarInstance = {
   $el: { f7Searchbar: Searchbar.Searchbar | undefined; querySelector(selector: string): HTMLElement | null }
@@ -211,7 +215,7 @@ const availableKeys = computed(() => {
 
 const placeholder = computed(() => {
   if (props.placeholder) return props.placeholder
-  if (!props.filtersDefinitions || window.innerWidth < BREAKPOINTS.LG) return 'Search...'
+  if (!props.filtersDefinitions || useBreakpoints().lessThan('lg')) return 'Search...'
   return `Search keywords or field:value (${availableKeys.value.join(', ')})`
 })
 
@@ -274,8 +278,6 @@ watch(
   () => rawSearchString.value,
   (newValue) => {
     tokenizedSearch.value = tokenizeString(newValue)
-    if (autocompleteSearchbar && autocompleteSearchbar.opened) {
-    }
     emits('update:tokenizedSearch', tokenizedSearch.value)
   }
 )
@@ -336,51 +338,38 @@ function onTextInput(id: 'include-input' | 'exclude-input', event: Event) {
   }
 }
 
+function setSearchString(newSearchString: string) {
+  rawSearchString.value = newSearchString
+  if (f7SearchbarRef.value?.$el?.f7Searchbar) {
+    f7SearchbarRef.value.$el.f7Searchbar.search(newSearchString)
+  } else if (inputEl) {
+    inputEl.value = newSearchString
+  }
+  inputEl?.setSelectionRange(newSearchString.length, newSearchString.length)
+}
+
 function addToken(token: FieldValueToken) {
   if (!isFieldValueToken(token)) return
-  const newSearchString = rawSearchString.value + ' ' + formatFieldValueToken(token)
-
-  rawSearchString.value = newSearchString
-  if (inputEl) {
-    inputEl.value = newSearchString
-    inputEl.setSelectionRange(newSearchString.length, newSearchString.length)
-  }
-  tokenizedSearch.value = tokenizeString(newSearchString)
-  emits('update:tokenizedSearch', tokenizedSearch.value)
+  const formattedToken = formatFieldValueToken(token)
+  const newSearchString = rawSearchString.value ? `${rawSearchString.value} ${formattedToken}` : formattedToken
+  setSearchString(newSearchString)
 }
 
 function deleteToken(token: FieldValueToken) {
   if (!isFieldValueToken(token)) return
   const oldSearchString = rawSearchString.value
-
   const start = token.start ?? 0
   const end = token.rawToken ? start + token.rawToken.length : oldSearchString.length
-  const newSearchString = oldSearchString.slice(0, start) + oldSearchString.slice(end)
-
-  rawSearchString.value = newSearchString
-  if (inputEl) {
-    inputEl.value = newSearchString
-    inputEl.setSelectionRange(newSearchString.length, newSearchString.length)
-  }
-  tokenizedSearch.value = tokenizeString(newSearchString)
-  emits('update:tokenizedSearch', tokenizedSearch.value)
+  const newSearchString = (oldSearchString.slice(0, start) + oldSearchString.slice(end)).trim()
+  setSearchString(newSearchString)
 }
-
 function updateToken(token: FieldValueToken) {
   if (!isFieldValueToken(token)) return
   const oldSearchString = rawSearchString.value
-
   const start = token.start ?? 0
   const end = token.rawToken ? start + token.rawToken.length : oldSearchString.length
   const newSearchString = oldSearchString.slice(0, start) + formatFieldValueToken(token) + oldSearchString.slice(end)
-
-  rawSearchString.value = newSearchString
-  if (inputEl) {
-    inputEl.value = newSearchString
-    inputEl.setSelectionRange(newSearchString.length, newSearchString.length)
-  }
-  tokenizedSearch.value = tokenizeString(newSearchString)
-  emits('update:tokenizedSearch', tokenizedSearch.value)
+  setSearchString(newSearchString)
 }
 
 // Methods
@@ -397,7 +386,6 @@ function restoreSearchbarQuery(key?: string) {
   key = key ?? props.persistSearchStringKey
   if (!key || !persistedQueryString) return
 
-  console.log('Restoring persisted search string for key: ' + key, persistedQueryString?.value)
   const persisted = persistedQueryString?.value
   if (persisted && typeof persisted === 'string') {
     if (autocompleteSearchbar && !Array.isArray((autocompleteSearchbar as { value?: unknown }).value)) {
@@ -413,7 +401,6 @@ function persistSearchbarQuery(key?: string) {
 
   const toPersist = rawSearchString.value
   const hasValue = !!toPersist && toPersist !== ''
-  console.log('Persisting search string for key: ' + key, toPersist)
   if (key && persistedQueryString) {
     persistedQueryString.value = hasValue ? toPersist : null
   }
@@ -454,7 +441,6 @@ function destroyAutocompleteSearchbar() {
 }
 
 async function autocompleteSource(query: string, render: (suggestions: string[]) => void) {
-  const autocompleteValue = Array.isArray(autocompleteSearchbar?.value) ? autocompleteSearchbar.value : []
   if (autocompleteSearchbar && !Array.isArray(autocompleteSearchbar.value)) {
     autocompleteSearchbar.value = []
   }
@@ -463,6 +449,7 @@ async function autocompleteSource(query: string, render: (suggestions: string[])
   const previousChar = cursorPosition > query.length + 1 ? ' ' : (query[cursorPosition - 1] ?? ' ')
 
   let suggestions: string[] = []
+  highlightedSuggestion = null
 
   if (query.length === 0) {
     render([])
@@ -491,7 +478,7 @@ async function autocompleteSource(query: string, render: (suggestions: string[])
   }
 
   // save first option as highlighted suggestion for tab completion
-  highlightedSuggestion = suggestions[0]
+  highlightedSuggestion = suggestions[0] ?? null
   render(suggestions ?? [])
 }
 

@@ -82,7 +82,7 @@ export function formatFieldValueToken(token: FieldValueToken): string {
   const rawToken = token.rawToken?.replace(/^-/, '') ?? ''
   const rawValues = splitFieldValues(rawToken.slice(rawToken.indexOf(':') + 1))
   const quotedValues = new Set(rawValues.filter(isQuoted).map((value) => value.slice(1, -1)))
-  const values = token.values.map((value) => (quotedValues.has(value) || /[\s,]/.test(value) ? `"${value}"` : value))
+  const values = token.values.map((value) => (quotedValues.has(value) || /[\s,()"']/.test(value) ? `"${value}"` : value))
   return `${token.negated ? '-' : ''}${token.field}:${values.join(',')}`
 }
 

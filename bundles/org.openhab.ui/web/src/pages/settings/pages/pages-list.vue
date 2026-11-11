@@ -393,7 +393,7 @@ export default {
     },
     ctrlClick(event, item) {
       this.toggleItemCheck(event, item.uid, item)
-      if (!this.selected.size > 0) this.showCheckboxes = false
+      if (this.selected.size === 0) this.showCheckboxes = false
     },
     toggleItemCheck(event, name, item) {
       if (!this.showCheckboxes) this.showCheckboxes = true

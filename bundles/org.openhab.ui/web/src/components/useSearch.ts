@@ -134,14 +134,6 @@ export function useSearch<TItem>(list: Ref<TItem[]> | TItem[], options: UseSearc
     }
   )
 
-  function _logComputedCost(measureName: string) {
-    const entries = performance.getEntriesByName(measureName)
-    if (entries.length === 0) return console.log('No evaluations yet.')
-
-    const lastEntry = entries[entries.length - 1]
-    console.log(`Last Execution Time (${measureName}): ${lastEntry.duration.toFixed(3)} ms`)
-  }
-
   const isFiltered = computed(() =>
     typeof fuseSearch.value === 'string' ? fuseSearch.value.length > 0 : Reflect.ownKeys(fuseSearch.value).length > 0
   )

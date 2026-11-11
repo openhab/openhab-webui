@@ -130,7 +130,6 @@
                   <span
                     v-if="getItemSemanticLabel(item)"
                     v-html="' · ' + highlightMatches(getItemSemanticLabel(item), fuseMatches, 'semantics')"></span>
-                  <!-- {{  getItemTypeLabel(item) + ' · ' + getItemSemanticLabel(item) }} -->
                   <div>
                     <f7-chip
                       v-for="tag in getNonSemanticTags(item)"
@@ -245,7 +244,6 @@ export default {
         path: 'tags'
       },
       state: {
-        // test
         label: 'State',
         getFn: (item) => item.state + (item.displayState ? ' ' + item.displayState : '')
       },
@@ -306,7 +304,6 @@ export default {
       },
       vlParams: {
         items: [],
-        searchAll: this.searchAll,
         renderExternal: this.renderExternal,
         height: this.height
       },

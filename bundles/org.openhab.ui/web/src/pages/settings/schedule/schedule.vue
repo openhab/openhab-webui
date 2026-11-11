@@ -116,7 +116,7 @@ export default {
   },
   setup() {
     const rules = shallowRef([])
-    const haystackFields = ['uid', 'name', 'description', 'tag'] // TODO: ruleStatusBadgeText
+    const haystackFields = ['uid', 'name', 'description', 'tag', 'status']
     const ohSearchbarRef = useTemplateRef('oh-searchbar')
 
     function displayedTags(rule) {
@@ -142,13 +142,7 @@ export default {
       },
       status: {
         label: 'Status',
-        options: {
-          uninitialized: 'Uninitialized',
-          initializing: 'Initializing',
-          idle: 'Idle',
-          running: 'Running',
-          disabled: 'Disabled'
-        },
+        options: ['Uninitialized', 'Initializing', 'Idle', 'Running', 'Disabled'],
         getFn: (rule) => [rule.rule.status?.status, rule.rule.status?.statusDetail]
       }
     }

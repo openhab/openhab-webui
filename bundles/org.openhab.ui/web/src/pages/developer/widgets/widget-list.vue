@@ -156,10 +156,6 @@ export default {
         label: 'Tag',
         path: 'tags'
       },
-      title: {
-        title: 'Title',
-        path: 'config.title'
-      },
       component: {
         label: 'Component',
         getFn: (widget) => findElementsInObject(toRaw(widget), 'component')

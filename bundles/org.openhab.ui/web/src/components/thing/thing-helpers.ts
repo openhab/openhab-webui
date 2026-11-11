@@ -19,6 +19,11 @@ export function thingStatusBadgeText(statusInfo: api.ThingStatusInfo) {
   return statusInfo.status
 }
 
+export function thingStatusSearchValues(statusInfo: api.ThingStatusInfo): string[] {
+  const badgeText = thingStatusBadgeText(statusInfo)
+  return badgeText === statusInfo.status ? [statusInfo.status] : [statusInfo.status, badgeText]
+}
+
 export function thingStatusDescription(statusInfo: api.ThingStatusInfo) {
   const description = statusInfo.description
   if (description) {
