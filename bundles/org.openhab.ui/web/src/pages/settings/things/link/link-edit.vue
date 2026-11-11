@@ -201,8 +201,7 @@ export default {
               ) // move default to be first
               this.profileTypes = this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
 
-              const channelUID = this.channel.uid.replace('#', '%23')
-              this.$oh.api.get('/rest/links/' + this.itemName + '/' + channelUID).then((link) => {
+              this.$oh.api.get('/rest/links/' + this.itemName + '/' + encodeURIComponent(this.channel.uid)).then((link) => {
                 this.link = link
                 if (this.link.configuration.profile) {
                   this.onProfileTypeChange(this.link.configuration.profile)
