@@ -18,7 +18,6 @@
 </template>
 
 <script lang="ts" setup>
-import { p } from '@/assets/definitions/widgets/helpers'
 import { isFieldValueToken, type FilterDefinition, type FieldValueToken } from '@/components/search-helpers'
 
 const props = defineProps<{
