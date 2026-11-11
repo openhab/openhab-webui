@@ -172,12 +172,13 @@ import {
   type ValueToken
 } from '@/components/search-helpers'
 import FilterOptionsList from '@/pages/filter-options-list.vue'
-import { BREAKPOINTS } from '@/js/constants/breakpoints'
 import { useBreakpoints } from '@/js/composables/useBreakpoints'
 
 type F7SearchbarInstance = {
   $el: { f7Searchbar: Searchbar.Searchbar | undefined; querySelector(selector: string): HTMLElement | null }
 }
+
+const { lessThan } = useBreakpoints()
 
 const storagePrefix = 'openhab.ui:search:'
 
@@ -215,7 +216,7 @@ const availableKeys = computed(() => {
 
 const placeholder = computed(() => {
   if (props.placeholder) return props.placeholder
-  if (!props.filtersDefinitions || useBreakpoints().lessThan('lg')) return 'Search...'
+  if (!props.filtersDefinitions || lessThan('lg').value) return 'Search...'
   return `Search keywords or field:value (${availableKeys.value.join(', ')})`
 })
 
