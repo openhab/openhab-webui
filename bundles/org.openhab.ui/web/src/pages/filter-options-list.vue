@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import { isFieldValueToken, type FilterDefinition, type Token, type ParsedToken, type FieldValueToken } from '@/components/search-helpers'
+import { isFieldValueToken, type FilterDefinition, type FieldValueToken } from '@/components/search-helpers'
 
 const props = defineProps<{
   field: string
@@ -51,19 +51,17 @@ function toggleFilterSelection(value: string): void {
 
   const tokenValue = props.token.values
   const tokenValues: string[] = Array.isArray(tokenValue) ? [...tokenValue] : tokenValue ? [tokenValue] : []
-  if (selected) {
+  const valueIndex = tokenValues.findIndex((v) => v?.toLowerCase() === value.toLowerCase())
+  if (selected === !props.token.negated) {
     tokenValues.push(value)
-  } else {
-    tokenValues.splice(
-      tokenValues.findIndex((v) => v?.toLowerCase() === value.toLowerCase()),
-      1
-    )
+  } else if (valueIndex !== -1) {
+    tokenValues.splice(valueIndex, 1)
   }
 
   if (tokenValues.length === 0) {
     emits('delete:token', props.token)
   } else {
-    emits('update:token', { ...props.token, negated: false, values: tokenValues })
+    emits('update:token', { ...props.token, values: tokenValues })
   }
 }
 </script>

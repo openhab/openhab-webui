@@ -140,7 +140,7 @@ export default {
   },
   setup() {
     const widgets = shallowRef([])
-    const haystackFields = ['uid', 'tags', 'title']
+    const haystackFields = ['uid', 'tags']
     const ohSearchbarRef = useTemplateRef('oh-searchbar')
 
     const filtersDefinitions = {

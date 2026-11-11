@@ -232,7 +232,6 @@ export default {
       if (this.loading) return
       this.loading = true
 
-      if (this.initSearchbar) this.lastSearchQueryStore.lastSitemapsSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
       this.initSearchbar = false
 
       this.sitemaps = []

@@ -187,7 +187,6 @@
 <script>
 import { nextTick, reactive, shallowRef, useTemplateRef } from 'vue'
 import { f7, theme } from 'framework7-vue'
-import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 
@@ -281,7 +280,6 @@ export default {
       f7,
       theme,
       runtimeStore,
-      BREAKPOINTS,
       items,
       filtersDefinitions,
       search,
