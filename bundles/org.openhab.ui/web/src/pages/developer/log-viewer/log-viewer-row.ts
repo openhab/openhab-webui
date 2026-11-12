@@ -56,20 +56,22 @@ export const LogTableRow: FunctionalComponent<LogTableRowProps> = (props) => {
   }
 
   // return h('tr', { class: rowClass, 'data-id': item.sequence }, [
-  return h('td', { class: 'text' },
-      h('div', { class: 'textline' }, [
-        h('span', { class: 'time details-trigger' }, `${item.time}`),
-        ' [',
-        h('span', { class: `level ${item.level.toLowerCase()}` }, item.level.padEnd(5)),
-        '] [',
-        h('span', { class: 'logger', title: item.loggerName, innerHTML: highlightText(item.loggerName, highlightFilters) }),
-        '] - ',
-        h('span', {
-          class: `msg ${item.level.toLowerCase()}`,
-          innerHTML: escapedMessage // Replaces v-html
-        })
-      ])
-    )
+  return h(
+    'td',
+    { class: 'text' },
+    h('div', { class: 'textline' }, [
+      h('span', { class: 'time details-trigger' }, `${item.time}`),
+      ' [',
+      h('span', { class: `level ${item.level.toLowerCase()}` }, item.level.padEnd(5)),
+      '] [',
+      h('span', { class: 'logger', title: item.loggerName, innerHTML: highlightText(item.loggerName, highlightFilters) }),
+      '] - ',
+      h('span', {
+        class: `msg ${item.level.toLowerCase()}`,
+        innerHTML: escapedMessage // Replaces v-html
+      })
+    ])
+  )
 }
 
 // Explicitly register props so Vue knows how to unpack them

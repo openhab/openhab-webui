@@ -8,7 +8,7 @@
     @mousedown="handleTableMouseDown"
     @dblclick="handleTableDoubleClick"
     @touchstart="handleTableTouchStart">
-    <div v-bind="containerProps" @scroll="emit('scroll', $event)" class="container">
+    <div v-bind="containerProps" @scroll="emit('scroll', $event)" class="container" tabindex="0">
       <div v-bind="wrapperProps" class="wrapper">
         <div
           v-if="columnResizeEnabled"
@@ -179,6 +179,7 @@ const props = withDefaults(
  */
 const emit = defineEmits<{
   scroll: [event: Event]
+  'scroll-to-bottom': [container: HTMLElement]
   'auto-size-column': [colIndex: number]
   tableClick: [event: MouseEvent]
 }>()
@@ -412,10 +413,10 @@ function getItemHeight(index: number): number {
 function measureDOMItem(el: Element | ComponentPublicInstance | null, index: number) {
   if (!(el instanceof Element)) return
   const actualHeight = el.getBoundingClientRect().height
-  
+
   if (heightCache.get(index) !== actualHeight) {
     heightCache.set(index, actualHeight)
-    if(heightCache.size > MaxHeightCache) {
+    if (heightCache.size > MaxHeightCache) {
       const oldestKey = heightCache.keys().next().value
       if (oldestKey !== undefined) {
         heightCache.delete(oldestKey)
@@ -424,23 +425,12 @@ function measureDOMItem(el: Element | ComponentPublicInstance | null, index: num
   }
 }
 
-function triggerListRecalculation() {
-  nextTick(() => {
-    console.log('TriggerListRecalculation')
-    const container = containerProps.ref.value
-    if (!container) return
-
-    const originalScroll = container.scrollTop
-    container.scrollTop = originalScroll === 0 ? 1 : originalScroll - 1
-    container.scrollTop = originalScroll
-  })
-}
-
-function scrollToBottom() {
+function scrollToBottom(shouldScroll: () => boolean) {
   setTimeout(() => {
-    if (containerProps.ref.value) {
-      containerProps.ref.value.scrollTop = containerProps.ref.value.scrollHeight
-    }
+    const container = containerProps.ref.value
+    if (!container || !shouldScroll()) return
+    container.scrollTop = container.scrollHeight
+    emit('scroll-to-bottom', container)
   }, 100)
 }
 

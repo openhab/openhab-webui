@@ -1,7 +1,6 @@
 <template>
   <div class="table-block">
     <f7-card class="log-viewer-card">
-      <!-- :line-height="!textMode ? LineHeights[textSize] : LineHeights[`textmode_${textSize}` as TextSize]" -->
       <resizable-table
         ref="resizableTable"
         :columns="TABLE_COLUMN_DEFS"
@@ -11,6 +10,10 @@
         @auto-size-column="autoSizeColumn"
         @table-click="onTableClick"
         @scroll="onScroll"
+        @scroll-to-bottom="noteProgrammaticScroll"
+        @wheel.passive="onWheel"
+        @pointerdown="onPointerDown"
+        @keydown="onKeydown"
         :line-height="!textMode ? LineHeights[textSize] : LineHeights[`textmode_${textSize}` as TextSize]"
         :list="filteredList"
         :class="{
@@ -272,7 +275,7 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, useTemplateRef, watch, type Ref } from 'vue'
 import { f7 } from 'framework7-vue'
-import { useStorage } from '@vueuse/core'
+import { useEventListener, useStorage } from '@vueuse/core'
 import ResizableTable from './resizable-table.vue'
 import LogViewerSettingsPopup from './log-viewer-settings-popup.vue'
 import LogViewerHighlightsPopup from './log-viewer-highlights-popup.vue'
@@ -280,6 +283,7 @@ import LogViewerDetailsPopup from './log-viewer-details-popup.vue'
 import OhSearchbar from '@/pages/oh-searchbar.vue'
 import { useSearch } from '@/components/useSearch'
 import { LogTableRow } from './log-viewer-row.ts'
+import { useLogScroll } from './scroll-position'
 
 // TODO: Remove once we have refactored clipboard to TypeScript
 // @ts-expect-error-next-line
@@ -294,11 +298,12 @@ import { type LogEntry, type EnrichedLogEntry, type LogHighlightFilter, Color } 
 // Should match the actual line heights used in the CSS for the different text sizes and modes
 enum LineHeights {
   small = 22,
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   medium = 28,
   large = 33,
   textmode_small = 17,
   textmode_medium = 23,
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  // oxlint-disable-next-line typescript/no-duplicate-enum-values
   textmode_large = 28
 }
 const defaultLineHeight = 22
@@ -381,13 +386,25 @@ const filtersDefinitions = {
 }
 const haystackFields = ['message', 'loggerName']
 
-let maxScrollHeight = 0
+const {
+  autoScroll,
+  isUserScrolling,
+  onWheel,
+  onPointerDown,
+  onPointerEnd,
+  onKeydown,
+  onScroll,
+  noteProgrammaticScroll,
+  reset,
+  followLatest
+} = useLogScroll()
+useEventListener(window, 'pointerup', onPointerEnd)
+useEventListener(window, 'pointercancel', onPointerEnd)
 const loggerPackages = ref<api.LoggerInfo[]>([])
 const stateConnected = ref(false)
 const stateProcessing = ref(true)
 const stateConnecting = ref(false)
 const loadingLoggers = ref(true)
-const autoScroll = ref(true)
 const tableData: EnrichedLogEntry[] = [] // non-reactive to manually updates efficiently
 const logStart = ref('--:--:--')
 const logEnd = ref('--:--:--')
@@ -716,27 +733,12 @@ function clearLog() {
 
 function showLatestLogs() {
   stateProcessing.value = true
-  autoScroll.value = true
-  maxScrollHeight = 0
+  followLatest()
   nextTick(() => scrollToBottom())
 }
 
 function scrollToBottom() {
-  // resizableTableRef.value?.scrollTo(filteredList.value.length, { behavior: 'smooth', block: 'end' })
-
-  resizableTableRef.value?.scrollToBottom()
-}
-
-function onScroll(event: Event) {
-  const scrollTop = (event.target as HTMLElement).scrollTop
-  const clientHeight = (event.target as HTMLElement).clientHeight
-
-  // add some guardband to avoid auto-scroll being triggered inadvertently
-  if (scrollTop + clientHeight < maxScrollHeight - 100) {
-    autoScroll.value = false
-  }
-
-  maxScrollHeight = Math.max(maxScrollHeight, scrollTop + clientHeight)
+  resizableTableRef.value?.scrollToBottom(() => autoScroll.value && !isUserScrolling())
 }
 
 function addLogger(loggerName: string) {
@@ -836,7 +838,7 @@ function copyTableToClipboard() {
 }
 
 function setTextMode(textModeEnabled: boolean) {
-  maxScrollHeight = 0
+  reset()
   textMode.value = textModeEnabled
   if (textModeEnabled) {
     resizableTableRef.value?.clearResizeHoverState()
@@ -853,7 +855,7 @@ function toggleWrapMessages() {
 }
 
 function toggleTextSize() {
-  maxScrollHeight = 0
+  reset()
   if (textSize.value === 'small') {
     textSize.value = 'medium'
   } else if (textSize.value === 'medium') {
