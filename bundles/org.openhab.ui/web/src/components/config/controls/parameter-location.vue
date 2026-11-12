@@ -57,6 +57,9 @@ export default {
           url: 'pick-location',
           route: {
             path: 'pick-location',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },

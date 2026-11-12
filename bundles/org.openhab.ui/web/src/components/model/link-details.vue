@@ -103,7 +103,10 @@ export default {
           url: 'links/new',
           route: {
             component: AddLinkPage,
-            path: 'links/new'
+            path: 'links/new',
+            options: {
+              browserHistory: false
+            }
           }
         },
         {

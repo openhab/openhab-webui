@@ -719,6 +719,9 @@ export default {
           url: 'thing-action',
           route: {
             path: 'thing-action',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },
@@ -763,6 +766,9 @@ export default {
           url: `${networkType}-network`,
           route: {
             path: `${networkType}-network`,
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },
@@ -857,6 +863,9 @@ export default {
           route: {
             component: AddChannelPage,
             path: 'channels/new',
+            options: {
+              browserHistory: false
+            },
             context: {
               operation: 'add-channel'
             },
@@ -890,6 +899,9 @@ export default {
           route: {
             component: AddFromThingPage,
             path: 'add-to-model',
+            options: {
+              browserHistory: false
+            },
             props: {},
             on: {
               pageAfterOut(event, page) {}

@@ -554,6 +554,9 @@ export default {
           route: {
             component: AddFromThing,
             path: 'add-thing',
+            options: {
+              browserHistory: false
+            },
             props: {},
             on: {
               pageAfterOut(event, page) {}
@@ -575,6 +578,9 @@ export default {
           route: {
             component: AddFromTemplate,
             path: 'add-template',
+            options: {
+              browserHistory: false
+            },
             props: {}
           }
         },

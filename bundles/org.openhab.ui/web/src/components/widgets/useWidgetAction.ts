@@ -325,22 +325,27 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
               }
 
               console.log(`Opening ${actionModal} in ${action} modal`)
-              let modalRoute: { url: string; route: { [key: string]: { component: unknown } } } = {
+              // const modalRoute: Router.NavigateParameters & { url: string; route: Partial<Router.RouteParameters> } = {
+              const modalRoute: Partial<Router.Route> = {
                 url: modalUrl,
-                route: {}
+                route: {
+                  path: modalUrl,
+                  options: {
+                    browserHistory: false
+                  }
+                }
               }
-              if (action === Action.popup) modalRoute.route.popup = { component: OhPopup }
-              if (action === Action.popover) modalRoute.route.popup = { component: OhPopover }
-              if (action === Action.sheet) modalRoute.route.popup = { component: OhSheet }
+              if (action === Action.popup) modalRoute.route!.popup = { component: OhPopup }
+              if (action === Action.popover) modalRoute.route!.popup = { component: OhPopover }
+              if (action === Action.sheet) modalRoute.route!.popup = { component: OhSheet }
               let modalProps: Router.RouteOptions = {
-                browserHistory: false,
                 props: {
                   uid: actionModal,
                   el: evt?.target && '_icon' in evt.target ? evt.target._icon : evt ? evt.target : null,
                   modalConfig: actionModalConfig || {}
                 }
               }
-              f7.views.main.router.navigate(modalRoute as any as string, modalProps)
+              f7.views.main.router.navigate(modalRoute, modalProps)
               break
             case Action.photos:
               type Photo = { item: string; caption?: string }
@@ -387,13 +392,19 @@ export function useWidgetAction(context: Ref<WidgetContext>, config: Ref<WidgetA
               let groupPopupRoute = {
                 url: '/group/' + actionGroupItem,
                 route: {
+                  path: '/group/' + actionGroupItem,
+                  options: {
+                    browserHistory: false
+                  },
                   popup: {
                     component: GroupPopup
                   }
                 }
-              }
+              } satisfies Partial<Router.Route>
               console.log(`Opening ${actionGroupItem} details in popup`)
-              f7.views.main.router.navigate(groupPopupRoute as any as string, { props: { groupItem: actionGroupItem } })
+              f7.views.main.router.navigate(groupPopupRoute as unknown as Router.NavigateParameters, {
+                props: { groupItem: actionGroupItem }
+              })
               break
             case Action.analyzer:
               let actionAnalyzerItems = actionConfig[`${processedPrefix}actionAnalyzerItems`]

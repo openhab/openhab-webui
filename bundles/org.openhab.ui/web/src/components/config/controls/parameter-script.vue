@@ -43,6 +43,9 @@ export default {
           url: 'script-edit',
           route: {
             path: 'script-edit',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },
