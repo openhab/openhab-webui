@@ -47,7 +47,7 @@
     :log-entry="selectedLogEntry"
     @select:next="updateSelectedByIndex(selectedLogIndex + 1)"
     @select:previous="updateSelectedByIndex(selectedLogIndex - 1)"
-    @select:latest="updateSelectedByIndex(filteredList.length - 1)" />
+    @select:latest="updateSelectedByIndex(tableData.length - 1)" />
 
   <Teleport v-if="searchbarContainer" defer :to="searchbarContainer">
     <oh-searchbar
@@ -306,7 +306,6 @@ enum LineHeights {
   // oxlint-disable-next-line typescript/no-duplicate-enum-values
   textmode_large = 28
 }
-const defaultLineHeight = 22
 type TextSize = keyof typeof LineHeights
 
 const maxEntries = 2000
@@ -318,7 +317,7 @@ const props = withDefaults(
     storageKeyPrefix?: string
   }>(),
   {
-    storageKeyPrefix: 'org.openhab.ui:logviewer:'
+    storageKeyPrefix: 'openhab.ui:logviewer:'
   }
 )
 
@@ -362,6 +361,14 @@ let reconnectDelay = 1000
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null
 let batchUpdatePending = false
 const batchLogs: EnrichedLogEntry[] = []
+// force formatting to be done using browers local timezone
+const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  fractionalSecondDigits: 3,
+  hourCycle: 'h23'
+})
 
 const filtersDefinitions = {
   level: {
@@ -659,9 +666,7 @@ function onTableClick(event: MouseEvent) {
 
 function addLogEntry(logEntry: LogEntry) {
   lastSequence.value = Math.max(lastSequence.value, logEntry.sequence)
-  const date = new Date(logEntry.unixtime)
-
-  const time = date.toISOString().slice(11, 23)
+  const time = dateFormatter.format(new Date(logEntry.unixtime))
   const formattedTimeSansMS = time.slice(0, 8)
 
   logEnd.value = formattedTimeSansMS
@@ -669,7 +674,7 @@ function addLogEntry(logEntry: LogEntry) {
     logStart.value = formattedTimeSansMS
   }
 
-  let entry = { ...logEntry, time, height: -1 } satisfies EnrichedLogEntry
+  let entry = { ...logEntry, time } satisfies EnrichedLogEntry
   batchLogs.push(entry)
 
   if (!batchUpdatePending) {
@@ -746,8 +751,8 @@ function addLogger(loggerName: string) {
     loggerName: loggerName,
     level: 'INFO'
   }
-  updateLogLevel(loggerName, defaultLogLevel)
   loggerPackages.value.push(logger)
+  updateLogLevel(loggerName, defaultLogLevel)
   loggerPackages.value.sort((a, b) => a.loggerName.localeCompare(b.loggerName))
 }
 

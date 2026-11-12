@@ -3,6 +3,12 @@ import { ref } from 'vue'
 const SCROLL_INPUT_TIMEOUT = 500
 const SCROLL_GUARD = 100
 
+/**
+ * Scroll events also fire for programmatic scrolling and layout changes, so they
+ * cannot alone indicate that the user wants to stop following the log. Track
+ * recent input and touch momentum separately, and pause only after the viewport
+ * moves beyond the guard band. Programmatic scrolls reset the position baseline.
+ */
 export function useLogScroll() {
   const autoScroll = ref(true)
   let maxScrollHeight = 0
