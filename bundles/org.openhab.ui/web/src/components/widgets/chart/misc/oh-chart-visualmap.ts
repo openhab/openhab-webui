@@ -24,14 +24,10 @@ const chartVisualMap: MiscChartComponent = {
         options.inRange.color = presetPalettes[options.presetPalette] as string[]
       }
     }
-    if (options.min !== undefined) {
-      ;(options as VisualMapComponentOption).min = options.min
-    } else if (context.series && context.series[0]) {
+    if (options.min === undefined && context.series && context.series[0]) {
       ;(options as VisualMapComponentOption).min = Math.min(...(context.series[0].data as number[][]).map((p) => p[p.length - 1]))
     }
-    if (options.max !== undefined) {
-      ;(options as VisualMapComponentOption).max = options.max
-    } else if (context.series && context.series[0]) {
+    if (options.max === undefined && context.series && context.series[0]) {
       ;(options as VisualMapComponentOption).max = Math.max(...(context.series[0].data as number[][]).map((p) => p[p.length - 1]))
     }
 
