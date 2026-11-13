@@ -43,6 +43,12 @@ public class MountedFile {
                 break;
             }
         }
+        // ensure the resolved path stays inside the mount source or config folder
+        Path base = mount != null ? mount.getAbsoluteSource().normalize()
+                : ManagerSettings.getInstance().getConfigPath().normalize();
+        if (!getAbsolutePath().normalize().startsWith(base)) {
+            throw new FileOperationException("path not allowed", Status.NOT_ACCEPTABLE);
+        }
     }
 
     public MountedFile(MountPoint mount) {
@@ -99,11 +105,15 @@ public class MountedFile {
     }
 
     private String normalize(String path) throws FileOperationException {
+        if (path == null) {
+            throw new FileOperationException("path not allowed", Status.NOT_ACCEPTABLE);
+        }
         String normalizedPath = ".".equals(path) ? "" : path;
         while (normalizedPath.startsWith(File.separator)) {
-            normalizedPath = path.substring(1);
+            normalizedPath = normalizedPath.substring(1);
         }
-        if (normalizedPath.contains(".." + File.separator) || normalizedPath.contains(File.separator + "..")) {
+        if (normalizedPath.contains(".." + File.separator) || normalizedPath.contains(File.separator + "..")
+                || "..".equals(normalizedPath)) {
             throw new FileOperationException("path not allowed", Status.NOT_ACCEPTABLE);
         }
         if (File.separator.equals("\\")) {
