@@ -24,9 +24,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 
 /**
  * Helper object for getting files from multi-part {@link HttpServletRequest}s.
@@ -37,6 +38,9 @@ public class MultipartRequestMap extends HashMap<String, List<Object>> {
 
     private static final long serialVersionUID = 1L;
     private static final String DEFAULT_ENCODING = "UTF-8";
+    // Request attribute Jetty reads the multipart configuration from, see
+    // ServletContextRequest.MULTIPART_CONFIG_ELEMENT
+    private static final String MULTIPART_CONFIG_ATTRIBUTE = "org.eclipse.jetty.multipartConfig";
 
     private String encoding;
     private String tempLocation;
@@ -59,6 +63,8 @@ public class MultipartRequestMap extends HashMap<String, List<Object>> {
                 }
             }
 
+            // The REST servlet is registered without multipart support, so tell Jetty how to parse the parts.
+            request.setAttribute(MULTIPART_CONFIG_ATTRIBUTE, new MultipartConfigElement(tempLocation));
             for (Part part : request.getParts()) {
                 String fileName = part.getSubmittedFileName();
                 if (fileName == null) {
