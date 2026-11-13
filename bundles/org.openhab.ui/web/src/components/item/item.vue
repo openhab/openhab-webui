@@ -6,7 +6,7 @@
     :link="link"
     :title="item.label ? item.label : item.name"
     :footer="item.label ? item.name : '\xa0'"
-    :subtitle="noType ? '' : getItemTypeAndMetaLabel(item)"
+    :subtitle="noType ? '' : getItemTypeAndSemanticLabel(item)"
     :after="state">
     <template #media>
       <oh-icon
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { getItemTypeAndMetaLabel, getNonSemanticTags } from '@/components/item/item-helpers'
+import { getItemTypeAndSemanticLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 
 export default {
   props: {
@@ -47,7 +47,7 @@ export default {
     link: String
   },
   setup() {
-    return { getItemTypeAndMetaLabel, getNonSemanticTags }
+    return { getItemTypeAndSemanticLabel, getNonSemanticTags }
   },
   computed: {
     state() {
