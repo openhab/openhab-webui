@@ -208,6 +208,9 @@ export default {
           url: 'configure-slot',
           route: {
             path: 'configure-slot',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },
