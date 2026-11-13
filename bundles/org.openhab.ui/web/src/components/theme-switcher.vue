@@ -92,6 +92,10 @@
           <f7-toggle v-model:checked="hideChatInput" />
         </f7-list-item>
         <f7-list-item>
+          <span>{{ t('about.miscellaneous.theme.hideChatLink') }}</span>
+          <f7-toggle v-model:checked="hideChatLink" />
+        </f7-list-item>
+        <f7-list-item>
           <span>{{ t('about.miscellaneous.home.disableCardExpansionAnimation') }}</span>
           <f7-toggle v-model:checked="disableExpandableCardAnimation" />
         </f7-list-item>
@@ -331,6 +335,7 @@ export default {
       'homeNavBar',
       'homeBackground',
       'hideChatInput',
+      'hideChatLink',
       'disableExpandableCardAnimation',
       'webAudio',
       'dialogEnabled',
