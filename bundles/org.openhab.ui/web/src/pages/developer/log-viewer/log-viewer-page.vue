@@ -34,15 +34,7 @@
         </template>
       </oh-nav-content>
       <f7-subnavbar :inner="false" style="padding-right: var(--f7-safe-area-right)">
-        <f7-searchbar
-          ref="searchbar"
-          custom-search
-          placeholder="Filter"
-          clear-button
-          :disable-button="false"
-          :value="logViewerCore?.filterText"
-          @searchbar:search="logViewerCore?.handleFilter"
-          @searchbar:clear="logViewerCore?.clearFilter" />
+        <div ref="searchbarContainer" id="searchbar-container" style="flex: 1; display: flex; align-items: center; padding-left: 8px" />
         <div style="display: flex; flex-wrap: nowrap">
           <f7-badge
             class="log-period margin-left-half"
@@ -50,7 +42,7 @@
             :tooltip="logViewerCore?.periodRangeTooltip">
             {{ logViewerCore?.logStart }}&nbsp;>&nbsp;{{ logViewerCore?.logEnd }}
           </f7-badge>
-          <f7-badge class="margin-horizontal" :color="logViewerCore?.countersBadgeColor" tooltip="Log entries filtered/total">
+          <f7-badge class="log-count margin-horizontal" :color="logViewerCore?.countersBadgeColor" tooltip="Log entries filtered/total">
             {{ logViewerCore?.filterCount }}/{{ logViewerCore?.tableData.length }}
           </f7-badge>
         </div>
@@ -61,7 +53,7 @@
       <log-viewer-toolbar :log-viewer-core="logViewerCore" />
     </f7-toolbar>
 
-    <log-viewer-core ref="logViewerCore" />
+    <log-viewer-core ref="logViewerCore" :searchbar-container="searchbarContainerRef" />
   </f7-page>
 </template>
 
@@ -70,6 +62,10 @@
   .subnavbar
     height: unset
 
+    .badge.log-period
+      width: 160px
+    .badge.log-count
+      width: 90px
     .badge.color-red
       background-color #c81d00
     .badge.color-orange
@@ -90,7 +86,7 @@
 </style>
 
 <script setup lang="ts">
-import { useTemplateRef } from 'vue'
+import { useTemplateRef, ref } from 'vue'
 import { type Router, getDevice } from 'framework7'
 import LogViewerCore from './log-viewer-core.vue'
 import LogViewerToolbar from './log-viewer-toolbar.vue'
@@ -104,7 +100,8 @@ defineProps<{
 }>()
 
 // State/Data
-const logViewerCore = useTemplateRef('logViewerCore')
+const logViewerCore = useTemplateRef<InstanceType<typeof LogViewerCore> | null>('logViewerCore')
+const searchbarContainerRef = useTemplateRef<HTMLElement | null>('searchbarContainer')
 
 // Lifecycle Hooks
 function onPageAfterIn() {
