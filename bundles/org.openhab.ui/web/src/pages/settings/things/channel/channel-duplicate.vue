@@ -58,7 +58,7 @@ export default {
       this.channel.label = this.channel.label + ' copy'
       this.config = Object.assign({}, this.channel.configuration)
       this.$oh.api
-        .get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`)
+        .get(`/rest/config-descriptions/channel:${this.thing.UID}:${encodeURIComponent(this.channelId)}`)
         .then((ct) => {
           this.configDescription = ct
         })

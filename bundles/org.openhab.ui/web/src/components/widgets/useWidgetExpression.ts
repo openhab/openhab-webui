@@ -23,6 +23,7 @@ import { i18n } from '@/js/i18n.ts'
 
 import type { VariableScopeName, WidgetContext } from './types'
 import * as api from '@/api'
+import { useBreakpoints } from '@/js/composables/useBreakpoints.ts'
 
 expr.jsep.plugins.register(jsepRegex, jsepArrow, jsepObject, jsepTemplate)
 
@@ -89,6 +90,7 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
   // imports
   const userStore = useUserStore()
   const uiOptionsStore = useUIOptionsStore()
+  const { width, height } = useBreakpoints()
 
   const instance = getCurrentInstance()
   const global = instance?.appContext.config.globalProperties
@@ -99,9 +101,6 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
   const viewAreaHeight = inject('viewAreaHeight', null) as Ref<number> | null
 
   // computed
-  const appWidth = computed(() => (global?.$f7dim as { width: number }).width ?? 0)
-  const appHeight = computed(() => (global?.$f7dim as { height: number }).height ?? 0)
-
   const screenInfo = computed<ScreenInfo>(() => {
     return {
       width: window.screen.width,
@@ -112,8 +111,8 @@ export function useWidgetExpression(properties: { context?: WidgetContext; props
       pixelDepth: window.screen.pixelDepth,
       viewAreaWidth: viewAreaWidth != null ? viewAreaWidth.value : null,
       viewAreaHeight: viewAreaHeight != null ? viewAreaHeight.value : null,
-      appWidth: appWidth.value,
-      appHeight: appHeight.value
+      appWidth: width.value,
+      appHeight: height.value
     }
   })
 

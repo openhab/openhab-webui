@@ -675,8 +675,8 @@ import ExpressionTester from './expression-tester.vue'
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 
 import { getPageType } from '@/pages/page-type'
-import RuleStatus from '@/components/rule/rule-status-mixin'
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { ruleStatusBadgeColor, ruleStatusBadgeText } from '@/components/rule/rule-helpers.ts'
+import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
 
@@ -684,7 +684,6 @@ import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [RuleStatus, ThingStatus],
   components: {
     ClipboardIcon,
     Item,
@@ -695,6 +694,14 @@ export default {
   props: {
     activeToolTab: String,
     searchFor: String
+  },
+  setup() {
+    return {
+      ruleStatusBadgeColor,
+      ruleStatusBadgeText,
+      thingStatusBadgeColor,
+      thingStatusBadgeText
+    }
   },
   watch: {
     searchFor(val) {

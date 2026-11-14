@@ -72,7 +72,8 @@
         <f7-block
           v-else-if="!createMode && !stubMode"
           class="block-narrow padding-left padding-right skeleton-text skeleton-effect-blink"
-          strong>
+          strong
+          v-deferred>
           <f7-col>
             ______:
             <f7-chip class="margin-left" text="________" />
@@ -310,7 +311,7 @@
               icon-aurora="f7:pause_circle"
               class="toggle-enabled display-flex flex-direction-row"
               @click="toggleDisabled">
-              &nbsp;{{ $f7dim.width < 550 ? '' : rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable' }}
+              &nbsp;{{ $f7dim.width < BREAKPOINTS.SM ? '' : rule.status.statusDetail === 'DISABLED' ? 'Enable' : 'Disable' }}
             </f7-button>
             <f7-button
               :color="rule.status.status === 'IDLE' ? 'blue' : 'gray'"
@@ -320,10 +321,10 @@
               icon-aurora="f7:play_round"
               class="run-now display-flex flex-direction-row"
               @click="runNow">
-              &nbsp;{{ $f7dim.width < 550 ? '' : 'Run' }}
+              &nbsp;{{ $f7dim.width < BREAKPOINTS.SM ? '' : 'Run' }}
             </f7-button>
             <f7-chip
-              v-if="$f7dim.width > 600"
+              v-if="$f7dim.width >= BREAKPOINTS.SM"
               class="display-flex flex-direction-row"
               :text="rule.status.status"
               :color="ruleStatusBadgeColor(rule.status)"
@@ -430,7 +431,7 @@
 .popup
   &.copy-definition-popup
 
-    @media (min-width: 630px) and (min-height: 630px)
+    @media (--media-SM-up) and (min-height: 630px)
       width 90%
       max-width 450px
       height auto
@@ -507,7 +508,7 @@ import RuleModulePopup from './rule-module-popup.vue'
 
 import RuleMixin from './rule-edit-mixin'
 import ModuleDescriptionSuggestions from './module-description-suggestions'
-import RuleStatus from '@/components/rule/rule-status-mixin'
+import { ruleStatusBadgeColor } from '@/components/rule/rule-helpers.ts'
 import { RULE_UID_PATTERN } from '@/js/openhab/uid.ts'
 
 import ConfigSheet from '@/components/config/config-sheet.vue'
@@ -520,11 +521,12 @@ import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 import { canSerializeRules, create } from '@/api'
 import copyToClipboard from '@/js/clipboard'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 const UID_REGEX = new RegExp('^' + RULE_UID_PATTERN + '$')
 
 export default {
-  mixins: [RuleMixin, ModuleDescriptionSuggestions, RuleStatus, FileDefinition],
+  mixins: [RuleMixin, ModuleDescriptionSuggestions, FileDefinition],
   components: {
     RuleGeneralSettings,
     ConfigSheet,
@@ -548,7 +550,7 @@ export default {
       STUB: 'Stub only',
       STRIPPED: 'Strip template'
     })
-    return { theme, dirty, dirtyIndicator, serializationOptions }
+    return { theme, dirty, dirtyIndicator, serializationOptions, ruleStatusBadgeColor, BREAKPOINTS }
   },
   data() {
     return {
@@ -914,7 +916,7 @@ export default {
       }
     },
     async save(noToast) {
-      if (!this.ready || !this.isEditable) return Promise.reject()
+      if (!this.ready || !this.isEditable) throw new Error('Not ready or not editable')
       if (this.currentTab === 'code' && this.codeDirty) {
         const editor = this.$refs.codeEditor
         try {
@@ -928,19 +930,19 @@ export default {
       }
       if (!this.rule.uid) {
         f7.dialog.alert('Please provide a unique rule UID.', 'UID required').open()
-        return Promise.reject()
+        throw new Error('Rule UID is required')
       }
       if (!this.uidValid) {
         f7.dialog
           .alert("Please provide a valid rule UID. It can't contain '/', '\\' or have leading or trailing whitespace.", 'Invalid UID')
           .open()
-        return Promise.reject()
+        throw new Error('Invalid rule UID')
       }
       if (!this.rule.name) {
         f7.dialog
           .alert('Please provide a rule label. The label is required and will be shown in the UI to identify this rule.', 'Label required')
           .open()
-        return Promise.reject()
+        throw new Error('Rule label is required')
       }
       const promise = this.createMode
         ? this.$oh.api.postPlain('/rest/rules', JSON.stringify(this.rule), 'text/plain', 'application/json')

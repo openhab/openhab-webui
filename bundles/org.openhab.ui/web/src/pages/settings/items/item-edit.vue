@@ -78,6 +78,7 @@ import ItemForm from '@/components/item/item-form.vue'
 import NotEditableNotice from '@/components/util/not-editable-notice.vue'
 
 import ItemMixin from '@/components/item/item-mixin'
+import { validateItemName } from '@/components/item/item-helpers'
 import { showToast } from '@/js/dialog-promises'
 
 import { useDirty } from '@/pages/useDirty'
@@ -242,8 +243,8 @@ export default {
         return
       }
 
-      if (this.validateItemName(this.item.name) !== '')
-        return f7.dialog.alert('Please give the Item a valid name: ' + this.validateItemName(this.item.name)).open()
+      if (validateItemName(this.item.name, this.items) !== '')
+        return f7.dialog.alert('Please give the Item a valid name: ' + validateItemName(this.item.name, this.items)).open()
       if (!this.item.type || !this.types.ItemTypes.includes(this.item.type.split(':')[0]))
         return f7.dialog.alert('Please give Item a valid type').open()
 

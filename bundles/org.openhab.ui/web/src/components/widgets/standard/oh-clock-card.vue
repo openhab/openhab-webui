@@ -5,8 +5,9 @@
       <f7-row v-if="config.showDate && config.datePos !== 'below'">
         <f7-col>
           <oh-clock
+            class="date-clock"
             :context="clockContext"
-            :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }"
+            :style="{ 'font-size': config.dateFontSize, 'font-weight': config.dateFontWeight }"
             :format="config.dateFormat"
             :timezone="config.timezone" />
         </f7-col>
@@ -14,8 +15,9 @@
       <f7-row>
         <f7-col>
           <oh-clock
+            class="time-clock"
             :context="clockContext"
-            :style="{ 'font-size': config.timeFontSize || '2vw', 'font-weight': config.timeFontWeight || 'normal' }"
+            :style="{ 'font-size': config.timeFontSize, 'font-weight': config.timeFontWeight }"
             :format="config.timeFormat"
             :timezone="config.timezone" />
         </f7-col>
@@ -23,8 +25,9 @@
       <f7-row v-if="config.showDate && config.datePos === 'below'">
         <f7-col>
           <oh-clock
+            class="date-clock"
             :context="clockContext"
-            :style="{ 'font-size': config.dateFontSize || '1vw', 'font-weight': config.dateFontWeight || 'normal' }"
+            :style="{ 'font-size': config.dateFontSize, 'font-weight': config.dateFontWeight }"
             :format="config.dateFormat"
             :timezone="config.timezone" />
         </f7-col>
@@ -32,6 +35,21 @@
     </template>
   </oh-card>
 </template>
+
+<style scoped lang="stylus">
+.row .col
+  container-type inline-size
+
+  :deep(div)
+    white-space nowrap
+    font-weight normal
+
+  :deep(div.time-clock)
+      font-size clamp(1.2rem, 10cqw, 3rem)
+
+  :deep(div.date-clock)
+      font-size clamp(.9rem, 6cqw, 2rem)
+</style>
 
 <script setup lang="ts">
 import { computed } from 'vue'

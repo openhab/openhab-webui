@@ -43,13 +43,12 @@
 <script>
 import { f7 } from 'framework7-vue'
 
-import TagMixin from '@/components/tags/tag-mixin'
+import { semanticType } from '@/components/tags/tag-helpers'
 import SemanticsPickerPopup from '@/components/tags/semantics-picker-popup.vue'
 
 import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
 export default {
-  mixins: [TagMixin],
   props: {
     item: Object,
     createMode: Boolean,
@@ -75,7 +74,7 @@ export default {
       return this.createMode || (this.item && this.item.editable)
     },
     currentSemanticType() {
-      return this.semanticType(this.semanticClass)
+      return semanticType(this.semanticClass)
     },
     semanticValue() {
       if (!this.semanticClass) return null
@@ -121,10 +120,11 @@ export default {
       this.semanticClass = ''
       this.semanticProperty = ''
       this.item.tags.forEach((t) => {
-        if (this.semanticType(t) !== '') {
+        const semanticType = semanticType(t)
+        if (semanticType !== '') {
           this.semanticClass = t
         }
-        if (this.isSemanticPropertyTag(t)) {
+        if (semanticType === 'Property') {
           this.semanticProperty = t
         }
       })

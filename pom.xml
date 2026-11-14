@@ -62,14 +62,17 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <!-- Maven 3.10+ sets a default outputTimestamp, which makes bnd keep a literal SNAPSHOT qualifier instead of a
+      build timestamp. A single character disables reproducible builds and restores timestamped snapshot versions. -->
+    <project.build.outputTimestamp>-</project.build.outputTimestamp>
     <oh.java.version>21</oh.java.version>
     <maven.compiler.release>${oh.java.version}</maven.compiler.release>
 
-    <bnd.version>7.4.0</bnd.version>
+    <bnd.version>7.5.0</bnd.version>
+    <bouncycastle.version>1.86</bouncycastle.version>
     <eea.version>2.4.0</eea.version>
-    <jackson.annotations.version>2.20</jackson.annotations.version>
-    <karaf.version>4.4.11</karaf.version>
-    <karaf.maven.plugin.version>4.4.11</karaf.maven.plugin.version>
+    <karaf.version>4.4.12</karaf.version>
+    <karaf.maven.plugin.version>4.4.12</karaf.maven.plugin.version>
     <ohc.version>5.3.0-SNAPSHOT</ohc.version>
     <sat.version>0.18.0</sat.version>
     <spotless.version>2.44.3</spotless.version>
@@ -92,24 +95,24 @@
           <configuration>
             <bnd><![CDATA[Bundle-SymbolicName: ${project.artifactId}
 Automatic-Module-Name: ${def;bsn}
-Import-Package: \\
-  io.swagger.v3.oas.annotations.*;resolution:=optional,\\
-  javax.annotation.security.*;resolution:=optional,\\
-  org.eclipse.jdt.annotation.*;resolution:=optional,\\
-  org.openhab.core.automation.annotation.*;resolution:=optional;version=!,\\
-  org.openhab.*;version=!,\\
-  com.google.common.*;version="14.0",\\
+Import-Package: \
+  io.swagger.v3.oas.annotations.*;resolution:=optional,\
+  javax.annotation.security.*;resolution:=optional,\
+  org.eclipse.jdt.annotation.*;resolution:=optional,\
+  org.openhab.core.automation.annotation.*;resolution:=optional;version=!,\
+  org.openhab.*;version=!,\
+  com.google.common.*;version="14.0",\
   *
--exportcontents: \\
-  !*.internal.*,\\
-  !*.impl.*, \\
+-exportcontents: \
+  !*.internal.*,\
+  !*.impl.*, \
   org.openhab.*
 -noimportjava: true
 -sources: false
 -contract: *
 -includeresource: -${.}/NOTICE, -${.}/*.xsd
--fixupmessages: \\
-  'Unused Import-Package instructions';is:=ignore,\\
+-fixupmessages: \
+  'Unused Import-Package instructions';is:=ignore,\
   'Unused Export-Package instructions';is:=ignore]]></bnd>
             <!--
               -dsannotations-options: norequirements
@@ -181,24 +184,6 @@ Import-Package: \\
           </executions>
         </plugin>
 
-        <!-- Define the version of the export plugin we use -->
-        <plugin>
-          <groupId>biz.aQute.bnd</groupId>
-          <artifactId>bnd-export-maven-plugin</artifactId>
-          <version>${bnd.version}</version>
-          <configuration>
-            <resolve>true</resolve>
-            <failOnChanges>true</failOnChanges>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>export</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
         <!-- Define the version of the testing plugin that we use -->
         <plugin>
           <groupId>biz.aQute.bnd</groupId>
@@ -208,24 +193,6 @@ Import-Package: \\
             <execution>
               <goals>
                 <goal>testing</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-
-        <!-- Define the version of the baseline plugin we use and avoid failing when no baseline jar exists. -->
-        <!-- (for example before the first release) -->
-        <plugin>
-          <groupId>biz.aQute.bnd</groupId>
-          <artifactId>bnd-baseline-maven-plugin</artifactId>
-          <version>${bnd.version}</version>
-          <configuration>
-            <failOnMissing>false</failOnMissing>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>baseline</goal>
               </goals>
             </execution>
           </executions>
@@ -242,7 +209,7 @@ Import-Package: \\
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.15.0</version>
+          <version>3.16.0</version>
           <configuration>
             <compilerId>eclipse</compilerId>
             <compilerArgs>
@@ -260,12 +227,12 @@ Import-Package: \\
             <dependency>
               <groupId>org.codehaus.plexus</groupId>
               <artifactId>plexus-compiler-eclipse</artifactId>
-              <version>2.15.0</version>
+              <version>2.17.0</version>
             </dependency>
             <dependency>
               <groupId>org.eclipse.jdt</groupId>
               <artifactId>ecj</artifactId>
-              <version>3.46.0</version>
+              <version>3.46.100</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -273,13 +240,13 @@ Import-Package: \\
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.6.3</version>
+          <version>3.7.0</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
-          <version>3.1.4</version>
+          <version>3.2.0</version>
         </plugin>
 
         <plugin>
@@ -295,21 +262,6 @@ Import-Package: \\
           <configuration>
             <outputDirectory>${project.build.directory}/site</outputDirectory>
             <failOnError>!${quality.skip}</failOnError>
-          </configuration>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>3.15.2</version>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-release-plugin</artifactId>
-          <version>3.3.1</version>
-          <configuration>
-            <preparationGoals>clean install</preparationGoals>
           </configuration>
         </plugin>
 
@@ -334,7 +286,7 @@ Import-Package: \\
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.6</version>
+          <version>3.6.1</version>
           <configuration>
             <argLine>--add-opens java.base/java.net=ALL-UNNAMED
               --add-opens java.base/java.util=ALL-UNNAMED</argLine>
@@ -347,7 +299,7 @@ Import-Package: \\
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.6.2</version>
         </plugin>
 
         <plugin>

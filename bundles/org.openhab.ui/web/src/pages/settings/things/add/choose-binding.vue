@@ -23,7 +23,7 @@
     <f7-block class="block-narrow">
       <f7-col>
         <group-box title="Installed Bindings">
-          <f7-list v-if="!ready" class="col">
+          <f7-list v-if="!ready" class="col" v-deferred>
             <f7-list-group>
               <f7-list-item
                 v-for="n in 10"

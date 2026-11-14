@@ -1,9 +1,7 @@
 <template>
   <f7-page @page:afterin="onPageAfterIn">
-    <f7-navbar title="Persistence Configuration Issues" back-link="Health Checks" back-link-url="/settings/health/" back-link-force>
-      <f7-nav-right>
-        <developer-dock-icon />
-      </f7-nav-right>
+    <f7-navbar>
+      <oh-nav-content title="Persistence Configuration Issues" back-link="Health Checks" back-link-url="/settings/health/" :f7router />
     </f7-navbar>
 
     <f7-block class="block-narrow">
@@ -21,7 +19,7 @@
 
     <f7-block class="block-narrow">
       <!-- skeleton for not ready -->
-      <f7-col v-if="!ready">
+      <f7-col v-if="!ready" v-deferred>
         <f7-block-title>&nbsp;Loading...</f7-block-title>
         <f7-list contacts-list class="col">
           <f7-list-group>
@@ -62,6 +60,9 @@
 
 <script>
 export default {
+  props: {
+    f7Router: Object
+  },
   data() {
     return {
       ready: false,

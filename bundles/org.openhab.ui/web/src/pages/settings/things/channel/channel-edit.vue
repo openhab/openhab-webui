@@ -71,7 +71,7 @@ export default {
     onPageAfterIn(event) {
       this.config = Object.assign({}, this.channel.configuration)
       this.$oh.api
-        .get(`/rest/config-descriptions/channel:${this.thing.UID}:${this.channelId.replace('#', '%23')}`)
+        .get(`/rest/config-descriptions/channel:${this.thing.UID}:${encodeURI(this.channelId)}`)
         .then((ct) => {
           this.configDescription = ct
         })

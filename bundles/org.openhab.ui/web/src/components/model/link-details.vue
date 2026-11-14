@@ -30,16 +30,21 @@
 
 <script>
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import { f7 } from 'framework7-vue'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingStatus],
   props: {
     item: Object,
     links: Array,
     f7router: Object
+  },
+  setup() {
+    return {
+      thingStatusBadgeColor,
+      thingStatusBadgeText
+    }
   },
   data() {
     return {
@@ -127,7 +132,7 @@ export default {
         return
       }
 
-      this.f7router.navigate(`/settings/items/${this.item.name}/links/edit/${link.thing.UID}/${link.channel.id.replace('#', '%23')}`)
+      this.f7router.navigate(`/settings/items/${this.item.name}/links/edit/${link.thing.UID}/${encodeURIComponent(link.channel.id)}`)
     }
   },
   watch: {

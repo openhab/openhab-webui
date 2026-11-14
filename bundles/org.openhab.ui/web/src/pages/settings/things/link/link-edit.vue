@@ -111,7 +111,7 @@ import { mapStores } from 'pinia'
 import ConfigSheet from '@/components/config/config-sheet.vue'
 import Item from '@/components/item/item.vue'
 import ItemStatePreview from '@/components/item/item-state-preview.vue'
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import LinkMixin from '@/pages/settings/things/link/link-mixin'
 import cloneDeep from 'lodash/cloneDeep'
 import fastDeepEqual from 'fast-deep-equal/es6'
@@ -123,7 +123,7 @@ import { showToast } from '@/js/dialog-promises'
 import { useDirty } from '@/pages/useDirty'
 
 export default {
-  mixins: [ThingStatus, LinkMixin],
+  mixins: [LinkMixin],
   components: {
     ConfigSheet,
     Item,
@@ -139,7 +139,7 @@ export default {
   setup() {
     const { dirty, dirtyIndicator } = useDirty('link-edit-page')
 
-    return { dirty, dirtyIndicator }
+    return { dirty, dirtyIndicator, thingStatusBadgeColor, thingStatusBadgeText }
   },
   data() {
     return {
@@ -201,8 +201,7 @@ export default {
               ) // move default to be first
               this.profileTypes = this.profileTypes.filter((p) => this.isProfileTypeCompatible(this.channel, p, this.item)) // only show compatible profile types
 
-              const channelUID = this.channel.uid.replace('#', '%23')
-              this.$oh.api.get('/rest/links/' + this.itemName + '/' + channelUID).then((link) => {
+              this.$oh.api.get('/rest/links/' + this.itemName + '/' + encodeURIComponent(this.channel.uid)).then((link) => {
                 this.link = link
                 if (this.link.configuration.profile) {
                   this.onProfileTypeChange(this.link.configuration.profile)

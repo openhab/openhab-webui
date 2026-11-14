@@ -18,7 +18,7 @@ export default {
   },
   computed: {
     widgetContext() {
-      if (!this.item) return
+      if (!this.item) return null
 
       let ctx = {
         component: itemDefaultStandaloneComponent(this.item),

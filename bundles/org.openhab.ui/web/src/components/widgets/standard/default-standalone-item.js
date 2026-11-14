@@ -87,7 +87,12 @@ export default function itemDefaultStandaloneComponent(item) {
       }
     }
 
-    if ((semanticClass === 'Control' || semanticClass === 'Setpoint') && !stateDescription.readOnly) {
+    // Controls with command options fall through to the label widget, which offers the options on click
+    if (
+      (semanticClass === 'Control' || semanticClass === 'Setpoint') &&
+      !stateDescription.readOnly &&
+      !item.commandDescription?.commandOptions?.length
+    ) {
       if (item.type === 'DateTime') {
         component = {
           component: 'oh-input-card',

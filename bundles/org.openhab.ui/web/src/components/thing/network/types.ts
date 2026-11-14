@@ -42,6 +42,8 @@ export interface NetworkNode {
   secondaryRole?: string
   status: 'online' | 'offline' | 'unknown'
   statusColor?: string
+  /** The node the map was opened from, drawn at the center */
+  focused?: boolean
   properties?: Record<string, string | number | boolean>
 }
 
@@ -104,8 +106,10 @@ export interface NetworkGraphProvider {
 
   /**
    * Build a NetworkGraph from raw thing data
+   *
+   * @param focusUID the thing the map was opened from, its node is marked as focused
    */
-  buildGraph(things: api.EnrichedThing[], bridgeUID: string): NetworkGraph
+  buildGraph(things: api.EnrichedThing[], bridgeUID: string, focusUID?: string): NetworkGraph
 }
 
 /**

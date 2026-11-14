@@ -47,6 +47,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const disablePageTransitionAnimation = ref<boolean>(localStorage.getItem('openhab.ui:theme.disablepagetransition') === 'true')
 
   const hideChatInput = ref<boolean>(localStorage.getItem('openhab.ui:theme.home.hidechatinput') === 'true')
+  const hideChatLink = ref<boolean>(localStorage.getItem('openhab.ui:theme.hidechatlink') === 'true')
 
   const disableHideBarsOnScroll = ref<boolean>(localStorage.getItem('openhab.ui:theme.disablehidebarsonscroll') === 'true')
 
@@ -130,7 +131,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   const darkMode = computed({
     get: (): 'dark' | 'light' => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+      // oxlint-disable-next-line typescript/no-unused-expressions
       darkModeChange.value // darkModeChange to force re-computation
       if (storedDarkMode.value === 'auto') {
         if (typeof window.OHApp?.preferDarkMode === 'function') {
@@ -210,6 +211,10 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
 
   watch(hideChatInput, (newValue) => {
     localStorage.setItem('openhab.ui:theme.home.hidechatinput', newValue.toString())
+  })
+
+  watch(hideChatLink, (newValue) => {
+    localStorage.setItem('openhab.ui:theme.hidechatlink', newValue.toString())
   })
 
   watch(disableHideBarsOnScroll, (newValue) => {
@@ -376,6 +381,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
       blocklyRenderer: blocklyRenderer.value,
       disablePageTransitionAnimation: disablePageTransitionAnimation.value,
       hideChatInput: hideChatInput.value,
+      hideChatLink: hideChatLink.value,
       disableHideBarsOnScroll: disableHideBarsOnScroll.value,
       webAudio: webAudio.value,
       visibleBreakpointDisabled: visibleBreakpointDisabled.value
@@ -394,6 +400,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
     disableLeftPanelSwipe,
     disablePageTransitionAnimation,
     hideChatInput,
+    hideChatLink,
     disableHideBarsOnScroll,
     webAudio,
     visibleBreakpointDisabled,

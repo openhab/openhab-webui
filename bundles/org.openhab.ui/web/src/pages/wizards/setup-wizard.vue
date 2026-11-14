@@ -972,6 +972,10 @@ export default {
     installAddons() {
       return new Promise((resolve, reject) => {
         const checkInterval = 2 // check the add-ons statuses every 2 seconds
+        // Installing an add-on can make the framework refresh bundles of the REST stack (e.g. when the add-on brings a
+        // provider for an optional import), so the REST API may be unavailable for a few seconds afterwards.
+        // Errors are therefore only treated as failures once they persist for longer than this grace period.
+        const restOutageGraceSeconds = 60
         const perAddonTimeoutSeconds = 5 * 60
         let settled = false
 
@@ -1014,7 +1018,7 @@ export default {
           clearInstallCheckTimer()
           this.installingAddons = false
           if (error) {
-            reject(error)
+            reject(error instanceof Error ? error : new Error(error))
           } else {
             resolve()
           }
@@ -1046,46 +1050,77 @@ export default {
           console.log('Installing add-on: ' + addon.uid)
           this.waitingProgressTitle = this.t('setupwizard.addons.installingAddon', { addon: addon.label })
 
-          this.$oh.api
-            .post('/rest/addons/' + addon.uid + '/install', {}, 'text')
-            .then(() => {
-              if (this.isInstallCancelled) {
-                settleInstall(new Error('cancelled'))
-                return
-              }
-              clearInstallCheckTimer()
-              this.addonInstallCheckTimer = setInterval(() => {
+          // start of the current streak of failed REST requests for this add-on, null if the last request succeeded
+          let failingSince = null
+          const isWithinOutageGrace = () => {
+            if (failingSince === null) failingSince = getNowSeconds()
+            return getNowSeconds() - failingSince <= restOutageGraceSeconds
+          }
+
+          const requestInstall = () => {
+            if (settled) return
+            if (this.isInstallCancelled) {
+              settleInstall(new Error('cancelled'))
+              return
+            }
+            this.$oh.api
+              .post('/rest/addons/' + addon.uid + '/install', {}, 'text')
+              .then(() => {
+                failingSince = null
                 if (this.isInstallCancelled) {
                   settleInstall(new Error('cancelled'))
                   return
                 }
-                if (getNowSeconds() > overallDeadline) {
-                  settleInstall(new Error('Timed out while installing selected add-ons.'))
-                  return
-                }
-                if (getNowSeconds() > addonDeadline) {
-                  settleInstall(new Error(`Timed out while installing add-on: ${addon.label || addon.uid}.`))
-                  return
-                }
-                checkAddonStatus(addon)
-                  .then((installed) => {
-                    if (!installed) return
-                    addon.installed = true
-                    clearInstallCheckTimer()
-                    nextTick(() => {
-                      installNextAddon()
+                clearInstallCheckTimer()
+                this.addonInstallCheckTimer = setInterval(() => {
+                  if (this.isInstallCancelled) {
+                    settleInstall(new Error('cancelled'))
+                    return
+                  }
+                  if (getNowSeconds() > overallDeadline) {
+                    settleInstall(new Error('Timed out while installing selected add-ons.'))
+                    return
+                  }
+                  if (getNowSeconds() > addonDeadline) {
+                    settleInstall(new Error(`Timed out while installing add-on: ${addon.label || addon.uid}.`))
+                    return
+                  }
+                  checkAddonStatus(addon)
+                    .then((installed) => {
+                      failingSince = null
+                      if (!installed) return
+                      addon.installed = true
+                      clearInstallCheckTimer()
+                      nextTick(() => {
+                        installNextAddon()
+                      })
                     })
-                  })
-                  .catch((err) => {
-                    console.log(`Error while querying API to check addon ${addon.uid}: ${err}`)
-                    settleInstall(err)
-                  })
-              }, checkInterval * 1000)
-            })
-            .catch((err) => {
-              console.log(`Failed to install add-on ${addon.uid}: ${err}`)
-              settleInstall(err)
-            })
+                    .catch((err) => {
+                      if (isWithinOutageGrace()) {
+                        console.log(
+                          `Error while querying API to check addon ${addon.uid}: ${err}, REST API may be restarting. Trying again in ${checkInterval} secs...`
+                        )
+                        return
+                      }
+                      console.log(`Error while querying API to check addon ${addon.uid}: ${err}`)
+                      settleInstall(err)
+                    })
+                }, checkInterval * 1000)
+              })
+              .catch((err) => {
+                if (isWithinOutageGrace() && getNowSeconds() <= addonDeadline) {
+                  console.log(
+                    `Failed to install add-on ${addon.uid}: ${err}, REST API may be restarting. Retrying in ${checkInterval} secs...`
+                  )
+                  setTimeout(requestInstall, checkInterval * 1000)
+                  return
+                }
+                console.log(`Failed to install add-on ${addon.uid}: ${err}`)
+                settleInstall(err)
+              })
+          }
+
+          requestInstall()
         }
 
         installNextAddon()

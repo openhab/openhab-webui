@@ -56,7 +56,7 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink" strong>
+        <f7-block v-else class="block-narrow skeleton-text skeleton-effect-blink" strong v-deferred>
           <f7-col class="padding-horizontal">
             ______:
             <f7-chip class="margin-left" text="________" />
@@ -220,7 +220,7 @@
           </f7-col>
         </f7-block>
         <!-- skeletons for not ready -->
-        <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink">
+        <f7-block v-else-if="!error" class="block-narrow skeleton-text skeleton-effect-blink" v-deferred>
           <f7-col>
             <thing-general-settings :thing="{}" :thing-type="{}" :ready="false" />
             <f7-block-title medium> ____ _______ </f7-block-title>
@@ -417,7 +417,7 @@ import NetworkPopup from '@/pages/settings/things/network/network-popup.vue'
 import AddChannelPage from '@/pages/settings/things/channel/channel-add.vue'
 import AddFromThingPage from '@/pages/settings/model/add-from-thing.vue'
 
-import ThingStatus from '@/components/thing/thing-status-mixin'
+import { thingStatusBadgeColor, thingStatusDescription } from '@/components/thing/thing-helpers'
 
 import ThingActionPopup from '@/pages/settings/things/thing-action-popup.vue'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
@@ -430,7 +430,7 @@ import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 
 export default {
-  mixins: [ThingStatus, FileDefinition],
+  mixins: [FileDefinition],
   components: {
     ConfigSheet,
     ChannelList,
@@ -447,7 +447,9 @@ export default {
 
     return {
       dirty,
-      dirtyIndicator
+      dirtyIndicator,
+      thingStatusBadgeColor,
+      thingStatusDescription
     }
   },
   data() {
@@ -767,6 +769,7 @@ export default {
         {
           props: {
             bridgeUID: this.thing.bridgeUID || this.thing.UID,
+            thingUID: this.thing.UID,
             networkType
           }
         }

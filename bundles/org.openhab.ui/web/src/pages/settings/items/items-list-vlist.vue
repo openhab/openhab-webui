@@ -58,7 +58,7 @@
       </f7-col>
 
       <!-- skeleton for not ready -->
-      <f7-col v-show="!ready">
+      <f7-col v-if="!ready" v-deferred>
         <f7-block-title class="no-margin-top"> &nbsp;Loading... </f7-block-title>
         <f7-list media-list class="col wide">
           <f7-list-group>
@@ -141,7 +141,7 @@
 
     <f7-block v-if="ready && !items.length" class="block-narrow">
       <empty-state-placeholder icon="square_on_circle" title="items.title" text="items.text" />
-      <f7-row v-if="$f7dim.width < 1280" class="display-flex justify-content-center">
+      <f7-row v-if="$f7dim.width < BREAKPOINTS.LG" class="display-flex justify-content-center">
         <f7-button
           large
           fill
@@ -177,13 +177,14 @@
 import { nextTick } from 'vue'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
+import { BREAKPOINTS } from '@/js/constants/breakpoints'
 
 import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 
 import * as Types from '@/assets/item-types'
-import ItemMixin from '@/components/item/item-mixin'
+import { getItemTypeAndMetaLabel, getNonSemanticTags } from '@/components/item/item-helpers'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
@@ -193,7 +194,7 @@ import { showToast } from '@/js/dialog-promises'
 const ITEM_KINDS = { editable: 'Editable', readonly: 'Non-editable' }
 
 export default {
-  mixins: [ItemMixin, FileDefinition],
+  mixins: [FileDefinition],
   props: {
     f7router: Object
   },
@@ -202,7 +203,7 @@ export default {
     EmptyStatePlaceholder
   },
   setup() {
-    return { f7, theme }
+    return { f7, theme, BREAKPOINTS, getItemTypeAndMetaLabel, getNonSemanticTags }
   },
   data() {
     return {
@@ -495,7 +496,7 @@ export default {
   },
   computed: {
     searchbarPlaceholder() {
-      return window.innerWidth >= 1280 ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
+      return window.innerWidth >= BREAKPOINTS.LG ? 'Search (for advanced search, use the developer sidebar (Shift+Alt+D))' : 'Search'
     },
     allSelected() {
       return this.selectedItems.length >= this.listedItems.length && this.listedItems.length > 0

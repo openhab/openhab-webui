@@ -5,6 +5,7 @@ import Weekday from 'dayjs/plugin/weekday'
 import aggregateSeries, { dimensionFromDate } from './oh-aggregate-series'
 import { AggregationFunction, ChartType, OhAggregateSeries } from '@/types/components/widgets'
 import type { ChartContext } from '../types'
+import { ItemType } from '@/assets/item-types'
 
 vi.mock('framework7-vue', () => ({
   f7: {
@@ -195,8 +196,9 @@ describe('aggregateSeries', () => {
           ]
         }
       ] as any
+      const items = [{ name: 'TestItem', type: ItemType.Number }] as any
 
-      const result = aggregateSeries.get(context, component, points, startTime, endTime)
+      const result = aggregateSeries.get(context, component, items, points, startTime, endTime)
 
       // result.data should have 2 entries (look-back point should be filtered out)
       expect(result.data).toHaveLength(2)

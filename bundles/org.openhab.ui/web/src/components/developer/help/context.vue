@@ -102,20 +102,20 @@ export default {
                   `<a class="external" target="_blank" href="${useRuntimeStore().websiteUrl}/docs`
                 )
                 // Fix local folder anchor href: Rewrite folder to /folder/
-                body = body.replace(/(<a href=")([A-z-]+)(")/gm, '$1' + this.localUrl + '$2/$3')
+                body = body.replace(/(<a href=")([A-Za-z-_]+)(")/gm, '$1' + this.localUrl + '$2/$3')
                 // Fix external anchor href
                 body = body.replace(/<a href="http/gm, '<a class="external" target="_blank" href="http')
 
                 // Fix links to other pages if on overview or semantic model tabs
-                body = body.replace(/(<a href=")(\/overview\/)([A-z-]+)(\/")/gm, '$1/$3$4')
+                body = body.replace(/(<a href=")(\/overview\/)([A-Za-z-_]+)(\/")/gm, '$1/$3$4')
 
                 // Allow embedding framework7 icons by using <!--F7(:blue|:green) ICON_NAME --> comments
-                body = body.replace(/<!--F7 ([A-z]*) -->/gm, '<i class="f7-icons size-22">$1</i>')
+                body = body.replace(/<!--F7 ([A-Za-z-_]*) -->/gm, '<i class="f7-icons size-22">$1</i>')
                 body = body.replace(
-                  /<!--F7:blue ([A-z]*) -->/gm,
+                  /<!--F7:blue ([A-Za-z-_]*) -->/gm,
                   '<i class="f7-icons size-22" style="color: var(--oh-theme-alt-color)">$1</i>'
                 )
-                body = body.replace(/<!--F7:green ([A-z]*) -->/gm, '<i class="f7-icons size-22" style="color: #4cd964">$1</i>')
+                body = body.replace(/<!--F7:green ([A-Za-z-_]*) -->/gm, '<i class="f7-icons size-22" style="color: #4cd964">$1</i>')
 
                 body = body.replace(/<pre>/gm, '<div class="block block-strong no-padding"><pre class="padding-half">')
                 body = body.replace(/<\/pre>/gm, '</pre></div>')

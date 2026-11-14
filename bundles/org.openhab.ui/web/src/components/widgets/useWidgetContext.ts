@@ -8,10 +8,32 @@ import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts
 
 import type { ContextVarObj, VariableObject, VariableScopeName, VariableValue, WidgetContext } from './types'
 import { type EvaluateExpressionFn } from '@/components/widgets/useWidgetExpression.ts'
-import { computed, onBeforeUnmount, onMounted, readonly, type Ref, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, type Ref, ref } from 'vue'
 import * as api from '@/api'
 import { applyParameterDefaults } from '@/components/widgets/helpers.ts'
 import { type ConfigGuardFn } from '@/types/widget-ts-template'
+
+/**
+ * Merges the widget's own slots with slots passed down from the component referencing the widget (context).
+ * The referencing component may carry empty slots, e.g. the list items generated for `listWidget` metadata
+ * on the home page always have `default: []`. A shallow `{ ...a, ...b }` merge would let such an empty slot
+ * overwrite a non-empty widget slot. Therefore, only non-empty context slots take precedence; empty ones are
+ * ignored so the widget's own slot content is preserved.
+ */
+export function mergeWidgetSlots<W extends readonly unknown[], C extends readonly unknown[]>(
+  widgetSlots: Readonly<Record<string, W>> | undefined,
+  contextSlots: Readonly<Record<string, C>> | undefined
+): Record<string, W | C> {
+  const merged: Record<string, W | C> = { ...widgetSlots }
+  if (contextSlots) {
+    for (const [key, value] of Object.entries(contextSlots)) {
+      if (value && value.length > 0) {
+        merged[key] = value
+      }
+    }
+  }
+  return merged
+}
 
 /**
  * useWidgetContext must be used as a composable in all widget components.
@@ -128,7 +150,7 @@ export function useWidgetContext<T = Record<string, unknown>>(context: Ref<Widge
     }
     const extendedWidget =
       context.value.component && 'slots' in context.value.component
-        ? { ...widget, slots: { ...widget.slots, ...context.value.component.slots } }
+        ? { ...widget, slots: mergeWidgetSlots(widget.slots, context.value.component.slots) }
         : widget
     return {
       component: extendedWidget as api.RootUiComponent | api.UiComponent,

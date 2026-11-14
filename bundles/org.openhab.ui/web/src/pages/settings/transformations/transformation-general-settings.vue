@@ -1,8 +1,8 @@
 <template>
   <f7-block class="block-narrow">
     <f7-col>
-      <f7-list class="no-margin" inline-labels no-hairlines-md>
-        <f7-list-group>
+      <group-box title="Transformation Properties">
+        <f7-list class="no-margin" inline-labels no-hairlines-md>
           <f7-list-input
             v-if="createMode"
             label="Transformation ID"
@@ -26,6 +26,7 @@
             :value="transformation.label"
             required
             validate
+            :disabled="!transformation.editable ? true : null"
             @input="transformation.label = $event.target.value"
             clear-button />
           <wrapped-list-output v-else label="Label" :value="transformation.label" />
@@ -37,23 +38,32 @@
               </option>
             </select>
           </f7-list-item>
-        </f7-list-group>
-      </f7-list>
+        </f7-list>
+      </group-box>
     </f7-col>
     <f7-col v-if="createMode && types">
-      <f7-block-title>Transformation Type</f7-block-title>
-      <f7-list media-list>
-        <f7-list-item
-          v-for="type in types"
-          media-item
-          radio
-          radio-icon="start"
-          :value="transformation.type"
-          :checked="transformation.type === type ? true : null"
-          @change="$emit('new-type', type)"
-          :key="type"
-          :title="type" />
-      </f7-list>
+      <group-box title="Transformation Type">
+        <f7-list media-list>
+          <f7-list-item v-if="!types.length">
+            <p>No transformation types are currently available.</p>
+            <p>
+              Install one or more transformation add-ons in
+              <f7-link href="/addons/transformation/">Add-on Store → Transformations</f7-link> to enable additional transformation types.
+            </p>
+          </f7-list-item>
+          <f7-list-item
+            v-for="type in types"
+            v-else
+            media-item
+            radio
+            radio-icon="start"
+            :value="transformation.type"
+            :checked="transformation.type === type ? true : null"
+            @change="$emit('new-type', type)"
+            :key="type"
+            :title="type" />
+        </f7-list>
+      </group-box>
     </f7-col>
   </f7-block>
 </template>
