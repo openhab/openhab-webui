@@ -16,15 +16,9 @@
             info="Note: cannot be changed after the creation"
             @input="transformation.uid = $event.target.value"
             clear-button />
-          <f7-list-input v-else label="Transformation UID" type="text" :input="false">
-            <template #input>
-              <span>
-                {{ transformation.uid }}
-                <clipboard-icon :value="transformation.uid" tooltip="Copy UID" style="pointer-events: initial !important" />
-              </span>
-            </template>
-          </f7-list-input>
+          <wrapped-list-output v-else label="Transformation UID" :value="transformation.uid" clipboard />
           <f7-list-input
+            v-if="transformation.editable"
             label="Label"
             type="text"
             placeholder="Tranformation label for display purposes"
@@ -34,7 +28,8 @@
             validate
             :disabled="!transformation.editable ? true : null"
             @input="transformation.label = $event.target.value"
-            :clear-button="createMode || transformation.editable" />
+            clear-button />
+          <wrapped-list-output v-else label="Label" :value="transformation.label" />
           <f7-list-item v-if="createMode && languages" title="Language" smart-select :smart-select-params="smartSelectParams">
             <select name="language" @change="$emit('new-language', $event.target.value)">
               <option value="" selected />
@@ -76,10 +71,10 @@
 <script>
 import { theme } from 'framework7-vue'
 
-import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import WrappedListOutput from '@/components/util/wrapped-list-output.vue'
 
 export default {
-  components: { ClipboardIcon },
+  components: { WrappedListOutput },
   props: {
     transformation: Object,
     createMode: Boolean,
