@@ -110,7 +110,7 @@ export default defineConfig([
       'no-irregular-whitespace': 'off'
     }
   },
-  globalIgnores(['dist', 'build', 'public', '**/*.parser.js', 'src/api/**', 'src/js/voice/wakeword/micro-wakeword/**']),
+  globalIgnores(['dist', 'build', 'public', '**/*.parser.js', 'src/api/**']),
   eslintConfigPrettier, // Disables all ESLint rules that conflict with Prettier/oxfmt
   ...pluginOxlint.buildFromOxlintConfig({
     categories: {

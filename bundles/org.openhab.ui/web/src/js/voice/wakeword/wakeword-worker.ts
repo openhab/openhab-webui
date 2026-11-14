@@ -1,6 +1,8 @@
 /// <reference lib="webworker" />
 
-import { loadMicroWakeWord } from './micro-wakeword/micro-wakeword.js'
+import { loadMicroWakeWord } from '@jvoice-project/micro-wakeword4j'
+// passed explicitly, as the dev server's dependency bundling moves the module away from the wasm next to it
+import microWakeWordWasmURL from '@jvoice-project/micro-wakeword4j/micro-wakeword.wasm?url'
 import { AudioHistory } from './audio-history.ts'
 import { OUTPUT_SAMPLE_RATE } from './resampler.ts'
 import { WakeWordSpotter } from './wakeword-spotter.ts'
@@ -48,7 +50,7 @@ export default class WakeWordWorker {
         this.port.onmessage = (audio: MessageEvent<Float32Array>) => this.onAudio(audio.data)
         this.port.start()
         try {
-          const [microWakeWord, manifest] = await Promise.all([loadMicroWakeWord(), fetchText(manifestUrl)])
+          const [microWakeWord, manifest] = await Promise.all([loadMicroWakeWord(microWakeWordWasmURL), fetchText(manifestUrl)])
           const modelName = (JSON.parse(manifest) as { model?: unknown }).model
           if (typeof modelName !== 'string') {
             throw new Error('The manifest does not name a model file')
