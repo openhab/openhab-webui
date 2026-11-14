@@ -511,7 +511,7 @@ Import-Package: \
                 <requireJavaVersion>
                   <version>[21.0,22.0)</version>
                   <message>++ WARNING ++ WARNING ++ WARNING ++ WARNING ++ WARNING ++ WARNING ++
-JDK 25 compiler is in use, generating Java 21 bytecode.
+JDK 25 compiler is in use, generating Java ${oh.java.version} bytecode.
 This is not officially supported.
 Consider using JDK 21 for building and testing.
 ++ WARNING ++ WARNING ++ WARNING ++ WARNING ++ WARNING ++ WARNING ++</message>
@@ -632,6 +632,14 @@ Consider using JDK 21 for building and testing.
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <!-- generate Java 25 bytecode, requires JDK 25; activate explicitly with -Pj25 -->
+      <id>j25</id>
+      <properties>
+        <oh.java.version>25</oh.java.version>
+        <maven.compiler.release>${oh.java.version}</maven.compiler.release>
+      </properties>
     </profile>
   </profiles>
 
