@@ -50,7 +50,7 @@
         </f7-list>
 
         <!-- Chat -->
-        <f7-list v-if="!uiOptionsStore.hideChatLink" class="admin-links">
+        <f7-list v-if="!uiOptionsStore.hideChatMenu" class="admin-links">
           <f7-list-item link="/chat" :title="t('chat.title')" no-chevron panel-close :class="{ currentsection: currentPath.chat }">
             <template #media>
               <f7-icon ios="f7:chat_bubble_2" aurora="f7:chat_bubble_2" md="material:chat" />
