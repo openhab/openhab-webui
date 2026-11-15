@@ -26,7 +26,7 @@ const WAKE_WORD_AUDIO_MS = 4500
 /** How long the dialog shows as triggered when the server doesn't start listening. */
 const TRIGGERED_MS = 3000
 
-/** How long the dialog shows as thinking after listening when no reply plays. */
+/** How long the dialog shows as thinking after listening when no reply plays, for servers that don't send DIALOG_IDLE. */
 const THINKING_MS = 8000
 
 /* oxlint-disable typescript/no-unsafe-member-access */
@@ -156,8 +156,8 @@ export class AudioMain {
   }
 
   /**
-   * Works out what the dialog is doing and reports a change. The triggered and thinking states end after a while, for
-   * when the server doesn't go on to the next step.
+   * Works out what the dialog is doing and reports a change. The triggered and thinking states end when the server
+   * sends DIALOG_IDLE, or after a while, for when the server doesn't go on to the next step.
    */
   private updateState() {
     clearTimeout(this.stateTimer)
@@ -427,6 +427,11 @@ export class AudioMain {
           this.events.onListeningChange?.(this)
           this.updateWakeWordPaused()
         }
+        break
+      case WorkerOutCmd.DIALOG_IDLE:
+        // the server has finished the interaction, so no reply is coming
+        this.spotTime = 0
+        this.listeningEndTime = 0
         break
       case WorkerOutCmd.SINK_VOLUME: {
         const sinkVolume = data.value
