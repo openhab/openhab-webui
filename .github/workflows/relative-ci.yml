@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       # pinning to SHA to mitigate possible supply chain attack
       - name: Send bundle stats and build information to RelativeCI
