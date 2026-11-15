@@ -264,6 +264,7 @@ export class AudioMain {
     if (this.online && this.audioSource && !this.audioSource.isSuspended()) {
       this.postToWorker(WorkerInCmd.ON_SPOT)
       this.spotTime = Date.now()
+      this.listeningEndTime = 0
       this.updateState()
     }
   }
