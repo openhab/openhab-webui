@@ -20,8 +20,8 @@ export enum PresetPalette {
 
 export interface Config {
   show?: boolean
-  min?: string
-  max?: string
+  min?: number
+  max?: number
   type?: Type
   orient?: Orient
   calculable?: boolean

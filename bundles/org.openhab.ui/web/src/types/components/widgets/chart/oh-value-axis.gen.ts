@@ -17,8 +17,8 @@ export interface Config {
   nameLocation?: NameLocation
   nameGap?: number
   nameRotate?: string
-  min?: string
-  max?: string
+  min?: number
+  max?: number
   scale?: boolean
   split?: Split[]
   gridIndex?: number

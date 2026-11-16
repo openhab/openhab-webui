@@ -41,14 +41,14 @@ export function renderVisualMap(visualMap: VisualMap): api.UiComponent[] {
   if (visualMap.min !== null && visualMap.min !== undefined && visualMap.min !== '') {
     const minValue = typeof visualMap.min === 'string' ? parseFloat(visualMap.min) : visualMap.min
     if (!isNaN(minValue) && isFinite(minValue)) {
-      config.min = minValue.toString()
+      config.min = minValue
     }
   }
 
   if (visualMap.max !== null && visualMap.max !== undefined && visualMap.max !== '') {
     const maxValue = typeof visualMap.max === 'string' ? parseFloat(visualMap.max) : visualMap.max
     if (!isNaN(maxValue) && isFinite(maxValue)) {
-      config.max = maxValue.toString()
+      config.max = maxValue
     }
   }
 
@@ -101,14 +101,14 @@ export function renderValueAxis(options: ValueAxisOptions): api.UiComponent {
   if (options.min !== undefined && options.min !== '') {
     const minValue = typeof options.min === 'string' ? parseFloat(options.min) : options.min
     if (!isNaN(minValue) && isFinite(minValue)) {
-      config.min = minValue.toString()
+      config.min = minValue
     }
   }
 
   if (options.max !== undefined && options.max !== '') {
     const maxValue = typeof options.max === 'string' ? parseFloat(options.max) : options.max
     if (!isNaN(maxValue) && isFinite(maxValue)) {
-      config.max = maxValue.toString()
+      config.max = maxValue
     }
   }
 
