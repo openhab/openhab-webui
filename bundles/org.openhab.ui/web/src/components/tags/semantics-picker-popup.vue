@@ -73,7 +73,6 @@ export default {
     SemanticsTreeview
   },
   props: {
-    item: Object,
     propertyMode: Boolean,
     classMode: Boolean,
     hideNone: Boolean,
@@ -81,6 +80,7 @@ export default {
     semanticProperty: String
   },
   emits: ['close', 'changed'],
+  inject: ['item'],
   setup() {
     return {
       theme

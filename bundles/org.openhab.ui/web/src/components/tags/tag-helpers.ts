@@ -12,7 +12,7 @@ export function semanticType(tag: string) {
   if (useSemanticsStore().Equipment.indexOf(tag) >= 0) return 'Equipment'
   if (useSemanticsStore().Points.indexOf(tag) >= 0) return 'Point'
   if (useSemanticsStore().Properties.indexOf(tag) >= 0) return 'Property'
-  return '' as SemanticTagType
+  return ''
 }
 
 export function isSemanticMetadata(semanticMetadata: unknown): semanticMetadata is SemanticMetadata {

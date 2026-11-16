@@ -20,7 +20,6 @@
         v-if="popupType === 'class'"
         ref="classPopup"
         :key="'semantics-class'"
-        :item="item"
         :hideNone="hideNone"
         :classMode="true"
         :semanticClass="semanticClass"
@@ -30,7 +29,6 @@
         v-if="popupType === 'property'"
         ref="propertyPopup"
         :key="'semantics-property'"
-        :item="item"
         :hideNone="hideNone"
         :propertyMode="true"
         @changed="itemChanged"
@@ -50,10 +48,10 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 
 export default {
   props: {
-    item: Object,
     createMode: Boolean,
     hideNone: Boolean
   },
+  inject: ['item'],
   components: {
     SemanticsPickerPopup
   },
@@ -120,11 +118,11 @@ export default {
       this.semanticClass = ''
       this.semanticProperty = ''
       this.item.tags.forEach((t) => {
-        const semanticType = semanticType(t)
-        if (semanticType !== '') {
+        const type = semanticType(t)
+        if (['Location', 'Equipment', 'Point'].includes(type)) {
           this.semanticClass = t
         }
-        if (semanticType === 'Property') {
+        if (type === 'Property') {
           this.semanticProperty = t
         }
       })
