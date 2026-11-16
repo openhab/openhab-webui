@@ -617,6 +617,14 @@ export class AudioMain {
    * Starts a worker that listens for the wake word in the microphone audio and triggers the dialog when it hears it.
    */
   private startWakeWord(config: WakeWordConfig) {
+    let manifestUrl: string
+    try {
+      // the worker resolves URLs against its own location, so make the URL absolute
+      manifestUrl = new URL(config.manifestUrl, document.baseURI).href
+    } catch {
+      this.events.onMessage?.(`Wake word detection unavailable: invalid model URL ${config.manifestUrl}`, 'error')
+      return
+    }
     const worker = new Worker(wakeWordWorkerURL, {
       name: 'wakeword-worker',
       type: 'module'
@@ -627,8 +635,7 @@ export class AudioMain {
     worker.onerror = (err: ErrorEvent) => this.events.onMessage?.(`Wake word worker error: ${err.message}`, 'error')
     const command: WakeWordWorkerInMessage = {
       cmd: WakeWordWorkerInCmd.INITIALIZE,
-      // the worker resolves URLs against its own location, so make the URL absolute
-      manifestUrl: new URL(config.manifestUrl, document.baseURI).href,
+      manifestUrl,
       probabilityCutoff: config.probabilityCutoff,
       sampleRate: this.getVoiceAudioContext().sampleRate,
       port: node.port
