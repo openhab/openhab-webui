@@ -126,7 +126,7 @@
   </group-box>
 
   <group-box title="Item Semantic">
-    <semantics-picker v-if="!hideSemantics" :item="item" :createMode="createMode" :hide-none="forceSemantics" />
+    <semantics-picker v-if="!hideSemantics" :createMode="createMode" :hide-none="forceSemantics" />
   </group-box>
   <!-- <semantics-picker v-if="!hideSemantics" :item="item" :createMode="createMode" :hide-none="forceSemantics" /> -->
   <!-- <f7-list inline-labels> -->
@@ -185,6 +185,7 @@
 </style>
 
 <script>
+import { provide } from 'vue'
 import { f7 } from 'framework7-vue'
 
 import SemanticsPicker from '@/components/tags/semantics-picker.vue'
@@ -215,6 +216,9 @@ export default {
     ItemPicker,
     GroupForm,
     TagInput
+  },
+  setup(props) {
+    provide('item', props.item)
   },
   data() {
     return {
