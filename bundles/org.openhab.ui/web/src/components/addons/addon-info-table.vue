@@ -142,7 +142,7 @@ const information = computed(() => {
       id: 'createdAt',
       title: 'Created At',
       // @ts-expect-error: created_at is not typed
-      value: dayjs(props.addon.properties.created_at).utc('z').local().format('LLL')
+      value: dayjs(props.addon.properties.created_at).format('LLL')
     })
   }
 
@@ -151,7 +151,7 @@ const information = computed(() => {
     info.push({
       id: 'updated',
       title: 'Updated At',
-      value: dayjs(updatedAt).utc(false).local().format('LLL')
+      value: dayjs(updatedAt).format('LLL')
     })
   }
 
