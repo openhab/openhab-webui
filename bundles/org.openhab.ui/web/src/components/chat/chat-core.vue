@@ -156,17 +156,27 @@
     padding-left unquote('max(env(safe-area-inset-left, 0px), 12px)')
     padding-right unquote('max(env(safe-area-inset-right, 0px), 20px)')
     padding-bottom unquote('max(env(safe-area-inset-bottom, 0px), 8px)')
+    box-sizing border-box
     textarea
       overflow-y hidden
     .link
       height var(--f7-messagebar-height)
-      padding 8px 0
+      padding 8px 4px
       display flex
       flex-direction column
       justify-content flex-end
-      flex 1
+      align-items center
+      flex 0 0 auto
+      width 32px
+      min-width 32px
+      box-sizing border-box
       &:not(:last-child)
         margin-right 6px
+      .icon
+        flex 0 0 auto
+        width 22px
+        min-width 22px
+        height 22px
 
   .chat-messages-container
     display flex
