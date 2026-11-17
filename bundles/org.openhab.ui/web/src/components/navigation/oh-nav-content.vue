@@ -20,6 +20,7 @@
     {{ title }}<span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
   </f7-nav-title-large>
   <f7-nav-right>
+    <voice-button />
     <developer-icons />
     <f7-link v-if="editable === false" icon-f7="lock_fill" icon-only tooltip="Not editable through the UI" />
     <template v-if="saveLink && (editable === undefined || editable === true)">
@@ -66,6 +67,7 @@
 import { f7, theme } from 'framework7-vue'
 import type { Router } from 'framework7'
 import DeveloperIcons from '@/components/developer/developer-icons.vue'
+import VoiceButton from '@/components/voice/voice-button.vue'
 import { useI18n } from 'vue-i18n'
 const device = f7.device
 
