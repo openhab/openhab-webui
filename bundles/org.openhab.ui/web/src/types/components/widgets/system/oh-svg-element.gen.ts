@@ -18,7 +18,7 @@ export enum ColorProperty {
 }
 
 export interface Config {
-  stateItems?: string
+  stateItems?: string | string[]
   useProxyElementForState?: boolean
   stateOnColor?: string
   stateOffColor?: string
@@ -30,7 +30,7 @@ export interface Config {
   stateOnAsStyleClass?: string
   stateOffAsStyleClass?: string
   useDisplayState?: boolean
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

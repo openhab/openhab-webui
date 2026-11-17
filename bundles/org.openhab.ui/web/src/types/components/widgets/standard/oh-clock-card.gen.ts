@@ -34,7 +34,7 @@ export interface Config {
   datePos?: DatePos
   dateFontSize?: string
   dateFontWeight?: string
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

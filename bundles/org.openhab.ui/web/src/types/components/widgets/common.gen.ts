@@ -60,66 +60,6 @@ export enum ActionAnalyzerAggregation {
   diffLast = 'diff_last'
 }
 
-export enum Taphold_action {
-  navigate = 'navigate',
-  command = 'command',
-  toggle = 'toggle',
-  options = 'options',
-  rule = 'rule',
-  popup = 'popup',
-  popover = 'popover',
-  sheet = 'sheet',
-  photos = 'photos',
-  group = 'group',
-  analyzer = 'analyzer',
-  url = 'url',
-  http = 'http',
-  variable = 'variable'
-}
-
-export enum Taphold_actionHttpMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE'
-}
-
-export enum Taphold_actionPageTransition {
-  f7Circle = 'f7-circle',
-  f7Cover = 'f7-cover',
-  f7CoverV = 'f7-cover-v',
-  f7Dive = 'f7-dive',
-  f7Fade = 'f7-fade',
-  f7Flip = 'f7-flip',
-  f7Parallax = 'f7-parallax',
-  f7Push = 'f7-push'
-}
-
-export enum Taphold_actionAnalyzerChartType {
-  none = '',
-  day = 'day',
-  isoWeek = 'isoWeek',
-  month = 'month',
-  year = 'year'
-}
-
-export enum Taphold_actionAnalyzerCoordSystem {
-  time = 'time',
-  aggregate = 'aggregate',
-  calendar = 'calendar'
-}
-
-export enum Taphold_actionAnalyzerAggregation {
-  average = 'average',
-  sum = 'sum',
-  min = 'min',
-  max = 'max',
-  first = 'first',
-  last = 'last',
-  diffFirst = 'diff_first',
-  diffLast = 'diff_last'
-}
-
 export enum ChartType {
   dynamic = '',
   day = 'day',

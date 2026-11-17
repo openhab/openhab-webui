@@ -13,7 +13,7 @@ export interface Config {
   noShadow?: boolean
   outline?: boolean
   item?: string
-  modules?: Modules
+  modules?: Modules | Modules[] | string
 }
 export interface Component {
   component: 'oh-colorpicker-card'

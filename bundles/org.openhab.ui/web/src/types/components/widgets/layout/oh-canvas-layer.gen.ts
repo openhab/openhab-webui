@@ -12,7 +12,7 @@ export interface Config {
   preload?: boolean
   editVisible?: boolean
   visible?: string
-  visibleTo?: VisibleTo
+  visibleTo?: VisibleTo | VisibleTo[] | string
 }
 export interface Component {
   component: 'oh-canvas-layer'

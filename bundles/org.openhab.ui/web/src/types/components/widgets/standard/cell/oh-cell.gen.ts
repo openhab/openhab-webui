@@ -20,7 +20,7 @@ export interface Config {
   icon?: string
   color?: string
   on?: string
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

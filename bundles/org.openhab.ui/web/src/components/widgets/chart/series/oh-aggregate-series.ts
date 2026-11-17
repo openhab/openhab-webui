@@ -9,6 +9,7 @@ import { type ScatterSeriesOption } from 'echarts'
 import { f7 } from 'framework7-vue'
 import { OhAggregateSeriesDefinition } from '@/assets/definitions/widgets/chart'
 import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widgets/chart/util/time.ts'
+import { ensureArray } from '@/js/openhab/utils'
 
 dayjs.extend(IsoWeek)
 dayjs.extend(Weekday)
@@ -136,6 +137,8 @@ const aggregateSeries: SeriesComponent = {
       component.config,
       OhAggregateSeriesDefinition
     )
+
+    series.markers = ensureArray(series.markers)
 
     const chartType = context.chart.config.chartType
     let dimension1 = series.dimension1

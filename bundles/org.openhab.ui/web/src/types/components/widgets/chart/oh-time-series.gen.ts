@@ -30,7 +30,7 @@ export interface Config {
   displayState?: boolean
   offsetAmount?: number
   offsetUnit?: OffsetUnit
-  markers?: Markers[]
+  markers?: Markers | Markers[] | string
   type?: Type
   labelPosition?: LabelPosition
   color?: string
@@ -38,7 +38,7 @@ export interface Config {
   barBorderRadius?: number
   xAxisIndex?: number
   yAxisIndex?: number
-  action?: Action | Action[]
+  action?: Action | Action[] | string
   actionUrl?: string
   actionUrlSameWindow?: boolean
   actionHttpMethod?: ActionHttpMethod

@@ -20,7 +20,7 @@ export interface Config {
   min?: number
   max?: number
   scale?: boolean
-  split?: Split[]
+  split?: Split | Split[] | string
   gridIndex?: number
 }
 export interface Component {
