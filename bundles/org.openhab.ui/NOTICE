@@ -11,3 +11,13 @@ https://www.eclipse.org/legal/epl-2.0/.
 == Source Code
 
 https://github.com/openhab/openhab-webui
+
+== Third-party Content
+
+microWakeWord models alexa, hey_jarvis and hey_mycroft from the ESPHome micro_wake_word model collection (web/public/res/wakeword)
+* License: Apache License 2.0, see LICENSE-micro-wake-word-models and NOTICE-micro-wake-word-models
+* Project: https://github.com/esphome/micro-wake-word-models
+
+microWakeWord models hey_jeeves and hey_openhab (web/public/res/wakeword), trained by the jVoice project
+* License: Apache License 2.0
+* Project: https://github.com/jvoice-project/micro-wakeword4j

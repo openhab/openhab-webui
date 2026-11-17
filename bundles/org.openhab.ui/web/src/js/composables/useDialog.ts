@@ -3,6 +3,7 @@ import { getAccessToken } from '@/js/openhab/auth'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
 import type { AudioMain } from '@/js/voice/audio-main'
+import { wakeWordConfig } from '@/js/voice/wakeword/wake-words'
 
 /**
  * Composable for managing the voice dialog.
@@ -13,18 +14,32 @@ export function useDialog() {
   const uiOptionsStore = useUIOptionsStore()
   const runtimeStore = useRuntimeStore()
 
-  const updatePageIcon = (online: boolean, recording: boolean, playing: boolean) => {
-    let voiceIcon: string
-    if (!online) {
-      voiceIcon = 'f7:mic_slash_fill'
-    } else if (recording) {
-      voiceIcon = 'f7:mic_circle_fill'
-    } else if (playing) {
-      voiceIcon = 'f7:speaker_2_fill'
-    } else {
-      voiceIcon = 'f7:mic_circle'
+  const initialize = () => {
+    const { dialogIdentifier, dialogListeningItem, dialogLocationItem, dialogWakeWord, dialogWakeWordUrl } = uiOptionsStore
+    void audioMain.value?.initialize(
+      dialogIdentifier,
+      dialogListeningItem,
+      dialogLocationItem,
+      wakeWordConfig(dialogWakeWord, dialogWakeWordUrl)
+    )
+  }
+
+  let levelFrame = 0
+  const followLevel = () => {
+    // rises at once and falls slowly, like the needle of a level meter
+    runtimeStore.voiceLevel = Math.max(audioMain.value?.getLevel() ?? 0, runtimeStore.voiceLevel * 0.9)
+    levelFrame = requestAnimationFrame(followLevel)
+  }
+
+  const updateState = (io: AudioMain) => {
+    const state = io.getState()
+    runtimeStore.voiceState = state
+    runtimeStore.voiceListeningForWakeWord = io.isListeningForWakeWord()
+    cancelAnimationFrame(levelFrame)
+    runtimeStore.voiceLevel = 0
+    if (state === 'listening' || state === 'speaking') {
+      levelFrame = requestAnimationFrame(followLevel)
     }
-    runtimeStore.voiceIcon = voiceIcon
   }
 
   /**
@@ -34,8 +49,7 @@ export function useDialog() {
     if (audioMain.value) {
       return
     }
-    const { dialogEnabled, dialogIdentifier, dialogLocationItem, dialogListeningItem, dialogConnectOnWindowEvent, dialogTriggerOnConnect } =
-      uiOptionsStore
+    const { dialogEnabled, dialogConnectOnWindowEvent, dialogTriggerOnConnect } = uiOptionsStore
 
     if (!dialogEnabled) {
       return
@@ -54,7 +68,7 @@ export function useDialog() {
       }
       const ohURL = `${location.protocol}//${location.hostname}${port}`
 
-      updatePageIcon(false, false, false)
+      runtimeStore.voiceState = 'offline'
       let forceTrigger = dialogTriggerOnConnect
       audioMain.value = new AudioMain(ohURL, getAccessToken, {
         onMessage: (message, level) => {
@@ -65,18 +79,12 @@ export function useDialog() {
           }
         },
         onRunningChange(io) {
-          updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
           if (forceTrigger && io.isRunning()) {
             forceTrigger = false
             io.sendSpot()
           }
         },
-        onListeningChange(io) {
-          updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
-        },
-        onSpeakingChange(io) {
-          updatePageIcon(io.isRunning(), io.isListening(), io.isSpeaking())
-        }
+        onStateChange: updateState
       })
 
       if (dialogConnectOnWindowEvent) {
@@ -84,7 +92,7 @@ export function useDialog() {
         const startAudio = () => {
           clean()
           if (audioMain.value && !audioMain.value.isInitialized()) {
-            void audioMain.value.initialize(dialogIdentifier, dialogListeningItem, dialogLocationItem)
+            initialize()
           }
         }
         const clean = () => events.forEach((e) => document.body.removeEventListener(e, startAudio))
@@ -101,8 +109,7 @@ export function useDialog() {
       if (audioMain.value.isInitialized()) {
         audioMain.value.sendSpot()
       } else {
-        const { dialogIdentifier, dialogLocationItem, dialogListeningItem } = uiOptionsStore
-        void audioMain.value.initialize(dialogIdentifier, dialogListeningItem, dialogLocationItem)
+        initialize()
       }
     }
   }

@@ -189,6 +189,9 @@ export default class AudioWorker {
         case WebSocketOutCmd.STOP_LISTENING:
           this.postToMainThread(WorkerOutCmd.STOP_LISTENING)
           break
+        case WebSocketOutCmd.DIALOG_IDLE:
+          this.postToMainThread(WorkerOutCmd.DIALOG_IDLE)
+          break
         case WebSocketOutCmd.SINK_VOLUME: {
           const sinkVolumeData = data.args
           this.postToMainThread(WorkerOutCmd.SINK_VOLUME, sinkVolumeData)
