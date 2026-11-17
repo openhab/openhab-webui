@@ -35,8 +35,6 @@ export const useRuntimeStore = defineStore('runtime', () => {
   const modelPickerExpanded = ref<boolean>(false)
   const modelSelectedItem = ref<object | null>(null)
   const modelExpandedTreeviewItems = ref<string[]>([])
-  const pagesShowSitemaps = ref<boolean>(false)
-  const pagesGroupOrder = ref<'alphabetical' | 'type'>('alphabetical')
   const ready = ref<boolean>(false)
 
   // Getters
@@ -81,8 +79,6 @@ export const useRuntimeStore = defineStore('runtime', () => {
     modelPickerExpanded,
     modelSelectedItem,
     modelExpandedTreeviewItems,
-    pagesShowSitemaps,
-    pagesGroupOrder,
     ready,
 
     setRootResource

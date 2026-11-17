@@ -27,7 +27,7 @@
         class="channellist-linkeditem searchbar-ignore"
         :title="link.item.label ? link.item.label : link.item.name"
         :footer="link.item.label ? link.item.name : '\xa0'"
-        :subtitle="getItemTypeAndMetaLabel(link.item)"
+        :subtitle="getItemTypeAndSemanticLabel(link.item)"
         :after="
           context.store[link.item.name]
             ? context.store[link.item.name].displayState || context.store[link.item.name].state
@@ -91,7 +91,7 @@ import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
 import DuplicateChannelPage from '@/pages/settings/things/channel/channel-duplicate.vue'
 
-import { getItemTypeAndMetaLabel } from '@/components/item/item-helpers'
+import { getItemTypeAndSemanticLabel } from '@/components/item/item-helpers'
 
 export default {
   props: {
@@ -107,7 +107,7 @@ export default {
   },
   emits: ['channel-updated'],
   setup() {
-    return { getItemTypeAndMetaLabel }
+    return { getItemTypeAndSemanticLabel }
   },
   data() {
     return {
