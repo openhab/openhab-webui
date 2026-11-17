@@ -139,6 +139,7 @@
 
 <script>
 import { nextTick } from 'vue'
+import { useStorage } from '@vueuse/core'
 import { f7, theme } from 'framework7-vue'
 import { mapStores } from 'pinia'
 
@@ -146,11 +147,12 @@ import ClipboardIcon from '@/components/util/clipboard-icon.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
-import { useLastSearchQueryStore } from '@/js/stores/useLastSearchQueryStore'
 
 import * as api from '@/api'
 import { showToast } from '@/js/dialog-promises'
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
+
+const storagePrefix = 'openhab.ui:search:'
 
 export default {
   props: {
@@ -161,8 +163,8 @@ export default {
     ClipboardIcon
   },
   setup() {
-    const lastSearchQueryStore = useLastSearchQueryStore()
-    return { f7, theme, lastSearchQueryStore, BREAKPOINTS }
+    const lastSearchQuery = useStorage(storagePrefix + 'transformation', '', sessionStorage, { flush: 'sync', writeDefaults: false })
+    return { f7, theme, lastSearchQuery, BREAKPOINTS }
   },
   data() {
     return {
@@ -178,7 +180,7 @@ export default {
   computed: {
     indexedTransformations() {
       if (this.groupBy === 'alphabetical') {
-        return this.transformations.reduce((prev, transformation, i, transformations) => {
+        return this.transformations.reduce((prev, transformation) => {
           const label = transformation.label || transformation.uid
           const initial = label.substring(0, 1).toUpperCase()
           if (!prev[initial]) {
@@ -189,7 +191,7 @@ export default {
           return prev
         }, {})
       } else {
-        const typeGroups = this.transformations.reduce((prev, transformation, i, transformations) => {
+        const typeGroups = this.transformations.reduce((prev, transformation) => {
           const type = transformation.type.toUpperCase()
           if (!prev[type]) {
             prev[type] = []
@@ -209,32 +211,32 @@ export default {
     ...mapStores(useRuntimeStore)
   },
   methods: {
-    onPageAfterIn() {
+    async onPageAfterIn() {
       this.load()
     },
     onPageBeforeOut(event) {
-      this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+      this.lastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
     },
-    load() {
+    async load() {
       if (this.loading) return
       this.loading = true
 
       if (this.initSearchbar) {
-        this.lastSearchQueryStore.lastTransformationSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query
+        this.lastSearchQuery = this.$refs.searchbar?.$el.f7Searchbar.query ?? null
       }
       this.initSearchbar = false
 
-      api.getTransformations().then((data) => {
-        this.transformations = data.sort((a, b) => (a.label || a.uid).localeCompare(b.label || a.uid))
-        this.loading = false
-        this.ready = true
-        this.initSearchbar = true
+      const _transformations = await api.getTransformations()
+      this.transformations = _transformations.sort((a, b) => (a.label || a.uid).localeCompare(b.label || a.uid))
 
-        nextTick(() => {
-          if (this.$refs.listIndex) this.$refs.listIndex.update()
-          if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
-          this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQueryStore.lastTransformationSearchQuery || '')
-        })
+      this.loading = false
+      this.ready = true
+      this.initSearchbar = true
+
+      nextTick(() => {
+        if (this.$refs.listIndex) this.$refs.listIndex.update()
+        if (this.$device.desktop && this.$refs.searchbar) this.$refs.searchbar.$el.f7Searchbar.$inputEl[0].focus()
+        this.$refs.searchbar?.$el.f7Searchbar.search(this.lastSearchQuery || '')
       })
     },
     switchGroupOrder(groupBy) {
@@ -276,10 +278,8 @@ export default {
       }
     },
     removeSelected() {
-      const vm = this
-
       f7.dialog.confirm(`Remove ${this.selectedTransformations.length} selected transformations?`, 'Remove Transformations', () => {
-        vm.doRemoveSelected()
+        this.doRemoveSelected()
       })
     },
     doRemoveSelected() {

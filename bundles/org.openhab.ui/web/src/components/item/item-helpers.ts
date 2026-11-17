@@ -19,11 +19,10 @@ export function getItemTypeLabel(item: api.EnrichedItem | api.EnrichedGroupItem 
   return ret
 }
 
-export function getItemTypeAndMetaLabel(item: api.EnrichedItem | api.EnrichedGroupItem) {
-  let ret = getItemTypeLabel(item)
+export function getItemSemanticLabel(item: api.EnrichedItem | api.EnrichedGroupItem) {
+  let ret = ''
   const semanticMetadata = item.metadata?.semantics
   if (isSemanticMetadata(semanticMetadata)) {
-    ret += ' · '
     const classParts = semanticMetadata.value?.split('_')
     ret += classParts[0]
     if (classParts.length > 1) {
@@ -37,6 +36,12 @@ export function getItemTypeAndMetaLabel(item: api.EnrichedItem | api.EnrichedGro
     }
   }
   return ret
+}
+
+export function getItemTypeAndSemanticLabel(item: api.EnrichedItem | api.EnrichedGroupItem) {
+  const semanticLabel = getItemSemanticLabel(item)
+  const typeLabel = getItemTypeLabel(item)
+  return semanticLabel ? `${typeLabel} · ${semanticLabel}` : typeLabel
 }
 
 export function getNonSemanticTags(item: api.EnrichedItem | api.EnrichedGroupItem) {
