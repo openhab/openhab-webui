@@ -4,6 +4,7 @@ import { Dom7 } from 'framework7'
 import { f7, f7ready } from 'framework7-vue'
 import type { CodeEditorType } from '@/assets/definitions/media-types.ts'
 import { isAdminMenuSection, type AdminMenuSection } from '@/js/admin-menu.ts'
+import { NONE_WAKE_WORD } from '@/js/voice/wakeword/wake-words'
 
 type StoredDarkModeType = 'auto' | 'dark' | 'light'
 
@@ -110,7 +111,7 @@ export const useUIOptionsStore = defineStore('uiOptions', () => {
   const dialogLocationItem = ref<string>(localStorage.getItem('openhab.ui:dialog.locationItem') || '')
   const dialogConnectOnWindowEvent = ref<boolean>(localStorage.getItem('openhab.ui:dialog.connectOnWindowEvent') === 'true')
   const dialogTriggerOnConnect = ref<boolean>(localStorage.getItem('openhab.ui:dialog.triggerOnLaunch') === 'true')
-  const dialogWakeWord = ref<string>(localStorage.getItem('openhab.ui:dialog.wakeWord') || '')
+  const dialogWakeWord = ref<string>(localStorage.getItem('openhab.ui:dialog.wakeWord') || NONE_WAKE_WORD)
   const dialogWakeWordUrl = ref<string>(localStorage.getItem('openhab.ui:dialog.wakeWordUrl') || '')
   const assistSelectedLlmTools = ref<string[] | null>(localStorage.getItem('openhab.ui:assist.llmtools.selected')?.split(',') ?? null)
   const assistShowGenericToolVisualisation = ref<boolean>(localStorage.getItem('openhab.ui:assist.showGenericToolVisualisation') === 'true')

@@ -157,9 +157,10 @@
           :label="t('about.dialog.wakeWord')"
           :info="t('about.dialog.wakeWord.info')"
           type="select"
+          :dropdown="false"
           :value="dialogWakeWord"
           @change="dialogWakeWord = $event.target.value">
-          <option value="">{{ t('about.dialog.wakeWord.none') }}</option>
+          <option :value="noneWakeWord">{{ t('about.dialog.wakeWord.none') }}</option>
           <option v-for="wakeWord in builtinWakeWords" :key="wakeWord.id" :value="wakeWord.id">{{ wakeWord.label }}</option>
           <option :value="customWakeWord">{{ t('about.dialog.wakeWord.custom') }}</option>
         </f7-list-input>
@@ -302,7 +303,7 @@ import { useI18n } from 'vue-i18n'
 
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
-import { BUILTIN_WAKE_WORDS, CUSTOM_WAKE_WORD } from '@/js/voice/wakeword/wake-words'
+import { BUILTIN_WAKE_WORDS, NONE_WAKE_WORD, CUSTOM_WAKE_WORD } from '@/js/voice/wakeword/wake-words'
 
 export default {
   components: {
@@ -314,6 +315,7 @@ export default {
     return {
       t,
       builtinWakeWords: BUILTIN_WAKE_WORDS,
+      noneWakeWord: NONE_WAKE_WORD,
       customWakeWord: CUSTOM_WAKE_WORD
     }
   },

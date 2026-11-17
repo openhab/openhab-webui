@@ -13,6 +13,11 @@ export const BUILTIN_WAKE_WORDS = [
 ] as const
 
 /**
+ * The wake word setting when wake word detection is disabled.
+ */
+export const NONE_WAKE_WORD = 'none'
+
+/**
  * The wake word setting for a model at a URL of the user's choice.
  */
 export const CUSTOM_WAKE_WORD = 'custom'
@@ -20,7 +25,7 @@ export const CUSTOM_WAKE_WORD = 'custom'
 /**
  * Returns the model to listen for, or undefined when the wake word is off.
  *
- * @param wakeWord the id of a built-in wake word, {@link CUSTOM_WAKE_WORD}, or empty for none
+ * @param wakeWord the id of a built-in wake word, {@link CUSTOM_WAKE_WORD}, or {@link NONE_WAKE_WORD} / empty for none
  * @param customManifestUrl URL of the manifest of a custom wake word, relative to Main UI
  */
 export function wakeWordConfig(wakeWord: string, customManifestUrl: string): WakeWordConfig | undefined {
