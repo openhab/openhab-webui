@@ -27,6 +27,8 @@ import org.openhab.ui.cometvisu.internal.MountPoint;
  *
  */
 public class MountedFile {
+    public static final String HIDDEN_CONFIG_FILENAME = "hidden.php";
+
     private MountPoint mount;
     private Path path;
     private Path relativeTargetPath;
@@ -43,11 +45,21 @@ public class MountedFile {
                 break;
             }
         }
+        // hidden config is only accessible via the admin-only ConfigResource, never via the general file API
+        if (isHiddenConfig(getAbsolutePath())) {
+            throw new FileOperationException("access to hidden configuration is forbidden", Status.FORBIDDEN);
+        }
     }
 
     public MountedFile(MountPoint mount) {
         this.path = mount.getTargetPath();
         this.mount = mount;
+    }
+
+    public static boolean isHiddenConfig(Path absolutePath) {
+        Path hiddenPath = ManagerSettings.getInstance().getConfigPath().normalize().resolve(HIDDEN_CONFIG_FILENAME);
+        Path normalized = absolutePath.normalize();
+        return normalized.equals(hiddenPath) || normalized.toString().equalsIgnoreCase(hiddenPath.toString());
     }
 
     public MountPoint getMount() {
