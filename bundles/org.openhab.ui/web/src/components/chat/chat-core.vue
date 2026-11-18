@@ -152,18 +152,25 @@
   /* Chat Messages */
   .chat-messagebar
     position relative
-    bottom 0
-    textarea
-      overflow-y hidden
+    box-sizing border-box
+    :deep(textarea)
+      overflow-y hidden !important
     .link
       height var(--f7-messagebar-height)
-      padding 8px 0
+      padding 8px
       display flex
       flex-direction column
-      justify-content flex-end
-      flex 1
+      justify-content flex-center
+      align-items center
+      flex 0 0 auto
+      width 32px
+      min-width 32px
+      box-sizing border-box
       &:not(:last-child)
         margin-right 6px
+      .icon
+        width 22px
+        height 22px
 
   .chat-messages-container
     display flex
