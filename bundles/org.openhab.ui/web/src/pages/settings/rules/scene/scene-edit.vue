@@ -463,6 +463,9 @@ export default {
           url: 'item-config',
           route: {
             path: 'item-config',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },

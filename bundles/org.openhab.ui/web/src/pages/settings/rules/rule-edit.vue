@@ -1154,6 +1154,9 @@ export default {
           url: 'module-config',
           route: {
             path: 'module-config',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },
@@ -1217,6 +1220,9 @@ export default {
           url: 'module-config',
           route: {
             path: 'module-config',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },

@@ -856,6 +856,9 @@ export default {
           url: 'pick-from-model',
           route: {
             path: 'pick-from-model',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },

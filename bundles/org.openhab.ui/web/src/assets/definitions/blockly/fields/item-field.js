@@ -30,6 +30,9 @@ export class FieldItemModelPicker extends Blockly.FieldTextInput {
           url: 'pick-from-model',
           route: {
             path: 'pick-from-model',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },
