@@ -28,7 +28,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.openhab.core.items.Item;
 import org.openhab.core.library.types.DecimalType;
 import org.openhab.core.library.types.OnOffType;
-import org.openhab.core.library.types.OpenClosedType;
 import org.openhab.core.library.types.StringType;
 import org.openhab.core.library.types.UpDownType;
 import org.openhab.core.sitemap.Widget;
@@ -532,7 +531,6 @@ public class ConfigHelper {
         List<Class<? extends Command>> states = new ArrayList<>();
         states.add(DecimalType.class);
         states.add(OnOffType.class);
-        states.add(OpenClosedType.class);
         states.add(UpDownType.class);
         states.add(StringType.class);
 
@@ -578,7 +576,6 @@ public class ConfigHelper {
         List<Class<? extends Command>> states = new ArrayList<>();
         states.add(DecimalType.class);
         states.add(OnOffType.class);
-        states.add(OpenClosedType.class);
         states.add(UpDownType.class);
         states.add(StringType.class);
 
