@@ -14,7 +14,7 @@
           :link="!l.link.editable && l._invalid ? undefined : '#'"
           @click="!l.link.editable && l._invalid ? undefined : editLink(l)">
           <template #media>
-            <span class="item-initial">{{ !l._invalid && l.channel.label ? l.channel.label[0] : '?' }}</span>
+            <span class="item-initial">{{ !l._invalid && l.channel.label ? firstGrapheme(l.channel.label) : '?' }}</span>
           </template>
           <template #title>
             <f7-icon v-if="!l.link.editable" f7="lock_fill" size="1rem" color="gray" />
@@ -33,6 +33,7 @@ import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
 import { thingStatusBadgeColor, thingStatusBadgeText } from '@/components/thing/thing-helpers'
 import { f7 } from 'framework7-vue'
 import { showToast } from '@/js/dialog-promises'
+import { firstGrapheme } from '@/js/openhab/utils'
 
 export default {
   props: {
@@ -43,7 +44,8 @@ export default {
   setup() {
     return {
       thingStatusBadgeColor,
-      thingStatusBadgeText
+      thingStatusBadgeText,
+      firstGrapheme
     }
   },
   data() {

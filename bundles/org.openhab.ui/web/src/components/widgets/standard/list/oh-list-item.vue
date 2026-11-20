@@ -63,7 +63,7 @@
           config.fallbackIconToInitial && config.title && context.parent.component.config && context.parent.component.config.mediaList
         "
         class="item-initial"
-        >{{ config.title[0].toUpperCase() }}</span
+        >{{ firstGrapheme(config.title).toUpperCase() }}</span
       >
     </template>
   </f7-list-item>
@@ -164,6 +164,7 @@ import { computed } from 'vue'
 import { useWidgetContext } from '@/components/widgets/useWidgetContext'
 import { OhListItemDefinition } from '@/assets/definitions/widgets/standard/listitems'
 import { useWidgetAction } from '@/components/widgets/useWidgetAction.ts'
+import { firstGrapheme } from '@/js/openhab/utils'
 
 export default {
   name: 'oh-list-item', // eslint-disable-line vue/component-definition-name-casing
@@ -175,7 +176,7 @@ export default {
     const context = computed(() => props.context)
     const { config, childContext, evaluateExpression, hasAction, slots } = useWidgetContext(context)
     const { performAction } = useWidgetAction(context, config, evaluateExpression)
-    return { config, childContext, hasAction, slots, performAction }
+    return { config, childContext, hasAction, slots, performAction, firstGrapheme }
   },
   computed: {
     isEquipmentAccordion() {

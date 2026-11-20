@@ -30,8 +30,8 @@
       <!-- Icon or initial letter -->
       <template #media>
         <oh-icon v-if="!c.extensible && c.channelType.category" :icon="c.channelType.category" height="32" width="32" />
-        <span v-else-if="c.extensible && c.channel.label" class="item-initial">{{ c.channel.label[0] }}</span>
-        <span v-else-if="!c.extensible && c.channelType.label" class="item-initial">{{ c.channelType.label[0] }}</span>
+        <span v-else-if="c.extensible && c.channel.label" class="item-initial">{{ firstGrapheme(c.channel.label) }}</span>
+        <span v-else-if="!c.extensible && c.channelType.label" class="item-initial">{{ firstGrapheme(c.channelType.label) }}</span>
       </template>
       <!-- Channel links -->
       <f7-accordion-content v-if="!pickerMode" class="searchbar-ignore">
@@ -69,6 +69,7 @@
 
 <script>
 import ClipboardIcon from '@/components/util/clipboard-icon.vue'
+import { firstGrapheme } from '@/js/openhab/utils'
 
 export default {
   components: {
@@ -85,6 +86,9 @@ export default {
     selection: [String, Array]
   },
   emits: ['selected', 'channel-opened'],
+  setup() {
+    return { firstGrapheme }
+  },
   data() {
     return {
       openedChannel: ''
