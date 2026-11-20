@@ -72,6 +72,12 @@ export default {
     refreshAccessToken() {
       return new Promise((resolve, reject) => {
         const refreshToken = this.getRefreshToken()
+        if (!refreshToken) {
+          // e.g. logged out in another tab
+          cancelTokenRefresh()
+          reject('No refresh token')
+          return
+        }
         const payload = utils.serializeObject({
           grant_type: 'refresh_token',
           client_id: window.location.origin,
@@ -87,6 +93,7 @@ export default {
           .postPlain('/rest/auth/token', payload, 'application/json', 'application/x-www-form-urlencoded')
           .then((data) => {
             if (this.getRefreshToken() !== refreshToken) {
+              if (!this.getRefreshToken()) cancelTokenRefresh()
               reject('Session has been closed during token refresh')
               return
             }

@@ -190,6 +190,22 @@ describe('token-refresh', () => {
     expect(refresh).toHaveBeenCalledTimes(1)
   })
 
+  it('does not retry a refresh that cancels refreshing and fails, e.g. after a logout in another tab', async () => {
+    const refresh = vi.fn<() => Promise<void>>().mockImplementation(async () => {
+      cancelTokenRefresh()
+      await Promise.reject(new Error('No refresh token'))
+    })
+    scheduleTokenRefresh(EXPIRES_IN, refresh)
+
+    suspend(REFRESH_DUE_MS)
+    await vi.advanceTimersByTimeAsync(TOKEN_CHECK_INTERVAL_MS)
+    expect(refresh).toHaveBeenCalledTimes(1)
+
+    await vi.advanceTimersByTimeAsync(TOKEN_REFRESH_MAX_RETRY_DELAY_MS * 2)
+    setVisibility(false)
+    expect(refresh).toHaveBeenCalledTimes(1)
+  })
+
   it('stops refreshing when cancelled', async () => {
     const refresh = vi.fn<() => Promise<void>>().mockResolvedValue()
     scheduleTokenRefresh(EXPIRES_IN, refresh)

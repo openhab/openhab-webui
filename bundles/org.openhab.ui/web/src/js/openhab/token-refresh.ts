@@ -42,14 +42,13 @@ function checkTokenRefresh(): void {
 
   const currentAttempt = ++attempt
   attemptStartTime = Date.now()
-  refreshFn().then(
-    () => {
+  refreshFn()
+    .then(() => {
       if (currentAttempt === attempt) attemptStartTime = null
-    },
-    () => {
+    })
+    .catch(() => {
       if (currentAttempt === attempt) refreshFailed()
-    }
-  )
+    })
 }
 
 function onVisibilityChange(): void {
@@ -82,8 +81,8 @@ export function cancelTokenRefresh(): void {
   if (checkTimer !== null) {
     clearInterval(checkTimer)
     checkTimer = null
-    document.removeEventListener('visibilitychange', onVisibilityChange)
   }
+  document.removeEventListener('visibilitychange', onVisibilityChange)
   attempt++
   attemptStartTime = null
   refreshDueTime = null
