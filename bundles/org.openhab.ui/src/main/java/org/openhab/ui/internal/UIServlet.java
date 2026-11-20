@@ -15,35 +15,33 @@ package org.openhab.ui.internal;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.ReadableByteChannel;
-import java.util.Arrays;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.UnavailableException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.net.URLConnection;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.util.resource.EmptyResource;
-import org.eclipse.jetty.util.resource.Resource;
 import org.openhab.core.OpenHAB;
-import org.ops4j.pax.web.service.WebContainer;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.http.HttpContext;
-import org.osgi.service.http.whiteboard.HttpWhiteboardConstants;
-import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardContext;
-import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletName;
-import org.osgi.service.http.whiteboard.propertytypes.HttpWhiteboardServletPattern;
+import org.osgi.service.servlet.whiteboard.propertytypes.HttpWhiteboardContextSelect;
+import org.osgi.service.servlet.whiteboard.propertytypes.HttpWhiteboardServletName;
+import org.osgi.service.servlet.whiteboard.propertytypes.HttpWhiteboardServletPattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * Servlet that serves files from both the filesystem and the local bundle. Supports general file caching as well as
@@ -51,14 +49,19 @@ import org.slf4j.LoggerFactory;
  *
  * @author Yannick Schaus - Initial contribution
  * @author Dan Cunningham - Convert file serving to a custom servlet
+ * @author Holger Friedrich - Serve files without Jetty DefaultServlet, support range requests
  */
+// The ranking makes this servlet win the "/*" mapping against the Jakarta REST whiteboard's default application
+// servlet, which is registered at "/*" in the default context. Pax Web resolves the conflict by context ranking on
+// registration, but only by servlet ranking and service id when re-enabling waiting servlets after any other servlet
+// on "/" is unregistered, which would otherwise let the REST servlet take over and serve 404 for the UI.
 @Component(immediate = true, service = Servlet.class, name = "org.openhab.ui", property = {
-        HttpWhiteboardConstants.HTTP_WHITEBOARD_SERVLET_INIT_PARAM_PREFIX + "precompressed=true" })
+        "service.ranking:Integer=1" })
 @NonNullByDefault
 @HttpWhiteboardServletName(UIServlet.SERVLET_PATH)
 @HttpWhiteboardServletPattern(UIServlet.SERVLET_PATH + "*")
-@HttpWhiteboardContext(name = "=org.openhab.ui.context", path = "=/")
-public class UIServlet extends DefaultServlet {
+@HttpWhiteboardContextSelect("(osgi.http.whiteboard.context.name=org.openhab.ui.context)")
+public class UIServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,67 +69,26 @@ public class UIServlet extends DefaultServlet {
 
     private static final String APP_BASE = "app";
     public static final String SERVLET_PATH = "/";
-    private static final String STATIC_PATH = "/static";
-    private static final String STATIC_BASE = OpenHAB.getConfigFolder() + "/html";
-    private static final String[] COMPRESS_EXT = { "gz", "br" };
+    private static final String STATIC_PATH = "/static/";
+    // precompressed variants in order of preference, mapping the file extension to the HTTP content-coding
+    private static final List<Encoding> ENCODINGS = List.of(new Encoding("br", "br"), new Encoding("gz", "gzip"));
+    // a single byte range; multiple ranges are not supported and the complete resource is served instead
+    private static final Pattern BYTE_RANGE = Pattern.compile("bytes=(\\d*)-(\\d*)");
 
-    private final HttpContext defaultHttpContext;
+    private final UIContext uiContext;
+    private final Path staticBase;
     private final long bundleModifiedTime;
-    private @Nullable ContextHandler contextHandler;
 
     @Activate
-    public UIServlet(final @Reference WebContainer webContainer) {
-        this.defaultHttpContext = webContainer.createDefaultHttpContext();
+    public UIServlet(final @Reference UIContext uiContext) {
+        this(uiContext, Path.of(OpenHAB.getConfigFolder(), "html"));
+    }
+
+    UIServlet(UIContext uiContext, Path staticBase) {
+        this.uiContext = uiContext;
+        this.staticBase = staticBase.toAbsolutePath().normalize();
         logger.debug("Starting up {} at {}", getClass().getSimpleName(), SERVLET_PATH);
         bundleModifiedTime = (System.currentTimeMillis() / 1000) * 1000; // round milliseconds
-    }
-
-    @Override
-    public void init() throws UnavailableException {
-        contextHandler = ContextHandler.getCurrentContext().getContextHandler();
-        super.init();
-    }
-
-    @Override
-    public @Nullable Resource getResource(@NonNullByDefault({}) String name) {
-        logger.debug("getResource: {}", name);
-        ContextHandler contextHandler = this.contextHandler;
-        if (contextHandler == null) {
-            return null;
-        }
-
-        if (name.startsWith(STATIC_PATH) && !name.endsWith("/")) {
-            URL url = null;
-            try {
-                url = new File(STATIC_BASE + name.substring(STATIC_PATH.length())).toURI().toURL();
-            } catch (MalformedURLException e) {
-                logger.error("Error while serving static content: {}", e.getMessage());
-                url = defaultHttpContext.getResource(APP_BASE + name);
-            }
-            try {
-                logger.debug("getResource static file returning {}", url);
-                return contextHandler.newResource(url);
-            } catch (IOException e) {
-                logger.error("Error while serving content: {}", e.getMessage());
-                return null;
-            }
-        } else {
-            URL url = defaultHttpContext.getResource(APP_BASE + name);
-            // if we don't find a resource, and it's not a check for a compressed version,
-            // let the UIErrorPageServlet return the app base with a proper response code that lets
-            // the Vue.js main UI handle routing
-            if (url == null && Arrays.stream(COMPRESS_EXT).noneMatch(name::endsWith)) {
-                return null;
-            }
-            try {
-                logger.debug("getResource bundle file returning {}", url);
-                // a missing compressed version must not be null, Jetty expects a non-existing resource
-                return url == null ? EmptyResource.INSTANCE : new ResourceWrapper(contextHandler.newResource(url));
-            } catch (IOException e) {
-                logger.error("Error while serving content: {}", e.getMessage());
-                return null;
-            }
-        }
     }
 
     @Override
@@ -135,113 +97,266 @@ public class UIServlet extends DefaultServlet {
         if (request == null || response == null) {
             return;
         }
-        if (!defaultHttpContext.handleSecurity(request, response)) {
+
+        if (!uiContext.handleSecurity(request, response)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-        super.doGet(request, response);
+
+        // the path info is decoded and normalized by the container, unlike the raw request URI, so ".." segments
+        // cannot be used to leave the served directories
+        String requestPath = request.getPathInfo();
+        if (requestPath == null || requestPath.isEmpty() || SERVLET_PATH.equals(requestPath)) {
+            requestPath = "/index.html";
+        }
+
+        ResourceDescriptor resource = resolveResource(requestPath, request.getHeader("Accept-Encoding"));
+        if (resource == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        response.setHeader("Vary", "Accept-Encoding");
+        if (resource.lastModified > 0) {
+            response.setDateHeader("Last-Modified", resource.lastModified);
+            if (isNotModified(request, resource.lastModified)) {
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
+            }
+        }
+        if (resource.contentType != null) {
+            response.setContentType(resource.contentType);
+        }
+        // .svgz files are gzip compressed SVGs and must be served with Content-Encoding: gzip, as Jetty's
+        // DefaultServlet did
+        @Nullable
+        String contentEncoding = resource.contentEncoding;
+        if (requestPath.endsWith(".svgz")) {
+            contentEncoding = contentEncoding == null ? "gzip" : "gzip, " + contentEncoding;
+        }
+        if (contentEncoding != null) {
+            response.setHeader("Content-Encoding", contentEncoding);
+        }
+        long length = resource.contentLength;
+        ByteRange range = null;
+        if (length >= 0) {
+            response.setHeader("Accept-Ranges", "bytes");
+            String rangeHeader = request.getHeader("Range");
+            if (rangeHeader != null && isRangeApplicable(request, resource.lastModified)) {
+                range = parseRange(rangeHeader, length);
+            }
+        }
+
+        if (range == ByteRange.UNSATISFIABLE) {
+            response.setHeader("Content-Range", "bytes */" + length);
+            // not sendError(), which would dispatch to the error page servlet and serve the UI instead
+            response.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+            return;
+        }
+        if (range != null) {
+            response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+            response.setHeader("Content-Range", "bytes " + range.first() + "-" + range.last() + "/" + length);
+            response.setContentLengthLong(range.length());
+        } else if (length >= 0) {
+            response.setContentLengthLong(length);
+        }
+
+        try (InputStream is = resource.url.openStream()) {
+            if (range == null) {
+                is.transferTo(response.getOutputStream());
+            } else {
+                is.skipNBytes(range.first());
+                copy(is, response.getOutputStream(), range.length());
+            }
+        }
     }
 
-    @Override
-    public @Nullable String getWelcomeFile(@Nullable String pathInContext) {
-        logger.debug("getWelcomeFile {}", pathInContext);
-        if (pathInContext != null && pathInContext.startsWith(STATIC_PATH)) {
-            return null;
+    private static void copy(InputStream in, OutputStream out, long count) throws IOException {
+        byte[] buffer = new byte[8192];
+        long remaining = count;
+        while (remaining > 0) {
+            int read = in.read(buffer, 0, (int) Math.min(buffer.length, remaining));
+            if (read < 0) {
+                break;
+            }
+            out.write(buffer, 0, read);
+            remaining -= read;
         }
-        return "/index.html";
     }
 
     /**
-     *
-     * Wraps a resource and returns a consistent time for bundled files
-     *
+     * Checks the If-Range precondition. No ETags are sent, so only an HTTP date matching the last modification time
+     * allows a partial response.
      */
-    class ResourceWrapper extends Resource {
+    private boolean isRangeApplicable(HttpServletRequest request, long lastModified) {
+        if (request.getHeader("If-Range") == null) {
+            return true;
+        }
+        try {
+            return request.getDateHeader("If-Range") == (lastModified / 1000) * 1000;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 
-        private final Resource baseResource;
+    /**
+     * Parses a Range header according to RFC 9110, section 14.1.2.
+     *
+     * @return the requested range, {@link ByteRange#UNSATISFIABLE} if no byte of the resource is selected, or null if
+     *         the header is invalid or requests multiple ranges and the complete resource should be served
+     */
+    static @Nullable ByteRange parseRange(String header, long length) {
+        Matcher matcher = BYTE_RANGE.matcher(header.trim());
+        if (!matcher.matches()) {
+            return null;
+        }
+        String first = matcher.group(1);
+        String last = matcher.group(2);
+        try {
+            if (first.isEmpty()) {
+                if (last.isEmpty()) {
+                    return null;
+                }
+                long suffixLength = Long.parseLong(last);
+                if (suffixLength == 0 || length == 0) {
+                    return ByteRange.UNSATISFIABLE;
+                }
+                return new ByteRange(Math.max(0, length - suffixLength), length - 1);
+            }
+            long start = Long.parseLong(first);
+            long end = last.isEmpty() ? Long.MAX_VALUE : Long.parseLong(last);
+            if (end < start) {
+                return null;
+            }
+            if (start >= length) {
+                return ByteRange.UNSATISFIABLE;
+            }
+            return new ByteRange(start, Math.min(end, length - 1));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 
-        public ResourceWrapper(Resource baseResource) {
-            this.baseResource = baseResource;
+    private boolean isNotModified(HttpServletRequest request, long lastModified) {
+        try {
+            long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+            // HTTP dates have a resolution of one second
+            return ifModifiedSince >= 0 && ifModifiedSince >= (lastModified / 1000) * 1000;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private static boolean accepts(@Nullable String acceptEncoding, String coding) {
+        if (acceptEncoding == null) {
+            return false;
+        }
+        for (String part : acceptEncoding.split(",")) {
+            String[] params = part.split(";");
+            if (params[0].trim().equalsIgnoreCase(coding)) {
+                return params.length < 2 || !params[1].trim().matches("q=0(\\.0{0,3})?");
+            }
+        }
+        return false;
+    }
+
+    private @Nullable ResourceDescriptor resolveResource(String requestPath, @Nullable String acceptEncoding) {
+        logger.debug("Resolving UI resource: {}", requestPath);
+
+        if (requestPath.startsWith(STATIC_PATH) && !requestPath.endsWith("/")) {
+            return resolveStaticResource(requestPath, acceptEncoding);
         }
 
-        @Override
-        public long lastModified() {
-            return bundleModifiedTime;
+        if (requestPath.endsWith("/")) {
+            return null;
         }
 
-        @Override
-        public boolean isContainedIn(@Nullable Resource r) throws MalformedURLException {
-            return baseResource.isContainedIn(r);
+        return resolveBundleResource(APP_BASE + requestPath, requestPath, acceptEncoding);
+    }
+
+    private @Nullable ResourceDescriptor resolveStaticResource(String requestPath, @Nullable String acceptEncoding) {
+        Path path;
+        try {
+            path = staticBase.resolve(requestPath.substring(STATIC_PATH.length())).normalize();
+        } catch (InvalidPathException e) {
+            return null;
+        }
+        if (!path.startsWith(staticBase)) {
+            return null;
+        }
+        File file = path.toFile();
+        if (file.isDirectory() || !file.exists()) {
+            return null;
         }
 
-        @Override
-        public void close() {
-            baseResource.close();
+        for (Encoding encoding : ENCODINGS) {
+            if (accepts(acceptEncoding, encoding.coding())) {
+                File compressed = new File(file.getPath() + "." + encoding.extension());
+                if (compressed.exists()) {
+                    URL compressedUrl = fileUrl(compressed);
+                    if (compressedUrl != null) {
+                        return new ResourceDescriptor(compressedUrl, contentType(requestPath), encoding.coding(),
+                                compressed.length(), compressed.lastModified());
+                    }
+                }
+            }
         }
 
-        @Override
-        public boolean exists() {
-            return baseResource.exists();
+        URL fileUrl = fileUrl(file);
+        return fileUrl == null ? null
+                : new ResourceDescriptor(fileUrl, contentType(requestPath), null, file.length(), file.lastModified());
+    }
+
+    private @Nullable URL fileUrl(File file) {
+        try {
+            return file.toURI().toURL();
+        } catch (MalformedURLException e) {
+            logger.debug("Failed to create URL for static resource {}", file, e);
+            return null;
+        }
+    }
+
+    private @Nullable ResourceDescriptor resolveBundleResource(String bundlePath, String requestPath,
+            @Nullable String acceptEncoding) {
+        for (Encoding encoding : ENCODINGS) {
+            if (accepts(acceptEncoding, encoding.coding())) {
+                URL compressed = uiContext.getResource(bundlePath + "." + encoding.extension());
+                if (compressed != null) {
+                    return new ResourceDescriptor(compressed, contentType(requestPath), encoding.coding(), -1,
+                            bundleModifiedTime);
+                }
+            }
         }
 
-        @Override
-        public boolean isDirectory() {
-            return baseResource.isDirectory();
+        URL resource = uiContext.getResource(bundlePath);
+        if (resource == null && ENCODINGS.stream().noneMatch(e -> requestPath.endsWith("." + e.extension()))) {
+            // Missing resources should return 404 so the error page servlet can handle SPA routes.
+            return null;
         }
+        return resource == null ? null
+                : new ResourceDescriptor(resource, contentType(requestPath), null, -1, bundleModifiedTime);
+    }
 
-        @Override
-        public long length() {
-            return baseResource.length();
+    private @Nullable String contentType(String path) {
+        String contentType = getServletContext().getMimeType(path);
+        if (contentType == null) {
+            contentType = URLConnection.guessContentTypeFromName(path);
         }
+        return contentType;
+    }
 
-        @Override
-        public URL getURL() {
-            return baseResource.getURL();
-        }
+    private record Encoding(String extension, String coding) {
+    }
 
-        @Override
-        public File getFile() throws IOException {
-            return baseResource.getFile();
-        }
+    private record ResourceDescriptor(URL url, @Nullable String contentType, @Nullable String contentEncoding,
+            long contentLength, long lastModified) {
+    }
 
-        @Override
-        public String getName() {
-            return baseResource.getName();
-        }
+    record ByteRange(long first, long last) {
+        static final ByteRange UNSATISFIABLE = new ByteRange(-1, -1);
 
-        @Override
-        public InputStream getInputStream() throws IOException {
-            return baseResource.getInputStream();
-        }
-
-        @Override
-        public ReadableByteChannel getReadableByteChannel() throws IOException {
-            return baseResource.getReadableByteChannel();
-        }
-
-        @Override
-        public boolean delete() throws SecurityException {
-            return baseResource.delete();
-        }
-
-        @Override
-        public boolean renameTo(@Nullable Resource dest) throws SecurityException {
-            return baseResource.renameTo(dest);
-        }
-
-        @Override
-        public String[] list() {
-            return baseResource.list();
-        }
-
-        @Override
-        public Resource addPath(@Nullable String path) throws IOException {
-            return baseResource.addPath(path);
-        }
-
-        @Override
-        public String toString() {
-            return getURL().toString();
+        long length() {
+            return last - first + 1;
         }
     }
 }
