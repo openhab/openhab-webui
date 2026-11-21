@@ -79,6 +79,9 @@ export default {
           url: 'configure-props',
           route: {
             path: 'configure-props',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },

@@ -250,6 +250,9 @@ export default {
           url: 'configure-widget',
           route: {
             path: 'configure-widget',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },
@@ -285,6 +288,9 @@ export default {
           url: 'widget-code',
           route: {
             path: 'widget-code',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },

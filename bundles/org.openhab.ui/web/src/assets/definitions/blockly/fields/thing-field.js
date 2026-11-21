@@ -29,6 +29,9 @@ export class FieldThingPicker extends Blockly.FieldTextInput {
           url: 'thing-select',
           route: {
             path: 'thing-select',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },

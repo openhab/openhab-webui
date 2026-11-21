@@ -149,7 +149,10 @@ export default {
           url: 'links/new',
           route: {
             component: AddLinkPage,
-            path: 'links/new'
+            path: 'links/new',
+            options: {
+              browserHistory: false
+            }
           }
         },
         {
@@ -173,6 +176,9 @@ export default {
           route: {
             component: ConfigureChannelPage,
             path,
+            options: {
+              browserHistory: false
+            },
             context: {
               operation: 'edit-channel'
             },
@@ -211,6 +217,9 @@ export default {
           route: {
             component: DuplicateChannelPage,
             path,
+            options: {
+              browserHistory: false
+            },
             context: {
               operation: 'duplicate-channel'
             },

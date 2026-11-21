@@ -132,7 +132,11 @@ export default {
           console.debug(`Opening ${combined} in ${command} modal`)
           const modalRoute = {
             url: combined + '/' + command,
-            route: {}
+            route: {
+              options: {
+                browserHistory: false
+              }
+            }
           }
           if (command === 'popup') modalRoute.route.popup = { component: OhPopup }
           if (command === 'popover') modalRoute.route.popup = { component: OhPopover }

@@ -32,6 +32,9 @@ export class FieldAudiosinkPicker extends Blockly.FieldTextInput {
           url: 'pick-from-audiosink',
           route: {
             path: 'pick-from-audiosink',
+            options: {
+              browserHistory: false
+            },
             popup
           }
         },

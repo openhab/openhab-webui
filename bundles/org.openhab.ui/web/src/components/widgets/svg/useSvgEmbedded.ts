@@ -152,9 +152,11 @@ export function useSvgEmbedded(options: useSvgEmbeddedOptions) {
     const svgElementWidgetDefinition = OhSVGElementDefinition()
     svgElementWidgetDefinition.label = svgElementWidgetDefinition.label.replace('${id}', id)
 
-    // @ts-expect-error: f7router.navigate is missing the type definition for the below call
     f7router.navigate(
-      { url: 'on-svg-click-settings', route: { path: 'on-svg-click-settings', popup } },
+      {
+        url: 'on-svg-click-settings',
+        route: { path: 'on-svg-click-settings', options: { browserHistory: false }, popup }
+      } as Router.NavigateParameters,
       {
         props: {
           widget: svgElementWidgetDefinition,
