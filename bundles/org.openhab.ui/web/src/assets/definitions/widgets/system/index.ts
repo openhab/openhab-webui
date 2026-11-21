@@ -152,3 +152,8 @@ export const OhSVGElementDefinition = () =>
   new WidgetDefinition('oh-svg-element', 'SVG Element Settings for ${id}', 'Control an element within an embedded SVG')
     .paramGroup(pg('state', 'State', 'Defines if and how the state is represented in the SVG'), SVGElementParameters())
     .paramGroup(actionGroup(), actionParams())
+import SlideButtonParameters from './slide-button.ts'
+export const OhSlideButtonDefinition = () =>
+  new WidgetDefinition('oh-slide-button', 'Slide Button', 'Sliding button with optional latching and state feedback')
+    .paramGroup(actionGroup(), actionParams())
+    .params(SlideButtonParameters())
