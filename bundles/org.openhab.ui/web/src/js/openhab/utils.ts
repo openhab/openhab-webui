@@ -15,6 +15,16 @@ export function normalizeLabelForThingId(label: string) {
     .replace(/[^0-9a-z_-]/gi, '')
     .replace(/^-+/, '')
 }
+/**
+ * Returns the first user-perceived character of a label, so that e.g. an emoji is not split into surrogate halves
+ * and keeps its variation selector.
+ *
+ * @param label the label
+ * @returns the first grapheme of the label, or an empty string if the label is empty
+ */
+export function firstGrapheme(label: string): string {
+  return new Intl.Segmenter().segment(label).containing(0)?.segment ?? ''
+}
 export function normalizeInput(id: any) {
   const inputElement: HTMLInputElement = document.querySelector(id) as HTMLInputElement
   inputElement.value = normalizeLabel(inputElement.value.trim())
