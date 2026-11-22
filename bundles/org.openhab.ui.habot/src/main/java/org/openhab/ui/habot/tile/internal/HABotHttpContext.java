@@ -73,7 +73,7 @@ public class HABotHttpContext extends ServletContextHelper {
         } else {
             // Pax Web probes the bare resource base once to decide whether the registration maps a directory or a
             // single file. It has to resolve to the directory, otherwise every request is answered with index.html.
-            if (name.equals(resourcesBase) || name.equals("/" + resourcesBase)) {
+            if (resourcesBase.equals(name) || ("/" + resourcesBase).equals(name)) {
                 return defaultResource;
             }
             if (defaultResource != null) {

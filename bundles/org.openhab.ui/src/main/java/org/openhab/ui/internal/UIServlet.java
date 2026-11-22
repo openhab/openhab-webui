@@ -329,10 +329,7 @@ public class UIServlet extends HttpServlet {
         }
 
         URL resource = uiContext.getResource(bundlePath);
-        if (resource == null && ENCODINGS.stream().noneMatch(e -> requestPath.endsWith("." + e.extension()))) {
-            // Missing resources should return 404 so the error page servlet can handle SPA routes.
-            return null;
-        }
+        // Missing resources should return 404 so the error page servlet can handle SPA routes.
         return resource == null ? null
                 : new ResourceDescriptor(resource, contentType(requestPath), null, -1, bundleModifiedTime);
     }
