@@ -49,6 +49,8 @@
 .model-card
   --card-offset calc(40px + var(--f7-safe-area-left) + var(--f7-safe-area-right))
   --card-width calc(100% - var(--f7-safe-area-left) - var(--f7-safe-area-right) - 40px)
+  &:not(.card-opened)
+    cursor pointer
   .card-close-button
     position absolute
     top calc(16px + var(--f7-safe-area-top))
