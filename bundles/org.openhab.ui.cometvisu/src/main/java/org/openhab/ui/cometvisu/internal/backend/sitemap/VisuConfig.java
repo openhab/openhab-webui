@@ -109,7 +109,7 @@ public class VisuConfig {
      */
     public String getConfigXml(HttpServletRequest req) {
         SchemaPages pagesBean = new SchemaPages();
-        pagesBean.setBackend("oh2");
+        pagesBean.setBackend("openhab");
         pagesBean.setDesign("metal");
         pagesBean.setMaxMobileScreenWidth(new BigDecimal(480));
         pagesBean.setBindClickToWidget(true);
@@ -171,6 +171,7 @@ public class VisuConfig {
                 processWidget(rootPage, widget, pagesBean, 0);
             }
             configHelper.cleanup(rootPage, pagesBean);
+
         } catch (Exception e) {
             logger.error("", e);
             // show the exception in the config
