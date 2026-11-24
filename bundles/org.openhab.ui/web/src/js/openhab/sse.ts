@@ -33,12 +33,31 @@ export interface SSEConnection {
    */
   keepaliveTimer: number | null
   /**
+   * Timestamp (ms since epoch) of the last received `alive` heartbeat, or 0 if none was received on the current EventSource.
+   */
+  lastAlive: number
+  /**
+   * The heartbeat interval in seconds announced by the server in its last `alive` message.
+   */
+  keepaliveSeconds: number
+  /**
    * Establishes or resets the keepalive/heartbeat timer.
-   * Starts a timer for <code>seconds + 2</code> seconds, triggering the heartbeat callback with `false` if no heartbeat is received before the timer expires.
+   * Starts a timer for <code>seconds + 2</code> seconds. If no heartbeat is received before the timer expires,
+   * the heartbeat callback is triggered with `false` and the connection is re-established (with backoff on repeated expiries).
    *
    * @param seconds the heartbeat interval in seconds
    */
   setKeepalive: (seconds?: number) => void
+  /**
+   * Whether the stream is considered lost: the keepalive timer expired, the last heartbeat is older than
+   * the announced interval + 2 seconds (e.g. timers were frozen while the device slept) or the stream reported an error.
+   */
+  isStale: () => boolean
+  /**
+   * Closes the current EventSource and immediately opens a new one, cancelling any pending reconnect.
+   * Does nothing if the connection has been closed explicitly.
+   */
+  reconnect: () => void
   /**
    * Clears the active keepalive/heartbeat timer and clear the timeout job ID.
    */
@@ -64,6 +83,9 @@ function newSSEConnection(
   heartbeatCallback: HeartbeatCallback | undefined
 ): SSEConnection {
   let reconnectSeconds = 1
+  // Number of consecutive keepalive expiries without a heartbeat in between, used for the backoff
+  let keepaliveExpiries = 0
+  let streamLost = false
 
   const connection: SSEConnection = {
     url: '',
@@ -71,18 +93,56 @@ function newSSEConnection(
     closed: false,
     reconnectTimeout: null,
     keepaliveTimer: null,
+    lastAlive: 0,
+    keepaliveSeconds: 10,
     setKeepalive(seconds: number = 10) {
       console.debug('Setting keepalive interval seconds', seconds)
       this.clearKeepalive()
+      this.keepaliveSeconds = seconds
       this.keepaliveTimer = setTimeout(
         () => {
           console.warn('SSE timeout error')
+          connection.keepaliveTimer = null
+          streamLost = true
           if (heartbeatCallback) {
             heartbeatCallback(false)
           }
+          // The TCP connection is often dead without the browser noticing (sleep, network change),
+          // so do not wait for the browser: replace the EventSource. The first expiry reconnects
+          // right away, repeated expiries back off up to 10 seconds.
+          keepaliveExpiries++
+          const delay = keepaliveExpiries <= 1 ? 0 : Math.min(Math.pow(2, keepaliveExpiries - 1), 10) * 1000
+          console.debug(`SSE: reconnecting after keepalive timeout in ${delay} ms (expiry #${keepaliveExpiries})`)
+          if (connection.reconnectTimeout) clearTimeout(connection.reconnectTimeout)
+          connection.reconnectTimeout = setTimeout(() => {
+            connection.reconnectTimeout = null
+            connection.reconnect()
+          }, delay)
         },
         (seconds + 2) * 1000
       )
+    },
+    isStale() {
+      if (this.closed) return false
+      if (streamLost) return true
+      return this.lastAlive > 0 && Date.now() - this.lastAlive > (this.keepaliveSeconds + 2) * 1000
+    },
+    reconnect() {
+      if (this.closed) return
+      console.debug(`SSE: reconnecting ${this.url}`)
+      if (this.reconnectTimeout) {
+        clearTimeout(this.reconnectTimeout)
+        this.reconnectTimeout = null
+      }
+      this.clearKeepalive()
+      if (this.currentEventSource) {
+        this.currentEventSource.close()
+        this.currentEventSource = null
+      }
+      this.lastAlive = 0
+      this.currentEventSource = initEventSource()
+      // Make sure a connection attempt that hangs silently is retried too
+      this.setKeepalive(this.keepaliveSeconds)
     },
     clearKeepalive() {
       if (this.keepaliveTimer) {
@@ -136,6 +196,9 @@ function newSSEConnection(
       let evt: { interval: number }
       try {
         evt = JSON.parse(e.data as string) as { interval: number }
+        connection.lastAlive = Date.now()
+        keepaliveExpiries = 0
+        streamLost = false
         connection.setKeepalive(evt.interval)
       } catch (error) {
         console.error('Failed to parse "alive" message data:', error)
@@ -166,6 +229,7 @@ function newSSEConnection(
     newEventSource.onerror = (event: Event) => {
       if (connection.closed) return
       console.warn('SSE error')
+      streamLost = true
       connection.clearKeepalive()
       if (errorCallback) {
         errorCallback()
@@ -229,6 +293,26 @@ function newSSEConnection(
   console.debug(`new SSE connection: ${connection.url}, ${openSSEClients.length} open`)
   console.debug(openSSEClients)
   return connection
+}
+
+/**
+ * Reconnects all open SSE connections whose stream is considered lost.
+ * Called when the page becomes visible again or the browser comes back online.
+ */
+function reconnectStaleConnections(reason: string) {
+  for (const conn of [...openSSEClients]) {
+    if (conn.isStale()) {
+      console.info(`SSE: ${reason}, stream of ${conn.url} is stale, reconnecting`)
+      conn.reconnect()
+    }
+  }
+}
+
+if (typeof document !== 'undefined' && typeof window !== 'undefined') {
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') reconnectStaleConnections('page visible')
+  })
+  window.addEventListener('online', () => reconnectStaleConnections('browser online'))
 }
 
 const SSEService = {
