@@ -2,7 +2,6 @@
   <f7-link
     v-if="runtimeStore.voiceState"
     class="voice-button"
-    style="margin-right: 12px"
     :class="[`voice-${runtimeStore.voiceState}`, { 'voice-wake-word': runtimeStore.voiceListeningForWakeWord }]"
     :style="{ '--voice-level': runtimeStore.voiceLevel }"
     :icon-f7="icon"
