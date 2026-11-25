@@ -189,6 +189,14 @@ html
     position absolute
     right calc(var(--f7-navbar-inner-padding-right) + var(--f7-safe-area-right))
 
+/* Reduce excessive spacing between icon-only links in iOS navbar (icon-only links already have 44px width) */
+.ios .navbar .right
+  a.icon-only + a.icon-only
+    margin-left 0
+  a.icon-only + a:not(.icon-only),
+  a:not(.icon-only) + a.icon-only
+    margin-left 8px
+
 /* Semantic Model related searchbar and expand treeview button */
 .model-searchbar
   .searchbar-inner
