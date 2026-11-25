@@ -26,7 +26,7 @@
         <voice-button />
         <developer-icons />
         <f7-link
-          v-if="userStore.isAdmin"
+          v-if="userStore.isAdmin()"
           icon-ios="f7:pencil"
           icon-aurora="f7:pencil"
           icon-md="material:edit"
