@@ -17,11 +17,12 @@
         {{ pageLabel }}
       </f7-nav-title>
       <f7-nav-right>
+        <voice-button />
         <f7-link v-if="editable" icon-md="material:edit" @click="editPage" class="edit-page-button">
           {{ theme === 'md' ? '' : $t('page.navbar.edit') }}
         </f7-link>
         <f7-link v-if="fullscreenIcon" class="fullscreen-icon-navbar" :icon-f7="fullscreenIcon" @click="toggleFullscreen" />
-        <div v-if="!showBackButton && !editable && !fullscreenIcon" style="width: 44px; height: 44px" />
+        <div v-if="!showBackButton && !editable && !fullscreenIcon && !runtimeStore.voiceState" style="width: 44px; height: 44px" />
       </f7-nav-right>
     </f7-navbar>
     <template v-else>
@@ -94,6 +95,7 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useComponentsStore } from '@/js/stores/useComponentsStore'
 import { useUserStore } from '@/js/stores/useUserStore'
 import { useUIOptionsStore } from '@/js/stores/useUIOptionsStore'
+import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { useWidgetExpression } from '@/components/widgets/useWidgetExpression.ts'
 import { useViewArea } from '@/js/composables/useViewArea.ts'
 
@@ -102,6 +104,7 @@ import { getPageType } from '@/pages/page-type'
 
 import OhLayoutPage from '@/components/widgets/layout/oh-layout-page.vue'
 import EmptyStatePlaceholder from '@/components/empty-state-placeholder.vue'
+import VoiceButton from '@/components/voice/voice-button.vue'
 import type { WidgetContext } from '@/components/widgets/types'
 const OhMapPage = defineAsyncComponent(() => import('@/components/widgets/map/oh-map-page.vue'))
 const OhPlanPage = defineAsyncComponent(() => import('@/components/widgets/plan/oh-plan-page.vue'))
@@ -123,6 +126,7 @@ const componentStore = useComponentsStore()
 const statesStore = useStatesStore()
 const userStore = useUserStore()
 const uiOptionsStore = useUIOptionsStore()
+const runtimeStore = useRuntimeStore()
 
 const theme = f7.theme
 
