@@ -127,6 +127,7 @@ export default {
       loading: false,
       initSearchbar: false,
       things: [], // This is needed for Thing UID validation via validateThingUID (in thing-inbox-mixin.js)
+      resolvedBindingId: '',
       thingTypes: [],
       discoverySupported: false,
       inputSupported: null,
@@ -147,12 +148,34 @@ export default {
         this.intervalId = 0
       }
     },
+    /**
+     * Finds the binding ID for an add-on ID. An add-on ID can extend the binding ID with a suffix
+     * (for example the add-on 'modbus-e3dc' provides thing types of the binding 'modbus'),
+     * so the ID is shortened at '-' until thing types are found.
+     */
+    resolveBindingId(bindingId) {
+      return this.$oh.api.get('/rest/thing-types?bindingId=' + bindingId).then((data) => {
+        const found = data.some((tt) => tt.UID.split(':')[0] === bindingId && tt.listed)
+        const idx = bindingId.lastIndexOf('-')
+        if (found || idx < 0) return { bindingId, data }
+        return this.resolveBindingId(bindingId.substring(0, idx))
+      })
+    },
     onPageAfterIn() {
-      this.$oh.api
-        .get('/rest/thing-types?bindingId=' + this.bindingId)
-        .then((data) => {
+      Promise.all([
+        this.resolveBindingId(this.bindingId),
+        this.$oh.api.get('/rest/addons?serviceId=all&installedOnly=true').catch(() => [])
+      ])
+        .then(([{ bindingId, data }, addons]) => {
+          this.resolvedBindingId = bindingId
+          // An add-on can provide only some of the thing types of its binding (e.g. 'modbus-e3dc' for 'modbus').
+          // The bundles of the add-on are known by the add-on; the bundle of a thing type is known by the thing type.
+          // Thing types without bundle information (older openHAB core) are always shown.
+          const addon = addons.find((a) => a.type === 'binding' && a.id === this.bindingId)
+          const addonBundles = addon?.loggerPackages ?? []
           this.thingTypes = data
-            .filter((tt) => tt.UID.split(':')[0] === this.bindingId && tt.listed)
+            .filter((tt) => tt.UID.split(':')[0] === this.resolvedBindingId && tt.listed)
+            .filter((tt) => !addonBundles.length || !tt.bundleSymbolicName || addonBundles.includes(tt.bundleSymbolicName))
             .sort((a, b) => {
               if (a.bridge && !b.bridge) return -1
               if (b.bridge && !a.bridge) return 1
@@ -186,21 +209,23 @@ export default {
       }
       this.scanning = true
       const query = this.inputConfig.input ? `?input=${encodeURIComponent(this.inputConfig.input)}` : ''
-      this.$oh.api.postPlain(`/rest/discovery/bindings/${this.bindingId}/scan${query}`, null, 'text/plain', 'text/plain').then((data) => {
-        try {
-          this.scanTimeout = parseInt(data)
-          this.scanProgress = 0
-          let progressBarEl = f7.progressbar.show('#scan-progress', 0, 'theme-alt')
-          this.intervalId = setInterval(() => {
-            this.scanProgress += 1
-            f7.progressbar.set(progressBarEl, (this.scanProgress * 100) / this.scanTimeout)
-            this.loadInbox()
-          }, 1000)
-          this.scanTimeoutId = setTimeout(this.finishScanning, this.scanTimeout * 1000)
-        } catch (e) {
-          this.scanning = false
-        }
-      })
+      this.$oh.api
+        .postPlain(`/rest/discovery/bindings/${this.resolvedBindingId}/scan${query}`, null, 'text/plain', 'text/plain')
+        .then((data) => {
+          try {
+            this.scanTimeout = parseInt(data)
+            this.scanProgress = 0
+            let progressBarEl = f7.progressbar.show('#scan-progress', 0, 'theme-alt')
+            this.intervalId = setInterval(() => {
+              this.scanProgress += 1
+              f7.progressbar.set(progressBarEl, (this.scanProgress * 100) / this.scanTimeout)
+              this.loadInbox()
+            }, 1000)
+            this.scanTimeoutId = setTimeout(this.finishScanning, this.scanTimeout * 1000)
+          } catch (e) {
+            this.scanning = false
+          }
+        })
     },
     /**
      * Load discovery information for the binding.
@@ -209,7 +234,7 @@ export default {
      */
     loadDiscoveryInfo() {
       return this.$oh.api
-        .get(`/rest/discovery/bindings/${this.bindingId}/info`)
+        .get(`/rest/discovery/bindings/${this.resolvedBindingId}/info`)
         .then((data) => {
           this.discoverySupported = true
           this.inputSupported = data.inputSupported
@@ -248,7 +273,7 @@ export default {
         .get('/rest/inbox?includeIgnored=false')
         .then((data) => {
           this.loading = false
-          this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.bindingId)
+          this.scanResults = data.filter((e) => e.thingTypeUID.split(':')[0] === this.resolvedBindingId)
           const filterQuery = this.$refs.searchbar?.$el.f7Searchbar.query
           this.initSearchbar = false
           nextTick(() => {
