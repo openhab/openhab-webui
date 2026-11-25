@@ -38,7 +38,7 @@ export interface Config {
   categoryType: CategoryType
   weekdayFormat: WeekdayFormat
   monthFormat: MonthFormat
-  data?: string[]
+  data?: string | string[]
 }
 export interface Component {
   component: 'oh-category-axis'

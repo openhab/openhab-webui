@@ -6,6 +6,7 @@ import type { AxisComponent, OhCategoryAxisOption } from '../types'
 import { ChartType, OhCategoryAxis } from '@/types/components/widgets'
 import { OhCategoryAxisDefinition } from '@/assets/definitions/widgets/chart'
 import { chartTypeLongerThanAYear, mapChartTypeToYears } from '@/components/widgets/chart/util/time.ts'
+import { ensureArray } from '@/js/openhab/utils'
 
 dayjs.extend(LocalizedFormat)
 dayjs.extend(LocaleData)
@@ -86,7 +87,7 @@ export function getCategoryAxisData(config: OhCategoryAxis.Config, startTime: Da
       break
     case OhCategoryAxis.CategoryType.values:
       // pass through
-      return { data: config.data ?? [], name: undefined }
+      return { data: ensureArray(config.data), name: undefined }
     default:
       const exhaustiveCheck: never = config.categoryType
       console.warn('oh-category-axis: Unknown categoryType', exhaustiveCheck)

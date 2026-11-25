@@ -82,6 +82,24 @@ export function simpleHash(obj: object | string): string {
   return (hash >>> 0).toString(36)
 }
 
+/**
+ * Returns array of values depending on the input type: array, single value, or comma-separated string.
+ * Note, this does not do any runtime checkout to ensure type safety.
+ *
+ * @param input the input value to parse, which can be an array, a single value, or a comma-separated string
+ * @returns an array of parsed values
+ */
+export function ensureArray<T>(input: T[] | T | string | undefined): T[] {
+  if (!input) return []
+  if (Array.isArray(input)) return input
+  if (typeof input === 'string')
+    return input
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean) as unknown as T[]
+  return [input]
+}
+
 export default {
   normalizeLabel,
   normalizeLabelForThingId,
@@ -89,5 +107,6 @@ export default {
   normalizeInputForThingId,
   hsbToRgb,
   toRGBStyle,
-  simpleHash
+  simpleHash,
+  ensureArray
 }
