@@ -17,5 +17,6 @@
   "about.reload.purgeExplanation2": "Seleccioneu Netejar les memòries cau i Actualitzar per esborrar totes les memòries cau, anul·lar el registre dels \"Service workers\" i tornar a baixar-ho tot del servidor.",
   "about.reload.purgeCachesAndRefresh": "Netejar les memòries cau i Actualitzar",
   "about.reload.confirmPurge": "Netejar totes les memòria cau d'aplicacions i anul·lar el registre dels \"Service workers\"? Això també tornarà a carregar la pàgina des del servidor, cosa que pot trigar uns segons.",
-  "about.reload.reloadApp": "Recarregar App"
+  "about.reload.reloadApp": "Recarregar App",
+  "about.reload.setupWizard": "Assistent de Configuració"
 }
