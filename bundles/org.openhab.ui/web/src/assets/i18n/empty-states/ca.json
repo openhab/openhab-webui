@@ -32,5 +32,7 @@
   "page.unavailable.title": "Pàgina no disponible",
   "page.unavailable.text": "No teniu permís per veure aquesta pàgina a causa de restriccions de visibilitat.",
   "persistence.title": "No hi ha cap \"add-on\" de persistència instal·lat",
-  "persistence.text": "Amb la persistència podeu emmagatzemar els estats dels Items en el temps, independentment que siguin valors històrics o futurs. Per configurar la persistència, cal instal·lar almenys un complement o \"add-on\" de persistència."
+  "persistence.text": "Amb la persistència podeu emmagatzemar els estats dels Items en el temps, independentment que siguin valors històrics o futurs. Per configurar la persistència, cal instal·lar almenys un complement o \"add-on\" de persistència.",
+  "sitemaps.title": "Encara no hi ha Sitemaps",
+  "sitemaps.text": "Els Sitemaps són una manera declarativa de definir l'estructura d'una interfície d'usuari, en aquells casos que hi donen suport (interfície bàsica, aplicacions mòbils...). Estan formats per components o Widgets que serveixen per mostrar l'estat dels elements o per enviar-los ordres.<br><br>Utilitza el botó + per crear el teu primer mapa del lloc."
 }
