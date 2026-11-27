@@ -15,6 +15,25 @@ export function normalizeLabelForThingId(label: string) {
     .replace(/[^0-9a-z_-]/gi, '')
     .replace(/^-+/, '')
 }
+// Intl.Segmenter is stateless, so one instance is shared by all calls.
+// It is missing in some supported browsers (e.g. Firefox < 125), so it is only created when available.
+const graphemeSegmenter = typeof Intl !== 'undefined' && typeof Intl.Segmenter === 'function' ? new Intl.Segmenter() : null
+/**
+ * Returns the first user-perceived character of a label, so that e.g. an emoji is not split into surrogate halves
+ * and keeps its variation selector.
+ * Without Intl.Segmenter, the first code point is returned instead: an emoji still stays whole,
+ * but a variation selector following it is dropped.
+ *
+ * @param label the label
+ * @returns the first grapheme of the label, or an empty string if the label is empty
+ */
+export function firstGrapheme(label: string): string {
+  if (!label) return ''
+  if (graphemeSegmenter) {
+    return graphemeSegmenter.segment(label).containing(0)?.segment ?? ''
+  }
+  return Array.from(label)[0] ?? ''
+}
 export function normalizeInput(id: any) {
   const inputElement: HTMLInputElement = document.querySelector(id) as HTMLInputElement
   inputElement.value = normalizeLabel(inputElement.value.trim())

@@ -30,7 +30,9 @@
                 :badge-color="thingStatusBadgeColor(thing.statusInfo)"
                 :link="'/settings/things/' + thing.UID">
                 <template #media>
-                  <span class="item-initial">{{ channel.label ? channel.label[0] : channelType.label ? channelType.label[0] : '?' }}</span>
+                  <span class="item-initial">{{
+                    channel.label ? firstGrapheme(channel.label) : channelType.label ? firstGrapheme(channelType.label) : '?'
+                  }}</span>
                 </template>
               </f7-list-item>
               <f7-list-item divider title="Item" />
@@ -120,6 +122,7 @@ import { useStatesStore } from '@/js/stores/useStatesStore'
 import { useRuntimeStore } from '@/js/stores/useRuntimeStore'
 import { nextTick } from 'vue'
 import { showToast } from '@/js/dialog-promises'
+import { firstGrapheme } from '@/js/openhab/utils'
 import { useDirty } from '@/pages/useDirty'
 
 export default {
@@ -139,7 +142,7 @@ export default {
   setup() {
     const { dirty, dirtyIndicator } = useDirty('link-edit-page')
 
-    return { dirty, dirtyIndicator, thingStatusBadgeColor, thingStatusBadgeText }
+    return { dirty, dirtyIndicator, thingStatusBadgeColor, thingStatusBadgeText, firstGrapheme }
   },
   data() {
     return {

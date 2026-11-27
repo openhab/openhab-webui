@@ -21,7 +21,7 @@
                 height="60"
                 width="60" />
               <span v-else>
-                {{ item.label ? item.label[0] : item.name[0] }}
+                {{ item.label ? firstGrapheme(item.label) : item.name[0] }}
               </span>
             </div>
             <h2>{{ item.label }}</h2>
@@ -196,6 +196,7 @@ import { f7, theme } from 'framework7-vue'
 import { useStatesStore } from '@/js/stores/useStatesStore'
 
 import { getItemTypeLabel } from '@/components/item/item-helpers'
+import { firstGrapheme } from '@/js/openhab/utils'
 import ModelMixin from '@/pages/settings/model/model-mixin'
 import FileDefinition from '@/pages/settings/file-definition-mixin'
 
@@ -206,7 +207,7 @@ export default {
     f7router: Object
   },
   setup() {
-    return { theme, utils, getItemTypeLabel }
+    return { theme, utils, getItemTypeLabel, firstGrapheme }
   },
   data() {
     return {
