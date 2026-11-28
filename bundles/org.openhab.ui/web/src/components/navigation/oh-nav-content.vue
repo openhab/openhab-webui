@@ -112,7 +112,12 @@ function back() {
     return
   }
   const f7router: Router.Router = props.f7router || f7.views.main.router
-  f7router.back()
+
+  if (f7router.currentRoute?.route?.options?.browserHistory === false) {
+    f7router.back(undefined, { browserHistory: false })
+  } else {
+    f7router.back()
+  }
 
   /*
   const currentPath = f7router.currentRoute.path

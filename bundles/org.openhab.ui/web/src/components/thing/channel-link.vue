@@ -88,7 +88,7 @@
 import { f7 } from 'framework7-vue'
 
 import AddLinkPage from '@/pages/settings/things/link/link-add.vue'
-import ConfigureChannelPage from '@/pages/settings/things/channel/channel-edit.vue'
+import ChannelEditPage from '@/pages/settings/things/channel/channel-edit.vue'
 import DuplicateChannelPage from '@/pages/settings/things/channel/channel-duplicate.vue'
 
 import { getItemTypeAndMetaLabel } from '@/components/item/item-helpers'
@@ -174,7 +174,7 @@ export default {
         {
           url: path,
           route: {
-            component: ConfigureChannelPage,
+            component: ChannelEditPage,
             path,
             options: {
               browserHistory: false

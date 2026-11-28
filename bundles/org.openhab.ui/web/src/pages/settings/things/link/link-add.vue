@@ -391,13 +391,13 @@ export default {
         this.saveItem(this.newItem).then((data) => {
           this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
             showToast('Item and link created')
-            this.f7router.back()
+            this.f7router.back(undefined, { browserHistory: false })
           })
         })
       } else {
         this.$oh.api.put('/rest/links/' + link.itemName + '/' + encodeURIComponent(link.channelUID), link).then((data) => {
           showToast('Link created')
-          this.f7router.back()
+          this.f7router.back(undefined, { browserHistory: false })
         })
       }
     }

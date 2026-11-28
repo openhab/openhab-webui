@@ -88,7 +88,7 @@ export default {
         .catch((err) => {
           console.error('Error loading channel types', err)
           f7.dialog.alert('Error loading channel type: ' + err)
-          this.f7router.back()
+          this.f7router.back(undefined, { browserHistory: false })
         })
     },
     save() {
@@ -117,7 +117,7 @@ export default {
       })
       this.f7route.route.context.finalChannel = finalChannel
       // this.f7router.emit('complete', finalChannel)
-      this.f7router.back()
+      this.f7router.back(undefined, { browserHistory: false })
     }
   }
 }
