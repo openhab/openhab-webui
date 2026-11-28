@@ -11,6 +11,7 @@ export interface Config {
   borders?: boolean
   src?: string
   height?: number
+  openhabSession?: boolean
 }
 export interface Component {
   component: 'oh-webframe-card'

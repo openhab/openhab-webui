@@ -75,6 +75,11 @@ Display a web page in a card
     Height of the frame (by default 300px)
   </PropDescription>
 </PropBlock>
+<PropBlock type="BOOLEAN" name="openhabSession" label="Reuse openHAB sign-in">
+  <PropDescription>
+    Start a session with a participating servlet on the same HTTPS origin before loading the frame
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 

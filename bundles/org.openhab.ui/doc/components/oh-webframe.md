@@ -38,11 +38,30 @@ Displays a web page in a frame
     Height of the frame (by default 300px)
   </PropDescription>
 </PropBlock>
+<PropBlock type="BOOLEAN" name="openhabSession" label="Reuse openHAB sign-in">
+  <PropDescription>
+    Start a session with a participating servlet on the same HTTPS origin before loading the frame
+  </PropDescription>
+</PropBlock>
 </PropGroup>
 </div>
 
 
 <!-- GENERATED /props -->
+
+## Authenticated frames
+
+Enable **Reuse openHAB sign-in** to embed a servlet that supports this option.
+Use a URL on the same HTTPS origin as Main UI, such as `/homekit/camera/front-door`.
+
+Main UI sends a `POST` to the frame path followed by `/_openhab_session` using the existing API client.
+It omits the frame URL's query and fragment, and loads the frame only after the session endpoint returns `204 No Content`.
+
+The servlet must implement this endpoint, check the request origin, and apply openHAB's access policy.
+For authenticated access, it should set a short-lived `Secure`, `HttpOnly`, `SameSite=Strict` cookie scoped to the protected resource.
+It must validate the session for the viewer and its protected requests, and respect expiry and revocation.
+It may return `204` without setting a cookie when its policy permits anonymous access, or `401` if a Main UI sign-in is required.
+A plain `401` lets Main UI handle sign-in.
 
 <!-- If applicable describe how properties are forwarded to a underlying component from Framework7, ECharts, etc.:
 ### Inherited Properties
