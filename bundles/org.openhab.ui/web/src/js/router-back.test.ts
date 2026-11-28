@@ -8,10 +8,7 @@ const runtimeRoute: RouterBackTarget['currentRoute'] = {
 describe('backArgsForCurrentRoute', () => {
   it('leaves back unchanged when the current route is in window history', () => {
     expect(backArgsForCurrentRoute({ route: {} }, [])).toEqual([])
-    expect(backArgsForCurrentRoute(undefined, ['/settings/things/', { force: true }])).toEqual([
-      '/settings/things/',
-      { force: true }
-    ])
+    expect(backArgsForCurrentRoute(undefined, ['/settings/things/', { force: true }])).toEqual(['/settings/things/', { force: true }])
   })
 
   it('pops only the page stack when the current route was not pushed to window history', () => {
@@ -24,9 +21,7 @@ describe('backArgsForCurrentRoute', () => {
   })
 
   it('keeps an explicit browserHistory option', () => {
-    expect(backArgsForCurrentRoute(runtimeRoute, [{ browserHistory: true, force: true }])).toEqual([
-      { browserHistory: true, force: true }
-    ])
+    expect(backArgsForCurrentRoute(runtimeRoute, [{ browserHistory: true, force: true }])).toEqual([{ browserHistory: true, force: true }])
   })
 })
 
