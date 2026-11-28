@@ -94,7 +94,7 @@ export default {
       })
       this.f7route.route.context.finalChannel = finalChannel
       // this.f7router.emit('complete', finalChannel)
-      this.f7router.back()
+      this.f7router.back(undefined, { browserHistory: false })
     }
   }
 }

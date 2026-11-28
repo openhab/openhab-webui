@@ -86,7 +86,7 @@ export default {
         configuration: this.config
       })
       this.f7route.route.context.finalChannel = finalChannel
-      this.f7router.back()
+      this.f7router.back(undefined, { browserHistory: false })
       // this.$emit('channelAddComplete', finalChannel)
       // f7.view.main.emit('complete', finalChannel)
     }

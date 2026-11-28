@@ -326,7 +326,7 @@ export default {
                   dialog.setProgress(100)
                   showToast('Items created and linked')
                   dialog.close()
-                  this.f7router.back()
+                  this.f7router.back(undefined, { browserHistory: false })
                 })
                 .catch((err) => {
                   dialog.close()

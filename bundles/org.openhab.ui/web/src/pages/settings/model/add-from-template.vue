@@ -575,7 +575,7 @@ export default {
           dialog.setProgress(100)
           showToast('Model created')
           dialog.close()
-          this.f7router.back()
+          this.f7router.back(undefined, { browserHistory: false })
         })
     },
     onPrefixInput(event) {
