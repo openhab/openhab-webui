@@ -5,6 +5,7 @@ import { guardConfig, guardComponent, type ConfigGuardFn } from '@/types/widget-
 export interface Config {
   src?: string
   height?: number
+  openhabSession?: boolean
 }
 export interface Component {
   component: 'oh-webframe'
