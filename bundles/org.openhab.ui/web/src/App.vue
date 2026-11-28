@@ -486,6 +486,7 @@ import { useSemanticsStore } from '@/js/stores/useSemanticsStore'
 import { useModelStore } from '@/js/stores/useModelStore'
 
 import { BREAKPOINTS } from '@/js/constants/breakpoints'
+import { guardFramework7Back } from '@/js/router-back'
 import { getRoot } from '@/api'
 import { isUnauthorized } from '@/js/hey-api'
 import { request } from 'framework7'
@@ -1140,6 +1141,10 @@ export default {
   },
   mounted() {
     f7ready(async (f7) => {
+      // Runtime routes keep browserHistory: false (#4636). In-app back must not
+      // then call history.back(), or it leaves the previous real page (#4708, #4710).
+      guardFramework7Back(f7)
+
       this.$f7dim.width = f7.width
       this.$f7dim.height = f7.height
 
@@ -1175,6 +1180,7 @@ export default {
       })
 
       f7.on('pageBeforeIn', (page) => {
+        guardFramework7Back(f7)
         if (page.route && page.route.url) {
           // console.log('pageBeforeIn: current URL:', page.route.url)
           this.updateUrl(page.route.url)
